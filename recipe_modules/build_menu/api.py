@@ -34,6 +34,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
   ]
 
   def initialize(self):
+    self._chroot_created = False
     self._dep_graph = None
 
   @property
@@ -108,7 +109,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           # If we have applied patches and the SDK was not validated, then we
           # need to do so before leaving the context.
           if not self._dep_graph and self.m.workspace_util.patch_sets:
-            self._get_dep_graph([])
+            if self._chroot_created:
+              self._get_dep_graph([])
       else:
         # No config, and missing_ok is False.
         raise self.m.step.StepFailure('Missing configuration for {}'.format(
@@ -158,6 +160,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           version=config.general.sdk_cache_version, use_image=self.is_staging,
           timeout_sec=None
           if config.build.sdk_update.compile_source else 'DEFAULT')
+      self._chroot_created = True
 
       self.m.cros_sdk.update_chroot(
           self.gitiles_commit, self.gerrit_changes,
