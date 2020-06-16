@@ -23,3 +23,4 @@ output_file=$1
 shift 1
 
 "$@" |& tee "${output_file}"
+exit "${PIPESTATUS[0]}"
