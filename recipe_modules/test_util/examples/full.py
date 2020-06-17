@@ -11,7 +11,7 @@ DEPS = [
     'test_util',
 ]
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import ParseDict
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -27,12 +27,12 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(build.builder.bucket, properties.expected_bucket)
   api.assertions.assertEqual(build.builder.builder, properties.expected_builder)
 
-  props = MessageToDict(build.input.properties)
-  props_name = props.get('build_target', {}).get('name')
-  api.assertions.assertEqual(properties.expected_build_target or None,
-                             props_name)
+  props = ParseDict(build.input.properties, BuildTargetProperties(),
+                    ignore_unknown_fields=True)
+  api.assertions.assertEqual(properties.expected_build_target,
+                             props.build_target.name)
   api.assertions.assertEqual(properties.expected_force_relevant_build,
-                             props.get('force_relevant_build', False))
+                             props.force_relevant_build, False)
 
   # Check host for "True"-ness to see if it is set.  We do not care what the
   # value is for the purposes of testing, since we do not want to hard code the
@@ -59,6 +59,12 @@ def RunSteps(api, properties):
   if properties.expected_executable:
     api.assertions.assertEqual(api.buildbucket.build.exe,
                                properties.expected_executable)
+
+  props = ParseDict(build.output.properties, BuildTargetProperties(),
+                    ignore_unknown_fields=True)
+  if properties.expected_output_build_target_name:
+    api.assertions.assertEqual(properties.expected_output_build_target_name,
+                               props.build_target.name)
 
 
 def GenTests(api):
@@ -224,3 +230,41 @@ def GenTests(api):
                          expected_builder='amd64-generic-postsubmit',
                          expected_build_target='amd64-generic',
                          expect_commit=True, expected_executable=executable)))
+
+  yield api.test(
+      'critical-child',
+      api.test_util.test_child_build('amd64-generic',
+                                     critical=common_pb2.YES).build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
+                         expected_critical=common_pb2.YES, expect_commit=True)))
+
+  yield api.test(
+      'non-critical-child',
+      api.test_util.test_child_build('amd64-generic',
+                                     critical=common_pb2.NO).build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
+                         expected_critical=common_pb2.NO, expect_commit=True)))
+
+  yield api.test(
+      'with-output-properties-message',
+      api.test_util.test_build(
+          builder='amd64-generic-postsubmit',
+          input_properties=BuildTargetProperties(
+              build_target=BuildTarget(name='amd64-generic')),
+          output_properties=BuildTargetProperties(
+              build_target=BuildTarget(name='changed'))).build,
+      api.properties(
+          TestProperties(expected_project='chromeos',
+                         expected_bucket='postsubmit',
+                         expected_builder='amd64-generic-postsubmit',
+                         expected_build_target='amd64-generic',
+                         expected_output_build_target_name='changed',
+                         expect_commit=True)))

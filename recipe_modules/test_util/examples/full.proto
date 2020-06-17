@@ -44,4 +44,10 @@ message TestProperties {
 
   // Expected value for end_time (seconds since epoch).
   int64 expected_end_time = 12;
+
+  // Expected critical value.
+  buildbucket.v2.Trinary expected_critical = 13;
+
+  // Expected output.properties.build_target.name.
+  string expected_output_build_target_name = 14;
 }

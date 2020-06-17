@@ -73,7 +73,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
   def test_build(self, cq=False, dry_run=False, bot_size='large',
                  extra_changes=None, exe=None, input_properties=None,
                  create_time=None, start_time=None, update_time=None,
-                 end_time=None, **kwargs):
+                 end_time=None, critical=None, output_properties=None,
+                 **kwargs):
     """Return a buildbucket step_data for a typical test build.
 
     In general, test_orchestrator() should be called for orchestrators, and
@@ -100,6 +101,13 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       start_time (seconds): Start time, in seconds since epoch.
       update_time (seconds): Update time, in seconds since epoch.
       end_time (seconds): End time, in seconds since epoch.
+      critical (Trinary): Whether the build is critical.
+      output_properties: A protobuf output properties message, a dictionary of
+          output properties, or None.  If used, the dictionary may be a superset
+          of protobufs.  If |output_properties| evaluates False, then the
+          message and build will have NO output properties.  If specified, the
+          output properties will be
+          |input_properties|.update(|output_properties|).
       **kwargs: see buildbucket/test_api.py
 
     Returns:
@@ -118,6 +126,11 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     input_dict = input_properties or {}
     if not isinstance(input_dict, dict):
       input_dict = MessageToDict(input_dict, preserving_proto_field_name=True)
+
+    output_dict = output_properties or {}
+    if not isinstance(output_dict, dict):
+      output_dict = MessageToDict(output_dict, preserving_proto_field_name=True)
+
     func = (
         self.m.buildbucket.try_build_message
         if cq else self.m.buildbucket.ci_build_message)
@@ -130,6 +143,9 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     if bot_size:
       msg.infra.swarming.bot_dimensions.extend(
           self.m.cros_tags.tags(bot_size=bot_size))
+
+    if critical:
+      msg.critical = critical
 
     if create_time:
       msg.create_time.seconds = create_time
@@ -146,6 +162,13 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       msg.update_time.seconds = update_time
     if end_time:
       msg.end_time.seconds = end_time
+
+    # If output_properties were not passed, then we do not set output_properties
+    # in the message at all.  If they were, then we copy the input_properties,
+    # and update with output_properties after that.
+    if output_dict:
+      msg.output.properties.update(input_dict)
+      msg.output.properties.update(output_dict)
 
     ret = self.m.buildbucket.build(msg)
     if input_dict:
