@@ -1212,6 +1212,260 @@
   },
   {
     "cmd": [],
+    "name": "applying Cq-Depend to input projects"
+  },
+  {
+    "cmd": [],
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "-b",
+      "__cl_factory",
+      "--track",
+      "cros/master"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.create cl_factory branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/config/+/1234@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/config",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/config|src/chromiumos/config|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-d",
+      "https://chromium-review.googlesource.com/c/chromiumos/config/+/1234"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description.git_cl description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1,chromium:1,chromium:1@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/config/+/1234@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/config",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/config|src/chromiumos/config|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-n",
+      "-",
+      "https://chromium-review.googlesource.com/c/chromiumos/config/+/1234"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description.git_cl set description",
+    "stdin": "a quick description\n\nCq-Depend: chromium:1,chromium:1,chromium:1\nChange-Id: deadbeef\n    ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "-b",
+      "__cl_factory",
+      "--track",
+      "cros/master"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/program/galaxy",
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.create cl_factory branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/1234@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromeos/program/galaxy",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/galaxy|src/chromeos/program/galaxy|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-d",
+      "https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/1234"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/program/galaxy",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description.git_cl description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1,chromium:1,chromium:1@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/1234@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromeos/program/galaxy",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/galaxy|src/chromeos/program/galaxy|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-n",
+      "-",
+      "https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/1234"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/program/galaxy",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description.git_cl set description",
+    "stdin": "a quick description\n\nCq-Depend: chromium:1,chromium:1,chromium:1\nChange-Id: deadbeef\n    ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {

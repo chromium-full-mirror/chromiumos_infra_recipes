@@ -5,6 +5,8 @@
 
 """Used to create sweeping changes by creating CLs in many repos."""
 
+import re
+
 from recipe_engine import post_process
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -28,6 +30,7 @@ DEPS = [
 ]
 
 _CHROMIOUS_CONFIG_PROJECT = 'chromiumos/config'
+_CHANGE_ID_REGEX = re.compile(r'^Change-Id: ', re.MULTILINE)
 
 
 def RunSteps(api, properties):
@@ -67,6 +70,7 @@ def RunSteps(api, properties):
     # Start development branches for each project.
     api.repo.start('cl-factory', projects=[info.name for info in cl_infos])
 
+    changes = []
     for info in cl_infos:
       with api.step.nest('working on project {}'.format(info.name)) as pres, \
           api.context(cwd=api.cros_source.workspace_path.join(info.path)):
@@ -75,9 +79,30 @@ def RunSteps(api, properties):
 
         if api.git.diff_check(api.context.cwd):
           pres.step_text = 'diff'
-          _make_cl(api, info, api.context.cwd, properties, gerrit_changes)
+          cl = _make_cl(api, info, api.context.cwd, properties, gerrit_changes)
+          changes.append(cl)
         else:
           pres.step_text = 'no diff'
+
+    if changes:
+      cq_depend = api.cros_cq_depends.get_cq_depend(changes)
+      replacement = cq_depend + '\nChange-Id: '
+
+      with api.step.nest('applying Cq-Depend to input projects'):
+        for info, change in zip(gc_infos, gerrit_changes):
+          with api.step.nest('applying Cq-Depend to {}'
+                             .format(info.name)) as pres, \
+              api.context(cwd=api.cros_source.workspace_path.join(info.path)):
+
+            # For the change description commands to work we must be operating
+            # on a tracking branch.
+            api.step('create cl_factory branch', [
+                'git', 'checkout', '-b', '__cl_factory', '--track',
+                '{}/{}'.format(info.remote, 'master')
+            ])
+            description = api.gerrit.get_change_description(change)
+            description = re.sub(_CHANGE_ID_REGEX, replacement, description)
+            api.gerrit.set_change_description(change, description)
 
 
 def _determine_sync_projects(api, gc_infos, cl_infos, properties):
@@ -133,7 +158,7 @@ def _make_cl(api, info, project_path, properties, gerrit_changes):
   commit_message = _make_commit_message(api, info, properties, gerrit_changes)
   api.git.add([project_path])
   api.git.commit(commit_message)
-  api.gerrit.create_change(
+  return api.gerrit.create_change(
       project=project_path,
       reviewers=list(properties.reviewers),
       hashtags=list(properties.hashtags),
