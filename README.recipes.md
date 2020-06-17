@@ -50,6 +50,7 @@
   * [iterutils](#recipe_modules-iterutils)
   * [metadata_json](#recipe_modules-metadata_json)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
+  * [orch_menu](#recipe_modules-orch_menu) &mdash; API providing a menu for orchestrator steps.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [phosphorus](#recipe_modules-phosphorus)
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
@@ -225,6 +226,7 @@
   * [metadata_json:examples/upload_to_gs](#recipes-metadata_json_examples_upload_to_gs)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
+  * [orch_menu:examples/full](#recipes-orch_menu_examples_full)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [paygen](#recipes-paygen) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
@@ -557,7 +559,7 @@ API providing a menu for build steps
 A module with steps used by image builders.
 
 Image builders do not call other recipe modules directly: they always get
-there via this module, and be a simple sequence of steps.
+there via this module, and are a simple sequence of steps.
 
 &mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#254)(self, config=None, packages=None, artifact_build=None, timeout_sec='DEFAULT', name=None):**
 
@@ -3428,6 +3430,75 @@ Args:
 
 Returns:
   str: A string describing the VM test.
+### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)
+
+[DEPS](/recipe_modules/orch_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API providing a menu for orchestrator steps
+
+#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module with steps used by orchestrators.
+
+Orchestrators do not call other recipe modules directly: they always get there
+via this module, and are a simple sequence of steps.
+
+&mdash; **def [clone\_repo](/recipe_modules/orch_menu/api.py#161)(self, name, commit):**
+
+Clone a repo into a temporary directory.
+
+Args:
+  name (str): Display name for the repo.
+  commit (GitilesCommit): The commit to clone (and fetch).
+
+Returns:
+  (Path) path of the repo.
+
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#44)(self):**
+
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#52)(self):**
+
+&mdash; **def [get\_manifest\_info](/recipe_modules/orch_menu/api.py#56)(self, external=False):**
+
+Return information about a manifest repo.
+
+Args:
+  external (bool): Whether the external manifest is wanted.
+
+Returns:
+  None, or an object with attributes:
+    name (str): display name for the manifest repo.
+    gitiles_commit (GitilesCommit): commit for the repo.
+    path (Path): Path to the checked out repo.
+    url (str): URL for the repo.
+
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#48)(self):**
+
+&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#32)(self):**
+
+&mdash; **def [push\_manifest\_refs](/recipe_modules/orch_menu/api.py#179)(self, ref):**
+
+Update the remote ref (if any).
+
+If |ref| evaluates to False, do nothing.
+
+Args:
+  ref (str): Ref to push to (possibly empty) or None
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#78)(self, missing_ok=False, test_footers=None):**
+
+Initial setup steps for the orchestrator.
+
+This context manager returns with all of the contexts that the orchestrator
+needs to have when it runs, for cleanup to happen properly.
+
+Args:
+  missing_ok (bool): Whether it is OK if no config is found.
+  test_footers (str): test Cr-External-Snapshot footer data(values separated
+      by newlines), or None.
+
+Returns:
+  BuilderConfig or None, with an active context.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#6): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5280,6 +5351,11 @@ Runs the presubmit for a project with checkout per local manifest.
 [DEPS](/recipe_modules/naming/examples/get_test_title.py#6): [naming](#recipe_modules-naming)
 
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
+### *recipes* / [orch\_menu:examples/full](/recipe_modules/orch_menu/examples/full.py)
+
+[DEPS](/recipe_modules/orch_menu/examples/full.py#6): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#21)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

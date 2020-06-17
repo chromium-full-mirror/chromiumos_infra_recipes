@@ -1,0 +1,21 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.orch_menu.examples;
+
+message FullProperties {
+  // Value for setup_orchestrator(missing_ok) parameter.
+  bool missing_ok = 1;
+
+  // Whether to expect a missing config.
+  bool expect_missing_config = 2;
+
+  // Test footers to pass to git_footers.  This is a newline separated string of
+  // footer values.
+  string test_footers = 3;
+
+
+}

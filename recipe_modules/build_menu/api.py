@@ -24,7 +24,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
   """A module with steps used by image builders.
 
   Image builders do not call other recipe modules directly: they always get
-  there via this module, and be a simple sequence of steps.
+  there via this module, and are a simple sequence of steps.
   """
 
   # TODO(crbug/1053703): Make the above statement true.
