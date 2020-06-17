@@ -149,7 +149,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "External-Snapshot-SHA:"
+      "external-manifest-SHA:"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,

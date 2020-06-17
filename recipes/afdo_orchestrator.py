@@ -10,14 +10,11 @@ All builders run against the same source tree.
 
 DEPS = [
     'recipe_engine/buildbucket',
-    'recipe_engine/context',
     'recipe_engine/cq',
-    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
     'bot_cost',
     'build_plan',
-    'cros_bisect',
     'cros_history',
     'cros_infra_config',
     'cros_source',
@@ -25,9 +22,8 @@ DEPS = [
     'cros_test_proctor',
     'failures',
     'gerrit',
-    'git',
-    'git_footers',
     'naming',
+    'orch_menu',
     'skylab',
     'test_util',
 ]
@@ -40,10 +36,10 @@ from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
-from PB.recipes.chromeos.afdo_orchestrator import AfdoOrchestratorProperties
+from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 
-PROPERTIES = AfdoOrchestratorProperties
+PROPERTIES = OrchestratorProperties
 
 # TODO(crbug/1053703): refactor this along with orchestrator.py
 # Most of this builder will be greatly simplified as part of refactoring
@@ -52,29 +48,17 @@ PROPERTIES = AfdoOrchestratorProperties
 
 
 def RunSteps(api, properties):
-  api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
+  with api.orch_menu.setup_orchestrator(missing_ok=True) as config:
+    if config:
+      DoRunSteps(api, properties, config)
 
-  with api.bot_cost.cq_run_cost_context():
-    DoRunSteps(api, properties)
 
-def DoRunSteps(api, properties):
-  push_manifest_refs = None
-  with api.step.nest('set up orchestrator') as presentation:
-    config = api.cros_infra_config.configure_builder(
-        api.buildbucket.gitiles_commit,
-        api.buildbucket.build.input.gerrit_changes)
+def DoRunSteps(api, properties, config):
+  # Update the start ref to indicate we've begun processing the snapshot.
+  api.orch_menu.push_manifest_refs(properties.update_manifest_refs.start)
 
-    api.cros_bisect.set_orchestrator_bisect_builder()
-    snapshot = api.cros_infra_config.gitiles_commit
-    gerrit_changes = api.cros_infra_config.gerrit_changes
-    intern_snapshot_id = snapshot.id
-    presentation.links['manifest snapshot revision'] = (
-        'https://chrome-internal.googlesource.com/chromeos/manifest-internal/'
-        '+/{}/snapshot.xml'.format(intern_snapshot_id))
-
-    if not config:
-      # No config found.  This was already logged, just exit.
-      return
+  snapshot = api.cros_infra_config.gitiles_commit
+  gerrit_changes = api.cros_infra_config.gerrit_changes
 
   # This orchestrator ignores the config, using enable_history=True
   if gerrit_changes:

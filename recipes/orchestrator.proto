@@ -35,4 +35,10 @@ message OrchestratorProperties {
 
   // Time delay between each child build.
   float stagger_children_seconds = 5;
+
+  // Used in afdo_orchestrator.py
+  // BuilderConfig.Id.name of the builder that will process the HW Test
+  // results. This is expected to have the same type/branch and
+  // project/bucket/version as the this orchestrator does.
+  string process_child = 6;
 }

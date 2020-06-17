@@ -107,14 +107,14 @@ class OrchMenuApi(recipe_api.RecipeApi):
           self._internal_repo_path = self.clone_repo('internal manifest',
                                                      self.gitiles_commit)
 
-          test_footers = test_footers or 'External-Snapshot-SHA'
           # Read the Cr-External-Snapshot footer to get ref of external snapshot
           # that corresponds with the internal snapshot.
+          test_data = self.m.git_footers.test_api.step_test_data_factory(
+              test_footers or 'external-manifest-SHA')
           with self.m.context(cwd=self._internal_repo_path):
             footer_values = self.m.git_footers.from_ref(
                 self.gitiles_commit.id, key='Cr-External-Snapshot',
-                step_test_data=self.m.git_footers.test_api
-                .step_test_data_factory(test_footers))
+                step_test_data=test_data)
 
             # Make sure we got exactly one snapshot ref.
             if not footer_values or len(footer_values) != 1:

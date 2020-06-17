@@ -167,7 +167,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "External-Snapshot-SHA:"
+      "external-manifest-SHA:"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
@@ -217,7 +217,7 @@
       "git",
       "push",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "External-Snapshot-SHA:refs/heads/postsubmit"
+      "external-manifest-SHA:refs/heads/postsubmit"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,

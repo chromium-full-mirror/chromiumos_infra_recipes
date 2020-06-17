@@ -4332,17 +4332,17 @@ Whether there are toolchain CLs applied to the source tree.
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
 
-[DEPS](/recipes/afdo_orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/afdo_orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#60)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#56)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#54)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#50)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#337)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#321)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4359,7 +4359,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#325)(api):**
+&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#309)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4369,7 +4369,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#267)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#251)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4384,7 +4384,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#209)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#193)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
 
 Run and collect any process_child.
 
@@ -4399,7 +4399,7 @@ Args:
 
 Returns: A list of (one) build_pb2.Build object with the process_child result.
 
-&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#388)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#372)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -5360,30 +5360,17 @@ Runs the presubmit for a project with checkout per local manifest.
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#21)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#70)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#63)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#63)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#57)(api, properties):**
 
-&mdash; **def [clone\_repo](/recipes/orchestrator.py#254)(api, name, url, fetch=None):**
-
-Clone a repo into a temporary directory.
-
-Args:
-  api   (RecipeApi): See RunSteps documentation.
-  name  (str):       Name of repo for display purposes
-  url   (str):       Url to clone from
-  fetch (str|None):  If specified, ref to fetch from remote
-
-Returns:
-  path (Path): path on disk to cloned repo
-
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#352)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#266)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -5402,7 +5389,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#332)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#246)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -5412,20 +5399,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [maybe\_push\_commit](/recipes/orchestrator.py#464)(api, repo_name, repo_url, repo_path, ref, commit):**
-
-Update a ref in the remote repo to point to a given commit.  If ref
-evaluates as False, then do nothing
-
-Args:
-  api (RecipeApi):  See RunSteps documentation.
-  repo_name (str):  Name of repo for display purposes
-  repo_url  (str):  URL of remote repo to push to
-  repo_path (Path): Path to local repo to push from
-  ref       (str):  ref to push to (possibly empty) or None
-  commit    (str):  commit SHA1 to push to ref
-
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#274)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#188)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -5440,7 +5414,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#411)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#325)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -5452,24 +5426,6 @@ Args:
     of the string. Intended to pick up the *-snapshot cases. See more below.
 
 Returns: A bool whether to collect the build.
-
-&mdash; **def [validate\_ref](/recipes/orchestrator.py#453)(ref, name):**
-
-Assert the given ref starts with refs/heads.
-
-Args:
-  ref (string): the ref to validate, if any.
-  name (string): name of ref to validate.
-
-&mdash; **def [validate\_refs](/recipes/orchestrator.py#438)(refs):**
-
-Assert the given refs start with refs/heads.
-
-Args:
-  refs (UpdateManifestRefs): Refs to validate.
-
-Raises:
-  AssertionError: If any invalid ref is found.
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
