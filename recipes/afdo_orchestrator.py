@@ -32,6 +32,8 @@ DEPS = [
     'test_util',
 ]
 
+from google.protobuf import json_format
+
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ArtifactsByService
 from PB.chromiumos.common import BuildTarget
@@ -403,46 +405,16 @@ def should_collect(build, child_specs_dict, child_targets_dict):
 
 def GenTests(api):
 
-  def gerrit_changes(**kwargs):
-    """Generate a GerritChange."""
-    return api.test_util.test_build(cq=True,
-                                    **kwargs).message.input.gerrit_changes
-
-  def postsubmit_orchestrator_build():
+  def test_orchestrator(**kwargs):
     """Generate a test build proto for the postsubmit orchestrator."""
-    return api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                                    builder='postsubmit-orchestrator')
-
-  def orderfile_generate_orchestrator():
-    """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(
-        project='chromeos', bucket='toolchain',
-        builder='orderfile-generate-orchestrator')
-    return api.buildbucket.build(build)
-
-  def cq_orchestrator_build_with_gerrit_change(tags=None):
-    """Generate a test build proto with gerrit changes."""
-    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                             builder='cq-orchestrator',
-                                             tags=tags)
-    build.input.gerrit_changes.extend(gerrit_changes())
-    return api.buildbucket.build(build)
+    return api.test_util.test_orchestrator(**kwargs).build
 
   def vm_test_build(name):
-    output = build_pb2.Build.Output()
-    output.properties.update({'name': name})
-    return build_pb2.Build(output=output, status=common_pb2.SUCCESS)
-
-  def input_proto(snapshot, build_target):
-    """Generate an instance of Build.Input.
-
-    Args:
-      * snapshot(GitilesCommit): The snapshot of the build.
-      * build_target (str): The name of the build target.
-    """
-    return api.test_util.test_build(
-        cq=True, revision=snapshot, input_properties=BuildTargetProperties(
-            build_target=BuildTarget(name=build_target))).message.input
+    # The only things we care about are output.properties.name and status.
+    return json_format.ParseDict(
+        dict(
+            output=dict(properties=dict(name=name)), status=common_pb2.SUCCESS),
+        build_pb2.Build())
 
   vm_tests = [vm_test_build('vm-test')]
 
@@ -464,40 +436,52 @@ def GenTests(api):
       api.skylab.test_with_execute_response_json(id=4321),
   ]
 
-  output = build_pb2.Build.Output()
-  output.properties['build_cost'] = 10.0
-  output.properties['artifacts'] = {
-      'gs_bucket': 'chromeos-image-archive',
-      'gs_path': 'BUILDER/VERSION-BUILD_ID'
-  }
-
   builds = [
-      build_pb2.Build(id=8922054662172514000,
-                      builder={'builder': 'amd64-generic-cq'},
-                      status=common_pb2.SUCCESS,
-                      input=input_proto(None, 'amd64-generic'), output=output),
-      build_pb2.Build(id=8922054662172514001,
-                      builder={'builder': 'arm-generic-cq'},
-                      status=common_pb2.STARTED,
-                      input=input_proto(None, 'arm-generic'), output=output),
+      api.test_util.test_child_build(
+          'amd64-generic', cq=True, build_id=8922054662172514000,
+          status='SUCCESS', output_properties=dict(
+              build_cost=10.0, artifacts=dict(
+                  files_by_artifact={
+                      "CHROME_DEBUG_BINARY": ["chrome.debug.bz2"]
+                  }, gs_bucket="chromeos-image-archive",
+                  gs_path="GS_PATH/DIR"))).message,
+      api.test_util.test_child_build(
+          'arm-generic', cq=True, build_id=8922054662172514001,
+          status='STARTED', output_properties=dict(
+              artifacts=dict(
+                  files_by_artifact={
+                      "CHROME_DEBUG_BINARY": ["chrome.debug.bz2"]
+                  }, gs_bucket="chromeos-image-archive",
+                  gs_path="GS_PATH/DIR"))).message,
+      api.test_util.test_child_build(
+          'atlas', cq=True, build_id=8922054662172514002, start_time=1562475245,
+          status='SUCCESS', output_properties=dict(
+              artifacts=dict(
+                  files_by_artifact={
+                      "CHROME_DEBUG_BINARY": ["chrome.debug.bz2"]
+                  }, gs_bucket="chromeos-image-archive",
+                  gs_path="GS_PATH/DIR")), revision=None).message,
   ]
+
+  # we have three here to properly exercise "prioritize_builds"
+  followon_resp1 = rpc_pb2.BatchResponse(responses=[
+      dict(
+          schedule_build=api.test_util.test_orchestrator(
+              build_id=5555, bucket='toolchain',
+              builder='orderfile-verify-orchestrator',
+              status='SUCCESS').message)
+  ])
 
   process_resp1 = rpc_pb2.BatchResponse(responses=[
       dict(
-          schedule_build=build_pb2.Build(id=5555, builder={
-              'builder': 'PROCESS'
-          }, status=common_pb2.SUCCESS))
-  ])
-
-  followon_resp1 = rpc_pb2.BatchResponse(responses=[
-      dict(
-          schedule_build=build_pb2.Build(
-              id=5555, builder={'builder': 'orderfile-verify-orchestrator'},
-              status=common_pb2.SUCCESS))
+          schedule_build=api.test_util.test_orchestrator(
+              build_id=5555, bucket='toolchain',
+              builder='afdo-process-toolchain', status='SUCCESS').message)
   ])
 
   yield api.test(
-      'basic', postsubmit_orchestrator_build(),
+      'basic',
+      test_orchestrator(),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
@@ -516,25 +500,20 @@ def GenTests(api):
           [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'))
-
-  yield api.test(
-      'no_config',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='no-such'),
+          step_name='run tests.collect tests.collect moblab vm tests'),
   )
+
+  yield api.test('no_config', test_orchestrator(builder='no-such'))
 
   yield api.test(
       'fails_if_changes_not_submittable',
-      cq_orchestrator_build_with_gerrit_change(),
-      api.cq(full_run=True),
+      test_orchestrator(cq=True),
       api.gerrit.simulated_changes_are_submittable(submittable=False),
   )
 
   yield api.test(
       'join_if_inflight_orchs',
-      cq_orchestrator_build_with_gerrit_change(),
-      api.cq(full_run=True),
+      test_orchestrator(cq=True),
       api.buildbucket.simulated_search_results(
           builds, step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
@@ -563,8 +542,7 @@ def GenTests(api):
 
   yield api.test(
       'runs_if_no_inflight_orchs',
-      cq_orchestrator_build_with_gerrit_change(),
-      api.cq(full_run=True),
+      test_orchestrator(cq=True),
       api.buildbucket.simulated_search_results(
           [], step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
@@ -589,18 +567,13 @@ def GenTests(api):
           step_name='run tests.collect tests.collect moblab vm tests'),
   )
 
-  yield api.test(
-      'dry_run',
-      cq_orchestrator_build_with_gerrit_change(),
-      api.cq(dry_run=True),
-  )
+  yield api.test('dry_run', test_orchestrator(cq=True, dry_run=True))
 
   yield api.test(
       'quota_scheduler_override',
-      cq_orchestrator_build_with_gerrit_change(
-          tags=api.cros_tags.tags(
+      test_orchestrator(
+          cq=True, tags=api.cros_tags.tags(
               cq_cl_tag='pupr:chromeos-base/chromeos-chrome')),
-      api.cq(full_run=True),
       api.buildbucket.simulated_search_results(
           builds, 'run builds.get build history.'
           'get completed builds.get change build history.'
@@ -628,7 +601,9 @@ def GenTests(api):
 
   yield api.test(
       'orchestrator_with_process_child_and_followon',
-      orderfile_generate_orchestrator(),
+      test_orchestrator(bucket='toolchain',
+                        builder='orderfile-generate-orchestrator',
+                        revision=None),
       api.properties(process_child='PROCESS'),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
