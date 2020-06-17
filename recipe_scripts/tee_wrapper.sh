@@ -13,6 +13,9 @@
 # containing the binary and the arguments, and not as a pure string allowing
 # direct use of 'tee' and output redirection (>&, 2>&1, etc.).
 
+# NOTE: If you modify this file, then rerun (and update) the associated
+# unit test file: recipe_scripts/tee_wrapper_unittest.sh.
+
 if [[ $# -lt 2 ]]; then
   echo "USAGE: $0 <tee_file> <command> [optional command arguments]"
   exit 1
