@@ -462,12 +462,11 @@ class GerritApi(recipe_api.RecipeApi):
         # always supply the patch number, and many of our applications
         # do not know it.
         description = self.m.git_cl.get_description(
-            patch_url=gerrit_change_url,
-            step_test_data=functools.partial(
+            patch_url=gerrit_change_url, step_test_data=functools.partial(
                 self.m.raw_io.test_api.stream_output,
-                self.test_api.test_gerrit_change_description()))
+                self.test_api.test_gerrit_change_description())).stdout
 
-      pres.logs['description text'] = [description.stdout]
+      pres.logs['description text'] = [description]
       return description
 
   def set_change_description(self, gerrit_change, description):
