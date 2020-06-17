@@ -3095,11 +3095,11 @@ Raises:
 
 APIs for dealing with Gitiles.
 
-#### **class [GitilesApi](/recipe_modules/gitiles/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitilesApi](/recipe_modules/gitiles/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gitiles helpers.
 
-&mdash; **def [fetch\_revision](/recipe_modules/gitiles/api.py#13)(self, host, project, branch, test_output_data=None):**
+&mdash; **def [fetch\_revision](/recipe_modules/gitiles/api.py#14)(self, host, project, branch, test_output_data=None):**
 
 Call gitiles-fetch-ref support tool.
 
@@ -3111,6 +3111,27 @@ Args:
 
 Returns:
   str: the current revision hash of the specified branch
+
+&mdash; **def [file\_url](/recipe_modules/gitiles/api.py#54)(self, commit, file_path=None):**
+
+Return the url for a file in a GitilesCommit.
+
+Args:
+  commit (GitilesCommit): The gitiles commit to use.
+  file_path (str): The file path to append, if any.
+
+Returns:
+  (str) The url for the file.
+
+&mdash; **def [repo\_url](/recipe_modules/gitiles/api.py#43)(self, commit):**
+
+Return the url for the repo in a GitilesCommit.
+
+Args:
+  commit (GitilesCommit): The gitiles commit to use.
+
+Returns:
+  (str) The url for the repo.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
 
 [DEPS](/recipe_modules/goma/__init__.py#5): [support](#recipe_modules-support), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -5137,9 +5158,9 @@ Test git_footers calls.
 &mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#20)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [gitiles:examples/full](/recipe_modules/gitiles/examples/full.py)
 
-[DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles)
+[DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#14)(api):**
 ### *recipes* / [goma:examples/disable\_upload](/recipe_modules/goma/examples/disable_upload.py)
 
 [DEPS](/recipe_modules/goma/examples/disable_upload.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

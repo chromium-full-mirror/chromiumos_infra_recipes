@@ -4,13 +4,25 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'gitiles',
 ]
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 
 def RunSteps(api):
   api.gitiles.fetch_revision('testgerrit', 'my/project', 'master')
   api.gitiles.fetch_revision('testgerrit', 'my/project', 'refs/heads/master')
+
+  commit = GitilesCommit(host='host.example.com', project='project/name',
+                         ref='refs/heads/master', id='snap')
+  api.assertions.assertEqual(
+      api.gitiles.repo_url(commit), 'https://host.example.com/project/name')
+
+  api.assertions.assertEqual(
+      api.gitiles.file_url(commit, 'path/to/file'),
+      'https://host.example.com/project/name/+/snap/path/to/file')
 
 
 def GenTests(api):

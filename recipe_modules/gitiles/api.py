@@ -7,6 +7,7 @@
 
 from recipe_engine import recipe_api
 
+
 class GitilesApi(recipe_api.RecipeApi):
   """A module for Gitiles helpers."""
 
@@ -38,3 +39,27 @@ class GitilesApi(recipe_api.RecipeApi):
     res = self.m.support.call('gitiles-fetch-ref', input,
                               test_output_data=test_output_data)
     return res['branch']['revision']
+
+  def repo_url(self, commit):
+    """Return the url for the repo in a GitilesCommit.
+
+    Args:
+      commit (GitilesCommit): The gitiles commit to use.
+
+    Returns:
+      (str) The url for the repo.
+    """
+    return 'https://%s/%s' % (commit.host, commit.project)
+
+  def file_url(self, commit, file_path=None):
+    """Return the url for a file in a GitilesCommit.
+
+    Args:
+      commit (GitilesCommit): The gitiles commit to use.
+      file_path (str): The file path to append, if any.
+
+    Returns:
+      (str) The url for the file.
+    """
+    ref = commit.id or commit.ref
+    return '%s/+/%s/%s' % (self.repo_url(commit), ref, file_path or '')
