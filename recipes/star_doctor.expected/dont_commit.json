@@ -38,7 +38,7 @@
       "----",
       "cp",
       "gs:///build_config.ToT.json",
-      "[CLEANUP]/tmp_tmp_1/goldeneye/ge_build_config.json"
+      "[CLEANUP]/tmp_tmp_1/goldeneye/build_config.ToT.json"
     ],
     "infra_step": true,
     "name": "generate binary config.copy goldeneye configs.gsutil download",

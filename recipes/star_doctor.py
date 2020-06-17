@@ -37,14 +37,13 @@ def RunSteps(api, properties):
 
   with api.step.nest('generate binary config'):
     with api.step.nest('copy goldeneye configs') as presentation:
-      try:
-        # Trying to debug this.
-        ge_path = workdir.join('goldeneye')
-        api.gsutil.download(properties.ge_bucket, 'build_config.ToT.json',
-                            ge_path.join('ge_build_config.json'))
-      except api.step.InfraFailure:  # pragma:nocover
-        # Will remove this once stable & debugged.
-        pass
+      ge_path = workdir.join('goldeneye')
+      api.gsutil.download(properties.ge_bucket, 'build_config.ToT.json',
+                          ge_path.join('build_config.ToT.json'))
+      for branch in properties.branches:
+        branched_config = 'build_config.release-{}.json'.format(branch)
+        api.gsutil.download(properties.ge_bucket, branched_config,
+                            ge_path.join(branched_config))
 
     # We need lucicfg from depot_tools.
     with api.depot_tools.on_path():
@@ -97,4 +96,5 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test('dont_commit', api.properties(commit_changes=False))
 
-  yield api.test('full', api.properties(commit_changes=True))
+  yield api.test('full', api.properties(commit_changes=True,
+                                        branches=['R9000']))

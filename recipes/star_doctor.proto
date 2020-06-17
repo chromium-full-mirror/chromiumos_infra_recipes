@@ -12,4 +12,7 @@ message StarDoctorProperties {
 
   // GoldenEye bucket to copy configs from.
   string ge_bucket = 2;
+
+  // Branches to track and sync GoldenEye configs for.
+  repeated string branches = 3;
 }
