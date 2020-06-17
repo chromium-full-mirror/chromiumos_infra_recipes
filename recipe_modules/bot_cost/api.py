@@ -8,6 +8,7 @@ import contextlib
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 
 # Cost is in USD per day as calculated in go/cros-infra-sizing on 2018-12-12.
 # With an estimate for medium, since postdates that doc.
@@ -22,6 +23,7 @@ class BotCostApi(recipe_api.RecipeApi):
     # If we are led launched, this lets us at least estimate the actual time
     # spend in the run.
     self._start_time = self.m.time.time()
+    self._cq_run_cost = 0
 
   @contextlib.contextmanager
   def build_cost_context(self):
@@ -34,6 +36,18 @@ class BotCostApi(recipe_api.RecipeApi):
       yield
     finally:
       self.set_build_cost()
+
+  @contextlib.contextmanager
+  def cq_run_cost_context(self):
+    """Set cq cost after running.
+
+    Returns:
+      A context that sets cq_run_cost on exit.
+    """
+    try:
+      yield
+    finally:
+      self.set_cq_run_cost()
 
   def set_build_cost(self):
     """Wrapper function to calculate and set the cost of creating the build.
@@ -102,7 +116,7 @@ class BotCostApi(recipe_api.RecipeApi):
     bot_days = build_duration / (60.0 * 60.0 * 24.0)
     return bot_days * daily_cost
 
-  def set_cq_run_cost(self, child_builds):
+  def set_cq_run_cost(self, child_builds=None):
     """Wrapper function to calculate and set the cost of the cq run.
 
     Calculate the cost of the cq run and set it as a build output property.
@@ -111,8 +125,18 @@ class BotCostApi(recipe_api.RecipeApi):
       child_builds (list[build_pb2.Build]): The child builds for this cq run.
     """
     with self.m.step.nest('set cq run cost') as presentation:
+      child_builds = child_builds or self._get_child_builds()
       cq_run_cost = self._calculate_cq_run_cost(child_builds, presentation)
       presentation.properties['cq_run_cost'] = round(cq_run_cost, 4)
+      self._cq_run_cost = cq_run_cost
+
+  def _get_child_builds(self):
+    """Get the child builders for this orchestrator."""
+    predicate = rpc_pb2.BuildPredicate(
+        tags=self.m.buildbucket.tags(
+            parent_buildbucket_id=str(self.m.buildbucket.build.id)))
+    predicate.builder.project = self.m.buildbucket.build.builder.project
+    return self.m.buildbucket.search(predicate)
 
   def _get_child_builds_cost(self, child_builds, parent_step):
     """Get the cost of building child images during this cq run.
