@@ -32,6 +32,22 @@ class GitFootersApi(recipe_api.RecipeApi):
       return None
     return [l.strip() for l in result.stdout.splitlines() if l.strip()]
 
+  def from_gerrit_change(self, gerrit_change, key=None, **kwargs):
+    """Return the footer value(s) in the commit message for the given key.
+
+    Args:
+      gerrit_change (GerritChange): The change of interest.
+      key (str): The footer key to look for. If not set, returns all footers
+          found in the Gerrit change message. Note that if this parameter is
+          set, it is EXCLUDED from the returned footer string(s). If it is not
+          set, the footers are formatted as '<key>:<value>'.
+
+    Returns:
+      list[str]: The footer value(s) found in the commit message.
+    """
+    message_text = self.m.gerrit.get_change_description(gerrit_change)
+    return self.from_message(message_text, key=key)
+
   def from_message(self, message, key=None, **kwargs):
     """Return the footer value(s) in the commit message for the given key.
 

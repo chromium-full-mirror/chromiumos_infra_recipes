@@ -2986,7 +2986,7 @@ Returns:
   str: The command output.
 ### *recipe_modules* / [git\_footers](/recipe_modules/git_footers)
 
-[DEPS](/recipe_modules/git_footers/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/git_footers/__init__.py#6): [gerrit](#recipe_modules-gerrit), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 API wrapping the git_footers script..
 
@@ -3005,7 +3005,21 @@ Args:
 Returns:
   list[str]: All matching footer values, or None
 
-&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#35)(self, message, key=None, \*\*kwargs):**
+&mdash; **def [from\_gerrit\_change](/recipe_modules/git_footers/api.py#35)(self, gerrit_change, key=None, \*\*kwargs):**
+
+Return the footer value(s) in the commit message for the given key.
+
+Args:
+  gerrit_change (GerritChange): The change of interest.
+  key (str): The footer key to look for. If not set, returns all footers
+      found in the Gerrit change message. Note that if this parameter is
+      set, it is EXCLUDED from the returned footer string(s). If it is not
+      set, the footers are formatted as '<key>:<value>'.
+
+Returns:
+  list[str]: The footer value(s) found in the commit message.
+
+&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#51)(self, message, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the commit message for the given key.
 
@@ -3019,7 +3033,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the commit message.
 
-&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#57)(self, ref, key=None, \*\*kwargs):**
+&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#73)(self, ref, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the given ref for the given key.
 
@@ -3030,7 +3044,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
 
-&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#75)(self, ref, \*\*kwargs):**
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#91)(self, ref, \*\*kwargs):**
 
 Return the footer value for Cr-Commit-Position.
 
@@ -5241,11 +5255,11 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#12)(api):**
 ### *recipes* / [git\_footers:examples/full](/recipe_modules/git_footers/examples/full.py)
 
-[DEPS](/recipe_modules/git_footers/examples/full.py#10): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/git_footers/examples/full.py#12): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 Test git_footers calls.
 
-&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#21)(api, invalid_cr_commit_position):**
+&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#23)(api, invalid_cr_commit_position):**
 ### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
 
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
