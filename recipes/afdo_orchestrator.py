@@ -54,18 +54,27 @@ PROPERTIES = AfdoOrchestratorProperties
 def RunSteps(api, properties):
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
 
+  with api.bot_cost.cq_run_cost_context():
+    DoRunSteps(api, properties)
+
+def DoRunSteps(api, properties):
   push_manifest_refs = None
-  with api.step.nest('set up orchestrator'):
+  with api.step.nest('set up orchestrator') as presentation:
     config = api.cros_infra_config.configure_builder(
         api.buildbucket.gitiles_commit,
         api.buildbucket.build.input.gerrit_changes)
-    if not config:
-      # No config found.  This was already logged, just exit.
-      return
 
     api.cros_bisect.set_orchestrator_bisect_builder()
     snapshot = api.cros_infra_config.gitiles_commit
     gerrit_changes = api.cros_infra_config.gerrit_changes
+    intern_snapshot_id = snapshot.id
+    presentation.links['manifest snapshot revision'] = (
+        'https://chrome-internal.googlesource.com/chromeos/manifest-internal/'
+        '+/{}/snapshot.xml'.format(intern_snapshot_id))
+
+    if not config:
+      # No config found.  This was already logged, just exit.
+      return
 
   # This orchestrator ignores the config, using enable_history=True
   if gerrit_changes:

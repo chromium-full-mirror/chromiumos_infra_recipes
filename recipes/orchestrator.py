@@ -63,15 +63,17 @@ PROPERTIES = OrchestratorProperties
 def RunSteps(api, properties):
   api.buildbucket.host = api.buildbucket.HOST_PROD_BEEFY
 
-  push_manifest_refs = None
+  with api.bot_cost.cq_run_cost_context():
+    DoRunSteps(api, properties)
+
+
+def DoRunSteps(api, properties):
+  push_manifest_refs = lambda x: x
   with api.step.nest('set up orchestrator') as presentation:
-    validate_refs(properties.update_manifest_refs)
+    have_manifest_updates = validate_refs(properties.update_manifest_refs)
     config = api.cros_infra_config.configure_builder(
         api.buildbucket.gitiles_commit,
         api.buildbucket.build.input.gerrit_changes)
-    if not config:
-      # No config found.  This was already logged, just exit.
-      return
 
     api.cros_bisect.set_orchestrator_bisect_builder()
     snapshot = api.cros_infra_config.gitiles_commit
@@ -81,43 +83,51 @@ def RunSteps(api, properties):
         'https://chrome-internal.googlesource.com/chromeos/manifest-internal/'
         '+/{}/snapshot.xml'.format(intern_snapshot_id))
 
-    # clone internal manifest repo
-    intern_repo_path = clone_repo(api, 'internal manifest',
-                                  api.cros_source.INTERNAL_MANIFEST_URL,
-                                  fetch=intern_snapshot_id)
+    if have_manifest_updates:
+      # clone internal manifest repo
+      intern_repo_path = clone_repo(api, 'internal manifest',
+                                    api.cros_source.INTERNAL_MANIFEST_URL,
+                                    fetch=intern_snapshot_id)
 
-    # read the Cr-External-Snapshot footer to get ref of external snapshot
-    # that corresponds with the internal snapshot
-    with api.context(cwd=intern_repo_path):
-      footer_values = api.git_footers.from_ref(intern_snapshot_id,
-                                               key='Cr-External-Snapshot')
+      # read the Cr-External-Snapshot footer to get ref of external snapshot
+      # that corresponds with the internal snapshot
+      with api.context(cwd=intern_repo_path):
+        footer_values = api.git_footers.from_ref(
+            intern_snapshot_id, key='Cr-External-Snapshot',
+            step_test_data=api.git_footers.test_api.step_test_data_factory(
+                'external-manifest-SHA'))
 
-      # make sure we got exactly one snapshot ref
-      assert footer_values and len(footer_values) == 1, \
-          'expected exactly one Cr-External-Snapshot footer'
-      extern_snapshot_id = footer_values[0]
+        # make sure we got exactly one snapshot ref
+        assert footer_values and len(footer_values) == 1, \
+            'expected exactly one Cr-External-Snapshot footer'
+        extern_snapshot_id = footer_values[0]
 
-    # clone the external manifest repo
-    extern_repo_path = clone_repo(api, 'external manifest',
-                                  api.cros_source.EXTERNAL_MANIFEST_URL,
-                                  fetch=extern_snapshot_id)
+      # clone the external manifest repo
+      extern_repo_path = clone_repo(api, 'external manifest',
+                                    api.cros_source.EXTERNAL_MANIFEST_URL,
+                                    fetch=extern_snapshot_id)
 
-    # create a helper function bound up to our exact repo url and path for
-    # updating manifest snapshots refs internally and externally
-    def _push_manifest_refs(ref):
-      """Helper function to push the snapshot ref for both internal and
-      external manifest repos to the given named ref.
+      # create a helper function bound up to our exact repo url and path for
+      # updating manifest snapshots refs internally and externally
+      def _push_manifest_refs(ref):
+        """Helper function to push the snapshot ref for both internal and
+        external manifest repos to the given named ref.
 
-      Args:
-        ref (str): the ref to push to (possibly empty), or None
-      """
-      maybe_push_commit(api, 'manifest-internal',
-                        api.cros_source.INTERNAL_MANIFEST_URL, intern_repo_path,
-                        ref, intern_snapshot_id)
-      maybe_push_commit(api, 'manifest', api.cros_source.EXTERNAL_MANIFEST_URL,
-                        extern_repo_path, ref, extern_snapshot_id)
+        Args:
+          ref (str): the ref to push to (possibly empty), or None
+        """
+        maybe_push_commit(api, 'manifest-internal',
+                          api.cros_source.INTERNAL_MANIFEST_URL,
+                          intern_repo_path, ref, intern_snapshot_id)
+        maybe_push_commit(api, 'manifest',
+                          api.cros_source.EXTERNAL_MANIFEST_URL,
+                          extern_repo_path, ref, extern_snapshot_id)
 
-    push_manifest_refs = _push_manifest_refs
+      push_manifest_refs = _push_manifest_refs
+
+    if not config:
+      # No config found.  This was already logged, just exit.
+      return
 
   # Update the start ref to indicate we've begun processing the snapshot.
   push_manifest_refs(properties.update_manifest_refs.start)
@@ -437,6 +447,7 @@ def validate_refs(refs):
   validate_ref(refs.start, 'start')
   validate_ref(refs.build, 'build')
   validate_ref(refs.test, 'test')
+  return (refs.start or refs.build or refs.test)
 
 
 def validate_ref(ref, name):
