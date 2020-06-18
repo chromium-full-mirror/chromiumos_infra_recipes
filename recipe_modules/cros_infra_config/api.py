@@ -284,10 +284,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
             project='chromeos/manifest-internal', ref='refs/heads/snapshot')
       # We will need commit.id later.  Add it if necessary.
       if not commit.id:
+        test_data = dict(
+            branch=dict(revision='%s-HEAD-SHA' % commit.ref.split('/')[-1]))
         commit = common_pb2.GitilesCommit(
             host=commit.host, project=commit.project, ref=commit.ref,
             id=self.m.gitiles.fetch_revision(commit.host, commit.project,
-                                             commit.ref))
+                                             commit.ref,
+                                             test_output_data=test_data))
       if commit:
         changed = True
 

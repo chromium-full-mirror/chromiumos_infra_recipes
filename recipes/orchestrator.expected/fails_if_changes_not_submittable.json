@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "set up orchestrator",
     "~followup_annotations": [
-      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/abcd1234/snapshot.xml@@@"
+      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml@@@"
     ]
   },
   {
@@ -132,7 +132,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"abcd1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -144,7 +144,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@changes@\"[{\\\"project\\\": \\\"chromeos/manifest-internal\\\", \\\"host\\\": \\\"chrome-internal-review.googlesource.com\\\", \\\"patchset\\\": \\\"7\\\", \\\"change\\\": \\\"123456\\\"}]\"@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"abcd1234\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -182,7 +182,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "abcd1234:"
+      "snapshot-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
@@ -210,7 +210,7 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "abcd1234",
+      "snapshot-HEAD-SHA",
       "--key",
       "Cr-External-Snapshot"
     ],
@@ -248,7 +248,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "abcd1234:Cr-External-Snapshot:"
+      "snapshot-HEAD-SHA:Cr-External-Snapshot:"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,

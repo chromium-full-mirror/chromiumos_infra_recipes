@@ -1443,7 +1443,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#90)(self):**
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#333)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#336)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1483,7 +1483,7 @@ Get BotPolicies as defined in infra/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#390)(build):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#393)(build):**
 
 Return the build target name from input properties.
 

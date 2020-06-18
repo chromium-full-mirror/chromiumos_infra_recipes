@@ -552,7 +552,7 @@
       "orchestrator": {
         "child_specs": [],
         "gitilesCommit": {
-          "host": "chrome-internal",
+          "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/snapshot"
         },
@@ -677,7 +677,7 @@
           "awaitCompletion": true
         },
         "gitilesCommit": {
-          "host": "chrome-internal",
+          "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/snapshot"
         },

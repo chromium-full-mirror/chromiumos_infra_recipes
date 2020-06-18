@@ -44,7 +44,8 @@ def RunSteps(api, properties):
   if not commit.project:
     commit = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
-                                      id='abcd1234', ref='refs/heads/snapshot')
+                                      id='snapshot-HEAD-SHA',
+                                      ref='refs/heads/snapshot')
   api.assertions.assertEqual(commit, api.cros_infra_config.gitiles_commit)
   want = [] if not (changes and config.build.apply_gerrit_changes) else changes
   api.assertions.assertEqual(want, api.cros_infra_config.gerrit_changes)
