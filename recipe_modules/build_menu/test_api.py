@@ -46,3 +46,38 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
     """
     return self.m.cros_build_api.set_api_return(step, endpoint, data, iteration,
                                                 retcode)
+
+  def test(self, name, *args, **kwargs):
+    """A test, with build and BuildTargetProperties,
+
+    This function creates a test child_build from kwargs, and then calls
+    api.test() to create the TestData for a test.
+
+    The following arguments are consumed by this method:
+      build_target (str): The name of the build target.  Default: amd64-generic.
+      artifact_pointless (bool): Whether the artifact prepare step replies
+          POINTLESS.
+      pointless (bool): The reply from the pointless build check.
+
+    Args:
+      *args (list):  Arguments to pass to test_api.test.
+      kwargs (dict): Arguments to pass to test_util.test_build.
+
+    Returns:
+      (recipe_test_api.TestData) TestData for the test.
+    """
+    # The combination of *args and **kwargs above makes this the least messy way
+    # to have our own parameters, with defaults.
+    build_target = kwargs.pop('build_target', 'amd64-generic')
+    artifact_pointless = kwargs.pop('artifact_pointless', False)
+    pointless = kwargs.pop('pointless', False)
+
+    ret = self.m.test_util.test_child_build(build_target, **kwargs).build
+    if artifact_pointless:
+      ret += self.set_build_api_return('prepare artifacts',
+                                       'ArtifactsService/PrepareForBuild',
+                                       '{"build_relevance": "POINTLESS"}')
+    if pointless:
+      ret += self.set_pointless_return(True)
+    # Call recipe_test_api.test().
+    return super(BuildMenuTestApi, self).test(name, ret, *args)

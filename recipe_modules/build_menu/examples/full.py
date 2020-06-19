@@ -54,58 +54,41 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def test_build(build_target='amd64-generic', **kwargs):
-    """Helper for creating build."""
-    return api.test_util.test_child_build(build_target, **kwargs).build
+  # Normal CQ build, with one gerrit_change.
+  yield api.build_menu.test('cq-build', cq=True)
 
-  yield api.test(
-      'postsubmit-build', test_build(),
+  # This covers the env_info.pointless check.
+  yield api.build_menu.test('pointless-cq-build', cq=True, pointless=True)
+
+  # Run the other tests that we only run in the module.
+  yield api.build_menu.test(
+      'postsubmit-build',
       api.properties(
           FullProperties(artifact_build=True, upload_prebuilts=True)))
 
-  yield api.test('cq-build', test_build(cq=True))
+  yield api.build_menu.test('toolchain-cq-build',
+                            api.build_menu.set_toolchain_cls_return(True),
+                            cq=True)
 
-  yield api.test('toolchain-cq-build', test_build(cq=True),
-                 api.build_menu.set_toolchain_cls_return(True))
+  for forced in False, True:
+    yield api.build_menu.test(
+        ('forced-' if forced else '') + 'pointless-artifact-build',
+        api.properties(
+            FullProperties(
+                build_target=common.BuildTarget(name='chell'),
+                artifact_build=True, forced_relevant=forced, expected_packages=[
+                    common.PackageInfo(category='chromeos-base',
+                                       package_name='chromeos-chrome')
+                ])), bucket='toolchain', builder='orderfile-generate-toolchain',
+        artifact_pointless=True)
 
-  yield api.test('pointless-cq-build', test_build(cq=True),
-                 api.build_menu.set_pointless_return(True))
+  yield api.build_menu.test('no-sysroot',
+                            api.properties(FullProperties(no_sysroot=True)))
 
-  yield api.test(
-      'forced-pointless-artifact-build',
-      test_build(bucket='toolchain', builder='orderfile-generate-toolchain'),
-      api.build_menu.set_build_api_return('prepare artifacts',
-                                          'ArtifactsService/PrepareForBuild',
-                                          '{"build_relevance": "POINTLESS"}'),
-      api.properties(
-          FullProperties(
-              build_target=common.BuildTarget(name='chell'),
-              artifact_build=True, forced_relevant=True, expected_packages=[
-                  common.PackageInfo(category='chromeos-base',
-                                     package_name='chromeos-chrome')
-              ])))
+  yield api.build_menu.test('no-config', builder='no-config')
 
-  yield api.test(
-      'pointless-artifact-build',
-      test_build(bucket='toolchain', builder='orderfile-generate-toolchain'),
-      api.build_menu.set_build_api_return('prepare artifacts',
-                                          'ArtifactsService/PrepareForBuild',
-                                          '{"build_relevance": "POINTLESS"}'),
-      api.properties(
-          FullProperties(
-              build_target=common.BuildTarget(name='chell'),
-              artifact_build=True, expected_packages=[
-                  common.PackageInfo(category='chromeos-base',
-                                     package_name='chromeos-chrome')
-              ])))
-
-  yield api.test('no-sysroot', test_build(),
-                 api.properties(FullProperties(no_sysroot=True)))
-
-  yield api.test('no-config', test_build('no_config', builder='no-config'))
-
-  yield api.test(
-      'with-findit-bisect', test_build(),
+  yield api.build_menu.test(
+      'with-findit-bisect',
       api.properties(
           FullProperties(expected_packages=[
               common.PackageInfo(category='cat1', package_name='foo',
@@ -131,7 +114,8 @@ def GenTests(api):
                       })
           }))
 
-  yield api.test(
-      'missing-ok-config', test_build(builder='no-config'),
+  yield api.build_menu.test(
+      'missing-ok-config',
       api.properties(
-          FullProperties(missing_config_ok=True, expect_missing_config=True)))
+          FullProperties(missing_config_ok=True, expect_missing_config=True)),
+      builder='no-config')
