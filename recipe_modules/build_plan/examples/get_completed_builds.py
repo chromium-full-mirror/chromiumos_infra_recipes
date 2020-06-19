@@ -4,6 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine.recipe_api import Property
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
@@ -14,17 +16,24 @@ from google.protobuf import timestamp_pb2
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'build_plan',
 ]
 
+PROPERTIES = {
+    'forced_rebuilds': Property(default=[]),
+    'expected_completed': Property(default=[])
+}
 
-def RunSteps(api):
+
+def RunSteps(api, forced_rebuilds, expected_completed):
   result = api.build_plan.get_completed_builds([
-      BuilderConfig.Orchestrator.ChildSpec(name = 'atlas-cq'),
-      BuilderConfig.Orchestrator.ChildSpec(name = 'amd64-generic-cq'),
-  ])
-  api.assertions.assertEqual(len(result), 1)
-  api.assertions.assertEqual(result[0].builder.builder, 'amd64-generic-cq')
+      BuilderConfig.Orchestrator.ChildSpec(name='atlas-cq'),
+      BuilderConfig.Orchestrator.ChildSpec(name='amd64-generic-cq'),
+  ], forced_rebuilds)
+  actual_completed_builders = [build.builder.builder for build in result]
+  api.assertions.assertEqual(
+      set(actual_completed_builders), set(expected_completed))
 
 
 def GenTests(api):
@@ -42,7 +51,32 @@ def GenTests(api):
                           None, 'atlas')),
   ]
 
-  yield (
-      api.test('completed_builds') + api.buildbucket.simulated_search_results(
+  yield api.test(
+      'one-failure-no-forced-rebuilds',
+      api.buildbucket.simulated_search_results(
           builds, 'get completed builds.get change build history.'
-          'buildbucket.search'))
+          'buildbucket.search'),
+      api.properties(**{
+          'forced_rebuilds': set(),
+          'expected_completed': ['amd64-generic-cq']
+      }))
+
+  yield api.test(
+      'one-failure-all-forced-rebuilds',
+      api.buildbucket.simulated_search_results(
+          builds, 'get completed builds.get change build history.'
+          'buildbucket.search'),
+      api.properties(**{
+          'forced_rebuilds': {'all'},
+          'expected_completed': []
+      }))
+
+  yield api.test(
+      'one-failure-one-force-rebuild',
+      api.buildbucket.simulated_search_results(
+          builds, 'get completed builds.get change build history.'
+          'buildbucket.search'),
+      api.properties(**{
+          'forced_rebuilds': {'amd64-generic-cq'},
+          'expected_completed': []
+      }))

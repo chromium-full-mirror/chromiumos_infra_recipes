@@ -11,6 +11,10 @@ from recipe_engine import recipe_api
 from collections import defaultdict
 from datetime import datetime
 
+# A Git footer than can be included in commit messages to tell the cq run to not
+# recycled builds for that builder.
+DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
+
 
 class BuildPlanApi(recipe_api.RecipeApi):
   """A module to plan the builds to be launched."""
@@ -53,7 +57,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
           is_retry = len(
               self.m.cros_history.get_matching_builds(
                   self.m.buildbucket.build)) > 1
-          completed_builds = self.get_completed_builds(child_specs)
+          forced_rebuilds = self.get_forced_rebuilds(gerrit_changes)
+          completed_builds = self.get_completed_builds(child_specs,
+                                                       forced_rebuilds)
           presentation.step_text = ('found {} build{} to recycle'.format(
               len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
@@ -150,12 +156,13 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     return completed_builds, filtered_snapshot_builds, new_build_requests
 
-  def get_completed_builds(self, child_specs):
+  def get_completed_builds(self, child_specs, forced_rebuilds):
     """Get the list of previously passed child builds with criticality refreshed.
 
     Args:
       api (RecipeApi): See RunSteps documentation.
       child_specs list(ChildSpec): List of child specs of cq-orchestrator.
+      force_rebuilds list(str): List of builder names that cannot be reused.
 
     Returns:
       A list of build_pb2.Build objects corresponding to the
@@ -173,6 +180,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
         if build.builder.builder not in child_builders:  #pragma: no cover
           continue
 
+        if build.builder.builder in forced_rebuilds or 'all' in forced_rebuilds:
+          skip_log.append(
+              '{} is skipped because rebuilds were disabled for this builder.'
+              .format(build.builder.builder))
+          continue
+
         builder_config = self.m.cros_infra_config.get_builder_config(
             build.builder.builder)
         # If the build ran before a known bug was fixed, don't reuse it.
@@ -183,6 +196,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
                   datetime.utcfromtimestamp(
                       builder_config.general.broken_before.seconds)))
           continue
+
         # Refresh the criticality of the builders.
         build.critical = (
             common_pb2.YES
@@ -230,3 +244,31 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     # return reduced list
     return best_builds_list
+
+  def get_forced_rebuilds(self, gerrit_changes):
+    """Gets a list of builders whose builds should not be reused.
+
+    Compiles a list of all builders whose builds should not be reused as
+    indicated by the Gerrit changes' commit messages. For multiple changes, the
+    union of these list is returned.
+
+    Args:
+      gerrit_changes ([common_pb2.GerritChange]): Gerrit changes applied to this
+        run.
+
+    Returns:
+      builders (set(str)): A set of builder names or 'all' if no builds can be
+        reused.
+    """
+    builders = set()
+    for gerrit_change in gerrit_changes:
+      footer_value = self.m.git_footers.from_gerrit_change(
+          gerrit_change, key=DISALLOW_RECYCLED_BUILDS_FOOTER)
+      assert len(footer_value) <= 1, 'Multiple footers found'
+      if len(footer_value) == 0:
+        continue
+      new_builders = [x.strip() for x in footer_value[0].split(',')]
+      if 'all' in new_builders:
+        return {'all'}
+      builders.update(new_builders)
+    return builders

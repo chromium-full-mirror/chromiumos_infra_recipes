@@ -11,6 +11,7 @@ All builders run against the same source tree.
 DEPS = [
     'recipe_engine/buildbucket',
     'cros_tags',
+    'git_footers',
     'orch_menu',
     'skylab',
     'test_util',
@@ -163,6 +164,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(assert_singleton=True,
                                                 enable_history=True)),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, 'run builds.get build history.'
           'get completed builds.get change build history.'
@@ -194,6 +196,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(assert_singleton=True,
                                                 enable_history=True)),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
@@ -252,6 +255,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(enable_history=True,
                                                 assert_singleton=True)),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
@@ -284,6 +288,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(enable_history=True,
                                                 assert_singleton=True)),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           [], step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
@@ -444,6 +449,7 @@ def GenTests(api):
                                                 enable_history=True),
           tags=api.cros_tags.tags(
               cq_cl_tag='pupr:chromeos-base/chromeos-chrome')),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, 'run builds.get build history.'
           'get completed builds.get change build history.'
@@ -486,6 +492,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(assert_singleton=True,
                                                 enable_history=True)),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, step_name='run builds.get build history'
           '.find matching builds.buildbucket.search'),

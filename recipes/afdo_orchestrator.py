@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
+    'git_footers',
     'orch_menu',
     'skylab',
     'test_util',
@@ -195,6 +196,7 @@ def GenTests(api):
   yield api.test(
       'join_if_inflight_orchs',
       test_orchestrator(cq=True),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
@@ -224,6 +226,7 @@ def GenTests(api):
   yield api.test(
       'runs_if_no_inflight_orchs',
       test_orchestrator(cq=True),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           [], step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
@@ -248,7 +251,11 @@ def GenTests(api):
           step_name='run tests.collect tests.collect moblab vm tests'),
   )
 
-  yield api.test('dry_run', test_orchestrator(cq=True, dry_run=True))
+  yield api.test(
+      'dry_run',
+      test_orchestrator(cq=True, dry_run=True),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
+  )
 
   yield api.test(
       'orchestrator_with_process_child_and_followon',
@@ -256,6 +263,7 @@ def GenTests(api):
                         builder='orderfile-generate-orchestrator',
                         revision=None),
       api.properties(process_child='PROCESS'),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(

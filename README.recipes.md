@@ -97,6 +97,7 @@
   * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan)
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
   * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
+  * [build_plan:examples/get_forced_rebuilds](#recipes-build_plan_examples_get_forced_rebuilds)
   * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
   * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
@@ -659,13 +660,13 @@ Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 ### *recipe_modules* / [build\_plan](/recipe_modules/build_plan)
 
-[DEPS](/recipe_modules/build_plan/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/build_plan/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [git\_footers](#recipe_modules-git_footers), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to plan the builds to be launched.
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#18)(self, child_specs, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#22)(self, child_specs, enable_history, gerrit_changes, snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -685,20 +686,37 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#153)(self, child_specs):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#159)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
 Args:
   api (RecipeApi): See RunSteps documentation.
   child_specs list(ChildSpec): List of child specs of cq-orchestrator.
+  force_rebuilds list(str): List of builder names that cannot be reused.
 
 Returns:
   A list of build_pb2.Build objects corresponding to the
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#195)(self, builds):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#248)(self, gerrit_changes):**
+
+Gets a list of builders whose builds should not be reused.
+
+Compiles a list of all builders whose builds should not be reused as
+indicated by the Gerrit changes' commit messages. For multiple changes, the
+union of these list is returned.
+
+Args:
+  gerrit_changes ([common_pb2.GerritChange]): Gerrit changes applied to this
+    run.
+
+Returns:
+  builders (set(str)): A set of builder names or 'all' if no builds can be
+    reused.
+
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#209)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -4467,15 +4485,15 @@ Whether there are toolchain CLs applied to the source tree.
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
 
-[DEPS](/recipes/afdo_orchestrator.py#11): [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/afdo_orchestrator.py#11): [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#43)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#44)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#36)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#37)(api, properties):**
 ### *recipes* / [afdo\_process](/recipes/afdo_process.py)
 
 [DEPS](/recipes/afdo_process.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)
@@ -4688,14 +4706,19 @@ behaving as expected.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/bisect_build_plan.py#18)(api):**
 ### *recipes* / [build\_plan:examples/cq\_build\_plan](/recipe_modules/build_plan/examples/cq_build_plan.py)
 
-[DEPS](/recipe_modules/build_plan/examples/cq_build_plan.py#14): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/build_plan/examples/cq_build_plan.py#14): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#24)(api):**
 ### *recipes* / [build\_plan:examples/get\_completed\_builds](/recipe_modules/build_plan/examples/get_completed_builds.py)
 
-[DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#14): [build\_plan](#recipe_modules-build_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#16): [build\_plan](#recipe_modules-build_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#29)(api, forced_rebuilds, expected_completed):**
+### *recipes* / [build\_plan:examples/get\_forced\_rebuilds](/recipe_modules/build_plan/examples/get_forced_rebuilds.py)
+
+[DEPS](/recipe_modules/build_plan/examples/get_forced_rebuilds.py#10): [build\_plan](#recipe_modules-build_plan), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_forced_rebuilds.py#20)(api, expected_builders):**
 ### *recipes* / [build\_plan:examples/postsubmit\_build\_plan](/recipe_modules/build_plan/examples/postsubmit_build_plan.py)
 
 [DEPS](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -5445,9 +5468,9 @@ Runs the presubmit for a project with checkout per local manifest.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
 ### *recipes* / [orch\_menu:examples/full](/recipe_modules/orch_menu/examples/full.py)
 
-[DEPS](/recipe_modules/orch_menu/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/orch_menu/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#35)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#36)(api, properties):**
 ### *recipes* / [orch\_menu:tests/collect](/recipe_modules/orch_menu/tests/collect.py)
 
 [DEPS](/recipe_modules/orch_menu/tests/collect.py#6): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -5465,15 +5488,15 @@ behaving as expected.
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/properties.py#27)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipes/orchestrator.py#11): [cros\_tags](#recipe_modules-cros_tags), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#37)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#38)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#30)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#31)(api, properties):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

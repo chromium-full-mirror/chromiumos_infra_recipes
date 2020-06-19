@@ -1,0 +1,127 @@
+[
+  {
+    "cmd": [],
+    "name": "get CL 1234 description",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/1234@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "get CL 1234 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@|src/|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-d",
+      "https://chromium-review.googlesource.com/1234"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "get CL 1234 description.git_cl description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Disallow-Recycled-Builds"
+    ],
+    "infra_step": true,
+    "name": "read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n    "
+  },
+  {
+    "cmd": [],
+    "name": "get CL 5678 description",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/5678@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "get CL 5678 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@|src/|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-d",
+      "https://chromium-review.googlesource.com/5678"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/",
+    "env_suffixes": {
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "get CL 5678 description.git_cl description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Disallow-Recycled-Builds"
+    ],
+    "infra_step": true,
+    "name": "read git footers (2)",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n    "
+  },
+  {
+    "name": "$result"
+  }
+]

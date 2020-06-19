@@ -17,6 +17,7 @@ DEPS = [
     'recipe_engine/properties',
     'build_plan',
     'cros_infra_config',
+    'git_footers',
 ]
 
 
@@ -24,8 +25,10 @@ def RunSteps(api):
   child_specs = api.cros_infra_config.get_builder_config(
       'cq-orchestrator').orchestrator.child_specs
   completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
-      child_specs, True, [common_pb2.GerritChange(change=1234)],
-      common_pb2.GitilesCommit())
+      child_specs, True, [
+          common_pb2.GerritChange(host='chromium-review.googlesource.com',
+                                  change=1234)
+      ], common_pb2.GitilesCommit())
   api.assertions.assertEqual(existing_builds, [])
   api.assertions.assertEqual(len(completed_builds), 1)
   api.assertions.assertEqual(completed_builds[0].builder.builder,
@@ -53,12 +56,16 @@ def GenTests(api):
     """Generate a test build proto with no gitiles commit project."""
     build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
                                              builder='cq-orchestrator')
-    build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
+    build.input.gerrit_changes.extend([
+        common_pb2.GerritChange(host='chromium-review.googlesource.com',
+                                change=1234)
+    ])
     return api.buildbucket.build(build)
 
   yield api.test(
       'basic',
       cq_orchestrator_build_with_gerrit_change(),
+      api.git_footers.simulated_get_footers([], 'get build history'),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -70,9 +77,12 @@ def GenTests(api):
   yield api.test(
       'with_config',
       cq_orchestrator_build_with_gerrit_change(),
-      api.properties(**{
-          '$chromeos/cros_infra_config':
-          CrosInfraConfigProperties(config_ref='refs/changes/33/433/1')}),
+      api.properties(
+          **{
+              '$chromeos/cros_infra_config':
+                  CrosInfraConfigProperties(config_ref='refs/changes/33/433/1')
+          }),
+      api.git_footers.simulated_get_footers([], 'get build history'),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),

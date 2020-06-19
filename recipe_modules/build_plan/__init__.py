@@ -12,5 +12,6 @@ DEPS = [
     'cros_history',
     'cros_relevance',
     'cros_tags',
+    'git_footers',
     'test_util',
 ]

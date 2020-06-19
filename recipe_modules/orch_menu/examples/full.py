@@ -11,6 +11,7 @@ DEPS = [
     'cros_bisect',
     'cros_tags',
     'gerrit',
+    'git_footers',
     'orch_menu',
     'skylab',
     'test_util',
@@ -219,6 +220,7 @@ def GenTests(api):
           FullProperties(expected_completed_builds=builds,
                          expected_enable_history=True)),
       api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       testing_responses(ctp_response1, ctp_response2, hw_tests, vm_tests, [],
                         moblab_vm_tests),
       input_properties={
@@ -238,6 +240,7 @@ def GenTests(api):
           FullProperties(expected_completed_builds=builds,
                          expected_enable_history=True)),
       api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
+      api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       testing_responses(ctp_response1, ctp_response2, hw_tests, vm_tests, [],
                         moblab_vm_tests),
       input_properties={
