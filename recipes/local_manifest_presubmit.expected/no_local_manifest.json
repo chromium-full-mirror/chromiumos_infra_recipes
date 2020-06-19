@@ -490,6 +490,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -525,6 +528,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -551,6 +557,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]

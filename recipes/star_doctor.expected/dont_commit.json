@@ -60,6 +60,9 @@
       "/path/to/tmp/json"
     ],
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -88,6 +91,9 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]",
         "[CLEANUP]/tmp_tmp_2"

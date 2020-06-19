@@ -3260,6 +3260,9 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -3283,6 +3286,9 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -3318,6 +3324,9 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]

@@ -1600,6 +1600,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1621,6 +1624,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1673,6 +1679,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1694,6 +1703,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1755,6 +1767,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1807,6 +1822,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1865,6 +1883,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1917,6 +1938,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -1975,6 +1999,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/private-overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
@@ -2028,6 +2055,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos/src/overlay",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
         "RECIPE_REPO[depot_tools]"
       ]
