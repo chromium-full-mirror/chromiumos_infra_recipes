@@ -3,7 +3,22 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Used to create sweeping changes by creating CLs in many repos."""
+"""Used to create sweeping changes by creating CLs in many repos.
+
+Currently focused on the use case of running gen_config in program and project
+repositories, an example invocation follows:
+
+bb add
+  -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418
+  -p 'repo_regexes=["src/project/galaxy"]'
+  -p command=gen_config
+  -p 'message_template="Hello world\n\nBUG=chromium:1092954\nTEST=None"'
+  -p 'reviewers=["reviewer@google.com"]'
+  -p 'hashtags=["mondo-update"]'
+  chromeos/infra/ClFactory
+
+For more details on the input properties, see cl_factory.proto.
+"""
 
 import re
 
@@ -35,6 +50,42 @@ _CHANGE_ID_REGEX = re.compile(r'^Change-Id: ', re.MULTILINE)
 
 def RunSteps(api, properties):
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
+  _validate_inputs(properties, gerrit_changes)
+
+  with api.cros_source.checkout_overlays_context(), \
+    api.context(cwd=api.cros_source.workspace_path):
+
+    # The project infos for the the input gerrit changes and the projects infos
+    # for the repos we are attempting to make change lists for.
+    gc_infos = api.repo.project_infos([gc.project for gc in gerrit_changes])
+    cl_infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
+
+    api.cros_source.ensure_synced_cache(
+        projects=_determine_sync_projects(api, gc_infos, cl_infos, properties))
+
+    with api.step.nest('cherry-pick gerrit changes'):
+      patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
+      api.cros_source.apply_gerrit_patch_sets(patch_sets)
+
+    # Start development branches for each project.
+    api.repo.start('cl-factory', projects=[info.name for info in cl_infos])
+
+    changes = _make_changes(api, cl_infos, gerrit_changes, properties)
+
+    if changes:
+      _set_source_cq_depends(api, changes, gc_infos, gerrit_changes)
+
+
+def _validate_inputs(properties, gerrit_changes):
+  """Validates the inputs to this recipe.
+
+  Validates that the inputs to this recipe. An exception is thrown if a problem
+  is found.
+
+  Args:
+    properties (ClFactoryProperties): recipe input properties.
+    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe.
+  """
   if not gerrit_changes:
     raise ValueError('Gerrit changes to apply must be specified.')
 
@@ -51,58 +102,88 @@ def RunSteps(api, properties):
         'A message_template property must specify how to create '
         'commit messages')
 
-  with api.cros_source.checkout_overlays_context(), \
-    api.context(cwd=api.cros_source.workspace_path):
 
-    # The project infos for the the input gerrit changes and the projects infos
-    # for the repos we are attempting to make changelists for.
-    gc_infos = api.repo.project_infos([gc.project for gc in gerrit_changes])
-    cl_infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
+def _make_changes(api, cl_infos, gerrit_changes, properties):
+  """Creates and returns the generated change lists.
 
-    sync_projects = _determine_sync_projects(api, gc_infos, cl_infos,
-                                             properties)
-    api.cros_source.ensure_synced_cache(projects=sync_projects)
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    cl_infos (List[ProjectInfo]}: List of infos for the projects CLs are being
+      made in. Corresponds to that found via repo_regexes.
+    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe.
+    properties (ClFactoryProperties): Input properties to the recipe.
 
-    with api.step.nest('cherry-pick gerrit changes'):
-      patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
-      api.cros_source.apply_gerrit_patch_sets(patch_sets)
+  Returns:
+    List([GerritChange]) of generated change lists.
+  """
+  changes = []
+  for info in cl_infos:
+    with api.step.nest('working on project {}'.format(info.name)) as pres, \
+        api.context(cwd=api.cros_source.workspace_path.join(info.path)):
 
-    # Start development branches for each project.
-    api.repo.start('cl-factory', projects=[info.name for info in cl_infos])
+      _gen_config(api)
 
-    changes = []
-    for info in cl_infos:
-      with api.step.nest('working on project {}'.format(info.name)) as pres, \
+      if api.git.diff_check(api.context.cwd):
+        pres.step_text = 'diff'
+        cl = _make_cl(api, info, properties, gerrit_changes)
+        changes.append(cl)
+      else:
+        pres.step_text = 'no diff'
+  return changes
+
+
+def _make_cl(api, info, properties, gerrit_changes):
+  """Makes and returns a generated gerrit change.
+
+  Makes and returns a generated gerrit change, assumes cwd is the project path.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    info (ProjectInfo): project info of project making a change list for.
+    properties (ClFactoryProperties): recipe input properties.
+    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe.
+
+  Returns:
+    GerritChange generated gerrit change.
+  """
+  project_path = api.context.cwd
+  commit_message = _make_commit_message(api, info, gerrit_changes, properties)
+  api.git.add([project_path])
+  api.git.commit(commit_message)
+  return api.gerrit.create_change(
+      project=project_path,
+      reviewers=list(properties.reviewers),
+      hashtags=list(properties.hashtags),
+  )
+
+
+def _set_source_cq_depends(api, changes, gc_infos, gerrit_changes):
+  """Sets Cq-Depend on the input gerrit changes.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    changes (List[GerritChange]): List of generated gerrit changes.
+    gc_infos (List[ProjectInfo]): List of infos for the input gerrit changes.
+    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe.
+  """
+  cq_depend = api.cros_cq_depends.get_cq_depend(changes)
+  replacement = cq_depend + '\nChange-Id: '
+
+  with api.step.nest('applying Cq-Depend to input projects'):
+    for info, change in zip(gc_infos, gerrit_changes):
+      with api.step.nest('applying Cq-Depend to {}'
+                         .format(info.name)) as pres, \
           api.context(cwd=api.cros_source.workspace_path.join(info.path)):
 
-        _gen_config(api)
-
-        if api.git.diff_check(api.context.cwd):
-          pres.step_text = 'diff'
-          cl = _make_cl(api, info, api.context.cwd, properties, gerrit_changes)
-          changes.append(cl)
-        else:
-          pres.step_text = 'no diff'
-
-    if changes:
-      cq_depend = api.cros_cq_depends.get_cq_depend(changes)
-      replacement = cq_depend + '\nChange-Id: '
-
-      with api.step.nest('applying Cq-Depend to input projects'):
-        for info, change in zip(gc_infos, gerrit_changes):
-          with api.step.nest('applying Cq-Depend to {}'
-                             .format(info.name)) as pres, \
-              api.context(cwd=api.cros_source.workspace_path.join(info.path)):
-
-            # For the change description commands to work we must be operating
-            # on a tracking branch.
-            api.step('create cl_factory branch', [
-                'git', 'checkout', '-b', '__cl_factory', '--track',
-                '{}/{}'.format(info.remote, 'master')
-            ])
-            description = api.gerrit.get_change_description(change)
-            description = re.sub(_CHANGE_ID_REGEX, replacement, description)
-            api.gerrit.set_change_description(change, description)
+        # For the change description commands to work we must be operating
+        # on a tracking branch.
+        api.step('create cl_factory branch', [
+            'git', 'checkout', '-b', '__cl_factory', '--track', '{}/{}'.format(
+                info.remote, 'master')
+        ])
+        description = api.gerrit.get_change_description(change)
+        description = re.sub(_CHANGE_ID_REGEX, replacement, description)
+        api.gerrit.set_change_description(change, description)
 
 
 def _determine_sync_projects(api, gc_infos, cl_infos, properties):
@@ -110,7 +191,7 @@ def _determine_sync_projects(api, gc_infos, cl_infos, properties):
 
   Args:
     api (RecipeApi): See RunSteps documentation.
-    gc_infos (List[ProjectInfo]): List of infos for the gerrit changes.
+    gc_infos (List[ProjectInfo]): List of infos for the input gerrit changes.
     cl_infos (List[ProjectInfo]}: List of infos for the projects CLs are being
       made in. Corresponds to that found via repo_regexes.
     properties (ClFactoryProperties): Input properties to the recipe.
@@ -154,18 +235,18 @@ def _gen_config(api):
   api.step('run gen_config config.star', [gen_config_path, config_path])
 
 
-def _make_cl(api, info, project_path, properties, gerrit_changes):
-  commit_message = _make_commit_message(api, info, properties, gerrit_changes)
-  api.git.add([project_path])
-  api.git.commit(commit_message)
-  return api.gerrit.create_change(
-      project=project_path,
-      reviewers=list(properties.reviewers),
-      hashtags=list(properties.hashtags),
-  )
+def _make_commit_message(api, info, gerrit_changes, properties):
+  """Makes the commit message for a generated gerrit change.
 
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    info (ProjectInfo): project info of project making a commit message for.
+    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe.
+    properties (ClFactoryProperties): Input properties to the recipe.
 
-def _make_commit_message(api, info, properties, gerrit_changes):
+  Returns:
+    str commit message.
+  """
   replacements = {
       'project': info.name,
       'path': info.path,

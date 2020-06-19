@@ -4699,11 +4699,28 @@ Return the kwargs as a json string.
 &mdash; **def [RunSteps](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#19)(api):**
 ### *recipes* / [cl\_factory](/recipes/cl_factory.py)
 
-[DEPS](/recipes/cl_factory.py#17): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/cl_factory.py#32): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Used to create sweeping changes by creating CLs in many repos.
 
-&mdash; **def [RunSteps](/recipes/cl_factory.py#36)(api, properties):**
+Currently focused on the use case of running gen_config in program and project
+repositories, an example invocation follows:
+
+bb add
+  -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418
+  -p 'repo_regexes=["src/project/galaxy"]'
+  -p command=gen_config
+  -p 'message_template="Hello world
+
+BUG=chromium:1092954
+TEST=None"'
+  -p 'reviewers=["reviewer@google.com"]'
+  -p 'hashtags=["mondo-update"]'
+  chromeos/infra/ClFactory
+
+For more details on the input properties, see cl_factory.proto.
+
+&mdash; **def [RunSteps](/recipes/cl_factory.py#51)(api, properties):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)
