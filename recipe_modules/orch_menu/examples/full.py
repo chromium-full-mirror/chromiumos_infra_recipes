@@ -37,42 +37,29 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def test(name, missing_ok=False, expect_missing_config=False,
-           test_footers=None, **kwargs):
-    """Helper for creating build.
+  yield api.orch_menu.test('basic')
 
-    Args:
-      name (str): Test name.
-      expect_config_fail (bool): Whether to expect setup_orchestrator to fail.
-      test_footers (str): git_footers test data.
-    """
-    kwargs.setdefault(
-        'input_properties',
-        OrchestratorProperties(
-            update_manifest_refs=OrchestratorProperties.UpdateManifestRefs(
-                start='refs/heads/postsubmit')))
-    ret = api.test(
-        name,
-        api.test_util.test_orchestrator(**kwargs).build,
-        api.properties(
-            FullProperties(missing_ok=missing_ok,
-                           expect_missing_config=expect_missing_config,
-                           test_footers=test_footers)))
-    return ret
+  yield api.orch_menu.test(
+      'two-footers',
+      api.properties(
+          FullProperties(expect_missing_config=True,
+                         test_footers='foot1\nfoot2')))
 
-  yield test('basic')
-
-  yield test('two-footers', expect_missing_config=True,
-             test_footers='foot1\nfoot2')
-
-  yield test(
-      'bad-ref', input_properties=OrchestratorProperties(
+  yield api.orch_menu.test(
+      'bad-ref',
+      api.properties(
+          FullProperties(missing_ok=True, expect_missing_config=True)),
+      input_properties=OrchestratorProperties(
           update_manifest_refs=OrchestratorProperties.UpdateManifestRefs(
-              start='missing-ref-heads')), missing_ok=True,
-      expect_missing_config=True)
+              start='missing-ref-heads')))
 
-  yield test('required-missing-config', builder='no-config',
-             expect_missing_config=True)
+  yield api.orch_menu.test(
+      'required-missing-config',
+      api.properties(FullProperties(expect_missing_config=True)),
+      builder='no-config')
 
-  yield test('forgiven-missing-builder', builder='no-config', missing_ok=True,
-             expect_missing_config=True)
+  yield api.orch_menu.test(
+      'forgiven-missing-config',
+      api.properties(
+          FullProperties(missing_ok=True, expect_missing_config=True)),
+      builder='no-config')

@@ -15,4 +15,5 @@ DEPS = [
     'git',
     'git_footers',
     'gitiles',
+    'test_util',
 ]

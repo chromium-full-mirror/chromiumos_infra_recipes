@@ -3446,7 +3446,7 @@ Returns:
   str: A string describing the VM test.
 ### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)
 
-[DEPS](/recipe_modules/orch_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/orch_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API providing a menu for orchestrator steps
 
