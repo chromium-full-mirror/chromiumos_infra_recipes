@@ -14,4 +14,7 @@ message BuildTargetProperties {
 
   // Override for pointless build check.
   bool force_relevant_build = 2;
+
+  // Whether this is an artifact build (calls ArtifactsService/PrepareForBuild.)
+  bool artifact_build = 3;
 }

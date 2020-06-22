@@ -80,7 +80,7 @@ def GenTests(api):
                     common.PackageInfo(category='chromeos-base',
                                        package_name='chromeos-chrome')
                 ])), bucket='toolchain', builder='orderfile-generate-toolchain',
-        artifact_pointless=True)
+        artifact_pointless=True, input_properties=dict(artifact_build=True))
 
   yield api.build_menu.test('no-sysroot',
                             api.properties(FullProperties(no_sysroot=True)))

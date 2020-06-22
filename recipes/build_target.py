@@ -26,14 +26,8 @@ def RunSteps(api, properties):
 
 
 def DoRunSteps(api, config, build_target, properties):
-  # TODO(crbug/1053703): artifact_build is something that we can remove when we
-  # split up build_target.py into individual builders, since we will know
-  # whether it is True or False based on what recipe we are.
-  artifact_build = api.cros_artifacts.has_output_artifacts(
-      config.artifacts.artifacts_info)
-
   if not api.build_menu.setup_workspace_and_chroot(
-      artifact_build=artifact_build,
+      artifact_build=properties.artifact_build,
       forced_relevant=properties.force_relevant_build):
     return
 
@@ -62,7 +56,7 @@ def DoRunSteps(api, config, build_target, properties):
     ebuilds_spec = config.unit_tests.ebuilds_run_spec
     if api.cros_infra_config.should_run(install_spec):
       api.build_menu.bootstrap_sysroot_and_install_packages(
-          config, packages, artifact_build=artifact_build)
+          config, packages, artifact_build=properties.artifact_build)
 
     if not api.cros_infra_config.should_exit(install_spec):
       api.build_menu.build_and_test_images(
@@ -114,8 +108,10 @@ def GenTests(api):
                                           '', retcode=1), cq=True)
 
   # This covers the Relevance check.
-  yield api.build_menu.test('prepare-for-build-pointless', cq=True,
-                            artifact_pointless=True)
+  yield api.build_menu.test(
+      'prepare-for-build-pointless', cq=True,
+      input_properties=BuildTargetProperties(artifact_build=True),
+      artifact_pointless=True)
 
   yield api.build_menu.test(
       'run-exit-install',
