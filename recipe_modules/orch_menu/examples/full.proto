@@ -17,5 +17,7 @@ message FullProperties {
   // footer values.
   string test_footers = 3;
 
-
+  // The expected list build_pb2.Build() entries in completed_builds, JSON
+  // encoded.
+  repeated string expected_completed_builds = 4;
 }

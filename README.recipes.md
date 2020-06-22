@@ -3446,7 +3446,7 @@ Returns:
   str: A string describing the VM test.
 ### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)
 
-[DEPS](/recipe_modules/orch_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/orch_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 API providing a menu for orchestrator steps
 
@@ -3470,6 +3470,21 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#44)(self):**
 
+&mdash; **def [filter\_schedule\_wait\_builds](/recipe_modules/orch_menu/api.py#251)(self, parent_step, child_specs, enable_history, stagger_children_seconds=0.0):**
+
+Find the builds we need, filter those already started, run, and collect.
+
+Most of the heavy lifting is done in get_build_plan.
+
+Args:
+  parent_step (Step): the calling step, to be used for presentation purposes.
+  child_specs (list(ChildSpec)): A list of child specs.
+  enable_history (bool): Enables history lookup in cq orchestrator.
+  stagger_children_seconds (float): The number of seconds between each child
+    build's start (until crbug.com/1063143).
+
+Returns: A list of build_pb2.Build objects with build results.
+
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#52)(self):**
 
 &mdash; **def [get\_manifest\_info](/recipe_modules/orch_menu/api.py#56)(self, external=False):**
@@ -3490,6 +3505,18 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/orch_menu/api.py#32)(self):**
 
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#227)(self, enable_history=False, stagger_children_seconds=0.0, step_name=None):**
+
+Plan, schedule, and run child builders.
+
+Args:
+  enable_history (bool): Whether history is enabled.
+  stagger_children_seconds (float): Time delay between each child build.
+  step_name (str): Name for step, or None.
+
+Returns:
+  (list[Build]): completed builds.
+
 &mdash; **def [push\_manifest\_refs](/recipe_modules/orch_menu/api.py#179)(self, ref):**
 
 Update the remote ref (if any).
@@ -3498,6 +3525,21 @@ If |ref| evaluates to False, do nothing.
 
 Args:
   ref (str): Ref to push to (possibly empty) or None
+
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#335)(self, builder, await_completion=False, properties=None, step_name=None, timeout_sec=None):**
+
+Schedule a builder, and optionally await completion.
+
+Args:
+  builder (str): The name of the builder: one of project/bucket/builder,
+    bucket/builder, or builder.
+  await_completion (bool): Wether to await completion.
+  properties (dict): Dictionary of input properties for the builder.
+  step_name (str): Name for the step, or None.
+  timeout_sec (int): Timeout for the builder, in seconds.
+
+Returns:
+  (Build): The build that was scheduled, and possibly waited for.
 
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#78)(self, missing_ok=False, test_footers=None):**
 
@@ -3513,6 +3555,23 @@ Args:
 
 Returns:
   BuilderConfig or None, with an active context.
+
+&mdash; **def [should\_collect](/recipe_modules/orch_menu/api.py#308)(self, build, child_specs_dict, child_targets_dict):**
+
+Returns whether the orchestrator should collect the build.
+
+Args:
+  build (build_pb2.Build): the build to check whether to collect.
+  child_specs_dict (dict): mapping of builder name to ChildSpec.
+  child_targets_dict (dict): fuzzy mapping of builder target to to ChildSpec.
+    Fuzzy in the sense that it just chops off from the last '-' to the end
+    of the string. Intended to pick up the *-snapshot cases. See more below.
+
+Returns: A bool whether to collect the build.
+
+&mdash; **def [wait\_for\_inflight\_orchestrator](/recipe_modules/orch_menu/api.py#195)(self):**
+
+If there is an inflight orchestrator, wait for it.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#6): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4346,87 +4405,15 @@ Whether there are toolchain CLs applied to the source tree.
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
 
-[DEPS](/recipes/afdo_orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/afdo_orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#57)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#56)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#51)(api, properties):**
-
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#322)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
-
-Find the builds you need, filter those already started, run, and collect.
-
-Most of the heavy lifting is done in get_build_plan.
-
-Args:
-  api (RecipeApi): See RunSteps documentation.
-  parent_step (Step): the calling step, to be used for presentation purposes.
-  child_specs (list(ChildSpec)): A list of child specs.
-  enable_history (bool): Enables history lookup in cq orchestrator.
-  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
-  gerrit_changes list(GerritChange): List of patches in the order that they
-    can be cherry-picked.
-  stagger_children_seconds (float): The number of seconds between each child
-    build's start (until crbug.com/1063143).
-
-Returns: A list of build_pb2.Build objects with build results.
-
-&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#310)(api):**
-
-Returns the child specs that should be run for this invocation.
-
-Args:
-  api (RecipeApi): See RunSteps.
-
-Returns:
-  list[ChildSpec] of children to run
-
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#252)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
-
-Run and collect any followon orchestrator.
-
-Args:
-  api (RecipeApi): See RunSteps documentation.
-  parent_step (Step): the calling step, to be used for presentation purposes.
-  config (BuilderConfig): the config for this orchestrator.
-  enable_history (bool): Enables history lookup in cq orchestrator.
-  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
-  gerrit_changes list(GerritChange): List of patches in the order that they
-    can be cherry-picked.
-
-Returns: A list of build_pb2.Build objects with results.
-
-&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#194)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
-
-Run and collect any process_child.
-
-Args:
-  api (RecipeApi): See RunSteps documentation.
-  parent_step (Step): the calling step, to be used for presentation purposes.
-  name (str): The name of the child builder.
-  input_artifacts (list[InputArtifactInfo]): List of input artifacts to pass.
-  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
-  gerrit_changes list(GerritChange): List of patches in the order that they
-    can be cherry-picked.
-
-Returns: A list of (one) build_pb2.Build object with the process_child result.
-
-&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#382)(build, child_specs_dict, child_targets_dict):**
-
-Returns whether the orchestrator should collect the build.
-
-Args:
-  build (build_pb2.Build): the build to check whether to collect.
-  child_specs_dict (dict): mapping of builder name to ChildSpec.
-  child_targets_dict (dict): fuzzy mapping of builder target to to ChildSpec.
-    Fuzzy in the sense that it just chops off from the last '-' to the end
-    of the string. Intended to pick up the *-snapshot cases. See more below.
-
-Returns: A bool whether to collect the build.
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#50)(api, properties):**
 ### *recipes* / [afdo\_process](/recipes/afdo_process.py)
 
 [DEPS](/recipes/afdo_process.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)
@@ -5388,9 +5375,9 @@ Runs the presubmit for a project with checkout per local manifest.
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
 ### *recipes* / [orch\_menu:examples/full](/recipe_modules/orch_menu/examples/full.py)
 
-[DEPS](/recipe_modules/orch_menu/examples/full.py#6): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/orch_menu/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#28)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -5399,66 +5386,9 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#62)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#49)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#56)(api, properties):**
-
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#265)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
-
-Find the builds you need, filter those already started, run, and collect.
-
-Most of the heavy lifting is done in get_build_plan.
-
-Args:
-  api (RecipeApi): See RunSteps documentation.
-  parent_step (Step): the calling step, to be used for presentation purposes.
-  child_specs (list(ChildSpec)): A list of child specs.
-  enable_history (bool): Enables history lookup in cq orchestrator.
-  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
-  gerrit_changes list(GerritChange): List of patches in the order that they
-    can be cherry-picked.
-  stagger_children_seconds (float): The number of seconds between each child
-    build's start (until crbug.com/1063143).
-
-Returns: A list of build_pb2.Build objects with build results.
-
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#245)(api):**
-
-Returns the child specs that should be run for this invocation.
-
-Args:
-  api (RecipeApi): See RunSteps.
-
-Returns:
-  list[ChildSpec] of children to run
-
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#187)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
-
-Run and collect any followon orchestrator.
-
-Args:
-  api (RecipeApi): See RunSteps documentation.
-  parent_step (Step): the calling step, to be used for presentation purposes.
-  config (BuilderConfig): the config for this orchestrator.
-  enable_history (bool): Enables history lookup in cq orchestrator.
-  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
-  gerrit_changes list(GerritChange): List of patches in the order that they
-    can be cherry-picked.
-
-Returns: A list of build_pb2.Build objects with results.
-
-&mdash; **def [should\_collect](/recipes/orchestrator.py#324)(build, child_specs_dict, child_targets_dict):**
-
-Returns whether the orchestrator should collect the build.
-
-Args:
-  build (build_pb2.Build): the build to check whether to collect.
-  child_specs_dict (dict): mapping of builder name to ChildSpec.
-  child_targets_dict (dict): fuzzy mapping of builder target to to ChildSpec.
-    Fuzzy in the sense that it just chops off from the last '-' to the end
-    of the string. Intended to pick up the *-snapshot cases. See more below.
-
-Returns: A bool whether to collect the build.
+&mdash; **def [RunSteps](/recipes/orchestrator.py#43)(api, properties):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
