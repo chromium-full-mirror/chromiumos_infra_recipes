@@ -14,7 +14,6 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
-    'bot_cost',
     'build_plan',
     'cros_history',
     'cros_infra_config',
@@ -148,8 +147,6 @@ def DoRunSteps(api, properties, config):
             config.orchestrator.follow_on_orchestrator.await_completion))
 
   with api.step.nest('clean up orchestrator') as presentation:
-    api.bot_cost.set_cq_run_cost(completed_builds)
-
     # Recheck the BuilderConfigs at HEAD, one last time, to see if any failed
     # builders are now noncritical.
     api.cros_infra_config.force_reload()

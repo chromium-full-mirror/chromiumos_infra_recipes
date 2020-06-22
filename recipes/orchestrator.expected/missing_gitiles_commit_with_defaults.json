@@ -4494,14 +4494,6 @@
   },
   {
     "cmd": [],
-    "name": "clean up orchestrator.set cq run cost",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@cq_run_cost@0.0002@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "clean up orchestrator.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -4530,7 +4522,7 @@
     "cmd": [],
     "name": "set cq run cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@cq_run_cost@0.0@@@"
+      "@@@SET_BUILD_PROPERTY@cq_run_cost@0.0002@@@"
     ]
   },
   {
@@ -4553,43 +4545,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
-    "name": "set cq run cost.calculate build cost.buildbucket.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {

@@ -4405,15 +4405,15 @@ Whether there are toolchain CLs applied to the source tree.
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
 
-[DEPS](/recipes/afdo_orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/afdo_orchestrator.py#11): [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#56)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#55)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#50)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#49)(api, properties):**
 ### *recipes* / [afdo\_process](/recipes/afdo_process.py)
 
 [DEPS](/recipes/afdo_process.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)
@@ -5380,15 +5380,15 @@ Runs the presubmit for a project with checkout per local manifest.
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#28)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/orchestrator.py#11): [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#49)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#48)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#43)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#42)(api, properties):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
