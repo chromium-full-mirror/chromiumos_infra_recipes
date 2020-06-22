@@ -31,7 +31,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     )
     resp['revision_info'] = {
         'commit': {
-            'message': 'Change commit message',
+            'message': self.test_gerrit_change_description(),
         },
         'fetch': {
             'http': {

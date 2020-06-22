@@ -6,6 +6,7 @@
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 DEPS = [
+    'recipe_engine/assertions',
     'gerrit',
 ]
 
@@ -16,8 +17,10 @@ def RunSteps(api):
       change=123,
   )
 
-  # This just forwards to depot_tools/gerrit, so whatever.
-  api.gerrit.get_change_description(gerrit_change)
+  api.assertions.assertEqual(
+      api.gerrit.get_change_description(gerrit_change),
+      api.gerrit.test_api.test_gerrit_change_description())
+
 
 def GenTests(api):
   yield api.test('basic')
