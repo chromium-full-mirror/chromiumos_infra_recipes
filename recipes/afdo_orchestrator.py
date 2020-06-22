@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/time',
     'bot_cost',
     'build_plan',
     'cros_history',
@@ -95,9 +96,9 @@ def DoRunSteps(api, properties, config):
   child_specs = []
   with api.step.nest('run builds') as presentation:
     child_specs = get_child_specs(api)
-    completed_builds = filter_schedule_wait_builds(api, presentation,
-                                                   child_specs, True, snapshot,
-                                                   gerrit_changes)
+    completed_builds = filter_schedule_wait_builds(
+        api, presentation, child_specs, True, snapshot, gerrit_changes,
+        stagger_children_seconds=properties.stagger_children_seconds)
 
   # From here all builds should have been collected: move to checking results.
   with api.step.nest('check build results') as presentation:
@@ -319,7 +320,8 @@ def get_child_specs(api):
 
 
 def filter_schedule_wait_builds(api, parent_step, child_specs, enable_history,
-                                snapshot, gerrit_changes):
+                                snapshot, gerrit_changes,
+                                stagger_children_seconds=0.0):
   """Find the builds you need, filter those already started, run, and collect.
 
   Most of the heavy lifting is done in get_build_plan.
@@ -332,6 +334,8 @@ def filter_schedule_wait_builds(api, parent_step, child_specs, enable_history,
     snapshot (GitilesCommit): Start ref to be supplied to the child builds.
     gerrit_changes list(GerritChange): List of patches in the order that they
       can be cherry-picked.
+    stagger_children_seconds (float): The number of seconds between each child
+      build's start (until crbug.com/1063143).
 
   Returns: A list of build_pb2.Build objects with build results.
   """
@@ -343,9 +347,15 @@ def filter_schedule_wait_builds(api, parent_step, child_specs, enable_history,
       len(new_build_requests),
       len(completed_builds) + len(existing_builds)))
 
-  # request new builds and add to total existing.
-  existing_builds += api.buildbucket.schedule(
-      new_build_requests, url_title_fn=api.naming.get_build_title)
+  if new_build_requests:
+    # Implement sleepy builds for GoB smoothing: crbug.com/1063143
+    with api.step.nest('schedule new builds') as pres:
+      with api.buildbucket.with_host(api.buildbucket.HOST_PROD):
+        for new_build_request in new_build_requests:
+          # request new builds and add to total existing.
+          existing_builds += api.buildbucket.schedule(
+              [new_build_request], url_title_fn=api.naming.get_build_title)
+          api.time.sleep(stagger_children_seconds)
 
   child_specs_dict = {cs.name: cs for cs in child_specs}
   child_targets_dict = {cs.name[:cs.name.rfind('-')]: cs for cs in child_specs}

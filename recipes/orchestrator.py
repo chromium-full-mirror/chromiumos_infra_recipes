@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/time',
     'bot_cost',
     'build_plan',
     'cros_bisect',
@@ -48,8 +49,6 @@ from google.protobuf import wrappers_pb2
 
 from collections import defaultdict
 from datetime import datetime
-
-import time
 
 PROPERTIES = OrchestratorProperties
 
@@ -298,7 +297,7 @@ def filter_schedule_wait_builds(api, parent_step, child_specs, enable_history,
           # request new builds and add to total existing.
           existing_builds += api.buildbucket.schedule(
               [new_build_request], url_title_fn=api.naming.get_build_title)
-          time.sleep(stagger_children_seconds)
+          api.time.sleep(stagger_children_seconds)
 
   child_specs_dict = {cs.name: cs for cs in child_specs}
   child_targets_dict = {cs.name[:cs.name.rfind('-')]: cs for cs in child_specs}

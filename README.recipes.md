@@ -4346,17 +4346,17 @@ Whether there are toolchain CLs applied to the source tree.
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
 
-[DEPS](/recipes/afdo_orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/afdo_orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#56)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#57)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#50)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#51)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#321)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/afdo_orchestrator.py#322)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -4370,10 +4370,12 @@ Args:
   snapshot (GitilesCommit): Start ref to be supplied to the child builds.
   gerrit_changes list(GerritChange): List of patches in the order that they
     can be cherry-picked.
+  stagger_children_seconds (float): The number of seconds between each child
+    build's start (until crbug.com/1063143).
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#309)(api):**
+&mdash; **def [get\_child\_specs](/recipes/afdo_orchestrator.py#310)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -4383,7 +4385,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#251)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/afdo_orchestrator.py#252)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -4398,7 +4400,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#193)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_process\_child](/recipes/afdo_orchestrator.py#194)(api, parent_step, name, input_artifacts, snapshot, gerrit_changes):**
 
 Run and collect any process_child.
 
@@ -4413,7 +4415,7 @@ Args:
 
 Returns: A list of (one) build_pb2.Build object with the process_child result.
 
-&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#372)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/afdo_orchestrator.py#382)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -5391,17 +5393,17 @@ Runs the presubmit for a project with checkout per local manifest.
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#21)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/orchestrator.py#11): [bot\_cost](#recipe_modules-bot_cost), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#63)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#62)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#57)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#56)(api, properties):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#266)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipes/orchestrator.py#265)(api, parent_step, child_specs, enable_history, snapshot, gerrit_changes, stagger_children_seconds=0.0):**
 
 Find the builds you need, filter those already started, run, and collect.
 
@@ -5420,7 +5422,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#246)(api):**
+&mdash; **def [get\_child\_specs](/recipes/orchestrator.py#245)(api):**
 
 Returns the child specs that should be run for this invocation.
 
@@ -5430,7 +5432,7 @@ Args:
 Returns:
   list[ChildSpec] of children to run
 
-&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#188)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
+&mdash; **def [schedule\_wait\_follow\_on](/recipes/orchestrator.py#187)(api, parent_step, config, enable_history, snapshot, gerrit_changes):**
 
 Run and collect any followon orchestrator.
 
@@ -5445,7 +5447,7 @@ Args:
 
 Returns: A list of build_pb2.Build objects with results.
 
-&mdash; **def [should\_collect](/recipes/orchestrator.py#325)(build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipes/orchestrator.py#324)(build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
