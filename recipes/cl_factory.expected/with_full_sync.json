@@ -743,8 +743,31 @@
   },
   {
     "cmd": [],
-    "name": "working on project a",
+    "name": "generate project change lists",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@unified diff@[START_DIR]/chromiumos_workspace/src/a@@@",
+      "@@@STEP_LOG_LINE@unified diff@================================================================================@@@",
+      "@@@STEP_LOG_LINE@unified diff@- before text@@@",
+      "@@@STEP_LOG_LINE@unified diff@+ after text@@@",
+      "@@@STEP_LOG_LINE@unified diff@@@@",
+      "@@@STEP_LOG_LINE@unified diff@[START_DIR]/chromiumos_workspace/src/b@@@",
+      "@@@STEP_LOG_LINE@unified diff@================================================================================@@@",
+      "@@@STEP_LOG_LINE@unified diff@- before text@@@",
+      "@@@STEP_LOG_LINE@unified diff@+ after text@@@",
+      "@@@STEP_LOG_LINE@unified diff@@@@",
+      "@@@STEP_LOG_LINE@unified diff@[START_DIR]/chromiumos_workspace/src/c@@@",
+      "@@@STEP_LOG_LINE@unified diff@================================================================================@@@",
+      "@@@STEP_LOG_LINE@unified diff@- before text@@@",
+      "@@@STEP_LOG_LINE@unified diff@+ after text@@@",
+      "@@@STEP_LOG_LINE@unified diff@@@@",
+      "@@@STEP_LOG_END@unified diff@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate project change lists.working on project a",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@diff@@@"
     ]
   },
@@ -754,16 +777,16 @@
       "[START_DIR]/chromiumos_workspace/src/a/config.star"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/a",
-    "name": "working on project a.run gen_config config.star",
+    "name": "generate project change lists.working on project a.run gen_config config.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "working on project a.diff check",
+    "name": "generate project change lists.working on project a.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -774,9 +797,21 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/a",
     "infra_step": true,
-    "name": "working on project a.git add",
+    "name": "generate project change lists.working on project a.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--cached"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/a",
+    "name": "generate project change lists.working on project a.grab a diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -792,9 +827,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/a",
     "infra_step": true,
-    "name": "working on project a.write commit message",
+    "name": "generate project change lists.working on project a.write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Regenerate audio config in project a.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Regenerate the audio config in project a@@@",
@@ -819,16 +854,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/a",
     "infra_step": true,
-    "name": "working on project a.git commit",
+    "name": "generate project change lists.working on project a.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "working on project a.create gerrit change for [START_DIR]/chromiumos_workspace/src/a",
+    "name": "generate project change lists.working on project a.create gerrit change for [START_DIR]/chromiumos_workspace/src/a",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
@@ -842,9 +877,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "working on project a.create gerrit change for [START_DIR]/chromiumos_workspace/src/a.repo forall",
+    "name": "generate project change lists.working on project a.create gerrit change for [START_DIR]/chromiumos_workspace/src/a.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/a|src/[START_DIR]/chromiumos_workspace/src/a|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -872,9 +907,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "working on project a.create gerrit change for [START_DIR]/chromiumos_workspace/src/a.git_cl upload",
+    "name": "generate project change lists.working on project a.create gerrit change for [START_DIR]/chromiumos_workspace/src/a.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -896,15 +931,16 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "working on project a.create gerrit change for [START_DIR]/chromiumos_workspace/src/a.git_cl status",
+    "name": "generate project change lists.working on project a.create gerrit change for [START_DIR]/chromiumos_workspace/src/a.git_cl status",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "working on project b",
+    "name": "generate project change lists.working on project b",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@diff@@@"
     ]
   },
@@ -914,16 +950,16 @@
       "[START_DIR]/chromiumos_workspace/src/b/config.star"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/b",
-    "name": "working on project b.run gen_config config.star",
+    "name": "generate project change lists.working on project b.run gen_config config.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "working on project b.diff check",
+    "name": "generate project change lists.working on project b.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -934,9 +970,21 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/b",
     "infra_step": true,
-    "name": "working on project b.git add",
+    "name": "generate project change lists.working on project b.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--cached"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/b",
+    "name": "generate project change lists.working on project b.grab a diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -952,9 +1000,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/b",
     "infra_step": true,
-    "name": "working on project b.write commit message",
+    "name": "generate project change lists.working on project b.write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Regenerate audio config in project b.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Regenerate the audio config in project b@@@",
@@ -979,16 +1027,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/b",
     "infra_step": true,
-    "name": "working on project b.git commit",
+    "name": "generate project change lists.working on project b.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "working on project b.create gerrit change for [START_DIR]/chromiumos_workspace/src/b",
+    "name": "generate project change lists.working on project b.create gerrit change for [START_DIR]/chromiumos_workspace/src/b",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
@@ -1002,9 +1050,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "working on project b.create gerrit change for [START_DIR]/chromiumos_workspace/src/b.repo forall",
+    "name": "generate project change lists.working on project b.create gerrit change for [START_DIR]/chromiumos_workspace/src/b.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/b|src/[START_DIR]/chromiumos_workspace/src/b|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -1032,9 +1080,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "working on project b.create gerrit change for [START_DIR]/chromiumos_workspace/src/b.git_cl upload",
+    "name": "generate project change lists.working on project b.create gerrit change for [START_DIR]/chromiumos_workspace/src/b.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1056,15 +1104,16 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "working on project b.create gerrit change for [START_DIR]/chromiumos_workspace/src/b.git_cl status",
+    "name": "generate project change lists.working on project b.create gerrit change for [START_DIR]/chromiumos_workspace/src/b.git_cl status",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "working on project c",
+    "name": "generate project change lists.working on project c",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@diff@@@"
     ]
   },
@@ -1074,16 +1123,16 @@
       "[START_DIR]/chromiumos_workspace/src/c/config.star"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/c",
-    "name": "working on project c.run gen_config config.star",
+    "name": "generate project change lists.working on project c.run gen_config config.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "working on project c.diff check",
+    "name": "generate project change lists.working on project c.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1094,9 +1143,21 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/c",
     "infra_step": true,
-    "name": "working on project c.git add",
+    "name": "generate project change lists.working on project c.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--cached"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/c",
+    "name": "generate project change lists.working on project c.grab a diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1112,9 +1173,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/c",
     "infra_step": true,
-    "name": "working on project c.write commit message",
+    "name": "generate project change lists.working on project c.write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@Regenerate audio config in project c.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@Regenerate the audio config in project c@@@",
@@ -1139,16 +1200,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/c",
     "infra_step": true,
-    "name": "working on project c.git commit",
+    "name": "generate project change lists.working on project c.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "working on project c.create gerrit change for [START_DIR]/chromiumos_workspace/src/c",
+    "name": "generate project change lists.working on project c.create gerrit change for [START_DIR]/chromiumos_workspace/src/c",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
@@ -1162,9 +1223,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "working on project c.create gerrit change for [START_DIR]/chromiumos_workspace/src/c.repo forall",
+    "name": "generate project change lists.working on project c.create gerrit change for [START_DIR]/chromiumos_workspace/src/c.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/c|src/[START_DIR]/chromiumos_workspace/src/c|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -1192,9 +1253,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "working on project c.create gerrit change for [START_DIR]/chromiumos_workspace/src/c.git_cl upload",
+    "name": "generate project change lists.working on project c.create gerrit change for [START_DIR]/chromiumos_workspace/src/c.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1216,20 +1277,23 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "working on project c.create gerrit change for [START_DIR]/chromiumos_workspace/src/c.git_cl status",
+    "name": "generate project change lists.working on project c.create gerrit change for [START_DIR]/chromiumos_workspace/src/c.git_cl status",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "applying Cq-Depend to input projects"
+    "name": "generate project change lists.applying Cq-Depend to input projects",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1242,16 +1306,16 @@
       "cros/master"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.create cl_factory branch",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.create cl_factory branch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
@@ -1270,9 +1334,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description.repo forall",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromiumos/config|src/chromiumos/config|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -1295,16 +1359,16 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description.git_cl description",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description.git_cl description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1,chromium:1,chromium:1@@@",
@@ -1324,9 +1388,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description.repo forall",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromiumos/config|src/chromiumos/config|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -1350,17 +1414,17 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description.git_cl set description",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description.git_cl set description",
     "stdin": "a quick description\n\nCq-Depend: chromium:1,chromium:1,chromium:1\nChange-Id: deadbeef\n    ",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1373,16 +1437,16 @@
       "cros/master"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/program/galaxy",
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.create cl_factory branch",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.create cl_factory branch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
@@ -1401,9 +1465,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description.repo forall",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/galaxy|src/chromeos/program/galaxy|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -1426,16 +1490,16 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description.git_cl description",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description.git_cl description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1,chromium:1,chromium:1@@@",
@@ -1455,9 +1519,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description.repo forall",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/galaxy|src/chromeos/program/galaxy|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -1481,10 +1545,10 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description.git_cl set description",
+    "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description.git_cl set description",
     "stdin": "a quick description\n\nCq-Depend: chromium:1,chromium:1,chromium:1\nChange-Id: deadbeef\n    ",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

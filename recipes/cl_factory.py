@@ -39,6 +39,7 @@ DEPS = [
     'cros_cq_depends',
     'cros_sdk',
     'cros_source',
+    'easy',
     'gerrit',
     'git',
     'repo',
@@ -70,10 +71,18 @@ def RunSteps(api, properties):
     # Start development branches for each project.
     api.repo.start('cl-factory', projects=[info.name for info in cl_infos])
 
-    changes = _make_changes(api, cl_infos, gerrit_changes, properties)
+    with api.step.nest('generate project change lists') as pres:
 
-    if changes:
-      _set_source_cq_depends(api, changes, gc_infos, gerrit_changes)
+      changes, diffs = _make_changes(api, cl_infos, gerrit_changes, properties)
+
+      if changes:
+        unified_diff = ''
+        for cl, diff in zip(changes, diffs):
+          unified_diff += cl.project + '\n'
+          unified_diff += '=' * 80
+          unified_diff += '\n' + diff + '\n\n'
+        pres.logs['unified diff'] = unified_diff
+        _set_source_cq_depends(api, changes, gc_infos, gerrit_changes)
 
 
 def _validate_inputs(properties, gerrit_changes):
@@ -104,7 +113,7 @@ def _validate_inputs(properties, gerrit_changes):
 
 
 def _make_changes(api, cl_infos, gerrit_changes, properties):
-  """Creates and returns the generated change lists.
+  """Creates and returns the generated change lists and their diffs
 
   Args:
     api (RecipeApi): See RunSteps documentation.
@@ -114,8 +123,10 @@ def _make_changes(api, cl_infos, gerrit_changes, properties):
     properties (ClFactoryProperties): Input properties to the recipe.
 
   Returns:
-    List([GerritChange]) of generated change lists.
+    (List([GerritChange]), List([str])) tuple of generated changes and the diffs
+      for those changes
   """
+  diffs = []
   changes = []
   for info in cl_infos:
     with api.step.nest('working on project {}'.format(info.name)) as pres, \
@@ -125,15 +136,16 @@ def _make_changes(api, cl_infos, gerrit_changes, properties):
 
       if api.git.diff_check(api.context.cwd):
         pres.step_text = 'diff'
-        cl = _make_cl(api, info, properties, gerrit_changes)
+        cl, diff = _make_cl(api, info, properties, gerrit_changes)
         changes.append(cl)
+        diffs.append(diff)
       else:
         pres.step_text = 'no diff'
-  return changes
+  return changes, diffs
 
 
 def _make_cl(api, info, properties, gerrit_changes):
-  """Makes and returns a generated gerrit change.
+  """Makes and returns a generated gerrit change and their diffs.
 
   Makes and returns a generated gerrit change, assumes cwd is the project path.
 
@@ -144,17 +156,22 @@ def _make_cl(api, info, properties, gerrit_changes):
     gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe.
 
   Returns:
-    GerritChange generated gerrit change.
+    (List([GerritChange]), List([str])) tuple of generated changes and the diffs
+      for those changes
   """
   project_path = api.context.cwd
   commit_message = _make_commit_message(api, info, gerrit_changes, properties)
   api.git.add([project_path])
+  test_stdout = '- before text\n+ after text'
+  diff = api.easy.stdout_step('grab a diff', ['git', 'diff', '--cached'],
+                              test_stdout=test_stdout)
   api.git.commit(commit_message)
-  return api.gerrit.create_change(
+  cl = api.gerrit.create_change(
       project=project_path,
       reviewers=list(properties.reviewers),
       hashtags=list(properties.hashtags),
   )
+  return cl, diff
 
 
 def _set_source_cq_depends(api, changes, gc_infos, gerrit_changes):
