@@ -463,25 +463,13 @@ class GerritApi(recipe_api.RecipeApi):
     Returns:
       str: The change description.
     """
-    with self.m.step.nest(
-        'get CL %d description' % gerrit_change.change) as pres:
+    with self.m.step.nest('get CL %d description' %
+                          gerrit_change.change) as pres:
       gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
       pres.links['link to change'] = gerrit_change_url
-
-      with self.m.context(cwd=self.m.cros_source.workspace_path):
-        project_info = self.m.repo.project_info(gerrit_change.project)
-
-      with self.m.context(
-          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
-        # Use `git cl` because depot_tools/gerrit does not support
-        # getting description for the latest patch. That is, you must
-        # always supply the patch number, and many of our applications
-        # do not know it.
-        description = self.m.git_cl.get_description(
-            patch_url=gerrit_change_url, step_test_data=functools.partial(
-                self.m.raw_io.test_api.stream_output,
-                self.test_api.test_gerrit_change_description())).stdout
-
+      patch_set = self.fetch_patch_sets([gerrit_change],
+                                        include_commit_info=True)[0]
+      description = patch_set.commit_info.get('message')
       pres.logs['description text'] = [description]
       return description
 
