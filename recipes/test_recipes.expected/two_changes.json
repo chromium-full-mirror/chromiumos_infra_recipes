@@ -196,7 +196,7 @@
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
     "name": "apply gerrit changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}, {\"change_number\": 123457, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 10}], \"include_files\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}, {\"change_number\": 123457, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 10}], \"include_commit_info\": false, \"include_files\": false}",
     "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

@@ -40,6 +40,9 @@ def RunSteps(api):
   api.assertions.assertEqual(patch.submitted, '2017-02-02 13:11:20.000000000')
   api.assertions.assertIn('my/fake/file', patch.file_infos)
   api.assertions.assertEqual(
+      patch.commit_info,
+      {'message': api.gerrit.test_api.test_gerrit_change_description()})
+  api.assertions.assertEqual(
       patch.to_gerrit_change_proto(),
       GerritChange(host='chromium-review.googlesource.com',
                    change=91827,

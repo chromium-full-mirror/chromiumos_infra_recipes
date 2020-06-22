@@ -134,6 +134,17 @@ class PatchSet(object):
     """
     return self._rev_info.get('files')
 
+  @property
+  def commit_info(self):
+    """Returns the CommitInfo for a patchet.
+
+    Will return None if commit info wasn't requested. See `include_commit_info`
+    on `gerrit.fetch_patch_sets`.
+
+    See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#commit-info
+    """
+    return self._rev_info.get('commit')
+
   def to_gerrit_change_proto(self):
     """Returns a GerritChange proto constructed from this patchset."""
     return GerritChange(host=self.host, change=self.change_id,
@@ -193,7 +204,7 @@ class GerritApi(recipe_api.RecipeApi):
                                timeout=10 * 60)
 
   def fetch_patch_sets(self, gerrit_changes, include_files=False,
-                       test_output_data=None):
+                       include_commit_info=False, test_output_data=None):
     """Fetch and return PatchSets from Gerrit.
 
     The step fails if any patch set is not found.
@@ -201,6 +212,7 @@ class GerritApi(recipe_api.RecipeApi):
     Args:
       gerrit_changes (List[GerritChange]): Buildbucket GerritChanges to fetch.
       include_files (bool): If True, include information about changed files.
+      incude_commit_info (bool): If True, include information about the commit.
       test_output_data (dict): Test output for gerrit-fetch-changes.
 
     Returns:
@@ -214,7 +226,11 @@ class GerritApi(recipe_api.RecipeApi):
           'patch_set': int(gerrit_change.patchset),
       })
 
-    request = {'changes': requests, 'include_files': include_files}
+    request = {
+        'changes': requests,
+        'include_files': include_files,
+        'include_commit_info': include_commit_info
+    }
     results = self._gerrit_fetch_changes(request,
                                          test_output_data=test_output_data)
 

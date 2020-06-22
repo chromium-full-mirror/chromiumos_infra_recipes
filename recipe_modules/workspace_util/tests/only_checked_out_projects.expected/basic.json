@@ -61,7 +61,7 @@
     ],
     "infra_step": true,
     "name": "failing apply changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123, \"host\": \"\", \"patch_set\": 0}, {\"change_number\": 456, \"host\": \"\", \"patch_set\": 0}, {\"change_number\": 789, \"host\": \"\", \"patch_set\": 0}], \"include_files\": true}",
+    "stdin": "{\"changes\": [{\"change_number\": 123, \"host\": \"\", \"patch_set\": 0}, {\"change_number\": 456, \"host\": \"\", \"patch_set\": 0}, {\"change_number\": 789, \"host\": \"\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_files\": true}",
     "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -249,7 +249,7 @@
     ],
     "infra_step": true,
     "name": "successful apply changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123, \"host\": \"\", \"patch_set\": 0}, {\"change_number\": 456, \"host\": \"\", \"patch_set\": 0}], \"include_files\": true}",
+    "stdin": "{\"changes\": [{\"change_number\": 123, \"host\": \"\", \"patch_set\": 0}, {\"change_number\": 456, \"host\": \"\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_files\": true}",
     "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
