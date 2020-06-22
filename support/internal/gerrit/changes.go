@@ -1,3 +1,7 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package gerrit
 
 import (
@@ -41,6 +45,7 @@ type Changes []*Change
 type Options struct {
 	IncludeDetailedLabels bool `json:"include_detailed_labels"`
 	IncludeFiles          bool `json:"include_files"`
+	IncludeCommitInfo     bool `json:"include_commit_info"`
 }
 
 func changesToQueryParams(changes Changes, options Options) gerrit.ChangeQueryParams {
@@ -60,8 +65,14 @@ func changesToQueryParams(changes Changes, options Options) gerrit.ChangeQueryPa
 	queryOpts := []string{}
 	if allRevisions {
 		queryOpts = append(queryOpts, "ALL_REVISIONS")
+		if options.IncludeCommitInfo {
+			queryOpts = append(queryOpts, "ALL_COMMITS")
+		}
 	} else if currentRevision {
 		queryOpts = append(queryOpts, "CURRENT_REVISION")
+		if options.IncludeCommitInfo {
+			queryOpts = append(queryOpts, "CURRENT_COMMIT")
+		}
 	}
 	if options.IncludeFiles {
 		queryOpts = append(queryOpts, "ALL_FILES")

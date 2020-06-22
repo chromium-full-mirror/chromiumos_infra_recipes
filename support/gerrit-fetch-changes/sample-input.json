@@ -1,6 +1,7 @@
 {
   "include_detailed_labels": true,
   "include_files": true,
+  "include_commit_info": true,
   "changes": [
     {
       "change_number": 1919750,
