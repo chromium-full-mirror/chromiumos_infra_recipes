@@ -2,6 +2,9 @@
 
 cd "$(dirname "$0")"
 
+# Make the bin dir. It's fine if it already exists.
+mkdir -p cipd-bin
+
 # Build all of the binaries and install them to cipd-bin/
 # Set the OS and architecture corresponding to the GCE bots.
 # This allows cross compilation.
