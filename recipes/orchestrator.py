@@ -21,7 +21,6 @@ DEPS = [
     'cros_tags',
     'cros_test_proctor',
     'failures',
-    'gerrit',
     'naming',
     'orch_menu',
     'skylab',
@@ -48,14 +47,13 @@ def RunSteps(api, properties):
 def DoRunSteps(api, properties, config):
   # Update the start ref to indicate we've begun processing the snapshot.
   api.orch_menu.push_manifest_refs(properties.update_manifest_refs.start)
+  api.orch_menu.assert_changes_submittable()
 
   snapshot = api.orch_menu.gitiles_commit
   gerrit_changes = api.orch_menu.gerrit_changes
-  if gerrit_changes:
-    api.gerrit.assert_changes_submittable(gerrit_changes)
-
-    if properties.enable_history and properties.assert_singleton:
-      api.orch_menu.wait_for_inflight_orchestrator()
+  if (gerrit_changes and properties.enable_history and
+      properties.assert_singleton):
+    api.orch_menu.wait_for_inflight_orchestrator()
 
   completed_builds = api.orch_menu.plan_and_run_children(
       enable_history=properties.enable_history,
@@ -238,12 +236,6 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           moblab_vm_tests,
           step_name='run tests.collect tests.collect moblab vm tests'),
-  )
-
-  yield api.test(
-      'fails_if_changes_not_submittable',
-      test_orchestrator(cq=True),
-      api.gerrit.simulated_changes_are_submittable(submittable=False),
   )
 
   yield api.test(

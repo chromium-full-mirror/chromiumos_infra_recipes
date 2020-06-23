@@ -16,6 +16,7 @@ DEPS = [
     'cros_infra_config',
     'cros_source',
     'cros_tags',
+    'gerrit',
     'git',
     'git_footers',
     'gitiles',

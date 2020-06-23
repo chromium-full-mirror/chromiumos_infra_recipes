@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_bisect',
+    'gerrit',
     'orch_menu',
     'test_util',
 ]
@@ -34,6 +35,7 @@ def RunSteps(api, properties):
       api.assertions.assertTrue(properties.expect_missing_config)
       return
     api.assertions.assertIsNotNone(config)
+    api.orch_menu.assert_changes_submittable()
 
     expected_changes = api.buildbucket.build.input.gerrit_changes
     expected_changes.extend([
@@ -112,6 +114,10 @@ def GenTests(api):
       api.properties(
           FullProperties(missing_ok=True, expect_missing_config=True)),
       builder='no-config')
+
+  yield api.orch_menu.test(
+      'fails-if-changes-not-submittable',
+      api.gerrit.simulated_changes_are_submittable(submittable=False), cq=True)
 
   # Joins an inflight orchestrator run.
   yield api.orch_menu.test(

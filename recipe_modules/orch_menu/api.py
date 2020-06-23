@@ -224,6 +224,11 @@ class OrchMenuApi(recipe_api.RecipeApi):
           timeout=60 * 60 * 23,
       )
 
+  def assert_changes_submittable(self):
+    """Verify that any changes are submittable."""
+    if self.gerrit_changes:
+      self.m.gerrit.assert_changes_submittable(self.gerrit_changes)
+
   def plan_and_run_children(self, enable_history=False,
                             stagger_children_seconds=0.0, step_name=None):
     """Plan, schedule, and run child builders.
