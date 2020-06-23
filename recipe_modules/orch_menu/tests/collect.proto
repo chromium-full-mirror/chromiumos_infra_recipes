@@ -1,0 +1,25 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.orch_menu.tests;
+
+import "google/protobuf/wrappers.proto";
+import "chromiumos/builder_config.proto";
+import "chromiumos/common.proto";
+
+message CollectProperties {
+  // The expected answer from should_collect.
+  bool expected_collect = 1;
+
+  // The value in child_specs.
+  chromiumos.BuilderConfig.Orchestrator.ChildSpec child_spec = 2;
+
+  // The value in child_targets.
+  chromiumos.BuilderConfig.Orchestrator.ChildSpec child_target = 3;
+
+  // The Build target.
+  chromiumos.BuildTarget build_target = 4;
+}

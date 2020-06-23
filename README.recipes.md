@@ -92,7 +92,7 @@
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [build_menu:examples/full](#recipes-build_menu_examples_full)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
-  * [build_menu:tests/no-dep-graph](#recipes-build_menu_tests_no-dep-graph)
+  * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph)
   * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan)
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
   * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
@@ -228,6 +228,7 @@
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full)
+  * [orch_menu:tests/collect](#recipes-orch_menu_tests_collect)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [paygen](#recipes-paygen) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
@@ -3528,7 +3529,7 @@ If |ref| evaluates to False, do nothing.
 Args:
   ref (str): Ref to push to (possibly empty) or None
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#335)(self, builder, await_completion=False, properties=None, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#332)(self, builder, await_completion=False, properties=None, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -3558,7 +3559,7 @@ Args:
 Returns:
   BuilderConfig or None, with an active context.
 
-&mdash; **def [should\_collect](/recipe_modules/orch_menu/api.py#308)(self, build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipe_modules/orch_menu/api.py#306)(self, build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -4628,11 +4629,11 @@ Renames a branch using `cros branch rename`.
 [DEPS](/recipe_modules/build_menu/tests/is_staging.py#6): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/build_menu/tests/is_staging.py#22)(api, properties):**
-### *recipes* / [build\_menu:tests/no-dep-graph](/recipe_modules/build_menu/tests/no-dep-graph.py)
+### *recipes* / [build\_menu:tests/no\_dep\_graph](/recipe_modules/build_menu/tests/no_dep_graph.py)
 
-[DEPS](/recipe_modules/build_menu/tests/no-dep-graph.py#6): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/build_menu/tests/no_dep_graph.py#6): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/no-dep-graph.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/no_dep_graph.py#15)(api):**
 ### *recipes* / [build\_plan:examples/bisect\_build\_plan](/recipe_modules/build_plan/examples/bisect_build_plan.py)
 
 [DEPS](/recipe_modules/build_plan/examples/bisect_build_plan.py#10): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -5402,6 +5403,11 @@ Runs the presubmit for a project with checkout per local manifest.
 [DEPS](/recipe_modules/orch_menu/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#28)(api, properties):**
+### *recipes* / [orch\_menu:tests/collect](/recipe_modules/orch_menu/tests/collect.py)
+
+[DEPS](/recipe_modules/orch_menu/tests/collect.py#6): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/collect.py#20)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#11): [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

@@ -283,9 +283,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
             self.m.time.sleep(stagger_children_seconds)
 
     child_specs_dict = {cs.name: cs for cs in child_specs}
-    child_targets_dict = {
-        cs.name[:cs.name.rfind('-')]: cs for cs in child_specs
-    }
+    child_targets_dict = {cs.name.rsplit('-', 1)[0]: cs for cs in child_specs}
     collect_builds = [
         b for b in existing_builds
         if self.should_collect(b, child_specs_dict, child_targets_dict)
@@ -298,7 +296,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           [b.id for b in collect_builds], timeout=60 * 60 * 36,
           step_name='collect', url_title_fn=self.m.naming.get_build_title,
           fields=fields).values()
-    except self.m.step.StepFailure:  #pragma: no cover
+    except self.m.step.StepFailure:
       completed_builds += self.m.buildbucket.get_multi(
           [b.id for b in collect_builds], step_name='get',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()
@@ -319,14 +317,13 @@ class OrchMenuApi(recipe_api.RecipeApi):
     """
     builder_name = build.builder.builder
     child_spec = child_specs_dict.get(builder_name)
-    if not child_spec:  #pragma: no cover
+    if not child_spec:
       # Missed lookup, the existing build name was not a name in child_specs.
       # The usual case would be existing build has a *-snapshot name but the
       # orchestrator's child has a *-postsubmit name.
       # TODO(crbug/991996): Refactor: use something other than string manip.
-      child_spec = child_targets_dict.get(
-          builder_name[:builder_name.rfind('-')])
-    if not child_spec:  #pragma: no cover
+      child_spec = child_targets_dict.get(builder_name.rsplit('-', 1)[0])
+    if not child_spec:
       # Missed lookup even after fallback for *-snapshot.
       return True
     return (child_spec.collect_handling !=
@@ -380,7 +377,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
                                                       step_name='collect',
                                                       url_title_fn=title_fn,
                                                       fields=fields).values()
-        except self.m.step.StepFailure:  #pragma: no cover
+        except self.m.step.StepFailure:
           [build] = self.m.buildbucket.get_multi([build.id], step_name='get',
                                                  url_title_fn=title_fn,
                                                  fields=fields).values()

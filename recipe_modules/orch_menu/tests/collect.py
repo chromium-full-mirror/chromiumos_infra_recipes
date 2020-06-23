@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
+    'recipe_engine/properties',
+    'orch_menu',
+    'test_util',
+]
+
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipe_modules.chromeos.orch_menu.tests.collect import CollectProperties
+
+PROPERTIES = CollectProperties
+
+
+def RunSteps(api, properties):
+  build = api.buildbucket.build
+  child_specs_dict = {}
+  child_targets_dict = {}
+  if properties.child_spec.name:
+    child_specs_dict[build.builder.builder] = properties.child_spec
+  if properties.child_target.name:
+    child_targets_dict[properties.build_target.name] = properties.child_target
+
+  api.assertions.assertEqual(
+      properties.expected_collect,
+      api.orch_menu.should_collect(build, child_specs_dict, child_targets_dict))
+
+
+def GenTests(api):
+
+  ChildSpec = BuilderConfig.Orchestrator.ChildSpec
+  CollectHandling = ChildSpec.CollectHandling
+  build_target = 'amd64-generic'
+  builder = '%s-postsubmit' % build_target
+
+  # Iterate through all of the possible cases for child_specs_dict and
+  # child_targets_dict, and verify that we get the right answer each time.
+  for spec_name, spec_value in CollectHandling.items():
+    for target_name, target_value in CollectHandling.items():
+      properties = CollectProperties(
+          expected_collect=(spec_value or target_value) != ChildSpec.NO_COLLECT)
+      if spec_value:
+        properties.child_spec.name = builder
+        properties.child_spec.collect_handling = spec_value
+      if target_value:
+        properties.child_target.name = build_target
+        properties.child_target.collect_handling = target_value
+      yield api.test(
+          '%s-%s' % (spec_name, target_name),
+          api.test_util.test_child_build(build_target, builder=builder).build,
+          api.properties(properties))

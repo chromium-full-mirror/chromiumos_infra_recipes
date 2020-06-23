@@ -126,6 +126,13 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
   )
 
+  # Collect times out
+  yield api.orch_menu.test(
+      'collect-children-timeout',
+      api.step_data('run builds.collect.wait', retcode=1),
+      api.buildbucket.simulated_get_multi(builds, 'run builds.get'),
+  )
+
   # Bisection
   yield api.orch_menu.test(
       'with-test-bisection',
@@ -153,4 +160,18 @@ def GenTests(api):
           'run follow on orchestrator.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           successful_orch, 'run follow on orchestrator.collect'),
+      bucket='toolchain', builder='orderfile-generate-orchestrator')
+
+  # Follow-on orchestrator times out.
+  yield api.orch_menu.test(
+      'with-follow-on-timeout',
+      api.properties(
+          expected_completed_builds=list_to_json(builds + successful_orch)),
+      api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
+      api.buildbucket.simulated_schedule_output(
+          BatchResponse(responses=[dict(schedule_build=running_orch[0])]),
+          'run follow on orchestrator.buildbucket.schedule'),
+      api.step_data('run follow on orchestrator.collect.wait', retcode=1),
+      api.buildbucket.simulated_get_multi(successful_orch,
+                                          'run follow on orchestrator.get'),
       bucket='toolchain', builder='orderfile-generate-orchestrator')
