@@ -5,7 +5,7 @@
 
 """API providing a menu for orchestrator steps"""
 
-import collections
+from collections import namedtuple
 import contextlib
 
 from google.protobuf.json_format import MessageToDict
@@ -18,8 +18,58 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
-_manifest_info = collections.namedtuple(
-    '_manifest_info', ['name', 'gitiles_commit', 'path', 'url'])
+_manifest_info = namedtuple('_manifest_info',
+                            ['name', 'gitiles_commit', 'path', 'url'])
+
+
+class BuildsStatus(object):
+  """The running status of the builds.
+
+  Properties:
+    completed_builds (list[Build]): The completed builds.
+    testable_builds (list[Build]): The list of testable builds.
+    failures (list[Failure]): The list of failures.
+    fatal_failures (list[Failure]): The list of fatal failures.
+  """
+
+  def __init__(self, completed, failures, configs):
+    """
+
+    Args:
+      completed (list[Build]): The builds.
+      failures (list[Failure]): The failures
+      configs (dict{name: BuilderConfig}): Builder config dictionary.
+    """
+    self.completed_builds = completed
+    self.failures = failures
+    self._configs = configs
+
+  @property
+  def testable_builds(self):
+    return [b for b in self.completed_builds if self._is_testable(b)]
+
+  @property
+  def fatal_failures(self):
+    return [f for f in self.failures if f.fatal]
+
+  def update(self, completed, failures, configs=None):
+    """Update the status.
+
+    Add the new builds and failures to our attributes.
+
+    Args:
+      completed (list[Build]): The builds.
+      failures (list[Failure]): The failures
+      configs (dict{name: BuilderConfig}): Builder config dictionary.
+    """
+    self._configs = configs or self._configs
+    self.completed_builds += completed
+    self.failures += failures
+
+  def _is_testable(self, build):
+    """Whether the build is testable."""
+    return (build.status == common_pb2.SUCCESS and
+            self._configs.get(build.builder.builder))
 
 
 class OrchMenuApi(recipe_api.RecipeApi):
@@ -55,6 +105,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     properties.assert_singleton = (
         properties.assert_singleton or glob_props.assert_singleton)
     self._properties = properties
+    self._builds_status = BuildsStatus([], [], {})
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
@@ -72,15 +123,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
   def gerrit_changes(self):
     return self.m.cros_infra_config.gerrit_changes
 
-  # TODO(crbug/1093916): drop this when the property is fully migrated.
   @property
-  def enable_history(self):
-    return self._properties.enable_history
-
-  # TODO(crbug/1093916): drop this when the property is fully migrated.
-  @property
-  def update_manifest_refs(self):
-    return self._properties.update_manifest_refs
+  def builds_status(self):
+    return self._builds_status
 
   def get_manifest_info(self, external=False):
     """Return information about a manifest repo.
@@ -137,43 +182,15 @@ class OrchMenuApi(recipe_api.RecipeApi):
         presentation.links['manifest snapshot revision'] = (
             self.m.gitiles.file_url(self.gitiles_commit, 'snapshot.xml'))
 
-        # If updating manifests, clone the internal manifest repo.
-        if self._has_manifest_refs:
-          self._internal_repo_path = self.clone_repo('internal manifest',
-                                                     self.gitiles_commit)
-
-          # Read the Cr-External-Snapshot footer to get ref of external snapshot
-          # that corresponds with the internal snapshot.
-          test_data = self.m.git_footers.test_api.step_test_data_factory(
-              test_footers or 'external-manifest-SHA')
-          with self.m.context(cwd=self._internal_repo_path):
-            footer_values = self.m.git_footers.from_ref(
-                self.gitiles_commit.id, key='Cr-External-Snapshot',
-                step_test_data=test_data)
-
-            # Make sure we got exactly one snapshot ref.
-            if not footer_values or len(footer_values) != 1:
-              raise self.m.step.StepFailure(
-                  'expected exactly one Cr-External-Snapshot footer')
-            extern_snapshot_id = footer_values[0]
-
-          self._external_gitiles_commit = common_pb2.GitilesCommit(
-              host=self.m.cros_source.EXTERNAL_HOST,
-              project=self.m.cros_source.EXTERNAL_PROJECT,
-              ref=self.gitiles_commit.ref, id=extern_snapshot_id)
-
-          # clone the external manifest repo
-          self._external_repo_path = self.clone_repo(
-              'external manifest', self._external_gitiles_commit)
+        self._sync_manifest_repos(test_footers)
 
         if not config and not missing_ok:
           raise self.m.step.StepFailure('Missing configuration for {}'.format(
               self.m.buildbucket.builder_name))
 
       if config:
-        if self._has_manifest_refs:
-          # Update the start ref to indicate we've begun processing the snapshot.
-          self.push_manifest_refs(self._properties.update_manifest_refs.start)
+        # Update the start ref to indicate we've begun processing the snapshot.
+        self.push_manifest_refs(self._properties.update_manifest_refs.start)
 
         if self.gerrit_changes:
           # Any changes we have must be submittable.
@@ -184,6 +201,19 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
       # Yield while inside of the bot_cost.cq_run_cost_context.
       yield config
+
+  def create_recipe_result(self):
+    """Create the correct return value for RunSteps.
+
+    Returns:
+      (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
+    """
+    # Recheck the BuilderConfigs at HEAD, one last time, to see if any
+    # failed builders are now noncritical.
+    result = self._non_critical_build_check('clean up orchestrator',
+                                            self.builds_status.completed_builds,
+                                            self.builds_status.failures)
+    return self.m.failures.aggregate_failures(result.failures)
 
   def _validate_properties(self):
     """Validate the orchestrator properties.
@@ -198,6 +228,44 @@ class OrchMenuApi(recipe_api.RecipeApi):
         raise self.m.step.StepFailure('%s ref %s is missing refs/heads/' %
                                       (ref.name, value))
       self._has_manifest_refs = True
+
+  def _sync_manifest_repos(self, test_footers):
+    """Sync the manifest repos.
+
+    Args:
+      test_footers (str): test Cr-External-Snapshot footer data(values separated
+          by newlines), or None.
+    """
+    # If updating manifests, clone the internal manifest repo.
+    if not self._has_manifest_refs:
+      return
+
+    self._internal_repo_path = self.clone_repo('internal manifest',
+                                               self.gitiles_commit)
+
+    # Read the Cr-External-Snapshot footer to get ref of external snapshot
+    # that corresponds with the internal snapshot.
+    test_data = self.m.git_footers.test_api.step_test_data_factory(
+        test_footers or 'external-manifest-SHA')
+    with self.m.context(cwd=self._internal_repo_path):
+      footer_values = self.m.git_footers.from_ref(self.gitiles_commit.id,
+                                                  key='Cr-External-Snapshot',
+                                                  step_test_data=test_data)
+
+      # Make sure we got exactly one snapshot ref.
+      if not footer_values or len(footer_values) != 1:
+        raise self.m.step.StepFailure(
+            'expected exactly one Cr-External-Snapshot footer')
+      extern_snapshot_id = footer_values[0]
+
+    self._external_gitiles_commit = common_pb2.GitilesCommit(
+        host=self.m.cros_source.EXTERNAL_HOST,
+        project=self.m.cros_source.EXTERNAL_PROJECT,
+        ref=self.gitiles_commit.ref, id=extern_snapshot_id)
+
+    # clone the external manifest repo
+    self._external_repo_path = self.clone_repo('external manifest',
+                                               self._external_gitiles_commit)
 
   def clone_repo(self, name, commit):
     """Clone a repo into a temporary directory.
@@ -232,6 +300,28 @@ class OrchMenuApi(recipe_api.RecipeApi):
             self.m.context(cwd=manifest.path):
           self.m.git.push(manifest.url,
                           "%s:%s" % (manifest.gitiles_commit.id, ref))
+
+  def _non_critical_build_check(self, step_name, builds, failures):
+    """Update failures based on the current criticality of the builders.
+
+    Args:
+      step_name (str): the name for the step.
+      builds (list[Build]): Builds to review.
+      failures (list[Failure]): Failures to review.
+
+    Returns:
+      namedtuple with:
+        configs (dict{name:BuilderConfig}): child configs
+        failures (list[Failure]): updated failures.
+    """
+    _non_crit_ret = namedtuple('_non_crit_ret', ['configs', 'failures'])
+    with self.m.step.nest(step_name) as presentation:
+      self.m.cros_infra_config.force_reload()
+      configs = self.m.cros_infra_config.safe_get_builder_configs(
+          [b.builder.builder for b in builds])
+      failures = self.m.failures.update_non_critical_failures(
+          presentation, failures, configs)
+      return _non_crit_ret(configs, failures)
 
   def wait_for_inflight_orchestrator(self):
     """If there is an inflight orchestrator, wait for it."""
@@ -277,24 +367,63 @@ class OrchMenuApi(recipe_api.RecipeApi):
     if self.gerrit_changes:
       self.m.gerrit.assert_changes_submittable(self.gerrit_changes)
 
-  def plan_and_run_children(self, step_name=None):
+  def plan_and_run_children(self, run_step_name=None, results_step_name=None,
+                            check_critical_step_name=None):
     """Plan, schedule, and run child builders.
 
     Args:
-      step_name (str): Name for step, or None.
+      run_step_name (str): Name for "run builds" step, or None.
+      results_step_name (str): Name for "check build results" step, or None.
+      check_critical_step_name (str): Name for "non-critical build check" step,
+        or None.
 
     Returns:
-      (list[Build]): completed builds.
+      (BuildsStatus): The current status of the builds.
     """
-    with self.m.step.nest(step_name or 'run builds') as presentation:
-      child_builders = self.m.cros_bisect.get_test_child_builders()
-      child_specs = [
-          BuilderConfig.Orchestrator.ChildSpec(
-              name=cb,
-              collect_handling=BuilderConfig.Orchestrator.ChildSpec.COLLECT,
-          ) for cb in child_builders
-      ] if child_builders else self.config.orchestrator.child_specs
-      return self.filter_schedule_wait_builds(presentation, child_specs)
+    with self.m.step.nest(run_step_name or 'run builds') as pres:
+      completed_builds = self.filter_schedule_wait_builds(
+          pres, self._bisect_builder_child_specs())
+
+    with self.m.step.nest(results_step_name or 'check build results') as pres:
+      relevant_builds = []
+      for build in completed_builds:
+        if build.status in (common_pb2.STARTED, common_pb2.SCHEDULED):
+          pres.text = 'some builds are running/pending'
+        # Assume relevant if the child doesn't have the relevant_build prop.
+        if ('relevant_build' not in build.output.properties or
+            build.output.properties['relevant_build']):
+          relevant_builds.append(build.builder.builder)
+      pres.logs['relevant_builds'] = sorted(relevant_builds or
+                                            ['no relevant builds'])
+      failures = self.m.failures.get_build_failures(completed_builds)
+
+    # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
+    # non-critical.
+    check_result = self._non_critical_build_check(
+        check_critical_step_name or 'non-critical build check',
+        completed_builds, failures)
+
+    self._builds_status.update(completed_builds, check_result.failures,
+                               check_result.configs)
+    if not self._builds_status.fatal_failures:
+      # If we've made it this far, the child builders were successful
+      # and we can update the build success manifest ref if it is specified.
+      self.push_manifest_refs(self._properties.update_manifest_refs.build)
+
+    return self._builds_status
+
+  def _bisect_builder_child_specs(self):
+    """Get the child_spec list from cros_bisect.
+
+    Returns:
+      (list[BuilderConfig.Orchestrator.ChildSpec]) The list of child_specs.
+    """
+    return [
+        BuilderConfig.Orchestrator.ChildSpec(
+            name=cb,
+            collect_handling=BuilderConfig.Orchestrator.ChildSpec.COLLECT)
+        for cb in self.m.cros_bisect.get_test_child_builders()
+    ] or self.config.orchestrator.child_specs
 
   def filter_schedule_wait_builds(self, parent_step, child_specs):
     """Find the builds we need, filter those already started, run, and collect.
@@ -305,7 +434,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
       parent_step (Step): the calling step, to be used for presentation purposes.
       child_specs (list(ChildSpec)): A list of child specs.
 
-    Returns: A list of build_pb2.Build objects with build results.
+    Returns:
+      (list[Build]) List of build results.
     """
     completed_builds, existing_builds, new_build_requests = (
         self.m.build_plan.get_build_plan(
@@ -321,7 +451,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       with self.m.step.nest('schedule new builds') as pres:
         with self.m.buildbucket.with_host(self.m.buildbucket.HOST_PROD):
           for new_build_request in new_build_requests:
-            # request new builds and add to total existing.
+            # Request new builds and add to total existing.
             existing_builds += self.m.buildbucket.schedule(
                 [new_build_request], url_title_fn=self.m.naming.get_build_title)
             if self._properties.stagger_children_seconds:
@@ -334,16 +464,16 @@ class OrchMenuApi(recipe_api.RecipeApi):
         if self.should_collect(b, child_specs_dict, child_targets_dict)
     ]
 
-    # collect all existing builds, add to completed builds
+    # Collect all existing builds, add to completed builds
     fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
+    build_ids = [b.id for b in collect_builds]
     try:
       completed_builds += self.m.buildbucket.collect_builds(
-          [b.id for b in collect_builds], timeout=60 * 60 * 36,
-          step_name='collect', url_title_fn=self.m.naming.get_build_title,
-          fields=fields).values()
+          build_ids, timeout=60 * 60 * 36, step_name='collect',
+          url_title_fn=self.m.naming.get_build_title, fields=fields).values()
     except self.m.step.StepFailure:
       completed_builds += self.m.buildbucket.get_multi(
-          [b.id for b in collect_builds], step_name='get',
+          build_ids, step_name='get',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()
 
     return completed_builds
@@ -352,13 +482,14 @@ class OrchMenuApi(recipe_api.RecipeApi):
     """Returns whether the orchestrator should collect the build.
 
     Args:
-      build (build_pb2.Build): the build to check whether to collect.
+      build (Build): the build to check whether to collect.
       child_specs_dict (dict): mapping of builder name to ChildSpec.
-      child_targets_dict (dict): fuzzy mapping of builder target to to ChildSpec.
+      child_targets_dict (dict): fuzzy mapping of build_target to ChildSpec.
         Fuzzy in the sense that it just chops off from the last '-' to the end
         of the string. Intended to pick up the *-snapshot cases. See more below.
 
-    Returns: A bool whether to collect the build.
+    Returns:
+      (bool) Whether to collect the build.
     """
     builder_name = build.builder.builder
     child_spec = child_specs_dict.get(builder_name)
@@ -375,7 +506,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
             BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT)
 
   def schedule_wait_build(self, builder, await_completion=False,
-                          properties=None, step_name=None, timeout_sec=None):
+                          properties=None, check_failures=False, step_name=None,
+                          timeout_sec=None):
     """Schedule a builder, and optionally await completion.
 
     Args:
@@ -383,6 +515,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
         bucket/builder, or builder.
       await_completion (bool): Wether to await completion.
       properties (dict): Dictionary of input properties for the builder.
+      check_failures (bool): Whether or not failures accumulate in
+        builds_status.  This is only used if await_completion is True.
       step_name (str): Name for the step, or None.
       timeout_sec (int): Timeout for the builder, in seconds.
 
@@ -398,9 +532,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
       builder = parts[-1]
 
       # The builder may or may not be in the same bucket as us, and the
-      # gitiles_commit and gerrit_changes that we are using may have derived from
-      # our builder config, rather than buildbucket properties.  Pass the actual
-      # answers to schedule_request.
+      # gitiles_commit and gerrit_changes that we are using may have derived
+      # from our builder config, rather than buildbucket properties.  Pass the
+      # actual answers to schedule_request.
       props = self.m.cros_infra_config.props_for_child_build
       props.update(properties or {})
       tags = self.m.cros_tags.make_schedule_tags(self.gitiles_commit)
@@ -417,14 +551,45 @@ class OrchMenuApi(recipe_api.RecipeApi):
       if await_completion:
         fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
         try:
-          [build] = self.m.buildbucket.collect_builds([build.id],
-                                                      timeout=timeout_sec,
-                                                      step_name='collect',
-                                                      url_title_fn=title_fn,
-                                                      fields=fields).values()
+          builds = self.m.buildbucket.collect_builds([build.id],
+                                                     timeout=timeout_sec,
+                                                     step_name='collect',
+                                                     url_title_fn=title_fn,
+                                                     fields=fields).values()
         except self.m.step.StepFailure:
-          [build] = self.m.buildbucket.get_multi([build.id], step_name='get',
-                                                 url_title_fn=title_fn,
-                                                 fields=fields).values()
+          builds = self.m.buildbucket.get_multi([build.id], step_name='get',
+                                                url_title_fn=title_fn,
+                                                fields=fields).values()
 
-      return build
+        failures = (
+            self.m.failures.get_build_failures(builds)
+            if check_failures else [])
+        self._builds_status.update(builds, failures)
+      return builds[0]
+
+  def plan_and_run_tests(self, testable_builds=None):
+    """Plan, schedule, and run tests.
+
+    Run tests on the testable_builds identified by plan_and_run_children.
+
+    Args:
+      testable_builds (list[Build]): The list of builds to consider,
+        or None to use the current results.
+
+    Returns:
+      (BuildsStatus): The current status of the builds.
+    """
+    # Is the build tagged as overriding the PCQ quota scheduler account?
+    if self.m.cros_tags.has_entry('cq_cl_tag',
+                                  'pupr:chromeos-base/chromeos-chrome',
+                                  self.m.buildbucket.build.tags):
+      self.m.skylab.set_qs_account('pupr')
+
+    test_failures = self.m.cros_test_proctor.run_proctor(
+        testable_builds or self._builds_status.testable_builds,
+        self.gitiles_commit, self.gerrit_changes,
+        self._properties.enable_history)
+    self._builds_status.update([], test_failures)
+
+    self.push_manifest_refs(self._properties.update_manifest_refs.test)
+    return self._builds_status

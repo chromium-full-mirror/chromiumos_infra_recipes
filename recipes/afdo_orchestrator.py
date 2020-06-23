@@ -12,15 +12,6 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
-    'recipe_engine/step',
-    'recipe_engine/time',
-    'build_plan',
-    'cros_history',
-    'cros_infra_config',
-    'cros_tags',
-    'cros_test_proctor',
-    'failures',
-    'naming',
     'orch_menu',
     'skylab',
     'test_util',
@@ -28,14 +19,11 @@ DEPS = [
 
 from google.protobuf import json_format
 
-from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ArtifactsByService
-from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
-from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 PROPERTIES = OrchestratorProperties
 
@@ -49,103 +37,53 @@ def RunSteps(api, properties):
   with api.orch_menu.setup_orchestrator(missing_ok=True) as config:
     if config:
       DoRunSteps(api, properties, config)
+    return api.orch_menu.create_recipe_result()
 
 
 def DoRunSteps(api, properties, config):
   snapshot = api.orch_menu.gitiles_commit
   gerrit_changes = api.orch_menu.gerrit_changes
 
-  completed_builds = api.orch_menu.plan_and_run_children()
-
-  # From here all builds should have been collected: move to checking results.
-  with api.step.nest('check build results') as presentation:
-    for build in completed_builds:
-      if build.status in (common_pb2.STARTED, common_pb2.SCHEDULED):
-        presentation.text = 'some builds are running/pending'
-    relevant_builds = []
-    for build in completed_builds:
-      # Assume relevant if the child doesn't have the relevant_build prop.
-      if ('relevant_build' not in build.output.properties or
-          build.output.properties['relevant_build']):
-        relevant_builds.append(build.builder.builder)
-    presentation.logs['relevant_builds'] = \
-        sorted(relevant_builds or ['no relevant builds'])
-    failures = api.failures.get_build_failures(completed_builds)
-
-  # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
-  # non-critical. Snapshot builds are always scheduled without the critical bit
-  # set to `NO` so this is also the only place that we will discover that.
-  with api.step.nest('non-critical build check') as presentation:
-    api.cros_infra_config.force_reload()
-    child_builder_configs = api.cros_infra_config.safe_get_builder_configs(
-        [b.builder.builder for b in completed_builds])
-    failures = api.failures.update_non_critical_failures(
-        presentation, failures, child_builder_configs)
-  fatal_failures = [f for f in failures if f.fatal == True]
+  api.orch_menu.plan_and_run_children()
 
   # If this is a dry run, check that the builds passed and quit.
   # TODO(crbug/1071440): Because the HW Tests have production side effects, we
   # need to not run them for dryruns at this time.
   if api.cq.state == api.cq.DRY:
-    return api.failures.aggregate_failures(failures)
+    return
 
-  # Otherwise, run tests for builds that weren't build failures and that
-  # still exist as builders.
-  need_tests_builds = [
-      b for b in completed_builds if b.status == common_pb2.SUCCESS and
-      child_builder_configs.get(b.builder.builder)
-  ]
+  # Run any HW tests.
+  builds_status = api.orch_menu.plan_and_run_tests()
 
-  test_failures = api.cros_test_proctor.run_proctor(need_tests_builds, snapshot,
-                                                    gerrit_changes, True)
-  failures.extend(test_failures)
-
-  # Create InputArtifactInfo for the CHROME_DEBUG_BINARY from the creating
-  # builder.
-  art_property = lambda b: b.output.properties['artifacts']
-  locs = list(
-      set('{}/{}'.format(
-          art_property(b)['gs_bucket'],
-          art_property(b)['gs_path'])
-          for b in need_tests_builds
-          if art_property(b)['gs_bucket']))
-  input_artifacts = [
-      dict(artifact_types=[ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
-           gs_locations=locs)
-  ]
-
-  # Schedule and wait for any process_child builder.
-  if not fatal_failures and properties.process_child:
-    processed = [
-        api.orch_menu.schedule_wait_build(
-            properties.process_child, await_completion=True,
-            properties=dict(input_artifacts=input_artifacts),
-            step_name='run {}'.format(properties.process_child),
-            timeout_sec=4 * 60 * 60)
+  if not builds_status.fatal_failures and properties.process_child:
+    # Create InputArtifactInfo for the CHROME_DEBUG_BINARY from the creating
+    # builder.
+    art_property = lambda b: b.output.properties['artifacts']
+    locs = list(
+        set('{}/{}'.format(
+            art_property(b)['gs_bucket'],
+            art_property(b)['gs_path'])
+            for b in builds_status.testable_builds
+            if art_property(b)['gs_bucket']))
+    input_artifacts = [
+        dict(artifact_types=[ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
+             gs_locations=locs)
     ]
 
-    completed_builds.extend(processed)
-    # Update the failure variables.
-    process_failures = api.failures.get_build_failures(processed)
-    failures.extend(process_failures)
-    fatal_failures.extend([f for f in process_failures if f.fatal == True])
+    # Schedule and wait for any process_child builder.
+    api.orch_menu.schedule_wait_build(
+        properties.process_child,
+        await_completion=True,
+        properties=dict(input_artifacts=input_artifacts),
+        check_failures=True,
+        step_name='run {}'.format(properties.process_child),
+        timeout_sec=4 * 60 * 60,
+    )
 
   # Launch any specified follow on orchestrator.
-  if not fatal_failures and config.orchestrator.follow_on_orchestrator.name:
-    completed_builds.append(
-        api.orch_menu.schedule_wait_build(
-            config.orchestrator.follow_on_orchestrator.name,
-            config.orchestrator.follow_on_orchestrator.await_completion))
-
-  with api.step.nest('clean up orchestrator') as presentation:
-    # Recheck the BuilderConfigs at HEAD, one last time, to see if any failed
-    # builders are now noncritical.
-    api.cros_infra_config.force_reload()
-    child_builder_configs = api.cros_infra_config.safe_get_builder_configs(
-        [b.builder.builder for b in completed_builds])
-    failures = api.failures.update_non_critical_failures(
-        presentation, failures, child_builder_configs)
-  return api.failures.aggregate_failures(failures)
+  follower = config.orchestrator.follow_on_orchestrator
+  if not api.orch_menu.builds_status.fatal_failures and follower.name:
+    api.orch_menu.schedule_wait_build(follower.name, follower.await_completion)
 
 
 def GenTests(api):

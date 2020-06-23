@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.orch_menu.examples;
 
 import "go.chromium.org/luci/buildbucket/proto/build.proto";
+import "recipe_engine/result.proto";
 
 message FullProperties {
   // Value for setup_orchestrator(missing_ok) parameter.
@@ -24,4 +25,7 @@ message FullProperties {
 
   // The expected value for enable_history.
   bool expected_enable_history = 5;
+
+  // The expected build result.
+  recipe_engine.RawResult expected_recipe_result = 6;
 }

@@ -1077,6 +1077,36 @@
   },
   {
     "cmd": [],
+    "name": "clean up orchestrator"
+  },
+  {
+    "cmd": [],
+    "name": "clean up orchestrator.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "clean up orchestrator.read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set cq run cost",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@cq_run_cost@0.0007@@@"

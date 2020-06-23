@@ -16,11 +16,14 @@ DEPS = [
     'cros_infra_config',
     'cros_source',
     'cros_tags',
+    'cros_test_proctor',
+    'failures',
     'gerrit',
     'git',
     'git_footers',
     'gitiles',
     'naming',
+    'skylab',
     'test_util',
 ]
 
