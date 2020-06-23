@@ -62,6 +62,7 @@
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
   * [swarming_cli](#recipe_modules-swarming_cli)
   * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
+  * [tast_exec](#recipe_modules-tast_exec)
   * [tast_results](#recipe_modules-tast_results)
   * [test_util](#recipe_modules-test_util) &mdash; API to simpify testing Chrome OS recipes.
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
@@ -257,6 +258,7 @@
   * [sysroot_util:examples/full](#recipes-sysroot_util_examples_full)
   * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build)
   * [sysroot_util:tests/update_artifact_for_build](#recipes-sysroot_util_tests_update_artifact_for_build)
+  * [tast_exec:examples/run](#recipes-tast_exec_examples_run)
   * [tast_results:examples/archive_dir](#recipes-tast_results_examples_archive_dir)
   * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult)
   * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results)
@@ -4132,6 +4134,28 @@ Args:
 
 Returns:
   (PrepareForBuildResponse): Whether the build is relevant.
+### *recipe_modules* / [tast\_exec](/recipe_modules/tast_exec)
+
+[DEPS](/recipe_modules/tast_exec/__init__.py#6): [easy](#recipe_modules-easy), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to execute tast commands.
+
+&mdash; **def [run](/recipe_modules/tast_exec/api.py#18)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path):**
+
+Run tast tests.
+
+Args:
+    suite_name(str): Name of the suite to run.
+    expressions(list(str)): Expressions to test.
+    qcow_image_path(Path): Path to image in qcow format.
+    test_artifacts_dir(Path): Dir containing test artifacts.
+    private_key_path(Path): Path to private key.
+
+Returns:
+    A tuple of list(Failures) and a bool indicating whether
+    the results were empty.
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
 [DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5561,6 +5585,11 @@ json files.
 [DEPS](/recipe_modules/sysroot_util/tests/update_artifact_for_build.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/sysroot_util/tests/update_artifact_for_build.py#24)(api, properties):**
+### *recipes* / [tast\_exec:examples/run](/recipe_modules/tast_exec/examples/run.py)
+
+[DEPS](/recipe_modules/tast_exec/examples/run.py#7): [tast\_exec](#recipe_modules-tast_exec), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+&mdash; **def [RunSteps](/recipe_modules/tast_exec/examples/run.py#13)(api):**
 ### *recipes* / [tast\_results:examples/archive\_dir](/recipe_modules/tast_results/examples/archive_dir.py)
 
 [DEPS](/recipe_modules/tast_results/examples/archive_dir.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -5583,13 +5612,13 @@ json files.
 &mdash; **def [RunSteps](/recipe_modules/tast_results/examples/record_logs.py#12)(api):**
 ### *recipes* / [tast\_vm](/recipes/tast_vm.py)
 
-[DEPS](/recipes/tast_vm.py#19): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/tast_vm.py#15): [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 An experimental recipe for running Tast VM tests without Chroot and
 ChromeOS checkout, resulting in much faster tests. The tests will
 use tast executable from build_artifacts.
 
-&mdash; **def [RunSteps](/recipes/tast_vm.py#41)(api, properties):**
+&mdash; **def [RunSteps](/recipes/tast_vm.py#36)(api, properties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)
