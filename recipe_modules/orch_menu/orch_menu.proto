@@ -1,0 +1,29 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.orch_menu;
+
+message OrchMenuProperties {
+  // Specifies which refs in the manifest repository should point to the
+  // snapshot ref used by the orchestrator, and when.
+  message UpdateManifestRefs {
+    // The start ref is updated before child builds are launched.
+    // An example start ref is 'postsubmit', which should update
+    // right when the orchestrator launches.
+    string start = 1;
+
+    // The "build" ref is updated only if all child builds (but not necessarily
+    // tests) succeed.
+    string build = 2;
+
+    // The "test" ref is updated only if ALL tests succeed.
+    string test = 3;
+  }
+  UpdateManifestRefs update_manifest_refs = 1;
+
+  // Time delay between each child build.
+  float stagger_children_seconds = 2;
+}

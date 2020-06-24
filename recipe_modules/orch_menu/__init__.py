@@ -23,3 +23,13 @@ DEPS = [
     'naming',
     'test_util',
 ]
+
+from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
+
+PROPERTIES = OrchMenuProperties
+
+# TODO(crbug/1093916): Migrate the common orchestrator properties to the
+# module, and stop looking at the global properties.
+from PB.recipes.chromeos.orchestrator import OrchestratorProperties
+
+GLOBAL_PROPERTIES = OrchestratorProperties

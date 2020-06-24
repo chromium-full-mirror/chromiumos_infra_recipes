@@ -8,13 +8,15 @@
 import collections
 import contextlib
 
-from google.protobuf import json_format
+from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import ParseDict
 
 from recipe_engine import recipe_api
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
+from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
 _manifest_info = collections.namedtuple(
     '_manifest_info', ['name', 'gitiles_commit', 'path', 'url'])
@@ -29,17 +31,30 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
   # TODO(crbug/1053703): Make the above statement true.
 
-  def initialize(self):
-    self._orchestrator_properties = json_format.ParseDict(
-        self.m.buildbucket.build.input.properties, OrchestratorProperties(),
-        ignore_unknown_fields=True)
+  # TODO(crbug/1098798, crbug/1093916): Migrate the common orchestrator
+  # properties to the module, and stop looking at the global properties.
+  def __init__(self, properties, glob_props, *args, **kwargs):
+    super(OrchMenuApi, self).__init__(*args, **kwargs)
     # TODO(crbug/1098798): Fix the logic for manifest refs.
     self._has_manifest_refs = True
     self._internal_repo_path = None
     self._external_repo_path = None
     self._external_gitiles_commit = None
+    # Our properties: OrchMenuProperties ($chromeos/orch_menu).
+    # Merge in the global properties.
+    if (not MessageToDict(properties.update_manifest_refs) and
+        glob_props.HasField('update_manifest_refs')):
+      # No manifest refs were given in the module, but the recipe has them.
+      properties.update_manifest_refs.start = glob_props.update_manifest_refs.start
+      properties.update_manifest_refs.build = glob_props.update_manifest_refs.build
+      properties.update_manifest_refs.test = glob_props.update_manifest_refs.test
+    properties.stagger_children_seconds = (
+        properties.stagger_children_seconds or
+        glob_props.stagger_children_seconds)
+    self._properties = properties
 
-    # Set the buildbucket host for our children to use.
+  def initialize(self):
+    # Set the default buildbucket host for buildbucket calls.
     self.m.buildbucket.host = self.m.buildbucket.HOST_PROD_BEEFY
 
   @property
@@ -91,10 +106,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
     Returns:
       BuilderConfig or None, with an active context.
     """
-    properties = self._orchestrator_properties
     with self.m.bot_cost.cq_run_cost_context():
       with self.m.step.nest('set up orchestrator') as presentation:
-        self._validate_properties(properties)
+        self._validate_properties()
         config = self.m.cros_infra_config.configure_builder(
             self.m.buildbucket.gitiles_commit,
             self.m.buildbucket.build.input.gerrit_changes)
@@ -139,24 +153,18 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # Yield while inside of the bot_cost.cq_run_cost_context.
       yield config
 
-  def _validate_properties(self, properties):
+  def _validate_properties(self):
     """Validate the orchestrator properties.
-
-    Args:
-      properties (OrchestratorProperties): The properties for the orchestrator.
 
     Raises:
       StepFailure on errors.
     """
     # The only property we need to validate is update_manifest_refs, and we want
     # to validate all of them.
-    manifest_refs = json_format.MessageToDict(properties.update_manifest_refs,
-                                              preserving_proto_field_name=True)
-
-    for ref, value in manifest_refs.items():
+    for ref, value in self._properties.update_manifest_refs.ListFields():
       if not value.startswith('refs/heads/'):
         raise self.m.step.StepFailure('%s ref %s is missing refs/heads/' %
-                                      (ref, value))
+                                      (ref.name, value))
       self._has_manifest_refs = True
 
   def clone_repo(self, name, commit):
@@ -230,13 +238,11 @@ class OrchMenuApi(recipe_api.RecipeApi):
     if self.gerrit_changes:
       self.m.gerrit.assert_changes_submittable(self.gerrit_changes)
 
-  def plan_and_run_children(self, enable_history=False,
-                            stagger_children_seconds=0.0, step_name=None):
+  def plan_and_run_children(self, enable_history=False, step_name=None):
     """Plan, schedule, and run child builders.
 
     Args:
       enable_history (bool): Whether history is enabled.
-      stagger_children_seconds (float): Time delay between each child build.
       step_name (str): Name for step, or None.
 
     Returns:
@@ -250,12 +256,11 @@ class OrchMenuApi(recipe_api.RecipeApi):
               collect_handling=BuilderConfig.Orchestrator.ChildSpec.COLLECT,
           ) for cb in child_builders
       ] if child_builders else self.config.orchestrator.child_specs
-      return self.filter_schedule_wait_builds(
-          presentation, child_specs, enable_history,
-          stagger_children_seconds=stagger_children_seconds)
+      return self.filter_schedule_wait_builds(presentation, child_specs,
+                                              enable_history)
 
   def filter_schedule_wait_builds(self, parent_step, child_specs,
-                                  enable_history, stagger_children_seconds=0.0):
+                                  enable_history):
     """Find the builds we need, filter those already started, run, and collect.
 
     Most of the heavy lifting is done in get_build_plan.
@@ -264,8 +269,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
       parent_step (Step): the calling step, to be used for presentation purposes.
       child_specs (list(ChildSpec)): A list of child specs.
       enable_history (bool): Enables history lookup in cq orchestrator.
-      stagger_children_seconds (float): The number of seconds between each child
-        build's start (until crbug.com/1063143).
 
     Returns: A list of build_pb2.Build objects with build results.
     """
@@ -286,7 +289,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
             # request new builds and add to total existing.
             existing_builds += self.m.buildbucket.schedule(
                 [new_build_request], url_title_fn=self.m.naming.get_build_title)
-            self.m.time.sleep(stagger_children_seconds)
+            if self._properties.stagger_children_seconds:
+              self.m.time.sleep(self._properties.stagger_children_seconds)
 
     child_specs_dict = {cs.name: cs for cs in child_specs}
     child_targets_dict = {cs.name.rsplit('-', 1)[0]: cs for cs in child_specs}

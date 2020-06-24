@@ -56,8 +56,7 @@ def DoRunSteps(api, properties, config):
     api.orch_menu.wait_for_inflight_orchestrator()
 
   completed_builds = api.orch_menu.plan_and_run_children(
-      enable_history=properties.enable_history,
-      stagger_children_seconds=properties.stagger_children_seconds)
+      enable_history=properties.enable_history)
 
   # From here all builds should have been collected: move to checking results.
   with api.step.nest('check build results') as presentation:
