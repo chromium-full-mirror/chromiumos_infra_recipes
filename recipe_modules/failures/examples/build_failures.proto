@@ -9,7 +9,7 @@ package recipe_modules.chromeos.failures.examples;
 import "go.chromium.org/luci/buildbucket/proto/build.proto";
 
 message BuildProperties {
-  // The build, json encoded for protobuf compatibility.
+  // The builds.
   repeated buildbucket.v2.Build builds = 1;
 
   // Refresh_config value:

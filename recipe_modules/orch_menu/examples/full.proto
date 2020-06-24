@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.orch_menu.examples;
 
+import "go.chromium.org/luci/buildbucket/proto/build.proto";
+
 message FullProperties {
   // Value for setup_orchestrator(missing_ok) parameter.
   bool missing_ok = 1;
@@ -17,7 +19,6 @@ message FullProperties {
   // footer values.
   string test_footers = 3;
 
-  // The expected list build_pb2.Build() entries in completed_builds, JSON
-  // encoded.
-  repeated string expected_completed_builds = 4;
+  // The expected value for completed_builds.
+  repeated buildbucket.v2.Build expected_completed_builds = 4;
 }
