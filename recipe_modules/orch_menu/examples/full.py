@@ -35,7 +35,6 @@ def RunSteps(api, properties):
       api.assertions.assertTrue(properties.expect_missing_config)
       return
     api.assertions.assertIsNotNone(config)
-    api.orch_menu.assert_changes_submittable()
 
     expected_changes = api.buildbucket.build.input.gerrit_changes
     # Add any changes from the config.
@@ -45,8 +44,6 @@ def RunSteps(api, properties):
     ])
     api.assertions.assertEqual(
         str(expected_changes), str(api.orch_menu.gerrit_changes))
-
-    api.orch_menu.push_manifest_refs('refs/heads/postsubmit')
 
     api.orch_menu.wait_for_inflight_orchestrator()
     completed = api.orch_menu.plan_and_run_children()

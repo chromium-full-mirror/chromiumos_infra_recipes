@@ -52,10 +52,6 @@ def RunSteps(api, properties):
 
 
 def DoRunSteps(api, properties, config):
-  # Update the start ref to indicate we've begun processing the snapshot.
-  api.orch_menu.push_manifest_refs(properties.update_manifest_refs.start)
-  api.orch_menu.assert_changes_submittable()
-
   snapshot = api.orch_menu.gitiles_commit
   gerrit_changes = api.orch_menu.gerrit_changes
 

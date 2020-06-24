@@ -99,9 +99,14 @@ class OrchMenuApi(recipe_api.RecipeApi):
     needs to have when it runs, for cleanup to happen properly.
 
     Args:
-      missing_ok (bool): Whether it is OK if no config is found.
+      missing_ok (bool): Whether it is OK if no config is found.  This can be
+        used by the caller to have a builder with no config report FAILURE
+        (False), or SUCCESS (True).
       test_footers (str): test Cr-External-Snapshot footer data(values separated
           by newlines), or None.
+
+    Raises:
+      StepFailure if no config is found and |missing_ok| is False.
 
     Returns:
       BuilderConfig or None, with an active context.
@@ -149,6 +154,15 @@ class OrchMenuApi(recipe_api.RecipeApi):
         if not config and not missing_ok:
           raise self.m.step.StepFailure('Missing configuration for {}'.format(
               self.m.buildbucket.builder_name))
+
+      if config:
+        if self._has_manifest_refs:
+          # Update the start ref to indicate we've begun processing the snapshot.
+          self.push_manifest_refs(self._properties.update_manifest_refs.start)
+
+        if self.gerrit_changes:
+          # Any changes we have must be submittable.
+          self.assert_changes_submittable()
 
       # Yield while inside of the bot_cost.cq_run_cost_context.
       yield config

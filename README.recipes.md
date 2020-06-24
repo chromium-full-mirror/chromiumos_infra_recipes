@@ -3466,11 +3466,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [assert\_changes\_submittable](/recipe_modules/orch_menu/api.py#236)(self):**
+&mdash; **def [assert\_changes\_submittable](/recipe_modules/orch_menu/api.py#250)(self):**
 
 Verify that any changes are submittable.
 
-&mdash; **def [clone\_repo](/recipe_modules/orch_menu/api.py#170)(self, name, commit):**
+&mdash; **def [clone\_repo](/recipe_modules/orch_menu/api.py#184)(self, name, commit):**
 
 Clone a repo into a temporary directory.
 
@@ -3483,7 +3483,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#60)(self):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipe_modules/orch_menu/api.py#262)(self, parent_step, child_specs, enable_history):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipe_modules/orch_menu/api.py#276)(self, parent_step, child_specs, enable_history):**
 
 Find the builds we need, filter those already started, run, and collect.
 
@@ -3516,7 +3516,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/orch_menu/api.py#56)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#241)(self, enable_history=False, step_name=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#255)(self, enable_history=False, step_name=None):**
 
 Plan, schedule, and run child builders.
 
@@ -3527,7 +3527,7 @@ Args:
 Returns:
   (list[Build]): completed builds.
 
-&mdash; **def [push\_manifest\_refs](/recipe_modules/orch_menu/api.py#188)(self, ref):**
+&mdash; **def [push\_manifest\_refs](/recipe_modules/orch_menu/api.py#202)(self, ref):**
 
 Update the remote ref (if any).
 
@@ -3536,7 +3536,7 @@ If |ref| evaluates to False, do nothing.
 Args:
   ref (str): Ref to push to (possibly empty) or None
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#342)(self, builder, await_completion=False, properties=None, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#356)(self, builder, await_completion=False, properties=None, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -3559,14 +3559,19 @@ This context manager returns with all of the contexts that the orchestrator
 needs to have when it runs, for cleanup to happen properly.
 
 Args:
-  missing_ok (bool): Whether it is OK if no config is found.
+  missing_ok (bool): Whether it is OK if no config is found.  This can be
+    used by the caller to have a builder with no config report FAILURE
+    (False), or SUCCESS (True).
   test_footers (str): test Cr-External-Snapshot footer data(values separated
       by newlines), or None.
+
+Raises:
+  StepFailure if no config is found and |missing_ok| is False.
 
 Returns:
   BuilderConfig or None, with an active context.
 
-&mdash; **def [should\_collect](/recipe_modules/orch_menu/api.py#316)(self, build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipe_modules/orch_menu/api.py#330)(self, build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -3579,7 +3584,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [wait\_for\_inflight\_orchestrator](/recipe_modules/orch_menu/api.py#204)(self):**
+&mdash; **def [wait\_for\_inflight\_orchestrator](/recipe_modules/orch_menu/api.py#218)(self):**
 
 If there is an inflight orchestrator, wait for it.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
