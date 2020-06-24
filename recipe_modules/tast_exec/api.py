@@ -31,21 +31,12 @@ class TastExecApi(recipe_api.RecipeApi):
         the results were empty.
     """
     # Setup qemu debug.
-    kvm_pid_file = self.m.path.mkstemp(prefix='kvm-pid')
-    kvm_monitor_file = self.m.path.mkstemp(prefix='kvm-monitor')
-    kvm_monitor_serial_file = self.m.path.mkstemp(prefix='kvm-monitor-serial')
-
-    self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
-                    kvm_monitor_serial_file, private_key_path)
-    tast_dir = test_artifacts_dir.join('tast')
-    task_result = self._run_tast(expressions, tast_dir, private_key_path,
-                                 suite_name, 'first')
+    task_result = self._tast_iter(suite_name, expressions, qcow_image_path,
+                                  test_artifacts_dir, private_key_path, 'first')
+    tests_to_retry, _ = self.m.tast_results.get_tests_to_retry(task_result)
     all_test_cases = []
     if task_result.test_cases:
       all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
-
-    tests_to_retry, requires_restart = (
-        self.m.tast_results.get_tests_to_retry(task_result))
     failures = [
         f for f in self.m.tast_results.get_failures(task_result)
         if f.title not in tests_to_retry
@@ -54,23 +45,14 @@ class TastExecApi(recipe_api.RecipeApi):
         jsonpb.MessageToDict(tc) for tc in task_result.test_cases if
         tc.verdict != TaskState.VERDICT_PASSED and tc.name not in tests_to_retry
     ]
-    final_task_result = task_result
+    empty_result = task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
     if tests_to_retry:
-      if requires_restart:
-        self._kill_vm(kvm_pid_file)
-        self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
-        kvm_pid_file = self.m.path.mkstemp(prefix='kvm-pid')
-        kvm_monitor_file = self.m.path.mkstemp(prefix='kvm-monitor')
-        kvm_monitor_serial_file = self.m.path.mkstemp(
-            prefix='kvm-monitor-serial')
-        self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
-                        kvm_monitor_serial_file, private_key_path)
-
-      retry_task_result = self._run_tast(tests_to_retry, tast_dir,
-                                         private_key_path, suite_name, 'second')
+      retry_task_result = self._tast_iter(suite_name, tests_to_retry,
+                                          qcow_image_path, test_artifacts_dir,
+                                          private_key_path, 'second')
       all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
       failures += self.m.tast_results.get_failures(retry_task_result)
-      final_task_result = retry_task_result
+      empty_result = retry_task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
       failed_test_cases += [
           jsonpb.MessageToDict(tc)
           for tc in retry_task_result.test_cases
@@ -79,11 +61,25 @@ class TastExecApi(recipe_api.RecipeApi):
 
     self.m.easy.set_property_step('all_test_cases', all_test_cases)
     self.m.easy.set_property_step('failed_test_cases', failed_test_cases)
-    self._kill_vm(kvm_pid_file)
-    self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
     self.m.tast_results.record_logs(SYS_LOG_DIR)
 
-    return failures, final_task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
+    return failures, empty_result
+
+  def _tast_iter(self, suite_name, expressions, qcow_image_path,
+                 test_artifacts_dir, private_key_path, tag):
+    kvm_pid_file = self.m.path.mkstemp(prefix='kvm-pid')
+    kvm_monitor_file = self.m.path.mkstemp(prefix='kvm-monitor')
+    kvm_monitor_serial_file = self.m.path.mkstemp(prefix='kvm-monitor-serial')
+
+    self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
+                    kvm_monitor_serial_file, private_key_path)
+    tast_dir = test_artifacts_dir.join('tast')
+    task_result = self._run_tast(expressions, tast_dir, private_key_path,
+                                 suite_name, tag)
+
+    self._kill_vm(kvm_pid_file)
+    self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
+    return task_result
 
   def _run_tast(self, expressions, tast_dir, private_key_path, name, tag):
     test_results_dir = self.m.path.mkdtemp(prefix='test-results')

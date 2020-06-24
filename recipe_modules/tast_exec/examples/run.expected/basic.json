@@ -154,59 +154,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "tests to retry",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@retry_config@test_suite: \"tast_vm\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
-      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@retry_config@  requires_restart: true@@@",
-      "@@@STEP_LOG_LINE@retry_config@}@@@",
-      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
-      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@  reason: \"Test did not finish\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@retry_config@}@@@",
-      "@@@STEP_LOG_END@retry_config@@@",
-      "@@@STEP_LOG_LINE@failed_tests@{u'arc.Boot': name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@failed_tests@verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@failed_tests@human_readable_summary: \"Lost SSH connection to VM\"@@@",
-      "@@@STEP_LOG_LINE@failed_tests@}@@@",
-      "@@@STEP_LOG_END@failed_tests@@@",
-      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
-      "@@@STEP_LOG_LINE@matches@<->test_name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@matches@reason: \"Lost SSH connection\"@@@",
-      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@matches@requires_restart: true@@@",
-      "@@@STEP_LOG_LINE@matches@Scenario had no match:test_name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@matches@reason: \"Test did not finish\"@@@",
-      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_END@matches@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/vm_retry.binaryproto",
-      "--format",
-      "text"
-    ],
-    "name": "tests to retry.fetch master:testingconfig/generated/vm_retry.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "pkill",
       "-F",
@@ -258,6 +205,59 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@kvm-monitor-serial_tmp_5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "tests to retry",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@retry_config@test_suite: \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@  requires_restart: true@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Test did not finish\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_END@retry_config@@@",
+      "@@@STEP_LOG_LINE@failed_tests@{u'arc.Boot': name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@failed_tests@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@failed_tests@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@failed_tests@}@@@",
+      "@@@STEP_LOG_END@failed_tests@@@",
+      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@matches@<->test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@requires_restart: true@@@",
+      "@@@STEP_LOG_LINE@matches@Scenario had no match:test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@reason: \"Test did not finish\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_END@matches@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/vm_retry.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "tests to retry.fetch master:testingconfig/generated/vm_retry.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -402,20 +402,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "set all_test_cases",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@all_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}, {\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set failed_test_cases",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@failed_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]@@@"
-    ]
-  },
-  {
     "cmd": [
       "pkill",
       "-F",
@@ -467,6 +453,20 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@kvm-monitor-serial_tmp_9@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set all_test_cases",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@all_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}, {\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set failed_test_cases",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@failed_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]@@@"
     ]
   },
   {
