@@ -33,7 +33,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self._orchestrator_properties = json_format.ParseDict(
         self.m.buildbucket.build.input.properties, OrchestratorProperties(),
         ignore_unknown_fields=True)
-    self._has_manifest_refs = False
+    # TODO(crbug/1098798): Fix the logic for manifest refs.
+    self._has_manifest_refs = True
     self._internal_repo_path = None
     self._external_repo_path = None
     self._external_gitiles_commit = None
