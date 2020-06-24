@@ -3466,11 +3466,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [assert\_changes\_submittable](/recipe_modules/orch_menu/api.py#250)(self):**
+&mdash; **def [assert\_changes\_submittable](/recipe_modules/orch_menu/api.py#249)(self):**
 
 Verify that any changes are submittable.
 
-&mdash; **def [clone\_repo](/recipe_modules/orch_menu/api.py#184)(self, name, commit):**
+&mdash; **def [clone\_repo](/recipe_modules/orch_menu/api.py#183)(self, name, commit):**
 
 Clone a repo into a temporary directory.
 
@@ -3481,9 +3481,9 @@ Args:
 Returns:
   (Path) path of the repo.
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#60)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#59)(self):**
 
-&mdash; **def [filter\_schedule\_wait\_builds](/recipe_modules/orch_menu/api.py#276)(self, parent_step, child_specs, enable_history):**
+&mdash; **def [filter\_schedule\_wait\_builds](/recipe_modules/orch_menu/api.py#275)(self, parent_step, child_specs, enable_history):**
 
 Find the builds we need, filter those already started, run, and collect.
 
@@ -3496,9 +3496,9 @@ Args:
 
 Returns: A list of build_pb2.Build objects with build results.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#68)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#67)(self):**
 
-&mdash; **def [get\_manifest\_info](/recipe_modules/orch_menu/api.py#72)(self, external=False):**
+&mdash; **def [get\_manifest\_info](/recipe_modules/orch_menu/api.py#71)(self, external=False):**
 
 Return information about a manifest repo.
 
@@ -3512,11 +3512,11 @@ Returns:
     path (Path): Path to the checked out repo.
     url (str): URL for the repo.
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#64)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#63)(self):**
 
-&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#56)(self):**
+&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#55)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#255)(self, enable_history=False, step_name=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#254)(self, enable_history=False, step_name=None):**
 
 Plan, schedule, and run child builders.
 
@@ -3527,7 +3527,7 @@ Args:
 Returns:
   (list[Build]): completed builds.
 
-&mdash; **def [push\_manifest\_refs](/recipe_modules/orch_menu/api.py#202)(self, ref):**
+&mdash; **def [push\_manifest\_refs](/recipe_modules/orch_menu/api.py#201)(self, ref):**
 
 Update the remote ref (if any).
 
@@ -3536,7 +3536,7 @@ If |ref| evaluates to False, do nothing.
 Args:
   ref (str): Ref to push to (possibly empty) or None
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#356)(self, builder, await_completion=False, properties=None, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#355)(self, builder, await_completion=False, properties=None, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -3551,7 +3551,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#94)(self, missing_ok=False, test_footers=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#93)(self, missing_ok=False, test_footers=None):**
 
 Initial setup steps for the orchestrator.
 
@@ -3571,7 +3571,7 @@ Raises:
 Returns:
   BuilderConfig or None, with an active context.
 
-&mdash; **def [should\_collect](/recipe_modules/orch_menu/api.py#330)(self, build, child_specs_dict, child_targets_dict):**
+&mdash; **def [should\_collect](/recipe_modules/orch_menu/api.py#329)(self, build, child_specs_dict, child_targets_dict):**
 
 Returns whether the orchestrator should collect the build.
 
@@ -3584,7 +3584,7 @@ Args:
 
 Returns: A bool whether to collect the build.
 
-&mdash; **def [wait\_for\_inflight\_orchestrator](/recipe_modules/orch_menu/api.py#218)(self):**
+&mdash; **def [wait\_for\_inflight\_orchestrator](/recipe_modules/orch_menu/api.py#217)(self):**
 
 If there is an inflight orchestrator, wait for it.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)

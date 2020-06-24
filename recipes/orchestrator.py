@@ -292,7 +292,9 @@ def GenTests(api):
   yield api.test(
       'joinable_existing_annealing_builds',
       test_orchestrator(
-          input_properties=OrchestratorProperties(enable_history=True)),
+          input_properties=OrchestratorProperties(
+              enable_history=True, update_manifest_refs=dict(
+                  build='refs/heads/stable', start='refs/heads/postsubmit'))),
       api.buildbucket.simulated_search_results(
           existing_annealing_builds, 'run builds.get snapshot builds'
           '.buildbucket.search'),

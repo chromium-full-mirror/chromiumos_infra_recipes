@@ -35,8 +35,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
   # properties to the module, and stop looking at the global properties.
   def __init__(self, properties, glob_props, *args, **kwargs):
     super(OrchMenuApi, self).__init__(*args, **kwargs)
-    # TODO(crbug/1098798): Fix the logic for manifest refs.
-    self._has_manifest_refs = True
+    self._has_manifest_refs = False
     self._internal_repo_path = None
     self._external_repo_path = None
     self._external_gitiles_commit = None
