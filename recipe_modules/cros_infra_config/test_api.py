@@ -58,3 +58,20 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     # Humans can edit the JSON file for test data, impl reads binary proto.
     return self._read_config('test_dut_tracking_config.json',
                              TrackingPolicyCfg())
+
+  def override_builder_configs_test_data(self, message, iteration=1):
+    """Set arbitrary builder config test data.
+
+    Args:
+      message (BuilderConfigs): The data to return.
+      iteration (int): Which call to read builder configs to replace.
+
+    Returns:
+      (StepTestData) to overwrite that BuilderConfigs refresh.
+    """
+    step_name = ('read builder configs'
+                 if iteration == 1 else 'read builder configs (%d)' % iteration)
+    step_name += '.fetch master:generated/builder_configs.binaryproto'
+    return self.step_data(
+        step_name,
+        self.m.depot_gitiles.make_encoded_file(message.SerializeToString()))

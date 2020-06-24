@@ -11,7 +11,7 @@ DEPS = [
     'test_util',
 ]
 
-from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.builder_config import BuilderConfigs
 from PB.recipe_modules.chromeos.cros_infra_config.examples.full import (
     FullProperties)
 
@@ -41,3 +41,14 @@ def GenTests(api):
           FullProperties(children_names=[
               'amd64-generic-postsubmit', 'arm-generic-postsubmit'
           ])))
+
+  # Verify that override_builder_configs_test_data works.
+  configs = BuilderConfigs()
+  orch = configs.builder_configs.add()
+  orch.id.name = 'postsubmit-orchestrator'
+  orch.orchestrator.child_specs.add().name = 'builder1'
+  yield api.test(
+      'forced-config',
+      api.test_util.test_orchestrator().build,
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(FullProperties(children_names=['builder1'])))
