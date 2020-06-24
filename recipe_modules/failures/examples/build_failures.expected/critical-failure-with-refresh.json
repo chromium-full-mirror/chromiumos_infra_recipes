@@ -1,0 +1,72 @@
+[
+  {
+    "cmd": [],
+    "name": "build results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@3 builds failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.amd64-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.eve-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.grunt-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read builder configs"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "read builder configs.fetch master:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "non-critical build check",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@new non-critical builders@changed amd64-postsubmit to non-critical@@@",
+      "@@@STEP_LOG_LINE@new non-critical builders@changed grunt-postsubmit to non-critical@@@",
+      "@@@STEP_LOG_END@new non-critical builders@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

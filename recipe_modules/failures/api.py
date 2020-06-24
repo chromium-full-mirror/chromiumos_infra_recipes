@@ -134,8 +134,9 @@ class FailuresApi(recipe_api.RecipeApi):
     failures = self._get_failures(kind, filtered_runs, get_status, is_critical,
                                   get_title, get_link_map, get_id)
     if baseline_runs:
-      self._get_failures('baseline ' + kind, baseline_runs, get_status,
-                         lambda x: True, get_title, get_link_map, get_id)
+      self._get_failures('baseline ' + kind, baseline_runs,
+                         get_status, lambda x: True, get_title, get_link_map,
+                         get_id)
     return failures
 
   @contextlib.contextmanager
@@ -162,7 +163,7 @@ class FailuresApi(recipe_api.RecipeApi):
       StepFailure: If failed_packages is not empty.
     """
     if not packages:
-        return
+      return
 
     short_message = ','.join([p.package_name for p in packages])
 
@@ -270,19 +271,27 @@ class FailuresApi(recipe_api.RecipeApi):
     return result_pb2.RawResult(status=common_pb2.FAILURE,
                                 summary_markdown=summary_markdown)
 
-  def get_build_failures(self, builds):
+  def get_build_failures(self, builds, refresh_configs=False):
     """Verify all builds completed successfully.
 
     Args:
       builds (list[build_pb2.Build]): List of completed builds.
+      refresh_configs (bool): Whether to update configs and adjust is_critical.
 
     Returns:
       list[Failure]: All failures discovered in the given runs.
     """
     get_id = lambda b: b.builder.builder
-    return self._get_failures(
-        'build', builds, self.get_build_status, self.m.buildbucket.is_critical,
-        self.m.naming.get_build_title, self.m.urls.get_build_link_map, get_id)
+    ret = self._get_failures('build', builds, self.get_build_status,
+                             self.m.buildbucket.is_critical,
+                             self.m.naming.get_build_title,
+                             self.m.urls.get_build_link_map, get_id)
+    if refresh_configs:
+      self.m.cros_infra_config.force_reload()
+      child_configs = self.m.cros_infra_config.safe_get_builder_configs(
+          [b.builder.builder for b in builds])
+      ret = self.update_non_critical_failures(None, ret, child_configs)
+    return ret
 
   def get_hw_test_failures(self, hw_tests, baseline_hw_tests=None):
     """Logs hardware test status to UI, and raises on failed tests.
@@ -393,12 +402,29 @@ class FailuresApi(recipe_api.RecipeApi):
     return (self.get_hwtest_status(hw_test) != common_pb2.SUCCESS and
             hw_test.task.test.common.critical.value)
 
-  def update_non_critical_failures(self, step, failures, fresh_builder_configs):
+  @contextlib.contextmanager
+  def _with_step(self, step, name):
+    """Returns a context with the current step, or a new one.
+
+    Args:
+      step (StepData): The current step, or None.
+      name (str): The name of the step to create if there is not one.
+
+    Returns:
+      (context) with active step.
     """
+    if step:
+      yield step
+    else:
+      with self.m.step.nest(name) as step:
+        yield step
+
+  def update_non_critical_failures(self, step, failures, fresh_builder_configs):
+    """If builders are now non-critical or removed, failures are non-fatal.
 
     Args:
       failures (list[Failure]): All failures encountered during execution.
-      step (recipe Step): parent step.
+      step (recipe Step): parent step.  If None, a step will be created.
       fresh_builder_configs (dict(str, BuilderConfig)): name to builder config
           for all BuilderConfigs that should have criticality checked.
 
@@ -414,12 +440,17 @@ class FailuresApi(recipe_api.RecipeApi):
         if f.id in fresh_builder_configs:
           cfg = fresh_builder_configs[f.id]
           non_critical = cfg.general.critical and not cfg.general.critical.value
-          if f.fatal and non_critical:
-            presentation_log.append('changed {} to non-critical'.format(f.id))
-            fatal = False
+        else:
+          # Deleted builders are non_critical.
+          non_critical = True
+        if f.fatal and non_critical:
+          presentation_log.append('changed {} to non-critical'.format(f.id))
+          fatal = False
       new_failures.append(
           self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
                        fatal=fatal, id=f.id))
     if presentation_log:
-      step.presentation.logs['new non-critical builders'] = presentation_log
+      # Make sure we hvae a "parent" step.
+      with self._with_step(step, 'non-critical build check') as pres:
+        pres.presentation.logs['new non-critical builders'] = presentation_log
     return new_failures

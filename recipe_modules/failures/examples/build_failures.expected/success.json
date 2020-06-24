@@ -1,0 +1,20 @@
+[
+  {
+    "cmd": [],
+    "name": "build results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all critical builds succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.zork-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
