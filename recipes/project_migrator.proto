@@ -20,4 +20,8 @@ message ProjectMigratorProperties {
 
   // Key for HWID database
   string hwid_key = 4;
+
+  // When no input config data is available, the project
+  // name to use when generating the output.
+  string project_name = 5;
 }

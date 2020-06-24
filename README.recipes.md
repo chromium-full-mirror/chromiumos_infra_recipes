@@ -5471,9 +5471,9 @@ Run on changes to model.yaml and HWID databases.
 Copies the changed files into a project-local location and regenerates merged
 configuration data.
 
-&mdash; **def [RunSteps](/recipes/project_migrator.py#42)(api, properties):**
+&mdash; **def [RunSteps](/recipes/project_migrator.py#57)(api, properties):**
 
-&mdash; **def [require](/recipes/project_migrator.py#36)(cond, message):**
+&mdash; **def [require](/recipes/project_migrator.py#51)(cond, message):**
 
 Require a given condition be true or throw a ValueError.
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)

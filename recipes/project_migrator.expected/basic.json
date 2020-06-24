@@ -1,6 +1,23 @@
 [
   {
     "cmd": [],
+    "name": "cloning config repo"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "chromium.googlesource.com/chromiumos/config",
+      "[START_DIR]/config"
+    ],
+    "infra_step": true,
+    "name": "cloning config repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "cloning public overlay"
   },
   {
@@ -81,11 +98,11 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/dest/dest/imported"
+      "[START_DIR]/dest/imported"
     ],
     "cwd": "[START_DIR]/dest",
     "infra_step": true,
-    "name": "ensure [START_DIR]/dest/dest/imported directory exists"
+    "name": "ensure [START_DIR]/dest/imported directory exists"
   },
   {
     "cmd": [
@@ -96,7 +113,7 @@
       "/path/to/tmp/json",
       "copy",
       "[START_DIR]/public/some/model.yaml",
-      "[START_DIR]/dest/dest/imported/public_model.yaml"
+      "[START_DIR]/dest/imported/public_model.yaml"
     ],
     "cwd": "[START_DIR]/dest",
     "infra_step": true,
@@ -106,7 +123,7 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/dest/dest/imported/public_model.yaml"
+      "[START_DIR]/dest/imported/public_model.yaml"
     ],
     "cwd": "[START_DIR]/dest",
     "infra_step": true,
@@ -121,7 +138,7 @@
       "/path/to/tmp/json",
       "copy",
       "[START_DIR]/private/some/model.yaml",
-      "[START_DIR]/dest/dest/imported/private_model.yaml"
+      "[START_DIR]/dest/imported/private_model.yaml"
     ],
     "cwd": "[START_DIR]/dest",
     "infra_step": true,
@@ -131,7 +148,7 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/dest/dest/imported/private_model.yaml"
+      "[START_DIR]/dest/imported/private_model.yaml"
     ],
     "cwd": "[START_DIR]/dest",
     "infra_step": true,
@@ -146,7 +163,7 @@
       "/path/to/tmp/json",
       "copy",
       "../hwid/v3/SOME_KEY",
-      "[START_DIR]/dest/dest/imported/hwid"
+      "[START_DIR]/dest/imported/hwid"
     ],
     "cwd": "[START_DIR]/dest",
     "infra_step": true,
@@ -156,11 +173,50 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/dest/dest/imported/hwid"
+      "[START_DIR]/dest/imported/hwid"
     ],
     "cwd": "[START_DIR]/dest",
     "infra_step": true,
     "name": "git add (3)"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/dest/generated"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "ensure [START_DIR]/dest/generated directory exists"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/config/payload_utils/join_config_payloads.py",
+      "--output generated/joined.jsonproto",
+      "--config-bundle generated/config.jsonproto",
+      "--public-model [START_DIR]/public/some/model.yaml",
+      "--private-model [START_DIR]/private/some/model.yaml",
+      "--hwid [START_DIR]/hwid/v3/SOME_KEY",
+      "--project-name test_project"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "name": "Generate joined configuration"
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "generated/joined.jsonproto"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git add (4)"
   },
   {
     "cmd": [

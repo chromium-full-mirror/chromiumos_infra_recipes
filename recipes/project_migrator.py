@@ -22,15 +22,30 @@ from recipe_engine import post_process
 
 # Recipe dependencies
 DEPS = [
-    'gerrit', 'git', 'git_txn', 'gitiles', 'recipe_engine/buildbucket',
-    'recipe_engine/context', 'recipe_engine/file', 'recipe_engine/path',
-    'recipe_engine/properties', 'recipe_engine/raw_io', 'recipe_engine/step'
+    'gerrit',
+    'git',
+    'git_txn',
+    'gitiles',
+    'recipe_engine/buildbucket',
+    'recipe_engine/context',
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/properties',
+    'recipe_engine/raw_io',
+    'recipe_engine/step',
 ]
 
 PROPERTIES = ProjectMigratorProperties
 
 # Repo URL configuration
 CROS_HWID_REPO = 'chrome-internal.googlesource.com/chromeos/chromeos-hwid'
+CROS_CONFIG_REPO = 'chromium.googlesource.com/chromiumos/config'
+
+# Source and destination config files
+SRC_CONFIG = 'generated/config.jsonproto'
+DST_CONFIG = 'generated/joined.jsonproto'
+
+JOIN_SCRIPT_PATH = 'payload_utils/join_config_payloads.py'
 
 
 def require(cond, message):
@@ -43,15 +58,20 @@ def RunSteps(api, properties):
   require(properties.dest_repo, 'Destination repo must be specified.')
 
   # Defines paths to which to clone repos.
+  cros_config_path = api.path['start_dir'].join('config')
   dest_repo_path = api.path['start_dir'].join('dest')
   public_repo_path = api.path['start_dir'].join('public')
   private_repo_path = api.path['start_dir'].join('private')
   hwid_repo_path = api.path['start_dir'].join('hwid')
 
   # Destination path configuration
-  dest_file_path = dest_repo_path.join('dest/imported')
+  dest_file_path = dest_repo_path.join('imported')
   dest_hwid_path = dest_file_path.join('hwid')
   dest_yaml_path = dest_file_path.join('model.yaml')
+
+  # Clone config repo
+  with api.step.nest('cloning config repo'):
+    api.git.clone(CROS_CONFIG_REPO, target_path=cros_config_path)
 
   # Clone source repos.
   have_work = False
@@ -105,6 +125,36 @@ def RunSteps(api, properties):
                     dest_hwid_path)
       api.git.add([dest_hwid_path])
 
+    generated_path = dest_repo_path.join('generated')
+    api.file.ensure_directory('ensure %s directory exists' % generated_path,
+                              generated_path)
+
+    # Mock existence of source path for tests
+    api.path.mock_add_paths(SRC_CONFIG)
+
+    # Merge hwid and yaml files with any generated config that we have
+    cmd = [cros_config_path.join(JOIN_SCRIPT_PATH), '--output %s' % DST_CONFIG]
+    if api.path.exists(SRC_CONFIG):
+      cmd += ['--config-bundle %s' % SRC_CONFIG]
+    if properties.HasField('public_yaml'):
+      cmd += [
+          '--public-model %s' %
+          public_repo_path.join(properties.public_yaml.path)
+      ]
+    if properties.HasField('private_yaml'):
+      cmd += [
+          '--private-model %s' %
+          private_repo_path.join(properties.private_yaml.path)
+      ]
+    if properties.hwid_key:
+      cmd += ['--hwid %s/v3/%s' % (hwid_repo_path, properties.hwid_key.upper())]
+    if properties.project_name:
+      cmd += ['--project-name %s' % properties.project_name]
+
+    # Generate joined output
+    api.step("Generate joined configuration", cmd)
+    api.git.add([DST_CONFIG])
+
     # Commit changes (if any)
     changed_files = api.git.get_diff_files('HEAD')
     if changed_files:
@@ -132,7 +182,8 @@ def GenTests(api):
                   'repo': 'example.com/private/',
                   'path': 'some/model.yaml'
               },
-              'hwid_key': 'some_key'
+              'hwid_key': 'some_key',
+              'project_name': 'test_project'
           }))
 
   yield api.test(
@@ -147,7 +198,8 @@ def GenTests(api):
                   'repo': 'example.com/private/',
                   'path': 'some/model.yaml'
               },
-              'hwid_key': 'some_key'
+              'hwid_key': 'some_key',
+              'project_name': 'test_project'
           }), api.expect_exception('ValueError'))
 
   yield api.test(
