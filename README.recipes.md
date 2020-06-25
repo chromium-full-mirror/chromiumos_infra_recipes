@@ -4202,15 +4202,18 @@ Returns:
 
 A hack for crbug/1049754.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#136)(self, task_result):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#136)(self, task_result, exclude_tests=None):**
 
-Convert TaskResult into api.failures.Failure objects.
+Convert TaskResult into api.failures.Failure objects and dicts.
 
 Args:
   task_result (TaskResult): TaskResult to be converted.
+  exclude_tests list(str): List of names of tests to be
+    excluded.
 
 Returns:
-  list(Failure) of individual tests.
+  A tuple of list(Failure) and list(dict) representing
+  failed test cases excluding the ones provided.
 
 &mdash; **def [get\_results](/recipe_modules/tast_results/api.py#46)(self, test_results_path, suite_name, tag):**
 
@@ -4226,7 +4229,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#210)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#217)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -4237,7 +4240,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#163)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#170)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -4245,7 +4248,7 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#188)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#195)(self, sys_log_dir):**
 
 Print system logs to MILO.
 

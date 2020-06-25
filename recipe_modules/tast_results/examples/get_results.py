@@ -17,8 +17,9 @@ from PB.test_platform.taskstate import TaskState
 def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')
   task_result = api.tast_results.get_results(temp_dir, 'fancy-suite', '1')
-  failures = api.tast_results.get_failures(task_result)
+  failures, test_cases = api.tast_results.get_failures(task_result)
   api.tast_results.print_results(failures, False)
+  api.assertions.assertEqual(test_cases[0]['name'], 'arc.Boot')
   # fake test case code.
   api.tast_results.fake_empty_result_test_cases()
 
@@ -41,13 +42,15 @@ def RunSteps(api):
           x for x in task_result.test_cases
           if x.verdict == TaskState.VERDICT_PASSED
       ])
-  failures = api.tast_results.get_failures(passed_task_result)
+  failures, test_cases = api.tast_results.get_failures(passed_task_result)
+  api.assertions.assertEqual(test_cases, [])
   api.tast_results.print_results(failures, False)
   tests, _ = api.tast_results.get_tests_to_retry(passed_task_result)
   api.assertions.assertEqual(tests, [])
   fishy_task_result = ExecuteResponse.TaskResult(name=task_result.name,
                                                  state=task_result.state)
-  failures = api.tast_results.get_failures(fishy_task_result)
+  failures, test_cases = api.tast_results.get_failures(fishy_task_result)
+  api.assertions.assertEqual(test_cases, [])
   api.tast_results.print_results(failures, True)
 
 

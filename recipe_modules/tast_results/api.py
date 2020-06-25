@@ -133,32 +133,39 @@ class TastResultsApi(recipe_api.RecipeApi):
         human_readable_summary=task_summary,
     )
 
-  def get_failures(self, task_result):
-    """Convert TaskResult into api.failures.Failure objects.
+  def get_failures(self, task_result, exclude_tests=None):
+    """Convert TaskResult into api.failures.Failure objects and dicts.
 
     Args:
       task_result (TaskResult): TaskResult to be converted.
+      exclude_tests list(str): List of names of tests to be
+        excluded.
 
     Returns:
-      list(Failure) of individual tests.
+      A tuple of list(Failure) and list(dict) representing
+      failed test cases excluding the ones provided.
     """
     failures = []
-    for test_case_result in task_result.test_cases:
-      if test_case_result.verdict == TaskState.VERDICT_FAILED:
-        failures.append(
-            self.m.failures.Failure(
-                kind='vm test',
-                title=test_case_result.name,
-                link_map={
-                    test_case_result.human_readable_summary[:50]: (
-                        '%s/tests/%s' % (task_result.log_url,
-                                         test_case_result.name))
-                },
-                fatal=True,
-                id=None,
-            ))
+    failed_test_cases = []
+    exclude_tests = exclude_tests or []
+    for test_case in task_result.test_cases:
+      if test_case.verdict == TaskState.VERDICT_FAILED:
+        if test_case.name not in exclude_tests:
+          failures.append(
+              self.m.failures.Failure(
+                  kind='vm test',
+                  title=test_case.name,
+                  link_map={
+                      test_case.human_readable_summary[:50]:
+                          ('%s/tests/%s' % (task_result.log_url, test_case.name)
+                          )
+                  },
+                  fatal=True,
+                  id=None,
+              ))
+          failed_test_cases.append(jsonpb.MessageToDict(test_case))
 
-    return failures
+    return failures, failed_test_cases
 
   def print_results(self, failures, empty_result):
     """Print results for the user.
