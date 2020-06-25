@@ -32,6 +32,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
+from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
 from google.protobuf import json_format
 
@@ -47,12 +48,8 @@ def RunSteps(api, properties):
 def DoRunSteps(api, properties, config):
   snapshot = api.orch_menu.gitiles_commit
   gerrit_changes = api.orch_menu.gerrit_changes
-  if (gerrit_changes and properties.enable_history and
-      properties.assert_singleton):
-    api.orch_menu.wait_for_inflight_orchestrator()
 
-  completed_builds = api.orch_menu.plan_and_run_children(
-      enable_history=properties.enable_history)
+  completed_builds = api.orch_menu.plan_and_run_children()
 
   # From here all builds should have been collected: move to checking results.
   with api.step.nest('check build results') as presentation:
@@ -83,11 +80,7 @@ def DoRunSteps(api, properties, config):
   if not fatal_failures:
     # If we've made it this far, the child builders were successful
     # and we can update the build success manifest ref if it is specified.
-    api.orch_menu.push_manifest_refs(properties.update_manifest_refs.build)
-
-  # If this is a dry run, check that the builds passed and quit.
-  if not properties.enable_tests_on_dry_runs and api.cq.state == api.cq.DRY:
-    return api.failures.aggregate_failures(failures)
+    api.orch_menu.push_manifest_refs(api.orch_menu.update_manifest_refs.build)
 
   # Otherwise, run tests for builds that weren't build failures and that
   # still exist as builders.
@@ -101,14 +94,13 @@ def DoRunSteps(api, properties, config):
                              api.buildbucket.build.tags):
     api.skylab.set_qs_account('pupr')
 
-  test_failures = api.cros_test_proctor.run_proctor(need_tests_builds, snapshot,
-                                                    gerrit_changes,
-                                                    properties.enable_history)
+  test_failures = api.cros_test_proctor.run_proctor(
+      need_tests_builds, snapshot, gerrit_changes, api.orch_menu.enable_history)
   failures.extend(test_failures)
 
   # Victory! If we've made it this far, all tests were successful
   # and we can update the test success manifest ref if it is specified.
-  api.orch_menu.push_manifest_refs(properties.update_manifest_refs.test)
+  api.orch_menu.push_manifest_refs(api.orch_menu.update_manifest_refs.test)
 
   # Launch any specified follow on orchestrator.
   if not fatal_failures and config.orchestrator.follow_on_orchestrator.name:
@@ -130,12 +122,15 @@ def DoRunSteps(api, properties, config):
 
 def GenTests(api):
 
+  def orch_menu_properties(**kwargs):
+    return {'$chromeos/orch_menu': kwargs}
+
   def test_orchestrator(cq=False, **kwargs):
     """Generate a test build proto for the postsubmit orchestrator."""
     if not cq:
       kwargs.setdefault(
           'input_properties',
-          OrchestratorProperties(
+          orch_menu_properties(
               update_manifest_refs=dict(build='refs/heads/stable',
                                         start='refs/heads/postsubmit')))
     return api.test_util.test_orchestrator(cq=cq, **kwargs).build
@@ -237,7 +232,8 @@ def GenTests(api):
       'builds_with_history',
       test_orchestrator(
           cq=True,
-          input_properties=OrchestratorProperties(enable_history=True)),
+          input_properties=orch_menu_properties(assert_singleton=True,
+                                                enable_history=True)),
       api.buildbucket.simulated_search_results(
           builds, 'run builds.get build history.'
           'get completed builds.get change build history.'
@@ -267,7 +263,8 @@ def GenTests(api):
       'pointless_builds',
       test_orchestrator(
           cq=True,
-          input_properties=OrchestratorProperties(enable_history=True)),
+          input_properties=orch_menu_properties(assert_singleton=True,
+                                                enable_history=True)),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
@@ -292,7 +289,8 @@ def GenTests(api):
   yield api.test(
       'joinable_existing_annealing_builds',
       test_orchestrator(
-          input_properties=OrchestratorProperties(
+          input_properties=orch_menu_properties(
+              assert_singleton=True,
               enable_history=True, update_manifest_refs=dict(
                   build='refs/heads/stable', start='refs/heads/postsubmit'))),
       api.buildbucket.simulated_search_results(
@@ -323,8 +321,8 @@ def GenTests(api):
       'join_if_inflight_orchs',
       test_orchestrator(
           cq=True,
-          input_properties=OrchestratorProperties(enable_history=True,
-                                                  assert_singleton=True)),
+          input_properties=orch_menu_properties(enable_history=True,
+                                                assert_singleton=True)),
       api.buildbucket.simulated_search_results(
           builds, step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
@@ -355,8 +353,8 @@ def GenTests(api):
       'runs_if_no_inflight_orchs',
       test_orchestrator(
           cq=True,
-          input_properties=OrchestratorProperties(enable_history=True,
-                                                  assert_singleton=True)),
+          input_properties=orch_menu_properties(enable_history=True,
+                                                assert_singleton=True)),
       api.buildbucket.simulated_search_results(
           [], step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
@@ -384,7 +382,7 @@ def GenTests(api):
   yield api.test(
       'updates_refs',
       test_orchestrator(
-          input_properties=OrchestratorProperties(update_manifest_refs={
+          input_properties=orch_menu_properties(update_manifest_refs={
               'start': 'refs/heads/foo',
               'build': 'refs/heads/bar'
           })),
@@ -413,7 +411,7 @@ def GenTests(api):
       'missing_gitiles_commit',
       test_orchestrator(
           revision=None,
-          input_properties=OrchestratorProperties(update_manifest_refs={
+          input_properties=orch_menu_properties(update_manifest_refs={
               'start': 'refs/heads/foo',
               'build': 'refs/heads/bar'
           })),
@@ -509,12 +507,12 @@ def GenTests(api):
           step_name='run tests.collect tests.collect moblab vm tests'),
   )
 
-  yield api.test('dry_run', test_orchestrator(cq=True, dry_run=True))
-
   yield api.test(
       'quota_scheduler_override',
       test_orchestrator(
-          cq=True, input_properties=OrchestratorProperties(enable_history=True),
+          cq=True,
+          input_properties=orch_menu_properties(assert_singleton=True,
+                                                enable_history=True),
           tags=api.cros_tags.tags(
               cq_cl_tag='pupr:chromeos-base/chromeos-chrome')),
       api.buildbucket.simulated_search_results(
@@ -557,7 +555,8 @@ def GenTests(api):
       'retry_only_critical_builds',
       test_orchestrator(
           cq=True,
-          input_properties=OrchestratorProperties(enable_history=True)),
+          input_properties=orch_menu_properties(assert_singleton=True,
+                                                enable_history=True)),
       api.buildbucket.simulated_search_results(
           builds, step_name='run builds.get build history'
           '.find matching builds.buildbucket.search'),

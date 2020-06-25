@@ -50,6 +50,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
     properties.stagger_children_seconds = (
         properties.stagger_children_seconds or
         glob_props.stagger_children_seconds)
+    properties.enable_history = (
+        properties.enable_history or glob_props.enable_history)
+    properties.assert_singleton = (
+        properties.assert_singleton or glob_props.assert_singleton)
     self._properties = properties
 
   def initialize(self):
@@ -67,6 +71,16 @@ class OrchMenuApi(recipe_api.RecipeApi):
   @property
   def gerrit_changes(self):
     return self.m.cros_infra_config.gerrit_changes
+
+  # TODO(crbug/1093916): drop this when the property is fully migrated.
+  @property
+  def enable_history(self):
+    return self._properties.enable_history
+
+  # TODO(crbug/1093916): drop this when the property is fully migrated.
+  @property
+  def update_manifest_refs(self):
+    return self._properties.update_manifest_refs
 
   def get_manifest_info(self, external=False):
     """Return information about a manifest repo.
@@ -96,6 +110,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     This context manager returns with all of the contexts that the orchestrator
     needs to have when it runs, for cleanup to happen properly.
+
+    If appropriate, any inflight orchestrator has finished before we return.
 
     Args:
       missing_ok (bool): Whether it is OK if no config is found.  This can be
@@ -163,6 +179,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
           # Any changes we have must be submittable.
           self.assert_changes_submittable()
 
+      # If we are waiting on inflight orchestrators, do that now.
+      self.wait_for_inflight_orchestrator()
+
       # Yield while inside of the bot_cost.cq_run_cost_context.
       yield config
 
@@ -217,6 +236,13 @@ class OrchMenuApi(recipe_api.RecipeApi):
   def wait_for_inflight_orchestrator(self):
     """If there is an inflight orchestrator, wait for it."""
 
+    if not (self.gerrit_changes and self._properties.enable_history and
+            self._properties.assert_singleton):
+      # In order to join an inflight orchestrator, there must be changes and we
+      # must have history, and only allow one orchestrator for a cl_group.  If
+      # that is not the case, we're done.
+      return
+
     with self.m.step.nest('find inflight orchestrator') as pres:
       my_build = self.m.buildbucket.build
       running_builds = self.m.cros_history.get_matching_builds(
@@ -251,11 +277,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
     if self.gerrit_changes:
       self.m.gerrit.assert_changes_submittable(self.gerrit_changes)
 
-  def plan_and_run_children(self, enable_history=False, step_name=None):
+  def plan_and_run_children(self, step_name=None):
     """Plan, schedule, and run child builders.
 
     Args:
-      enable_history (bool): Whether history is enabled.
       step_name (str): Name for step, or None.
 
     Returns:
@@ -269,11 +294,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
               collect_handling=BuilderConfig.Orchestrator.ChildSpec.COLLECT,
           ) for cb in child_builders
       ] if child_builders else self.config.orchestrator.child_specs
-      return self.filter_schedule_wait_builds(presentation, child_specs,
-                                              enable_history)
+      return self.filter_schedule_wait_builds(presentation, child_specs)
 
-  def filter_schedule_wait_builds(self, parent_step, child_specs,
-                                  enable_history):
+  def filter_schedule_wait_builds(self, parent_step, child_specs):
     """Find the builds we need, filter those already started, run, and collect.
 
     Most of the heavy lifting is done in get_build_plan.
@@ -281,15 +304,14 @@ class OrchMenuApi(recipe_api.RecipeApi):
     Args:
       parent_step (Step): the calling step, to be used for presentation purposes.
       child_specs (list(ChildSpec)): A list of child specs.
-      enable_history (bool): Enables history lookup in cq orchestrator.
 
     Returns: A list of build_pb2.Build objects with build results.
     """
     completed_builds, existing_builds, new_build_requests = (
-        self.m.build_plan.get_build_plan(child_specs=child_specs,
-                                         enable_history=enable_history,
-                                         gerrit_changes=self.gerrit_changes,
-                                         snapshot=self.gitiles_commit))
+        self.m.build_plan.get_build_plan(
+            child_specs=child_specs,
+            enable_history=self._properties.enable_history,
+            gerrit_changes=self.gerrit_changes, snapshot=self.gitiles_commit))
     parent_step.presentation.step_text = ('{} new, {} recycled'.format(
         len(new_build_requests),
         len(completed_builds) + len(existing_builds)))

@@ -55,11 +55,7 @@ def DoRunSteps(api, properties, config):
   snapshot = api.orch_menu.gitiles_commit
   gerrit_changes = api.orch_menu.gerrit_changes
 
-  # This orchestrator ignores the config, using enable_history=True
-  if gerrit_changes:
-    api.orch_menu.wait_for_inflight_orchestrator()
-
-  completed_builds = api.orch_menu.plan_and_run_children(enable_history=True)
+  completed_builds = api.orch_menu.plan_and_run_children()
 
   # From here all builds should have been collected: move to checking results.
   with api.step.nest('check build results') as presentation:
@@ -90,7 +86,7 @@ def DoRunSteps(api, properties, config):
   # If this is a dry run, check that the builds passed and quit.
   # TODO(crbug/1071440): Because the HW Tests have production side effects, we
   # need to not run them for dryruns at this time.
-  if not properties.enable_tests_on_dry_runs and api.cq.state == api.cq.DRY:
+  if api.cq.state == api.cq.DRY:
     return api.failures.aggregate_failures(failures)
 
   # Otherwise, run tests for builds that weren't build failures and that
@@ -154,8 +150,14 @@ def DoRunSteps(api, properties, config):
 
 def GenTests(api):
 
+  def orch_menu_properties(**kwargs):
+    return {'$chromeos/orch_menu': kwargs}
+
   def test_orchestrator(**kwargs):
     """Generate a test build proto for the postsubmit orchestrator."""
+    kwargs.setdefault(
+        'input_properties',
+        orch_menu_properties(enable_history=True, assert_singleton=True))
     return api.test_util.test_orchestrator(**kwargs).build
 
   def vm_test_build(name):

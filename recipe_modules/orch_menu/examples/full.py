@@ -37,6 +37,8 @@ def RunSteps(api, properties):
       return
     api.assertions.assertIsNotNone(config)
 
+    api.assertions.assertEqual(properties.expected_enable_history,
+                               api.orch_menu.enable_history)
     expected_changes = build.input.gerrit_changes
     # Add any changes from the config.
     expected_changes.extend([
@@ -46,12 +48,8 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(
         str(expected_changes), str(api.orch_menu.gerrit_changes))
 
-    enable_history = ('enable_history' in build.input.properties and
-                      build.input.properties['enable_history'])
-    if enable_history:
-      api.orch_menu.wait_for_inflight_orchestrator()
-    completed = api.orch_menu.plan_and_run_children(
-        enable_history=enable_history)
+    completed = api.orch_menu.plan_and_run_children()
+    api.orch_menu.push_manifest_refs(api.orch_menu.update_manifest_refs.build)
     follow_on = config.orchestrator.follow_on_orchestrator
     if follow_on.name:
       completed.append(
@@ -126,9 +124,14 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           successful_orch,
           'find inflight orchestrator.waiting for existing runs'),
-      api.properties(FullProperties(expected_completed_builds=builds)),
+      api.properties(
+          FullProperties(expected_completed_builds=builds,
+                         expected_enable_history=True)),
       api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
-      input_properties=dict(enable_history=True, assert_singleton=True),
+      input_properties={
+          '$chromeos/orch_menu':
+              dict(enable_history=True, assert_singleton=True)
+      },
       cq=True,
   )
 
@@ -138,9 +141,14 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           [], step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
-      api.properties(FullProperties(expected_completed_builds=builds)),
+      api.properties(
+          FullProperties(expected_completed_builds=builds,
+                         expected_enable_history=True)),
       api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
-      input_properties=dict(enable_history=True, assert_singleton=True),
+      input_properties={
+          '$chromeos/orch_menu':
+              dict(enable_history=True, assert_singleton=True)
+      },
       cq=True,
   )
 

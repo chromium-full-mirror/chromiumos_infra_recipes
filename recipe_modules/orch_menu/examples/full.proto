@@ -21,4 +21,7 @@ message FullProperties {
 
   // The expected value for completed_builds.
   repeated buildbucket.v2.Build expected_completed_builds = 4;
+
+  // The expected value for enable_history.
+  bool expected_enable_history = 5;
 }

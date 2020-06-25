@@ -51,17 +51,20 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'only-recipe',
-      test_props(update_manifest_refs=module_refs,
-                 stagger_children_seconds=4.0),
+      test_props(update_manifest_refs=module_refs, stagger_children_seconds=4.0,
+                 enable_history=True, assert_singleton=True),
       input_properties=OrchestratorProperties(update_manifest_refs=recipe_refs,
-                                              stagger_children_seconds=4.0))
+                                              stagger_children_seconds=4.0,
+                                              enable_history=True,
+                                              assert_singleton=True))
 
   yield api.orch_menu.test(
       'only-module',
-      test_props(update_manifest_refs=module_refs,
-                 stagger_children_seconds=4.0), input_properties={
+      test_props(update_manifest_refs=module_refs, stagger_children_seconds=4.0,
+                 enable_history=True, assert_singleton=True), input_properties={
                      '$chromeos/orch_menu':
                          dict(
                              update_manifest_refs=MessageToDict(module_refs),
-                             stagger_children_seconds=4.0)
+                             stagger_children_seconds=4.0, enable_history=True,
+                             assert_singleton=True)
                  })

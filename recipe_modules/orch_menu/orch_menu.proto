@@ -26,4 +26,10 @@ message OrchMenuProperties {
 
   // Time delay between each child build.
   float stagger_children_seconds = 2;
+
+  // Specifies whether to enable cros_history based resource saving.
+  bool enable_history = 3;
+
+  // Specifies whether to enable exiting redundant builds.
+  bool assert_singleton = 4;
 }
