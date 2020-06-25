@@ -40,7 +40,8 @@ def RunSteps(api, properties):
     if properties.no_sysroot:
       api.assertions.assertIsNone(api.build_menu.sysroot)
     else:
-      api.build_menu.bootstrap_sysroot_and_install_packages()
+      api.build_menu.bootstrap_sysroot_and_install_packages(
+          artifact_build=properties.artifact_build)
       api.build_menu.build_and_test_images()
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
@@ -79,8 +80,9 @@ def GenTests(api):
                 artifact_build=True, forced_relevant=forced, expected_packages=[
                     common.PackageInfo(category='chromeos-base',
                                        package_name='chromeos-chrome')
-                ])), bucket='toolchain', builder='orderfile-generate-toolchain',
-        artifact_pointless=True, input_properties=dict(artifact_build=True))
+                ])), build_target='chell', bucket='toolchain',
+        builder='orderfile-generate-toolchain', artifact_pointless=True,
+        input_properties=dict(artifact_build=True))
 
   yield api.build_menu.test('no-sysroot',
                             api.properties(FullProperties(no_sysroot=True)))

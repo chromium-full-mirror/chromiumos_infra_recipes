@@ -13,7 +13,7 @@ from PB.chromiumos import common
 
 
 def RunSteps(api):
-  build_target = common.BuildTarget(name='eve')
+  build_target = common.BuildTarget(name='amd64-generic')
 
   with api.build_menu.configure_builder(build_target) as config:
     api.build_menu.setup_workspace_and_chroot()

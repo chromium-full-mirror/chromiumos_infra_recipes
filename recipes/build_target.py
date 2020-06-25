@@ -117,7 +117,8 @@ def GenTests(api):
       'run-exit-install',
       builder='arm64-generic-kernel-v5_4-buildtest-postsubmit')
 
-  yield api.build_menu.test('no-run-tests', build_target='grunt', cq=True)
+  yield api.build_menu.test('no-run-tests', build_target='grunt',
+                            builder='grunt-unittest-only-postsubmit')
 
   yield api.build_menu.test('run-exit-tests',
                             builder='amd64-generic-exit-after-unittests')

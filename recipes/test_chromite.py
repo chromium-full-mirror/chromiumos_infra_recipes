@@ -33,11 +33,11 @@ def RunSteps(api):
 def GenTests(api):
 
   def test(name, **kwargs):
-    return api.test(
-        name,
-        api.test_util.test_child_build('amd64-generic', **kwargs).build)
+    return api.test(name, api.test_util.test_child_build(None, **kwargs).build)
 
-  yield test('no-gerrit-changes')
+  yield test('no-gerrit-changes', cq=True, builder='chromite-cq')
+
+  yield test('postsubmit', builder='chromite-postsubmit')
 
   yield test('one-gerrit-change', cq=True, builder='chromite-cq')
 

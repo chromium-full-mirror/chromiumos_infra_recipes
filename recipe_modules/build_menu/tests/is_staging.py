@@ -20,7 +20,7 @@ PROPERTIES = StagingProperties
 
 
 def RunSteps(api, properties):
-  build_target = common.BuildTarget(name='eve')
+  build_target = common.BuildTarget(name='amd64-generic')
   kwargs = {}
 
   if properties.HasField('is_staging'):
