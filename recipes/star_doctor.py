@@ -9,7 +9,10 @@ Automatically updates binary config files and updates Goldeneye config
 json files.
 """
 
-from PB.recipes.chromeos.star_doctor import StarDoctorProperties
+from recipe_engine import post_process
+
+from PB.recipes.chromeos.star_doctor import (StarDoctorProperties,
+                                             RemoteConfigFile)
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -35,15 +38,37 @@ def RunSteps(api, properties):
     workdir = api.path.mkdtemp()
     api.git.clone(INFRA_CONFIG_URL, target_path=workdir, timeout_sec=3 * 60)
 
+  remote_config_files = properties.remote_config_files
+  # If remote_config_files is not specified, build them based on the ge_bucket
+  # and branches properties. Note that if remote_config_files is specified,
+  # ge_bucket and branches should not be.
+  if not remote_config_files:
+    remote_config_files.add(
+        bucket_name=properties.ge_bucket,
+        object_name='build_config.ToT.json',
+        dest_path='goldeneye/build_config.ToT.json',
+    )
+
+    for branch in properties.branches:
+      branched_config = 'build_config.release-{}.json'.format(branch)
+      remote_config_files.add(
+          bucket_name=properties.ge_bucket,
+          object_name=branched_config,
+          dest_path='goldeneye/{}'.format(branched_config),
+      )
+  else:
+    if properties.ge_bucket or properties.branches:
+      raise ValueError(
+          'ge_bucket and branches cannot be set if remote_config_files is set.')
+
   with api.step.nest('generate binary config'):
     with api.step.nest('copy goldeneye configs') as presentation:
-      ge_path = workdir.join('goldeneye')
-      api.gsutil.download(properties.ge_bucket, 'build_config.ToT.json',
-                          ge_path.join('build_config.ToT.json'))
-      for branch in properties.branches:
-        branched_config = 'build_config.release-{}.json'.format(branch)
-        api.gsutil.download(properties.ge_bucket, branched_config,
-                            ge_path.join(branched_config))
+      for remote_config_file in remote_config_files:
+        api.gsutil.download(
+            remote_config_file.bucket_name,
+            remote_config_file.object_name,
+            workdir.join(remote_config_file.dest_path),
+        )
 
     # We need lucicfg from depot_tools.
     with api.depot_tools.on_path():
@@ -98,3 +123,24 @@ def GenTests(api):
 
   yield api.test('full', api.properties(commit_changes=True,
                                         branches=['R9000']))
+
+  yield api.test(
+      'old_and_new_properties_set',
+      api.properties(
+          StarDoctorProperties(
+              ge_bucket='test_ge_bucket',
+              branches=['R9000'],
+              remote_config_files=[
+                  RemoteConfigFile(
+                      bucket_name='test_bucket',
+                      object_name='test_object',
+                      dest_path='ge/test_object',
+                  )
+              ],
+          )),
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.ResultReasonRE,
+                       ('.*ge_bucket and branches cannot be set if'
+                        ' remote_config_files is set..*')),
+      api.post_process(post_process.DropExpectation),
+  )

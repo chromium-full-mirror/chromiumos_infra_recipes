@@ -6,13 +6,30 @@ syntax = "proto3";
 
 package recipes.chromeos.star_doctor;
 
+// Describes a config file whose source-of-truth is in Google Storage, and how
+// it is replicated to the infra/config repo.
+message RemoteConfigFile {
+  // The name of the Google Storage bucket.
+  string bucket_name = 1;
+
+  // The name of the Google Storage object.
+  string object_name = 2;
+
+  // The destination in infra/config.
+  string dest_path = 3;
+}
+
 message StarDoctorProperties {
   // Whether to commit changes.
   bool commit_changes = 1;
 
   // GoldenEye bucket to copy configs from.
+  // TODO(b/159233678): Remove once remote_config_files is passed.
   string ge_bucket = 2;
 
   // Branches to track and sync GoldenEye configs for.
   repeated string branches = 3;
+
+  // Config files to download from Google Storage.
+  repeated RemoteConfigFile remote_config_files = 4;
 }
