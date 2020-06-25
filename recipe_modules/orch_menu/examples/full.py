@@ -27,6 +27,7 @@ PROPERTIES = FullProperties
 
 
 def RunSteps(api, properties):
+  build = api.buildbucket.build
   with api.orch_menu.setup_orchestrator(
       missing_ok=properties.missing_ok,
       test_footers=properties.test_footers) as config:
@@ -36,7 +37,7 @@ def RunSteps(api, properties):
       return
     api.assertions.assertIsNotNone(config)
 
-    expected_changes = api.buildbucket.build.input.gerrit_changes
+    expected_changes = build.input.gerrit_changes
     # Add any changes from the config.
     expected_changes.extend([
         json_format.Parse(json_format.MessageToJson(x), GerritChange())
@@ -45,8 +46,12 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(
         str(expected_changes), str(api.orch_menu.gerrit_changes))
 
-    api.orch_menu.wait_for_inflight_orchestrator()
-    completed = api.orch_menu.plan_and_run_children()
+    enable_history = ('enable_history' in build.input.properties and
+                      build.input.properties['enable_history'])
+    if enable_history:
+      api.orch_menu.wait_for_inflight_orchestrator()
+    completed = api.orch_menu.plan_and_run_children(
+        enable_history=enable_history)
     follow_on = config.orchestrator.follow_on_orchestrator
     if follow_on.name:
       completed.append(
@@ -81,40 +86,31 @@ def GenTests(api):
                                      revision=None).message,
   ]
 
-  def make_properties(missing_ok=False, expect_missing_config=False,
-                      test_footers='', expected_completed_builds=None):
-    ret = FullProperties(missing_ok=missing_ok,
-                         expect_missing_config=expect_missing_config,
-                         test_footers=test_footers)
-    for build in expected_completed_builds or []:
-      ret.expected_completed_builds.add().CopyFrom(build)
-    return ret
-
   yield api.orch_menu.test('basic')
 
   yield api.orch_menu.test(
       'two-footers',
       api.properties(
-          make_properties(expect_missing_config=True,
-                          test_footers='foot1\nfoot2')))
+          FullProperties(expect_missing_config=True,
+                         test_footers='foot1\nfoot2')))
 
   yield api.orch_menu.test(
       'bad-ref',
       api.properties(
-          make_properties(missing_ok=True, expect_missing_config=True)),
+          FullProperties(missing_ok=True, expect_missing_config=True)),
       input_properties=OrchestratorProperties(
           update_manifest_refs=OrchestratorProperties.UpdateManifestRefs(
               start='missing-ref-heads')))
 
   yield api.orch_menu.test(
       'required-missing-config',
-      api.properties(make_properties(expect_missing_config=True)),
+      api.properties(FullProperties(expect_missing_config=True)),
       builder='no-config')
 
   yield api.orch_menu.test(
       'forgiven-missing-config',
       api.properties(
-          make_properties(missing_ok=True, expect_missing_config=True)),
+          FullProperties(missing_ok=True, expect_missing_config=True)),
       builder='no-config')
 
   yield api.orch_menu.test(
@@ -130,8 +126,22 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           successful_orch,
           'find inflight orchestrator.waiting for existing runs'),
-      api.properties(make_properties(expected_completed_builds=builds)),
+      api.properties(FullProperties(expected_completed_builds=builds)),
       api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
+      input_properties=dict(enable_history=True, assert_singleton=True),
+      cq=True,
+  )
+
+  # Runs when there is no inflight orchestrator.
+  yield api.orch_menu.test(
+      'no-inflight-orchestrator',
+      api.buildbucket.simulated_search_results(
+          [], step_name='find inflight orchestrator.'
+          'find matching builds.buildbucket.search'),
+      api.properties(FullProperties(expected_completed_builds=builds)),
+      api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
+      input_properties=dict(enable_history=True, assert_singleton=True),
+      cq=True,
   )
 
   # Collect times out
@@ -154,14 +164,14 @@ def GenTests(api):
                       ]))
           }),
       api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
-      api.properties(make_properties(expected_completed_builds=builds)),
+      api.properties(FullProperties(expected_completed_builds=builds)),
       bucket='bisect', builder='bisecting-orchestrator')
 
   # Follow-on orchestrator.
   yield api.orch_menu.test(
       'with-follow-on',
       api.properties(
-          make_properties(expected_completed_builds=builds + successful_orch)),
+          FullProperties(expected_completed_builds=builds + successful_orch)),
       api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           BatchResponse(responses=[dict(schedule_build=running_orch[0])]),
@@ -174,7 +184,7 @@ def GenTests(api):
   yield api.orch_menu.test(
       'with-follow-on-timeout',
       api.properties(
-          make_properties(expected_completed_builds=builds + successful_orch)),
+          FullProperties(expected_completed_builds=builds + successful_orch)),
       api.buildbucket.simulated_collect_output(builds, 'run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           BatchResponse(responses=[dict(schedule_build=running_orch[0])]),
