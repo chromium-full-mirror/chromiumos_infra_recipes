@@ -160,9 +160,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           None, config.artifacts, force_relevance=self._force_relevant_build)
 
     if not self._artifact_build or relevance != Relevance.POINTLESS:
-      # We can only uprev packages if we have a build_target.
-      if self.build_target.name:
-        self.m.cros_sdk.uprev_packages(build_targets=[self.build_target])
+      self.m.cros_sdk.uprev_packages()
       timeout = None if config.build.sdk_update.compile_source else 'DEFAULT'
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, use_image=self.is_staging,
