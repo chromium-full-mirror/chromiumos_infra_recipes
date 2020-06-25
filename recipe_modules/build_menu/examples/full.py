@@ -23,15 +23,14 @@ def RunSteps(api, properties):
   build_target = properties.build_target or common.BuildTarget(name='eve')
 
   with api.build_menu.configure_builder(
-      build_target, missing_ok=properties.missing_config_ok) as config:
+      missing_ok=properties.missing_config_ok) as config:
     api.assertions.assertEqual(config, api.build_menu.config)
     if not config:
       api.assertions.assertTrue(properties.expect_missing_config)
       api.assertions.assertIsNotNone(api.build_menu.config_or_default)
       return
 
-    relevant = api.build_menu.setup_workspace_and_chroot(
-        properties.artifact_build, properties.forced_relevant)
+    relevant = api.build_menu.setup_workspace_and_chroot()
     env_info = api.build_menu.setup_sysroot_and_determine_relevance(
         not properties.no_sysroot)
     if properties.forced_relevant:
@@ -40,8 +39,7 @@ def RunSteps(api, properties):
     if properties.no_sysroot:
       api.assertions.assertIsNone(api.build_menu.sysroot)
     else:
-      api.build_menu.bootstrap_sysroot_and_install_packages(
-          artifact_build=properties.artifact_build)
+      api.build_menu.bootstrap_sysroot_and_install_packages()
       api.build_menu.build_and_test_images()
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
@@ -65,7 +63,8 @@ def GenTests(api):
   yield api.build_menu.test(
       'postsubmit-build',
       api.properties(
-          FullProperties(artifact_build=True, upload_prebuilts=True)))
+          FullProperties(artifact_build=True, upload_prebuilts=True)),
+      input_properties={'$chromeos/build_menu': dict(artifact_build=True)})
 
   yield api.build_menu.test('toolchain-cq-build',
                             api.build_menu.set_toolchain_cls_return(True),
@@ -82,7 +81,10 @@ def GenTests(api):
                                        package_name='chromeos-chrome')
                 ])), build_target='chell', bucket='toolchain',
         builder='orderfile-generate-toolchain', artifact_pointless=True,
-        input_properties=dict(artifact_build=True))
+        input_properties={
+            '$chromeos/build_menu':
+                dict(artifact_build=True, force_relevant_build=forced)
+        })
 
   yield api.build_menu.test('no-sysroot',
                             api.properties(FullProperties(no_sysroot=True)))

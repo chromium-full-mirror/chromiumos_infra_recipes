@@ -24,3 +24,13 @@ DEPS = [
     'test_util',
     'workspace_util',
 ]
+
+from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
+
+PROPERTIES = BuildMenuProperties
+
+# TODO(crbug/1099259): Migrate the common build_target properties to the
+# module, and stop looking at the global properties.
+from PB.recipes.chromeos.build_target import BuildTargetProperties
+
+GLOBAL_PROPERTIES = BuildTargetProperties

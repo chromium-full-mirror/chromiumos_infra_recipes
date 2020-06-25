@@ -15,7 +15,8 @@ message AfdoProcessProperties {
   // Override for pointless build check.
   bool force_relevant_build = 2;
 
-  reserved 3;
+  // Whether this is an artifact build.  Must be True.  crbug/1099259.
+  bool artifact_build = 3;
 
   // Location information for the original build artifacts.  These are in
   // addition to those found in the builder config, and provide the location of

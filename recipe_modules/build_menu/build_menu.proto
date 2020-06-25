@@ -1,0 +1,20 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.build_menu;
+
+import "chromiumos/common.proto";
+
+message BuildMenuProperties {
+  // The build target being built.
+  chromiumos.BuildTarget build_target = 1;
+
+  // Override for pointless build check.
+  bool force_relevant_build = 2;
+
+  // Whether this is an artifact build (calls ArtifactsService/PrepareForBuild.)
+  bool artifact_build = 3;
+}

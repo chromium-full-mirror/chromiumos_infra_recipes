@@ -19,16 +19,13 @@ PROPERTIES = BuildTargetProperties
 
 
 def RunSteps(api, properties):
-  build_target = properties.build_target
-  with api.build_menu.configure_builder(build_target) as config:
+  with api.build_menu.configure_builder() as config:
     if config:
-      DoRunSteps(api, config, build_target, properties)
+      DoRunSteps(api, config, properties)
 
 
-def DoRunSteps(api, config, build_target, properties):
-  if not api.build_menu.setup_workspace_and_chroot(
-      artifact_build=properties.artifact_build,
-      forced_relevant=properties.force_relevant_build):
+def DoRunSteps(api, config, properties):
+  if not api.build_menu.setup_workspace_and_chroot():
     return
 
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
@@ -55,8 +52,7 @@ def DoRunSteps(api, config, build_target, properties):
     install_spec = config.build.install_packages.run_spec
     ebuilds_spec = config.unit_tests.ebuilds_run_spec
     if api.cros_infra_config.should_run(install_spec):
-      api.build_menu.bootstrap_sysroot_and_install_packages(
-          config, packages, artifact_build=properties.artifact_build)
+      api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
 
     if not api.cros_infra_config.should_exit(install_spec):
       api.build_menu.build_and_test_images(
@@ -90,7 +86,7 @@ def GenTests(api):
   # This covers the env_info.pointless check.
   yield api.build_menu.test('pointless-cq-build', cq=True, pointless=True)
 
-  # Normal CQ build, with one gerrit_change.
+  # Normal postsubmit build.
   yield api.build_menu.test('postsubmit-build')
 
   # Postsubmit build with install-packages failure.

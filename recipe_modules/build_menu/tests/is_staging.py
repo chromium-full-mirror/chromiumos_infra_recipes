@@ -20,7 +20,6 @@ PROPERTIES = StagingProperties
 
 
 def RunSteps(api, properties):
-  build_target = common.BuildTarget(name='amd64-generic')
   kwargs = {}
 
   if properties.HasField('is_staging'):
@@ -30,7 +29,7 @@ def RunSteps(api, properties):
   if properties.provide_is_staging:
     kwargs['is_staging'] = is_staging
 
-  with api.build_menu.configure_builder(build_target, **kwargs) as config:
+  with api.build_menu.configure_builder(**kwargs) as config:
     api.easy.set_property_step('is_staging', str(api.build_menu.is_staging))
     if properties.expected_is_staging:
       api.assertions.assertTrue(api.build_menu.is_staging)

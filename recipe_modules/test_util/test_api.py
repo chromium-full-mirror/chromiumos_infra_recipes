@@ -51,17 +51,6 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       # We may already have build_menu properties.  Passing build_target_name
       # overrides the value in any input properties we received.
       input_dict.setdefault('$chromeos/build_menu', {})
-
-      # TODO(crbug/1099259): This gets dropped when we add the module
-      # properties. Simplify review by adding the properties to build_menu
-      # properties.
-      if not input_dict['$chromeos/build_menu']:
-        input_dict['$chromeos/build_menu'] = {
-            k: v
-            for k, v in input_dict['$chromeos/build_menu'].items()
-            if not k.startswith('$')
-        }
-
       input_dict['$chromeos/build_menu']['build_target'] = build_target
       # TODO(crbug/1099259: build_target is moving to $chromeos/build_menu
       # properties.  Drop this when no longer needed.

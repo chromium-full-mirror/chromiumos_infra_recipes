@@ -45,8 +45,7 @@ VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
 
 
 def RunSteps(api, properties):
-  build_target = properties.build_target
-  with api.build_menu.configure_builder(build_target, missing_ok=True):
+  with api.build_menu.configure_builder(missing_ok=True):
     # We expect that we do not have a config, but we do have some non-default
     # values.  In the event that a config _IS_ present, let that win.
     config = api.build_menu.config_or_default
@@ -85,8 +84,9 @@ def RunSteps(api, properties):
     test_harness_name = VmTestRequest.TestHarness.Name(properties.test_harness)
     api.cros_build_api.TestService.VmTest(
         VmTestRequest(
-            build_target=build_target, chroot=api.cros_sdk.chroot,
-            vm_path=Path(path=vm_image_path, location=Path.OUTSIDE),
+            build_target=api.build_menu.build_target,
+            chroot=api.cros_sdk.chroot, vm_path=Path(path=vm_image_path,
+                                                     location=Path.OUTSIDE),
             ssh_options=VmTestRequest.SshOptions(
                 private_key_path=Path(path=private_key_path,
                                       location=Path.OUTSIDE)),

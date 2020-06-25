@@ -18,6 +18,8 @@ from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
+from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 
 class BuildMenuApi(recipe_api.RecipeApi):
@@ -33,9 +35,27 @@ class BuildMenuApi(recipe_api.RecipeApi):
       BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
   ]
 
-  def initialize(self):
+  # TODO(crbug/1099259): Migrate the common build_target properties to the
+  # module, and stop looking at the global properties.
+  def __init__(self, props, glob_props, *args, **kwargs):
+    super(BuildMenuApi, self).__init__(*args, **kwargs)
     self._chroot_created = False
     self._dep_graph = None
+    # Our properties: BuildMenuProperties ($chromeos/build_menu).
+    # TODO(crbug/1099259): Inherit missing properties from the recipe.
+    if not props.build_target.name:
+      props.build_target.CopyFrom(glob_props.build_target)
+    props.force_relevant_build = (
+        props.force_relevant_build or glob_props.force_relevant_build)
+    props.artifact_build = (props.artifact_build or glob_props.artifact_build)
+
+    self._build_target = props.build_target
+    self._force_relevant_build = props.force_relevant_build
+    self._artifact_build = props.artifact_build
+
+  @property
+  def build_target(self):
+    return self._build_target
 
   @property
   def config(self):
@@ -70,15 +90,13 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return self._dep_graph
 
   @contextlib.contextmanager
-  def configure_builder(self, build_target, is_staging=None, missing_ok=False):
+  def configure_builder(self, is_staging=None, missing_ok=False):
     """Initial setup steps for the builder.
 
-    This context manager returns with all of the contexts that build_target
+    This context manager returns with all of the contexts that an image builder
     needs to have when it runs, for cleanup to happen properly.
 
     Args:
-      build_target (BuildTarget): build_target for the build, or None if the
-          builder is build_target agnostic.
       is_staging (bool): Whether this is a staging builder.  Use this to
           override auto-detection. By default, anything in the 'staging' bucket
           is considered a staging builder.
@@ -87,20 +105,19 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Returns:
       BuilderConfig or None, with an active context.
     """
-    self.build_target = build_target or BuildTarget()
     with self.m.bot_cost.build_cost_context():
       config = self.m.cros_infra_config.configure_builder(
           self.m.buildbucket.gitiles_commit,
           self.m.buildbucket.build.input.gerrit_changes, is_staging=is_staging)
       if config and config.id.name and self.build_target.name:
-        self.m.cros_bisect.set_bisect_builder(build_target.name)
+        self.m.cros_bisect.set_bisect_builder(self.build_target.name)
       if config:
         self.m.cros_sdk.set_use_flags(config.build.use_flags)
       if config or missing_ok:
         with self.m.workspace_util.setup_workspace(), \
             self.m.cros_sdk.cleanup_context():
           if config:
-            with self.m.metadata_json.context(config, build_target):
+            with self.m.metadata_json.context(config, self.build_target):
               yield config
           else:
             # No config, and missing_ok is true.
@@ -116,21 +133,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
         raise self.m.step.StepFailure('Missing configuration for {}'.format(
             self.m.buildbucket.build.builder.builder))
 
-  def setup_workspace_and_chroot(self, artifact_build=False,
-                                 forced_relevant=False):
+  def setup_workspace_and_chroot(self):
     """Setup the workspace and chroot for the builder.
-
-    Args:
-      artifact_build (bool): Whether to call update_for_artifact_build and
-          terminate early if POINTLESS.
-      forced_relevant (bool): Whether to force relevance for artifact_builds.
 
     Returns:
       (bool): Whether the build is relevant.
     """
-    self._artifact_build = artifact_build
-    self._forced_relevant = forced_relevant
-
     # If we do not have a config, use an empty one.
     config = self.config_or_default
 
@@ -145,13 +153,13 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self.m.easy.set_property_step('chromeos_version', str(version))
 
     relevance = Relevance.UNKNOWN
-    if artifact_build:
+    if self._artifact_build:
       # Early check to see if the build is pointless. (No chroot nor
       # sysroot yet.)
       relevance = self.m.sysroot_util.update_for_artifact_build(
-          None, config.artifacts, force_relevance=forced_relevant)
+          None, config.artifacts, force_relevance=self._force_relevant_build)
 
-    if not artifact_build or relevance != Relevance.POINTLESS:
+    if not self._artifact_build or relevance != Relevance.POINTLESS:
       # We can only uprev packages if we have a build_target.
       if self.build_target.name:
         self.m.cros_sdk.uprev_packages(build_targets=[self.build_target])
@@ -221,7 +229,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # 3. output_properties.artifact_prep is True.
     pointless = self.m.cros_relevance.is_build_pointless(
         self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
-        force_relevant=self._forced_relevant)
+        force_relevant=self._force_relevant_build)
     if pointless:
       self.m.buildbucket.hide_current_build_in_gerrit()
 
@@ -252,7 +260,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return self.dep_graph
 
   def bootstrap_sysroot_and_install_packages(self, config=None, packages=None,
-                                             artifact_build=None,
                                              timeout_sec='DEFAULT', name=None):
     """Install packages (possibly fetching Chrome source).
 
@@ -260,7 +267,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       config (BuilderConfig): The Builder Config for the build.
       packages (list[PackageInfo]): list of packages to install.  Default: all
           packages for the build_target.
-      artifact_build (bool): Whether to call update_for_artifact_build.
       timeout_sec (int): Step timeout, in seconds, or None for default.
       name (string): step name for install packages, or None for default.
     """
@@ -272,7 +278,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     install_packages = config.build.install_packages
     self.m.sysroot_util.install_packages(config, self.dep_graph, packages,
-                                         artifact_build=artifact_build,
+                                         artifact_build=self._artifact_build,
                                          timeout_sec=timeout_sec, name=name)
 
   def build_and_test_images(self, config=None, run_tests=True):

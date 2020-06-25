@@ -21,20 +21,18 @@ PROPERTIES = AfdoProcessProperties
 
 
 def RunSteps(api, properties):
-  build_target = properties.build_target
-  with api.build_menu.configure_builder(build_target) as config:
+  with api.build_menu.configure_builder() as config:
     if config:
-      DoRunSteps(api, config, build_target, properties)
+      DoRunSteps(api, config, properties)
 
 
-def DoRunSteps(api, config, build_target, properties):
+def DoRunSteps(api, config, properties):
   # If we received any extra input_artifacts, add them to the values
   # from the config.
   config.artifacts.artifacts_info.toolchain.input_artifacts.extend(
       properties.input_artifacts or [])
 
-  if not api.build_menu.setup_workspace_and_chroot(
-      artifact_build=True, forced_relevant=properties.force_relevant_build):
+  if not api.build_menu.setup_workspace_and_chroot():
     return
 
   # This update_for_artifact_build call will download the input artifacts into
@@ -47,7 +45,7 @@ def DoRunSteps(api, config, build_target, properties):
                                              name='prepare artifacts final')
 
   api.cros_artifacts.upload_artifacts(
-      config.id.name, build_target, config.id.type,
+      config.id.name, api.build_menu.build_target, config.id.type,
       config.artifacts.artifacts_gs_bucket,
       artifacts_info=config.artifacts.artifacts_info, sysroot=None,
       chroot=api.cros_sdk.chroot)
@@ -58,10 +56,11 @@ def GenTests(api):
   def test(name, builder='benchmark-afdo-process', input_artifacts=None,
            artifact_pointless=False, **kwargs):
     kwargs['builder'] = builder
-    if input_artifacts:
-      kwargs['input_properties'] = AfdoProcessProperties(
-          input_artifacts=input_artifacts)
-    ret = api.test_util.test_child_build('chell', **kwargs).build
+    input_props = AfdoProcessProperties(artifact_build=True)
+    for artifact in input_artifacts or []:
+      input_props.input_artifacts.add().CopyFrom(artifact)
+    ret = api.test_util.test_child_build('chell', input_properties=input_props,
+                                         **kwargs).build
     if artifact_pointless:
       ret += api.build_menu.set_build_api_return(
           'prepare artifacts', 'ArtifactsService/PrepareForBuild',

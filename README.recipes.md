@@ -93,6 +93,7 @@
   * [build_menu:examples/full](#recipes-build_menu_examples_full)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
   * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph)
+  * [build_menu:tests/properties](#recipes-build_menu_tests_properties) &mdash; Verify module inherits some recipe properties.
   * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan)
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
   * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
@@ -559,14 +560,14 @@ Returns:
 
 API providing a menu for build steps
 
-#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by image builders.
 
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#254)(self, config=None, packages=None, artifact_build=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#262)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Install packages (possibly fetching Chrome source).
 
@@ -574,11 +575,10 @@ Args:
   config (BuilderConfig): The Builder Config for the build.
   packages (list[PackageInfo]): list of packages to install.  Default: all
       packages for the build_target.
-  artifact_build (bool): Whether to call update_for_artifact_build.
   timeout_sec (int): Step timeout, in seconds, or None for default.
   name (string): step name for install packages, or None for default.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#278)(self, config=None, run_tests=True):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#284)(self, config=None, run_tests=True):**
 
 Build the image and optionally run ebuild tests.
 
@@ -586,22 +586,22 @@ Args:
   config (BuilderConfig): The Builder Config for the build, or None.
   run_tests (bool): Whether to run ebuild tests.
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#64)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#56)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#40)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#84)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#44)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#60)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#72)(self, build_target, is_staging=None, missing_ok=False):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#64)(self):**
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#92)(self, is_staging=None, missing_ok=False):**
 
 Initial setup steps for the builder.
 
-This context manager returns with all of the contexts that build_target
+This context manager returns with all of the contexts that an image builder
 needs to have when it runs, for cleanup to happen properly.
 
 Args:
-  build_target (BuildTarget): build_target for the build, or None if the
-      builder is build_target agnostic.
   is_staging (bool): Whether this is a staging builder.  Use this to
       override auto-detection. By default, anything in the 'staging' bucket
       is considered a staging builder.
@@ -610,17 +610,15 @@ Args:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#68)(self):**
+&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#88)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#52)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#72)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#48)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#68)(self):**
 
-&mdash; **def [initialize](/recipe_modules/build_menu/api.py#36)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#76)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#56)(self):**
-
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#172)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#180)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -635,28 +633,23 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#119)(self, artifact_build=False, forced_relevant=False):**
+&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#136)(self):**
 
 Setup the workspace and chroot for the builder.
-
-Args:
-  artifact_build (bool): Whether to call update_for_artifact_build and
-      terminate early if POINTLESS.
-  forced_relevant (bool): Whether to force relevance for artifact_builds.
 
 Returns:
   (bool): Whether the build is relevant.
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#60)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#80)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#309)(self, config=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#315)(self, config=None):**
 
 Upload artifacts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#322)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#328)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -4460,7 +4453,7 @@ All builders run against the same source tree.
 
 Recipe for building an AFDO benchmark profile.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_process.py#30)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/afdo_process.py#29)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/afdo_process.py#23)(api, properties):**
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
@@ -4649,6 +4642,16 @@ Renames a branch using `cros branch rename`.
 [DEPS](/recipe_modules/build_menu/tests/no_dep_graph.py#6): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/build_menu/tests/no_dep_graph.py#15)(api):**
+### *recipes* / [build\_menu:tests/properties](/recipe_modules/build_menu/tests/properties.py)
+
+[DEPS](/recipe_modules/build_menu/tests/properties.py#12): [build\_menu](#recipe_modules-build_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+Verify module inherits some recipe properties.
+
+Verify that merging BuildTargetProperties into BuildMenuProperties is
+behaving as expected.
+
+&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/properties.py#27)(api, properties):**
 ### *recipes* / [build\_plan:examples/bisect\_build\_plan](/recipe_modules/build_plan/examples/bisect_build_plan.py)
 
 [DEPS](/recipe_modules/build_plan/examples/bisect_build_plan.py#10): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -4680,7 +4683,7 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#28)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#27)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#21)(api, properties):**
 ### *recipes* / [build\_with\_unittest](/recipes/build_with_unittest.py)
@@ -4689,7 +4692,7 @@ Recipe for building a BuildTarget image.
 
 Recipe for building a BuildTarget image with unit tests.
 
-&mdash; **def [DoRunSteps](/recipes/build_with_unittest.py#26)(api, config, build_target, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_with_unittest.py#25)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_with_unittest.py#19)(api, properties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
