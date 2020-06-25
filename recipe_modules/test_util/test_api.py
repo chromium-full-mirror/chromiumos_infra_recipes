@@ -47,9 +47,27 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       input_dict = MessageToDict(input_dict, preserving_proto_field_name=True)
     kwargs.setdefault('bucket', 'cq' if kwargs.get('cq') else 'postsubmit')
     if build_target_name:
+      build_target = dict(name=build_target_name)
+      # We may already have build_menu properties.  Passing build_target_name
+      # overrides the value in any input properties we received.
+      input_dict.setdefault('$chromeos/build_menu', {})
+
+      # TODO(crbug/1099259): This gets dropped when we add the module
+      # properties. Simplify review by adding the properties to build_menu
+      # properties.
+      if not input_dict['$chromeos/build_menu']:
+        input_dict['$chromeos/build_menu'] = {
+            k: v
+            for k, v in input_dict['$chromeos/build_menu'].items()
+            if not k.startswith('$')
+        }
+
+      input_dict['$chromeos/build_menu']['build_target'] = build_target
+      # TODO(crbug/1099259: build_target is moving to $chromeos/build_menu
+      # properties.  Drop this when no longer needed.
+      input_dict['build_target'] = build_target
       kwargs.setdefault('builder',
                         '%s-%s' % (build_target_name, kwargs['bucket']))
-      input_dict['build_target'] = {'name': build_target_name}
 
     return self.test_build(input_properties=input_dict, **kwargs)
 
