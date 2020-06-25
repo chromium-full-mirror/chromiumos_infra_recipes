@@ -72,17 +72,19 @@ def RunSteps(api, properties):
     api.repo.start('cl-factory', projects=[info.name for info in cl_infos])
 
     with api.step.nest('generate project change lists') as pres:
-
       changes, diffs = _make_changes(api, cl_infos, gerrit_changes, properties)
-
       if changes:
-        unified_diff = ''
-        for cl, diff in zip(changes, diffs):
-          unified_diff += cl.project + '\n'
-          unified_diff += '=' * 80
-          unified_diff += '\n' + diff + '\n\n'
-        pres.logs['unified diff'] = unified_diff
         _set_source_cq_depends(api, changes, gc_infos, gerrit_changes)
+
+    with api.step.nest('summarize results') as pres:
+      if not changes:
+        pres.step_text = 'no change lists generated'
+      else:
+        pres.logs['unified_diff'] = _make_unified_diff(changes, diffs)
+        gerrit_commands = _make_gerrit_commands(api, properties.hashtags,
+                                                changes)
+        if gerrit_commands:
+          pres.logs['gerrit_commands'] = gerrit_commands
 
 
 def _validate_inputs(properties, gerrit_changes):
@@ -278,6 +280,94 @@ def _make_commit_message(api, info, gerrit_changes, properties):
       api.buildbucket.build_url())
   message += '\n\n{}'.format(api.cros_cq_depends.get_cq_depend(gerrit_changes))
   return message
+
+
+def _make_unified_diff(changes, diffs):
+  """Makes a unified, single string, concatenation of all the diffs.
+
+  Combines the given diffs into a single string with a small header that shows
+  what project each particular diff comes from. The intention is for the user
+  to get an overall view of what has changed and thus may be able to make an
+  overall approval decision without visiting each change in gerrit.
+
+  Args:
+    changes (List[GerritChange]): List of generated gerrit changes.
+    diffs (List[str]): List of diffs for the generated gerrit changes.
+
+  Returns:
+    str unified diff.
+  """
+  unified_diff = ''
+  for cl, diff in zip(changes, diffs):
+    unified_diff += cl.project + '\n'
+    unified_diff += '=' * 80
+    unified_diff += '\n' + diff + '\n\n'
+  return unified_diff
+
+
+_CR_TEMPLATE = 'gerrit label-cr `gerrit {} --raw search "{} status:open {}"` 2'
+_V_TEMPLATE = 'gerrit label-v `gerrit {} --raw search "{} status:open {}"` 1'
+_CQ_TEMPLATE = 'gerrit label-cq `gerrit {} --raw search "{} status:open {}"` 2'
+
+
+def _make_gerrit_commands(api, hashtags, changes):
+  """Returns a the gerrit commands to review, verify, commit the changes.
+
+  Returns a string containing the gerrit command line commands that can be used
+  to review, verify, and commit the changes.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    hashtags (List[str]): List of hashtags applied to generated gerrit changes.
+    changes (List[GerritChange]): List of generated gerrit changes.
+
+  Returns:
+    str of approval commands suitable for presenting to the user, or None
+      if no commands could be determined.
+  """
+  owner_constraint = 'owner:{}'.format(
+      api.buildbucket.build.infra.swarming.task_service_account)
+  hashtag_constraints = ' '.join(
+      map(lambda t: 'hashtag:{}'.format(t), hashtags))
+  reviews = []
+  verifies = []
+  commits = []
+  if _has_changes_on_host(changes, 'chromium-review.googlesource.com'):
+    format = ['', owner_constraint, hashtag_constraints]
+    reviews.append(_CR_TEMPLATE.format(*format))
+    verifies.append(_V_TEMPLATE.format(*format))
+    commits.append(_CQ_TEMPLATE.format(*format))
+  if _has_changes_on_host(
+      changes, 'chrome-internal-review.googlesource.com'):  # pragma: nocover
+    format = ['-i', owner_constraint, hashtag_constraints]
+    reviews.append(_CR_TEMPLATE.format(*format))
+    verifies.append(_V_TEMPLATE.format(*format))
+    commits.append(_CQ_TEMPLATE.format(*format))
+  if not reviews:  # pragma: nocover
+    return None
+  commands = 'Review commands:\n' + '\n'.join(reviews)
+  commands += '\n\nVerify commands:\n' + '\n'.join(verifies)
+  commands += '\n\nCommit commands:\n' + '\n'.join(commits)
+  return commands
+
+
+def _has_changes_on_host(changes, host):
+  """Returns whether the changes have a change on host.
+
+  Returns whether or not the list of changes have a change that is on the
+  give gerrit host.
+
+  Args:
+    changes (List[GerritChange]): List of generated gerrit changes.
+    host (str): Host to check.
+
+  Returns:
+    bool whether or not the changes have a change on host.
+  """
+  for change in changes:
+    if host in change.host:
+      return True
+  return False
 
 
 def GenTests(api):

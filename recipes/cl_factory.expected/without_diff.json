@@ -946,6 +946,13 @@
   },
   {
     "cmd": [],
+    "name": "summarize results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no change lists generated@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {

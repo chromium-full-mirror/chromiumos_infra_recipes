@@ -743,25 +743,7 @@
   },
   {
     "cmd": [],
-    "name": "generate project change lists",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@unified diff@[START_DIR]/chromiumos_workspace/src/a@@@",
-      "@@@STEP_LOG_LINE@unified diff@================================================================================@@@",
-      "@@@STEP_LOG_LINE@unified diff@- before text@@@",
-      "@@@STEP_LOG_LINE@unified diff@+ after text@@@",
-      "@@@STEP_LOG_LINE@unified diff@@@@",
-      "@@@STEP_LOG_LINE@unified diff@[START_DIR]/chromiumos_workspace/src/b@@@",
-      "@@@STEP_LOG_LINE@unified diff@================================================================================@@@",
-      "@@@STEP_LOG_LINE@unified diff@- before text@@@",
-      "@@@STEP_LOG_LINE@unified diff@+ after text@@@",
-      "@@@STEP_LOG_LINE@unified diff@@@@",
-      "@@@STEP_LOG_LINE@unified diff@[START_DIR]/chromiumos_workspace/src/c@@@",
-      "@@@STEP_LOG_LINE@unified diff@================================================================================@@@",
-      "@@@STEP_LOG_LINE@unified diff@- before text@@@",
-      "@@@STEP_LOG_LINE@unified diff@+ after text@@@",
-      "@@@STEP_LOG_LINE@unified diff@@@@",
-      "@@@STEP_LOG_END@unified diff@@@"
-    ]
+    "name": "generate project change lists"
   },
   {
     "cmd": [],
@@ -1577,6 +1559,37 @@
     "stdin": "a quick description\n\nCq-Depend: chromium:1,chromium:1,chromium:1\nChange-Id: deadbeef\n    ",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize results",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@unified_diff@[START_DIR]/chromiumos_workspace/src/a@@@",
+      "@@@STEP_LOG_LINE@unified_diff@================================================================================@@@",
+      "@@@STEP_LOG_LINE@unified_diff@- before text@@@",
+      "@@@STEP_LOG_LINE@unified_diff@+ after text@@@",
+      "@@@STEP_LOG_LINE@unified_diff@@@@",
+      "@@@STEP_LOG_LINE@unified_diff@[START_DIR]/chromiumos_workspace/src/b@@@",
+      "@@@STEP_LOG_LINE@unified_diff@================================================================================@@@",
+      "@@@STEP_LOG_LINE@unified_diff@- before text@@@",
+      "@@@STEP_LOG_LINE@unified_diff@+ after text@@@",
+      "@@@STEP_LOG_LINE@unified_diff@@@@",
+      "@@@STEP_LOG_LINE@unified_diff@[START_DIR]/chromiumos_workspace/src/c@@@",
+      "@@@STEP_LOG_LINE@unified_diff@================================================================================@@@",
+      "@@@STEP_LOG_LINE@unified_diff@- before text@@@",
+      "@@@STEP_LOG_LINE@unified_diff@+ after text@@@",
+      "@@@STEP_LOG_LINE@unified_diff@@@@",
+      "@@@STEP_LOG_END@unified_diff@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@Review commands:@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@gerrit label-cr `gerrit  --raw search \"owner: status:open hashtag:refactor-audio-config\"` 2@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@Verify commands:@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@gerrit label-v `gerrit  --raw search \"owner: status:open hashtag:refactor-audio-config\"` 1@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@Commit commands:@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@gerrit label-cq `gerrit  --raw search \"owner: status:open hashtag:refactor-audio-config\"` 2@@@",
+      "@@@STEP_LOG_END@gerrit_commands@@@"
     ]
   },
   {
