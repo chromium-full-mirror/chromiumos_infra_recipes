@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipes.chromeos.cl_factory;
 
-import "go.chromium.org/luci/buildbucket/proto/common.proto";
-
 message ClFactoryProperties {
   // Regex specifying repos to operate on. The matching is the same
   // as in `repo forall --regex regexes...`, for example,

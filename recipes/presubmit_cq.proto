@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipes.chromeos.presubmit_cq;
 
-import "go.chromium.org/luci/buildbucket/proto/common.proto";
-
 message PresubmitCqProperties {
   // Passed to depot_tools/presubmit (Infra Presubmit). See
   // depot_tools/recipes/recipe_modules/presubmit/properties.proto for details.

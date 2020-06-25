@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_version.examples;
 
-import "chromiumos/common.proto";
-
 message TestInputProperties {
   string expected_version_snapshot = 1;
 }

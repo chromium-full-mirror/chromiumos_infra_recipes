@@ -7,7 +7,6 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_sdk.examples;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
-import "chromiumos/common.proto";
 
 message TestInputProperties {
   // SDK cache version

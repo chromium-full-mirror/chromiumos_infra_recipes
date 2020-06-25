@@ -6,10 +6,6 @@ syntax = "proto3";
 
 package recipes.chromeos.test_manifest;
 
-import "chromiumos/common.proto";
-import "chromite/api/test.proto";
-import "testplans/generate_test_plan.proto";
-
 message TestManifestProperties {
   // List of projects for which we want to test `cros branch` after
   // manifest updates.
