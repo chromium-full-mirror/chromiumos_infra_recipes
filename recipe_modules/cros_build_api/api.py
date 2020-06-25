@@ -321,16 +321,20 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
           request_time = timestamp_pb2.Timestamp()
           request_time.FromDatetime(self.m.time.utcnow())
           try:
+            # Note: 0 and 2 are considered ok return values because in
+            # chromite/api/controller/__init__.py, 0 is RETRN_CODE_SUCCESS and
+            # 2 is RETURN_CODE_UNSUCCESSFUL_RESPONSE_AVAILABLE (meaning that
+            # even though a problem occurred, there is actionable info in the
+            # response.)
             call_step = self.m.step('call build API script', cmd, ok_ret=(0, 2),
                                     infra_step=infra_step, timeout=timeout)
           finally:
             response_time = timestamp_pb2.Timestamp()
             response_time.FromDatetime(self.m.time.utcnow())
-
-          if self._capture_stdout_stderr:
-            file_contents = self.m.file.read_raw('read tee output file',
-                                                 logfile_path,
-                                                 test_data=test_teelog_data)
+            if self._capture_stdout_stderr:
+              file_contents = self.m.file.read_raw('read tee output file',
+                                                   logfile_path,
+                                                   test_data=test_teelog_data)
 
           # If no test data is provided, see if we have our own.
           test_output_data = (
