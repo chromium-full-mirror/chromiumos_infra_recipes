@@ -17,7 +17,7 @@ from PB.recipes.chromeos.test_platform.test_runner import \
   TestRunnerProperties, TestRunnerEnvProperties
 from PB.test_platform import phosphorus
 from PB.test_platform import skylab_local_state
-from PB.test_platform.skylab_test_runner.result import Result
+from PB.test_platform.skylab_test_runner.result import AsyncResults, Result
 from PB.test_platform.skylab_test_runner.config import Config
 
 from google.protobuf import json_format
@@ -187,6 +187,8 @@ def summarize_results(api, prejob_response, run_test_response, result):
     * result: skylab_test_runner.Result instance.
   """
   with api.step.nest('test results') as step:
+    if result.async_results.logs_url:
+      step.links['Autotest logs'] = result.async_results.logs_url
     step.presentation.logs['JSON output'] = json_format.MessageToJson(result)
     for prejob in result.prejob.step:
       with api.step.nest(prejob.name) as step:
@@ -381,6 +383,7 @@ def execution_steps(api, properties, envvars):
             api, phosphorus_config=phosphorus_config, properties=properties,
             dut_hostname=dut_hostname)
       result = get_results(api, load_response.results_dir)
+      result.async_results.CopyFrom(load_response.async_results)
       if _should_upload_to_gs(properties, result):
         upload_to_gs_response = upload_sync_results(
             api, config=phosphorus_config,
@@ -610,13 +613,15 @@ def GenTests(api):
 
   # Required for steps following `skylab_local_state load`.
   def _mock_load_step():
-    return (
-      api.step_data(
-      'execution steps.load local DUT state.call `skylab_local_state`.load',
-      stdout=api.raw_io.output(
-          json_format.MessageToJson(
-              skylab_local_state.load.LoadResponse(
-              results_dir='dummy-results-dir')))))
+    return (api.step_data(
+        'execution steps.load local DUT state.call `skylab_local_state`.load',
+        stdout=api.raw_io.output(
+            json_format.MessageToJson(
+                skylab_local_state.load.LoadResponse(
+                    async_results=AsyncResults(
+                        logs_url='http://foo-logs-url',
+                        gs_url='gs://foo-gs-url',
+                    ), results_dir='dummy-results-dir')))))
 
 
   def _successful_prejob_step():
