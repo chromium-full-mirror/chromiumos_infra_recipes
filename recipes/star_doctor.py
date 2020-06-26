@@ -62,13 +62,15 @@ def RunSteps(api, properties):
           'ge_bucket and branches cannot be set if remote_config_files is set.')
 
   with api.step.nest('generate binary config'):
-    with api.step.nest('copy goldeneye configs') as presentation:
+    with api.step.nest('copy remote configs') as presentation:
       for remote_config_file in remote_config_files:
         api.gsutil.download(
-            remote_config_file.bucket_name,
-            remote_config_file.object_name,
+            remote_config_file.bucket_name, remote_config_file.object_name,
             workdir.join(remote_config_file.dest_path),
-        )
+            name='download {}/{}'.format(
+                remote_config_file.bucket_name,
+                remote_config_file.object_name,
+            ))
 
     # We need lucicfg from depot_tools.
     with api.depot_tools.on_path():
@@ -121,8 +123,10 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test('dont_commit', api.properties(commit_changes=False))
 
-  yield api.test('full', api.properties(commit_changes=True,
-                                        branches=['R9000']))
+  yield api.test(
+      'full',
+      api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
+                     branches=['R9000']))
 
   yield api.test(
       'old_and_new_properties_set',

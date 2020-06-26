@@ -23,7 +23,7 @@
   },
   {
     "cmd": [],
-    "name": "generate binary config.copy goldeneye configs",
+    "name": "generate binary config.copy remote configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -41,7 +41,7 @@
       "[CLEANUP]/tmp_tmp_1/goldeneye/build_config.ToT.json"
     ],
     "infra_step": true,
-    "name": "generate binary config.copy goldeneye configs.gsutil download",
+    "name": "generate binary config.copy remote configs.gsutil download /build_config.ToT.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
