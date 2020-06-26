@@ -313,36 +313,6 @@ def GenTests(api):
   yield api.test('dry_run', test_orchestrator(cq=True, dry_run=True))
 
   yield api.test(
-      'quota_scheduler_override',
-      test_orchestrator(
-          cq=True, tags=api.cros_tags.tags(
-              cq_cl_tag='pupr:chromeos-base/chromeos-chrome')),
-      api.buildbucket.simulated_search_results(
-          builds, 'run builds.get build history.'
-          'get completed builds.get change build history.'
-          'buildbucket.search'),
-      api.buildbucket.simulated_collect_output(builds,
-                                               step_name='run builds.collect'),
-      api.buildbucket.simulated_schedule_output(
-          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
-      api.buildbucket.simulated_schedule_output(
-          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule htarget.hw.bvt-inline.buildbucket.schedule'),
-      api.buildbucket.simulated_collect_output(
-          hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks.buildbucket.collect'),
-      api.buildbucket.simulated_collect_output(
-          vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests'),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests'),
-      api.buildbucket.simulated_collect_output(
-          moblab_vm_tests,
-          step_name='run tests.collect tests.collect moblab vm tests'),
-  )
-
-  yield api.test(
       'orchestrator_with_process_child_and_followon',
       test_orchestrator(bucket='toolchain',
                         builder='orderfile-generate-orchestrator',
