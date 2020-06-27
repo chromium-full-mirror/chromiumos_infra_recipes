@@ -25,9 +25,9 @@ from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 from PB.recipe_modules.chromeos.cros_bisect import cros_bisect
 from PB.recipe_engine.result import RawResult
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
+    BatchResponse)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
-from PB.go.chromium.org.luci.buildbucket.proto.rpc import BatchResponse
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 PROPERTIES = FullProperties
@@ -135,9 +135,9 @@ def GenTests(api):
       Build(id=4321, builder={'builder': 'cros_test_platform'},
             status=common_pb2.SUCCESS),
   ]
-  ctp_response1 = rpc_pb2.BatchResponse(
+  ctp_response1 = BatchResponse(
       responses=[dict(schedule_build=cros_test_platforms[0])])
-  ctp_response2 = rpc_pb2.BatchResponse(
+  ctp_response2 = BatchResponse(
       responses=[dict(schedule_build=cros_test_platforms[1])])
 
   hw_tests = [

@@ -23,7 +23,8 @@ from google.protobuf import json_format
 from PB.chromiumos.common import ArtifactsByService
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 
 PROPERTIES = OrchestratorProperties
@@ -116,9 +117,9 @@ def GenTests(api):
       build_pb2.Build(id=4321, builder={'builder': 'cros_test_platform'},
                       status=common_pb2.SUCCESS),
   ]
-  ctp_response1 = rpc_pb2.BatchResponse(
+  ctp_response1 = builds_service_pb2.BatchResponse(
       responses=[dict(schedule_build=cros_test_platforms[0])])
-  ctp_response2 = rpc_pb2.BatchResponse(
+  ctp_response2 = builds_service_pb2.BatchResponse(
       responses=[dict(schedule_build=cros_test_platforms[1])])
 
   hw_tests = [
@@ -154,7 +155,7 @@ def GenTests(api):
   ]
 
   # we have three here to properly exercise "prioritize_builds"
-  followon_resp1 = rpc_pb2.BatchResponse(responses=[
+  followon_resp1 = builds_service_pb2.BatchResponse(responses=[
       dict(
           schedule_build=api.test_util.test_orchestrator(
               build_id=5555, bucket='toolchain',
@@ -162,7 +163,7 @@ def GenTests(api):
               status='SUCCESS').message)
   ])
 
-  process_resp1 = rpc_pb2.BatchResponse(responses=[
+  process_resp1 = builds_service_pb2.BatchResponse(responses=[
       dict(
           schedule_build=api.test_util.test_orchestrator(
               build_id=5555, bucket='toolchain',

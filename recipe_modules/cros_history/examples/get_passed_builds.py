@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from google.protobuf import struct_pb2
@@ -49,24 +50,23 @@ def GenTests(api):
               input_target_patches=[common_pb2.GerritChange(change=2341)])))
 
   yield api.test(
-      'passed_builds_with_history',
-      api.cq(full_run=True),
+      'passed_builds_with_history', api.cq(full_run=True),
       api.buildbucket.build(
           _build_with_changes(
               build_pb2.Build(
-                  builder=build_pb2.BuilderID(builder='cq-orch'), tags=[{
+                  builder=builder_pb2.BuilderID(builder='cq-orch'), tags=[{
                       'key': 'cq_equivalent_cl_group_key',
                       'value': 'GROUP_KEY'
                   }]))),
       api.buildbucket.simulated_search_results([
           _build_with_changes(
-              build_pb2.Build(id=123, builder=build_pb2.BuilderID(
+              build_pb2.Build(id=123, builder=builder_pb2.BuilderID(
                   builder='betty'), status=common_pb2.SUCCESS)),
           _build_with_changes(
-              build_pb2.Build(id=231, builder=build_pb2.BuilderID(
+              build_pb2.Build(id=231, builder=builder_pb2.BuilderID(
                   builder='reef'), status=common_pb2.SUCCESS)),
           _build_with_changes(
-              build_pb2.Build(id=312, builder=build_pb2.BuilderID(
+              build_pb2.Build(id=312, builder=builder_pb2.BuilderID(
                   builder='cq-orch'), status=common_pb2.SUCCESS)),
       ], 'get change build history.buildbucket.search'),
       api.properties(
@@ -75,9 +75,10 @@ def GenTests(api):
       api.properties(
           GetPassedBuildsProperties(output_builds=[
               _build_with_changes(
-                  build_pb2.Build(id=123, builder=build_pb2.BuilderID(
-                      builder='betty'), status=common_pb2.SUCCESS)),
+                  build_pb2.Build(
+                      id=123, builder=builder_pb2.BuilderID(
+                          builder='betty'), status=common_pb2.SUCCESS)),
               _build_with_changes(
-                  build_pb2.Build(id=231, builder=build_pb2.BuilderID(
+                  build_pb2.Build(id=231, builder=builder_pb2.BuilderID(
                       builder='reef'), status=common_pb2.SUCCESS))
           ])))

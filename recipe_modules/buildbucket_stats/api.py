@@ -4,9 +4,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from recipe_engine import recipe_api
 
@@ -26,9 +28,10 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     Returns:
       The number of builds (int) in the given bucket with given status.
     """
-    builder = build_pb2.BuilderID(
+    builder = builder_pb2.BuilderID(
         project=self.m.buildbucket.build.builder.project, bucket=bucket)
-    build_predicate = rpc_pb2.BuildPredicate(builder=builder, status=status)
+    build_predicate = builds_service_pb2.BuildPredicate(builder=builder,
+                                                        status=status)
     # Use a very small fields set to reduce the load on Buildbucket.
     return len(
         self.m.buildbucket.search(build_predicate, fields=('id',), limit=10000))

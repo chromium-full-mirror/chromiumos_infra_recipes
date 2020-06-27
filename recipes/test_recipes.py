@@ -8,8 +8,9 @@
 import contextlib
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 from PB.go.chromium.org.luci.led.job import job as job_pb2
 
 DEPS = [
@@ -120,7 +121,7 @@ def _get_last_successful_build(api, builder):
   """
   # Note that buildbucket.search returns results ordered newest-to-oldest.
   successful_builds = api.buildbucket.search(
-      rpc_pb2.BuildPredicate(
+      builds_service_pb2.BuildPredicate(
           builder={
               'project': PROJECT,
               'bucket': BUCKET,

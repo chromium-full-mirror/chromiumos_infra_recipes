@@ -14,6 +14,7 @@ from recipe_engine.recipe_api import Property
 
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
@@ -25,12 +26,12 @@ from google.protobuf import struct_pb2
 
 def RunSteps(api):
   build1 = build_pb2.Build(
-      builder=build_pb2.BuilderID(project='chromeos', bucket='bucket',
-                                  builder='foo-builder'),
+      builder=builder_pb2.BuilderID(project='chromeos', bucket='bucket',
+                                    builder='foo-builder'),
       status=common_pb2.SUCCESS)
   build2 = build_pb2.Build(
-      builder=build_pb2.BuilderID(project='chromeos', bucket='bucket',
-                                  builder='bar-builder'),
+      builder=builder_pb2.BuilderID(project='chromeos', bucket='bucket',
+                                    builder='bar-builder'),
       status=common_pb2.SUCCESS)
   # Here we set up the completed builds with the properties needed by
   # cros_bisect to do the BuildPayload fix up.

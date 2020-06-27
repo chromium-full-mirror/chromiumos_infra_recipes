@@ -5,8 +5,10 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 
 from recipe_engine import recipe_api
 
@@ -47,8 +49,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       passed_builders = set([current_builder_id.builder])
       patches = build.input.gerrit_changes
       # We don't want to specify the builder, but, we should specify the bucket
-      builder_shell = build_pb2.BuilderID(project=current_builder_id.project,
-                                          bucket=current_builder_id.bucket)
+      builder_shell = builder_pb2.BuilderID(project=current_builder_id.project,
+                                            bucket=current_builder_id.bucket)
       for build in self._get_patch_history(patches, builder=builder_shell,
                                            statuses=[common_pb2.SUCCESS],
                                            tags=tags):
@@ -121,8 +123,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('get snapshot builds') as presentation:
       project = self.m.buildbucket.build.builder.project
-      builder_shell = build_pb2.BuilderID(project=project,
-                                          bucket=SNAPSHOT_BUCKET)
+      builder_shell = builder_pb2.BuilderID(project=project,
+                                            bucket=SNAPSHOT_BUCKET)
 
       snapshot_builds = \
           self._get_patch_history(patches=patches,
@@ -218,7 +220,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
     # BuildRange and TimeRange are mutually exclusive.
     if start_build_id:
-      build_range = rpc_pb2.BuildRange(start_build_id=start_build_id)
+      build_range = builds_service_pb2.BuildRange(start_build_id=start_build_id)
       create_time = None
     else:
       build_range = None
@@ -234,9 +236,10 @@ class CrosHistoryApi(recipe_api.RecipeApi):
               buildset=self._buildset_tag_from_snapshot(snapshot)))
 
     predicates = [
-        rpc_pb2.BuildPredicate(builder=builder, gerrit_changes=patches,
-                               tags=tags, create_time=create_time,
-                               build=build_range)
+        builds_service_pb2.BuildPredicate(builder=builder,
+                                          gerrit_changes=patches, tags=tags,
+                                          create_time=create_time,
+                                          build=build_range)
     ]
 
     # See https://crbug.com/1051623#c13.  If we have a
@@ -249,7 +252,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       group_key = self.m.cros_tags.cq_equivalent_cl_group_key
       if group_key:
         predicates.append(
-            rpc_pb2.BuildPredicate(
+            builds_service_pb2.BuildPredicate(
                 builder=builder, tags=self.m.cros_tags.tags(
                     cq_equivalent_cl_group_key=group_key),
                 create_time=create_time, build=build_range))

@@ -7,8 +7,9 @@ import contextlib
 
 from recipe_engine import recipe_api
 
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import rpc as rpc_pb2
 
 # Cost is in USD per day as calculated in go/cros-infra-sizing on 2018-12-12.
 # With an estimate for medium, since postdates that doc.
@@ -132,7 +133,7 @@ class BotCostApi(recipe_api.RecipeApi):
 
   def _get_child_builds(self):
     """Get the child builders for this orchestrator."""
-    predicate = rpc_pb2.BuildPredicate(
+    predicate = builds_service_pb2.BuildPredicate(
         tags=self.m.buildbucket.tags(
             parent_buildbucket_id=str(self.m.buildbucket.build.id)))
     predicate.builder.project = self.m.buildbucket.build.builder.project

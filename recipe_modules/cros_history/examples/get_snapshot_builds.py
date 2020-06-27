@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from google.protobuf import struct_pb2
@@ -33,7 +34,7 @@ def GenTests(api):
 
   def build(build_id, builder, build_target):
     ret = build_pb2.Build(id=build_id,
-                          builder=build_pb2.BuilderID(builder=builder))
+                          builder=builder_pb2.BuilderID(builder=builder))
     ret.input.properties.update(
         api.test_util.build_target_properties(build_target_name=build_target))
     return ret

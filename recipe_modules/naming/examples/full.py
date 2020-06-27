@@ -11,12 +11,13 @@ DEPS = [
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.chromiumos.common import PackageInfo
 from PB.testplans.target_test_requirements_config import HwTestCfg
 
 def RunSteps(api):
-  build = build_pb2.Build(builder=build_pb2.BuilderID(
-      project='foo', bucket='bar', builder='baz'))
+  build = build_pb2.Build(
+      builder=builder_pb2.BuilderID(project='foo', bucket='bar', builder='baz'))
   api.assertions.assertEqual(api.naming.get_build_title(build), 'baz')
 
   commit = api.git.Commit('abcdef', '''

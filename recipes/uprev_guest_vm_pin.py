@@ -15,8 +15,11 @@ from google.protobuf import json_format
 from google.protobuf import struct_pb2
 
 from PB.chromiumos.common import PackageInfo
-from PB.go.chromium.org.luci.buildbucket.proto import rpc as bb_rpc
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as bb_build
+from PB.go.chromium.org.luci.buildbucket.proto import builder as bb_builder
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       bb_service)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
 from PB.recipes.chromeos.uprev_guest_vm_pin import UprevGuestVmPinProperties
 
@@ -65,8 +68,8 @@ def RunSteps(api, properties):
   with api.step.nest('get latest postsubmit build version'):
     builder_name = '{}-postsubmit'.format(properties.board)
     builds = api.buildbucket.search(
-        predicate=bb_rpc.BuildPredicate(
-            builder=bb_build.BuilderID(
+        predicate=bb_service.BuildPredicate(
+            builder=bb_builder.BuilderID(
                 project='chromeos',
                 bucket='postsubmit',
                 builder=builder_name,

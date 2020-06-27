@@ -8,6 +8,7 @@
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
@@ -19,7 +20,7 @@ DEPS = [
 
 def RunSteps(api):
   build = build_pb2.Build(
-      id=123, builder=build_pb2.BuilderID(builder='something-direct-vm'))
+      id=123, builder=builder_pb2.BuilderID(builder='something-direct-vm'))
   test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
       name='arc.Boot', verdict=TaskState.VERDICT_FAILED)
   test_case_dict = json_format.MessageToDict(test_case_result)
