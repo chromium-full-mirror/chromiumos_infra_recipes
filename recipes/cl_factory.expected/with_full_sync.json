@@ -274,7 +274,8 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
-      "all"
+      "all",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
@@ -409,7 +410,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,

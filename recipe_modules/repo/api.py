@@ -103,7 +103,8 @@ class RepoApi(recipe_api.RecipeApi):
 
   def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
-           local_manifest=None, manifest_name=None, projects=None):
+           local_manifest=None, manifest_name=None, projects=None,
+           verbose=False):
     """Executes 'repo init' with the given arguments.
 
     Args:
@@ -120,6 +121,7 @@ class RepoApi(recipe_api.RecipeApi):
       * projects (List[str]): Projects of concern or None if all projects are of
       concern. Used to limit work where possible such as only clearing git locks
       in these projects.
+      * verbose (bool): Whether to produce verbose output.
     """
     assert _kwonly is (), 'init accepts only 1 positional arg'
     cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
@@ -138,6 +140,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--repo-branch', repo_branch, '--no-repo-verify']
     if manifest_name:
       cmd += ['--manifest-name', manifest_name]
+    if verbose:
+      cmd += ['--verbose']
     self._step(cmd, timeout=15 * 60)
     self._clear_git_locks(projects)
 
@@ -162,7 +166,7 @@ class RepoApi(recipe_api.RecipeApi):
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,
            optimized_fetch=False, cache_dir=None, timeout=None,
-           retry_fetches=None, projects=None):
+           retry_fetches=None, projects=None, verbose=False):
     """Executes 'repo sync' with the given arguments.
 
     Args:
@@ -176,6 +180,7 @@ class RepoApi(recipe_api.RecipeApi):
       * cache_dir (Path): Use git-cache with this cache directory.
       * retry_fetches (int): The number of times to retry retriable fetches.
       * projects (List[str]): Projects to limit the sync to, or None to sync
+      * verbose (bool): Whether to produce verbose output.
       all projects.
     """
     assert _kwonly is (), 'sync accepts no positional args'
@@ -198,6 +203,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--cache-dir', cache_dir]
     if retry_fetches:
       cmd += ['--retry-fetches', '%d' % retry_fetches]
+    if verbose:
+      cmd += ['--verbose']
     if projects:
       cmd += projects
     self._step(cmd, name=None, timeout=timeout)

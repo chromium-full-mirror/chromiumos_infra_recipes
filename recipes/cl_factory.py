@@ -62,6 +62,7 @@ def RunSteps(api, properties):
     cl_infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
 
     api.cros_source.ensure_synced_cache(
+        init_opts=dict(verbose=True), sync_opts=dict(verbose=True),
         projects=_determine_sync_projects(api, gc_infos, cl_infos, properties))
 
     with api.step.nest('cherry-pick gerrit changes'):

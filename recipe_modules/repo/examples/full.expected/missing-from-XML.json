@@ -66,7 +66,8 @@
       "http://repo_url",
       "--repo-branch",
       "next",
-      "--no-repo-verify"
+      "--no-repo-verify",
+      "--verbose"
     ],
     "infra_step": true,
     "name": "repo init (2)",
@@ -189,6 +190,7 @@
       "/tmp/cache",
       "--retry-fetches",
       "8",
+      "--verbose",
       "chromiumos/config",
       "chromeos/project/puff/duffy"
     ],
