@@ -788,14 +788,21 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "generate project change lists.working on project c.gen_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/chromiumos_workspace/src/c/config/bin/gen_config",
       "[START_DIR]/chromiumos_workspace/src/c/config.star"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/c",
-    "name": "generate project change lists.working on project c.run gen_config config.star",
+    "name": "generate project change lists.working on project c.gen_config.run gen_config config.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -961,14 +968,21 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "generate project change lists.working on project d.gen_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/chromiumos_workspace/src/d/config/bin/gen_config",
       "[START_DIR]/chromiumos_workspace/src/d/config.star"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/d",
-    "name": "generate project change lists.working on project d.run gen_config config.star",
+    "name": "generate project change lists.working on project d.gen_config.run gen_config config.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

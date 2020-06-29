@@ -232,7 +232,13 @@ def _determine_sync_projects(api, gc_infos, cl_infos, properties):
 
 
 def _gen_config(api):
-  """Executes gen_config within cwd boxster repo.
+  """Executes gen_config within cwd device configuration repo.
+
+  Executes gen_config within the cwd device configuration repo. If gen_config or
+  config.star are not found in the usual locations this step will ignore this
+  repo. This is handy because the chromeos/project/private repo, for example, is
+  not a regular device configuration repo but the easy regex, "src/project",
+  will of course hit it.
 
   Args:
     api (RecipeApi): See RunSteps documentation.
@@ -243,15 +249,12 @@ def _gen_config(api):
   api.path.mock_add_paths(gen_config_path)
   api.path.mock_add_paths(config_path)
 
-  if not api.path.exists(gen_config_path):  # pragma: nocover
-    raise api.step.InfraFailure('gen_config not found. Expected at %s' %
-                                gen_config_path)
-
-  if not api.path.exists(config_path):  # pragma: nocover
-    raise api.step.InfraFailure('config.star not found. Expected at %s' %
-                                config_path)
-
-  api.step('run gen_config config.star', [gen_config_path, config_path])
+  with api.step.nest('gen_config') as pres:
+    if (not api.path.exists(gen_config_path) or
+        not api.path.exists(config_path)):  # pragma: nocover
+      pres.step_text = 'gen_config files not found'
+    else:
+      api.step('run gen_config config.star', [gen_config_path, config_path])
 
 
 def _make_commit_message(api, info, gerrit_changes, properties):
@@ -461,7 +464,7 @@ TEST=CQ
       # repo_regexes repos.
       api.step_data('repo forall (2)',
                     stdout=api.raw_io.output(forall_output('c', 'd'))),
-      # Common boxster repos.
+      # Common device configuration repos.
       api.step_data('repo forall (3)',
                     stdout=api.raw_io.output(forall_output('c', 'e'))),
       api.git.diff_check(True),
