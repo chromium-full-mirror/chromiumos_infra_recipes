@@ -75,6 +75,21 @@ class TastExecApi(recipe_api.RecipeApi):
 
   def _run_tast(self, expressions, tast_dir, private_key_path, name, tag):
     test_results_dir = self.m.path.mkdtemp(prefix='test-results')
+    list_stdout = self.m.easy.stdout_step('tast list', [
+        str(tast_dir.join('tast')), \
+        'list', \
+        '-build=false', \
+        '-keyfile={}'.format(private_key_path), \
+        '-remotebundledir={}'.format(
+            str(tast_dir.join('bundles').join('remote'))), \
+        '-remotedatadir={}'.format(str(
+            tast_dir.join('data'))), \
+        '-remoterunner={}'.format(
+            str(tast_dir.join('remote_test_runner'))), \
+        'localhost:9222'] + \
+        list(expressions), ok_ret='any', timeout=2 * 60)
+
+    tests = [t.strip() for t in list_stdout.splitlines()]
     self.m.step('tast run %s' % tag, [
         str(tast_dir.join('tast')), \
         '-verbose', \
@@ -93,7 +108,7 @@ class TastExecApi(recipe_api.RecipeApi):
         '-remoterunner={}'.format(
             str(tast_dir.join('remote_test_runner'))), \
         'localhost:9222'] + \
-        list(expressions), ok_ret='any', timeout=30 * 60)
+        tests, ok_ret='any', timeout=30 * 60)
     return self.m.tast_results.get_results(test_results_dir, name, tag)
 
   @exponential_retry(retries=2)

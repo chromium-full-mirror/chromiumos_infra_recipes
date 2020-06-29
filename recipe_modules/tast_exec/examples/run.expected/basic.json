@@ -67,15 +67,8 @@
   {
     "cmd": [
       "[CLEANUP]/temp_tmp_2/tast/tast",
-      "-verbose",
-      "run",
+      "list",
       "-build=false",
-      "-waituntilready",
-      "-continueafterfailure",
-      "-extrauseflags=tast_vm",
-      "-defaultvarsdir=[CLEANUP]/temp_tmp_2/tast/vars/private",
-      "-resultsdir",
-      "[CLEANUP]/test-results_tmp_6",
       "-keyfile=[CLEANUP]/temp_tmp_1",
       "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
@@ -95,6 +88,27 @@
       "n",
       "a",
       "l"
+    ],
+    "name": "tast list",
+    "timeout": 120
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_2/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_2/tast/vars/private",
+      "-resultsdir",
+      "[CLEANUP]/test-results_tmp_6",
+      "-keyfile=[CLEANUP]/temp_tmp_1",
+      "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
+      "localhost:9222"
     ],
     "name": "tast run first",
     "timeout": 1800
@@ -328,6 +342,21 @@
   {
     "cmd": [
       "[CLEANUP]/temp_tmp_2/tast/tast",
+      "list",
+      "-build=false",
+      "-keyfile=[CLEANUP]/temp_tmp_1",
+      "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
+      "localhost:9222",
+      "arc.Boot"
+    ],
+    "name": "tast list (2)",
+    "timeout": 120
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_2/tast/tast",
       "-verbose",
       "run",
       "-build=false",
@@ -341,8 +370,7 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
-      "localhost:9222",
-      "arc.Boot"
+      "localhost:9222"
     ],
     "name": "tast run second",
     "timeout": 1800
