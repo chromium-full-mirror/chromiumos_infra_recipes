@@ -507,7 +507,8 @@ class SkylabStateStore(object):
           config=skylab_local_state.common.Config(
               admin_service=self._config.lab.admin_service,
               autotest_dir=self._config.harness.autotest_dir,
-          ), dut_name=self._dut_hostname, run_id=self._run_id)
+          ), dut_name=self._dut_hostname, run_id=self._run_id,
+          dut_id=self._dut_id)
       r = api.skylab_local_state.load(load_request)
       self._results_dir = r.results_dir
       return r

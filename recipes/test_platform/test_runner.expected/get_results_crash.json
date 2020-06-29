@@ -33,6 +33,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\"@@@",
@@ -99,7 +100,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.load local DUT state.call `skylab_local_state`.load",
-    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
+    "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
