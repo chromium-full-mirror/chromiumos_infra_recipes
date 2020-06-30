@@ -243,6 +243,20 @@ class RepoApi(recipe_api.RecipeApi):
       cmd.append('--all')
     self._step(cmd)
 
+  def abandon(self, branch, projects=None):
+    """Abandon the branch in the given projects, or all projects if not set.
+
+    Args:
+      branch (str): The branch to abandon.
+      projects (list[str]): The projects for which to abandon the branch.
+    """
+    cmd = ['abandon', branch]
+    if projects is not None:
+      cmd.extend(projects)
+    else:
+      cmd.append('--all')
+    self._step(cmd)
+
   def project_infos(self, projects=[], regexes=[]):
     """Uses 'repo forall' to gather project information.
 

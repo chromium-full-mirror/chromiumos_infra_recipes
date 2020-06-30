@@ -70,22 +70,26 @@ def RunSteps(api, properties):
       api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
     # Start development branches for each project.
-    api.repo.start('cl-factory', projects=[info.name for info in cl_infos])
+    api.repo.start('_cl-factory', projects=[info.name for info in cl_infos])
+    try:
+      with api.step.nest('generate project change lists') as pres:
+        changes, diffs = _make_changes(api, cl_infos, gerrit_changes,
+                                       properties)
+        if changes:
+          _set_source_cq_depends(api, changes, gc_infos, gerrit_changes)
 
-    with api.step.nest('generate project change lists') as pres:
-      changes, diffs = _make_changes(api, cl_infos, gerrit_changes, properties)
-      if changes:
-        _set_source_cq_depends(api, changes, gc_infos, gerrit_changes)
-
-    with api.step.nest('summarize results') as pres:
-      if not changes:
-        pres.step_text = 'no change lists generated'
-      else:
-        pres.logs['unified_diff'] = _make_unified_diff(changes, diffs)
-        gerrit_commands = _make_gerrit_commands(api, properties.hashtags,
-                                                changes)
-        if gerrit_commands:
-          pres.logs['gerrit_commands'] = gerrit_commands
+      with api.step.nest('summarize results') as pres:
+        if not changes:
+          pres.step_text = 'no change lists generated'
+        else:
+          pres.logs['unified_diff'] = _make_unified_diff(changes, diffs)
+          gerrit_commands = _make_gerrit_commands(api, properties.hashtags,
+                                                  changes)
+          if gerrit_commands:
+            pres.logs['gerrit_commands'] = gerrit_commands
+    finally:
+      # Clean up by deleting the created branches.
+      api.repo.abandon('_cl-factory', projects=[info.name for info in cl_infos])
 
 
 def _validate_inputs(properties, gerrit_changes):

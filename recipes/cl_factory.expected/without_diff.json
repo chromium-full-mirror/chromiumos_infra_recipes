@@ -768,7 +768,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
-      "cl-factory",
+      "_cl-factory",
       "a",
       "b",
       "c"
@@ -904,6 +904,19 @@
     "~followup_annotations": [
       "@@@STEP_TEXT@no change lists generated@@@"
     ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "abandon",
+      "_cl-factory",
+      "a",
+      "b",
+      "c"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "repo abandon"
   },
   {
     "cmd": [],

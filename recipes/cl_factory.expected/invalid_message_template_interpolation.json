@@ -768,7 +768,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
-      "cl-factory",
+      "_cl-factory",
       "a",
       "b",
       "c"
@@ -1648,6 +1648,19 @@
       "@@@STEP_LOG_LINE@gerrit_commands@gerrit abandon `./gerrit  --raw search \"owner: status:open hashtag:refactor-audio-config\"`@@@",
       "@@@STEP_LOG_END@gerrit_commands@@@"
     ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "abandon",
+      "_cl-factory",
+      "a",
+      "b",
+      "c"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "repo abandon"
   },
   {
     "cmd": [],

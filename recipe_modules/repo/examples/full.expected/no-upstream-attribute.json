@@ -607,12 +607,32 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
+      "abandon",
+      "no-projects",
+      "--all"
+    ],
+    "infra_step": true,
+    "name": "repo abandon"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
       "start",
       "with-projects",
       "project"
     ],
     "infra_step": true,
     "name": "repo start (2)"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "abandon",
+      "with-projects",
+      "project"
+    ],
+    "infra_step": true,
+    "name": "repo abandon (2)"
   },
   {
     "name": "$result"

@@ -91,7 +91,9 @@ def RunSteps(api):
                                   'http://manifest_url')
 
   api.repo.start('no-projects')
+  api.repo.abandon('no-projects')
   api.repo.start('with-projects', projects=['project'])
+  api.repo.abandon('with-projects', projects=['project'])
 
 
 def GenTests(api):
