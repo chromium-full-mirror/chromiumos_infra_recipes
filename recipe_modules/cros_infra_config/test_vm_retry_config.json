@@ -1,5 +1,12 @@
 {
   "testSuite": "tast_vm",
+  "reasonScenarios": [
+    {
+      "reason": "Lost SSH connection",
+      "verdict": "VERDICT_FAILED",
+      "requires_restart": false
+    }
+  ],
   "suiteScenarios": [
     {
       "testName": "arc.Boot",

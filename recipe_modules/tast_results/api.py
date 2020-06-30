@@ -209,9 +209,13 @@ class TastResultsApi(recipe_api.RecipeApi):
       archive_link = self.archive_dir(dump_dir, 'system_logs')
       presentation.links['system_logs'] = archive_link
 
-  def _match_to_scenario(self, test_case, scenario):
+  def _match_to_testscenario(self, test_case, scenario):
     return (test_case.name == scenario.test_name and
             test_case.verdict == scenario.verdict and
+            scenario.reason in test_case.human_readable_summary)
+
+  def _match_to_reasonscenario(self, test_case, scenario):
+    return (test_case.verdict == scenario.verdict and
             scenario.reason in test_case.human_readable_summary)
 
   def get_tests_to_retry(self, task_result):
@@ -240,16 +244,23 @@ class TastResultsApi(recipe_api.RecipeApi):
       presentation.logs['retry_config'] = str(retry_config)
       presentation.logs['failed_tests'] = str(test_map)
       requires_restart = False
+      for scenario in retry_config.reason_scenarios:
+        for name, test in test_map.items():
+          if self._match_to_reasonscenario(test, scenario):
+            step_log.append('Found match {}<->{}'.format(test, scenario))
+            tests_to_retry.append(name)
+            requires_restart |= scenario.requires_restart
+
       for scenario in retry_config.suite_scenarios:
         if scenario.test_name in test_map:
           failed_test = test_map[scenario.test_name]
-          if self._match_to_scenario(failed_test, scenario):
+          if self._match_to_testscenario(failed_test, scenario):
             step_log.append('Found match {}<->{}'.format(failed_test, scenario))
             tests_to_retry.append(scenario.test_name)
             requires_restart |= scenario.requires_restart
             continue
 
-        step_log.append('Scenario had no match:{}'.format(scenario))
-
       presentation.logs['matches'] = step_log
+      # Make the tests list unique.
+      tests_to_retry = list(set(tests_to_retry))
       return tests_to_retry, requires_restart
