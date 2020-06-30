@@ -318,10 +318,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     """
     config = config or self.config_or_default
 
-    self.m.cros_artifacts.upload_artifacts(
-        config.id.name, self.build_target, config.id.type,
-        config.artifacts.artifacts_gs_bucket, sysroot=self.sysroot,
-        chroot=self.chroot, artifacts_info=config.artifacts.artifacts_info)
+    if self.m.cros_artifacts.has_output_artifacts(
+        config.artifacts.artifacts_info):
+      self.m.cros_artifacts.upload_artifacts(
+          config.id.name, self.build_target, config.id.type,
+          config.artifacts.artifacts_gs_bucket, sysroot=self.sysroot,
+          chroot=self.chroot, artifacts_info=config.artifacts.artifacts_info)
 
   def upload_prebuilts(self, config=None):
     """Upload prebuilts from the build.

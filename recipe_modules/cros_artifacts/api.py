@@ -448,6 +448,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                                                  artifacts_info, outpath,
                                                  test_data)
 
+      if not files_by_artifact:
+        presentation.step_text = 'No artifacts found.'
+        return
+
       # Upload all of the artifacts to the archive bucket/path.
       gs_path = self.artifacts_gs_path(builder_name, target, kind)
       presentation.links['gs upload dir'] = (

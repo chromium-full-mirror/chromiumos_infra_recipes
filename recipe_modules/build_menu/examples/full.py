@@ -70,6 +70,9 @@ def GenTests(api):
                             api.build_menu.set_toolchain_cls_return(True),
                             cq=True)
 
+  yield api.build_menu.test('has-no-artifacts', build_target='arm-generic',
+                            cq=True)
+
   for forced in False, True:
     yield api.build_menu.test(
         ('forced-' if forced else '') + 'pointless-artifact-build',
