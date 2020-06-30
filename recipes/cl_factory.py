@@ -5,8 +5,14 @@
 
 """Used to create sweeping changes by creating CLs in many repos.
 
-Currently focused on the use case of running gen_config in program and project
-repositories, an example invocation follows:
+This recipe is currently focused on the use case of running gen_config in
+program and project repositories. Invocation is most easily handled via the
+cl_factory script in the chromiumos/config repo's bin directory:
+
+https://chromium.googlesource.com/chromiumos/config/+/refs/heads/master/bin/cl_factory
+
+That script is a wrapper around the `bb add` command which ends up executing
+something that looks like this:
 
 bb add
   -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418
