@@ -29,7 +29,7 @@ def RunSteps(api, properties):
   _ = api.cros_source.workspace_path
 
   try:
-    api.cros_source.find_project_path('fake_project', 'fake_branch')
+    api.cros_source.find_project_paths('fake_project', 'fake_branch')
   except api.step.StepFailure:
     pass
 

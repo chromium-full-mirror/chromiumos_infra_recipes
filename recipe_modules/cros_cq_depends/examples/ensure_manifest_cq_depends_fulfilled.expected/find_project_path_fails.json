@@ -378,7 +378,7 @@
       "@@@STEP_LOG_LINE@gather cq-depend@invalid dep: chromium:IAmNotAnInteger@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@chrome-internal:67890@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
-      "@@@STEP_LOG_LINE@dep local@Failed to find project path, with failure: No path found for project 'c' branch 'refs/heads/master'@@@",
+      "@@@STEP_LOG_LINE@dep local@Failed to find project paths, with failure: No path found for project 'c' branch 'refs/heads/master'@@@",
       "@@@STEP_LOG_LINE@dep local@change None in non-Chrome OS repo not-a-project@@@",
       "@@@STEP_LOG_LINE@dep local@gerrit query failure for cl 1234@@@",
       "@@@STEP_LOG_END@dep local@@@",

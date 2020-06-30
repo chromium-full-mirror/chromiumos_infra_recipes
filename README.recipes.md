@@ -1298,7 +1298,7 @@ Args:
   manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
       namedtuples.
 
-&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#198)(self, gerrit_changes):**
+&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#199)(self, gerrit_changes):**
 
 Get Cq-Depend string for the given list of Gerrit changes.
 
@@ -1308,7 +1308,7 @@ Args:
 Return:
   str: The full Cq-Depend string.
 
-&mdash; **def [get\_cq\_depend\_reference](/recipe_modules/cros_cq_depends/api.py#184)(self, gerrit_change):**
+&mdash; **def [get\_cq\_depend\_reference](/recipe_modules/cros_cq_depends/api.py#185)(self, gerrit_change):**
 
 Return the Cq-Depend reference string for the given change.
 
@@ -1318,7 +1318,7 @@ Args:
 Returns:
   str: The reference string for the change, e.g. chromium:12345
 
-&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#210)(self, gerrit_changes):**
+&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#211)(self, gerrit_changes):**
 
 Mutually Cq-Depend all given Gerrit changes.
 
@@ -1946,7 +1946,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#140)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#146)(self, patch_sets):**
 
 Apply Gerrit patch sets to the workspace.
 
@@ -1967,7 +1967,7 @@ of a build and then mounted into the master and/or workspace paths.
 
 Returns a context where chromiumos and workspace overlays are mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#271)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#279)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -1980,7 +1980,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#228)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#236)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -2008,16 +2008,19 @@ Args:
   * projects (List[str]): Projects to limit the sync to, or None to sync
   all projects.
 
-&mdash; **def [find\_project\_path](/recipe_modules/cros_source/api.py#120)(self, project, branch):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#120)(self, project, branch):**
 
-Find the source path for a given project in the workspace.
+Find the source paths for a given project in the workspace.
+
+Will only include multiple results if the same project,branch is mapped
+more than once in the manifest.
 
 Args:
   project (str): The project name to find a source path for.
   branch (str): The branch name to find a source path for.
 
 Returns:
-  The path value for the found project.
+  list(str), The path values for the found project.
 
 &emsp; **@property**<br>&mdash; **def [preload\_path](/recipe_modules/cros_source/api.py#51)(self):**
 
@@ -2030,7 +2033,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#178)(self, gitiles_commit, manifest_url=INTERNAL_MANIFEST_URL):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#186)(self, gitiles_commit, manifest_url=INTERNAL_MANIFEST_URL):**
 
 Sync a checkout to the snapshot.
 

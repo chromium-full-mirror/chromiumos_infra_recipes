@@ -117,25 +117,31 @@ class CrosSourceApi(recipe_api.RecipeApi):
       self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
       yield
 
-  def find_project_path(self, project, branch):
-    """Find the source path for a given project in the workspace.
+  def find_project_paths(self, project, branch):
+    """Find the source paths for a given project in the workspace.
+
+    Will only include multiple results if the same project,branch is mapped
+    more than once in the manifest.
 
     Args:
       project (str): The project name to find a source path for.
       branch (str): The branch name to find a source path for.
 
     Returns:
-      The path value for the found project.
+      list(str), The path values for the found project.
     """
     if not branch.startswith('refs/'):
       branch = 'refs/heads/%s' % branch
+    paths = []
     with self.m.context(cwd=self.workspace_path):
       for project_info in self.m.repo.project_infos([project]):
         if project_info.branch == branch:
-          return project_info.path
+          paths.append(project_info.path)
 
-      raise self.m.step.StepFailure(
-          'No path found for project %r branch %r' % (project, branch))
+      if not paths:
+        raise self.m.step.StepFailure('No path found for project %r branch %r' %
+                                      (project, branch))
+      return paths
 
   def apply_gerrit_patch_sets(self, patch_sets):
     """Apply Gerrit patch sets to the workspace.
@@ -151,27 +157,29 @@ class CrosSourceApi(recipe_api.RecipeApi):
       self.m.git.set_global_config(['gc.packRefs', 'false'])
       new_commits = []
       for patch_set in patch_sets:
-        project_path = self.find_project_path(patch_set.project,
-                                              patch_set.branch)
-        with self.m.context(cwd=self.workspace_path.join(project_path)):
-          commit_id = self.m.git.fetch_ref(patch_set.git_fetch_url,
-                                           patch_set.git_fetch_ref)
-          merged = self.m.git.merge_silent_fail(
-              commit_id, 'merge gerrit changes', infra_step=False)
-          if not merged:
-            self.m.git.merge_abort()
-            if self.m.git.is_merge_commit(commit_id):
-              raise self.m.step.StepFailure('%s failed, aborting, this '
-                                            'commit is a merge so we can '
-                                            'not cherry-pick' % commit_id)
-            presentation = self.m.step.active_result.presentation
-            presentation.status = self.m.step.SUCCESS
-            presentation.step_text = (
-                'merge failed. will try cherry-pick instead')
-            self.m.git.cherry_pick(commit_id, infra_step=False)
+        project_paths = self.find_project_paths(patch_set.project,
+                                                patch_set.branch)
+        for project_path in project_paths:
+          with self.m.context(cwd=self.workspace_path.join(project_path)):
+            commit_id = self.m.git.fetch_ref(patch_set.git_fetch_url,
+                                             patch_set.git_fetch_ref)
+            merged = self.m.git.merge_silent_fail(commit_id,
+                                                  'merge gerrit changes',
+                                                  infra_step=False)
+            if not merged:
+              self.m.git.merge_abort()
+              if self.m.git.is_merge_commit(commit_id):
+                raise self.m.step.StepFailure('%s failed, aborting, this '
+                                              'commit is a merge so we can '
+                                              'not cherry-pick' % commit_id)
+              presentation = self.m.step.active_result.presentation
+              presentation.status = self.m.step.SUCCESS
+              presentation.step_text = (
+                  'merge failed. will try cherry-pick instead')
+              self.m.git.cherry_pick(commit_id, infra_step=False)
 
-          new_commit_id = self.m.git.head_commit()
-          new_commits.append(ProjectCommit(project_path, new_commit_id))
+            new_commit_id = self.m.git.head_commit()
+            new_commits.append(ProjectCommit(project_path, new_commit_id))
 
       return new_commits
 
