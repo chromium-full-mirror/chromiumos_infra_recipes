@@ -808,39 +808,16 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "generate project change lists.working on project a.diff check",
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/a",
+    "infra_step": true,
+    "name": "generate project change lists.working on project a.git status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-files",
-      "--error-unmatch",
-      "[START_DIR]/chromiumos_workspace/src/a"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/a",
-    "infra_step": true,
-    "name": "generate project change lists.working on project a.diff check.git ls-files",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--quiet",
-      "HEAD",
-      "[START_DIR]/chromiumos_workspace/src/a"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/a",
-    "infra_step": true,
-    "name": "generate project change lists.working on project a.diff check.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -870,39 +847,16 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "generate project change lists.working on project b.diff check",
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/b",
+    "infra_step": true,
+    "name": "generate project change lists.working on project b.git status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-files",
-      "--error-unmatch",
-      "[START_DIR]/chromiumos_workspace/src/b"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/b",
-    "infra_step": true,
-    "name": "generate project change lists.working on project b.diff check.git ls-files",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--quiet",
-      "HEAD",
-      "[START_DIR]/chromiumos_workspace/src/b"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/b",
-    "infra_step": true,
-    "name": "generate project change lists.working on project b.diff check.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -932,39 +886,16 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "generate project change lists.working on project c.diff check",
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/c",
+    "infra_step": true,
+    "name": "generate project change lists.working on project c.git status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-files",
-      "--error-unmatch",
-      "[START_DIR]/chromiumos_workspace/src/c"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/c",
-    "infra_step": true,
-    "name": "generate project change lists.working on project c.diff check.git ls-files",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--quiet",
-      "HEAD",
-      "[START_DIR]/chromiumos_workspace/src/c"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/c",
-    "infra_step": true,
-    "name": "generate project change lists.working on project c.diff check.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

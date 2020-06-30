@@ -137,7 +137,9 @@ def _make_changes(api, cl_infos, gerrit_changes, properties):
 
       _gen_config(api)
 
-      if api.git.diff_check(api.context.cwd):
+      # Note that we don't use api.git.diff_check here because it doesn't
+      # handle empty repos well. The ls-files will report an error condition.
+      if api.git.get_working_dir_diff_files():
         pres.step_text = 'diff'
         cl, diff = _make_cl(api, info, properties, gerrit_changes)
         changes.append(cl)
@@ -404,6 +406,11 @@ TEST=CQ
         '{0}|src/{0}|cros|refs/heads/master|refs/heads/master'.format(p)
         for p in projects)
 
+  def no_git_diff_step_data(project):
+    step_name = 'generate project change lists.working on project {}.git status'
+    return api.step_data(
+        step_name.format(project), stdout=api.raw_io.output(''))
+
   yield api.test(
       'with_diff',
       build(),
@@ -415,7 +422,6 @@ TEST=CQ
               command='echo "hello world"',
               message_template=message_template,
           )),
-      api.git.diff_check(True),
   )
 
   yield api.test(
@@ -429,6 +435,9 @@ TEST=CQ
               command='echo "hello world"',
               message_template=message_template,
           )),
+      no_git_diff_step_data('a'),
+      no_git_diff_step_data('b'),
+      no_git_diff_step_data('c'),
   )
 
   yield api.test(
@@ -443,7 +452,6 @@ TEST=CQ
               message_template=message_template,
               full_repo_sync=True,
           )),
-      api.git.diff_check(True),
   )
 
   # Here we replace the canned forall return to exercise the set logic
@@ -468,7 +476,6 @@ TEST=CQ
       # Common device configuration repos.
       api.step_data('repo forall (3)',
                     stdout=api.raw_io.output(forall_output('c', 'e'))),
-      api.git.diff_check(True),
   )
 
   yield api.test(
@@ -482,7 +489,6 @@ TEST=CQ
               command='echo "hello world"',
               message_template='No such {interpolation}.',
           )),
-      api.git.diff_check(True),
   )
 
   yield api.test(
