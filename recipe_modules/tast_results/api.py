@@ -43,13 +43,14 @@ class TastResultsApi(recipe_api.RecipeApi):
       presentation.links['archive_link'] = pantheon_url
       return pantheon_url
 
-  def get_results(self, test_results_path, suite_name, tag):
+  def get_results(self, test_results_path, suite_name, tag, tests):
     """Return the test results decoded from the results.json.
 
     Args:
       test_results_path (Path): Path to test_results/.
       suite_name (str): Name of the whole test suite.
       tag (str): Tag for this execution. Used to distinguish archive folders.
+      tests list(str): List of tests that were executed.
 
     Returns:
       A consolidated Data Structure summarizing all results from a run.
@@ -66,10 +67,9 @@ class TastResultsApi(recipe_api.RecipeApi):
                                 life_cycle=TaskState.LIFE_CYCLE_COMPLETED)
       log_url = self.archive_dir(test_results_path, tag + '_results')
 
-      # If there are no results, assume INFRA_FAILURE.
-      if not all_verdicts:  # pragma: nocover
-        overall_state.verdict = TaskState.VERDICT_UNSPECIFIED
-        test_cases = self.fake_empty_result_test_cases()
+      if len(test_cases) < len(tests):  #pragma: nocover
+        overall_state.verdict = TaskState.VERDICT_FAILED
+        test_cases += self.missing_test_cases(tests, test_cases)
       elif TaskState.VERDICT_FAILED in all_verdicts:
         overall_state.verdict = TaskState.VERDICT_FAILED
       return ExecuteResponse.TaskResult(name=suite_name, state=overall_state,
@@ -100,12 +100,22 @@ class TastResultsApi(recipe_api.RecipeApi):
         jsonpb.ParseDict(result, TestResult()) for result in list_of_results
     ]
 
-  def fake_empty_result_test_cases(self):
-    """A hack for crbug/1049754."""
+  def missing_test_cases(self, tests, test_cases):
+    """Create missing tests cases.
+    
+    Args:
+      tests list(str): list of tests that should have run.
+      test_cases list(TestCaseResult): test_cases in the results.json.
+    
+    Returns: list(TestCaseResult) the missing tests cases.
+    """
+    reported_tests = set([tc.name for tc in test_cases])
     return [
         ExecuteResponse.TaskResult.TestCaseResult(
-            name='arc.Boot', verdict=TaskState.VERDICT_FAILED,
-            human_readable_summary='tast wrote empty results.json.')
+            name=test, verdict=TaskState.VERDICT_FAILED,
+            human_readable_summary='Test did not run')
+        for test in tests
+        if test not in reported_tests
     ]
 
   def convert_to_testcaseresult(self, test_result):

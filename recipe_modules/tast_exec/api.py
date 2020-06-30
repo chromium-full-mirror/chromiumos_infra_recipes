@@ -109,7 +109,7 @@ class TastExecApi(recipe_api.RecipeApi):
             str(tast_dir.join('remote_test_runner'))), \
         'localhost:9222'] + \
         tests, ok_ret='any', timeout=30 * 60)
-    return self.m.tast_results.get_results(test_results_dir, name, tag)
+    return self.m.tast_results.get_results(test_results_dir, name, tag, tests)
 
   @exponential_retry(retries=2)
   def _launch_vm(self, qcow_image_path, kvm_pid_file, kvm_monitor_file,

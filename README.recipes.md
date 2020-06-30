@@ -4230,7 +4230,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#111)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#121)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -4240,11 +4240,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [fake\_empty\_result\_test\_cases](/recipe_modules/tast_results/api.py#103)(self):**
-
-A hack for crbug/1049754.
-
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#136)(self, task_result, exclude_tests=None):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#146)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Failure objects and dicts.
 
@@ -4257,7 +4253,7 @@ Returns:
   A tuple of list(Failure) and list(dict) representing
   failed test cases excluding the ones provided.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#46)(self, test_results_path, suite_name, tag):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#46)(self, test_results_path, suite_name, tag, tests):**
 
 Return the test results decoded from the results.json.
 
@@ -4265,13 +4261,14 @@ Args:
   test_results_path (Path): Path to test_results/.
   suite_name (str): Name of the whole test suite.
   tag (str): Tag for this execution. Used to distinguish archive folders.
+  tests list(str): List of tests that were executed.
 
 Returns:
   A consolidated Data Structure summarizing all results from a run.
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#221)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#231)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -4282,7 +4279,17 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#170)(self, failures, empty_result):**
+&mdash; **def [missing\_test\_cases](/recipe_modules/tast_results/api.py#103)(self, tests, test_cases):**
+
+Create missing tests cases.
+
+Args:
+  tests list(str): list of tests that should have run.
+  test_cases list(TestCaseResult): test_cases in the results.json.
+
+Returns: list(TestCaseResult) the missing tests cases.
+
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#180)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -4290,7 +4297,7 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#195)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#205)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
