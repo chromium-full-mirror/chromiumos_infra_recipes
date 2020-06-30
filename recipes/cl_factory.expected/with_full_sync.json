@@ -1630,6 +1630,9 @@
       "@@@STEP_LOG_LINE@gerrit_commands@@@@",
       "@@@STEP_LOG_LINE@gerrit_commands@Commit commands:@@@",
       "@@@STEP_LOG_LINE@gerrit_commands@gerrit label-cq `gerrit  --raw search \"owner: status:open hashtag:refactor-audio-config\"` 2@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@Abandon commands:@@@",
+      "@@@STEP_LOG_LINE@gerrit_commands@gerrit abandon `./gerrit  --raw search \"owner: status:open hashtag:refactor-audio-config\"`@@@",
       "@@@STEP_LOG_END@gerrit_commands@@@"
     ]
   },

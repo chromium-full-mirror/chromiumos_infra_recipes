@@ -314,6 +314,8 @@ def _make_unified_diff(changes, diffs):
 _CR_TEMPLATE = 'gerrit label-cr `gerrit {} --raw search "{} status:open {}"` 2'
 _V_TEMPLATE = 'gerrit label-v `gerrit {} --raw search "{} status:open {}"` 1'
 _CQ_TEMPLATE = 'gerrit label-cq `gerrit {} --raw search "{} status:open {}"` 2'
+_ABANDON_TEMPLATE = (
+    'gerrit abandon `./gerrit {} --raw search "{} status:open {}"`')
 
 
 def _make_gerrit_commands(api, hashtags, changes):
@@ -338,22 +340,26 @@ def _make_gerrit_commands(api, hashtags, changes):
   reviews = []
   verifies = []
   commits = []
+  abandons = []
   if _has_changes_on_host(changes, 'chromium-review.googlesource.com'):
     format = ['', owner_constraint, hashtag_constraints]
     reviews.append(_CR_TEMPLATE.format(*format))
     verifies.append(_V_TEMPLATE.format(*format))
     commits.append(_CQ_TEMPLATE.format(*format))
+    abandons.append(_ABANDON_TEMPLATE.format(*format))
   if _has_changes_on_host(
       changes, 'chrome-internal-review.googlesource.com'):  # pragma: nocover
     format = ['-i', owner_constraint, hashtag_constraints]
     reviews.append(_CR_TEMPLATE.format(*format))
     verifies.append(_V_TEMPLATE.format(*format))
     commits.append(_CQ_TEMPLATE.format(*format))
+    abandons.append(_ABANDON_TEMPLATE.format(*format))
   if not reviews:  # pragma: nocover
     return None
   commands = 'Review commands:\n' + '\n'.join(reviews)
   commands += '\n\nVerify commands:\n' + '\n'.join(verifies)
   commands += '\n\nCommit commands:\n' + '\n'.join(commits)
+  commands += '\n\nAbandon commands:\n' + '\n'.join(abandons)
   return commands
 
 
