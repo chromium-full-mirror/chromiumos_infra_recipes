@@ -56,6 +56,7 @@
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
+  * [result_flow](#recipe_modules-result_flow)
   * [skylab](#recipe_modules-skylab)
   * [skylab_local_state](#recipe_modules-skylab_local_state)
   * [stable_version](#recipe_modules-stable_version)
@@ -245,6 +246,7 @@
   * [repo:examples/full](#recipes-repo_examples_full)
   * [repo:examples/repo_retry_failure](#recipes-repo_examples_repo_retry_failure)
   * [repo:examples/repo_retry_success](#recipes-repo_examples_repo_retry_success)
+  * [result_flow:examples/full](#recipes-result_flow_examples_full)
   * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in the Chrome OS pool.
   * [sign_image](#recipes-sign_image) &mdash; Recipe for signing ChromeOS images.
   * [sign_paygen](#recipes-sign_paygen) &mdash; Recipe for signing ChromeOS payloads (AU deltas etc).
@@ -3927,6 +3929,20 @@ Args:
 &mdash; **def [version](/recipe_modules/repo/api.py#100)(self):**
 
 Prints the current version information of repo.
+### *recipe_modules* / [result\_flow](/recipe_modules/result_flow)
+
+[DEPS](/recipe_modules/result_flow/__init__.py#4): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [ResultFlowCommand](/recipe_modules/result_flow/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for issuing result flow commands
+
+&mdash; **def [ctp](/recipe_modules/result_flow/api.py#58)(self, request):**
+
+Run the result_flow to pipe CTP data to TestPlanRun table in BQ.
+
+Args:
+  request: a test_platform.result_flow.CTPRequest.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
 [DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -5598,6 +5614,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/repo_retry_success.py#12)(api):**
 
 &mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/examples/repo_retry_success.py#17)(api, attempt):**
+### *recipes* / [result\_flow:examples/full](/recipe_modules/result_flow/examples/full.py)
+
+[DEPS](/recipe_modules/result_flow/examples/full.py#6): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/result_flow/examples/full.py#17)(api):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
 [DEPS](/recipes/robocrop.py#12): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
