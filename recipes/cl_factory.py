@@ -18,7 +18,7 @@ bb add
   -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418
   -p 'repo_regexes=["src/project/galaxy"]'
   -p command=gen_config
-  -p 'message_template="Hello world\n\nBUG=chromium:1092954\nTEST=None"'
+  -p 'message_template=Hello world\n\nBUG=chromium:1092954\nTEST=None'
   -p 'reviewers=["reviewer@google.com"]'
   -p 'hashtags=["mondo-update"]'
   chromeos/infra/ClFactory

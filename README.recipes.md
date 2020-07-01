@@ -4851,10 +4851,10 @@ bb add
   -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418
   -p 'repo_regexes=["src/project/galaxy"]'
   -p command=gen_config
-  -p 'message_template="Hello world
+  -p 'message_template=Hello world
 
 BUG=chromium:1092954
-TEST=None"'
+TEST=None'
   -p 'reviewers=["reviewer@google.com"]'
   -p 'hashtags=["mondo-update"]'
   chromeos/infra/ClFactory
