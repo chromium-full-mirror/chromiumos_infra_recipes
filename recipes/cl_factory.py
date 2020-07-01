@@ -67,8 +67,13 @@ def RunSteps(api, properties):
     gc_infos = api.repo.project_infos([gc.project for gc in gerrit_changes])
     cl_infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
 
+    # TODO(https://crbug.com/1101452): Note the cache_path_override in the sync.
+    # Syncs to the cache are not always being reflected in the workspace. To
+    # avoid this issue we sync to the workspace itself.
+
     api.cros_source.ensure_synced_cache(
         init_opts=dict(verbose=True), sync_opts=dict(verbose=True),
+        cache_path_override=api.cros_source.workspace_path,
         projects=_determine_sync_projects(api, gc_infos, cl_infos, properties))
 
     with api.step.nest('cherry-pick gerrit changes'):
@@ -76,26 +81,22 @@ def RunSteps(api, properties):
       api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
     # Start development branches for each project.
-    api.repo.start('_cl-factory', projects=[info.name for info in cl_infos])
-    try:
-      with api.step.nest('generate project change lists') as pres:
-        changes, diffs = _make_changes(api, cl_infos, gerrit_changes,
-                                       properties)
-        if changes:
-          _set_source_cq_depends(api, changes, gc_infos, gerrit_changes)
+    api.repo.start('cl-factory', projects=[info.name for info in cl_infos])
 
-      with api.step.nest('summarize results') as pres:
-        if not changes:
-          pres.step_text = 'no change lists generated'
-        else:
-          pres.logs['unified_diff'] = _make_unified_diff(changes, diffs)
-          gerrit_commands = _make_gerrit_commands(api, properties.hashtags,
-                                                  changes)
-          if gerrit_commands:
-            pres.logs['gerrit_commands'] = gerrit_commands
-    finally:
-      # Clean up by deleting the created branches.
-      api.repo.abandon('_cl-factory', projects=[info.name for info in cl_infos])
+    with api.step.nest('generate project change lists') as pres:
+      changes, diffs = _make_changes(api, cl_infos, gerrit_changes, properties)
+      if changes:
+        _set_source_cq_depends(api, changes, gc_infos, gerrit_changes)
+
+    with api.step.nest('summarize results') as pres:
+      if not changes:
+        pres.step_text = 'no change lists generated'
+      else:
+        pres.logs['unified_diff'] = _make_unified_diff(changes, diffs)
+        gerrit_commands = _make_gerrit_commands(api, properties.hashtags,
+                                                changes)
+        if gerrit_commands:
+          pres.logs['gerrit_commands'] = gerrit_commands
 
 
 def _validate_inputs(properties, gerrit_changes):

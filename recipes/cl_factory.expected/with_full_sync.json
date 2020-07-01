@@ -224,7 +224,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos"
+      "[START_DIR]/chromiumos_workspace"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -241,9 +241,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests"
+      "[START_DIR]/chromiumos_workspace/.repo/manifests"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests",
     "~followup_annotations": [
@@ -258,9 +258,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests.git"
+      "[START_DIR]/chromiumos_workspace/.repo/manifests.git"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests.git",
     "~followup_annotations": [
@@ -277,7 +277,7 @@
       "all",
       "--verbose"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
     "timeout": 900,
@@ -296,7 +296,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -320,7 +320,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.clear git locks",
     "~followup_annotations": [
@@ -347,7 +347,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
@@ -367,7 +367,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version",
     "~followup_annotations": [
@@ -379,7 +379,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
@@ -391,7 +391,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
@@ -413,7 +413,7 @@
       "8",
       "--verbose"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo sync",
     "timeout": 3600,
@@ -734,7 +734,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
-      "_cl-factory",
+      "cl-factory",
       "a",
       "b",
       "c"
@@ -1635,19 +1635,6 @@
       "@@@STEP_LOG_LINE@gerrit_commands@gerrit abandon `./gerrit  --raw search \"owner: status:open hashtag:refactor-audio-config\"`@@@",
       "@@@STEP_LOG_END@gerrit_commands@@@"
     ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "abandon",
-      "_cl-factory",
-      "a",
-      "b",
-      "c"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "repo abandon"
   },
   {
     "cmd": [],
