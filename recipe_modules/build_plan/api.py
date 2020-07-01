@@ -182,7 +182,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         if build.builder.builder in forced_rebuilds or 'all' in forced_rebuilds:
           skip_log.append(
-              '{} is skipped because rebuilds were disabled for this builder.'
+              '{} is skipped because recycling was disabled for this builder.'
               .format(build.builder.builder))
           continue
 

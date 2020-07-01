@@ -3,8 +3,8 @@
     "cmd": [],
     "name": "get completed builds",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@skip log@amd64-generic-cq is skipped because rebuilds were disabled for this builder.@@@",
-      "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because rebuilds were disabled for this builder.@@@",
+      "@@@STEP_LOG_LINE@skip log@amd64-generic-cq is skipped because recycling was disabled for this builder.@@@",
+      "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because recycling was disabled for this builder.@@@",
       "@@@STEP_LOG_END@skip log@@@"
     ]
   },
