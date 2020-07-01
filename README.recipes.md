@@ -91,6 +91,7 @@
   * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
+  * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
   * [build_menu:examples/full](#recipes-build_menu_examples_full)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
   * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph)
@@ -4727,6 +4728,15 @@ Renames a branch using `cros branch rename`.
 [DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/breakpad/examples/full.py#19)(api):**
+### *recipes* / [build\_cq](/recipes/build_cq.py)
+
+[DEPS](/recipes/build_cq.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
+
+Recipe for building a BuildTarget image for CQ.
+
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#26)(api, config, properties):**
+
+&mdash; **def [RunSteps](/recipes/build_cq.py#20)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
