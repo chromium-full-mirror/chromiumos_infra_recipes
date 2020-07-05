@@ -233,8 +233,7 @@ def GenTests(api):
 
   yield api.test(
       'critical-child',
-      api.test_util.test_child_build('amd64-generic',
-                                     critical=common_pb2.YES).build,
+      api.test_util.test_child_build('amd64-generic', critical='YES').build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
@@ -244,8 +243,7 @@ def GenTests(api):
 
   yield api.test(
       'non-critical-child',
-      api.test_util.test_child_build('amd64-generic',
-                                     critical=common_pb2.NO).build,
+      api.test_util.test_child_build('amd64-generic', critical='NO').build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',

@@ -16,6 +16,7 @@ from collections import namedtuple
 from recipe_engine import recipe_test_api
 
 from PB.chromiumos.common import BuildTarget
+from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 
@@ -75,6 +76,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     """
     kwargs.setdefault('bucket', 'cq' if kwargs.get('cq') else 'postsubmit')
     kwargs.setdefault('builder', '%s-orchestrator' % kwargs['bucket'])
+    kwargs.setdefault('bot_size', 'small')
     return self.test_build(**kwargs)
 
   def test_build(self, cq=False, dry_run=False, bot_size='large',
@@ -108,7 +110,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       start_time (seconds): Start time, in seconds since epoch.
       update_time (seconds): Update time, in seconds since epoch.
       end_time (seconds): End time, in seconds since epoch.
-      critical (Trinary): Whether the build is critical.
+      critical (Trinary or str): Value (or name if str) to pass for critical.
       output_properties: A protobuf output properties message, a dictionary of
           output properties, or None.  If used, the dictionary may be a superset
           of protobufs.  If |output_properties| evaluates False, then the
@@ -152,7 +154,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
           self.m.cros_tags.tags(bot_size=bot_size))
 
     if critical:
-      msg.critical = critical
+      msg.critical = (
+          Trinary.Value(critical) if isinstance(critical, str) else critical)
 
     if create_time:
       msg.create_time.seconds = create_time
