@@ -13,6 +13,7 @@ DEPS = [
 ]
 
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine import post_process
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 PROPERTIES = BuildTargetProperties
@@ -81,40 +82,61 @@ def DoRunSteps(api, config, properties):
 def GenTests(api):
 
   # Normal CQ build, with one gerrit_change.
-  yield api.build_menu.test('cq-build', cq=True)
+  yield api.build_menu.test(
+      'cq-build', api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess), cq=True)
 
   # This covers the env_info.pointless check.
-  yield api.build_menu.test('pointless-cq-build', cq=True, pointless=True)
+  yield api.build_menu.test(
+      'pointless-cq-build',
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess), cq=True, pointless=True)
 
   # Normal postsubmit build.
-  yield api.build_menu.test('postsubmit-build')
+  yield api.build_menu.test(
+      'postsubmit-build',
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess))
 
   # Postsubmit build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages', '',
                                           retcode=1), cq=True)
 
   # Postsubmit build with artifact bundling failure.
   yield api.build_menu.test(
-      'bundle-fail',
+      'bundle-fail', api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/BundleArtifacts',
                                           '', retcode=1), cq=True)
 
   # This covers the Relevance check.
   yield api.build_menu.test(
-      'prepare-for-build-pointless', cq=True,
+      'prepare-for-build-pointless',
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess), cq=True,
       input_properties=BuildTargetProperties(artifact_build=True),
       artifact_pointless=True)
 
   yield api.build_menu.test(
       'run-exit-install',
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess),
       builder='arm64-generic-kernel-v5_4-buildtest-postsubmit')
 
-  yield api.build_menu.test('no-run-tests', build_target='grunt',
-                            builder='grunt-unittest-only-postsubmit')
+  # This builder has no output artifacts.
+  yield api.build_menu.test(
+      'no-run-tests', api.post_check(post_process.DoesNotRun,
+                                     'upload artifacts'),
+      api.post_check(post_process.StatusSuccess), build_target='grunt',
+      builder='grunt-unittest-only-postsubmit')
 
-  yield api.build_menu.test('run-exit-tests',
-                            builder='amd64-generic-exit-after-unittests')
+  yield api.build_menu.test(
+      'run-exit-tests', api.post_check(post_process.MustRun,
+                                       'upload artifacts'),
+      api.post_check(post_process.StatusSuccess),
+      builder='amd64-generic-exit-after-unittests')

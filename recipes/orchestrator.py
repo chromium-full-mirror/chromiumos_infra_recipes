@@ -24,6 +24,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
+from recipe_engine import post_process
 from google.protobuf import json_format
 
 PROPERTIES = OrchestratorProperties
@@ -138,6 +139,7 @@ def GenTests(api):
   yield api.test(
       'basic',
       test_orchestrator(),
+      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
@@ -165,6 +167,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(assert_singleton=True,
                                                 enable_history=True)),
+      api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, 'run builds.get build history.'
@@ -197,6 +200,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(assert_singleton=True,
                                                 enable_history=True)),
+      api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
@@ -226,6 +230,7 @@ def GenTests(api):
               assert_singleton=True,
               enable_history=True, update_manifest_refs=dict(
                   build='refs/heads/stable', start='refs/heads/postsubmit'))),
+      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_search_results(
           existing_annealing_builds, 'run builds.get snapshot builds'
           '.buildbucket.search'),
@@ -256,6 +261,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(enable_history=True,
                                                 assert_singleton=True)),
+      api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, step_name='find inflight orchestrator.'
@@ -289,6 +295,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(enable_history=True,
                                                 assert_singleton=True)),
+      api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           [], step_name='find inflight orchestrator.'
@@ -321,6 +328,7 @@ def GenTests(api):
               'start': 'refs/heads/foo',
               'build': 'refs/heads/bar'
           })),
+      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
@@ -350,6 +358,7 @@ def GenTests(api):
               'start': 'refs/heads/foo',
               'build': 'refs/heads/bar'
           })),
+      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
@@ -375,6 +384,7 @@ def GenTests(api):
       'orchestrator_with_follow_on',
       test_orchestrator(bucket='toolchain',
                         builder='orderfile-generate-orchestrator'),
+      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
@@ -401,6 +411,7 @@ def GenTests(api):
   yield api.test(
       'missing_gitiles_commit_with_defaults',
       test_orchestrator(revision=None),
+      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
@@ -423,6 +434,7 @@ def GenTests(api):
   yield api.test(
       'missing_gitiles_commit_with_changes',
       test_orchestrator(revision=None, cq=True),
+      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
@@ -450,6 +462,7 @@ def GenTests(api):
                                                 enable_history=True),
           tags=api.cros_tags.tags(
               cq_cl_tag='pupr:chromeos-base/chromeos-chrome')),
+      api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, 'run builds.get build history.'
@@ -493,6 +506,7 @@ def GenTests(api):
           cq=True,
           input_properties=orch_menu_properties(assert_singleton=True,
                                                 enable_history=True)),
+      api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, step_name='run builds.get build history'
@@ -531,6 +545,7 @@ def GenTests(api):
   yield api.test(
       'critical_child_builder_fails',
       test_orchestrator(),
+      api.post_check(post_process.StatusAnyFailure),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
@@ -565,6 +580,7 @@ def GenTests(api):
   yield api.test(
       'non-critical_child_builder_fails',
       test_orchestrator(),
+      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(

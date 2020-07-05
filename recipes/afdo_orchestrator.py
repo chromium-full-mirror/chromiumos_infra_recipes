@@ -20,6 +20,8 @@ DEPS = [
 
 from google.protobuf import json_format
 
+from recipe_engine import post_process
+
 from PB.chromiumos.common import ArtifactsByService
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -173,6 +175,7 @@ def GenTests(api):
   yield api.test(
       'basic',
       test_orchestrator(),
+      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
@@ -197,6 +200,7 @@ def GenTests(api):
   yield api.test(
       'join_if_inflight_orchs',
       test_orchestrator(cq=True),
+      api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           builds, step_name='find inflight orchestrator.'
@@ -227,6 +231,7 @@ def GenTests(api):
   yield api.test(
       'runs_if_no_inflight_orchs',
       test_orchestrator(cq=True),
+      api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           [], step_name='find inflight orchestrator.'
@@ -255,6 +260,7 @@ def GenTests(api):
   yield api.test(
       'dry_run',
       test_orchestrator(cq=True, dry_run=True),
+      api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
   )
 
@@ -263,6 +269,7 @@ def GenTests(api):
       test_orchestrator(bucket='toolchain',
                         builder='orderfile-generate-orchestrator',
                         revision=None),
+      api.post_check(post_process.StatusSuccess),
       api.properties(process_child='PROCESS'),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_collect_output(builds,

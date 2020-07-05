@@ -4528,9 +4528,9 @@ Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#45)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#47)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#38)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#40)(api, properties):**
 ### *recipes* / [afdo\_process](/recipes/afdo_process.py)
 
 [DEPS](/recipes/afdo_process.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)
@@ -4772,9 +4772,9 @@ behaving as expected.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#27)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#28)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#22)(api, properties):**
 ### *recipes* / [build\_with\_unittest](/recipes/build_with_unittest.py)
 
 [DEPS](/recipes/build_with_unittest.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
@@ -5542,9 +5542,9 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#39)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#40)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#32)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#33)(api, properties):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
