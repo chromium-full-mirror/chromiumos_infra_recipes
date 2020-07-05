@@ -28,4 +28,7 @@ message FullProperties {
 
   // The expected build result.
   recipe_engine.RawResult expected_recipe_result = 6;
+
+  // The name of any process_child builder to run.
+  string process_child = 7;
 }

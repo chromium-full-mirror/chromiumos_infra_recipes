@@ -32,22 +32,27 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def test_props(cq=False, **kwargs):
-    props = api.orch_menu.get_default_module_properties(cq=cq)
+  def test_props(with_manifest_refs=False, with_history=False, **kwargs):
+    props = api.orch_menu.get_default_module_properties(
+        with_manifest_refs=with_manifest_refs, with_history=with_history)
     props.update(**kwargs)
     return api.properties(TestProperties(expected_properties=props))
 
   recipe_refs = OrchestratorProperties.UpdateManifestRefs(
-      start='refs/heads/postsubmit')
+      build='refs/heads/stable', start='refs/heads/postsubmit')
   module_refs = OrchMenuProperties.UpdateManifestRefs(
-      start='refs/heads/postsubmit')
+      build='refs/heads/stable', start='refs/heads/postsubmit')
 
-  # Verify that the default properties from orch_menu.test work for cq=False.
+  # Verify that the default properties from orch_menu.test work for
+  # with_manifest_refs=True.
   yield api.orch_menu.test('basic-postsubmit',
-                           test_props(update_manifest_refs=module_refs))
+                           test_props(update_manifest_refs=module_refs),
+                           with_manifest_refs=True)
 
-  # Verify that the default properties from orch_menu.test work for cq=True.
-  yield api.orch_menu.test('basic-cq', test_props(cq=True), cq=True)
+  # Verify that the default properties from orch_menu.test work for
+  # with_history=True.
+  yield api.orch_menu.test('basic-cq', test_props(with_history=True),
+                           with_history=True, cq=True)
 
   yield api.orch_menu.test(
       'only-recipe',

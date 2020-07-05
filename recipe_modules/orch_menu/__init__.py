@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
     'bot_cost',
