@@ -23,10 +23,9 @@ from google.protobuf import json_format
 from recipe_engine import post_process
 
 from PB.chromiumos.common import ArtifactsByService
+from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
+    BatchResponse)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
-                                                       builds_service_pb2)
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 
 PROPERTIES = OrchestratorProperties
@@ -45,9 +44,8 @@ def RunSteps(api, properties):
 
 
 def DoRunSteps(api, properties, config):
-  snapshot = api.orch_menu.gitiles_commit
-  gerrit_changes = api.orch_menu.gerrit_changes
 
+  # Run the child builders.
   api.orch_menu.plan_and_run_children()
 
   # If this is a dry run, check that the builds passed and quit.
@@ -104,35 +102,49 @@ def GenTests(api):
 
   def vm_test_build(name):
     # The only things we care about are output.properties.name and status.
-    return json_format.ParseDict(
-        dict(
-            output=dict(properties=dict(name=name)), status=common_pb2.SUCCESS),
-        build_pb2.Build())
+    return api.test_util.test_build(builder='vmtest', revision=None,
+                                    output_properties=dict(name=name),
+                                    status='SUCCESS').message
 
   vm_tests = [vm_test_build('vm-test')]
 
   moblab_vm_tests = [vm_test_build('moblab-vm-test')]
 
-  cros_test_platforms = [
-      build_pb2.Build(id=1234, builder={'builder': 'cros_test_platform'},
-                      status=common_pb2.SUCCESS),
-      build_pb2.Build(id=4321, builder={'builder': 'cros_test_platform'},
-                      status=common_pb2.SUCCESS),
-  ]
-  ctp_response1 = builds_service_pb2.BatchResponse(
-      responses=[dict(schedule_build=cros_test_platforms[0])])
-  ctp_response2 = builds_service_pb2.BatchResponse(
-      responses=[dict(schedule_build=cros_test_platforms[1])])
+  ctp_response1 = BatchResponse(responses=[
+      dict(
+          schedule_build=api.test_util.test_build(
+              build_id=1234, bucket='testplatform',
+              builder='cros_test_platform', status='SUCCESS',
+              bot_size=None).message)
+  ])
+  ctp_response2 = BatchResponse(responses=[
+      dict(
+          schedule_build=api.test_util.test_build(
+              build_id=4321, bucket='testplatform',
+              builder='cros_test_platform', status='SUCCESS',
+              bot_size=None).message)
+  ])
 
   hw_tests = [
       api.skylab.test_with_execute_response_json(id=1234),
       api.skylab.test_with_execute_response_json(id=4321),
   ]
 
+  orchestrator = api.test_util.test_orchestrator(cq=True,
+                                                 build_id=8922054662172513000,
+                                                 status='STARTED').message
+
+  inflight_orchestrator = api.test_util.test_orchestrator(
+      cq=True, build_id=8922054662172513001, status='STARTED').message
+
+  follow_on_orchestrator = api.test_util.test_orchestrator(
+      build_id=8922054662172515000, bucket='toolchain',
+      builder='orderfile-verify-orchestrator', status='SUCCESS').message
+
   builds = [
       api.test_util.test_child_build(
           'amd64-generic', cq=True, build_id=8922054662172514000,
-          status='SUCCESS', output_properties=dict(
+          status='SUCCESS', critical='YES', output_properties=dict(
               build_cost=10.0, artifacts=dict(
                   files_by_artifact={
                       "CHROME_DEBUG_BINARY": ["chrome.debug.bz2"]
@@ -140,7 +152,7 @@ def GenTests(api):
                   gs_path="GS_PATH/DIR"))).message,
       api.test_util.test_child_build(
           'arm-generic', cq=True, build_id=8922054662172514001,
-          status='STARTED', output_properties=dict(
+          status='STARTED', critical='YES', output_properties=dict(
               artifacts=dict(
                   files_by_artifact={
                       "CHROME_DEBUG_BINARY": ["chrome.debug.bz2"]
@@ -148,7 +160,7 @@ def GenTests(api):
                   gs_path="GS_PATH/DIR"))).message,
       api.test_util.test_child_build(
           'atlas', cq=True, build_id=8922054662172514002, start_time=1562475245,
-          status='SUCCESS', output_properties=dict(
+          status='SUCCESS', critical='YES', output_properties=dict(
               artifacts=dict(
                   files_by_artifact={
                       "CHROME_DEBUG_BINARY": ["chrome.debug.bz2"]
@@ -157,20 +169,14 @@ def GenTests(api):
   ]
 
   # we have three here to properly exercise "prioritize_builds"
-  followon_resp1 = builds_service_pb2.BatchResponse(responses=[
-      dict(
-          schedule_build=api.test_util.test_orchestrator(
-              build_id=5555, bucket='toolchain',
-              builder='orderfile-verify-orchestrator',
-              status='SUCCESS').message)
-  ])
+  followon_resp1 = BatchResponse(
+      responses=[dict(schedule_build=follow_on_orchestrator)])
 
-  process_resp1 = builds_service_pb2.BatchResponse(responses=[
-      dict(
-          schedule_build=api.test_util.test_orchestrator(
-              build_id=5555, bucket='toolchain',
-              builder='afdo-process-toolchain', status='SUCCESS').message)
-  ])
+  process_child = api.test_util.test_child_build(
+      'chell', build_id=8922054662172514501, status='SUCCESS',
+      bucket='toolchain', builder='benchmark-afdo-process').message
+
+  process_resp1 = BatchResponse(responses=[dict(schedule_build=process_child)])
 
   yield api.test(
       'basic',
@@ -203,12 +209,18 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
-          builds, step_name='find inflight orchestrator.'
+          [inflight_orchestrator], step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
       api.buildbucket.simulated_collect_output(
-          builds, 'find inflight orchestrator.waiting for existing runs'),
-      api.buildbucket.simulated_collect_output(builds,
-                                               step_name='run builds.collect'),
+          [inflight_orchestrator],
+          'find inflight orchestrator.waiting for existing runs'),
+      api.buildbucket.simulated_search_results(
+          [x for x in builds if x.status == common_pb2.SUCCESS],
+          'run builds.get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_collect_output(
+          [x for x in builds if x.status != common_pb2.SUCCESS],
+          step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
@@ -230,14 +242,19 @@ def GenTests(api):
 
   yield api.test(
       'runs_if_no_inflight_orchs',
-      test_orchestrator(cq=True),
       api.post_check(post_process.StatusSuccess),
+      test_orchestrator(cq=True),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_search_results(
           [], step_name='find inflight orchestrator.'
           'find matching builds.buildbucket.search'),
-      api.buildbucket.simulated_collect_output(builds,
-                                               step_name='run builds.collect'),
+      api.buildbucket.simulated_search_results(
+          [x for x in builds if x.status == common_pb2.SUCCESS],
+          'run builds.get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_collect_output(
+          [x for x in builds if x.status != common_pb2.SUCCESS],
+          step_name='run builds.collect'),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule htarget.hw.bvt-cq.buildbucket.schedule'),
@@ -259,18 +276,24 @@ def GenTests(api):
 
   yield api.test(
       'dry_run',
-      test_orchestrator(cq=True, dry_run=True),
       api.post_check(post_process.StatusSuccess),
+      test_orchestrator(cq=True, dry_run=True),
+      api.buildbucket.simulated_search_results(
+          [x for x in builds if x.status == common_pb2.SUCCESS],
+          'run builds.get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_collect_output(
+          [x for x in builds if x.status != common_pb2.SUCCESS],
+          step_name='run builds.collect'),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
   )
 
   yield api.test(
       'orchestrator_with_process_child_and_followon',
       test_orchestrator(bucket='toolchain',
-                        builder='orderfile-generate-orchestrator',
-                        revision=None),
+                        builder='orderfile-generate-orchestrator'),
       api.post_check(post_process.StatusSuccess),
-      api.properties(process_child='PROCESS'),
+      api.properties(process_child='benchmark-afdo-process'),
       api.git_footers.simulated_get_footers([], 'run builds.get build history'),
       api.buildbucket.simulated_collect_output(builds,
                                                step_name='run builds.collect'),
@@ -292,7 +315,11 @@ def GenTests(api):
           moblab_vm_tests,
           step_name='run tests.collect tests.collect moblab vm tests'),
       api.buildbucket.simulated_schedule_output(
-          process_resp1, 'run PROCESS.buildbucket.schedule'),
+          process_resp1, 'run benchmark-afdo-process.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          [process_child], 'run benchmark-afdo-process.collect'),
       api.buildbucket.simulated_schedule_output(
           followon_resp1, 'run follow on orchestrator.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          [follow_on_orchestrator], 'run follow on orchestrator.collect'),
   )

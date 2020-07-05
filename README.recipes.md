@@ -4528,9 +4528,9 @@ Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#47)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#46)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#40)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#39)(api, properties):**
 ### *recipes* / [afdo\_process](/recipes/afdo_process.py)
 
 [DEPS](/recipes/afdo_process.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)
@@ -5542,9 +5542,9 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#40)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#41)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#33)(api, properties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#34)(api, properties):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
