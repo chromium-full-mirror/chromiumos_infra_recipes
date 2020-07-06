@@ -9,36 +9,23 @@ All builders run against the same source tree.
 """
 
 DEPS = [
-    'recipe_engine/buildbucket',
     'cros_tags',
-    'git_footers',
     'orch_menu',
-    'skylab',
-    'test_util',
 ]
 
 import json
 
-from google.protobuf import json_format
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
-    BatchResponse)
-from PB.recipes.chromeos.orchestrator import OrchestratorProperties
-
 from recipe_engine import post_process
 
-PROPERTIES = OrchestratorProperties
 
-
-def RunSteps(api, properties):
+def RunSteps(api):
   with api.orch_menu.setup_orchestrator(missing_ok=True) as config:
     if config:
-      DoRunSteps(api, properties, config)
+      DoRunSteps(api, config)
     return api.orch_menu.create_recipe_result()
 
 
-def DoRunSteps(api, properties, config):
+def DoRunSteps(api, config):
 
   # Run the child builders.
   api.orch_menu.plan_and_run_children()

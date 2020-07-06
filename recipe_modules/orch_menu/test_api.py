@@ -17,14 +17,13 @@ from recipe_engine import recipe_test_api
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
     BatchResponse)
-from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 
 
 class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing Chrome OS Recipes."""
 
   def test(self, name, *args, **kwargs):
-    """A test, with orchestrator and OrchestratorProperties,
+    """A test, with orchestrator and OrchMenuProperties,
 
     This function creates a test orchestrator from kwargs, and then calls
     api.test() to create the TestData for a test.

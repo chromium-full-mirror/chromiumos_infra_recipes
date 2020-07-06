@@ -15,7 +15,6 @@ from recipe_engine import recipe_api
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
 _manifest_info = namedtuple('_manifest_info',
@@ -79,31 +78,13 @@ class OrchMenuApi(recipe_api.RecipeApi):
   via this module, and are a simple sequence of steps.
   """
 
-  # TODO(crbug/1053703): Make the above statement true.
-
-  # TODO(crbug/1098798, crbug/1093916): Migrate the common orchestrator
-  # properties to the module, and stop looking at the global properties.
-  def __init__(self, properties, glob_props, *args, **kwargs):
+  def __init__(self, properties, *args, **kwargs):
     super(OrchMenuApi, self).__init__(*args, **kwargs)
     self._has_manifest_refs = False
     self._internal_repo_path = None
     self._external_repo_path = None
     self._external_gitiles_commit = None
     # Our properties: OrchMenuProperties ($chromeos/orch_menu).
-    # Merge in the global properties.
-    if (not MessageToDict(properties.update_manifest_refs) and
-        glob_props.HasField('update_manifest_refs')):
-      # No manifest refs were given in the module, but the recipe has them.
-      properties.update_manifest_refs.start = glob_props.update_manifest_refs.start
-      properties.update_manifest_refs.build = glob_props.update_manifest_refs.build
-      properties.update_manifest_refs.test = glob_props.update_manifest_refs.test
-    properties.stagger_children_seconds = (
-        properties.stagger_children_seconds or
-        glob_props.stagger_children_seconds)
-    properties.enable_history = (
-        properties.enable_history or glob_props.enable_history)
-    properties.assert_singleton = (
-        properties.assert_singleton or glob_props.assert_singleton)
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
 

@@ -8,7 +8,6 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'cros_bisect',
     'cros_tags',
     'gerrit',
     'git_footers',
@@ -22,12 +21,7 @@ from recipe_engine import recipe_test_api
 from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
-from PB.recipes.chromeos.orchestrator import OrchestratorProperties
-from PB.recipe_modules.chromeos.cros_bisect import cros_bisect
 from PB.recipe_engine.result import RawResult
-from PB.go.chromium.org.luci.buildbucket.proto.build import Build
-from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
-    BatchResponse)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
@@ -85,6 +79,9 @@ def RunSteps(api, properties):
 def GenTests(api):
   data = api.orch_menu.standard_test_data()
 
+  def orch_menu_properties(**kwargs):
+    return {'$chromeos/orch_menu': kwargs}
+
   yield api.orch_menu.test('basic', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess),
                            with_manifest_refs=True, with_history=True)
@@ -100,9 +97,8 @@ def GenTests(api):
       'bad-ref',
       api.properties(
           FullProperties(missing_ok=True, expect_missing_config=True)),
-      input_properties=OrchestratorProperties(
-          update_manifest_refs=OrchestratorProperties.UpdateManifestRefs(
-              start='missing-ref-heads')))
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(start='missing-ref-heads')))
 
   yield api.orch_menu.test(
       'required-missing-config',

@@ -9,30 +9,17 @@ All builders run against the same source tree.
 """
 
 DEPS = [
-    'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
-    'git_footers',
     'orch_menu',
-    'skylab',
-    'test_util',
 ]
-
-from google.protobuf import json_format
 
 from recipe_engine import post_process
 
 from PB.chromiumos.common import ArtifactsByService
-from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
-    BatchResponse)
-from PB.recipes.chromeos.orchestrator import OrchestratorProperties
+from PB.recipes.chromeos.afdo_orchestrator import AfdoOrchestratorProperties
 
-PROPERTIES = OrchestratorProperties
-
-# TODO(crbug/1053703): refactor this along with orchestrator.py
-# Most of this builder will be greatly simplified as part of refactoring
-# orchestrator.py into a menu module.  Any functions that look similar to those
-# in orchestrator.py are expected migrate to a recipe module.
+PROPERTIES = AfdoOrchestratorProperties
 
 
 def RunSteps(api, properties):
