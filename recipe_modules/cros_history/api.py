@@ -197,7 +197,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         ['commit/gitiles', snapshot.host, snapshot.project, '+', snapshot.id])
 
   def _get_patch_history(self, patches=None, snapshot=None, builder=None,
-                         limit=1000, statuses=None, start_build_id=None,
+                         limit=2000, statuses=None, start_build_id=None,
                          tags=None):
     """Get all the builds with specified parameters from Buildbucket.
 
@@ -206,7 +206,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       snapshot (GitilesCommit): snapshot to search on. This
         will set a buildset tag and search on it.
       builder (BuilderID): query for only this builder.
-      limit (int): limit the list returned to this number, default 1000.
+      limit (int): limit the list returned to this number.
       statuses ([common_pb2.Status]): query for builds with these statuses.
       start_build_id: query builds older than this ID.
       tags ([common_pb2.StringPair]): get builds with these tags only. If
