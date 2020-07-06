@@ -20,14 +20,14 @@
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
       "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 106, in RunSteps",
       "    _validate_properties(properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 101, in _validate_properties",
-      "    raise ValueError('must set destination_gs_path for {}'.format(board))",
-      "ValueError: must set destination_gs_path for sludge"
+      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 90, in _validate_properties",
+      "    raise ValueError('must set vm_board_images')",
+      "ValueError: must set vm_board_images"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('must set destination_gs_path for sludge',)"
+      "humanReason": "Uncaught Exception: ValueError('must set vm_board_images',)"
     },
     "name": "$result"
   }

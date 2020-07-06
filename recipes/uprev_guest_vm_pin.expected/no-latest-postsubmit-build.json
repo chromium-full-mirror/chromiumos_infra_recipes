@@ -14,6 +14,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "get latest postsubmit build version.query-sludge",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "ls",
@@ -22,16 +29,16 @@
       "-json",
       "-nopage",
       "-n",
-      "1",
+      "4",
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"sludge-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
     ],
     "infra_step": true,
-    "name": "get latest postsubmit build version.buildbucket.search",
+    "name": "get latest postsubmit build version.query-sludge.buildbucket.search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },

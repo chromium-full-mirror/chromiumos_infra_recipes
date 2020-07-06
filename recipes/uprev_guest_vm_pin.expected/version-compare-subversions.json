@@ -12,7 +12,7 @@
   },
   {
     "cmd": [],
-    "name": "get latest postsubmit build version.query-sludge",
+    "name": "get latest postsubmit build version.query-tatl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -30,21 +30,50 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"sludge-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tatl-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
     ],
     "infra_step": true,
-    "name": "get latest postsubmit build version.query-sludge.buildbucket.search",
+    "name": "get latest postsubmit build version.query-tatl.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-sludge/R80-1.2.3-3\"}, \"chromeos_version\": \"R80-1.2.3\"}}, \"id\": \"1\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-sludge/R80-1.2.2-2\"}, \"chromeos_version\": \"R80-1.2.2\"}}, \"id\": \"2\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-sludge/R80-1.2.1-1\"}, \"chromeos_version\": \"R80-1.2.1\"}}, \"id\": \"3\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-sludge/R80-1.2.0-0\"}, \"chromeos_version\": \"R80-1.2.0\"}}, \"id\": \"4\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}, \"id\": \"1\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}, \"id\": \"2\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
-      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
-      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@",
-      "@@@STEP_LINK@4@https://cr-buildbucket.appspot.com/build/4@@@"
+      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest postsubmit build version.query-tael",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "4",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tael-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest postsubmit build version.query-tael.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}, \"id\": \"1\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}, \"id\": \"2\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
+      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@"
     ]
   },
   {
@@ -419,14 +448,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "80.1.2.3",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/VERSION-PIN"
+      "80.1.2.9.0",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
     "infra_step": true,
     "name": "try uprev version file.version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@80.1.2.3@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@80.1.2.9.0@@@",
       "@@@STEP_LOG_END@VERSION-PIN@@@"
     ]
   },
@@ -447,7 +476,7 @@
       "rev-parse",
       "--show-toplevel"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "commit uprev.git rev-parse",
     "~followup_annotations": [
@@ -458,16 +487,16 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "commit uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -476,9 +505,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "uprev-guest-vm",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm"
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "commit uprev.repo start",
     "~followup_annotations": [
@@ -489,9 +518,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/VERSION-PIN"
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "commit uprev.git add",
     "~followup_annotations": [
@@ -506,15 +535,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "chromeos-dtc-vm: updating version pin to latest - 80.1.2.3",
+      "termina-dlc: updating version pin to latest - 80.1.2.9.0",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "commit uprev.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@chromeos-dtc-vm: updating version pin to latest - 80.1.2.3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@termina-dlc: updating version pin to latest - 80.1.2.9.0@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
@@ -525,7 +554,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "commit uprev.git commit",
     "~followup_annotations": [
@@ -545,7 +574,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/postsubmit-sludge/R80-1.2.3-3/image.zip",
+      "gs://chromeos-image-archive/postsubmit-tatl/R80-1.2.9.0-9.0/image.zip",
       "./"
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_2",
@@ -615,14 +644,167 @@
       "----",
       "cp",
       "*.tbz",
-      "gs://chromeos-localmirror-private/distfiles/sludge/80.1.2.3/"
+      "gs://termina-component-testing/uprev-test/amd64/80.1.2.9.0/"
     ],
     "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "infra_step": true,
     "name": "copy images to destination bucket.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-localmirror-private/distfiles/sludge/80.1.2.3/@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/80.1.2.9.0/@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "copy images to destination bucket.set image permissions on destination",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "acl",
+      "ch",
+      "-r",
+      "-u",
+      "tony.stark@google.com:OWNER",
+      "-u",
+      "bighead@google.com:READ",
+      "-g",
+      "koolkids@google.com:READ",
+      "gs://termina-component-testing/uprev-test/amd64/80.1.2.9.0/"
+    ],
+    "infra_step": true,
+    "name": "copy images to destination bucket.set image permissions on destination.gsutil acl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/postsubmit-tael/R80-1.2.9.0-9.0/image.zip",
+      "./"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "infra_step": true,
+    "name": "copy images to destination bucket.gsutil download (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
+      "--json-input",
+      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_3/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_3/image\", \"safe_mode\": true}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "name": "copy images to destination bucket.unzip image archive (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "name": "copy images to destination bucket.archive base guest VM (2)",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_3/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_3/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_3/image/guest-vm-base\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "name": "copy images to destination bucket.archive test guest VM (2)",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_3/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_3/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_3/image/guest-vm-test\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "*.tbz",
+      "gs://termina-component-testing/uprev-test/arm/80.1.2.9.0/"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "infra_step": true,
+    "name": "copy images to destination bucket.gsutil upload (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/80.1.2.9.0/@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "copy images to destination bucket.set image permissions on destination (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "acl",
+      "ch",
+      "-r",
+      "-u",
+      "tony.stark@google.com:OWNER",
+      "-u",
+      "bighead@google.com:READ",
+      "-g",
+      "koolkids@google.com:READ",
+      "gs://termina-component-testing/uprev-test/arm/80.1.2.9.0/"
+    ],
+    "infra_step": true,
+    "name": "copy images to destination bucket.set image permissions on destination (2).gsutil acl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -631,7 +813,7 @@
   },
   {
     "cmd": [],
-    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -641,16 +823,16 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm.repo forall",
+    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -663,10 +845,10 @@
       "--bypass-hooks",
       "--force",
       "--topic",
-      "chromeos-dtc-vm",
+      "termina-dlc",
       "--send-mail"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -675,7 +857,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm.git_cl upload",
+    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -690,7 +872,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -699,7 +881,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm.git_cl status",
+    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -710,14 +892,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -726,7 +908,7 @@
     "name": "generate CL.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -736,7 +918,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "generate CL.set labels on CL 1.git rebase",
     "~followup_annotations": [
@@ -750,7 +932,7 @@
       "cros",
       "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "generate CL.set labels on CL 1.git push",
     "~followup_annotations": [

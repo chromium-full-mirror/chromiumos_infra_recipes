@@ -6,32 +6,36 @@ syntax = "proto3";
 
 package recipes.chromeos.uprev_guest_vm_pin;
 
-// NextId: 7
 message UprevGuestVmPinProperties {
   // Path to the version file to update.
   // Required
   string version_file = 1;
 
-  // Name of the Chrome OS board that is used to generate the guest VM image.
+  // Structure that define a list of the VM board images to be uprevved.
   // Required
-  string board = 2;
-
-  // Destination gs bucket where the guest VM image will be copied.
-  // Required
-  string destination_gs_bucket = 3;
-
-  // Destination gs path where the guest VM image will be copied.
-  // Required
-  string destination_gs_path = 6;
+  repeated VmBoardImage vm_board_images = 2;
 
   // List of user acls to set for the uploaded image on the localmirror. ACLs
   // are in the format expected by `gsutil acl`. e.g
   // username@google.com:OWNER
-  repeated string user_acls = 4;
+  repeated string user_acls = 3;
 
   // List of group acls to set for the uploaded image on the localmirror. ACLs
   // are in the format expected by `gsutil acl`. e.g
   // username@google.com:OWNER
-  repeated string group_acls = 5;
+  repeated string group_acls = 4;
 }
 
+message VmBoardImage {
+  // Name of the Chrome OS board that is used to generate the guest VM image.
+  // Required
+  string board = 1;
+
+  // Destination gs bucket where the guest VM image will be copied.
+  // Required
+  string destination_gs_bucket = 2;
+
+  // Destination gs path where the guest VM image will be copied.
+  // Required
+  string destination_gs_path = 3;
+}
