@@ -10,9 +10,7 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"result\": \"good\", \"ye_unknown_field\": \"foobar\"}@@@",
-      "@@@STEP_LOG_END@response@@@",
-      "@@@STEP_LOG_LINE@tee_script_cmd@RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh@@@",
-      "@@@STEP_LOG_END@tee_script_cmd@@@"
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -235,9 +233,7 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"artifacts\": [{\"path\": \"[START_DIR]/tmp/artifact.tar.gz\"}]}@@@",
-      "@@@STEP_LOG_END@response@@@",
-      "@@@STEP_LOG_LINE@tee_script_cmd@RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh@@@",
-      "@@@STEP_LOG_END@tee_script_cmd@@@"
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -398,9 +394,7 @@
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"version\": {\"major\": 1, \"bug\": 0, \"minor\": 1}}@@@",
-      "@@@STEP_LOG_END@response@@@",
-      "@@@STEP_LOG_LINE@tee_script_cmd@RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh@@@",
-      "@@@STEP_LOG_END@tee_script_cmd@@@"
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {

@@ -10,9 +10,7 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"uploads_dir\": \"/binhosts/path\"}@@@",
-      "@@@STEP_LOG_END@response@@@",
-      "@@@STEP_LOG_LINE@tee_script_cmd@RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh@@@",
-      "@@@STEP_LOG_END@tee_script_cmd@@@"
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {

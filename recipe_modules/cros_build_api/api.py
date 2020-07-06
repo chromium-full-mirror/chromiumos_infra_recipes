@@ -296,7 +296,6 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
       cmd = []
       if self._capture_stdout_stderr:
         tee_script = self.repo_resource('recipe_scripts/tee_wrapper.sh')
-        presentation.logs['tee_script_cmd'] = [str(tee_script)]
         # Make the tee_script and logfile path be the first arguments.
         # The tee_script will execute the arguments after logfile path and
         # tee the output into the logfile path.
