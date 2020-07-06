@@ -259,7 +259,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   def bootstrap_sysroot_and_install_packages(self, config=None, packages=None,
                                              timeout_sec='DEFAULT', name=None):
-    """Install packages (possibly fetching Chrome source).
+    """Bootstrap the sysroot and install packages as appropriate.
+
+    The config determines whether to call install packages.  If installing
+    packages, fetch Chrome source when needed.
 
     Args:
       config (BuilderConfig): The Builder Config for the build.
@@ -267,6 +270,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
           packages for the build_target.
       timeout_sec (int): Step timeout, in seconds, or None for default.
       name (string): step name for install packages, or None for default.
+
+    Returns:
+      (bool): Whether to continue with the build.
     """
     # Make sure we have a valid config
     config = config or self.config_or_default
@@ -275,16 +281,23 @@ class BuildMenuApi(recipe_api.RecipeApi):
         compile_source=config.build.install_toolchain.compile_source)
 
     install_packages = config.build.install_packages
-    self.m.sysroot_util.install_packages(config, self.dep_graph, packages,
-                                         artifact_build=self._artifact_build,
-                                         timeout_sec=timeout_sec, name=name)
+    if self.m.cros_infra_config.should_run(install_packages.run_spec):
+      self.m.sysroot_util.install_packages(config, self.dep_graph, packages,
+                                           artifact_build=self._artifact_build,
+                                           timeout_sec=timeout_sec, name=name)
 
-  def build_and_test_images(self, config=None, run_tests=True):
-    """Build the image and optionally run ebuild tests.
+    return not self.m.cros_infra_config.should_exit(install_packages.run_spec)
+
+  def build_and_test_images(self, config=None):
+    """Build the image and run ebuild tests.
+
+    This behavior is adjusted by the run_spec values in config.
 
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
-      run_tests (bool): Whether to run ebuild tests.
+
+    Returns:
+      (bool): Whether to continue with the build.
     """
     config = config or self.config_or_default
     build_images = config.build.build_images
@@ -292,11 +305,13 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     builder_path = self.m.cros_artifacts.artifacts_gs_path(
         config.id.name, self.build_target, config.id.type)
+
     self.m.sysroot_util.build_images(build_images.image_types, builder_path,
                                      build_images.disable_rootfs_verification,
                                      build_images.disk_layout)
 
-    if run_tests:
+    # If we should run ebuild tests, do that.
+    if self.m.cros_infra_config.should_run(unit_tests.ebuilds_run_spec):
       with self.m.step.nest('run ebuild tests') as presentation:
         response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
             BuildTargetUnitTestRequest(
@@ -309,6 +324,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
             response_lambda=self.m.cros_build_api.failed_pkg_names)
         self.m.failures.set_failed_packages(presentation,
                                             response.failed_packages)
+
+    return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 
   def upload_artifacts(self, config=None):
     """Upload artifacts from the build.

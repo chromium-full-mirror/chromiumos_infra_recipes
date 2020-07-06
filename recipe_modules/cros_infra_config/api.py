@@ -89,10 +89,20 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @property
   def config_or_default(self):
+    """Config or default config.
+
+    The default config is empty, except for:
+      - id.name = this builder
+      - chrome.internal = True
+      - build.install_packages.run_spec = RUN
+      - build.use_flags = 'chrome_internal'
+    """
     return self.config or BuilderConfig(
         id=BuilderConfig.Id(name=self.m.buildbucket.build.builder.builder),
-        chrome=BuilderConfig.Chrome(internal=True),
-        build=BuilderConfig.Build(use_flags=[UseFlag(flag='chrome_internal')]))
+        chrome=BuilderConfig.Chrome(internal=True), build=BuilderConfig.Build(
+            install_packages=BuilderConfig.Build.InstallPackages(
+                run_spec=BuilderConfig.RUN),
+            use_flags=[UseFlag(flag='chrome_internal')]))
 
   @property
   def is_staging(self):

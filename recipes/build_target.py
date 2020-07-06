@@ -7,13 +7,11 @@
 
 DEPS = [
     'build_menu',
-    'cros_artifacts',
-    'cros_infra_config',
     'test_util',
 ]
 
-from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 PROPERTIES = BuildTargetProperties
@@ -22,7 +20,7 @@ PROPERTIES = BuildTargetProperties
 def RunSteps(api, properties):
   with api.build_menu.configure_builder() as config:
     if config:
-      DoRunSteps(api, config, properties)
+      return DoRunSteps(api, config, properties)
 
 
 def DoRunSteps(api, config, properties):
@@ -52,17 +50,9 @@ def DoRunSteps(api, config, properties):
   try:
     install_spec = config.build.install_packages.run_spec
     ebuilds_spec = config.unit_tests.ebuilds_run_spec
-    if api.cros_infra_config.should_run(install_spec):
-      api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
-
-    if not api.cros_infra_config.should_exit(install_spec):
-      api.build_menu.build_and_test_images(
-          config=config,
-          run_tests=api.cros_infra_config.should_run(ebuilds_spec))
-
-    if (not api.cros_infra_config.should_exit(install_spec) and
-        not api.cros_infra_config.should_exit(ebuilds_spec)):
-      api.build_menu.upload_prebuilts(config)
+    if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
+      if api.build_menu.build_and_test_images(config=config):
+        api.build_menu.upload_prebuilts(config)
   except StepFailure:
     # A StepFailure means build failed, we want to forgive an upload failure.
     forgive_upload_failure = True
@@ -84,32 +74,50 @@ def GenTests(api):
   # Normal CQ build, with one gerrit_change.
   yield api.build_menu.test(
       'cq-build', api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StatusSuccess), cq=True)
 
   # This covers the env_info.pointless check.
   yield api.build_menu.test(
       'pointless-cq-build',
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StatusSuccess), cq=True, pointless=True)
 
   # Normal postsubmit build.
   yield api.build_menu.test(
       'postsubmit-build',
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.StatusSuccess))
 
-  # Postsubmit build with install-packages failure.
+  # CQ build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages', '',
                                           retcode=1), cq=True)
 
-  # Postsubmit build with artifact bundling failure.
+  # CQ build with artifact bundling failure.
   yield api.build_menu.test(
       'bundle-fail', api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.build_menu.set_build_api_return('upload artifacts',
+                                          'ArtifactsService/BundleArtifacts',
+                                          '', retcode=1), cq=True)
+
+  # CQ build with failures in install packages and bundle artifacts.
+  yield api.build_menu.test(
+      'install-packages-and-bundle-fail',
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.post_check(post_process.StatusAnyFailure),
+      api.build_menu.set_build_api_return('install packages',
+                                          'SysrootService/InstallPackages', '',
+                                          retcode=1),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/BundleArtifacts',
                                           '', retcode=1), cq=True)
@@ -118,6 +126,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'prepare-for-build-pointless',
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StatusSuccess), cq=True,
       input_properties=BuildTargetProperties(artifact_build=True),
       artifact_pointless=True)
@@ -125,6 +134,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'run-exit-install',
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StatusSuccess),
       builder='arm64-generic-kernel-v5_4-buildtest-postsubmit')
 
@@ -132,6 +142,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'no-run-tests', api.post_check(post_process.DoesNotRun,
                                      'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StatusSuccess), build_target='grunt',
       builder='grunt-unittest-only-postsubmit')
 

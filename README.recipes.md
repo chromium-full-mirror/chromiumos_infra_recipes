@@ -102,7 +102,6 @@
   * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
   * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
-  * [build_with_unittest](#recipes-build_with_unittest) &mdash; Recipe for building a BuildTarget image with unit tests.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
@@ -573,7 +572,10 @@ there via this module, and are a simple sequence of steps.
 
 &mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#260)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
-Install packages (possibly fetching Chrome source).
+Bootstrap the sysroot and install packages as appropriate.
+
+The config determines whether to call install packages.  If installing
+packages, fetch Chrome source when needed.
 
 Args:
   config (BuilderConfig): The Builder Config for the build.
@@ -582,13 +584,20 @@ Args:
   timeout_sec (int): Step timeout, in seconds, or None for default.
   name (string): step name for install packages, or None for default.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#282)(self, config=None, run_tests=True):**
+Returns:
+  (bool): Whether to continue with the build.
 
-Build the image and optionally run ebuild tests.
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#291)(self, config=None):**
+
+Build the image and run ebuild tests.
+
+This behavior is adjusted by the run_spec values in config.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
-  run_tests (bool): Whether to run ebuild tests.
+
+Returns:
+  (bool): Whether to continue with the build.
 
 &emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#56)(self):**
 
@@ -646,14 +655,14 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#80)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#313)(self, config=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#330)(self, config=None):**
 
 Upload artifacts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#328)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#345)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1462,7 +1471,15 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#90)(self):**
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#336)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
+Config or default config.
+
+The default config is empty, except for:
+  - id.name = this builder
+  - chrome.internal = True
+  - build.install_packages.run_spec = RUN
+  - build.use_flags = 'chrome_internal'
+
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#346)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1482,11 +1499,11 @@ Args:
 Returns:
   BuilderConfig or None
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#219)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#229)(self):**
 
 Force a reload of the config map from ToT.
 
-&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#101)(self):**
+&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#111)(self):**
 
 Return a freshly loaded config for this builder.
 
@@ -1495,14 +1512,14 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#73)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#229)(self):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#239)(self):**
 
 Get BotPolicies as defined in infra/config.
 
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#393)(build):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#403)(build):**
 
 Return the build target name from input properties.
 
@@ -1513,7 +1530,7 @@ Args:
 Returns:
   (str) The name of the build target.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#169)(self, builder_name, missing_ok=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#179)(self, builder_name, missing_ok=False):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -1536,14 +1553,14 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#249)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#259)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#239)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#249)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
@@ -1554,17 +1571,17 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#56)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#97)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#107)(self):**
 
 &emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#65)(self):**
 
-&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#113)(self):**
+&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#123)(self):**
 
 Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#197)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#207)(self, builder_names):**
 
 Gets the BuilderConfigs for the specified builder names from master.
 
@@ -1578,9 +1595,9 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#226)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#236)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#223)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#233)(self, run_spec):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4768,22 +4785,13 @@ behaving as expected.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#20)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
-[DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util)
+[DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#28)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#26)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#22)(api, properties):**
-### *recipes* / [build\_with\_unittest](/recipes/build_with_unittest.py)
-
-[DEPS](/recipes/build_with_unittest.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
-
-Recipe for building a BuildTarget image with unit tests.
-
-&mdash; **def [DoRunSteps](/recipes/build_with_unittest.py#25)(api, config, properties):**
-
-&mdash; **def [RunSteps](/recipes/build_with_unittest.py#19)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#20)(api, properties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

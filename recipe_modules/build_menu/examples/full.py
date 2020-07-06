@@ -119,7 +119,7 @@ def GenTests(api):
                                   'baz', 'cat2', '3'),
                           ]
                       })
-          }))
+          }), bucket='bisect')
 
   yield api.build_menu.test(
       'missing-ok-config',
