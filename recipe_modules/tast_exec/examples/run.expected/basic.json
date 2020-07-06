@@ -111,7 +111,7 @@
       "localhost:9222"
     ],
     "name": "tast run first",
-    "timeout": 1800
+    "timeout": 2700
   },
   {
     "cmd": [],
@@ -379,7 +379,7 @@
       "localhost:9222"
     ],
     "name": "tast run second",
-    "timeout": 1800
+    "timeout": 2700
   },
   {
     "cmd": [],

@@ -217,7 +217,7 @@
       "localhost:9222"
     ],
     "name": "run tast tests.tast run first",
-    "timeout": 1800,
+    "timeout": 2700,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -505,7 +505,7 @@
       "localhost:9222"
     ],
     "name": "run tast tests.tast run second",
-    "timeout": 1800,
+    "timeout": 2700,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
