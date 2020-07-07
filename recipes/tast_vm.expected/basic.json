@@ -214,7 +214,8 @@
       "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
-      "localhost:9222"
+      "localhost:9222",
+      "expr"
     ],
     "name": "run tast tests.tast run first",
     "timeout": 2700,
@@ -502,7 +503,8 @@
       "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
-      "localhost:9222"
+      "localhost:9222",
+      "arc.Boot"
     ],
     "name": "run tast tests.tast run second",
     "timeout": 2700,

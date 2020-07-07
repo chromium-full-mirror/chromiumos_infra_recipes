@@ -108,7 +108,7 @@ class TastExecApi(recipe_api.RecipeApi):
         '-remoterunner={}'.format(
             str(tast_dir.join('remote_test_runner'))), \
         'localhost:9222'] + \
-        tests, ok_ret='any', timeout=45 * 60)
+        list(expressions), ok_ret='any', timeout=45 * 60)
     return self.m.tast_results.get_results(test_results_dir, name, tag, tests)
 
   @exponential_retry(retries=2)

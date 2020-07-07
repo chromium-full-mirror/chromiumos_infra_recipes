@@ -74,20 +74,7 @@
       "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
       "localhost:9222",
-      "!",
-      "i",
-      "n",
-      "f",
-      "o",
-      "r",
-      "m",
-      "a",
-      "t",
-      "i",
-      "o",
-      "n",
-      "a",
-      "l"
+      "!informational"
     ],
     "name": "tast list",
     "timeout": 120
@@ -108,7 +95,8 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
-      "localhost:9222"
+      "localhost:9222",
+      "!informational"
     ],
     "name": "tast run first",
     "timeout": 2700
@@ -376,7 +364,8 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
-      "localhost:9222"
+      "localhost:9222",
+      "arc.Boot"
     ],
     "name": "tast run second",
     "timeout": 2700

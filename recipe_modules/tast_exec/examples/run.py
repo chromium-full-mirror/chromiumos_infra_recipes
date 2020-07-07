@@ -13,7 +13,8 @@ DEPS = [
 def RunSteps(api):
   fake_file = api.path.mkstemp(prefix='temp')
   fake_dir = api.path.mkdtemp(prefix='temp')
-  api.tast_exec.run('tast_vm', '!informational', fake_file, fake_dir, fake_file)
+  api.tast_exec.run('tast_vm', ['!informational'], fake_file, fake_dir,
+                    fake_file)
 
 
 def GenTests(api):
