@@ -62,10 +62,20 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context(), \
     api.context(cwd=api.cros_source.workspace_path):
 
-    # The project infos for the the input gerrit changes and the projects infos
-    # for the repos we are attempting to make change lists for.
-    gc_infos = api.repo.project_infos([gc.project for gc in gerrit_changes])
-    cl_infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
+    with api.step.nest('find gerrit change repos'):
+      gc_infos = api.repo.project_infos([gc.project for gc in gerrit_changes])
+
+    with api.step.nest('find regex matching CL repos'):
+      cl_infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
+      if len(cl_infos) == 0:
+        regexes = ', '.join(
+            map(lambda v: '"{}"'.format(v), properties.repo_regexes))
+        raise ValueError(
+            'No matching projects found, for regex: {}'.format(regexes))
+
+    with api.step.nest('find additional repos to sync'):
+      sync_projects = _determine_sync_projects(api, gc_infos, cl_infos,
+                                               properties)
 
     # TODO(https://crbug.com/1101452): Note the cache_path_override in the sync.
     # Syncs to the cache are not always being reflected in the workspace. To
@@ -74,7 +84,7 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache(
         init_opts=dict(verbose=True), sync_opts=dict(verbose=True),
         cache_path_override=api.cros_source.workspace_path,
-        projects=_determine_sync_projects(api, gc_infos, cl_infos, properties))
+        projects=sync_projects)
 
     with api.step.nest('cherry-pick gerrit changes'):
       patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
@@ -484,15 +494,34 @@ TEST=CQ
               command='echo "hello world"',
               message_template=message_template,
           )),
-      # Gerrit changes repos.
-      api.step_data('repo forall',
+      api.step_data('find gerrit change repos.repo forall',
                     stdout=api.raw_io.output(forall_output('a', 'b'))),
-      # repo_regexes repos.
-      api.step_data('repo forall (2)',
+      api.step_data('find regex matching CL repos.repo forall',
                     stdout=api.raw_io.output(forall_output('c', 'd'))),
-      # Common device configuration repos.
-      api.step_data('repo forall (3)',
+      api.step_data('find additional repos to sync.repo forall',
                     stdout=api.raw_io.output(forall_output('c', 'e'))),
+  )
+
+  # Here we replace the canned forall return to simulate the user providing
+  # a regex that didn't match anything.
+  yield api.test(
+      'bad_regex',
+      build(),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              command='echo "hello world"',
+              message_template=message_template,
+          )),
+      api.step_data('find gerrit change repos.repo forall',
+                    stdout=api.raw_io.output(forall_output('a', 'b'))),
+      api.step_data('find regex matching CL repos.repo forall',
+                    stdout=api.raw_io.output('')),
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.ResultReasonRE, '.*No matching projects.*'),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(

@@ -288,7 +288,13 @@ class RepoApi(recipe_api.RecipeApi):
                            step_test_data=step_test_data)
 
     infos = []
-    for line in step_data.stdout.strip().split('\n'):
+    lines = step_data.stdout.strip().split('\n')
+
+    # If nothing was matched, return the empty infos.
+    if len(lines) == 1 and lines[0] == '':
+      return infos
+
+    for line in lines:
       name, path, remote, rrev, upstream = line.split('|')
 
       branch = None

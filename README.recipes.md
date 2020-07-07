@@ -245,6 +245,7 @@
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [repo:examples/full](#recipes-repo_examples_full)
+  * [repo:examples/project_infos_bad_regex](#recipes-repo_examples_project_infos_bad_regex)
   * [repo:examples/repo_retry_failure](#recipes-repo_examples_repo_retry_failure)
   * [repo:examples/repo_retry_success](#recipes-repo_examples_repo_retry_success)
   * [result_flow:examples/full](#recipes-result_flow_examples_full)
@@ -3796,7 +3797,7 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#375)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#381)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -3812,7 +3813,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#418)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#424)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -3820,7 +3821,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#341)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#347)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -3836,7 +3837,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#457)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#463)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -3869,7 +3870,7 @@ Args:
   in these projects.
   * verbose (bool): Whether to produce verbose output.
 
-&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#316)(self, manifest_file=None):**
+&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#322)(self, manifest_file=None):**
 
 Uses repo to create a manifest snapshot and returns it as a string.
 
@@ -3882,7 +3883,7 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#303)(self, project):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#309)(self, project):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -5642,6 +5643,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 [DEPS](/recipe_modules/repo/examples/full.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/full.py#15)(api):**
+### *recipes* / [repo:examples/project\_infos\_bad\_regex](/recipe_modules/repo/examples/project_infos_bad_regex.py)
+
+[DEPS](/recipe_modules/repo/examples/project_infos_bad_regex.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/project_infos_bad_regex.py#13)(api):**
 ### *recipes* / [repo:examples/repo\_retry\_failure](/recipe_modules/repo/examples/repo_retry_failure.py)
 
 [DEPS](/recipe_modules/repo/examples/repo_retry_failure.py#6): [repo](#recipe_modules-repo), [recipe\_engine/path][recipe_engine/recipe_modules/path]
