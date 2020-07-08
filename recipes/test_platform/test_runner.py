@@ -506,6 +506,7 @@ class SkylabStateStore(object):
       load_request = skylab_local_state.load.LoadRequest(
           config=skylab_local_state.common.Config(
               admin_service=self._config.lab.admin_service,
+              cros_inventory_service=self._config.lab.cros_inventory_service,
               autotest_dir=self._config.harness.autotest_dir,
           ), dut_name=self._dut_hostname, run_id=self._run_id,
           dut_id=self._dut_id)
@@ -543,6 +544,7 @@ class SkylabStateStore(object):
       save_request = skylab_local_state.save.SaveRequest(
           config=skylab_local_state.common.Config(
               admin_service=self._config.lab.admin_service,
+              cros_inventory_service=self._config.lab.cros_inventory_service,
               autotest_dir=self._config.harness.autotest_dir,
           ), results_dir=self._results_dir, dut_name=self._dut_hostname,
           dut_id=self._dut_id, dut_state=dut_state,
@@ -555,21 +557,21 @@ def GenTests(api):
   _sync_subdir = "synchronous_subdir"
   # Required for initial module set up.
   def _misc_properties():
-    return (
-        api.properties(
-            TestRunnerProperties(
-                config={
-                    'lab': {
-                        'admin_service': 'foo-service'
-                    },
-                    'harness': {
-                        'autotest_dir': '/path/to/autotest',
-                        'synch_offload_subdir': _sync_subdir
-                    },
-                    'output': {
-                        'gs_root_dir': _gs_root
-                    }}),
-            **{
+    return (api.properties(
+        TestRunnerProperties(
+            config={
+                'lab': {
+                    'admin_service': 'foo-service',
+                    'cros_inventory_service': 'inv-service'
+                },
+                'harness': {
+                    'autotest_dir': '/path/to/autotest',
+                    'synch_offload_subdir': _sync_subdir
+                },
+                'output': {
+                    'gs_root_dir': _gs_root
+                }
+            }), **{
                 '$chromeos/autotest_status_parser':
                     AutotestStatusParserProperties(
                         version=AutotestStatusParserProperties.Version(
@@ -581,11 +583,12 @@ def GenTests(api):
                 '$chromeos/phosphorus':
                     PhosphorusProperties(
                         version=PhosphorusProperties.Version(
-                            cipd_label='phosphorus_prod'))}) + #
-        api.properties.environ(TestRunnerEnvProperties(
-            SWARMING_BOT_ID='crossk-dummy',
-            SWARMING_TASK_ID='dummy-task-id',
-            SKYLAB_DUT_ID='dummy-dut-id')))
+                            cipd_label='phosphorus_prod'))
+            }) +  #
+            api.properties.environ(
+                TestRunnerEnvProperties(SWARMING_BOT_ID='crossk-dummy',
+                                        SWARMING_TASK_ID='dummy-task-id',
+                                        SKYLAB_DUT_ID='dummy-dut-id')))
 
   # An example request.
   def _request_properties():

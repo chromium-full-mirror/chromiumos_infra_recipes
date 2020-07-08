@@ -35,6 +35,7 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
@@ -100,7 +101,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.load local DUT state.call `skylab_local_state`.load",
-    "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
+    "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -121,6 +122,7 @@
       "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
@@ -139,7 +141,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.mark local DUT state dirty.call `skylab_local_state`.save",
-    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"dutName\": \"dummy\"\n}",
+    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"dutName\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -248,6 +250,7 @@
       "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true, @@@",
       "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
@@ -265,7 +268,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.save local DUT state.call `skylab_local_state`.save",
-    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\", \n  \"config\": {\n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutId\": \"dummy-dut-id\"\n}",
+    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutId\": \"dummy-dut-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
