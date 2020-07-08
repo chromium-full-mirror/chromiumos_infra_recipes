@@ -1,0 +1,31 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.test_platform.result_flow;
+
+import "test_platform/result_flow/common.proto";
+import "google/protobuf/timestamp.proto";
+
+message ResultFlowProperties {
+  // Below fields are set by builder properties, not by the callers.
+  Config ctp_flow = 1;
+  Config test_runner_flow = 2;
+  google.protobuf.Timestamp deadline = 3;
+
+  // This property is set by the recipe execution, not by the caller.
+  Response response = 4;
+}
+
+// Config contains the complete configuration to run the result flow.
+message Config {
+  .test_platform.result_flow.Source source = 1;
+  .test_platform.result_flow.Target target = 2;
+}
+
+// Response describes the outcome of the result_flow.
+message Response {
+  .test_platform.result_flow.State state = 1;
+}

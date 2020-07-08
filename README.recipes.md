@@ -280,6 +280,7 @@
   * [test_platform/ctp_uprev](#recipes-test_platform_ctp_uprev)
   * [test_platform/multi_bot/follower](#recipes-test_platform_multi_bot_follower)
   * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader)
+  * [test_platform/result_flow](#recipes-test_platform_result_flow)
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [test_util:examples/full](#recipes-test_util_examples_full)
@@ -5928,6 +5929,21 @@ Raises:
 [DEPS](/recipes/test_platform/multi_bot/leader.py#11): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipes/test_platform/multi_bot/leader.py#20)(api, properties):**
+### *recipes* / [test\_platform/result\_flow](/recipes/test_platform/result_flow.py)
+
+[DEPS](/recipes/test_platform/result_flow.py#8): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipes/test_platform/result_flow.py#37)(api, properties):**
+
+&mdash; **def [execution\_steps](/recipes/test_platform/result_flow.py#18)(api, properties):**
+
+Runs result_flow binary.
+
+Args:
+* properties: ResultFlowProperties instance.
+
+Raises:
+* InfraFailure.
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
 [DEPS](/recipes/test_platform/test_runner.py#27): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [phosphorus](#recipe_modules-phosphorus), [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
