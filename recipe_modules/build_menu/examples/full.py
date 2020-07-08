@@ -11,6 +11,8 @@ DEPS = [
     'test_util',
 ]
 
+from recipe_engine import post_process
+
 from PB.chromiumos import common
 from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
@@ -70,8 +72,12 @@ def GenTests(api):
                             api.build_menu.set_toolchain_cls_return(True),
                             cq=True)
 
-  yield api.build_menu.test('has-no-artifacts', build_target='arm-generic',
-                            cq=True)
+  yield api.build_menu.test('has-no-artifacts', build_target='arm-generic')
+
+  yield api.build_menu.test(
+      'postsubmit-with-changes', api.post_check(post_process.StatusFailure),
+      api.post_check(post_process.DoesNotRun, 'cherry-pick gerrit changes'),
+      build_target='arm-generic', cq=True, bucket='postsubmit')
 
   for forced in False, True:
     yield api.build_menu.test(

@@ -106,9 +106,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
       BuilderConfig or None, with an active context.
     """
     with self.m.bot_cost.build_cost_context():
+      changes = self.m.buildbucket.build.input.gerrit_changes
       config = self.m.cros_infra_config.configure_builder(
-          self.m.buildbucket.gitiles_commit,
-          self.m.buildbucket.build.input.gerrit_changes, is_staging=is_staging)
+          self.m.buildbucket.gitiles_commit, changes, is_staging=is_staging)
+      if (changes and config and not config.build.apply_gerrit_changes):
+        raise recipe_api.StepFailure(
+            'Changes provided, but builder does not apply changes')
       if config and config.id.name and self.build_target.name:
         self.m.cros_bisect.set_bisect_builder(self.build_target.name)
       if config:
@@ -130,7 +133,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
               self._get_dep_graph([])
       else:
         # No config, and missing_ok is False.
-        raise self.m.step.StepFailure('Missing configuration for {}'.format(
+        raise recipe_api.StepFailure('Missing configuration for {}'.format(
             self.m.buildbucket.build.builder.builder))
 
   def setup_workspace_and_chroot(self):
