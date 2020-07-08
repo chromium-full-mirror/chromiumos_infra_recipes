@@ -7,7 +7,9 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
+from PB.test_platform.result_flow.common import PubSubConfig
 from PB.test_platform.result_flow.ctp import CTPRequest, CTPResponse
+from PB.test_platform.result_flow.publish import PublishRequest, PublishResponse
 
 
 class ResultFlowCommand(recipe_api.RecipeApi):
@@ -55,11 +57,26 @@ class ResultFlowCommand(recipe_api.RecipeApi):
       presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
+  def publish(self, project_id, topic_id):
+    """Run the result_flow to publish build's own build ID to Pubsub.
+
+    Args:
+      * project_id (str): The project name
+      * topic_id (str): The topic name
+    Returns:
+      JSON proto of test_platform.result_flow.PublishResponse
+    """
+    req = PublishRequest(build_id=self.m.buildbucket.build.id,
+                         ctp=PubSubConfig(project=project_id, topic=topic_id))
+    return self._run('publish', req, PublishRequest, PublishResponse)
+
   def ctp(self, request):
     """Run the result_flow to pipe CTP data to TestPlanRun table in BQ.
 
     Args:
-      request: a test_platform.result_flow.CTPRequest.
+      * request: a test_platform.result_flow.CTPRequest
+    Returns:
+      JSON proto of test_platform.result_flow.CTPResponse
     """
     return self._run('ctp', request, CTPRequest, CTPResponse)
 

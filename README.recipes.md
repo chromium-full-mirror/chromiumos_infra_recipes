@@ -3950,18 +3950,30 @@ Args:
 Prints the current version information of repo.
 ### *recipe_modules* / [result\_flow](/recipe_modules/result_flow)
 
-[DEPS](/recipe_modules/result_flow/__init__.py#4): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/result_flow/__init__.py#4): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [ResultFlowCommand](/recipe_modules/result_flow/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ResultFlowCommand](/recipe_modules/result_flow/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing result flow commands
 
-&mdash; **def [ctp](/recipe_modules/result_flow/api.py#58)(self, request):**
+&mdash; **def [ctp](/recipe_modules/result_flow/api.py#73)(self, request):**
 
 Run the result_flow to pipe CTP data to TestPlanRun table in BQ.
 
 Args:
-  request: a test_platform.result_flow.CTPRequest.
+  * request: a test_platform.result_flow.CTPRequest
+Returns:
+  JSON proto of test_platform.result_flow.CTPResponse
+
+&mdash; **def [publish](/recipe_modules/result_flow/api.py#60)(self, project_id, topic_id):**
+
+Run the result_flow to publish build's own build ID to Pubsub.
+
+Args:
+  * project_id (str): The project name
+  * topic_id (str): The topic name
+Returns:
+  JSON proto of test_platform.result_flow.PublishResponse
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
 [DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -5636,9 +5648,9 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/examples/repo_retry_success.py#17)(api, attempt):**
 ### *recipes* / [result\_flow:examples/full](/recipe_modules/result_flow/examples/full.py)
 
-[DEPS](/recipe_modules/result_flow/examples/full.py#6): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/result_flow/examples/full.py#6): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/result_flow/examples/full.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/result_flow/examples/full.py#19)(api):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
 [DEPS](/recipes/robocrop.py#12): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -5,10 +5,12 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'result_flow',
 ]
 
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.recipe_modules.chromeos.result_flow.result_flow import \
   ResultFlowModuleProperties
 from PB.test_platform.result_flow.ctp import CTPRequest
@@ -20,9 +22,9 @@ def RunSteps(api):
   ctp_req = CTPRequest()
   api.result_flow.ctp(ctp_req)
 
-  # TODO(lxn@): replace below to the test for "test_runner" sub-command.
-  # Run ctp() again to cover the case when _cmd is not None.
-  api.result_flow.ctp(CTPRequest())
+  with api.assertions.assertRaises(TypeError):
+    api.result_flow.publish()
+  api.result_flow.publish('foo-proj', 'foo-topic')
 
 
 def GenTests(api):
@@ -30,6 +32,7 @@ def GenTests(api):
 
   yield api.test(
       'custom label',
+      api.buildbucket.build(Build(id=123456789)),
       api.properties(
           **{
               '$chromeos/result_flow':

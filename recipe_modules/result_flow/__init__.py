@@ -2,6 +2,7 @@ from PB.recipe_modules.chromeos.result_flow.result_flow import \
   ResultFlowModuleProperties
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/path',
