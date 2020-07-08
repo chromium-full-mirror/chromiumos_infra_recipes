@@ -24,6 +24,8 @@ mwarton@google.com
 shengjun@google.com
 xiaoningw@google.com
 
+include chromiumos/chromite:/OWNERS.testplatform
+
 # Service accounts
 recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
 
