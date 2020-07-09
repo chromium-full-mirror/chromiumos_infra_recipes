@@ -7,7 +7,7 @@
     "cmd": [
       "git",
       "clone",
-      "chromium.googlesource.com/chromiumos/config",
+      "https://chromium.googlesource.com/chromiumos/config",
       "[START_DIR]/config"
     ],
     "infra_step": true,

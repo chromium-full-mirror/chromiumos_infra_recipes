@@ -38,8 +38,8 @@ DEPS = [
 PROPERTIES = ProjectMigratorProperties
 
 # Repo URL configuration
-CROS_HWID_REPO = 'chrome-internal.googlesource.com/chromeos/chromeos-hwid'
-CROS_CONFIG_REPO = 'chromium.googlesource.com/chromiumos/config'
+CROS_HWID_REPO = 'https://chrome-internal.googlesource.com/chromeos/chromeos-hwid'
+CROS_CONFIG_REPO = 'https://chromium.googlesource.com/chromiumos/config'
 
 # Source and destination config files
 SRC_CONFIG = 'generated/config.jsonproto'
@@ -173,13 +173,13 @@ def GenTests(api):
       'basic',
       api.properties(
           **{
-              'dest_repo': 'example.com/some/project/repo',
+              'dest_repo': 'https://example.com/some/project/repo',
               'public_yaml': {
-                  'repo': 'example.com/public/',
+                  'repo': 'https://example.com/public/',
                   'path': 'some/model.yaml'
               },
               'private_yaml': {
-                  'repo': 'example.com/private/',
+                  'repo': 'https://example.com/private/',
                   'path': 'some/model.yaml'
               },
               'hwid_key': 'some_key',
@@ -191,11 +191,11 @@ def GenTests(api):
       api.properties(
           **{
               'public_yaml': {
-                  'repo': 'example.com/public/',
+                  'repo': 'https://example.com/public/',
                   'path': 'some/model.yaml'
               },
               'private_yaml': {
-                  'repo': 'example.com/private/',
+                  'repo': 'https://example.com/private/',
                   'path': 'some/model.yaml'
               },
               'hwid_key': 'some_key',
@@ -205,5 +205,5 @@ def GenTests(api):
   yield api.test(
       'dest_repo_only',
       api.properties(**{
-          'dest_repo': 'example.com/some/project/repo',
+          'dest_repo': 'https://example.com/some/project/repo',
       }), api.expect_exception('ValueError'))

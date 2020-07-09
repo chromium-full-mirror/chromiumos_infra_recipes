@@ -7,7 +7,7 @@
     "cmd": [
       "git",
       "clone",
-      "chromium.googlesource.com/chromiumos/config",
+      "https://chromium.googlesource.com/chromiumos/config",
       "[START_DIR]/config"
     ],
     "infra_step": true,
@@ -24,7 +24,7 @@
     "cmd": [
       "git",
       "clone",
-      "example.com/public/",
+      "https://example.com/public/",
       "[START_DIR]/public"
     ],
     "infra_step": true,
@@ -41,7 +41,7 @@
     "cmd": [
       "git",
       "clone",
-      "example.com/private/",
+      "https://example.com/private/",
       "[START_DIR]/private"
     ],
     "infra_step": true,
@@ -58,7 +58,7 @@
     "cmd": [
       "git",
       "clone",
-      "chrome-internal.googlesource.com/chromeos/chromeos-hwid",
+      "https://chrome-internal.googlesource.com/chromeos/chromeos-hwid",
       "[START_DIR]/hwid"
     ],
     "infra_step": true,
@@ -79,7 +79,7 @@
     "cmd": [
       "git",
       "clone",
-      "example.com/some/project/repo",
+      "https://example.com/some/project/repo",
       "[START_DIR]/dest"
     ],
     "infra_step": true,
@@ -237,7 +237,7 @@
     "cmd": [
       "git",
       "fetch",
-      "example.com/some/project/repo",
+      "https://example.com/some/project/repo",
       "refs/heads/master:"
     ],
     "cwd": "[START_DIR]/dest",
@@ -315,7 +315,7 @@
       "git",
       "push",
       "--porcelain",
-      "example.com/some/project/repo",
+      "https://example.com/some/project/repo",
       "HEAD:refs/heads/master"
     ],
     "cwd": "[START_DIR]/dest",
