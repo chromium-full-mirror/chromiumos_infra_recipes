@@ -120,9 +120,10 @@ def RunSteps(api, properties):
 
     # Copy the HWID database
     if properties.hwid_key:
-      api.file.copy('copy HWID database',
-                    '../hwid/v3/%s' % properties.hwid_key.upper(),
-                    dest_hwid_path)
+      api.file.copy(
+          'copy HWID database',
+          hwid_repo_path.join('hwid/v3/%s' % properties.hwid_key.upper()),
+          dest_hwid_path)
       api.git.add([dest_hwid_path])
 
     generated_path = dest_repo_path.join('generated')

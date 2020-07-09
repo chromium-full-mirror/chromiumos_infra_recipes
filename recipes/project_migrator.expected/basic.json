@@ -162,7 +162,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "../hwid/v3/SOME_KEY",
+      "[START_DIR]/hwid/hwid/v3/SOME_KEY",
       "[START_DIR]/dest/imported/hwid"
     ],
     "cwd": "[START_DIR]/dest",
