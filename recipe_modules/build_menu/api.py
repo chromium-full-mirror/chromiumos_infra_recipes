@@ -14,12 +14,8 @@ from recipe_engine import recipe_api
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
-from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
-from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
-from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 
 class BuildMenuApi(recipe_api.RecipeApi):
