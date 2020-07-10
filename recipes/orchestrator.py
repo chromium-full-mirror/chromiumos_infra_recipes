@@ -34,9 +34,7 @@ def DoRunSteps(api, config):
   api.orch_menu.plan_and_run_tests()
 
   # Launch any specified follow on orchestrator.
-  follower = config.orchestrator.follow_on_orchestrator
-  if not api.orch_menu.builds_status.fatal_failures and follower.name:
-    api.orch_menu.schedule_wait_build(follower.name, follower.await_completion)
+  api.orch_menu.run_follow_on_orchestrator()
 
 
 def GenTests(api):

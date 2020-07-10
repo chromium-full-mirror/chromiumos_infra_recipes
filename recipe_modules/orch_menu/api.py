@@ -105,6 +105,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
     return self.m.cros_infra_config.gerrit_changes
 
   @property
+  def is_dry_run(self):
+    return self.m.cq.state == self.m.cq.DRY
+
+  @property
   def builds_status(self):
     return self._builds_status
 
@@ -485,6 +489,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
       return True
     return (child_spec.collect_handling !=
             BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT)
+
+  def run_follow_on_orchestrator(self):
+    """Run the follow_on_orchestrator, if any.  Wait if necessary."""
+    follower = self.config.orchestrator.follow_on_orchestrator
+    if not self.builds_status.fatal_failures and follower.name:
+      self.schedule_wait_build(follower.name, follower.await_completion)
 
   def schedule_wait_build(self, builder, await_completion=False,
                           properties=None, check_failures=False, step_name=None,

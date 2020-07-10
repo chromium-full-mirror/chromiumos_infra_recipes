@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_tags',
@@ -48,6 +49,9 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(
         str(expected_changes), str(api.orch_menu.gerrit_changes))
 
+    api.assertions.assertEqual(api.orch_menu.is_dry_run,
+                               (api.cq.state == api.cq.DRY))
+
     builds_status = api.orch_menu.plan_and_run_children()
 
     if not builds_status.fatal_failures:
@@ -58,10 +62,7 @@ def RunSteps(api, properties):
           properties.process_child, await_completion=True, check_failures=True,
           step_name='run %s' % properties.process_child)
 
-    follower = config.orchestrator.follow_on_orchestrator
-    if follower.name:
-      api.orch_menu.schedule_wait_build(follower.name,
-                                        follower.await_completion)
+    api.orch_menu.run_follow_on_orchestrator()
 
     if properties.expected_completed_builds:
       for actual, expected in zip(api.orch_menu.builds_status.completed_builds,

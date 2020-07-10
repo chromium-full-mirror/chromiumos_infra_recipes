@@ -9,7 +9,6 @@ All builders run against the same source tree.
 """
 
 DEPS = [
-    'recipe_engine/cq',
     'recipe_engine/properties',
     'orch_menu',
 ]
@@ -36,8 +35,8 @@ def DoRunSteps(api, properties, config):
 
   # If this is a dry run, check that the builds passed and quit.
   # TODO(crbug/1071440): Because the HW Tests have production side effects, we
-  # need to not run them for dryruns at this time.
-  if api.cq.state == api.cq.DRY:
+  # must not run them for dryruns.
+  if api.orch_menu.is_dry_run:
     return
 
   # Run any HW tests.
@@ -69,9 +68,7 @@ def DoRunSteps(api, properties, config):
     )
 
   # Launch any specified follow on orchestrator.
-  follower = config.orchestrator.follow_on_orchestrator
-  if not api.orch_menu.builds_status.fatal_failures and follower.name:
-    api.orch_menu.schedule_wait_build(follower.name, follower.await_completion)
+  api.orch_menu.run_follow_on_orchestrator()
 
 
 def GenTests(api):
