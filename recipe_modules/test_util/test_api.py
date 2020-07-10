@@ -83,7 +83,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
                  extra_changes=None, exe=None, input_properties=None,
                  create_time=None, start_time=None, update_time=None,
                  end_time=None, critical=None, output_properties=None,
-                 **kwargs):
+                 tags=None, **kwargs):
     """Return a buildbucket step_data for a typical test build.
 
     In general, test_orchestrator() should be called for orchestrators, and
@@ -117,6 +117,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
           message and build will have NO output properties.  If specified, the
           output properties will be
           |input_properties|.update(|output_properties|).
+      tags: (list[StringPair] or key-value dict): tags to pass to the build.  If
+          a dict is given, it will be passed as arguments to cros_tags.tags()
       **kwargs: see buildbucket/test_api.py
 
     Returns:
@@ -132,6 +134,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
         'git_repo',
         'https://chrome-internal.googlesource.com/chromeos/manifest-internal')
 
+    tags = self.m.cros_tags.tags(**tags) if isinstance(tags, dict) else tags
+
     input_dict = input_properties or {}
     if not isinstance(input_dict, dict):
       input_dict = MessageToDict(input_dict, preserving_proto_field_name=True)
@@ -144,7 +148,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
         self.m.buildbucket.try_build_message
         if cq else self.m.buildbucket.ci_build_message)
 
-    msg = func(**kwargs)
+    msg = func(tags=tags, **kwargs)
     # If we were passed revision=None, clear the gitiles_commit.
     if not cq and 'revision' in kwargs and not kwargs['revision']:
       msg.input.gitiles_commit.Clear()

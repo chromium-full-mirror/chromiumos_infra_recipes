@@ -5567,7 +5567,7 @@ Runs the presubmit for a project with checkout per local manifest.
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/collect.py#20)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu)
+[DEPS](/recipes/orchestrator.py#11): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util)
 
 Recipe that schedules child builders and watches for failures.
 

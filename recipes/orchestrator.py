@@ -9,8 +9,8 @@ All builders run against the same source tree.
 """
 
 DEPS = [
-    'cros_tags',
     'orch_menu',
+    'test_util',
 ]
 
 import json
@@ -119,8 +119,8 @@ def GenTests(api):
       'quota_scheduler_override', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(verify_qs_account_pupr), cq=True, with_history=True,
-      tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/chromeos-chrome'),
-      git_footers=[], collect_builds=data.builds)
+      tags=dict(cq_cl_tag='pupr:chromeos-base/chromeos-chrome'), git_footers=[],
+      collect_builds=data.builds)
 
   yield api.orch_menu.test('retry_only_critical_builds', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess), cq=True,
