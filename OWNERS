@@ -1,16 +1,6 @@
 # Chrome OS CI team
 # Most of your recipes CLs should go to this group.
-andrewlamb@chromium.org
-ctmcnamara@chromium.org
-dburger@chromium.org
-dhanyaganesh@chromium.org
-engeg@chromium.org
-engeg@google.com  # engeg sometimes uses his @google account in Gerrit, so add that too.
-lamontjones@chromium.org
-mikenichols@chromium.org
-navil@google.com
-seanabraham@chromium.org
-smcallis@google.com
+include chromiumos/chromite:/OWNERS.ci
 
 # Chrome OS SYD EngProd Team.
 abergman@google.com
