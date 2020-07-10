@@ -701,7 +701,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#160)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#159)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -715,7 +715,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#249)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#248)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -731,7 +731,7 @@ Returns:
   builders (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#210)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#209)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 

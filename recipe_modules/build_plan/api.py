@@ -132,12 +132,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
         if bucket == 'bisect':
           bucket = 'postsubmit'
         parent_run_id = None
-        # Disable sending parent_run_id till crbug.com/986676 is resolved.
-        # if (child_spec.collect_handling !=
-        #     BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT):
-        #   # If collect handling not set to NO_COLLECT, the child will be
-        #   # terminated if the orchestrator dies and the child is not finished.
-        #   parent_run_id = self.m.swarming.task_id
+        if (child_spec.collect_handling !=
+            BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT):
+          # If collect handling not set to NO_COLLECT, the child will be
+          # terminated if the orchestrator dies and the child is not finished.
+          parent_run_id = self.m.swarming.task_id
 
         # Build the properties for the child.
         properties = self.m.cq.props_for_child_build
