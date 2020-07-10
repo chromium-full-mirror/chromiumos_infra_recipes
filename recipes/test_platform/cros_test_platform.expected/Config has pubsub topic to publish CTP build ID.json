@@ -1,0 +1,314 @@
+[
+  {
+    "cmd": [],
+    "name": "call `result_flow`",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `result_flow`.ensure result_flow",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_flow",
+      "-ensure-file",
+      "chromiumos/infra/result_flow/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "call `result_flow`.ensure result_flow.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/result_flow/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/result_flow/result_flow",
+      "publish",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "name": "call `result_flow`.publish",
+    "stdin": "{\n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate request"
+  },
+  {
+    "cmd": [],
+    "name": "validate request.validate timeouts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate request.validate scheduling parameters",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "traffic split",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@selected backend: skylab@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "traffic split.call binary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "traffic split.call binary.ensure cros_test_platform",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/cros_test_platform",
+      "-ensure-file",
+      "chromiumos/infra/cros_test_platform/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "traffic split.call binary.ensure cros_test_platform.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cros_test_platform/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "traffic split.call binary.pre-execution debug data",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform scheduler-traffic-split -input_json /dev/stdin -output_json /dev/stdout -rip-cautotest@@@",
+      "@@@STEP_LOG_END@cmd@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"request\": {}@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
+      "scheduler-traffic-split",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout",
+      "-rip-cautotest"
+    ],
+    "name": "traffic split.call binary.scheduler-traffic-split",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"request\": {}\n    }\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "redirect to test_runner if applicable",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: send child tasks to skylab_swarming_worker@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests"
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary.pre-execution debug data",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform enumerate -input_json /dev/stdin -output_json /dev/stdout@@@",
+      "@@@STEP_LOG_END@cmd@@@",
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
+      "enumerate",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "name": "enumerate tests.call binary.enumerate",
+    "stdin": "{}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execute"
+  },
+  {
+    "cmd": [],
+    "name": "execute.call binary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execute.call binary.pre-execution debug data",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform skylab-execute -input_json /dev/stdin -output_json /dev/stdout@@@",
+      "@@@STEP_LOG_END@cmd@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"createTime\": \"1970-01-01T00:00:00Z\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
+      "skylab-execute",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "name": "execute.call binary.skylab-execute",
+    "stdin": "{\n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\\n\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `result_flow` (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/result_flow/result_flow",
+      "publish",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "name": "call `result_flow` (2).publish",
+    "stdin": "{\n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "postprocess"
+  },
+  {
+    "cmd": [],
+    "name": "summarize"
+  },
+  {
+    "name": "$result"
+  }
+]

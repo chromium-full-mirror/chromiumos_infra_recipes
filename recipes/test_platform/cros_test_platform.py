@@ -48,7 +48,8 @@ DEPS = [
     'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'cros_test_platform'
+    'result_flow',
+    'cros_test_platform',
 ]
 
 PROPERTIES = CrosTestPlatformProperties
@@ -272,6 +273,11 @@ def _get_quota_account(scheduling):
   return scheduling.qs_account or scheduling.quota_account
 
 
+def push_build_id(api, config):
+  if config.pubsub.topic and config.pubsub.project:
+    api.result_flow.publish(config.pubsub.project, config.pubsub.topic)
+
+
 def execute(api, requests, enumerations, config):
   """Execute request in the correct backend.
 
@@ -301,6 +307,9 @@ def _ensure_all_requests_enumerated(requests, enumerations):
 
 def RunSteps(api, properties):
   requests = _get_requests_from_properties(properties)
+  # Push Build ID to Pubsub to notify the subscribers that a new CTP
+  # build is about to run.
+  push_build_id(api, properties.config)
   validate_requests(api, requests)
   # Traffic split failures can be due to malformed requests.
   requests = split(api, requests, properties.config)
@@ -313,6 +322,8 @@ def RunSteps(api, properties):
     responses = execute(api, requests, enumerations, properties.config)
     tagged_responses = responses.tagged_responses
     set_output_properties(api, responses)
+    # Push the Build ID to notify the subscribers that CTP run completed.
+    push_build_id(api, properties.config)
     postprocess(api, requests, tagged_responses)
   summarize(api, enumerations, tagged_responses)
 
@@ -622,6 +633,7 @@ def GenTests(api):
                      params=Request.Params(
                          scheduling=Request.Params.Scheduling(priority=300)),
                  ))))
+
   # Request setting both priority and qs_account should cause build failure.
   yield (api.test('both priority and qs_account set') +  #
          api.properties(
@@ -631,6 +643,16 @@ def GenTests(api):
                          scheduling=Request.Params.Scheduling(
                              priority=100, qs_account='foo-qs-account')),
                  ))))
+
+  # Config set the pubsub topic to push build ID.
+  yield (
+      api.test('Config has pubsub topic to publish CTP build ID') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=Request(), config=Config(
+                  pubsub=Config.PubSub(project='foo-proj', topic='foo-topic'))))
+  )
+
   # An end-to-end run with traffic splitting to skylab.
   yield (
       api.test('end-to-end skylab execution with passed tasks') +  #
