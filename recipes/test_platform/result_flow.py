@@ -26,8 +26,9 @@ def execution_steps(api, properties):
   """
   with api.step.nest('execution steps'):
     if properties.ctp_flow:
-      req = result_flow.ctp.CTPRequest(ctp=properties.ctp_flow.source,
-                                       test_plan_run=properties.ctp_flow.target)
+      req = result_flow.ctp.CTPRequest(
+          ctp=properties.ctp_flow.ctp,
+          test_plan_run=properties.ctp_flow.test_plan_run)
       if properties.HasField('deadline'):
         req.deadline.MergeFrom(properties.deadline)
       resp = api.result_flow.ctp(req)
@@ -53,7 +54,7 @@ def GenTests(api):
 
   def _canned_ctp_config():
     return {
-        'source': {
+        'ctp': {
             'pubsub': {
                 'project': 'foo-project',
                 'topic': 'foo-topic',
@@ -71,7 +72,7 @@ def GenTests(api):
                 'create_time', 'start_time', 'end_time'
             ],
         },
-        'target': {
+        'test_plan_run': {
             'bq': {
                 'project': 'foo-project',
                 'dataset': 'foo-dataset',
@@ -81,13 +82,13 @@ def GenTests(api):
     }
 
   yield api.test(
-      'success w/o deadline',
+      'ctp result flow success w/o deadline',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
       _run_test_step_with_state(result_flow.common.SUCCEEDED),
   )
 
   yield api.test(
-      'success with deadline',
+      'ctp result flow success with deadline',
       api.properties(
           ResultFlowProperties(ctp_flow=_canned_ctp_config(),
                                deadline=timestamp_pb2.Timestamp(seconds=55))),
@@ -95,11 +96,11 @@ def GenTests(api):
   )
 
   yield api.test(
-      'failed',
+      'ctp result flow failed',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
       _run_test_step_with_state(result_flow.common.FAILED))
 
   yield api.test(
-      'timed out',
+      'ctp result flow timed out',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
       _run_test_step_with_state(result_flow.common.TIMED_OUT))

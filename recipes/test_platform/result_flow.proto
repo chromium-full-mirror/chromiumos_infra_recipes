@@ -11,18 +11,26 @@ import "google/protobuf/timestamp.proto";
 
 message ResultFlowProperties {
   // Below fields are set by builder properties, not by the callers.
-  Config ctp_flow = 1;
-  Config test_runner_flow = 2;
+  CTPConfig ctp_flow = 1;
+  TestRunnerConfig test_runner_flow = 2;
   google.protobuf.Timestamp deadline = 3;
 
   // This property is set by the recipe execution, not by the caller.
   Response response = 4;
 }
 
-// Config contains the complete configuration to run the result flow.
-message Config {
-  .test_platform.result_flow.Source source = 1;
-  .test_platform.result_flow.Target target = 2;
+// CTPConfig contains the complete configuration to run the result flow for CTP.
+message CTPConfig {
+  .test_platform.result_flow.Source ctp = 1;
+  .test_platform.result_flow.Target test_plan_run = 2;
+}
+
+// TestRunnerConfig contains the complete configuration to run the result flow
+// for test runner.
+message TestRunnerConfig {
+  .test_platform.result_flow.Source test_runner = 1;
+  .test_platform.result_flow.Target test_run = 2;
+  .test_platform.result_flow.Target test_case = 3;
 }
 
 // Response describes the outcome of the result_flow.
