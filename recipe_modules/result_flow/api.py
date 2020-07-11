@@ -9,6 +9,8 @@ from recipe_engine import recipe_api
 
 from PB.test_platform.result_flow.common import PubSubConfig
 from PB.test_platform.result_flow.ctp import CTPRequest, CTPResponse
+from PB.test_platform.result_flow.test_runner import \
+TestRunnerRequest, TestRunnerResponse
 from PB.test_platform.result_flow.publish import PublishRequest, PublishResponse
 
 
@@ -71,7 +73,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
     return self._run('publish', req, PublishRequest, PublishResponse)
 
   def ctp(self, request):
-    """Run the result_flow to pipe CTP data to TestPlanRun table in BQ.
+    """Pipe CTP data to TestPlanRun table in BQ.
 
     Args:
       * request: a test_platform.result_flow.CTPRequest
@@ -79,6 +81,17 @@ class ResultFlowCommand(recipe_api.RecipeApi):
       JSON proto of test_platform.result_flow.CTPResponse
     """
     return self._run('ctp', request, CTPRequest, CTPResponse)
+
+  def test_runner(self, request):
+    """Pipe test runner data to TestRun/TestCase tables in BQ.
+
+    Args:
+      * request: a test_platform.result_flow.TestRunnerRequest
+    Returns:
+      JSON proto of test_platform.result_flow.TestRunnerResponse
+    """
+    return self._run('test_runner', request, TestRunnerRequest,
+                     TestRunnerResponse)
 
   def _ensure_result_flow(self):
     """Ensure the result_flow CLI is installed."""

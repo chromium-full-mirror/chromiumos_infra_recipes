@@ -14,6 +14,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.recipe_modules.chromeos.result_flow.result_flow import \
   ResultFlowModuleProperties
 from PB.test_platform.result_flow.ctp import CTPRequest
+from PB.test_platform.result_flow.test_runner import TestRunnerRequest
 
 
 def RunSteps(api):
@@ -21,6 +22,11 @@ def RunSteps(api):
     api.result_flow.ctp(None)
   ctp_req = CTPRequest()
   api.result_flow.ctp(ctp_req)
+
+  with api.assertions.assertRaises(ValueError):
+    api.result_flow.test_runner(None)
+  test_runner_req = TestRunnerRequest()
+  api.result_flow.test_runner(test_runner_req)
 
   with api.assertions.assertRaises(TypeError):
     api.result_flow.publish()
