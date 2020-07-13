@@ -11,6 +11,8 @@
       "tensorflow",
       "--reviewers",
       "jeff@google.com",
+      "--cc",
+      "dean@google.com",
       "--hashtag",
       "foo-refactoring",
       "--hashtag",

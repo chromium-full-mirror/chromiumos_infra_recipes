@@ -2596,7 +2596,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#497)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#500)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -2604,7 +2604,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#435)(self, gerrit_change, comment):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#438)(self, gerrit_change, comment):**
 
 Add a comment to the given Gerrit change.
 
@@ -2625,7 +2625,7 @@ Args:
 Raises:
   StepFailure if the changes cannot be merged.
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#367)(self, project, reviewers=None, topic=None, hashtags=None):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#367)(self, project, reviewers=None, ccs=None, topic=None, hashtags=None):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -2636,6 +2636,8 @@ Args:
   project (str|Path): Any path within the project of interest.
   reviewers (list[str]): List of reviewer emails. If specified, gerrit will
       email the reviewers.
+  ccs (list[str]): List of cc emails. If specified, gerrit will cc the
+      individuals.
   topic (str): Topic to set for the CL.
   hashtags (list[str]): List of hashtags to set for the CL.
 
@@ -2657,7 +2659,7 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#457)(self, gerrit_change):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#460)(self, gerrit_change):**
 
 Get the description of the given Gerrit change.
 
@@ -2701,7 +2703,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#512)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#515)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -2714,7 +2716,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#476)(self, gerrit_change, description):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#479)(self, gerrit_change, description):**
 
 Set the description of the given Gerrit change.
 
@@ -2723,7 +2725,7 @@ Args:
   description (str): The new description, in full. Be sure this still
       includes the Change-Id and other essential metadata.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#403)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#406)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
 
@@ -3002,7 +3004,7 @@ API for working with git cl.
 
 A module for interacting with git cl.
 
-&mdash; **def [status](/recipe_modules/git_cl/api.py#78)(self, field=None, fast=False, \*\*kwargs):**
+&mdash; **def [status](/recipe_modules/git_cl/api.py#84)(self, field=None, fast=False, \*\*kwargs):**
 
 Run `git cl status` with given arguments.
 
@@ -3014,7 +3016,7 @@ Args:
 Returns:
   str: The command output.
 
-&mdash; **def [upload](/recipe_modules/git_cl/api.py#40)(self, topic=None, reviewers=None, hashtags=None, send_mail=False, \*\*kwargs):**
+&mdash; **def [upload](/recipe_modules/git_cl/api.py#40)(self, topic=None, reviewers=None, ccs=None, hashtags=None, send_mail=False, \*\*kwargs):**
 
 Run `git cl upload`.
 
@@ -3024,6 +3026,7 @@ confirmations and address nits.
 Args:
   topic (str): Optional --topic to set.
   reviewers (list[str]): Optional list of --reviewers to set.
+  ccs (list[str]): Optional list of --cc to set.
   hashtags (list[str]): Optional list of --hashtags to set.
   send_mail (bool): If true, set --send-mail.
   kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
