@@ -4383,7 +4383,7 @@ API to simpify testing Chrome OS recipes.
 A module providing test methods to simplify testing Chrome OS recipes.
 ### *recipe_modules* / [urls](/recipe_modules/urls)
 
-[DEPS](/recipe_modules/urls/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/urls/__init__.py#8): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 API for creating task URLs out of complex data structures.
 
@@ -4391,7 +4391,7 @@ API for creating task URLs out of complex data structures.
 
 A module for creating links to tasks.
 
-&mdash; **def [get\_build\_link\_map](/recipe_modules/urls/api.py#19)(self, build):**
+&mdash; **def [get\_build\_link\_map](/recipe_modules/urls/api.py#23)(self, build):**
 
 Returns the title->URL to the given buildbucket build.
 
@@ -4401,7 +4401,7 @@ Args:
 Returns:
   str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#111)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#123)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -4412,7 +4412,7 @@ Returns:
   str: URL pointing to the Cloud Storage Browser page for the
     object.
 
-&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#65)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#69)(self, skylab_result):**
 
 Returns the URL to the given skylab result page.
 
@@ -4423,7 +4423,7 @@ Returns:
   str->str map: title to URL to the skylab swarming task page
   if the suite succeeded or entries of just the failed tests.
 
-&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#54)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#58)(self, skylab_task):**
 
 Returns the URL to the given skylab task.
 
@@ -4433,7 +4433,7 @@ Args:
 Returns:
   str: URL pointing to the skylab swarming task page.
 
-&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#90)(self, task_state):**
+&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#102)(self, task_state):**
 
 String suffix to supply info about the task.
 
@@ -4443,7 +4443,7 @@ Args:
 Returns:
   str, denoting more information about the task.
 
-&mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#31)(self, vm_test):**
+&mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#35)(self, vm_test):**
 
 Returns the title->URL results from the given VM test.
 
@@ -6162,11 +6162,11 @@ localmirror and then modifies the Guest VM's version pin to match this version.
 &mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#104)(api, properties):**
 ### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
 
-[DEPS](/recipe_modules/urls/examples/full.py#16): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/urls/examples/full.py#17): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 Basic tests for the urls recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#26)(api):**
 ### *recipes* / [urls:examples/get\_vm\_test\_link\_map](/recipe_modules/urls/examples/get_vm_test_link_map.py)
 
 [DEPS](/recipe_modules/urls/examples/get_vm_test_link_map.py#15): [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

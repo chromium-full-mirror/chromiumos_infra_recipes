@@ -10,12 +10,14 @@ from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.urls.urls import UrlsProperties
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'skylab',
     'urls',
 ]
@@ -48,11 +50,20 @@ def RunSteps(api):
   child_result1.task_url = 'link.com'
   child_result2 = response.task_results.add()
   child_result2.state.verdict = TaskState.VERDICT_FAILED
+  child_result2.state.life_cycle = TaskState.LIFE_CYCLE_COMPLETED
   child_result2.name = 'second test'
   child_result2.task_url = 'newlink.com'
+  test_case1 = child_result2.test_cases.add()
+  test_case1.name = 'tast.speaker.IsReallyLoud'
+  test_case1.verdict = TaskState.VERDICT_FAILED
+  test_case2 = child_result2.test_cases.add()
+  test_case2.name = 'tast.cpu.IsVeryFast'
+  test_case2.verdict = TaskState.VERDICT_FAILED
+
   expected_map = {
       'first test': 'link.com',
-      'second test': 'newlink.com',
+      'tast.speaker.IsReallyLoud': 'newlink.com',
+      'tast.cpu.IsVeryFast': 'newlink.com',
   }
   skylab_result = api.skylab.test_api.skylab_result(
       task=skylab_task, status=common_pb2.FAILURE,
@@ -84,4 +95,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.properties(
+          **{'$chromeos/urls': UrlsProperties(per_test_case_reporting=True)}))

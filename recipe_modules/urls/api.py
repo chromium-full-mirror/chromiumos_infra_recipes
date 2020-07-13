@@ -16,6 +16,10 @@ from PB.test_platform.taskstate import TaskState
 class UrlsApi(recipe_api.RecipeApi):
   """A module for creating links to tasks."""
 
+  def __init__(self, properties, **kwargs):
+    super(UrlsApi, self).__init__(**kwargs)
+    self._per_test_case_reporting = properties.per_test_case_reporting
+
   def get_build_link_map(self, build):
     """Returns the title->URL to the given buildbucket build.
 
@@ -72,6 +76,7 @@ class UrlsApi(recipe_api.RecipeApi):
       str->str map: title to URL to the skylab swarming task page
       if the suite succeeded or entries of just the failed tests.
     """
+    failure_verdicts = (TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED)
     if (skylab_result.status == common_pb2.SUCCESS or
         not skylab_result.child_results):
       link_url = self.get_skylab_task_url(skylab_result.task)
@@ -79,11 +84,18 @@ class UrlsApi(recipe_api.RecipeApi):
     else:
       link_map = {}
       for task_result in skylab_result.child_results:
-        task_name = (
-            task_result.name + self.get_state_suffix(task_result.state))
-        if task_result.state.verdict in (TaskState.VERDICT_FAILED,
-                                         TaskState.VERDICT_UNSPECIFIED):
-          link_map[task_name] = task_result.task_url
+        # Return per-test case results if possible.
+        if (self._per_test_case_reporting and
+            task_result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED and
+            task_result.test_cases):
+          for tc in task_result.test_cases:
+            if tc.verdict in failure_verdicts:
+              link_map[tc.name] = task_result.task_url
+        else:
+          task_name = (
+              task_result.name + self.get_state_suffix(task_result.state))
+          if task_result.state.verdict in failure_verdicts:
+            link_map[task_name] = task_result.task_url
 
       return link_map
 

@@ -92,13 +92,13 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
   def _base64_compress_proto(self, proto):
     wire_format = proto.SerializeToString()
     return wire_format.encode('zlib_codec').encode('base64_codec')
+
   # Keep this block in sync with recipes/test_platform/cros_test_platform.py
   # TODO(jkop, chromium:1067440): refactor both to call the same code
   #######################
 
   def test_with_multi_response(
-      self, id, names,
-      task_state=TaskState(verdict=TaskState.VERDICT_PASSED),
+      self, id, names, task_state=TaskState(verdict=TaskState.VERDICT_PASSED),
       exclude_json=False):
     return self._with_multi_response(id, names, task_state,
                                      _json=not exclude_json)
@@ -111,21 +111,20 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
   def _multi_response(self, names, task_state, _json):
     responses_blob = self._responses_json_dict(names, task_state)
     responses_obj = json_format.Parse(
-        json.dumps({"tagged_responses": responses_blob}),
-        ExecuteResponses(), ignore_unknown_fields=True)
+        json.dumps({"tagged_responses": responses_blob}), ExecuteResponses(),
+        ignore_unknown_fields=True)
     second_responses_blob = self._marshal_responses(responses_obj)
     comp_string = self._base64_compress_proto(responses_obj)
-    overall = {"compressed_responses": comp_string }
+    overall = {"compressed_responses": comp_string}
     if _json:
       overall["responses"] = second_responses_blob
       overall['compressed_json_responses'] = self._base64_compress_dict(
-          second_responses_blob
-      )
+          second_responses_blob)
     return json_format.Parse(json.dumps(overall), struct_pb2.Struct())
 
   def _responses_json_dict(self, names, task_state):
     response_obj = json.loads(self._response_json(task_state))
-    return { name: response_obj for name in names}
+    return {name: response_obj for name in names}
 
   def _response_json(self, task_state):
     return """{
@@ -141,7 +140,17 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
             },
             "taskUrl": "https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010",
             "name": "cheets_NotificationTest",
-            "logUrl": "https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/"
+            "logUrl": "https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/",
+            "testCases": [
+                {
+                    "name": "tast",
+                    "verdict": "VERDICT_PASSED"
+                },
+                {
+                    "name": "tast.camera.TakesGreatPhotos",
+                    "verdict": "VERDICT_PASSED"
+                }
+            ]
         }
     ]
 }
