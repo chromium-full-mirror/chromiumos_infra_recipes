@@ -35,9 +35,9 @@ def DoRunSteps(api, config, properties):
   # the build has already failed. See also crbug/1086630.
   raise_upload_failure = True
   try:
-    api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
-    api.build_menu.build_and_test_images(config)
-    api.build_menu.upload_prebuilts(config)
+    if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
+      if api.build_menu.build_and_test_images(config):
+        api.build_menu.upload_prebuilts(config)
   except StepFailure:
     raise_upload_failure = False
     raise
@@ -55,17 +55,20 @@ def GenTests(api):
 
   # Normal postsubmit build.
   yield api.build_menu.test(
-      'postsubmit-build',
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      'postsubmit-build', api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess))
 
   # Postsubmit build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
-      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages', '',
                                           retcode=1))
@@ -73,6 +76,10 @@ def GenTests(api):
   # Postsubmit build with artifact bundling failure.
   yield api.build_menu.test(
       'bundle-fail', api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload prebuilts'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/BundleArtifacts',
                                           '', retcode=1))
@@ -80,9 +87,11 @@ def GenTests(api):
   # Postsubmit build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
-      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages', '',
                                           retcode=1),
@@ -91,16 +100,20 @@ def GenTests(api):
                                           '', retcode=1))
 
   yield api.build_menu.test(
-      'run-exit-install',
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      'run-exit-install', api.post_check(post_process.DoesNotRun,
+                                         'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess),
       builder='arm64-generic-kernel-v5_4-buildtest-postsubmit')
 
-  # This builder has no output artifacts.
+  # This builder has no output artifacts, and builds no images. (In the test
+  # data...)
   yield api.build_menu.test(
-      'no-run-tests', api.post_check(post_process.DoesNotRun,
-                                     'upload artifacts'),
+      'no-run-tests', api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess), build_target='grunt',
-      builder='grunt-unittest-only-postsubmit')
+      builder='grunt-postsubmit')

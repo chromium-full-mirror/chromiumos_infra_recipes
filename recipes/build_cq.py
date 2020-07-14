@@ -40,8 +40,10 @@ def DoRunSteps(api, config, properties):
   # the build has already failed. See also crbug/1086630.
   raise_upload_failure = True
   try:
-    api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
-    api.build_menu.build_and_test_images(config)
+    if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
+      # We have no steps following build_and_test_images, so we don't need to
+      # check the return value.
+      api.build_menu.build_and_test_images(config)
   except StepFailure:
     raise_upload_failure = False
     raise
@@ -59,47 +61,63 @@ def GenTests(api):
 
   # Normal CQ build, with one gerrit_change.
   yield api.build_menu.test(
-      'cq-build', api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess), cq=True)
+      'cq-build', api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess), cq=True, build_target='coral')
 
   # This covers the Relevance check.
   yield api.build_menu.test(
       'prepare-for-build-pointless',
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess), cq=True,
+      api.post_check(post_process.StatusSuccess), cq=True, build_target='coral',
       input_properties=BuildTargetProperties(artifact_build=True),
       artifact_pointless=True)
 
   # This covers the env_info.pointless check.
   yield api.build_menu.test(
       'pointless-cq-build',
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess), cq=True, pointless=True)
+      api.post_check(post_process.StatusSuccess), cq=True, build_target='coral',
+      pointless=True)
 
   # CQ build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages', '',
-                                          retcode=1), cq=True)
+                                          retcode=1), build_target='coral',
+      cq=True)
 
   # CQ build with artifact bundling failure.
   yield api.build_menu.test(
-      'bundle-fail', api.post_check(post_process.StatusAnyFailure),
+      'bundle-fail', api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/BundleArtifacts',
-                                          '', retcode=1), cq=True)
+                                          '', retcode=1), cq=True,
+      build_target='coral')
 
   # CQ build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages', '',
                                           retcode=1),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/BundleArtifacts',
-                                          '', retcode=1), cq=True)
+                                          '', retcode=1), cq=True,
+      build_target='coral')

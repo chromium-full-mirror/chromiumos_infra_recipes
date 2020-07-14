@@ -485,6 +485,60 @@
     },
     {
       "id": {
+        "name": "coral-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "BASE",
+            "TEST"
+          ]
+        },
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "packageBlacklist": [
+          {
+            "packageName": "chromite",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ],
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
         "name": "target-baseline",
         "branch": "master",
         "type": "CQ"
