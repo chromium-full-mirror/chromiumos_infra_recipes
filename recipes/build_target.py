@@ -37,11 +37,6 @@ def DoRunSteps(api, config, properties):
   # packages when that step fails, or even if build images fail afterward. See
   # also crbug/1086630.
   #
-  # TODO(crbug/1053703): The if statements from here to the end should be
-  # removed as we break build_target.py into the various builders.  In
-  # particular, RUN_EXIT now means "run through this step, and then upload
-  # any artifacts and exit."
-  #
   # In the case of install_packages.run_spec saying to not run, there are likely
   # to be no artifacts to upload, in which case the upload_artifacts call should
   # "bundle everything", and then "upload all none" of the artifacts.

@@ -25,8 +25,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
   there via this module, and are a simple sequence of steps.
   """
 
-  # TODO(crbug/1053703): Make the above statement true.
-
   UPLOADABLE_PREBUILTS = [
       BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
   ]
@@ -212,7 +210,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.metadata_json.upload_to_gs(config, self.build_target,
                                           partial=True)
 
-    # TODO(crbug/1053703): After 2020-11-12, if there is no sysroot, that's ok.
+    # TODO(crbug/1081828): After 2020-11-12, if there is no sysroot, that's ok.
     # Note: the dependency graph requires a sysroot prior to
     # crrev.com/c/2197226.
     packages = packages or (self.m.cros_bisect.get_packages() or

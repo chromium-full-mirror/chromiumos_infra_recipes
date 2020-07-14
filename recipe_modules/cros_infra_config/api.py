@@ -54,7 +54,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._is_staging = False
 
   def initialize(self):
-    # TODO(crbug/1053703): consider other options.
+    # If the builder is in the staging bucket, or has a name that begins
+    # 'staging-', then assume we are in staging.
     builder = self.m.buildbucket.build.builder
     self._is_staging = (
         builder.bucket == 'staging' or builder.builder.startswith('staging-'))

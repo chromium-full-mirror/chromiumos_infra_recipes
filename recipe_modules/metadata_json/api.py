@@ -50,9 +50,6 @@ class MetadataJsonApi(recipe_api.RecipeApi):
       build_id = self.test_api.led_build_id
     elif initial:
       # If this is the initial call, and start_time is non-zero, use bb.build.
-      # TODO(1053703): revisit after this runs in staging for a while. This is
-      # an experiment to see if start_time is populated before the initial
-      # add_default_entries call.
       return (self.m.buildbucket.build
               if self.m.buildbucket.build.start_time.seconds else
               self.m.buildbucket.get(self.m.buildbucket.build.id))
