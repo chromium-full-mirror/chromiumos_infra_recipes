@@ -806,6 +806,13 @@
   },
   {
     "cmd": [],
+    "name": "generate project change lists.working on project a.replace_strings",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate project change lists.working on project a.gen_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -985,6 +992,13 @@
   },
   {
     "cmd": [],
+    "name": "generate project change lists.working on project b.replace_strings",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate project change lists.working on project b.gen_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1160,6 +1174,13 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@diff@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate project change lists.working on project c.replace_strings",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

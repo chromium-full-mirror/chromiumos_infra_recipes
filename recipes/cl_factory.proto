@@ -35,4 +35,21 @@ message ClFactoryProperties {
   // Whether you want to force a full repo sync. Typically a targeted
   // sync of only the involved repos per repo_regexes should suffice.
   bool full_repo_sync = 6;
+
+  // Message defining string replacements to perform.
+  message ReplaceString {
+    // File glob used to identify files to perform replacements in.
+    // Glob rules for `file_glob` follow the same syntax as for
+    // the `python-glob2` module, which supports '**' syntax.
+    string file_glob = 1;
+
+    // String to replace.
+    string before = 2;
+
+    // String to replace with.
+    string after = 3;
+  }
+
+  // Indicates the string replacements to perform.
+  repeated ReplaceString replace_strings = 8;
 }

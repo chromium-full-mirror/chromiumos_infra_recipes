@@ -38,6 +38,7 @@ PROPERTIES = ClFactoryProperties
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -156,6 +157,7 @@ def _make_changes(api, cl_infos, gerrit_changes, properties):
     with api.step.nest('working on project {}'.format(info.name)) as pres, \
         api.context(cwd=api.cros_source.workspace_path.join(info.path)):
 
+      _replace_strings(api, properties)
       _gen_config(api)
 
       # Note that we don't use api.git.diff_check here because it doesn't
@@ -253,6 +255,24 @@ def _determine_sync_projects(api, gc_infos, cl_infos, properties):
   program_infos = api.repo.project_infos(regexes=['chromeos/program'])
   projects.update(set([i.name for i in program_infos]))
   return list(projects)
+
+
+def _replace_strings(api, properties):
+  """Executes string replacements with cwd repo.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    properties (ClFactoryProperties): recipe input properties.
+  """
+  with api.step.nest('replace_strings'):
+    for rs in properties.replace_strings:
+      for filename in api.file.glob_paths('find replace string files',
+                                          api.context.cwd, rs.file_glob,
+                                          test_data=['file.txt', 'file.star']):
+        filedata = api.file.read_raw('read {}'.format(filename), filename,
+                                     test_data='hello world')
+        filedata = filedata.replace(rs.before, rs.after)
+        api.file.write_raw('write {}'.format(filename), filename, str(filedata))
 
 
 def _gen_config(api):
@@ -465,6 +485,26 @@ TEST=CQ
       no_git_diff_step_data('a'),
       no_git_diff_step_data('b'),
       no_git_diff_step_data('c'),
+  )
+
+  yield api.test(
+      'with_replace_strings',
+      build(),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              command='echo "hello world"',
+              message_template=message_template,
+              replace_strings=[
+                  ClFactoryProperties.ReplaceString(
+                      file_glob='*.star',
+                      before='o',
+                      after='X',
+                  )
+              ],
+          )),
   )
 
   yield api.test(
