@@ -17,6 +17,7 @@ DEPS = [
     'recipe_engine/properties',
     'build_plan',
     'cros_infra_config',
+    'cros_relevance',
     'git_footers',
 ]
 
@@ -34,22 +35,25 @@ def RunSteps(api):
   api.assertions.assertEqual(completed_builds[0].builder.builder,
                              'amd64-generic-cq')
   api.assertions.assertEqual(len(new_requests), 1)
-  api.assertions.assertEqual(new_requests[0].builder.builder, 'atlas-cq')
+  api.assertions.assertEqual(new_requests[0].builder.builder, 'atlas-slim-cq')
 
 
 def GenTests(api):
   input_proto = api.build_plan.input_proto
   builds = [
-      build_pb2.Build(id=8922054662172514000, builder={
-          'builder': 'amd64-generic-cq'
-      }, status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic')),
-      build_pb2.Build(id=8922054662172514001, builder={
-          'builder': 'arm-generic-cq'
-      }, status=common_pb2.STARTED, input=input_proto(None, 'arm-generic')),
-      build_pb2.Build(id=8922054662172514002, builder={'builder': 'atlas-cq'},
+      build_pb2.Build(id=8922054662172514000,
+                      builder={'builder': 'amd64-generic-cq'},
+                      status=common_pb2.SUCCESS,
+                      input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514001,
+                      builder={'builder': 'arm-generic-cq'},
+                      status=common_pb2.STARTED,
+                      input=input_proto(None, 'arm-generic')),
+      build_pb2.Build(id=8922054662172514002,
+                      builder={'builder': 'atlas-slim-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562475245),
-                      status=common_pb2.SUCCESS, input=input_proto(
-                          None, 'atlas')),
+                      status=common_pb2.SUCCESS,
+                      input=input_proto(None, 'atlas-slim'))
   ]
 
   def cq_orchestrator_build_with_gerrit_change():
@@ -66,6 +70,8 @@ def GenTests(api):
       'basic',
       cq_orchestrator_build_with_gerrit_change(),
       api.git_footers.simulated_get_footers([], 'get build history'),
+      api.cros_relevance.simulated_get_necessary_builders(
+          ['amd64-generic-cq', 'arm-generic-cq', 'atlas-slim-cq']),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -83,6 +89,8 @@ def GenTests(api):
                   CrosInfraConfigProperties(config_ref='refs/changes/33/433/1')
           }),
       api.git_footers.simulated_get_footers([], 'get build history'),
+      api.cros_relevance.simulated_get_necessary_builders(
+          ['amd64-generic-cq', 'arm-generic-cq', 'atlas-slim-cq']),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),

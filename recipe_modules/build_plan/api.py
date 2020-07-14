@@ -86,40 +86,44 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('filter builds') as presentation:
       for child_spec in child_specs:
+        # Get the builder variant in the build plan.
+        if child_spec.name in necessary_builders:
+          child_builder_name = child_spec.name
+        elif self.get_slim_builder_name(child_spec.name) in necessary_builders:
+          child_builder_name = self.get_slim_builder_name(child_spec.name)
+        else:
+          filter_log.append('{} build is not needed for changes'.format(
+              child_spec.name))
+          continue
+
         child_builder_config = self.m.cros_infra_config.get_builder_config(
-            child_spec.name)
+            child_builder_name)
         critical = child_builder_config.general.critical.value
 
         # now we have a list of build names such as ['buddy-postsubmit', ...]
         # whereas snapshot_builds and completed_builds might be postfixed
         # with -snapshot. Use this to filter out.
         # TODO(crbug/991996): Refactor: use something other than string manip.
-        child_target = child_spec.name[:child_spec.name.rfind('-')]
-        # i.e. wizpig-snapshot -> wizpig
+        # e.g. amd64-generic-asan-cq -> amd64-generic-asan
+        child_builder_spec = child_builder_name[:child_builder_name.rfind('-')]
         # No need to retry previously-passed builds.
-        if child_spec.name in completed_builders:
-          filter_log.append('{} already passed'.format(child_target))
-          continue
-
-        # Filter out builds not in the build plan.
-        if child_spec.name not in necessary_builders:
-          filter_log.append('{} build is not needed for changes'
-                            .format(child_spec.name))
+        if child_builder_name in completed_builders:
+          filter_log.append('{} already passed'.format(child_builder_spec))
           continue
 
         # We've already found an existing build, we'll just wait on it later.
-        if child_target in snapshot_build_targets:
-          snapshot_build = snapshot_build_targets[child_target]
+        if child_builder_spec in snapshot_build_targets:
+          snapshot_build = snapshot_build_targets[child_builder_spec]
           snapshot_build.critical = common_pb2.YES if critical else common_pb2.NO
           filtered_snapshot_builds.append(snapshot_build)
-          filter_log.append('{} exists, will join on it'.format(child_target))
+          filter_log.append(
+              '{} exists, will join on it'.format(child_builder_spec))
           continue
 
         # Don't retry non-critical builds.
         if not critical and is_retry:
-          filter_log.append(
-              '{} is non-critical and this is a CQ rerun'
-              .format(child_spec.name))
+          filter_log.append('{} is non-critical and this is a CQ rerun'.format(
+              child_builder_name))
           continue
 
         tags = self.m.cros_tags.make_schedule_tags(snapshot)
@@ -144,9 +148,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
-                gitiles_commit=snapshot, builder=child_spec.name, bucket=bucket,
-                gerrit_changes=gerrit_changes, critical=critical, tags=tags,
-                properties=properties, swarming_parent_run_id=parent_run_id))
+                gitiles_commit=snapshot, builder=child_builder_name,
+                bucket=bucket, gerrit_changes=gerrit_changes, critical=critical,
+                tags=tags, properties=properties,
+                swarming_parent_run_id=parent_run_id))
       presentation.logs['filter log'] = filter_log
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.
@@ -176,7 +181,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
       for build in passed_builds:
         # Filter out non-child builds like vm_test, dry run orchestrator or
         # hw_tests in the future.
-        child_builders = [cs.name for cs in child_specs]
+        child_builders = [cs.name for cs in child_specs] + [
+            self.get_slim_builder_name(cs.name) for cs in child_specs
+        ]
         if build.builder.builder not in child_builders:  #pragma: no cover
           continue
 
@@ -272,3 +279,16 @@ class BuildPlanApi(recipe_api.RecipeApi):
         return {'all'}
       builders.update(new_builders)
     return builders
+
+  def get_slim_builder_name(self, builder_name):
+    """Returns to the name of the slim variant of the builder.
+
+    Args:
+      builder_name (str): The name of the builder for which to get the slim
+        builder variant name.
+
+    Returns:
+       A string of the slim builder name.
+    """
+    builder_spec, env_suffix = builder_name.rsplit('-', 1)
+    return builder_spec + '-slim-' + env_suffix

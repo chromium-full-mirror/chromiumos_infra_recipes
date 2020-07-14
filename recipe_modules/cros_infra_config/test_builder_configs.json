@@ -102,6 +102,36 @@
     },
     {
       "id": {
+        "name": "amd64-generic-slim-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true
+      },
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN_EXIT"
+      }
+    },
+    {
+      "id": {
         "name": "staging-amd64-generic-cq",
         "branch": "master",
         "type": "CQ"
@@ -279,6 +309,30 @@
           }
         ],
         "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "arm-generic-slim-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": false
+      },
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN_EXIT"
       }
     },
     {
@@ -481,6 +535,32 @@
           }
         ],
         "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "atlas-slim-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true,
+        "brokenBefore": "2019-11-01T00:00:00Z"
+      },
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "applyGerritChanges": true
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN_EXIT"
       }
     },
     {
