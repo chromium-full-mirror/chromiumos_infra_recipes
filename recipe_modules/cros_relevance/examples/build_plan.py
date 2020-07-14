@@ -34,7 +34,7 @@ def RunSteps(api, properties):
   ]
   builders = api.cros_relevance.get_necessary_builders(
       bc, gc, bbcommon_pb2.GitilesCommit(id='hello'),
-      properties.test_builder_ids)
+      test_builder_ids=properties.test_builder_ids)
   api.assertions.assertItemsEqual(builders, properties.expected_builders)
 
 
@@ -46,3 +46,12 @@ def GenTests(api):
       api.properties(
           BuildPlanTest(test_builder_ids=[BuilderConfig.Id(name=_BUILDER_NAME)],
                         expected_builders=[_BUILDER_NAME])))
+
+  # Verify that simulated_get_necessary_builders works.
+  yield api.test(
+      'forced-response',
+      api.cros_relevance.simulated_get_necessary_builders([
+          'other-builder',
+      ]), api.properties(BuildPlanTest(expected_builders=[
+          'other-builder',
+      ])))

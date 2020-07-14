@@ -26,7 +26,7 @@
       "@@@STEP_LOG_LINE@planner_input@}@@@",
       "@@@STEP_LOG_END@planner_input@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
-      "@@@STEP_LOG_LINE@planner_output@  name: \"my little builder\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"other-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_END@planner_output@@@"
     ]
