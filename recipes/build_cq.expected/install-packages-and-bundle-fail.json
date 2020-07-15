@@ -2882,7 +2882,241 @@
     "name": "install packages.check chrome source needed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@local_uprev no_prebuilt@@@"
+      "@@@STEP_TEXT@follower_lacks_prebuilt no_prebuilt@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/BuildsChrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"builds_chrome\": true}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"coral\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/BuildsChrome.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/BuildsChrome"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/BuildsChrome.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/BuildsChrome.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/BuildsChrome.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"has_prebuilt\": false}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"coral\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/HasChromePrebuilt"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/HasChromePrebuilt.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.check if diff requires chrome rebuild",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@no file diffs caused rebuild@@@"
     ]
   },
   {
@@ -2892,7 +3126,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"methods\": [{\"method\": \"chromite.api.DependencyService/GetBuildDependencyGraph\"}, {\"method\": \"chromite.api.DependencyService/GetToolchainPaths\"}, {\"method\": \"chromite.api.ArtifactsService/PrepareForBuild\"}, {\"method\": \"chromite.api.ArtifactsService/BundleArtifacts\"}, {\"method\": \"chromite.api.ArtifactsService/BundleImageArchives\"}, {\"method\": \"chromite.api.ArtifactsService/BundleTastFiles\"}, {\"method\": \"chromite.api.ArtifactsService/BundlePinnedGuestImages\"}, {\"method\": \"chromite.api.ArtifactsService/FetchPinnedGuestImageUris\"}, {\"method\": \"chromite.api.ArtifactsService/BundleImageZip\"}, {\"method\": \"chromite.api.ArtifactsService/BundleTestUpdatePayloads\"}, {\"method\": \"chromite.api.ArtifactsService/ExportCpeReport\"}, {\"method\": \"chromite.api.ArtifactsService/BundleEbuildLogs\"}, {\"method\": \"chromite.api.ArtifactsService/BundleAutotestFiles\"}, {\"method\": \"chromite.api.ArtifactsService/BundleChromeOSConfig\"}, {\"method\": \"chromite.api.ArtifactsService/BundleFirmware\"}, {\"method\": \"chromite.api.ToolchainService/PrepareForBuild\"}, {\"method\": \"chromite.api.ToolchainService/BundleArtifacts\"}, {\"method\": \"chromite.api.TestService/DebugInfoTest\"}, {\"method\": \"chromite.api.TestService/ChromitePytest\"}, {\"method\": \"chromite.api.TestService/ChromiteUnitTest\"}, {\"method\": \"chromite.api.TestService/BuildTargetUnitTest\"}, {\"method\": \"chromite.api.TestService/MoblabVmTest\"}, {\"method\": \"chromite.api.TestService/VmTest\"}, {\"method\": \"chromite.api.SdkService/Unmount\"}, {\"method\": \"chromite.api.SdkService/RestoreSnapshot\"}, {\"method\": \"chromite.api.SdkService/Create\"}, {\"method\": \"chromite.api.SdkService/Update\"}, {\"method\": \"chromite.api.SdkService/Clean\"}, {\"method\": \"chromite.api.SdkService/CreateSnapshot\"}, {\"method\": \"chromite.api.SdkService/Delete\"}, {\"method\": \"chromite.api.ImageService/Test\"}, {\"method\": \"chromite.api.ImageService/Create\"}, {\"method\": \"chromite.api.VersionService/Get\"}, {\"method\": \"chromite.api.BinhostService/PrepareBinhostUploads\"}, {\"method\": \"chromite.api.BinhostService/GetPrivatePrebuiltAclArgs\"}, {\"method\": \"chromite.api.BinhostService/SetBinhost\"}, {\"method\": \"chromite.api.BinhostService/RegenBuildCache\"}, {\"method\": \"chromite.api.BinhostService/Get\"}, {\"method\": \"chromite.api.SysrootService/Create\"}, {\"method\": \"chromite.api.SysrootService/InstallToolchain\"}, {\"method\": \"chromite.api.SysrootService/InstallPackages\"}, {\"method\": \"chromite.api.PackageService/NeedsChromeSource\"}, {\"method\": \"chromite.api.PackageService/GetTargetVersions\"}, {\"method\": \"chromite.api.PackageService/GetBestVisible\"}, {\"method\": \"chromite.api.PackageService/HasPrebuilt\"}, {\"method\": \"chromite.api.PackageService/GetChromeVersion\"}, {\"method\": \"chromite.api.PackageService/BuildsChrome\"}, {\"method\": \"chromite.api.PackageService/HasChromePrebuilt\"}, {\"method\": \"chromite.api.PackageService/Uprev\"}, {\"method\": \"chromite.api.PackageService/UprevVersionedPackage\"}, {\"method\": \"chromite.api.MethodService/Get\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"methods\": [{\"method\": \"chromite.api.DependencyService/GetBuildDependencyGraph\"}, {\"method\": \"chromite.api.DependencyService/GetToolchainPaths\"}, {\"method\": \"chromite.api.ArtifactsService/PrepareForBuild\"}, {\"method\": \"chromite.api.ArtifactsService/BundleArtifacts\"}, {\"method\": \"chromite.api.ArtifactsService/BundleImageArchives\"}, {\"method\": \"chromite.api.ArtifactsService/BundleTastFiles\"}, {\"method\": \"chromite.api.ArtifactsService/BundlePinnedGuestImages\"}, {\"method\": \"chromite.api.ArtifactsService/FetchPinnedGuestImageUris\"}, {\"method\": \"chromite.api.ArtifactsService/BundleImageZip\"}, {\"method\": \"chromite.api.ArtifactsService/BundleTestUpdatePayloads\"}, {\"method\": \"chromite.api.ArtifactsService/ExportCpeReport\"}, {\"method\": \"chromite.api.ArtifactsService/BundleEbuildLogs\"}, {\"method\": \"chromite.api.ArtifactsService/BundleAutotestFiles\"}, {\"method\": \"chromite.api.ArtifactsService/BundleChromeOSConfig\"}, {\"method\": \"chromite.api.ArtifactsService/BundleFirmware\"}, {\"method\": \"chromite.api.ToolchainService/PrepareForBuild\"}, {\"method\": \"chromite.api.ToolchainService/BundleArtifacts\"}, {\"method\": \"chromite.api.TestService/DebugInfoTest\"}, {\"method\": \"chromite.api.TestService/ChromitePytest\"}, {\"method\": \"chromite.api.TestService/ChromiteUnitTest\"}, {\"method\": \"chromite.api.TestService/BuildTargetUnitTest\"}, {\"method\": \"chromite.api.TestService/MoblabVmTest\"}, {\"method\": \"chromite.api.TestService/VmTest\"}, {\"method\": \"chromite.api.SdkService/Unmount\"}, {\"method\": \"chromite.api.SdkService/RestoreSnapshot\"}, {\"method\": \"chromite.api.SdkService/Create\"}, {\"method\": \"chromite.api.SdkService/Update\"}, {\"method\": \"chromite.api.SdkService/Clean\"}, {\"method\": \"chromite.api.SdkService/CreateSnapshot\"}, {\"method\": \"chromite.api.SdkService/Delete\"}, {\"method\": \"chromite.api.ImageService/Test\"}, {\"method\": \"chromite.api.ImageService/Create\"}, {\"method\": \"chromite.api.VersionService/Get\"}, {\"method\": \"chromite.api.BinhostService/PrepareBinhostUploads\"}, {\"method\": \"chromite.api.BinhostService/GetPrivatePrebuiltAclArgs\"}, {\"method\": \"chromite.api.BinhostService/SetBinhost\"}, {\"method\": \"chromite.api.BinhostService/RegenBuildCache\"}, {\"method\": \"chromite.api.BinhostService/Get\"}, {\"method\": \"chromite.api.SysrootService/Create\"}, {\"method\": \"chromite.api.SysrootService/InstallToolchain\"}, {\"method\": \"chromite.api.SysrootService/InstallPackages\"}, {\"method\": \"chromite.api.PackageService/GetTargetVersions\"}, {\"method\": \"chromite.api.PackageService/GetBestVisible\"}, {\"method\": \"chromite.api.PackageService/HasPrebuilt\"}, {\"method\": \"chromite.api.PackageService/GetChromeVersion\"}, {\"method\": \"chromite.api.PackageService/BuildsChrome\"}, {\"method\": \"chromite.api.PackageService/HasChromePrebuilt\"}, {\"method\": \"chromite.api.PackageService/Uprev\"}, {\"method\": \"chromite.api.PackageService/UprevVersionedPackage\"}, {\"method\": \"chromite.api.MethodService/Get\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2905,7 +3139,7 @@
       "/path/to/tmp/json",
       "copy",
       "{}",
-      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2920,9 +3154,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_15/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.MethodService/Get"
@@ -2946,7 +3180,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2972,37 +3206,39 @@
   },
   {
     "cmd": [],
-    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource",
+    "name": "install packages.check chrome source needed.any followers lack prebuilts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@True@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"installRequest\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"flags\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"env\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"useFlags\": [@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"flag\": \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"sysroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"/build/coral\"@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"useFlags\": [@@@",
-      "@@@STEP_LOG_LINE@request@      {@@@",
-      "@@@STEP_LOG_LINE@request@        \"flag\": \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    ]@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"packageInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"category\": \"chromeos-base\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"packageName\": \"chrome-icu\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"version\": \"1-r52\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"reasons\": [\"LOCAL_UPREV\", \"NO_PREBUILT\"], \"needs_chrome_source\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{\"has_prebuilt\": false}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3014,38 +3250,32 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"installRequest\": {\n    \"flags\": {}, \n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot\", \n      \"env\": {\n        \"useFlags\": [\n          {\n            \"flag\": \"chrome_internal\"\n          }\n        ]\n      }\n    }, \n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      }, \n      \"path\": \"/build/coral\"\n    }, \n    \"useFlags\": [\n      {\n        \"flag\": \"chrome_internal\"\n      }\n    ]\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json"
+      "{\n  \"buildTarget\": {\n    \"name\": \"coral\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"packageInfo\": {\n    \"category\": \"chromeos-base\", \n    \"packageName\": \"chrome-icu\", \n    \"version\": \"1-r52\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_16/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.write input file",
+    "name": "install packages.check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"installRequest\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"flags\": {}, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"[CACHE]/cros_chroot\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"env\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"useFlags\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@          {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@            \"flag\": \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@          }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        ]@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"sysroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"/build/coral\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"useFlags\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"flag\": \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"packageInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"category\": \"chromeos-base\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"packageName\": \"chrome-icu\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"version\": \"1-r52\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -3055,12 +3285,12 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_16/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_16/output_proto.json",
       "--log-level",
       "debug",
-      "chromite.api.PackageService/NeedsChromeSource"
+      "chromite.api.PackageService/HasPrebuilt"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -3068,9 +3298,9 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call build API script",
+    "name": "install packages.check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3081,7 +3311,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_16/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3091,16 +3321,16 @@
       ]
     },
     "infra_step": true,
-    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.read output file",
+    "name": "install packages.check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call response",
+    "name": "install packages.check chrome source needed.any followers lack prebuilts.call chromite.api.PackageService/HasPrebuilt.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
@@ -3110,7 +3340,7 @@
     "name": "install packages.check chrome source needed.set chrome_source_reasons",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@chrome_source_reasons@{\"compile_source\": false, \"follower_lacks_prebuilt\": false, \"local_uprev\": true, \"no_prebuilt\": true}@@@"
+      "@@@SET_BUILD_PROPERTY@chrome_source_reasons@{\"compile_source\": false, \"follower_lacks_prebuilt\": true, \"local_uprev\": false, \"no_prebuilt\": true}@@@"
     ]
   },
   {
@@ -3156,7 +3386,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"coral\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -3185,9 +3415,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_15/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.PackageService/GetChromeVersion"
@@ -3212,7 +3442,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3257,13 +3487,13 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:53Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:59Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"install packages|check chrome source needed|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:54.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:00.500Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -3287,7 +3517,7 @@
     },
     "infra_step": true,
     "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI4YDE/QQiDAjigMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJ/aW5zdGFsbCBwYWNrYWdlc3xjaGVj\\nayBjaHJvbWUgc291cmNlIG5lZWRlZHxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNr\\nYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDNQoqChNb\\nQ0FDSEVdL2Nyb3NfY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsEgcKBWNvcmFsigMJCgd2ZXJz\\naW9u\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI54DE/QQiDAjogMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJ/aW5zdGFsbCBwYWNrYWdlc3xjaGVj\\nayBjaHJvbWUgc291cmNlIG5lZWRlZHxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNr\\nYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDNQoqChNb\\nQ0FDSEVdL2Nyb3NfY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsEgcKBWNvcmFsigMJCgd2ZXJz\\naW9u\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3452,7 +3682,7 @@
       "@@@STEP_LOG_LINE@request@    \"gomaDir\": \"[START_DIR]/cipd/goma\", @@@",
       "@@@STEP_LOG_LINE@request@    \"gomaApproach\": \"DEFAULT\", @@@",
       "@@@STEP_LOG_LINE@request@    \"logDir\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_16\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_18\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"statsFile\": \"stats.binaryproto\", @@@",
       "@@@STEP_LOG_LINE@request@    \"counterzFile\": \"counterz.binaryproto\", @@@",
@@ -3498,8 +3728,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\", \n    \"gomaApproach\": \"DEFAULT\", \n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_16\"\n    }, \n    \"statsFile\": \"stats.binaryproto\", \n    \"counterzFile\": \"counterz.binaryproto\", \n    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\"\n  }, \n  \"flags\": {\n    \"useGoma\": true\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"coral\"\n    }, \n    \"path\": \"/build/coral\"\n  }, \n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    }\n  ]\n}",
-      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
+      "{\n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\", \n    \"gomaApproach\": \"DEFAULT\", \n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_18\"\n    }, \n    \"statsFile\": \"stats.binaryproto\", \n    \"counterzFile\": \"counterz.binaryproto\", \n    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\"\n  }, \n  \"flags\": {\n    \"useGoma\": true\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"coral\"\n    }, \n    \"path\": \"/build/coral\"\n  }, \n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    }\n  ]\n}",
+      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -3511,7 +3741,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"gomaDir\": \"[START_DIR]/cipd/goma\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"gomaApproach\": \"DEFAULT\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"logDir\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_16\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_18\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"statsFile\": \"stats.binaryproto\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"counterzFile\": \"counterz.binaryproto\", @@@",
@@ -3550,9 +3780,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_19/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SysrootService/InstallPackages"
@@ -3579,7 +3809,7 @@
       "@@@STEP_LOG_LINE@published event@  \"stepExecutionResult\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"retcode\": 1@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:56Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:02Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"install packages|call chromite.api.SysrootService/InstallPackages|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
@@ -3587,7 +3817,7 @@
       "@@@STEP_LOG_LINE@published event@      \"gomaDir\": \"[START_DIR]/cipd/goma\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"gomaApproach\": \"DEFAULT\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"logDir\": {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"dir\": \"[CLEANUP]/goma-logs-_tmp_16\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"dir\": \"[CLEANUP]/goma-logs-_tmp_18\"@@@",
       "@@@STEP_LOG_LINE@published event@      }, @@@",
       "@@@STEP_LOG_LINE@published event@      \"statsFile\": \"stats.binaryproto\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"counterzFile\": \"counterz.binaryproto\", @@@",
@@ -3620,7 +3850,7 @@
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {}, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:57.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:03.500Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -3644,7 +3874,7 @@
     },
     "infra_step": true,
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"Co4CChcKDC9idWlsZC9jb3JhbBIHCgVjb3JhbBICGAEiPgoTW0NBQ0hFXS9jcm9zX2Nocm9vdBoT\\nChEKD2Nocm9tZV9pbnRlcm5hbCISW1NUQVJUX0RJUl0vY2hyb21lKhEKD2Nocm9tZV9pbnRlcm5h\\nbDKbAQoVW1NUQVJUX0RJUl0vY2lwZC9nb21hEjgvY3JlZHMvc2VydmljZV9hY2NvdW50cy9zZXJ2\\naWNlLWFjY291bnQtZ29tYS1jbGllbnQuanNvbiABKh0KG1tDTEVBTlVQXS9nb21hLWxvZ3MtX3Rt\\ncF8xNjIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJpbmFyeXByb3RvEgAaBgjkgMT9BCIM\\nCOWAxP0EEIDKte4B0ALQ7IDZrvG1knzaAldpbnN0YWxsIHBhY2thZ2VzfGNhbGwgY2hyb21pdGUu\\nYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxQYWNrYWdlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHSi\\nAwIIAQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"Co4CChcKDC9idWlsZC9jb3JhbBIHCgVjb3JhbBICGAEiPgoTW0NBQ0hFXS9jcm9zX2Nocm9vdBoT\\nChEKD2Nocm9tZV9pbnRlcm5hbCISW1NUQVJUX0RJUl0vY2hyb21lKhEKD2Nocm9tZV9pbnRlcm5h\\nbDKbAQoVW1NUQVJUX0RJUl0vY2lwZC9nb21hEjgvY3JlZHMvc2VydmljZV9hY2NvdW50cy9zZXJ2\\naWNlLWFjY291bnQtZ29tYS1jbGllbnQuanNvbiABKh0KG1tDTEVBTlVQXS9nb21hLWxvZ3MtX3Rt\\ncF8xODIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJpbmFyeXByb3RvEgAaBgjqgMT9BCIM\\nCOuAxP0EEIDKte4B0ALQ7IDZrvG1knzaAldpbnN0YWxsIHBhY2thZ2VzfGNhbGwgY2hyb21pdGUu\\nYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxQYWNrYWdlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHSi\\nAwIIAQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3680,7 +3910,7 @@
       "/path/to/tmp/json",
       "copy",
       "{}",
-      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_21/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -3695,9 +3925,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_21/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_19/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_21/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.VersionService/Get"
@@ -3722,7 +3952,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_19/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_21/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3780,7 +4010,7 @@
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"/build/coral\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_18\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_20\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -3796,8 +4026,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            \"IMAGE_ZIP\"\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"coral\"\n    }, \n    \"path\": \"/build/coral\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_18\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_20/input_proto.json"
+      "{\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            \"IMAGE_ZIP\"\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"coral\"\n    }, \n    \"path\": \"/build/coral\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_20\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_22/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -3833,7 +4063,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"/build/coral\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_18\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_20\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -3842,9 +4072,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_20/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_22/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_20/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_22/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/BundleArtifacts"
@@ -3975,8 +4205,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"coral\"\n    ], \n    \"bot-config\": \"coral-cq\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"coral-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"create-time\": null, \n        \"status\": \"fail\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:05\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
-      "[CLEANUP]/metadata_tmp_21/metadata.json"
+      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"coral\"\n    ], \n    \"bot-config\": \"coral-cq\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"coral-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"create-time\": null, \n        \"status\": \"fail\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:11\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
+      "[CLEANUP]/metadata_tmp_23/metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -4024,7 +4254,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:05\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:11\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null, @@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
@@ -4123,7 +4353,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/metadata_tmp_21/metadata.json",
+      "[CLEANUP]/metadata_tmp_23/metadata.json",
       "gs:///coral-cq/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4177,7 +4407,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_22/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_24/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -4204,9 +4434,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_22/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_24/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_22/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_24/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -4230,7 +4460,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_22/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_24/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4293,7 +4523,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_23/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_25/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -4320,9 +4550,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_23/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_25/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_23/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_25/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Unmount"
@@ -4346,7 +4576,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_23/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_25/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4409,7 +4639,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_24/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_26/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -4436,9 +4666,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_24/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_26/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_24/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_26/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Delete"
@@ -4462,7 +4692,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_24/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_26/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4557,7 +4787,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.005@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0056@@@"
     ]
   },
   {

@@ -288,9 +288,12 @@ class ChromeApi(recipe_api.RecipeApi):
     """
     patch_sets = patch_sets or self.m.workspace_util.patch_sets
 
+    # TODO(https://crbug.com/1086714): NeedsChromeSource is temporarily removed,
+    # remove the "#pragma: nocover" when it comes back.
     # If there is a NeedChromeSource endpoint, use that.
-    if self.m.cros_build_api.has_endpoint(self.m.cros_build_api.PackageService,
-                                          'NeedsChromeSource'):
+    if self.m.cros_build_api.has_endpoint(
+        self.m.cros_build_api.PackageService,
+        'NeedsChromeSource'):  #pragma: nocover
       response = self.m.cros_build_api.PackageService.NeedsChromeSource(
           NeedsChromeSourceRequest(install_request=request))
     else:

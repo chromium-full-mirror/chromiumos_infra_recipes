@@ -115,6 +115,9 @@ def GenTests(api):
 
   def test_data(skips_chrome_prebuilt=False, needs_chrome=True, changes=True,
                 expected_builds_from=True, chrome_prebuilt=False, **kwargs):
+    # TODO(crbug/1086714): We don't have NeedsChromeSource yet, so force
+    # disable_needs_chrome=True.
+    kwargs['disable_needs_chrome'] = True
     props = TestInputProperties(needs_chrome=needs_chrome, changes=changes,
                                 expected_builds_from=expected_builds_from,
                                 **kwargs)
@@ -151,7 +154,9 @@ def GenTests(api):
       if not props.ignore_prebuilts and not skips_chrome_prebuilt:
         ret += api_response('PackageService/HasChromePrebuilt',
                             jsonify(has_prebuilt=chrome_prebuilt))
-    else:
+    # TODO(crbug/1086714): We don't have NeedsChromeSource yet.  Remove the
+    # pragma:nocover when we do.
+    else:  # pragma: nocover
       reasons = []
       if props.needs_chrome:
         reasons.extend(['COMPILE_SOURCE'] if props.ignore_prebuilts else [])
@@ -207,4 +212,3 @@ def GenTests(api):
       'ignore-prebuilts-old',
       _old_test_data(ignore_prebuilts=True),
   )
-

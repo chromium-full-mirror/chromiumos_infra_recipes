@@ -76,10 +76,21 @@ def GenTests(api):
                  api.properties(FullTestProperties(artifact_build=True)))
 
   yield api.test(
-      'cq-build-no-chrome-source', test_build(cq=True),
+      'cq-build-no-chrome-source',
+      test_build(cq=True),
+      # TODO(https://crbug.com/1086714): NeedsChromeSource does not exist.  When
+      # it does, the comented return replaces the two that follow.
+      # api.cros_build_api.set_api_return(
+      #     'install packages.check chrome source needed',
+      #     'PackageService/NeedsChromeSource', '{"needs_chrome_source": false}')
       api.cros_build_api.set_api_return(
           'install packages.check chrome source needed',
-          'PackageService/NeedsChromeSource', '{"needs_chrome_source": false}'))
+          'PackageService/HasChromePrebuilt', '{"has_prebuilt": true}'),
+      api.cros_build_api.set_api_return(
+          'install packages.check chrome source needed.'
+          'any followers lack prebuilts', 'PackageService/HasPrebuilt',
+          '{"has_prebuilt": true}'),
+  )
 
   yield api.test(
       'fails_install_with_many_packages', test_build(cq=True),
