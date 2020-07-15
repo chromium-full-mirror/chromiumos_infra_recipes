@@ -43,8 +43,6 @@ def DoRunSteps(api, config, properties):
 
   forgive_upload_failure = False
   try:
-    install_spec = config.build.install_packages.run_spec
-    ebuilds_spec = config.unit_tests.ebuilds_run_spec
     if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
       if api.build_menu.build_and_test_images(config=config):
         api.build_menu.upload_prebuilts(config)
