@@ -35,30 +35,8 @@
       "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
       "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        }, @@@",
-      "@@@STEP_LOG_LINE@response@        \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@response@            {@@@",
-      "@@@STEP_LOG_LINE@response@              \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@response@            }@@@",
-      "@@@STEP_LOG_LINE@response@          ]@@@",
-      "@@@STEP_LOG_LINE@response@        }@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
-      "@@@STEP_LOG_LINE@response@    \"one_too_many\": {@@@",
-      "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\", @@@",
+      "@@@STEP_LOG_LINE@response@            \"unmanagedPool\": \"foo-pool\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
@@ -176,19 +154,35 @@
     "cmd": [],
     "name": "redirect to test_runner if applicable",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@decision: send child tasks to skylab_swarming_worker@@@"
+      "@@@STEP_SUMMARY_TEXT@decision: send child tasks to test_runner@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "enumerate tests"
+    "name": "enumerate tests",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
+      "@@@STEP_LOG_END@autotest tests for default@@@"
+    ]
   },
   {
     "cmd": [],
     "name": "enumerate tests.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"autotestInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"test\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"name\": \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -202,19 +196,6 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"one_too_many\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
@@ -243,43 +224,124 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }, \n    \"one_too_many\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execute",
+    "name": "execute"
+  },
+  {
+    "cmd": [],
+    "name": "execute.call binary",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
+    "name": "execute.call binary.pre-execution debug data",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
-      "    raw_result = recipe_obj.run_steps(api, engine)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
-      "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 338, in RunSteps",
-      "    responses = execute(api, requests, enumerations, properties.config)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 290, in execute",
-      "    _ensure_all_requests_enumerated(requests, enumerations)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 321, in _ensure_all_requests_enumerated",
-      "    raise ValueError('No enumerations for requests tagged %s' % missing)",
-      "ValueError: No enumerations for requests tagged set([u'default', u'one_too_many'])"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform skylab-execute -input_json /dev/stdin -output_json /dev/stdout@@@",
+      "@@@STEP_LOG_END@cmd@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"requestParams\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"qsAccount\": \"foo-qs-account\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"unmanagedPool\": \"foo-pool\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"hardwareAttributes\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"model\": \"foo-model\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"migrations\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"useTestRunner\": true@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"notification\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"pubsubTopic\": \"projects/foo-proj/topics/foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"testMetadataUrl\": \"foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"testRunner\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"buildbucket\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@          \"pubsub\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"testRunnerMigration\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"redirectInstructions\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"percentOfRequests\": 100, @@@",
+      "@@@STEP_LOG_LINE@request@              \"constraint\": {@@@",
+      "@@@STEP_LOG_LINE@request@                \"quotaAccount\": \"foo-qs-account\", @@@",
+      "@@@STEP_LOG_LINE@request@                \"dutPool\": \"foo-pool\"@@@",
+      "@@@STEP_LOG_LINE@request@              }@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"enumeration\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"autotestInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"test\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"name\": \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"createTime\": \"1970-01-01T00:00:00Z\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
-    "failure": {
-      "humanReason": "Uncaught Exception: ValueError(\"No enumerations for requests tagged set([u'default', u'one_too_many'])\",)"
-    },
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
+      "skylab-execute",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "name": "execute.call binary.skylab-execute",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"qsAccount\": \"foo-qs-account\", \n          \"unmanagedPool\": \"foo-pool\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"migrations\": {\n          \"useTestRunner\": true\n        }, \n        \"notification\": {\n          \"pubsubTopic\": \"projects/foo-proj/topics/foo-topic\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"testRunner\": {\n          \"buildbucket\": {}, \n          \"pubsub\": {\n            \"project\": \"foo-proj\", \n            \"topic\": \"foo-topic\"\n          }\n        }, \n        \"testRunnerMigration\": {\n          \"redirectInstructions\": [\n            {\n              \"percentOfRequests\": 100, \n              \"constraint\": {\n                \"quotaAccount\": \"foo-qs-account\", \n                \"dutPool\": \"foo-pool\"\n              }\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\\n\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "postprocess"
+  },
+  {
+    "cmd": [],
+    "name": "summarize"
+  },
+  {
     "name": "$result"
   }
 ]

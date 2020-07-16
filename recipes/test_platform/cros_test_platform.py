@@ -290,13 +290,29 @@ def execute(api, requests, enumerations, config):
     _ensure_all_requests_enumerated(requests, enumerations)
     exec_reqs = ExecuteRequests(
         tagged_requests={
-            t: ExecuteRequest(request_params=r.params,
-                              enumeration=enumerations[t], config=config)
+            t: ExecuteRequest(
+                request_params=_set_notification(r.params, config),
+                enumeration=enumerations[t], config=config)
             for t, r in requests.iteritems()
         },
         build=Build(create_time=api.buildbucket.build.create_time),
     )
     return api.cros_test_platform.skylab_execute(exec_reqs)
+
+
+def _set_notification(params, config):
+  """Attach PubSub topic to each ExecuteRequest.
+
+  Returns:
+  same test_platform.Request.Params instance of input.
+  """
+  pubsub = config.test_runner.pubsub
+  if pubsub.project and pubsub.topic:
+    # The topic attached here is for notifying the cros_test_platform's
+    # internal pipeline to process the test runner output.
+    params.notification.pubsub_topic = "projects/%s/topics/%s" % (
+        pubsub.project, pubsub.topic)
+  return params
 
 
 def _ensure_all_requests_enumerated(requests, enumerations):
@@ -652,6 +668,43 @@ def GenTests(api):
               request=Request(), config=Config(
                   pubsub=Config.PubSub(project='foo-proj', topic='foo-topic'))))
   )
+
+  # Config set the pubsub topic for test_runner.
+  yield (
+      api.test('Config has pubsub topic to publish test runner build ID') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'),
+              config=Config(
+                  test_runner=Config.TestRunner(
+                      buildbucket=Config.Buildbucket(), pubsub=Config.PubSub(
+                          project='foo-proj', topic='foo-topic')),
+                  test_runner_migration=_test_migration_config(
+                      dut_pool='foo-pool',
+                      quota_account='foo-qs-account',
+                  ),
+              ),
+          ),
+      ) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request(
+                                      tag='foo',
+                                      scheduling=Request.Params.Scheduling(
+                                          unmanaged_pool='foo-pool',
+                                          qs_account='foo-qs-account',
+                                      ),
+                                  ),
+                              ),
+                      })))) +  #
+      api.step_data('enumerate tests.call binary.enumerate',
+                    stdout=api.raw_io.output(_test_single_enumeration('foo'))))
 
   # An end-to-end run with traffic splitting to skylab.
   yield (
