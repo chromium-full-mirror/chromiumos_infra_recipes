@@ -295,7 +295,8 @@ def execute(api, requests, enumerations, config):
                 enumeration=enumerations[t], config=config)
             for t, r in requests.iteritems()
         },
-        build=Build(create_time=api.buildbucket.build.create_time),
+        build=Build(id=api.buildbucket.build.id,
+                    create_time=api.buildbucket.build.create_time),
     )
     return api.cros_test_platform.skylab_execute(exec_reqs)
 
@@ -672,6 +673,7 @@ def GenTests(api):
   # Config set the pubsub topic for test_runner.
   yield (
       api.test('Config has pubsub topic to publish test runner build ID') +  #
+      api.buildbucket.build(Build(id=8874582904031090640)) +  #
       api.properties(
           CrosTestPlatformProperties(
               request=_test_request('foo'),

@@ -267,11 +267,11 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 338, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 339, in RunSteps",
       "    responses = execute(api, requests, enumerations, properties.config)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 290, in execute",
       "    _ensure_all_requests_enumerated(requests, enumerations)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 321, in _ensure_all_requests_enumerated",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 322, in _ensure_all_requests_enumerated",
       "    raise ValueError('No enumerations for requests tagged %s' % missing)",
       "ValueError: No enumerations for requests tagged set([u'default', u'one_too_many'])"
     ]
