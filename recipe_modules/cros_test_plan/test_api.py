@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Copyright 2019 The Chromium OS Authors. All rights reserved.
-# Use of this source code is governed under the Apache License, Version 2.0
-# that can be found in the LICENSE file.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
 from recipe_engine import recipe_test_api
 
 from PB.chromiumos.builder_config import BuilderConfig
@@ -51,9 +51,11 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                                            critical={'value': True}),
                     suite='bvt-cq',
                     skylab_board='target',
+                    skylab_model='model',
                     pool='DUT_POOL_QUOTA',
                 ),
-            ],),
+            ],
+        ),
     )
 
   @property

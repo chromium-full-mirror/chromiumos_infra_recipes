@@ -161,12 +161,15 @@ class SkylabApi(recipe_api.RecipeApi):
       return self.SkylabTask(id=build.id, url=build_url, test=test, unit=unit)
 
   def _get_ctp_tags(self, test, unit, image_path):
-    return {
+    result = {
         'label-pool': test.pool,
         'build': image_path,
         'label-board': test.skylab_board,
         'suite': test.suite,
     }
+    if test.skylab_model:
+      result['label-model'] = test.skylab_model
+    return result
 
   def _enable_test_retries(self, req):
     """Enable test retries within suites.
