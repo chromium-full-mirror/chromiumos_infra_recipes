@@ -162,7 +162,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/hwid/hwid/v3/SOME_KEY",
+      "[START_DIR]/hwid/v3/SOME_KEY",
       "[START_DIR]/dest/imported/hwid"
     ],
     "cwd": "[START_DIR]/dest",
@@ -197,6 +197,7 @@
   },
   {
     "cmd": [
+      "vpython",
       "[START_DIR]/config/payload_utils/join_config_payloads.py",
       "--output generated/joined.jsonproto",
       "--config-bundle generated/config.jsonproto",

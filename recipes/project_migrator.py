@@ -120,10 +120,9 @@ def RunSteps(api, properties):
 
     # Copy the HWID database
     if properties.hwid_key:
-      api.file.copy(
-          'copy HWID database',
-          hwid_repo_path.join('hwid/v3/%s' % properties.hwid_key.upper()),
-          dest_hwid_path)
+      api.file.copy('copy HWID database',
+                    hwid_repo_path.join('v3/%s' % properties.hwid_key.upper()),
+                    dest_hwid_path)
       api.git.add([dest_hwid_path])
 
     generated_path = dest_repo_path.join('generated')
@@ -153,7 +152,7 @@ def RunSteps(api, properties):
       cmd += ['--project-name %s' % properties.project_name]
 
     # Generate joined output
-    api.step("Generate joined configuration", cmd)
+    api.step("Generate joined configuration", ["vpython"] + cmd)
     api.git.add([DST_CONFIG])
 
     # Commit changes (if any)
