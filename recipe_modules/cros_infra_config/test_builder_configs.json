@@ -1,6 +1,27 @@
 {
   "builderConfigs": [
     {
+			"id": {
+				"name": "amd64-generic-asan",
+				"branch": "master"
+			},
+			"build": {
+				"portageProfile": {
+					"profile": "asan"
+				},
+				"installPackages": {
+					"runSpec": "RUN"
+				},
+				"buildImages": {
+					"imageTypes": [
+						"TEST",
+						"TEST_VM",
+						"BASE"
+					]
+				}
+			}
+		},
+    {
       "id": {
         "name": "amd64-generic-postsubmit",
         "branch": "master",

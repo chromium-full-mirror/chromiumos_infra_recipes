@@ -92,6 +92,7 @@
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
+  * [build_informational](#recipes-build_informational) &mdash; Recipe for generating artifacts for Informational builders.
   * [build_menu:examples/full](#recipes-build_menu_examples_full)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
   * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph)
@@ -4781,6 +4782,16 @@ Recipe for building a BuildTarget image for CQ.
 &mdash; **def [DoRunSteps](/recipes/build_cq.py#26)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_cq.py#20)(api, properties):**
+### *recipes* / [build\_informational](/recipes/build_informational.py)
+
+[DEPS](/recipes/build_informational.py#11): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
+
+Recipe for generating artifacts for Informational builders.
+
+This recipe supports the workflow necessary to support asan, UBsan, and fuzzer
+builder profiles.
+
+&mdash; **def [RunSteps](/recipes/build_informational.py#21)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
