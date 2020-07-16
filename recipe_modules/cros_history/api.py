@@ -257,22 +257,12 @@ class CrosHistoryApi(recipe_api.RecipeApi):
                     cq_equivalent_cl_group_key=group_key),
                 create_time=create_time, build=build_range))
 
-    # buildbucket.search returns at most |limit| builds, so we need to ask for
-    # more to be sure that we can detect overflow.  Ask for 2 extra, since we
-    # might strip ourselves from the results.
     builds = self.m.buildbucket.search(
-        predicates, limit=limit + 2 if limit > 0 else limit,
-        url_title_fn=self.m.naming.get_build_title)
+        predicates, limit=limit, url_title_fn=self.m.naming.get_build_title)
 
     # We are likely to have found ourselves, due to the group_key.
     # Remove this after
     builds = [b for b in builds if b.id != self.m.buildbucket.build.id]
-
-    # We'd prefer to stop rather than return truncated results.
-    if limit and len(builds) > limit:
-      raise RuntimeError(
-          "Number of buildbucket search results {} exceeds limit {}".format(
-              len(builds), limit))  # pragma: no cover
 
     # Filter out builds that were run on a superset of the input patches.
     # e.g. if we're trying to get the history for runs on [cl1#1], we aren't

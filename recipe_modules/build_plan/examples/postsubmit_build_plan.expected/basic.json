@@ -222,7 +222,7 @@
       "-json",
       "-nopage",
       "-n",
-      "2002",
+      "2000",
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
