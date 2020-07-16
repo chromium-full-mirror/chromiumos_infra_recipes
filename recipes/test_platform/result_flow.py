@@ -15,28 +15,43 @@ DEPS = [
 PROPERTIES = ResultFlowProperties
 
 
-def execution_steps(api, properties):
-  """Runs result_flow binary.
+def run_test_runner_flow(api, config, deadline):
+  with api.step.nest('process test_runner builds'):
+    req = result_flow.test_runner.TestRunnerRequest(
+        test_runner=config.test_runner, test_run=config.test_run,
+        test_case=config.test_case)
+    if deadline:
+      req.deadline.MergeFrom(deadline)
+    return api.result_flow.test_runner(req).state
 
-  Args:
-  * properties: ResultFlowProperties instance.
 
-  Raises:
-  * InfraFailure.
-  """
-  with api.step.nest('execution steps'):
-    if properties.ctp_flow:
-      req = result_flow.ctp.CTPRequest(
-          ctp=properties.ctp_flow.ctp,
-          test_plan_run=properties.ctp_flow.test_plan_run)
-      if properties.HasField('deadline'):
-        req.deadline.MergeFrom(properties.deadline)
-      resp = api.result_flow.ctp(req)
-      properties.response.state = resp.state
+def run_test_ctp_flow(api, config, deadline):
+  with api.step.nest('process CTP builds'):
+    req = result_flow.ctp.CTPRequest(ctp=config.ctp,
+                                     test_plan_run=config.test_plan_run)
+    if deadline:
+      req.deadline.MergeFrom(deadline)
+    return api.result_flow.ctp(req).state
+
+
+def _verify_flow(config, flow):
+  if flow == 'test_runner_flow':
+    return (config.test_runner.pubsub.subscription and
+            config.test_runner.bb.builder and config.test_run.bq.table and
+            config.test_case.bq.table)
+  if flow == 'ctp_flow':
+    return (config.ctp.pubsub.subscription and config.ctp.bb.builder and
+            config.test_plan_run.bq.table)
 
 
 def RunSteps(api, properties):
-  execution_steps(api, properties)
+  if _verify_flow(config=properties.test_runner_flow, flow='test_runner_flow'):
+    properties.response.state = run_test_runner_flow(
+        api, properties.test_runner_flow, properties.deadline)
+
+  if _verify_flow(config=properties.ctp_flow, flow='ctp_flow'):
+    properties.response.state = run_test_ctp_flow(api, properties.ctp_flow,
+                                                  properties.deadline)
 
   if properties.response.state != result_flow.common.SUCCEEDED:
     with api.step.nest('build status'):
@@ -46,11 +61,18 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def _run_test_step_with_state(state):
+  def _run_ctp_flow_with_state(state):
     return (api.step_data(
-        'execution steps.call `result_flow`.ctp', stdout=api.raw_io.output(
+        'process CTP builds.call `result_flow`.ctp', stdout=api.raw_io.output(
             json_format.MessageToJson(
                 result_flow.ctp.CTPResponse(state=state)))))
+
+  def _run_test_runner_flow_with_state(state):
+    return (api.step_data(
+        'process test_runner builds.call `result_flow`.test_runner',
+        stdout=api.raw_io.output(
+            json_format.MessageToJson(
+                result_flow.test_runner.TestRunnerResponse(state=state)))))
 
   def _canned_ctp_config():
     return {
@@ -81,10 +103,46 @@ def GenTests(api):
         }
     }
 
+  def _canned_test_runner_config():
+    return {
+        'test_runner': {
+            'pubsub': {
+                'project': 'foo-project',
+                'topic': 'foo-topic',
+                'subscription': 'foo-subscription',
+                'max_receiving_messages': 50
+            },
+            'bb': {
+                'host': 'cr-buildbucket.appspot.com',
+                'project': 'chromeos',
+                'bucket': 'test_runner',
+                'builder': 'test_runner',
+            },
+            'fields': [
+                'id', 'status', 'input.properties', 'output.properties',
+                'create_time', 'start_time', 'end_time'
+            ],
+        },
+        'test_run': {
+            'bq': {
+                'project': 'foo-project',
+                'dataset': 'foo-dataset',
+                'table': 'foo-table-test-run',
+            }
+        },
+        'test_case': {
+            'bq': {
+                'project': 'foo-project',
+                'dataset': 'foo-dataset',
+                'table': 'foo-table-test-case',
+            }
+        }
+    }
+
   yield api.test(
       'ctp result flow success w/o deadline',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
-      _run_test_step_with_state(result_flow.common.SUCCEEDED),
+      _run_ctp_flow_with_state(result_flow.common.SUCCEEDED),
   )
 
   yield api.test(
@@ -92,15 +150,30 @@ def GenTests(api):
       api.properties(
           ResultFlowProperties(ctp_flow=_canned_ctp_config(),
                                deadline=timestamp_pb2.Timestamp(seconds=55))),
-      _run_test_step_with_state(result_flow.common.SUCCEEDED),
+      _run_ctp_flow_with_state(result_flow.common.SUCCEEDED),
   )
 
   yield api.test(
       'ctp result flow failed',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
-      _run_test_step_with_state(result_flow.common.FAILED))
+      _run_ctp_flow_with_state(result_flow.common.FAILED))
 
   yield api.test(
       'ctp result flow timed out',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
-      _run_test_step_with_state(result_flow.common.TIMED_OUT))
+      _run_ctp_flow_with_state(result_flow.common.TIMED_OUT))
+
+  yield api.test(
+      'test_runner result flow success w/o deadline',
+      api.properties(
+          ResultFlowProperties(test_runner_flow=_canned_test_runner_config())),
+      _run_test_runner_flow_with_state(result_flow.common.SUCCEEDED),
+  )
+
+  yield api.test(
+      'test_runner result flow success with deadline',
+      api.properties(
+          ResultFlowProperties(test_runner_flow=_canned_test_runner_config(),
+                               deadline=timestamp_pb2.Timestamp(seconds=55))),
+      _run_test_runner_flow_with_state(result_flow.common.SUCCEEDED),
+  )

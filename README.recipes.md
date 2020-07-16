@@ -5992,17 +5992,11 @@ Raises:
 
 [DEPS](/recipes/test_platform/result_flow.py#8): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipes/test_platform/result_flow.py#38)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/result_flow.py#47)(api, properties):**
 
-&mdash; **def [execution\_steps](/recipes/test_platform/result_flow.py#18)(api, properties):**
+&mdash; **def [run\_test\_ctp\_flow](/recipes/test_platform/result_flow.py#28)(api, config, deadline):**
 
-Runs result_flow binary.
-
-Args:
-* properties: ResultFlowProperties instance.
-
-Raises:
-* InfraFailure.
+&mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
 [DEPS](/recipes/test_platform/test_runner.py#27): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [phosphorus](#recipe_modules-phosphorus), [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
