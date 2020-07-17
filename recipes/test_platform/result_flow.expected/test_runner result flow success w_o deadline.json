@@ -45,8 +45,7 @@
       "@@@STEP_LOG_LINE@request@      \"table\": \"foo-table-test-run\", @@@",
       "@@@STEP_LOG_LINE@request@      \"dataset\": \"foo-dataset\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"deadline\": \"1970-01-01T00:00:00Z\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -102,7 +101,7 @@
       "/dev/stdout"
     ],
     "name": "process test_runner builds.call `result_flow`.test_runner",
-    "stdin": "{\n  \"testRunner\": {\n    \"fields\": [\n      \"id\", \n      \"status\", \n      \"input.properties\", \n      \"output.properties\", \n      \"create_time\", \n      \"start_time\", \n      \"end_time\"\n    ], \n    \"bb\": {\n      \"project\": \"chromeos\", \n      \"host\": \"cr-buildbucket.appspot.com\", \n      \"bucket\": \"test_runner\", \n      \"builder\": \"test_runner\"\n    }, \n    \"pubsub\": {\n      \"project\": \"foo-project\", \n      \"topic\": \"foo-topic\", \n      \"maxReceivingMessages\": 50, \n      \"subscription\": \"foo-subscription\"\n    }\n  }, \n  \"testCase\": {\n    \"bq\": {\n      \"project\": \"foo-project\", \n      \"table\": \"foo-table-test-case\", \n      \"dataset\": \"foo-dataset\"\n    }\n  }, \n  \"testRun\": {\n    \"bq\": {\n      \"project\": \"foo-project\", \n      \"table\": \"foo-table-test-run\", \n      \"dataset\": \"foo-dataset\"\n    }\n  }, \n  \"deadline\": \"1970-01-01T00:00:00Z\"\n}",
+    "stdin": "{\n  \"testRunner\": {\n    \"fields\": [\n      \"id\", \n      \"status\", \n      \"input.properties\", \n      \"output.properties\", \n      \"create_time\", \n      \"start_time\", \n      \"end_time\"\n    ], \n    \"bb\": {\n      \"project\": \"chromeos\", \n      \"host\": \"cr-buildbucket.appspot.com\", \n      \"bucket\": \"test_runner\", \n      \"builder\": \"test_runner\"\n    }, \n    \"pubsub\": {\n      \"project\": \"foo-project\", \n      \"topic\": \"foo-topic\", \n      \"maxReceivingMessages\": 50, \n      \"subscription\": \"foo-subscription\"\n    }\n  }, \n  \"testCase\": {\n    \"bq\": {\n      \"project\": \"foo-project\", \n      \"table\": \"foo-table-test-case\", \n      \"dataset\": \"foo-dataset\"\n    }\n  }, \n  \"testRun\": {\n    \"bq\": {\n      \"project\": \"foo-project\", \n      \"table\": \"foo-table-test-run\", \n      \"dataset\": \"foo-dataset\"\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

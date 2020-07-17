@@ -47,11 +47,14 @@ def _verify_flow(config, flow):
 def RunSteps(api, properties):
   if _verify_flow(config=properties.test_runner_flow, flow='test_runner_flow'):
     properties.response.state = run_test_runner_flow(
-        api, properties.test_runner_flow, properties.deadline)
+        api=api, config=properties.test_runner_flow,
+        deadline=properties.deadline
+        if properties.HasField('deadline') else None)
 
   if _verify_flow(config=properties.ctp_flow, flow='ctp_flow'):
-    properties.response.state = run_test_ctp_flow(api, properties.ctp_flow,
-                                                  properties.deadline)
+    properties.response.state = run_test_ctp_flow(
+        api=api, config=properties.ctp_flow, deadline=properties.deadline
+        if properties.HasField('deadline') else None)
 
   if properties.response.state != result_flow.common.SUCCEEDED:
     with api.step.nest('build status'):
