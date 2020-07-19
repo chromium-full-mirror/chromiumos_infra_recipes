@@ -138,8 +138,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
-  def _download_file(self, filename, step_test_data, branch='master',
-                     timeout=None):
+  def _download_binproto(self, filename, step_test_data, branch='master',
+                         timeout=None):
     """Helper method to fetch a file from gititles."""
     return self.m.depot_gitiles.download_file(
         REPO_URL, filename + '.binaryproto', branch=self._config_ref,
@@ -154,8 +154,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     # Step nesting needs to happen here or it shows up many times in Milo,
     # once for each builder.
-    return self._download_file('generated/builder_configs',
-                               self.test_api.builder_configs_step_test_data)
+    return self._download_binproto('generated/builder_configs',
+                                   self.test_api.builder_configs_step_test_data)
 
   def _get_name_to_builder_config(self, force_reload=False):
     """Helper method that returns the name to BuilderConfig map.
@@ -244,8 +244,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       BotPolicyCfg as defined in the config repo.
     """
     return BotPolicyCfg.FromString(
-        self._download_file('bot_scaling/generated/bot_policy',
-                            self.test_api.bot_policy_test_data))
+        self._download_binproto('bot_scaling/generated/bot_policy',
+                                self.test_api.bot_policy_test_data))
 
   def get_vm_retry_config(self):
     """Get SuiteRetryCfg as defined in infra/config for tast vm.
@@ -254,8 +254,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       SuiteRetryCfg as defined in the config repo.
     """
     return SuiteRetryCfg.FromString(
-        self._download_file('testingconfig/generated/vm_retry',
-                            self.test_api.vm_retry_test_data))
+        self._download_binproto('testingconfig/generated/vm_retry',
+                                self.test_api.vm_retry_test_data))
 
   def get_dut_tracking_config(self):
     """Get TrackingPolicyCfg as defined in infra/config.
@@ -264,8 +264,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       TrackingPolicyCfg as defined in the config repo.
     """
     return TrackingPolicyCfg.FromString(
-        self._download_file('testingconfig/generated/dut_tracking',
-                            self.test_api.dut_tracking_test_data))
+        self._download_binproto('testingconfig/generated/dut_tracking',
+                                self.test_api.dut_tracking_test_data))
 
   def _determine_repo_state(self, config, commit, changes):
     """Set _gitiles_commit and _gerrit_changes.
