@@ -1,0 +1,16 @@
+[
+  {
+    "cmd": [
+      "gcloud",
+      "auth",
+      "list"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "gcloud auth"
+  },
+  {
+    "name": "$result"
+  }
+]

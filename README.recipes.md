@@ -38,6 +38,7 @@
   * [f20_proto_validation](#recipe_modules-f20_proto_validation) &mdash; A sample module to validate F20 metadata definitions.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gce_provider](#recipe_modules-gce_provider)
+  * [gcloud](#recipe_modules-gcloud)
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
   * [git_cl](#recipe_modules-git_cl) &mdash; API for working with git cl.
@@ -193,6 +194,8 @@
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
   * [forge_commit](#recipes-forge_commit) &mdash; Recipe for forcing forge commit failure.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full)
+  * [gce_test](#recipes-gce_test) &mdash; An experimental recipe for running GCE tests.
+  * [gcloud:examples/full](#recipes-gcloud_examples_full)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change)
   * [gerrit:examples/add_change_comment](#recipes-gerrit_examples_add_change_comment)
@@ -2594,6 +2597,20 @@ Args:
 
 Returns:
   Config, GCE Provider Config defintion with updated values.
+### *recipe_modules* / [gcloud](/recipe_modules/gcloud)
+
+[DEPS](/recipe_modules/gcloud/__init__.py#6): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [GcloudApi](/recipe_modules/gcloud/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to process tast-results/ directory.
+
+&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#12)(self, step_name=None):**
+
+Print out the auth creds currently on the bot.
+
+Args:
+  step_name(str): Name of the step.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5362,6 +5379,18 @@ See https://crbug.com/1068743.
 [DEPS](/recipe_modules/gce_provider/examples/full.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/gce_provider/examples/full.py#14)(api):**
+### *recipes* / [gce\_test](/recipes/gce_test.py)
+
+[DEPS](/recipes/gce_test.py#8): [gcloud](#recipe_modules-gcloud)
+
+An experimental recipe for running GCE tests.
+
+&mdash; **def [RunSteps](/recipes/gce_test.py#13)(api):**
+### *recipes* / [gcloud:examples/full](/recipe_modules/gcloud/examples/full.py)
+
+[DEPS](/recipe_modules/gcloud/examples/full.py#6): [gcloud](#recipe_modules-gcloud)
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/full.py#11)(api):**
 ### *recipes* / [generator](/recipes/generator.py)
 
 [DEPS](/recipes/generator.py#41): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
