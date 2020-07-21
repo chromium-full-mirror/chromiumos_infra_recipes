@@ -167,29 +167,6 @@ class CrosHistoryApi(recipe_api.RecipeApi):
                                      builder=build.builder, statuses=statuses,
                                      start_build_id=start_build_id, limit=limit)
 
-  @classmethod
-  def get_build_target(cls, build):
-    """Take a build_pb2 and get its build_target name or return None."""
-    try:
-      return build.input.properties['build_target']['name']
-    except ValueError:  # pragma: no cover
-      return None
-
-  @classmethod
-  def build_target_dict(cls, builds):
-    """Take a list of builds and return a map of build_target names to build.
-
-    This function will omit any builds that don't define input build targets.
-
-    Args:
-      builds (build_pb2.Build): builds to extract build_target.name set from.
-
-    Returns: a dict(str, build_pb2.Build) of build_target names.
-    """
-    build_targets = {cls.get_build_target(b): b for b in builds}
-    build_targets.pop(None, None)
-    return build_targets
-
   @staticmethod
   def _buildset_tag_from_snapshot(snapshot):
     """Map a snapshot (GitilesCommit) into a buildset tag string value."""

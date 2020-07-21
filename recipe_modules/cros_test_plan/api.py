@@ -38,16 +38,13 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
     with self.m.step.nest(name or 'generate test plan') as presentation:
       self._ensure_test_planner()
 
-      if not gerrit_changes:
-        gerrit_changes = []  # pragma: nocover
-
       request_proto = GenerateTestPlanRequest(
           manifest_commit=manifest_commit.id, gitiles_commit=ProtoBytes(
               serialized_proto=GitilesCommit.SerializeToString(
                   manifest_commit)),
           gerrit_changes=[
               ProtoBytes(serialized_proto=GerritChange.SerializeToString(gc))
-              for gc in gerrit_changes
+              for gc in gerrit_changes or []
           ], buildbucket_protos=[
               ProtoBytes(serialized_proto=Build.SerializeToString(build))
               for build in builds
@@ -68,8 +65,9 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       self.m.step('call test_planner', cmd, infra_step=True)
 
       response_bin = self.m.file.read_raw(
-          'read output file', output_bin_file, test_data=self.test_api
-          .generate_test_plan_response.SerializeToString())
+          'read output file', output_bin_file,
+          test_data=self.test_api.generate_test_plan_response.SerializeToString(
+          ))
       response_proto = GenerateTestPlanResponse.FromString(response_bin)
 
       presentation.logs['planner_output'] = [str(response_proto)]
@@ -78,7 +76,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
   def _ensure_test_planner(self):
     """Ensure the test_planner cli is installed."""
     if self._test_planner_path:
-      return  # pragma: nocover
+      return
 
     with self.m.step.nest('ensure test_planner'):
       with self.m.context(infra_steps=True):

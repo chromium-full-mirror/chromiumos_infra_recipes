@@ -17,6 +17,8 @@ from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
+from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.testplans.test_retry import SuiteRetryCfg
 
 REPO_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
@@ -401,8 +403,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     return config
 
-  @staticmethod
-  def get_build_target_name(build):
+  def get_build_target_name(self, build):
     """Return the build target name from input properties.
 
     Args:
@@ -410,9 +411,30 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           'build_target' input property.
 
     Returns:
-      (str) The name of the build target.
+      (str) The name of the build target, or None.
     """
-    try:
-      return build.input.properties['build_target']['name']
-    except ValueError:
-      return None
+    name = None
+    if '$chromeos/build_menu' in build.input.properties:
+      name = json_format.ParseDict(
+          build.input.properties['$chromeos/build_menu'], BuildMenuProperties(),
+          ignore_unknown_fields=True).build_target.name
+    # Try the global space.
+    if not name:
+      name = json_format.ParseDict(build.input.properties,
+                                   BuildTargetProperties(),
+                                   ignore_unknown_fields=True).build_target.name
+    return name or None
+
+  def build_target_dict(self, builds):
+    """Take a list of builds and return a map of build_target names to build.
+
+    This function will omit any builds that don't define input build targets.
+
+    Args:
+      builds (list[Build]): builds to extract build_target.name set from.
+
+    Returns: a dict(str, Build) of build_target names.
+    """
+    build_targets = {self.get_build_target_name(b): b for b in builds}
+    build_targets.pop(None, None)
+    return build_targets

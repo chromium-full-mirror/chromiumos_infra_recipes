@@ -69,7 +69,7 @@ def RunSteps(api, properties):
       output = api.buildbucket.collect_builds(
           [child.id], step_name='collect', timeout=60 * 60 * 2,
           url_title_fn=api.naming.get_build_title)[child.id]
-    except api.step.StepFailure:  #pragma: no cover
+    except api.step.StepFailure:
       # If the child builder takes more than the given timeout, collect_builds
       # will raise StepFailure. If the failure is due to other reasons, then
       # get_multi will raise the same StepFailure.
@@ -112,3 +112,7 @@ def GenTests(api):
           common_pb2.GerritChange(change=1234),
           common_pb2.GerritChange(change=1235),
       ]).build)
+
+  yield api.test('timeout',
+                 api.test_util.test_build(cq=True).build,
+                 api.step_data('run Infra Presubmit.collect.wait', retcode=1))

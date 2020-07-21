@@ -59,6 +59,10 @@ def RunSteps(api, properties):
       target.name,
       api.cros_infra_config.get_build_target_name(api.buildbucket.build))
 
+  api.assertions.assertEqual({target.name: api.buildbucket.build},
+                             api.cros_infra_config.build_target_dict(
+                                 [api.buildbucket.build]))
+
 
 def GenTests(api):
 

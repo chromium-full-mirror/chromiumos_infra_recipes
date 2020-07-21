@@ -80,7 +80,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     completed_builders = [build.builder.builder for build in completed_builds]
     snapshot_build_targets = \
-        self.m.cros_history.build_target_dict(snapshot_builds)
+        self.m.cros_infra_config.build_target_dict(snapshot_builds)
 
     filtered_snapshot_builds = []
 
