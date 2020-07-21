@@ -634,6 +634,13 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#82)(self):**
 
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#368)(self, config=None):**
+
+Generate release payloads for the build.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
+
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#66)(self):**
 
 &emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#62)(self):**
@@ -661,6 +668,13 @@ Setup the workspace and chroot for the builder.
 
 Returns:
   (bool): Whether the build is relevant.
+
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#358)(self, config=None):**
+
+Sign the uploaded images.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#74)(self):**
 

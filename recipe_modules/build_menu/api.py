@@ -354,3 +354,23 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.cros_prebuilts.upload_target_prebuilts(
           self.build_target, config.id.type, artifacts.prebuilts_gs_bucket,
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
+
+  def sign_images(self, config=None):
+    """Sign the uploaded images.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+    """
+    with self.m.step.nest('sign images'):
+      # TODO: implement me!
+      pass
+
+  def generate_payloads(self, config=None):
+    """Generate release payloads for the build.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+    """
+    with self.m.step.nest('generate payloads'):
+      # TODO: implement me!
+      pass

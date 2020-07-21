@@ -5824,6 +5824,14 @@
   },
   {
     "cmd": [],
+    "name": "sign images"
+  },
+  {
+    "cmd": [],
+    "name": "generate payloads"
+  },
+  {
+    "cmd": [],
     "name": "finalize metadata"
   },
   {
