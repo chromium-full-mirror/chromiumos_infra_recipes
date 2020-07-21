@@ -6,7 +6,4 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.urls;
 
-message UrlsProperties {
-  // Enables code path for reporting failures in Milo at the test case level.
-  bool per_test_case_reporting = 1;
-}
+message UrlsProperties {}

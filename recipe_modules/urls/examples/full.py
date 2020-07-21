@@ -95,7 +95,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'basic',
-      api.properties(
-          **{'$chromeos/urls': UrlsProperties(per_test_case_reporting=True)}))
+  yield api.test('basic')
