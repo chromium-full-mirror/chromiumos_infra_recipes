@@ -17,4 +17,7 @@ message BuildMenuProperties {
 
   // Whether this is an artifact build (calls ArtifactsService/PrepareForBuild.)
   bool artifact_build = 3;
+
+  // Whether to run unit tests with code coverage or not.
+  bool test_with_code_coverage = 4;
 }

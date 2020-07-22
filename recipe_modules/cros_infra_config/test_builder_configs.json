@@ -1318,6 +1318,74 @@
       "unitTests": {
         "ebuildsRunSpec": "RUN"
       }
+    },
+    {
+      "id": {
+        "name": "sarien-code-coverage-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": false
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "packages": [
+          {
+            "packageName": "diagnostics",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "sarien-code-coverage-postsubmit",
+        "branch": "master",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": false
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "applyGerritChanges": false,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "packages": [
+          {
+            "packageName": "diagnostics",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ]
+      }
     }
   ]
 }

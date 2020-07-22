@@ -145,3 +145,9 @@ def GenTests(api):
       api.properties(
           FullProperties(missing_config_ok=True, expect_missing_config=True)),
       builder='no-config')
+
+  yield api.build_menu.test(
+      'code-coverage-build', builder='sarien-code-coverage-postsubmit',
+      input_properties={
+          '$chromeos/build_menu': dict(test_with_code_coverage=True)
+      })

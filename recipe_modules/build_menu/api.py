@@ -2,7 +2,6 @@
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 """API providing a menu for build steps"""
 
 import collections
@@ -15,6 +14,7 @@ from recipe_engine import recipe_api
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
+from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import Profile
 
@@ -47,6 +47,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._build_target = props.build_target
     self._force_relevant_build = props.force_relevant_build
     self._artifact_build = props.artifact_build
+    self._test_with_code_coverage = props.test_with_code_coverage
 
   @property
   def build_target(self):
@@ -321,12 +322,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
                 build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
                 result_path=str(self.m.path.mkdtemp()),
                 package_blacklist=unit_tests.package_blacklist,
+                packages=unit_tests.packages,
                 flags=BuildTargetUnitTestRequest.Flags(
+                    code_coverage=self._test_with_code_coverage,
                     empty_sysroot=unit_tests.empty_sysroot)),
             timeout=2 * 60 * 60,
             response_lambda=self.m.cros_build_api.failed_pkg_names)
         self.m.failures.set_failed_packages(presentation,
                                             response.failed_packages)
+        if self._test_with_code_coverage:
+          self.m.code_coverage.process_coverage_data(self.build_target)
 
     return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 

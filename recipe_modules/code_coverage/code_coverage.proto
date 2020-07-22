@@ -1,0 +1,13 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.code_coverage;
+
+message CodeCoverageProperties {
+  // GS bucket to which coverage data should be saved.
+  // Defaults to cros-code-coverage-data.
+  string gs_bucket = 1;
+}
