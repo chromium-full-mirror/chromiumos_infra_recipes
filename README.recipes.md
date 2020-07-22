@@ -4953,7 +4953,7 @@ Return the kwargs as a json string.
 &mdash; **def [RunSteps](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#19)(api):**
 ### *recipes* / [cl\_factory](/recipes/cl_factory.py)
 
-[DEPS](/recipes/cl_factory.py#38): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/cl_factory.py#39): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Used to create sweeping changes by creating CLs in many repos.
 
@@ -4966,21 +4966,14 @@ https://chromium.googlesource.com/chromiumos/config/+/refs/heads/master/bin/cl_f
 That script is a wrapper around the `bb add` command which ends up executing
 something that looks like this:
 
-bb add
-  -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418
-  -p 'repo_regexes=["src/project/galaxy"]'
-  -p command=gen_config
-  -p 'message_template=Hello world
+bb add   -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418   -p 'repo_regexes=["src/project/galaxy"]'   -p command=gen_config   -p 'message_template=Hello world
 
 BUG=chromium:1092954
-TEST=None'
-  -p 'reviewers=["reviewer@google.com"]'
-  -p 'hashtags=["mondo-update"]'
-  chromeos/infra/ClFactory
+TEST=None'   -p 'reviewers=["reviewer@google.com"]'   -p 'hashtags=["mondo-update"]'   -p 'replace_strings=[{"file_glob": "*.star", "before": "_CLAMSHELL", "after": "_CONVERTIBLE"}]'   chromeos/infra/ClFactory
 
 For more details on the input properties, see cl_factory.proto.
 
-&mdash; **def [RunSteps](/recipes/cl_factory.py#59)(api, properties):**
+&mdash; **def [RunSteps](/recipes/cl_factory.py#60)(api, properties):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)

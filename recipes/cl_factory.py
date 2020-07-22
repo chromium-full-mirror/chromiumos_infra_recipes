@@ -14,13 +14,14 @@ https://chromium.googlesource.com/chromiumos/config/+/refs/heads/master/bin/cl_f
 That script is a wrapper around the `bb add` command which ends up executing
 something that looks like this:
 
-bb add
-  -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418
-  -p 'repo_regexes=["src/project/galaxy"]'
-  -p command=gen_config
-  -p 'message_template=Hello world\n\nBUG=chromium:1092954\nTEST=None'
-  -p 'reviewers=["reviewer@google.com"]'
-  -p 'hashtags=["mondo-update"]'
+bb add \
+  -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418 \
+  -p 'repo_regexes=["src/project/galaxy"]' \
+  -p command=gen_config \
+  -p 'message_template=Hello world\n\nBUG=chromium:1092954\nTEST=None' \
+  -p 'reviewers=["reviewer@google.com"]' \
+  -p 'hashtags=["mondo-update"]' \
+  -p 'replace_strings=[{"file_glob": "*.star", "before": "_CLAMSHELL", "after": "_CONVERTIBLE"}]' \
   chromeos/infra/ClFactory
 
 For more details on the input properties, see cl_factory.proto.
