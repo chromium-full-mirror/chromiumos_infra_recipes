@@ -289,13 +289,13 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
   return phosphorus.common.Config(
       bot=phosphorus.common.BotEnvironment(
           autotest_dir=recipe_config.harness.autotest_dir,
-      ),
-      task=phosphorus.common.TaskEnvironment(
-          synchronous_offload_dir=off_dir,
+      ), task=phosphorus.common.TaskEnvironment(
           results_dir=load_response.results_dir,
+          ssp_base_image_name=recipe_config.harness.ssp_base_image_name,
+          synchronous_offload_dir=off_dir,
           test_results_dir=subdir,
-      )
-  )
+      ))
+
 
 def _upload_to_tko_config(api, phosphorus_config, run_test_response):
   """Construct a phosphorus.Config specific to upload_to_tko step.
