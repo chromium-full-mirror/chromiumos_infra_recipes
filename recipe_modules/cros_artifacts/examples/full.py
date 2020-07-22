@@ -42,7 +42,7 @@ def RunSteps(api, properties):
               artifact_types=[
                   common.ArtifactsByService.Toolchain
                   .UNVERIFIED_CHROME_LLVM_ORDERFILE
-              ], gs_locations=['publish_gs_location', 'pub2/%(gs_path)s'],
+              ], gs_locations=['publish_gs_location', 'pub2/{gs_path}'],
               acl_name='public-read')
       ]))
 

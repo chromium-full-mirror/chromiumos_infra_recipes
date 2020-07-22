@@ -364,7 +364,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             files = files_by_artifact.get(aname, [])
             if files:
               location_dict['artifact_name'] = aname
-              publish_loc = publish_template.format(location_dict)
+              publish_loc = publish_template.format(**location_dict)
               link_name = 'gs publish dir: %s' % aname
               link_value = (
                   'https://console.cloud.google.com/storage/browser/%s' %
