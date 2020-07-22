@@ -84,9 +84,10 @@ class BotScalingApi(recipe_api.RecipeApi):
     if bot_policy.policy_mode != BotPolicy.CONFIGURED:
       actionable = ScalingAction.NO
 
-    scaling_action = ScalingAction(bot_group=bot_policy.bot_group,
-                                   bot_type=bot_policy.bot_type,
-                                   actionable=actionable)
+    scaling_action = ScalingAction(
+        bot_group=bot_policy.bot_group, bot_type=bot_policy.bot_type,
+        actionable=actionable, bot_min=bot_policy.scaling_restriction.bot_floor,
+        bot_max=bot_policy.scaling_restriction.bot_ceiling)
 
     scaling_action.bots_requested = self._calculate_bot_adjustment(
         bot_policy, bots_requested, bots_configured)
