@@ -4008,7 +4008,7 @@ Prints the current version information of repo.
 
 Module for issuing result flow commands
 
-&mdash; **def [ctp](/recipe_modules/result_flow/api.py#75)(self, request):**
+&mdash; **def [pipe\_ctp\_data](/recipe_modules/result_flow/api.py#75)(self, request):**
 
 Pipe CTP data to TestPlanRun table in BQ.
 
@@ -4016,6 +4016,15 @@ Args:
   * request: a test_platform.result_flow.CTPRequest
 Returns:
   JSON proto of test_platform.result_flow.CTPResponse
+
+&mdash; **def [pipe\_test\_runner\_data](/recipe_modules/result_flow/api.py#85)(self, request):**
+
+Pipe test runner data to TestRun/TestCase tables in BQ.
+
+Args:
+  * request: a test_platform.result_flow.TestRunnerRequest
+Returns:
+  JSON proto of test_platform.result_flow.TestRunnerResponse
 
 &mdash; **def [publish](/recipe_modules/result_flow/api.py#62)(self, project_id, topic_id):**
 
@@ -4026,15 +4035,6 @@ Args:
   * topic_id (str): The topic name
 Returns:
   JSON proto of test_platform.result_flow.PublishResponse
-
-&mdash; **def [test\_runner](/recipe_modules/result_flow/api.py#85)(self, request):**
-
-Pipe test runner data to TestRun/TestCase tables in BQ.
-
-Args:
-  * request: a test_platform.result_flow.TestRunnerRequest
-Returns:
-  JSON proto of test_platform.result_flow.TestRunnerResponse
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
 [DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

@@ -72,7 +72,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
                          ctp=PubSubConfig(project=project_id, topic=topic_id))
     return self._run('publish', req, PublishRequest, PublishResponse)
 
-  def ctp(self, request):
+  def pipe_ctp_data(self, request):
     """Pipe CTP data to TestPlanRun table in BQ.
 
     Args:
@@ -80,9 +80,9 @@ class ResultFlowCommand(recipe_api.RecipeApi):
     Returns:
       JSON proto of test_platform.result_flow.CTPResponse
     """
-    return self._run('ctp', request, CTPRequest, CTPResponse)
+    return self._run('pipe-ctp-data', request, CTPRequest, CTPResponse)
 
-  def test_runner(self, request):
+  def pipe_test_runner_data(self, request):
     """Pipe test runner data to TestRun/TestCase tables in BQ.
 
     Args:
@@ -90,7 +90,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
     Returns:
       JSON proto of test_platform.result_flow.TestRunnerResponse
     """
-    return self._run('test_runner', request, TestRunnerRequest,
+    return self._run('pipe-test-runner-data', request, TestRunnerRequest,
                      TestRunnerResponse)
 
   def _ensure_result_flow(self):

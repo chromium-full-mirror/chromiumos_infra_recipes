@@ -22,7 +22,7 @@ def run_test_runner_flow(api, config, deadline):
         test_case=config.test_case)
     if deadline:
       req.deadline.MergeFrom(deadline)
-    return api.result_flow.test_runner(req).state
+    return api.result_flow.pipe_test_runner_data(req).state
 
 
 def run_test_ctp_flow(api, config, deadline):
@@ -31,7 +31,7 @@ def run_test_ctp_flow(api, config, deadline):
                                      test_plan_run=config.test_plan_run)
     if deadline:
       req.deadline.MergeFrom(deadline)
-    return api.result_flow.ctp(req).state
+    return api.result_flow.pipe_ctp_data(req).state
 
 
 def _verify_flow(config, flow):
@@ -66,13 +66,14 @@ def GenTests(api):
 
   def _run_ctp_flow_with_state(state):
     return (api.step_data(
-        'process CTP builds.call `result_flow`.ctp', stdout=api.raw_io.output(
+        'process CTP builds.call `result_flow`.pipe-ctp-data',
+        stdout=api.raw_io.output(
             json_format.MessageToJson(
                 result_flow.ctp.CTPResponse(state=state)))))
 
   def _run_test_runner_flow_with_state(state):
     return (api.step_data(
-        'process test_runner builds.call `result_flow`.test_runner',
+        'process test_runner builds.call `result_flow`.pipe-test-runner-data',
         stdout=api.raw_io.output(
             json_format.MessageToJson(
                 result_flow.test_runner.TestRunnerResponse(state=state)))))

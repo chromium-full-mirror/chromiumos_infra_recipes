@@ -56,13 +56,13 @@
   {
     "cmd": [
       "[START_DIR]/cipd/result_flow/result_flow",
-      "ctp",
+      "pipe-ctp-data",
       "-input_json",
       "/dev/stdin",
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "call `result_flow` (2).ctp",
+    "name": "call `result_flow` (2).pipe-ctp-data",
     "stdin": "{}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -88,13 +88,13 @@
   {
     "cmd": [
       "[START_DIR]/cipd/result_flow/result_flow",
-      "test_runner",
+      "pipe-test-runner-data",
       "-input_json",
       "/dev/stdin",
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "call `result_flow` (4).test_runner",
+    "name": "call `result_flow` (4).pipe-test-runner-data",
     "stdin": "{}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

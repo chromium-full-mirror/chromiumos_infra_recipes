@@ -19,14 +19,14 @@ from PB.test_platform.result_flow.test_runner import TestRunnerRequest
 
 def RunSteps(api):
   with api.assertions.assertRaises(ValueError):
-    api.result_flow.ctp(None)
+    api.result_flow.pipe_ctp_data(None)
   ctp_req = CTPRequest()
-  api.result_flow.ctp(ctp_req)
+  api.result_flow.pipe_ctp_data(ctp_req)
 
   with api.assertions.assertRaises(ValueError):
-    api.result_flow.test_runner(None)
+    api.result_flow.pipe_test_runner_data(None)
   test_runner_req = TestRunnerRequest()
-  api.result_flow.test_runner(test_runner_req)
+  api.result_flow.pipe_test_runner_data(test_runner_req)
 
   with api.assertions.assertRaises(TypeError):
     api.result_flow.publish()
