@@ -7,6 +7,11 @@
         "coresPerBot": 32,
         "memoryGb": 64
       },
+      "scalingRestriction": {
+        "stepSize": 5,
+        "botCeiling": 15,
+        "botFloor": 5
+			},
       "regionRestrictions": [
         {
           "region": "us-central1-b",

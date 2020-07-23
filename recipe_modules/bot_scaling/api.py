@@ -18,9 +18,10 @@ import itertools
 TASK_STATES = ['RUNNING', 'PENDING']
 EXECUTION_HOUR_PERCENTILE = .16
 
-BotStats = namedtuple(
-    'BotStats',
-    ['bot_group', 'busy', 'count', 'dead', 'maintenance', 'quarantined'])
+BotStats = namedtuple('BotStats', [
+    'bot_group', 'busy', 'count', 'dead', 'maintenance', 'quarantined', 'min',
+    'max'
+])
 TaskStats = namedtuple('TaskStats', ['bot_group', 'task_state', 'count'])
 SwarmingStats = namedtuple('SwarmingStats', ['bot_stats', 'task_stats'])
 
@@ -181,7 +182,9 @@ class BotScalingApi(recipe_api.RecipeApi):
         if not bot_stats_hold:
           bot_stats_hold = self._bot_swarming_stats(
               policy.bot_group,
-              self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim))
+              self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim),
+              policy.scaling_restriction.bot_floor,
+              policy.scaling_restriction.bot_ceiling)
         for state in TASK_STATES:
           task_stats_hold = self._task_swarming_stats(
               policy.bot_group, state, task_stats_hold,
@@ -347,21 +350,23 @@ class BotScalingApi(recipe_api.RecipeApi):
     """
     return {c.prefix: c for c in configs.vms}
 
-  def _bot_swarming_stats(self, bot_group, cli_stats):
+  def _bot_swarming_stats(self, bot_group, cli_stats, min, max):
     """Helper method that formats the bot stats into a named tuple.
 
     Args:
       bot_group (str): name of bot group associated with stats.
       cli_stats (dict): swarming CLI dict of bot stats.
+      min (int): bot floor from config
+      max (int): bot ceiling from config
 
     Returns:
       BotStats: Swarming bot stats named tuple.
     """
     return BotStats(bot_group, int(cli_stats.get('busy', 0)),
-                    int(cli_stats.get('count', 0)), int(
-                        cli_stats.get('dead', 0)),
+                    int(cli_stats.get('count', 0)),
+                    int(cli_stats.get('dead', 0)),
                     int(cli_stats.get('maintenance', 0)),
-                    int(cli_stats.get('quarantined', 0)))
+                    int(cli_stats.get('quarantined', 0)), min, max)
 
   def _task_swarming_stats(self, bot_group, state, task_stats, cli_stats):
     """Helper method that formats the bot stats into a named tuple.
