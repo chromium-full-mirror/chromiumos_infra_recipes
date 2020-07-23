@@ -4043,7 +4043,7 @@ Returns:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#111)(self, test, unit, timeout, name=None):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#112)(self, test, unit, timeout, name=None):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -4072,7 +4072,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#231)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#232)(self, tasks, timeout):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -4083,7 +4083,7 @@ Args:
 Returns:
   list[SkylabResult]: The results for each suite.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#185)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#186)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
