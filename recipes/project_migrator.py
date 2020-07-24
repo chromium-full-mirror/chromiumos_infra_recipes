@@ -133,23 +133,26 @@ def RunSteps(api, properties):
     api.path.mock_add_paths(SRC_CONFIG)
 
     # Merge hwid and yaml files with any generated config that we have
-    cmd = [cros_config_path.join(JOIN_SCRIPT_PATH), '--output %s' % DST_CONFIG]
+    cmd = [cros_config_path.join(JOIN_SCRIPT_PATH), '--output', DST_CONFIG]
     if api.path.exists(SRC_CONFIG):
-      cmd += ['--config-bundle %s' % SRC_CONFIG]
+      cmd += ['--config-bundle', SRC_CONFIG]
     if properties.HasField('public_yaml'):
       cmd += [
-          '--public-model %s' %
+          '--public-model',
           public_repo_path.join(properties.public_yaml.path)
       ]
     if properties.HasField('private_yaml'):
       cmd += [
-          '--private-model %s' %
+          '--private-model',
           private_repo_path.join(properties.private_yaml.path)
       ]
     if properties.hwid_key:
-      cmd += ['--hwid %s/v3/%s' % (hwid_repo_path, properties.hwid_key.upper())]
+      cmd += [
+          '--hwid',
+          '%s/v3/%s' % (hwid_repo_path, properties.hwid_key.upper())
+      ]
     if properties.project_name:
-      cmd += ['--project-name %s' % properties.project_name]
+      cmd += ['--project-name', properties.project_name]
 
     # Generate joined output
     api.step("Generate joined configuration", ["vpython"] + cmd)

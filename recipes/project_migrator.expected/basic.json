@@ -199,12 +199,18 @@
     "cmd": [
       "vpython",
       "[START_DIR]/config/payload_utils/join_config_payloads.py",
-      "--output generated/joined.jsonproto",
-      "--config-bundle generated/config.jsonproto",
-      "--public-model [START_DIR]/public/some/model.yaml",
-      "--private-model [START_DIR]/private/some/model.yaml",
-      "--hwid [START_DIR]/hwid/v3/SOME_KEY",
-      "--project-name test_project"
+      "--output",
+      "generated/joined.jsonproto",
+      "--config-bundle",
+      "generated/config.jsonproto",
+      "--public-model",
+      "[START_DIR]/public/some/model.yaml",
+      "--private-model",
+      "[START_DIR]/private/some/model.yaml",
+      "--hwid",
+      "[START_DIR]/hwid/v3/SOME_KEY",
+      "--project-name",
+      "test_project"
     ],
     "cwd": "[START_DIR]/dest",
     "name": "Generate joined configuration"
