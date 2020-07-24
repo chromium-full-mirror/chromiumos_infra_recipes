@@ -1,0 +1,34 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.repo.examples;
+
+message ProjectInfo {
+  // Project name.
+  string name = 1;
+
+  // Project path.
+  string path = 2;
+
+  // Project remote.
+  string remote = 3;
+
+  // Project branch.
+  string branch = 4;
+}
+
+message ProjectInfosProperties {
+  // projects (List[str]): Project names or paths to return info for. Defaults
+  // to all projects.
+  repeated string projects = 1;
+
+  // regexes (List[str]): list of regexes for matching projects. The matching is
+  // the same as in `repo forall --regex regexes...`.
+  repeated string regexes = 2;
+
+  // The expected results.
+  repeated ProjectInfo expected_infos = 3;
+}

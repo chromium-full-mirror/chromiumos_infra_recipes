@@ -1,0 +1,106 @@
+[
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[START_DIR]/repo/.repo/tmp_manifest"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "infra_step": true,
+    "name": "write manifest",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@tmp_manifest@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "",
+      "--groups",
+      "all",
+      "--manifest-name",
+      "../tmp_manifest"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "infra_step": true,
+    "name": "repo init",
+    "timeout": 900
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "infra_step": true,
+    "name": "clear repo locks"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "infra_step": true,
+    "name": "clear git locks"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "infra_step": true,
+    "name": "repo sync"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "with-projects",
+      "project"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "infra_step": true,
+    "name": "repo start"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "abandon",
+      "with-projects",
+      "project"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "infra_step": true,
+    "name": "repo abandon"
+  },
+  {
+    "name": "$result"
+  }
+]

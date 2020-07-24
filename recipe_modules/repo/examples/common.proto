@@ -1,0 +1,98 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.repo.examples;
+
+// See api.repo.LocalManifest.
+message LocalManifest {
+  // The repo.
+  string repo = 1;
+
+  // The path.
+  string path = 2;
+}
+
+// See api.repo.ManifestDiff.
+message ManifestDiff {
+  // The project name.
+  string name = 1;
+
+  // The project path.
+  string path = 2;
+
+  // The old revision.
+  string from_rev = 3;
+
+  // The new revision.
+  string to_rev = 4;
+}
+
+// Args to repo.init()
+message InitOpts {
+  // Required: only manifest_url.
+  // manifest_url (str): URL of the manifest repository to clone.
+  string manifest_url = 1;
+
+  // manifest_branch (str): Manifest repository branch to checkout.
+  string manifest_branch = 2;
+
+  // reference (str): Location of a mirror directory to bootstrap sync.
+  string reference = 3;
+
+  // groups (list): Groups to checkout (see `repo init --groups`).
+  repeated string groups = 4;
+
+  // depth (int): Create a shallow clone of the given depth.
+  int32 depth = 5;
+
+  // repo_url (str): URL of the repo repository.
+  string repo_url = 6;
+
+  // repo_branch (str): Repo binary branch to use.
+  string repo_branch = 7;
+
+  // local_manifest (LocalManifest): Local manifest to add.
+  // See https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.md#local-manifests.
+  LocalManifest local_manifest = 8;
+
+  // manifest_name (str): Name of manifest file to use.
+  string manifest_name = 9;
+
+  // verbose (bool): Whether to produce verbose output.
+  bool verbose = 11;
+}
+
+message SyncOpts {
+  // force_sync (bool): Overwrite existing git directories if needed.
+  bool force_sync = 1;
+
+  // detach (bool): Detach projects back to manifest revision.
+  bool detach = 2;
+
+  // current_branch (bool): Fetch only current branch.
+  bool current_branch = 3;
+
+  // jobs (int): Projects to fetch simultaneously.
+  int32 jobs = 4;
+
+  // manifest_name (str): Temporary manifest to use for this sync.
+  string manifest_name = 5;
+
+  // no_tags (bool): Don't fetch tags.
+  bool no_tags = 6;
+
+  // optimized_fetch (bool): Only fetch projects if revision doesn't exist.
+  bool optimized_fetch = 7;
+
+  // cache_dir (Path): Use git-cache with this cache directory.
+  string cache_dir = 8;
+
+  // retry_fetches (int): The number of times to retry retriable fetches.
+  int32 retry_fetches = 9;
+
+  // verbose (bool): Whether to produce verbose output.
+  bool verbose = 11;
+}

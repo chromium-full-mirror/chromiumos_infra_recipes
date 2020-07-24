@@ -1,0 +1,37 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.repo.examples;
+import "recipe_modules/chromeos/repo/examples/common.proto";
+
+message AnnealingProperties {
+  // The args for repo init.
+  InitOpts init_opts = 1;
+
+  // The args for repo sync.
+  SyncOpts sync_opts = 2;
+
+  // The manifest_ref.  This is required for annealing tests, and
+  // empty for builder tests.
+  string manifest_ref = 3;
+
+  // The name of the manifest file, if any.
+  string manifest_file = 4;
+
+  // The data to use as the final manifest data, if any.
+  string manifest_data = 5;
+
+  // The prior manifest data, if any.
+  string from_manifest_data = 6;
+
+  // The expected manifest diffs, if any.
+  repeated ManifestDiff expected_manifest_diffs = 7;
+
+  // projects (List[str]): Projects of concern or None if all projects are of
+  // concern. Used to limit work where possible such as only clearing git
+  // locks in these projects.
+  repeated string projects = 8;
+}

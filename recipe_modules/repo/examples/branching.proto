@@ -1,0 +1,38 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.repo.examples;
+import "recipe_modules/chromeos/repo/examples/common.proto";
+
+message BranchProjects {
+  // The branch name for the call.
+  string branch = 1;
+
+  // Whether to use all projects.
+  // If True, the call has projects=None.
+  // If False, the call has projects=projects.
+  bool all_projects = 2;
+
+  // The project list for the call.
+  repeated string projects = 3;
+}
+
+message BranchingProperties {
+  // The manifest url.
+  string manifest_url = 1;
+
+  // The content of the manifest.
+  string manifest_data = 2;
+
+  // Args for sync.
+  SyncOpts sync_opts = 3;
+
+  // Args for start.
+  BranchProjects start_args = 4;
+
+  // Args for abandon.
+  BranchProjects abandon_args = 5;
+}

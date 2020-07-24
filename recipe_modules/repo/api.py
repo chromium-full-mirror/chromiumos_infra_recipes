@@ -33,6 +33,7 @@ class RepoApi(recipe_api.RecipeApi):
   """A module for interacting with the repo tool."""
 
   ManifestDiff = ManifestDiff
+  ProjectInfo = ProjectInfo
   LocalManifest = LocalManifest
 
   @property
@@ -181,8 +182,8 @@ class RepoApi(recipe_api.RecipeApi):
       * cache_dir (Path): Use git-cache with this cache directory.
       * retry_fetches (int): The number of times to retry retriable fetches.
       * projects (List[str]): Projects to limit the sync to, or None to sync
+        all projects.
       * verbose (bool): Whether to produce verbose output.
-      all projects.
     """
     assert _kwonly is (), 'sync accepts no positional args'
     cmd = ['sync']
@@ -258,7 +259,7 @@ class RepoApi(recipe_api.RecipeApi):
       cmd.append('--all')
     self._step(cmd)
 
-  def project_infos(self, projects=[], regexes=[]):
+  def project_infos(self, projects=None, regexes=None):
     """Uses 'repo forall' to gather project information.
 
     Note that if both projects and regexes are specified the resultant
@@ -274,6 +275,8 @@ class RepoApi(recipe_api.RecipeApi):
     Returns:
       List[ProjectInfo]: Requested project infos.
     """
+    projects = projects or []
+    regexes = regexes or []
 
     def step_test_data():
       data = '\n'.join('%s|src/%s|cros|refs/heads/master|refs/heads/master' %
@@ -323,7 +326,7 @@ class RepoApi(recipe_api.RecipeApi):
     assert len(set(project_infos)) == 1, 'expected one project'
     return project_infos[0]
 
-  def manifest_snapshot(self, manifest_file=None):
+  def manifest_snapshot(self, manifest_file=None, test_data=None):
     """Uses repo to create a manifest snapshot and returns it as a string.
 
     By default uses the internal .repo manifest, but can optionally take
@@ -331,12 +334,14 @@ class RepoApi(recipe_api.RecipeApi):
 
     Args:
       manifest_file (Path): If given, path to alternate manifest file to use.
+      test_data (str): Test data for the step: the contents of the manifest, or
+          None for the default.
 
     Returns:
       str: The manifest XML as a string.
     """
     step_test_data = lambda: self.m.raw_io.test_api.stream_output(
-        '<manifest></manifest>')
+        test_data or '<manifest></manifest>')
 
     cmd = ['manifest', '-r']
     if manifest_file:
@@ -348,7 +353,8 @@ class RepoApi(recipe_api.RecipeApi):
     return step_data.stdout.strip()
 
   def diff_remote_and_local_manifests(self, from_manifest_url,
-                                      from_manifest_ref, to_manifest_str):
+                                      from_manifest_ref, to_manifest_str,
+                                      test_from_data=None):
     """Diffs the remote manifest against the local manifest string.
 
     Diffs the 'snapshot.xml' at the given `from_manifest_url` at the ref
@@ -358,6 +364,8 @@ class RepoApi(recipe_api.RecipeApi):
       from_manifest_url (str): The manifest repo url to checkout.
       from_manifest_ref (str): The manifest ref to checkout.
       to_manifest_str (str): The string XML for the to manifest.
+      test_from_data (str): Test data: The from_manifest contents, or None for
+          the default.
 
     Returns:
       List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
@@ -365,8 +373,9 @@ class RepoApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('diff remote and local manifest') as presentation:
       self.m.git.fetch_ref(from_manifest_url, from_manifest_ref)
-      from_xml = self.m.git.show_file('FETCH_HEAD', 'snapshot.xml',
-                                      test_contents=MANIFEST_MOCK)
+      from_xml = self.m.git.show_file(
+          'FETCH_HEAD', 'snapshot.xml', test_contents=test_from_data or
+          MANIFEST_MOCK)
 
       if from_xml is None:
         presentation.step_text = 'no remote manifest found'
