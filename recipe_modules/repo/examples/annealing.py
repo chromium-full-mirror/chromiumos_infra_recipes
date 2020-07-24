@@ -92,6 +92,9 @@ def GenTests(api):
       <project name="NAME" path="PATH" revision="FROM_REV"/>
       <project name="NO_CHANGE" revision="NO_CHANGE_REV"/>
       <project name="DELETED" revision="REV"/>
+      <project name="IGNORE" revision="FROM_REV">
+        <annotation name="snapshot-mode" value="ignore-diff"/>
+      </project>
     </manifest>
   """
 
@@ -99,6 +102,9 @@ def GenTests(api):
     <manifest>
       <project name="NAME" path="PATH" revision="TO_REV"/>
       <project name="NO_CHANGE" revision="NO_CHANGE_REV"/>
+      <project name="IGNORE" revision="TO_REV">
+        <annotation name="snapshot-mode" value="ignore-diff"/>
+      </project>
     </manifest>
   """
   yield api.test(

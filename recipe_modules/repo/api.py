@@ -408,9 +408,21 @@ class RepoApi(recipe_api.RecipeApi):
       changed project (excludes added/removed projects).
     """
 
+    def snapshot_mode(project):
+      for annotation in project.iterfind('annotation'):
+        if annotation.get('name') == 'snapshot-mode':
+          return annotation.get('value')
+      return None
+
     def project_paths(xml_data):
       xml = ElementTree.fromstring(xml_data)
-      attrs = [proj.attrib for proj in xml.iterfind('project')]
+      # Some projects may be ignored by annealing.  Specifically, the checked
+      # out copy of the snapshot branch of the manifest.
+      attrs = [
+          proj.attrib
+          for proj in xml.iterfind('project')
+          if snapshot_mode(proj) != 'ignore-diff'
+      ]
       # Make sure `path` is set, use `name` if `path` is missing
       for attr in attrs:
         attr['path'] = attr.get('path', attr.get('name'))

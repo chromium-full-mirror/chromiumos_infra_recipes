@@ -219,6 +219,9 @@
       "@@@STEP_LOG_LINE@raw_io.output@    <manifest>@@@",
       "@@@STEP_LOG_LINE@raw_io.output@      <project name=\"NAME\" path=\"PATH\" revision=\"TO_REV\"/>@@@",
       "@@@STEP_LOG_LINE@raw_io.output@      <project name=\"NO_CHANGE\" revision=\"NO_CHANGE_REV\"/>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@      <project name=\"IGNORE\" revision=\"TO_REV\">@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@        <annotation name=\"snapshot-mode\" value=\"ignore-diff\"/>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@      </project>@@@",
       "@@@STEP_LOG_LINE@raw_io.output@    </manifest>@@@",
       "@@@STEP_LOG_LINE@raw_io.output@  @@@",
       "@@@STEP_LOG_END@raw_io.output@@@"

@@ -391,6 +391,31 @@ def GenTests(api):
   )
 
   yield api.test(
+      'only-ignored-gerrit-change',
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest', stdout=api.raw_io.output(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '<project name="SNAP" revision="TO_REV"><annotation '
+              'name="snapshot-mode" value="ignore-diff"/></project>'
+              '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="TO_REV" />'
+              '<project name="SNAP" revision="FROM_REV"><annotation '
+              'name="snapshot-mode" value="ignore-diff"/></project>'
+              '</manifest>')),
+      api.post_check(post_process.DoesNotRun, 'record new gerrit changes'),
+      api.post_check(post_process.DoesNotRun, 'publish internal snapshot'),
+  )
+
+  yield api.test(
       'disable-commits-in-commit-message',
       api.properties(
           AnnealingProperties(manifest_ref='snapshot',
