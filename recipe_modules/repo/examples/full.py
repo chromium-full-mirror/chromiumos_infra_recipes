@@ -51,8 +51,8 @@ def RunSteps(api):
 
   api.assertions.assertEqual(api.repo.manifest_snapshot(),
                              "<manifest></manifest>")
-  api.assertions.assertEqual(api.repo.manifest_snapshot("some_manifest_file"),
-                             "<manifest></manifest>")
+  api.assertions.assertEqual(
+      api.repo.manifest_snapshot("some_manifest_file"), "<manifest></manifest>")
 
   snapshot_a = api.path['start_dir'].join('snapshot_a.xml')
   snapshot_b = api.path['start_dir'].join('snapshot_b.xml')
@@ -97,8 +97,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  forall_test_data = '\n'.join('%s|src/%s|cros|refs/heads/master|' % (p, p)
-                               for p in ['a', 'b', 'c'])
+  forall_test_data = '\n'.join(
+      '%s|src/%s|cros|refs/heads/master|' % (p, p) for p in ['a', 'b', 'c'])
 
   yield api.test('setup_repo')
 

@@ -3835,11 +3835,11 @@ API for working with the 'repo' VCS tool.
 
 See: https://chromium.googlesource.com/external/repo/
 
-#### **class [RepoApi](/recipe_modules/repo/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RepoApi](/recipe_modules/repo/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with the repo tool.
 
-&mdash; **def [abandon](/recipe_modules/repo/api.py#246)(self, branch, projects=None):**
+&mdash; **def [abandon](/recipe_modules/repo/api.py#247)(self, branch, projects=None):**
 
 Abandon the branch in the given projects, or all projects if not set.
 
@@ -3847,7 +3847,7 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#381)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#384)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -3863,7 +3863,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#424)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#427)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -3871,7 +3871,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#347)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#350)(self, from_manifest_url, from_manifest_ref, to_manifest_str):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -3887,7 +3887,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#463)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#466)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -3900,7 +3900,7 @@ Args:
   are of concern. Used to perform optimizations where possible to only
   operate on the given projects.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#104)(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifest=None, manifest_name=None, projects=None, verbose=False):**
+&mdash; **def [init](/recipe_modules/repo/api.py#105)(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifest=None, manifest_name=None, projects=None, verbose=False):**
 
 Executes 'repo init' with the given arguments.
 
@@ -3920,7 +3920,7 @@ Args:
   in these projects.
   * verbose (bool): Whether to produce verbose output.
 
-&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#322)(self, manifest_file=None):**
+&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#326)(self, manifest_file=None):**
 
 Uses repo to create a manifest snapshot and returns it as a string.
 
@@ -3933,7 +3933,7 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#309)(self, project):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#313)(self, project):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -3943,7 +3943,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#260)(self, projects=[], regexes=[]):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#261)(self, projects=[], regexes=[]):**
 
 Uses 'repo forall' to gather project information.
 
@@ -3960,9 +3960,9 @@ Args:
 Returns:
   List[ProjectInfo]: Requested project infos.
 
-&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#37)(self):**
+&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#38)(self):**
 
-&mdash; **def [start](/recipe_modules/repo/api.py#232)(self, branch, projects=None):**
+&mdash; **def [start](/recipe_modules/repo/api.py#233)(self, branch, projects=None):**
 
 Start a new branch in the given projects, or all projects if not set.
 
@@ -3970,7 +3970,7 @@ Args:
   branch (str): The new branch name.
   projects (list[str]): The projects for which to start a branch.
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#166)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=False):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#167)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=False):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -3988,7 +3988,7 @@ Args:
   * verbose (bool): Whether to produce verbose output.
   all projects.
 
-&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#212)(self, manifest_url, manifest_data, \*\*kwargs):**
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#213)(self, manifest_url, manifest_data, \*\*kwargs):**
 
 Sync to the given manifest file data.
 
@@ -3997,7 +3997,7 @@ Args:
   * manifest_data (str): Manifest XML data to use for the sync.
   * kwargs: Keyword arguments to pass to 'repo.sync'.
 
-&mdash; **def [version](/recipe_modules/repo/api.py#100)(self):**
+&mdash; **def [version](/recipe_modules/repo/api.py#101)(self):**
 
 Prints the current version information of repo.
 ### *recipe_modules* / [result\_flow](/recipe_modules/result_flow)
@@ -4652,9 +4652,9 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#54)(api, properties):**
+&mdash; **def [RunSteps](/recipes/annealing.py#53)(api, properties):**
 
-&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#233)(api, manifest_diffs):**
+&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#225)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 
@@ -4665,11 +4665,11 @@ Args:
 Returns:
   list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#267)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#259)(api, repo_url, commit_id):**
 
 Create a GitilesCommit for the given |repo_url| and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#277)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#270)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -4692,7 +4692,7 @@ Args:
 Returns:
   A string containing the commit message.
 
-&mdash; **def [publish\_snapshot](/recipes/annealing.py#192)(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml, gerrit_commits=None, disable_gerrit=False, footers=[]):**
+&mdash; **def [publish\_snapshot](/recipes/annealing.py#183)(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml, gerrit_commits=None, disable_gerrit=False, footers=[]):**
 
 Generate snapshot.xml file and commit it to a ref.
 

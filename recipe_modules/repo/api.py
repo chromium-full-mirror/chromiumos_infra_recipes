@@ -21,7 +21,8 @@ MANIFEST_MOCK = """
     </manifest>
   """
 
-ManifestDiff = namedtuple('ManifestDiff', ['name', 'path', 'from_rev', 'to_rev'])
+ManifestDiff = namedtuple('ManifestDiff',
+                          ['name', 'path', 'from_rev', 'to_rev'])
 
 ProjectInfo = namedtuple('ProjectInfo', ['name', 'path', 'remote', 'branch'])
 
@@ -94,7 +95,7 @@ class RepoApi(recipe_api.RecipeApi):
 
     try:
       self._step(git_cmd + ['--ignore-missing'] + base_args, 'clear git locks')
-    except recipe_api.StepFailure: # pragma: nocover
+    except recipe_api.StepFailure:  # pragma: nocover
       self._step(git_cmd + base_args, 'retry clear git locks')
 
   def version(self):
@@ -275,14 +276,17 @@ class RepoApi(recipe_api.RecipeApi):
     """
 
     def step_test_data():
-      data = '\n'.join('%s|src/%s|cros|refs/heads/master|refs/heads/master' % (p, p)
-                       for p in projects or ['a', 'b', 'c'])
+      data = '\n'.join('%s|src/%s|cros|refs/heads/master|refs/heads/master' %
+                       (p, p) for p in projects or ['a', 'b', 'c'])
       return self.m.raw_io.test_api.stream_output(data)
 
     cmd = ['forall'] + projects
     if regexes:
       cmd += ['--regex'] + regexes
-    cmd += ['-c', 'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV\|$REPO_UPSTREAM']
+    cmd += [
+        '-c',
+        'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV\|$REPO_UPSTREAM'
+    ]
     step_data = self._step(cmd,
                            stdout=self.m.raw_io.output(add_output_log=True),
                            step_test_data=step_test_data)
@@ -331,17 +335,16 @@ class RepoApi(recipe_api.RecipeApi):
     Returns:
       str: The manifest XML as a string.
     """
-    step_test_data = lambda: self.m.raw_io.test_api.stream_output('<manifest></manifest>')
+    step_test_data = lambda: self.m.raw_io.test_api.stream_output(
+        '<manifest></manifest>')
 
     cmd = ['manifest', '-r']
     if manifest_file:
       cmd += ['-m', manifest_file]
 
-    step_data = self._step(
-        cmd,
-        stdout=self.m.raw_io.output(add_output_log=True),
-        step_test_data=step_test_data
-    )
+    step_data = self._step(cmd,
+                           stdout=self.m.raw_io.output(add_output_log=True),
+                           step_test_data=step_test_data)
     return step_data.stdout.strip()
 
   def diff_remote_and_local_manifests(self, from_manifest_url,
@@ -496,7 +499,7 @@ class RepoApi(recipe_api.RecipeApi):
           except recipe_api.StepFailure:
             if retries >= 1:
               raise
-            self.m.step('sleep 10 min, try repo again', ['sleep' ,'600'])
+            self.m.step('sleep 10 min, try repo again', ['sleep', '600'])
 
       # Sanity check since `repo init` will happily reuse a repository in the
       # cwd's ancestor directories.

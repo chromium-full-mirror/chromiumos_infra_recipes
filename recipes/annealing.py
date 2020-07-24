@@ -47,7 +47,6 @@ DEPS = [
     'repo',
 ]
 
-
 PROPERTIES = AnnealingProperties
 
 
@@ -93,26 +92,21 @@ def RunSteps(api, properties):
         external_snapshot_ref = None
         # Generate the manifest from public repo
         snapshot_xml_extern = api.repo.manifest_snapshot(
-            api.cros_source.workspace_path.join(
-                'manifest/full.xml'))
+            api.cros_source.workspace_path.join('manifest/full.xml'))
 
         # And publish
         with api.step.nest('publish external snapshot'):
           external_snapshot_commit = publish_snapshot(
-              api,
-              api.cros_source.EXTERNAL_MANIFEST_URL,
-              manifest_ref,
-              api.cros_source.workspace_path.join(
-                  'manifest/snapshot.xml'
-              ),
-              snapshot_xml_extern, disable_gerrit=True
-          )
+              api, api.cros_source.EXTERNAL_MANIFEST_URL, manifest_ref,
+              api.cros_source.workspace_path.join('manifest/snapshot.xml'),
+              snapshot_xml_extern, disable_gerrit=True)
           external_snapshot_ref = external_snapshot_commit.id
 
       # snapshot internal manifest
       snapshot_xml_intern = api.repo.manifest_snapshot()
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
-          api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref, snapshot_xml_intern)
+          api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
+          snapshot_xml_intern)
 
       # TODO(athilenius): It would be nice to set the 'Info' column here.
       gerrit_commits = []
@@ -131,14 +125,11 @@ def RunSteps(api, properties):
 
       with api.step.nest('publish internal snapshot'):
         internal_snapshot_commit = publish_snapshot(
-            api,
-            api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
+            api, api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
             api.cros_source.workspace_path.join(
-                'manifest-internal/snapshot.xml'),
-            snapshot_xml_intern, gerrit_commits,
-            properties.disable_gerrit_commits_in_commit_message,
-            footers=[("Cr-External-Snapshot", external_snapshot_ref)]
-        )
+                'manifest-internal/snapshot.xml'), snapshot_xml_intern,
+            gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
+            footers=[("Cr-External-Snapshot", external_snapshot_ref)])
 
         # Use new snapshot commit as the build output
         api.buildbucket.set_output_gitiles_commit(internal_snapshot_commit)
@@ -218,17 +209,18 @@ def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
 
   with api.git.head_context():
     api.git.checkout('FETCH_HEAD')
-    commit_message = make_message(
-        api, snapshot_ref, gerrit_commits, disable_gerrit)
+    commit_message = make_message(api, snapshot_ref, gerrit_commits,
+                                  disable_gerrit)
 
     if footers:
       commit_message += "\n"
-      for key,val in footers:
-        commit_message += "%s: %s\n" % (key,val)
+      for key, val in footers:
+        commit_message += "%s: %s\n" % (key, val)
 
     api.git_txn.update_ref_write_file(repo_url, snapshot_ref, commit_message,
                                       snapshot_file, snapshot_xml)
     return make_gitiles_commit(api, repo_url, api.git.head_commit())
+
 
 def get_gerrit_changes(api, manifest_diffs):
   """Find all Gerrit changes that landed since the last snapshot.
@@ -248,8 +240,8 @@ def get_gerrit_changes(api, manifest_diffs):
           cwd=api.cros_source.workspace_path.join(diff.path)):
         commits = api.git.log(diff.from_rev, diff.to_rev, limit=30)
         for commit in commits:
-          reviewed_on_footers = api.git_footers.from_message(commit.message,
-                                                             key='Reviewed-on')
+          reviewed_on_footers = api.git_footers.from_message(
+              commit.message, key='Reviewed-on')
           if reviewed_on_footers:
             gerrit_change_url = reviewed_on_footers[0]
             gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
@@ -273,6 +265,7 @@ def make_gitiles_commit(api, repo_url, commit_id):
       ref='refs/heads/master',
       id=commit_id,
   )
+
 
 def make_message(api, manifest_ref, gerrit_commits, disable_gerrit_commits):
   """Creates and returns the commit message with a Cr-Commit-Position.
@@ -310,8 +303,8 @@ def make_message(api, manifest_ref, gerrit_commits, disable_gerrit_commits):
     else:
       lines.append('********* No New Gerrit Changes *********')
 
-    lines.append('Cr-Commit-Position: refs/heads/%s@{#%d}' % (manifest_ref,
-                                                              position))
+    lines.append('Cr-Commit-Position: refs/heads/%s@{#%d}' %
+                 (manifest_ref, position))
 
     return '\n\n'.join(lines)
 
@@ -352,15 +345,15 @@ def GenTests(api):
       'no-gerrit-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'repo manifest', stdout=api.raw_io.output(
-              '<manifest visibility="external">'
-              '<project name="NAME" revision="TO_REV"/>'
-              '</manifest>')),
+          'repo manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
       api.step_data(
-          'repo manifest (2)', stdout=api.raw_io.output(
-              '<manifest visibility="internal">'
-              '<project name="NAME" revision="TO_REV"/>'
-              '</manifest>')),
+          'repo manifest (2)',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
@@ -371,19 +364,19 @@ def GenTests(api):
 
   yield api.test(
       'disable-commits-in-commit-message',
-      api.properties(AnnealingProperties(
-          manifest_ref='snapshot',
-          disable_gerrit_commits_in_commit_message=True)),
+      api.properties(
+          AnnealingProperties(manifest_ref='snapshot',
+                              disable_gerrit_commits_in_commit_message=True)),
       api.step_data(
-          'repo manifest', stdout=api.raw_io.output(
-              '<manifest visibility="external">'
-              '<project name="NAME" revision="TO_REV"/>'
-              '</manifest>')),
+          'repo manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
       api.step_data(
-          'repo manifest (2)', stdout=api.raw_io.output(
-              '<manifest visibility="internal">'
-              '<project name="NAME" revision="TO_REV"/>'
-              '</manifest>')),
+          'repo manifest (2)',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
@@ -394,7 +387,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'missing required properties',
+      'missing-required-properties',
       api.properties(AnnealingProperties()),
       api.expect_exception('ValueError'),
   )
