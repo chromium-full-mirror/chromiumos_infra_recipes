@@ -161,6 +161,7 @@
   * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
+  * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
   * [cros_relevance:examples/pointless](#recipes-cros_relevance_examples_pointless)
   * [cros_relevance:examples/toolchain](#recipes-cros_relevance_examples_toolchain)
@@ -5213,9 +5214,14 @@ For more details on the input properties, see cl_factory.proto.
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/utils.py#14)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#23)(api, properties):**
+### *recipes* / [cros\_prebuilts:tests/upload\_cq](/recipe_modules/cros_prebuilts/tests/upload_cq.py)
+
+[DEPS](/recipe_modules/cros_prebuilts/tests/upload_cq.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#18)(api):**
 ### *recipes* / [cros\_relevance:examples/build\_plan](/recipe_modules/cros_relevance/examples/build_plan.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
