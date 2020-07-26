@@ -9,9 +9,10 @@ import os
 
 from recipe_engine import recipe_api
 
-from PB.chromite.api import binhost
-from PB.chromiumos import builder_config
-from PB.chromiumos import common
+from PB.chromite.api import binhost as binhost_pb
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import Path
+
 
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
   """A module for uploading package prebuilts."""
@@ -31,7 +32,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     Returns:
       The full GS URI in which to upload prebuilts.
     """
-    label = builder_config.BuilderConfig.Id.Type.Name(kind).lower()
+    label = BuilderConfig.Id.Type.Name(kind).lower()
     version = self.m.cros_version.read_workspace_version()
     build_id = self.m.buildbucket.build.id
     return 'gs://%s/board/%s/%s-%s-%d/packages' % (gs_bucket, target.name,
@@ -49,9 +50,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     Raises:
       ValueError: If prebuilts are not supported for the given builder type.
     """
-    name = builder_config.BuilderConfig.Id.Type.Name(kind)
+    name = BuilderConfig.Id.Type.Name(kind)
     try:
-      return binhost.BinhostKey.Value('%s_BINHOST' % name.upper())
+      return binhost_pb.BinhostKey.Value('%s_BINHOST' % name.upper())
     except ValueError as err:
       err.message = '%s builders may not upload prebuilts' % name.lower()
       raise
@@ -89,17 +90,19 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       List[PackageInfo]: Package info files to deduplicate the prebuilt list.
     """
     with self.m.step.nest('get binhosts'):
-      request = binhost.BinhostGetRequest(build_target=target, private=private)
-      response = self.m.cros_build_api.BinhostService.Get(request,
-                                                          infra_step=True)
+      request = binhost_pb.BinhostGetRequest(build_target=target,
+                                             private=private)
+      response = self.m.cros_build_api.BinhostService.Get(
+          request, infra_step=True)
       binhosts_root = self.m.path.mkdtemp(prefix='binhosts')
       package_index_files = []
       for b in response.binhosts:
         gs_bucket, gs_source = self._parse_binhost(b)
         dest = binhosts_root.join(gs_source)
         self.m.gsutil.download(gs_bucket, gs_source, dest)
-        package_index_files.append(binhost.PackageIndex(
-          path=common.Path(path=str(dest), location=common.Path.OUTSIDE)))
+        package_index_files.append(
+            binhost_pb.PackageIndex(
+                path=Path(path=str(dest), location=Path.OUTSIDE)))
       return package_index_files
 
   def _prepare_binhost_uploads(self, target, uri, package_index_files):
@@ -116,11 +119,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           a list of uploadable string paths relative to that directory.
     """
     with self.m.step.nest('prepare binhost uploads'):
-      request = binhost.PrepareBinhostUploadsRequest(
-          build_target=target,
-          uri=uri,
-          package_index_files=package_index_files
-      )
+      request = binhost_pb.PrepareBinhostUploadsRequest(
+          build_target=target, uri=uri, package_index_files=package_index_files)
       response = self.m.cros_build_api.BinhostService.PrepareBinhostUploads(
           request, infra_step=True)
       upload_root = self.m.path.abs_to_path(response.uploads_dir)
@@ -140,8 +140,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       uri (str): The new binhost URI.
     """
     with self.m.step.nest('update binhost conf file'):
-      request = binhost.SetBinhostRequest(build_target=target, private=private,
-                                          key=key, uri=uri)
+      request = binhost_pb.SetBinhostRequest(build_target=target,
+                                             private=private, key=key, uri=uri)
       response = self.m.cros_build_api.BinhostService.SetBinhost(
           request, infra_step=True)
       binhost_path = self.m.path.abs_to_path(response.output_file)
@@ -164,8 +164,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
             cwd=self.m.cros_source.workspace_path.join(project.path)):
           self.m.git_txn.update_ref_write_file(
               project.remote, branch,
-              'Set %s=%s.' % (binhost.BinhostKey.Name(key), uri), binhost_path,
-              binhost_data, automerge=True)
+              'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),
+              binhost_path, binhost_data, automerge=True)
 
   def _upload(self, root, paths, uri, acls):
     """Upload the paths within root to the GS URI.
@@ -230,8 +230,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       acls = []
       if private:
         acls = self.m.cros_build_api.BinhostService.GetPrivatePrebuiltAclArgs(
-            binhost.AclArgsRequest(build_target=target),
-            infra_step=True, name='read gs acls').args
+            binhost_pb.AclArgsRequest(build_target=target), infra_step=True,
+            name='read gs acls').args
         assert len(acls) > 0, 'private prebuilts uploads must have ACLs'
       upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
       package_index_files = self._get_binhosts(target, private)

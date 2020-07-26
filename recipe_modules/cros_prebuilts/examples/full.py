@@ -15,6 +15,7 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
     CrosPrebuiltsProperties)
 
+
 def RunSteps(api):
   target = BuildTarget(name='target')
   api.cros_prebuilts.upload_target_prebuilts(target,
@@ -22,12 +23,10 @@ def RunSteps(api):
                                              'prebuilts_gs_bucket')
   api.cros_prebuilts.upload_target_prebuilts(target,
                                              BuilderConfig.Id.POSTSUBMIT,
-                                             'prebuilts_gs_bucket',
-                                             False)
+                                             'prebuilts_gs_bucket', False)
   api.assertions.assertRaises(ValueError,
                               api.cros_prebuilts.upload_target_prebuilts,
-                              target,
-                              BuilderConfig.Id.CQ,
+                              target, BuilderConfig.Id.CQ,
                               'prebuilts_gs_bucket')
 
 
@@ -36,8 +35,9 @@ def GenTests(api):
 
   yield api.test(
       'staging_branch',
-      api.properties(**{
-          "$chromeos/cros_prebuilts":
-          CrosPrebuiltsProperties(use_staging_branch=True)
-      }),
+      api.properties(
+          **{
+              "$chromeos/cros_prebuilts":
+                  CrosPrebuiltsProperties(use_staging_branch=True)
+          }),
   )
