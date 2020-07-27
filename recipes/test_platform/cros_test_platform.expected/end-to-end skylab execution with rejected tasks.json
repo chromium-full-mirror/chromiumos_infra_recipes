@@ -251,7 +251,13 @@
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-rejected\"@@@",
+      "@@@STEP_LOG_LINE@response@          \"name\": \"foo\"@@@",
+      "@@@STEP_LOG_LINE@response@        }, @@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"state\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"lifeCycle\": \"LIFE_CYCLE_REJECTED\"@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
+      "@@@STEP_LOG_LINE@response@          \"name\": \"baz\"@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
       "@@@STEP_LOG_LINE@response@      ]@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
@@ -325,9 +331,9 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJx1jMEKwjAMhl9l5Kzsvpt0HUwqSpmCiIy6ZTKtDtoq6Oi7m0oFPXhI+Mn/5RuhxU7dtIMsGcE6\\n5fCd7mjavglX2HCZl6yqi1kpeA6TBHTfIXs0OqAgyoLXbMsE7eViJXhFkCfKKXuWaMltidt92/8J\\nJJ9z9vnXw3FtdCAo2SxND8rQPCG6Y9kNw293VReMxdTgCRuHLfi99y/Ax0lg\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuFiT0lNSyzNKRGy5DIU4k3Lz7fS109KLALiKikmDiclHqCQblFqVmpySWqKFl9OfnoxQoUQ\\nC0eBABMAriYTgA==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-rejected\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8W6Onj6uLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKgWqKoksTg7KLUYaHYxUF00sum4DAhy9XJ1hunPyU8PLcoB\\nqQCyiq309ZMSi4C4SglqNlQyLT8fVS4vMTcVKgEyh2R7YfpBxtXG1tYCABCiWPo=\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuNiT0lNSyzNKRGy5tIQ4k3Lz7fS109KLALiKikmDiclZqCQFl9OfnoxQoKLEyIFZAqxcBQI\\nMAEArnAR2g==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"name\": \"baz\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}}]}@@@"
     ]
   },
   {
@@ -353,10 +359,11 @@
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.rejected due to unsatisfiable dependencies",
+    "name": "summarize.default task results.bot parameters rejected",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(task)  foo-rejected did not run@foo://bar/baz@@@",
+      "@@@STEP_LINK@(task)  foo (did not run)@foo://bar/baz@@@",
+      "@@@STEP_LINK@(task)  baz (did not run; no task link)@broken-link@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

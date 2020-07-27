@@ -427,7 +427,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.passed tests",
+    "name": "summarize.default task results.passed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@(log)   foo-retried attempt #1 passed on retry@logs://bar/baz1@@@",
@@ -436,7 +436,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.failed attempts that later passed",
+    "name": "summarize.default task results.failed before passing",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@(log)   foo-retried@logs://bar/baz@@@",

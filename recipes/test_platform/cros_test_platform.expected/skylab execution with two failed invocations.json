@@ -600,7 +600,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize.first task results.failed or incomplete tests",
+    "name": "summarize.first task results.failed and never passed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@(log)   foo-failed@logs://bar/baz@@@",
@@ -618,7 +618,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize.second task results.failed or incomplete tests",
+    "name": "summarize.second task results.failed and never passed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@(log)   baz-failed@logs://bar/baz@@@",

@@ -351,10 +351,10 @@
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.failed or incomplete tests",
+    "name": "summarize.default task results.timed out waiting for dut",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(task)  foo-pending did not run@@@@",
+      "@@@STEP_LINK@(task)  foo-pending (did not run; no task link)@broken-link@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

@@ -5953,7 +5953,7 @@ Args:
   enumerations: {tag: EnumerationResponse} dict.
   config: test_platform.Config instance.
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#348)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#345)(api, requests, responses):**
 
 &mdash; **def [push\_build\_id](/recipes/test_platform/cros_test_platform.py#276)(api, config):**
 
@@ -5968,9 +5968,11 @@ Args:
 
 Raises: StepFailure if no consistent decision can be achieved.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#445)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#442)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
+
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#491)(task_results):**
 
 &mdash; **def [split](/recipes/test_platform/cros_test_platform.py#163)(api, requests, config):**
 
@@ -5990,7 +5992,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#388)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#385)(api, enumerations, responses):**
 
 &mdash; **def [validate\_requests](/recipes/test_platform/cros_test_platform.py#58)(api, requests):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)

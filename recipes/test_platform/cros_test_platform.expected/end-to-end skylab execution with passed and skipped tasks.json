@@ -426,7 +426,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.passed tests",
+    "name": "summarize.default task results.passed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@(log)   foo-passed@logs://bar/baz@@@",
@@ -435,7 +435,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.skipped tests",
+    "name": "summarize.default task results.skipped",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@(log)   foo-skipped@logs://bar/baz1@@@",

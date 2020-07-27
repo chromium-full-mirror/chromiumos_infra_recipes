@@ -330,9 +330,6 @@ def RunSteps(api, properties):
   validate_requests(api, requests)
   # Traffic split failures can be due to malformed requests.
   requests = split(api, requests, properties.config)
-  # Enumeration or execution failures are all infra failures
-  # TODO(akeshet) (with the possible exception of certain kinds of execution
-  # timeouts; needs revisiting).
   with api.context(infra_steps=True):
     redirect_to_test_runner_if_applicable(api, requests, properties.config)
     enumerations = enumerate_tests(api, requests)
@@ -464,69 +461,70 @@ def _log_enumeration_errors(api, enumeration):
       step.presentation.status = api.step.FAILURE
 
 
+_SUCCESSFUL_TASK_STATES = ['passed', 'failed_before_passing', 'skipped']
+_UNSUCCESSFUL_TASK_STATES = [
+    'failed_and_never_passed', 'bot_parameters_rejected',
+    'timed_out_waiting_for_dut', 'cancelled_before_run', 'cancelled_during_run',
+    'other'
+]
+
+_TaskResultsByState = collections.namedtuple(
+    '_TaskResultsByState', _SUCCESSFUL_TASK_STATES + _UNSUCCESSFUL_TASK_STATES)
+
+
 def _log_task_results(api, task_results):
   """Report task results for a request on the UI."""
-  classified_results = _classify_task_results(task_results)
-  if classified_results.passed:
-    with api.step.nest('passed tests') as step:
-      _emit_links(step, classified_results.passed)
-  if classified_results.passed_on_retry:
-    with api.step.nest('failed attempts that later passed') as step:
-      _emit_links(step, classified_results.passed_on_retry)
-  if classified_results.skipped:
-    with api.step.nest('skipped tests') as step:
-      _emit_links(step, classified_results.skipped)
-  if classified_results.unsuccessful:
-    with api.step.nest('failed or incomplete tests') as step:
-      _emit_links(step, classified_results.unsuccessful)
-      step.presentation.status = api.step.FAILURE
-  if classified_results.rejected:
-    with api.step.nest('rejected due to unsatisfiable dependencies') as step:
-      _emit_links(step, classified_results.rejected)
-      step.presentation.status = api.step.FAILURE
-  if classified_results.other:  # pragma: no cover
-    with api.step.nest('unclassified tests') as step:
-      _emit_links(step, classified_results.other)
-      step.presentation.status = api.step.FAILURE
+  task_results_by_state = sort_task_results_by_state(task_results)
+
+  for task_state, task_results in task_results_by_state._asdict().items():
+    if task_results:
+      with api.step.nest(task_state.replace('_', ' ')) as step:
+        _emit_links(step, task_results)
+        if task_state in _UNSUCCESSFUL_TASK_STATES:
+          step.presentation.status = api.step.FAILURE
 
 
-_ClassifiedTaskResults = collections.namedtuple(
-    '_ClassifiedTaskResults',
-    [
-        'passed', 'passed_on_retry', 'unsuccessful', 'rejected', 'skipped',
-        'other'
-    ],
-)
+_PASSED_VERDICTS = [TaskState.VERDICT_PASSED, TaskState.VERDICT_PASSED_ON_RETRY]
+_FAILED_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 
 
-def _classify_task_results(task_results):
-  classified = _ClassifiedTaskResults(passed=[], passed_on_retry=[],
-                                      unsuccessful=[], rejected=[], skipped=[],
-                                      other=[])
-  failed_tasks = []
+def sort_task_results_by_state(task_results):
+  task_results_by_state = _TaskResultsByState(
+      passed=[], failed_before_passing=[], failed_and_never_passed=[],
+      skipped=[], bot_parameters_rejected=[], timed_out_waiting_for_dut=[],
+      cancelled_before_run=[], cancelled_during_run=[], other=[])
+  failed_at_least_once = []
   for tr in task_results:
-    # The order of these guard clauses is significant
-    if (tr.state.verdict == TaskState.VERDICT_PASSED or
-        tr.state.verdict == TaskState.VERDICT_PASSED_ON_RETRY):
-      classified.passed.append(tr)
-    elif tr.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED:
-      classified.rejected.append(tr)
-    elif tr.state.verdict == TaskState.VERDICT_NO_VERDICT:
-      classified.skipped.append(tr)
-    elif tr.state.verdict in (TaskState.VERDICT_FAILED,
-                              TaskState.VERDICT_UNSPECIFIED):
-      failed_tasks.append(tr)
+    task_run_status = tr.state.life_cycle
+    if task_run_status == TaskState.LIFE_CYCLE_REJECTED:
+      task_results_by_state.bot_parameters_rejected.append(tr)
+    elif task_run_status == TaskState.LIFE_CYCLE_CANCELLED:
+      task_results_by_state.cancelled_before_run.append(tr)
+    elif task_run_status == TaskState.LIFE_CYCLE_ABORTED:
+      task_results_by_state.cancelled_during_run.append(tr)
+    elif task_run_status == TaskState.LIFE_CYCLE_PENDING:
+      task_results_by_state.timed_out_waiting_for_dut.append(tr)
+    elif task_run_status == TaskState.LIFE_CYCLE_COMPLETED:
+      task_verdict = tr.state.verdict
+      if task_verdict in _PASSED_VERDICTS:
+        task_results_by_state.passed.append(tr)
+      elif task_verdict == TaskState.VERDICT_NO_VERDICT:
+        task_results_by_state.skipped.append(tr)
+      elif task_verdict in _FAILED_VERDICTS:
+        # Don't assign state to failed tasks at this point, since we don't
+        # know if they passed on retry or not.
+        failed_at_least_once.append(tr)
     else:  # pragma: no cover
-      classified.other.append(tr)
+      task_results_by_state.other.append(tr)
 
-  passed_set = set([x.name for x in classified.passed])
-  for tr in failed_tasks:
+  passed_set = set([x.name for x in task_results_by_state.passed])
+  for tr in failed_at_least_once:
     if tr.name in passed_set:
-      classified.passed_on_retry.append(tr)
+      task_results_by_state.failed_before_passing.append(tr)
     else:
-      classified.unsuccessful.append(tr)
+      task_results_by_state.failed_and_never_passed.append(tr)
 
-  return classified
+  return task_results_by_state
 
 
 def _emit_links(step, task_results):
@@ -543,13 +541,16 @@ def _emit_links(step, task_results):
     if t.state.life_cycle not in [
         TaskState.LIFE_CYCLE_COMPLETED, TaskState.LIFE_CYCLE_RUNNING
     ]:
-      step.links['(task)  ' + t.name + ' did not run'] = t.task_url
+      if t.task_url:
+        step.links['(task)  ' + t.name + ' (did not run)'] = t.task_url
+      else:
+        step.links['(task)  ' + t.name +
+                   ' (did not run; no task link)'] = 'broken-link'
       continue
     suffix = ''
     if t.attempt > 0:
       suffix = ' attempt #%s' % str(t.attempt)
-      if (t.state.verdict == TaskState.VERDICT_PASSED_ON_RETRY or
-          t.state.verdict == TaskState.VERDICT_PASSED):
+      if t.state.verdict in _PASSED_VERDICTS:
         suffix = suffix + ' passed on retry'
     step.links['(log)   ' + t.name + suffix] = t.log_url
     step.links['(task)  ' + t.name + suffix] = t.task_url
@@ -1007,7 +1008,8 @@ def GenTests(api):
           'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
               _test_single_enumeration('foo'))) +  #
       api.step_data(
-          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+          'execute.call binary.skylab-execute',
+          stdout=api.raw_io.output(
               json_format.MessageToJson(
                   ExecuteResponses(
                       tagged_responses={
@@ -1017,10 +1019,16 @@ def GenTests(api):
                                       life_cycle='LIFE_CYCLE_COMPLETED',
                                       verdict='VERDICT_FAILED'),
                                   task_results=[
+                                      # Include one result with task_url and one without.
                                       ExecuteResponse.TaskResult(
                                           task_url='foo://bar/baz',
                                           log_url='logs://bar/baz',
-                                          name='foo-rejected',
+                                          name='foo',
+                                          state=TaskState(
+                                              life_cycle="LIFE_CYCLE_REJECTED"),
+                                      ),
+                                      ExecuteResponse.TaskResult(
+                                          name='baz',
                                           state=TaskState(
                                               life_cycle="LIFE_CYCLE_REJECTED"),
                                       ),
@@ -1063,6 +1071,86 @@ def GenTests(api):
                                           name='foo-pending',
                                           state=TaskState(
                                               life_cycle="LIFE_CYCLE_PENDING"),
+                                      ),
+                                  ],
+                              )
+                      })))))
+
+  yield (
+      api.test('end-to-end skylab execution with cancelled tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo'))) +  #
+      api.step_data(
+          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
+                                  state=TaskState(
+                                      life_cycle='LIFE_CYCLE_CANCELLED',
+                                      verdict='VERDICT_FAILED'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url=None,
+                                          log_url=None,
+                                          name='foo-cancelled',
+                                          state=TaskState(
+                                              life_cycle="LIFE_CYCLE_CANCELLED"
+                                          ),
+                                      ),
+                                  ],
+                              )
+                      })))))
+  yield (
+      api.test('end-to-end skylab execution with aborted tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.step_data(
+          'traffic split.call binary.scheduler-traffic-split',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  SchedulerTrafficSplitResponses(
+                      tagged_responses={
+                          'default':
+                              SchedulerTrafficSplitResponse(
+                                  skylab_request=_test_request('foo'))
+                      })))) +  #
+      api.step_data(
+          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
+              _test_single_enumeration('foo'))) +  #
+      api.step_data(
+          'execute.call binary.skylab-execute', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  ExecuteResponses(
+                      tagged_responses={
+                          'default':
+                              ExecuteResponse(
+                                  state=TaskState(
+                                      life_cycle='LIFE_CYCLE_ABORTED',
+                                      verdict='VERDICT_FAILED'),
+                                  task_results=[
+                                      ExecuteResponse.TaskResult(
+                                          task_url=None,
+                                          log_url=None,
+                                          name='foo-aborted',
+                                          state=TaskState(
+                                              life_cycle="LIFE_CYCLE_ABORTED"),
                                       ),
                                   ],
                               )
