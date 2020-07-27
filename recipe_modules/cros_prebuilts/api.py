@@ -7,11 +7,15 @@
 
 import os
 
+from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 from PB.chromite.api import binhost as binhost_pb
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import Path
+from PB.chromiumos.common import BuildTarget, Path, PackageIndexInfo
+
+METADATA_GS_DIR_TMPL = 'gs://{gs_bucket}/snapshot/{snap4}/{snapshot}/{target}'
+METADATA_GS_FILE_TMPL = '{builder}-{build_id}-{kind}.json'
 
 
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
@@ -20,6 +24,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
   def __init__(self, properties, **kwargs):
     super(CrosPrebuiltsApi, self).__init__(**kwargs)
     self._use_staging_branch = properties.use_staging_branch
+    self._enable_snapshot_prebuilts = properties.enable_snapshot_prebuilts
+    self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts
 
   def _prebuilts_uri(self, target, kind, gs_bucket):
     """Determine the GS URI to upload prebuilts.
@@ -37,6 +43,151 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     build_id = self.m.buildbucket.build.id
     return 'gs://%s/board/%s/%s-%s-%d/packages' % (gs_bucket, target.name,
                                                    label, version, build_id)
+
+  def _get_snapshot_package_index_info(self, snapshots, build_targets,
+                                       gs_bucket, test_data_dict=None):
+    """Get prebuilts metadata for snapshots.
+
+    Returns PackageIndexInfo entries for the newest available prebuilts for each
+    of the given build_targets.
+
+    Args:
+      snapshots (list[str]): List of snapshot git SHA strings, newest first.
+      build_targets (list[BuildTarget]): List of BuildTargets to fetch.
+      gs_bucket (str): Google storage bucket where the prebuilts live.
+      test_data_dict (dict): Dictionary of test data:
+        test_data_dict[snapshot][target_name][file_name] = PackageIndexInfo
+
+    Returns:
+      (list[PackageIndexInfo]) The metadata for CreateSysrootService.
+    """
+    test_data_dict = test_data_dict or {}
+    test_snapshot_num = 5555
+    need_targets = set((x.name for x in build_targets))
+    download_root = self.m.path.mkdtemp(prefix='metadata')
+    ret = []
+
+    for snapshot in snapshots:
+      found_targets = set()
+      for target in need_targets:
+        with self.m.step.nest('{}/{}'.format(snapshot, target)) as presentation:
+          download_dir = download_root.join(snapshot, target)
+          self.m.file.ensure_directory('ensure directory', download_dir)
+          uri = os.path.join(METADATA_GS_DIR_TMPL, '*.json').format(
+              gs_bucket=gs_bucket,
+              snap4=snapshot[:4],
+              snapshot=snapshot,
+              target=target,
+          )
+          self.m.gsutil(['rsync', uri, download_dir], multithreaded=True)
+          listdir_test_data = []
+          if self._test_data.enabled:
+            for fname in test_data_dict.get(snapshot, {}).get(target, {}):
+              self.m.path.mock_add_paths(download_dir.join(fname))
+              listdir_test_data.append(fname)
+
+          files = self.m.file.listdir('listdir', download_dir,
+                                      test_data=listdir_test_data)
+          if files:
+            found_targets.add(target)
+          for meta in files:
+            name = self.m.path.basename(meta)
+            test_data = test_data_dict.get(snapshot, {}).get(target, {}).get(
+                name,
+                PackageIndexInfo(
+                    snapshot_sha=snapshot, snapshot_number=test_snapshot_num,
+                    build_target=BuildTarget(name=target),
+                    location='gs://{}/testdata/{}'.format(gs_bucket, name)))
+            ret.append(
+                self.m.file.read_proto('read {}'.format(name), meta,
+                                       PackageIndexInfo, 'JSONPB',
+                                       test_proto=test_data))
+
+      test_snapshot_num -= 1
+      need_targets -= found_targets
+    return ret
+
+  def get_package_index_info(self, gs_bucket, snapshot=None, build_target=None,
+                             count=30, test_data_dict=None):
+    """Return the PackageIndexInfo for this build.
+
+    Args:
+      gs_bucket (str): Google storage bucket where the prebuilts live.
+      snapshot (GitilesCommit): The snapshot for this build, or None.
+      build_target (BuildTarget): BuildTarget for the build, or None.
+      count (int): Number of snapshots to check.
+      test_data_dict (dict): Dictionary of test data:
+        test_data_dict[snapshot][target_name][file_name] = PackageIndexInfo
+
+    Returns:
+      (list[PackageIndexInfo]) The metadata for CreateSysrootService.
+    """
+    if not self._send_snapshot_prebuilts:
+      return []
+
+    snapshot = snapshot or self.m.cros_infra_config.gitiles_commit
+    build_target = build_target or self.m.cros_infra_config.get_build_target()
+    build_targets = [build_target] + [
+        BuildTarget(name='%s-generic' % x) for x in 'amd64', 'arm', 'arm64'
+    ]
+
+    with self.m.context(
+        cwd=self.m.cros_source.workspace_path.join('manifest-internal')):
+      shas = self.m.git.fetch_refs(self.m.cros_source.INTERNAL_MANIFEST_URL,
+                                   snapshot.id, count=count)
+      test_data_dict = (
+          test_data_dict or self.test_api.generate_snapshot_test_data_dict(
+              shas, build_targets, gs_bucket))
+
+      return self._get_snapshot_package_index_info(
+          shas, build_targets, gs_bucket, test_data_dict=test_data_dict)
+
+  def _upload_metadata(self, target, kind, gs_bucket, acls):
+    """Upload metadata about the (uploaded) prebuilts.
+
+    Args:
+      target (BuildTarget): The build target.
+      kind (BuilderConfig.Id.Type): The kind of prebuilts, e.g. POSTSUBMIT
+      gs_bucket (str): Google storage bucket to upload prebuilts to.
+      acls: (List[AclArg]): acls to apply to the uploaded metadata, will be
+          empty if the prebuilts are public.
+    """
+    # If the acls list is empty, then it is public.
+    acls = acls or [
+        binhost_pb.AclArgsResponse.AclArg(arg='-u', value='AllUsers:R')
+    ]
+
+    with self.m.step.nest('upload metadata') as presentation:
+      version = self.m.cros_version.read_workspace_version()
+      commit = self.m.cros_infra_config.gitiles_commit
+      build_target = self.m.cros_infra_config.get_build_target()
+      target = build_target.name if build_target else None
+
+      uri = os.path.join(METADATA_GS_DIR_TMPL, METADATA_GS_FILE_TMPL).format(
+          build_id=self.m.buildbucket.build.id,
+          builder=self.m.buildbucket.build.builder.builder,
+          gs_bucket=gs_bucket,
+          kind=BuilderConfig.Id.Type.Name(kind).lower(),
+          snap4=commit.id[:4],
+          snapshot=commit.id,
+          target=target,
+      )
+      metadata = PackageIndexInfo(snapshot_sha=commit.id,
+                                  snapshot_number=version.snapshot,
+                                  build_target=build_target, location=uri)
+      metadata_file = self.m.path.mkdtemp(
+          prefix='metadata').join('PackageIndexInfo.json')
+
+      self.m.file.write_text(
+          'write metadata', metadata_file,
+          json_format.MessageToJson(metadata, sort_keys=True,
+                                    use_integers_for_enums=True))
+
+      self.m.gsutil(['rsync', metadata_file, uri])
+      cmd = ['acl', 'ch']
+      self._add_acls(acls, cmd)
+      cmd.append(uri)
+      self.m.gsutil(cmd)
 
   def _binhost_key(self, kind):
     """Return the binhost key for the given builder type.
@@ -239,3 +390,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           target, upload_uri, package_index_files)
       self._upload(upload_root, upload_paths, upload_uri, acls)
       self._set_binhost(target, private, binhost_key, upload_uri)
+
+      if self._enable_snapshot_prebuilts:
+        self._upload_metadata(target, kind, gs_bucket, acls)

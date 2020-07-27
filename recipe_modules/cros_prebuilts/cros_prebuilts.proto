@@ -11,4 +11,10 @@ message CrosPrebuiltsProperties {
   // named "staging" instead of the real branch. Should only be set in
   // the staging environment.
   bool use_staging_branch = 1;
+
+  // Feature flag: whether to save package_index_files for a snapshot.
+  bool enable_snapshot_prebuilts = 2;
+
+  // Feature flag: whether to pass package_index_files to SysrootService/Create.
+  bool send_snapshot_prebuilts = 3;
 }

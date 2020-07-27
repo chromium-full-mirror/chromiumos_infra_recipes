@@ -1,0 +1,42 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_prebuilts.tests;
+
+import "chromiumos/common.proto";
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+// The files for a (snapshot, build_target), mapping filename to contents.
+message TargetTestMap {
+  map<string, chromiumos.PackageIndexInfo> files = 1;
+}
+
+// The entries for a snapshot.
+message SnapshotTestMap {
+  map<string, TargetTestMap> targets = 1;
+}
+
+message TestDataMap {
+  map<string, SnapshotTestMap> snapshots = 1;
+}
+
+message GetPkgIdxInfoProperties {
+  // Snapshots
+  repeated buildbucket.v2.GitilesCommit gitiles_commits = 1;
+
+  // The build_target for this builder.
+  repeated chromiumos.BuildTarget build_targets = 2;
+
+  // The gs_bucket to use.
+  string gs_bucket = 3;
+
+  // Test data (contents of the metadata in storage.)
+  TestDataMap test_data_dict = 4;
+
+  // Expected get_package_index_info() return.
+  repeated chromiumos.PackageIndexInfo expected_package_index_info = 5;
+
+}

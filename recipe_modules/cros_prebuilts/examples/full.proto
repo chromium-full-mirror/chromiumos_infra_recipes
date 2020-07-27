@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_prebuilts.examples;
 
 import "chromiumos/common.proto";
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
 message FullProperties {
   // The build_target for this builder.

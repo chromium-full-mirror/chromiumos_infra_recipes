@@ -15,6 +15,7 @@ DEPS = [
     'recipe_engine/runtime',
     'recipe_engine/step',
     'cros_build_api',
+    'cros_infra_config',
     'cros_source',
     'cros_version',
     'git',
