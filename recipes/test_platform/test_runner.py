@@ -29,14 +29,16 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/time',
     'recipe_engine/uuid',
     'autotest_status_parser',
     'phosphorus',
-    'skylab_local_state'
+    'skylab_local_state',
 ]
 
 PROPERTIES = TestRunnerProperties
 ENV_PROPERTIES = TestRunnerEnvProperties
+
 
 def validate_request(api, properties):
   """Validate the TestRunnerProperties.
@@ -52,8 +54,8 @@ def validate_request(api, properties):
       raise ValueError("Test name must be specified")
 
 
-def prejob(api, config=None, request=None, dut_hostname='',
-           load_response=None):
+def prejob(api, config=None, request=None, dut_hostname='', load_response=None,
+           max_duration_seconds=None):
   """Run a prejob (e.g. provision) against the DUT via `autoserv`.
 
   Args:
@@ -61,6 +63,7 @@ def prejob(api, config=None, request=None, dut_hostname='',
     * request: skylab_test_runner.Request instance.
     * dut_hostname: DUT hostname string.
     * load_response: LoadStateResponse instance.
+    * max_duration_seconds: int.
 
   Returns:
     * phosphorus.prejob.PrejobResponse
@@ -76,17 +79,22 @@ def prejob(api, config=None, request=None, dut_hostname='',
           desired_provisionable_labels=request.prejob.provisionable_labels,
           existing_provisionable_labels=load_response.provisionable_labels,
       )
+      # Use the earlier of the two deadlines: the globally configured max
+      # duration or the request's deadline (if provided).
+      prejob_request.deadline.seconds = (
+          api.time.ms_since_epoch() / 1000 + max_duration_seconds)
       if request.HasField('deadline'):
-        # Must explicitly check for existence of deadline.
-        # Reading the deadline from a request where the field is unset returns
-        # the zero value. The zero value google.protobuf.Timestamp translates to
-        # a non-zero time.Time in Go.
-        prejob_request.deadline.MergeFrom(request.deadline)
+        if request.deadline.seconds < prejob_request.deadline.seconds:
+          # Must explicitly check for existence of deadline.
+          # Reading the deadline from a request where the field is unset returns
+          # the zero value. The zero value google.protobuf.Timestamp translates to
+          # a non-zero time.Time in Go.
+          prejob_request.deadline.MergeFrom(request.deadline)
       return api.phosphorus.prejob(prejob_request)
 
 
-def run_test(api,
-             config=None, request=None, output_config=None, dut_hostname=''):
+def run_test(api, config=None, request=None, output_config=None,
+             dut_hostname=''):
   """Run a test against the DUT via `autoserv`.
 
   Args:
@@ -114,8 +122,7 @@ def run_test(api,
             is_client_test=request.test.autotest.is_client_test,
         ),
         environment=phosphorus.runtest.RunTestRequest.Environment(
-            gs_root_dir=output_config.gs_root_dir
-        ),
+            gs_root_dir=output_config.gs_root_dir),
     )
     if request.HasField('deadline'):
       # Must explicitly check for existence of deadline.
@@ -141,9 +148,8 @@ def upload_sync_results(api, config=None, output_config=None):
     root = output_config.gs_root_dir
     derived = url_join(root, "synchronous_offloads", api.uuid.random())
     with api.step.nest('upload results to GS') as step:
-      req = phosphorus.upload_to_gs.UploadToGSRequest(
-          config=config,
-          gs_directory=derived)
+      req = phosphorus.upload_to_gs.UploadToGSRequest(config=config,
+                                                      gs_directory=derived)
       return api.phosphorus.upload_to_gs(req)
 
 
@@ -205,7 +211,8 @@ def summarize_results(api, prejob_response, run_test_response, result):
     if result.autotest_result.incomplete:
       with api.step.nest("autoserv") as step:
         step.presentation.status = api.step.FAILURE
-        step.presentation.logs['summary'] = ("autoserv crashed. The test list "
+        step.presentation.logs['summary'] = (
+            "autoserv crashed. The test list "
             "is likely incomplete. Consult autoserv.ERROR for more details.")
     if (_result_contains_no_failures(result) and
         _prejob_failed(prejob_response)):
@@ -325,7 +332,6 @@ def _upload_to_tko_config(api, phosphorus_config, run_test_response):
   return ret
 
 
-
 _DUT_STATE_NEEDS_REPAIR = "needs_repair"
 
 
@@ -361,9 +367,9 @@ def execution_steps(api, properties, envvars):
     with api.step.nest('mark local DUT state dirty'):
       state_store.save(api, _DUT_STATE_NEEDS_REPAIR)
 
-
     phosphorus_config = _get_phosphorus_config(
-        properties.config, load_response,
+        properties.config,
+        load_response,
         properties.request.test.offload.synchronous_gs_enable,
     )
 
@@ -371,13 +377,17 @@ def execution_steps(api, properties, envvars):
     prejob_response = None
     run_test_response = None
     upload_to_gs_response = None
+    max_duration_sec = (
+        properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
     try:
       # prejob and test failures are detected when parsing results.
       # An exception from the steps here indicates an infrastructure
       # failure that should be bubbled up immediately.
-      prejob_response = prejob(
-          api, config=phosphorus_config, request=properties.request,
-          dut_hostname=dut_hostname, load_response=load_response)
+      prejob_response = prejob(api, config=phosphorus_config,
+                               request=properties.request,
+                               dut_hostname=dut_hostname,
+                               load_response=load_response,
+                               max_duration_seconds=max_duration_sec)
       if not _prejob_failed(prejob_response):
         run_test_response = run_test_specific_steps(
             api, phosphorus_config=phosphorus_config, properties=properties,
@@ -410,14 +420,13 @@ def run_test_specific_steps(api, phosphorus_config, properties, dut_hostname):
   Raises:
   * InfraFailure.
   """
-  run_test_response = run_test(api,
-                              config=phosphorus_config,
-                              request=properties.request,
-                              output_config=properties.config.output,
-                              dut_hostname=dut_hostname)
-  upload_to_tko(api, config=_upload_to_tko_config(api,
-                                                  phosphorus_config,
-                                                  run_test_response))
+  run_test_response = run_test(api, config=phosphorus_config,
+                               request=properties.request,
+                               output_config=properties.config.output,
+                               dut_hostname=dut_hostname)
+  upload_to_tko(
+      api, config=_upload_to_tko_config(api, phosphorus_config,
+                                        run_test_response))
   return run_test_response
 
 
@@ -433,7 +442,7 @@ def _should_upload_to_gs(properties, result):
   Returns: bool.
   """
   return (properties.request.test.offload.synchronous_gs_enable and
-    not result.autotest_result.incomplete)
+          not result.autotest_result.incomplete)
 
 
 def _set_offload_dir(result, upload_response):
@@ -459,19 +468,18 @@ def RunSteps(api, properties, envvars):
 
 
 def _is_failure(prejob_response, run_test_response, result):
-  return (
-      _result_contains_failures(result) or
-      _prejob_failed(prejob_response) or
-      _test_failed(run_test_response))
+  return (_result_contains_failures(result) or
+          _prejob_failed(prejob_response) or _test_failed(run_test_response))
 
 
 def _prejob_failed(prejob_response):
   return (prejob_response and
-    prejob_response.state != phosphorus.prejob.PrejobResponse.SUCCEEDED)
+          prejob_response.state != phosphorus.prejob.PrejobResponse.SUCCEEDED)
 
 
 def _test_failed(run_test_response):
-  return (run_test_response and
+  return (
+      run_test_response and
       run_test_response.state != phosphorus.runtest.RunTestResponse.SUCCEEDED)
 
 
@@ -555,6 +563,7 @@ class SkylabStateStore(object):
 def GenTests(api):
   _gs_root = "gs://bucket/foo/bar"
   _sync_subdir = "synchronous_subdir"
+
   # Required for initial module set up.
   def _misc_properties():
     return (api.properties(
@@ -566,7 +575,8 @@ def GenTests(api):
                 },
                 'harness': {
                     'autotest_dir': '/path/to/autotest',
-                    'synch_offload_subdir': _sync_subdir
+                    'synch_offload_subdir': _sync_subdir,
+                    'prejob_deadline_seconds': 60 * 60,
                 },
                 'output': {
                     'gs_root_dir': _gs_root
@@ -627,7 +637,6 @@ def GenTests(api):
                         gs_url='gs://foo-gs-url',
                     ), results_dir='dummy-results-dir')))))
 
-
   def _successful_prejob_step():
     return _prejob_step_with_state(phosphorus.prejob.PrejobResponse.SUCCEEDED)
 
@@ -648,9 +657,7 @@ def GenTests(api):
         stdout=api.raw_io.output(
             json_format.MessageToJson(
                 phosphorus.runtest.RunTestResponse(
-                  results_dir='dummy-results-dir/subdir',
-                  state=state)))))
-
+                    results_dir='dummy-results-dir/subdir', state=state)))))
 
   yield api.test(
       'test_name_missing',
@@ -668,24 +675,20 @@ def GenTests(api):
   )
 
   r = _canned_test_runner_request()
-  r['deadline'] = timestamp_pb2.Timestamp(seconds=55)
-  yield api.test(
-      'success with deadline',
-      _misc_properties(),
-      api.properties(TestRunnerProperties(request=r)),
-      _mock_load_step(),
-      _successful_prejob_step(),
-      _successful_run_test_step(),
-  )
+  current_time_sec = 2369692800
+  r['deadline'] = timestamp_pb2.Timestamp(seconds=current_time_sec + 55)
+  yield api.test('success with deadline', _misc_properties(),
+                 api.properties(TestRunnerProperties(request=r)),
+                 _mock_load_step(), _successful_prejob_step(),
+                 _successful_run_test_step()) + api.time.seed(current_time_sec)
 
   yield api.test(
       'prejob_crash',
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
-      api.step_data(
-          'execution steps.run prejob.call `phosphorus`.prejob',
-          retcode=1),
+      api.step_data('execution steps.run prejob.call `phosphorus`.prejob',
+                    retcode=1),
   )
 
   yield api.test(
@@ -694,9 +697,8 @@ def GenTests(api):
       _request_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
-      api.step_data(
-          'execution steps.run test.call `phosphorus`.run-test',
-          retcode=1),
+      api.step_data('execution steps.run test.call `phosphorus`.run-test',
+                    retcode=1),
   )
 
   yield api.test(
@@ -751,21 +753,17 @@ def GenTests(api):
               })),
       api.step_data(
           'execution steps.get test results.'
-          'call `autotest_status_parser`.parse',
-          stdout=api.raw_io.output(
+          'call `autotest_status_parser`.parse', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   Result(
                       autotest_result=Result.Autotest(test_cases=[]),
                   )))),
       api.step_data(
           'execution steps.upload results to GS.'
-          'call `phosphorus`.upload-to-gs',
-          stdout=api.raw_io.output(
+          'call `phosphorus`.upload-to-gs', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   phosphorus.upload_to_gs.UploadToGSResponse(
-                      gs_url=os.path.join(_gs_root,
-                                          "UUID",
-                                          _sync_subdir))))),
+                      gs_url=os.path.join(_gs_root, "UUID", _sync_subdir))))),
   )
 
   yield api.test(
@@ -775,9 +773,9 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
-      api.step_data('execution steps.get test results.'
-                    'call `autotest_status_parser`.parse',
-                    retcode=1),
+      api.step_data(
+          'execution steps.get test results.'
+          'call `autotest_status_parser`.parse', retcode=1),
   )
 
   yield api.test(
@@ -789,8 +787,7 @@ def GenTests(api):
       _successful_run_test_step(),
       api.step_data(
           'execution steps.get test results.call `autotest_status_parser`.'
-          'parse',
-          stdout=api.raw_io.output(
+          'parse', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   Result(
                       prejob=Result.Prejob(step=[

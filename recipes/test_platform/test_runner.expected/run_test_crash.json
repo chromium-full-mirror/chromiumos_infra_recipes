@@ -171,6 +171,7 @@
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T13:53:21Z\", @@@",
       "@@@STEP_LOG_LINE@request@  \"dutHostname\": \"dummy\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -228,7 +229,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  }, \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"dutHostname\": \"dummy\"\n}",
+    "stdin": "{\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  }, \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"deadline\": \"2012-05-14T13:53:21Z\", \n  \"dutHostname\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

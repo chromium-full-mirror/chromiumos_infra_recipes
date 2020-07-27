@@ -20,7 +20,7 @@ message TestRunnerProperties {
   .test_platform.skylab_test_runner.Result result = 2;
 
   // config describes configuration information for the cros_test_platform
-  // recipe; is set by the builder proterties, not the caller.
+  // recipe; is set by the builder properties, not the caller.
   .test_platform.skylab_test_runner.Config config = 3;
 }
 
