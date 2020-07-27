@@ -1483,7 +1483,7 @@ Generate start time in seconds.
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#428)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#446)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -1554,13 +1554,24 @@ Get BotPolicies as defined in infra/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#406)(self, build):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#406)(self, build=None):**
+
+Return the build target from input properties.
+
+Args:
+  build (Build): A buildbucket build, which is expected to have a
+      'build_target' input property, or None for the current build.
+
+Returns:
+  (BuildTarget) The build target, or None.
+
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#432)(self, build=None):**
 
 Return the build target name from input properties.
 
 Args:
   build (Build): A buildbucket build, which is expected to have a
-      'build_target' input property.
+      'build_target' input property, or None for the current build.
 
 Returns:
   (str) The name of the build target, or None.

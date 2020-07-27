@@ -55,6 +55,9 @@ def RunSteps(api, properties):
   # Force a reload of the config.
   api.assertions.assertEqual(config, api.cros_infra_config.fresh_config)
 
+  api.assertions.assertEqual(target.name,
+                             api.cros_infra_config.get_build_target_name())
+
   api.assertions.assertEqual(
       target.name,
       api.cros_infra_config.get_build_target_name(api.buildbucket.build))

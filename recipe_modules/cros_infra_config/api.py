@@ -403,27 +403,45 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     return config
 
-  def get_build_target_name(self, build):
+  def get_build_target(self, build=None):
+    """Return the build target from input properties.
+
+    Args:
+      build (Build): A buildbucket build, which is expected to have a
+          'build_target' input property, or None for the current build.
+
+    Returns:
+      (BuildTarget) The build target, or None.
+    """
+    build = build or self.m.buildbucket.build
+    target = None
+    if '$chromeos/build_menu' in build.input.properties:
+      target = json_format.ParseDict(
+          build.input.properties['$chromeos/build_menu'], BuildMenuProperties(),
+          ignore_unknown_fields=True).build_target
+      if target.name:
+        return target
+
+    # TODO(crbug/1099259): Once everyone is looking at (and setting) the
+    # build_menu properties, stop looking at the global ones.
+    target = json_format.ParseDict(build.input.properties,
+                                   BuildTargetProperties(),
+                                   ignore_unknown_fields=True).build_target
+    return target if target and target.name else None
+
+  def get_build_target_name(self, build=None):
     """Return the build target name from input properties.
 
     Args:
       build (Build): A buildbucket build, which is expected to have a
-          'build_target' input property.
+          'build_target' input property, or None for the current build.
 
     Returns:
       (str) The name of the build target, or None.
     """
-    name = None
-    if '$chromeos/build_menu' in build.input.properties:
-      name = json_format.ParseDict(
-          build.input.properties['$chromeos/build_menu'], BuildMenuProperties(),
-          ignore_unknown_fields=True).build_target.name
-    # Try the global space.
-    if not name:
-      name = json_format.ParseDict(build.input.properties,
-                                   BuildTargetProperties(),
-                                   ignore_unknown_fields=True).build_target.name
-    return name or None
+    build = build or self.m.buildbucket.build
+    target = self.get_build_target(build=build)
+    return target.name if target and target.name else None
 
   def build_target_dict(self, builds):
     """Take a list of builds and return a map of build_target names to build.
