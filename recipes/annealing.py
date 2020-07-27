@@ -93,7 +93,8 @@ def RunSteps(api, properties):
         external_snapshot_ref = None
         # Generate the manifest from public repo
         snapshot_xml_extern = api.repo.manifest_snapshot(
-            api.cros_source.workspace_path.join('manifest/full.xml'))
+            api.cros_source.workspace_path.join('manifest/full.xml'),
+            step_name='generate external manifest')
 
         # And publish
         with api.step.nest('publish external snapshot'):
@@ -104,7 +105,8 @@ def RunSteps(api, properties):
           external_snapshot_ref = external_snapshot_commit.id
 
       # snapshot internal manifest
-      snapshot_xml_intern = api.repo.manifest_snapshot()
+      snapshot_xml_intern = api.repo.manifest_snapshot(
+          step_name='generate internal manifest')
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
           api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
           snapshot_xml_intern)
@@ -320,12 +322,12 @@ def GenTests(api):
       'snapshot-manifest-has-manifest-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'repo manifest',
+          'generate external manifest',
           stdout=api.raw_io.output('<manifest visibility="external">'
                                    '<project name="NAME" revision="TO_REV"/>'
                                    '</manifest>')),
       api.step_data(
-          'repo manifest (2)',
+          'generate internal manifest',
           stdout=api.raw_io.output('<manifest visibility="internal">'
                                    '<project name="NAME" revision="TO_REV"/>'
                                    '</manifest>')),
@@ -347,12 +349,12 @@ def GenTests(api):
       'no-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'repo manifest',
+          'generate external manifest',
           stdout=api.raw_io.output('<manifest visibility="external">'
                                    '<project name="NAME" revision="FROM_REV"/>'
                                    '</manifest>')),
       api.step_data(
-          'repo manifest (2)',
+          'generate internal manifest',
           stdout=api.raw_io.output('<manifest visibility="internal">'
                                    '<project name="NAME" revision="FROM_REV"/>'
                                    '</manifest>')),
@@ -369,12 +371,12 @@ def GenTests(api):
       'no-gerrit-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'repo manifest',
+          'generate external manifest',
           stdout=api.raw_io.output('<manifest visibility="external">'
                                    '<project name="NAME" revision="TO_REV"/>'
                                    '</manifest>')),
       api.step_data(
-          'repo manifest (2)',
+          'generate internal manifest',
           stdout=api.raw_io.output('<manifest visibility="internal">'
                                    '<project name="NAME" revision="TO_REV"/>'
                                    '</manifest>')),
@@ -394,12 +396,12 @@ def GenTests(api):
           AnnealingProperties(manifest_ref='snapshot',
                               disable_gerrit_commits_in_commit_message=True)),
       api.step_data(
-          'repo manifest',
+          'generate external manifest',
           stdout=api.raw_io.output('<manifest visibility="external">'
                                    '<project name="NAME" revision="TO_REV"/>'
                                    '</manifest>')),
       api.step_data(
-          'repo manifest (2)',
+          'generate internal manifest',
           stdout=api.raw_io.output('<manifest visibility="internal">'
                                    '<project name="NAME" revision="TO_REV"/>'
                                    '</manifest>')),
