@@ -179,6 +179,10 @@
   },
   {
     "cmd": [],
+    "name": "set enable_synchronous_offload to true"
+  },
+  {
+    "cmd": [],
     "name": "enumerate tests"
   },
   {
