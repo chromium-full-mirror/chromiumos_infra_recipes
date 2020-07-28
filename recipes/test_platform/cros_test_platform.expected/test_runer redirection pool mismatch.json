@@ -158,10 +158,6 @@
   },
   {
     "cmd": [],
-    "name": "set enable_synchronous_offload to true"
-  },
-  {
-    "cmd": [],
     "name": "enumerate tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
@@ -262,9 +258,6 @@
       "@@@STEP_LOG_LINE@request@        \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"migrations\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"enableSynchronousOffload\": true@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"metadata\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"testMetadataUrl\": \"foo-metadata-url\", @@@",
       "@@@STEP_LOG_LINE@request@          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
@@ -312,7 +305,7 @@
     ],
     "infra_step": true,
     "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"quotaAccount\": \"foo-qs-account\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"migrations\": {\n          \"enableSynchronousOffload\": true\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"testRunnerMigration\": {\n          \"redirectInstructions\": [\n            {\n              \"percentOfRequests\": 100, \n              \"constraint\": {\n                \"quotaAccount\": \"foo-qs-account\", \n                \"dutPool\": \"bar-pool\"\n              }\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"quotaAccount\": \"foo-qs-account\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"testRunnerMigration\": {\n          \"redirectInstructions\": [\n            {\n              \"percentOfRequests\": 100, \n              \"constraint\": {\n                \"quotaAccount\": \"foo-qs-account\", \n                \"dutPool\": \"bar-pool\"\n              }\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
