@@ -5,7 +5,9 @@
 
 DEPS = [
     'recipe_engine/properties',
+    'cros_infra_config',
     'cros_prebuilts',
+    'test_util',
 ]
 
 from PB.chromiumos.builder_config import BuilderConfig
@@ -21,6 +23,7 @@ PROPERTIES = FullProperties
 
 
 def RunSteps(api, properties):
+  api.cros_infra_config.configure_builder()
   api.cros_prebuilts.upload_target_prebuilts(properties.build_target,
                                              BuilderConfig.Id.POSTSUBMIT,
                                              properties.gs_bucket,
@@ -31,7 +34,8 @@ def GenTests(api):
 
   def test_data(private=False, use_staging=False):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
-    ret = api.properties(
+    ret = api.test_util.test_child_build('amd64-generic', cq=False).build
+    ret += api.properties(
         FullProperties(
             build_target=BuildTarget(name='target'), private=private,
             gs_bucket=gs_bucket))

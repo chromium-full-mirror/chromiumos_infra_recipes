@@ -5240,9 +5240,9 @@ For more details on the input properties, see cl_factory.proto.
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/utils.py#14)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#25)(api, properties):**
 ### *recipes* / [cros\_prebuilts:tests/upload\_cq](/recipe_modules/cros_prebuilts/tests/upload_cq.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/tests/upload_cq.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
