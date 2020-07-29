@@ -15,18 +15,14 @@ DEPS = [
     'git_footers',
 ]
 
-PROPERTIES = {
-    'invalid_cr_commit_position': Property(default=False)
-}
+PROPERTIES = {'invalid_cr_commit_position': Property(default=False)}
 
 
 def RunSteps(api, invalid_cr_commit_position):
   api.assertions.assertEqual(
-      api.git_footers.from_ref('HEAD', key='Reviewed-On'),
-      ['HEAD:Reviewed-On'])
+      api.git_footers.from_ref('HEAD', key='Reviewed-On'), ['HEAD:Reviewed-On'])
   api.assertions.assertEqual(
-      api.git_footers.from_message('message', key='key'),
-      ['message:key'])
+      api.git_footers.from_message('message', key='key'), ['message:key'])
   api.git_footers.position_num('HEAD')
   api.git_footers.from_gerrit_change(
       GerritChange(

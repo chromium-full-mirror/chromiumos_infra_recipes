@@ -24,9 +24,10 @@ class GitFootersApi(recipe_api.RecipeApi):
     kwargs.setdefault('infra_step', True)
     kwargs.setdefault('step_test_data',
                       self.test_api.step_test_data_factory('my-footer'))
-    result = self.m.python(
-        'read git footers', self.m.depot_tools.root.join('git_footers.py'),
-        args, stdout=self.m.raw_io.output(), ok_ret=(0,1), **kwargs)
+    result = self.m.python('read git footers',
+                           self.m.depot_tools.root.join('git_footers.py'), args,
+                           stdout=self.m.raw_io.output(), ok_ret=(0, 1),
+                           **kwargs)
 
     if result.retcode == 1:
       return None
@@ -84,7 +85,7 @@ class GitFootersApi(recipe_api.RecipeApi):
     if key is not None:
       args.extend(['--key', key])
       kwargs.setdefault(
-         'step_test_data',
+          'step_test_data',
           self.test_api.step_test_data_factory('%s:%s' % (ref, key)))
     return self(*args, **kwargs)
 

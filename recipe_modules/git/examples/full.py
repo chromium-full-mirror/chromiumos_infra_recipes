@@ -22,8 +22,7 @@ def RunSteps(api):
   api.git.merge('branch', 'yeet')
   api.git.merge_abort()
   api.git.cherry_pick('branch')
-  api.git.commit('Updated README\n\nMuch better now.',
-                 files=['README.md'],
+  api.git.commit('Updated README\n\nMuch better now.', files=['README.md'],
                  author='John Doe <john.doe@example.com>')
   api.git.push('origin', 'HEAD:master', dry_run=True, capture_stdout=True)
 
@@ -39,16 +38,15 @@ def RunSteps(api):
   api.git.show_file('deadbeef', 'some/path')
   api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')
   api.assertions.assertEqual(
-      api.git.get_diff_files('master', 'HEAD'), ['a/b/text.txt', 'other_test.txt'])
+      api.git.get_diff_files('master', 'HEAD'),
+      ['a/b/text.txt', 'other_test.txt'])
   api.assertions.assertEqual(
       api.git.get_diff_files('master'), ['a/b/text.txt', 'other_test.txt'])
-  api.assertions.assertEqual(
-      api.git.get_diff_files(), ['a/b/text.txt', 'other_test.txt'])
-  api.assertions.assertFalse(
-      api.git.get_diff_files(test_stdout='\n'), [])
-  api.assertions.assertEqual(
-      api.git.get_working_dir_diff_files(),
-      ['changed.txt', 'new.txt'])
+  api.assertions.assertEqual(api.git.get_diff_files(),
+                             ['a/b/text.txt', 'other_test.txt'])
+  api.assertions.assertFalse(api.git.get_diff_files(test_stdout='\n'), [])
+  api.assertions.assertEqual(api.git.get_working_dir_diff_files(),
+                             ['changed.txt', 'new.txt'])
 
   with api.git.head_context():
     pass
@@ -62,8 +60,8 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.git.extract_branch('refs/tags/something', 'whatever'), 'whatever')
 
-  api.assertions.assertEqual(
-      api.git.is_merge_commit(commit_id), False)
+  api.assertions.assertEqual(api.git.is_merge_commit(commit_id), False)
+
 
 def GenTests(api):
   yield api.test('basic')

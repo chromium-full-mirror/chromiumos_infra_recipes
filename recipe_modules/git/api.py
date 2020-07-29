@@ -119,12 +119,12 @@ class GitApi(recipe_api.RecipeApi):
     if not test_stdout:
       test_stdout = '\n'.join(['a/b/text.txt', 'other_test.txt'])
 
-    cmd  = ['diff', '--name-only']
+    cmd = ['diff', '--name-only']
     cmd += [from_rev] if from_rev else []
     cmd += [to_rev] if to_rev else []
 
-    step_data = self._step(
-        cmd, stdout=self.m.raw_io.output(), test_stdout=test_stdout)
+    step_data = self._step(cmd, stdout=self.m.raw_io.output(),
+                           test_stdout=test_stdout)
 
     output = step_data.stdout.strip()
     if not output:
@@ -137,9 +137,9 @@ class GitApi(recipe_api.RecipeApi):
  M changed.txt
 ?? new.txt
 """
-    step_data = self._step(
-        ['status', '--porcelain'], stdout=self.m.raw_io.output(),
-        test_stdout=test_stdout)
+    step_data = self._step(['status', '--porcelain'],
+                           stdout=self.m.raw_io.output(),
+                           test_stdout=test_stdout)
 
     # Need to strip the diff mode characters, e.g. "?? "
     return [line[2:].strip() for line in step_data.stdout.strip().splitlines()]
@@ -211,8 +211,8 @@ class GitApi(recipe_api.RecipeApi):
     Returns:
       bool: whether the merge succeeded
     """
-    success = self._step(['merge', ref, '-m', message],
-                         ok_ret=(0,1), **kwargs).retcode == 0
+    success = self._step(['merge', ref, '-m', message], ok_ret=(0, 1),
+                         **kwargs).retcode == 0
     return success
 
   def cherry_pick(self, commit, **kwargs):
@@ -289,9 +289,9 @@ class GitApi(recipe_api.RecipeApi):
 
   def head_commit(self):
     """Returns the HEAD commit ID."""
-    return self._step(
-        ['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
-        test_stdout='%s\n' % self.test_api.test_commit_id).stdout.strip()
+    return self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
+                      test_stdout='%s\n' %
+                      self.test_api.test_commit_id).stdout.strip()
 
   @contextlib.contextmanager
   def head_context(self):
@@ -429,8 +429,7 @@ class GitApi(recipe_api.RecipeApi):
     Returns: list[str] parent commit sha.
     """
     step_data = self._step(['log', '--pretty=%P', '-n 1', commit_id],
-                           ok_ret=(0,),
-                           stdout=self.m.raw_io.output(),
+                           ok_ret=(0,), stdout=self.m.raw_io.output(),
                            test_stdout=test_contents)
     return step_data.stdout.split(' ')
 

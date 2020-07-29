@@ -2949,7 +2949,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#437)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#436)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -3111,7 +3111,7 @@ Args:
 Returns:
   list[str]: All matching footer values, or None
 
-&mdash; **def [from\_gerrit\_change](/recipe_modules/git_footers/api.py#35)(self, gerrit_change, key=None, \*\*kwargs):**
+&mdash; **def [from\_gerrit\_change](/recipe_modules/git_footers/api.py#36)(self, gerrit_change, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the commit message for the given key.
 
@@ -3125,7 +3125,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the commit message.
 
-&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#51)(self, message, key=None, \*\*kwargs):**
+&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#52)(self, message, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the commit message for the given key.
 
@@ -3139,7 +3139,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the commit message.
 
-&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#73)(self, ref, key=None, \*\*kwargs):**
+&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#74)(self, ref, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the given ref for the given key.
 
@@ -3150,7 +3150,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
 
-&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#91)(self, ref, \*\*kwargs):**
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#92)(self, ref, \*\*kwargs):**
 
 Return the footer value for Cr-Commit-Position.
 
@@ -5544,7 +5544,7 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 
 Test git_footers calls.
 
-&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#23)(api, invalid_cr_commit_position):**
+&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#21)(api, invalid_cr_commit_position):**
 ### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
 
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
