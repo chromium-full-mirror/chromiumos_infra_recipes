@@ -158,8 +158,46 @@ class GitApi(recipe_api.RecipeApi):
       args += refspecs
     self._step(args, timeout=timeout_sec)
 
+  def fetch_refs(self, remote, ref, timeout_sec=None, count=1, test_ids=None):
+    """Fetch a list of remote refs.
+
+    Args:
+      * remote (str): The remote repository to fetch from.
+      * ref (str): The ref to fetch.
+      * timeout_sec (int): Timeout in seconds.
+      * count (int): The number of commit IDs to return.
+      * test_ids (list[str]): List of test commit IDs, or None.
+
+    Returns:
+      list[str]: The commit IDs, starting with the fetched ref.
+    """
+    self.fetch(remote, ['%s:' % ref])
+    test_ids = test_ids or self.test_api.generate_test_ids(count)
+    test_retcode = 0 if len(test_ids) == count else 1
+
+    # Normally, there will be |count| elements in the output.  If the repo is
+    # too new, then this command will fail, and we will loop.
+    step_data = self._step(
+        ['log', 'FETCH_HEAD~%d..FETCH_HEAD' % count, '--pretty=%H'],
+        stdout=self.m.raw_io.output(), timeout=timeout_sec,
+        step_test_data=lambda: self.m.raw_io.test_api.stream_output(
+            '\n'.join(test_ids) + '\n', retcode=test_retcode), ok_ret=(0, 1))
+    if step_data.retcode == 0:
+      return step_data.stdout.splitlines()
+
+    ret = []
+    for idx in range(count):
+      step_data = self._step(['rev-parse', 'FETCH_HEAD~%d' % idx],
+                             stdout=self.m.raw_io.output(), timeout=timeout_sec,
+                             test_stdout='%s\n' % test_ids[idx], ok_ret=(0, 1))
+      if step_data.retcode:
+        break
+      ret.append(step_data.stdout.strip())
+
+    return ret
+
   def fetch_ref(self, remote, ref, timeout_sec=None):
-    """Fetch a single remote ref with 'git fetch'.
+    """Fetch a ref, and return the commit ID (SHA).
 
     Args:
       * remote (str): The remote repository to fetch from.
@@ -167,7 +205,7 @@ class GitApi(recipe_api.RecipeApi):
       * timeout_sec (int): Timeout in seconds.
 
     Returns:
-      str: The commit ID of the fetched ref.
+      str: The commit ID (SHA) of the fetched ref.
     """
     self.fetch(remote, ['%s:' % ref])
 

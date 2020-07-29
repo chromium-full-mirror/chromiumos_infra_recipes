@@ -1,0 +1,52 @@
+[
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "refs/heads/snapshot:"
+    ],
+    "infra_step": true,
+    "name": "git fetch"
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "FETCH_HEAD~4..FETCH_HEAD",
+      "--pretty=%H"
+    ],
+    "infra_step": true,
+    "name": "git log"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD~0"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD~1"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD~2"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (3)"
+  },
+  {
+    "name": "$result"
+  }
+]

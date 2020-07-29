@@ -1,0 +1,21 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.git.examples;
+
+import "chromiumos/common.proto";
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message FetchProperties {
+  // The head commit to use.
+  buildbucket.v2.GitilesCommit snapshot = 1;
+
+  // The count to pass.
+  int32 count = 2;
+
+  // The expected list of commit shas
+  repeated string expected_shas = 3;
+}

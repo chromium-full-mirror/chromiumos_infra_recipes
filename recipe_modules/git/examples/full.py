@@ -10,6 +10,9 @@ DEPS = [
     'git',
 ]
 
+# TODO(crbug/1098567): Refactor this to be actual examples, and move the tests
+# into tests/.
+
 
 def RunSteps(api):
   commit_id = 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'

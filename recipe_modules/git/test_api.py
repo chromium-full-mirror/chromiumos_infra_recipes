@@ -9,6 +9,17 @@ class GitTestApi(recipe_test_api.RecipeTestApi):
 
   test_commit_id = 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
 
+  def generate_test_ids(self, count):
+    """Return a list of test commit IDs.
+
+    Args:
+      * count (int): The number of IDs to generate.
+
+    Returns:
+      (str) the commit id to use (varies based on index).
+    """
+    return ["deadbeef00000000%024x" % x for x in range(count)]
+
   @recipe_test_api.mod_test_data
   @staticmethod
   def diff_check(value):

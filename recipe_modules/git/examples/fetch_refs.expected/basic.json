@@ -1,0 +1,25 @@
+[
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "refs/heads/snapshot:"
+    ],
+    "infra_step": true,
+    "name": "git fetch"
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "FETCH_HEAD~1..FETCH_HEAD",
+      "--pretty=%H"
+    ],
+    "infra_step": true,
+    "name": "git log"
+  },
+  {
+    "name": "$result"
+  }
+]
