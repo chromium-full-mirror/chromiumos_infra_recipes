@@ -277,6 +277,21 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/project1/generated/config.binaryproto",
+      "[START_DIR]/chromiumos_workspace/project1/generated/config.binaryproto.old"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "copy old config.jsonproto"
+  },
+  {
     "cmd": [],
     "name": "cherry-pick gerrit changes"
   },
@@ -498,6 +513,114 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "check for config.jsonproto diff",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@diff@@@",
+      "@@@STEP_LOG_LINE@diff@big diff@@@",
+      "@@@STEP_LOG_END@diff@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "diff",
+      "[START_DIR]/chromiumos_workspace/project1/generated/config.binaryproto.old",
+      "[START_DIR]/chromiumos_workspace/project1/generated/config.binaryproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "check for config.jsonproto diff.diff config.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "project1",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "check for config.jsonproto diff.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project1|src/project1|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "check_project_config",
+      "project1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "check for config.jsonproto diff.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check for config.jsonproto diff.comment on CL 123456",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@comment text@config.jsonproto diff introduced by change:@@@",
+      "@@@STEP_LOG_LINE@comment text@@@@",
+      "@@@STEP_LOG_LINE@comment text@big diff@@@",
+      "@@@STEP_LOG_END@comment text@@@",
+      "@@@STEP_LINK@link to change@https://chrome-internal-review.googlesource.com/c/project1/+/123456/7@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "project1",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "check for config.jsonproto diff.comment on CL 123456.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project1|src/project1|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "comment",
+      "-i",
+      "123456",
+      "-a",
+      "config.jsonproto diff introduced by change:\n\nbig diff"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "check for config.jsonproto diff.comment on CL 123456.git_cl comment",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/chromiumos_workspace/src/config/generate.sh"
     ],
@@ -513,9 +636,9 @@
       "--program",
       "[START_DIR]/chromiumos_workspace/src/program/testprogram/generated/config.binaryproto",
       "--project",
-      "[START_DIR]/chromiumos_workspace/src/project/testproject/generated/config.binaryproto",
+      "[START_DIR]/chromiumos_workspace/project1/generated/config.binaryproto",
       "--factory_dir",
-      "[START_DIR]/chromiumos_workspace/src/project/testproject/factory"
+      "[START_DIR]/chromiumos_workspace/project1/factory"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "check constraints",
