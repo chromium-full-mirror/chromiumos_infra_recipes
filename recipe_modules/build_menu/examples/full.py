@@ -81,6 +81,17 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'cherry-pick gerrit changes'),
       build_target='arm-generic', cq=True, bucket='postsubmit')
 
+  yield api.build_menu.test(
+      'postsubmit-with-snapshot-prebuilts',
+      api.properties(
+          FullProperties(artifact_build=True, upload_prebuilts=True)),
+      input_properties={
+          '$chromeos/build_menu':
+              dict(artifact_build=True),
+          '$chromeos/cros_prebuilts':
+              dict(enable_snapshot_prebuilts=True, send_snapshot_prebuilts=True)
+      })
+
   for forced in False, True:
     yield api.build_menu.test(
         ('forced-' if forced else '') + 'pointless-artifact-build',

@@ -586,7 +586,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#257)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#261)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -603,7 +603,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#288)(self, config=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#292)(self, config=None):**
 
 Build the image and run ebuild tests.
 
@@ -641,7 +641,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#82)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#368)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#372)(self, config=None):**
 
 Generate release payloads for the build.
 
@@ -676,7 +676,7 @@ Setup the workspace and chroot for the builder.
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#358)(self, config=None):**
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#362)(self, config=None):**
 
 Sign the uploaded images.
 
@@ -685,14 +685,14 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#74)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#327)(self, config=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#331)(self, config=None):**
 
 Upload artifacts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#342)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#346)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -4278,7 +4278,7 @@ API for various support functions for building.
 
 A module for sysroot setup, manipulation, and use.
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#107)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', test_data=None, name=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#110)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', test_data=None, name=None):**
 
 Bootstrap the sysroot by calling InstallToolchain.
 
@@ -4294,7 +4294,7 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#217)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, timeout_sec=(45 \* 60), build_test_data=None, test_test_data=None, name=None):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#220)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, timeout_sec=(45 \* 60), build_test_data=None, test_test_data=None, name=None):**
 
 Build and validate images.
 
@@ -4310,7 +4310,7 @@ Args:
       call, or None.
   name (str): Step name to use, or None for default name.
 
-&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#67)(self, build_target, profile=None, chroot_current=True, replace=True, timeout_sec='DEFAULT', test_data=None, name=None):**
+&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#67)(self, build_target, profile=None, chroot_current=True, replace=True, package_indexes=None, timeout_sec='DEFAULT', test_data=None, name=None):**
 
 Create the sysroot.
 
@@ -4320,6 +4320,7 @@ Args:
   chroot_current (bool): Whether the chroot is current.  (If not, it will be
       updated.
   replace (bool): Whether to replace an existing sysroot.
+  package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
   timeout_sec (int): Step timeout (in seconds).  Default: None if a
       toolchain change is detected, otherwise 10 minutes.
   test_data (str): test response (JSON) from the SysrootService/Create
@@ -4331,7 +4332,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#30)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/sysroot_util/api.py#140)(self, config, dep_graph, packages=None, artifact_build=False, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [install\_packages](/recipe_modules/sysroot_util/api.py#143)(self, config, dep_graph, packages=None, artifact_build=False, timeout_sec='DEFAULT', name=None):**
 
 Install packages (possibly fetching Chrome source).
 

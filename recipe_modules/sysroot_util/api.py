@@ -65,8 +65,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     return PrepareForBuildResponse.NEEDED if force_relevance else resp
 
   def create_sysroot(self, build_target, profile=None, chroot_current=True,
-                     replace=True, timeout_sec='DEFAULT', test_data=None,
-                     name=None):
+                     replace=True, package_indexes=None, timeout_sec='DEFAULT',
+                     test_data=None, name=None):
     """Create the sysroot.
 
     Args:
@@ -75,6 +75,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       chroot_current (bool): Whether the chroot is current.  (If not, it will be
           updated.
       replace (bool): Whether to replace an existing sysroot.
+      package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
       timeout_sec (int): Step timeout (in seconds).  Default: None if a
           toolchain change is detected, otherwise 10 minutes.
       test_data (str): test response (JSON) from the SysrootService/Create
@@ -84,6 +85,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     Returns:
       Sysroot
     """
+    package_index = package_indexes or []
     test_data = test_data or json_format.MessageToJson(
         SysrootCreateResponse(
             sysroot=Sysroot(path='/build/%s' %
@@ -99,7 +101,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                                          toolchain_changed=toolchain_cls)
       create_sysroot_response = self.m.cros_build_api.SysrootService.Create(
           SysrootCreateRequest(build_target=build_target, profile=profile,
-                               chroot=self.m.cros_sdk.chroot, flags=flags),
+                               chroot=self.m.cros_sdk.chroot, flags=flags,
+                               package_indexes=package_indexes),
           timeout=timeout_sec, test_output_data=test_data)
       self._sysroot = create_sysroot_response.sysroot
       return self.sysroot
