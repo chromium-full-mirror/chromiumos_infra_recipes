@@ -419,7 +419,7 @@ def _get_requests_from_properties(properties):
 
 #######################
 # Keep this block in sync with recipe_modules/skylab/test_api.py
-# TODO(jkop, chromium:1067440): refactor both to call the same code
+# TODO(chromium:1067440): refactor both to call the same code
 def _marshal_responses(responses):
   responses_dict = json_format.MessageToDict(responses)
   return responses_dict.get("taggedResponses", {})
@@ -435,7 +435,7 @@ def _base64_compress_proto(proto):
 
 
 # Keep this block in sync with recipe_modules/skylab/test_api.py
-# TODO(jkop, chromium:1067440): refactor both to call the same code
+# TODO(chromium:1067440): refactor both to call the same code
 #######################
 
 

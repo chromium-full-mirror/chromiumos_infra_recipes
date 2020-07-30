@@ -81,7 +81,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
 
   #######################
   # Keep this block in sync with recipes/test_platform/cros_test_platform.py
-  # TODO(jkop, chromium:1067440): refactor both to call the same code
+  # TODO(chromium:1067440): refactor both to call the same code
   def _marshal_responses(self, responses):
     responses_dict = json_format.MessageToDict(responses)
     return responses_dict.get("taggedResponses", {})
@@ -94,7 +94,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
     return wire_format.encode('zlib_codec').encode('base64_codec')
 
   # Keep this block in sync with recipes/test_platform/cros_test_platform.py
-  # TODO(jkop, chromium:1067440): refactor both to call the same code
+  # TODO(chromium:1067440): refactor both to call the same code
   #######################
 
   def test_with_multi_response(
