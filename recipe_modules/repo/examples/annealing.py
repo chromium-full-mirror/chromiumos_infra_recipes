@@ -9,10 +9,11 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'easy',
     'repo',
 ]
 
-from google.protobuf import json_format
+from google.protobuf.json_format import MessageToDict
 
 from PB.recipe_modules.chromeos.repo.examples import common
 from PB.recipe_modules.chromeos.repo.examples.annealing import (
@@ -28,20 +29,22 @@ def RunSteps(api, properties):
   api.path.mock_add_paths(repo_root.join('.repo'))
 
   with api.context(cwd=repo_root.join('manifest-internal')):
-    init_opts = json_format.MessageToDict(properties.init_opts,
-                                          preserving_proto_field_name=True)
+    init_opts = MessageToDict(properties.init_opts,
+                              preserving_proto_field_name=True)
     manifest_url = init_opts.pop('manifest_url', 'http://manifest_url')
     local_manifest = init_opts.pop('local_manifest', None)
     if local_manifest:
       init_opts['local_manifest'] = api.repo.LocalManifest(
           local_manifest['repo'], local_manifest['path'])
-    sync_opts = json_format.MessageToDict(properties.sync_opts,
-                                          preserving_proto_field_name=True)
+    sync_opts = MessageToDict(properties.sync_opts,
+                              preserving_proto_field_name=True)
 
     projects = list(properties.projects)
     api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
                                     manifest_url, init_opts=init_opts,
                                     sync_opts=sync_opts, projects=projects)
+    api.easy.set_property_step('commit',
+                               MessageToDict(api.repo.manifest_gitiles_commit))
 
     manifest_data = ('<manifest></manifest>' if not properties.manifest_data
                      else properties.manifest_data.encode('utf-8'))

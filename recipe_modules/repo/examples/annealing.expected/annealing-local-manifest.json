@@ -266,6 +266,54 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[START_DIR]/repo/.repo/manifests",
+    "infra_step": true,
+    "name": "git remote"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "get-url",
+      "cros-internal"
+    ],
+    "cwd": "[START_DIR]/repo/.repo/manifests",
+    "infra_step": true,
+    "name": "git remote (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/repo/.repo/manifests",
+    "infra_step": true,
+    "name": "git rev-parse"
+  },
+  {
+    "cmd": [
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/repo/.repo/manifests",
+    "infra_step": true,
+    "name": "git symbolic-ref"
+  },
+  {
+    "cmd": [],
+    "name": "set commit",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/master\"}@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "sync manifests"
   },

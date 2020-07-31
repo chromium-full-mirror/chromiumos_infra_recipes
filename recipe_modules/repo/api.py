@@ -489,6 +489,12 @@ class RepoApi(recipe_api.RecipeApi):
             ['--ignore-missing', '-j', '32', '-c', 'git', 'clean', '-d', '-f'])
         self._step(cmd, stdout=self.m.raw_io.output(add_output_log=True))
 
+  @property
+  def manifest_gitiles_commit(self):
+    """Return a Gitiles commit for the repo manifest."""
+    with self.m.context(cwd=self._find_root().join('.repo', 'manifests')):
+      return self.m.git.gitiles_commit()
+
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
                              sync_opts=None, projects=None):
     """Ensure the given repo checkout exists and is synced.
