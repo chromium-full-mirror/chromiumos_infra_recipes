@@ -4,6 +4,8 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'recipe_engine/step',
     'recipe_engine/context',
+    'recipe_engine/random',
+    'recipe_engine/step',
+    'recipe_engine/time',
 ]

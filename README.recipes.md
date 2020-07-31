@@ -2646,18 +2646,38 @@ Returns:
   Config, GCE Provider Config defintion with updated values.
 ### *recipe_modules* / [gcloud](/recipe_modules/gcloud)
 
-[DEPS](/recipe_modules/gcloud/__init__.py#6): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gcloud/__init__.py#6): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [GcloudApi](/recipe_modules/gcloud/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GcloudApi](/recipe_modules/gcloud/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#12)(self, step_name=None):**
+&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#22)(self, step_name=None):**
 
 Print out the auth creds currently on the bot.
 
 Args:
   step_name(str): Name of the step.
+
+&mdash; **def [create\_instance](/recipe_modules/gcloud/api.py#31)(self, image=DUMMY_IMAGE):**
+
+Create an instance in the GCE project.
+
+Args:
+  image(str): GCE image to use for the instance.
+
+Returns: A string name of the instance.
+
+&mdash; **def [delete\_instance](/recipe_modules/gcloud/api.py#53)(self, instance):**
+
+Delete a GCE instance.
+
+Args:
+  instance(str): GCE instance to be deleted.
+
+&mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#16)(self):**
+
+Set the default project for gcloud command.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
