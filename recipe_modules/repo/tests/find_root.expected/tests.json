@@ -7,6 +7,21 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/test/dir/sub"
+    ],
+    "infra_step": true,
+    "name": "test dir"
+  },
+  {
     "name": "$result"
   }
 ]

@@ -314,7 +314,7 @@
       "<manifest></manifest>",
       "[START_DIR]/repo/.repo/tmp_manifest"
     ],
-    "cwd": "[START_DIR]/repo",
+    "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
     "name": "sync to snapshot.write manifest",
     "~followup_annotations": [
@@ -334,7 +334,7 @@
       "--manifest-name",
       "../tmp_manifest"
     ],
-    "cwd": "[START_DIR]/repo",
+    "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
     "name": "sync to snapshot.repo init",
     "timeout": 900,
@@ -353,7 +353,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/repo",
+    "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
     "name": "sync to snapshot.clear repo locks",
     "~followup_annotations": [
@@ -377,7 +377,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/repo",
+    "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
     "name": "sync to snapshot.clear git locks",
     "~followup_annotations": [
@@ -393,7 +393,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/repo",
+    "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
     "name": "sync to snapshot.repo sync",
     "~followup_annotations": [

@@ -42,7 +42,10 @@ class RepoApi(recipe_api.RecipeApi):
 
   def _find_root(self):
     """Starting from cwd, find an ancestor with a '.repo' subdir."""
-    candidate = self.m.context.cwd.join()  # .join() makes a copy to mutate
+    # We need a copy of cwd that we can modify. join() with no arguments
+    # returns the instance, so we add an element, and then remove it.
+    candidate = self.m.context.cwd.join('force-copy')
+    candidate.pieces = candidate.pieces[:-1]
     while True:
       if self.m.path.exists(candidate.join('.repo')):
         return candidate
@@ -416,7 +419,7 @@ class RepoApi(recipe_api.RecipeApi):
 
     def project_paths(xml_data):
       xml = ElementTree.fromstring(xml_data)
-      # Some projects may be ignored by annealing.  Specifically, the checked
+      # Some projects may be ignored by annealing. Specifically, the checked
       # out copy of the snapshot branch of the manifest.
       attrs = [
           proj.attrib

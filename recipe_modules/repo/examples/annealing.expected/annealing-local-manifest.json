@@ -341,7 +341,7 @@
       "../../manifest-internal/snapshot-a.xml",
       "../../manifest-internal/snapshot-b.xml"
     ],
-    "cwd": "[START_DIR]/repo",
+    "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
     "name": "manifest diff"
   },
