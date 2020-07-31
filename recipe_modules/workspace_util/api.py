@@ -64,9 +64,13 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
           saved in cros_infra_config.configure_builder().
       staging (bool): Whether this is a staging build.  Default: False.
     """
-    self.m.cros_source.ensure_synced_cache(is_staging=staging)
-    self.m.cros_source.sync_snapshot(commit or
-                                     self.m.cros_infra_config.gitiles_commit)
+    commit = commit or self.m.cros_infra_config.gitiles_commit
+    manifest_url = self.m.cros_source.EXTERNAL_MANIFEST_URL
+    if commit.host == self.m.cros_source.INTERNAL_HOST:
+      manifest_url = self.m.cros_source.INTERNAL_MANIFEST_URL
+    self.m.cros_source.ensure_synced_cache(is_staging=staging,
+                                           manifest_url=manifest_url)
+    self.m.cros_source.sync_snapshot(commit, manifest_url=manifest_url)
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',
                     only_checked_out_projects=False):
