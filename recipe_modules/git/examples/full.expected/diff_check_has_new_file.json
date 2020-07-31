@@ -311,6 +311,43 @@
   {
     "cmd": [
       "git",
+      "remote"
+    ],
+    "infra_step": true,
+    "name": "git remote"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "get-url",
+      "cros-internal"
+    ],
+    "infra_step": true,
+    "name": "git remote (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git symbolic-ref (2)"
+  },
+  {
+    "cmd": [
+      "git",
       "log",
       "--pretty=%P",
       "-n 1",

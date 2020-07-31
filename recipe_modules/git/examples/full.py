@@ -58,6 +58,11 @@ def RunSteps(api):
   api.git.rebase(force=True)
   api.git.set_global_config(['upstream.hammer-branch', '1'])
 
+  commit = api.git.gitiles_commit(test_url='https://example.com/pro/ject/')
+  api.assertions.assertEqual('example.com', commit.host)
+  api.assertions.assertEqual('pro/ject', commit.project)
+  api.assertions.assertEqual('refs/heads/master', commit.ref)
+
   api.assertions.assertEqual(
       api.git.extract_branch('refs/heads/something', 'whatever'), 'something')
   api.assertions.assertEqual(

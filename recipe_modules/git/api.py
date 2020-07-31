@@ -9,9 +9,12 @@ import contextlib
 import datetime
 import types
 from collections import namedtuple
+from urlparse import urlparse
 
 from recipe_engine import recipe_api
 from recipe_engine.util import exponential_retry
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 
 class GitApi(recipe_api.RecipeApi):
@@ -467,7 +470,7 @@ class GitApi(recipe_api.RecipeApi):
     Returns: list[str] parent commit sha.
     """
     step_data = self._step(['log', '--pretty=%P', '-n 1', commit_id],
-                           ok_ret=(0,), stdout=self.m.raw_io.output(),
+                           stdout=self.m.raw_io.output(),
                            test_stdout=test_contents)
     return step_data.stdout.split(' ')
 
@@ -480,3 +483,26 @@ class GitApi(recipe_api.RecipeApi):
     Returns: Bool if the commit has more than 1 parent.
     """
     return len(self.get_parents(commit_id)) > 1
+
+  def gitiles_commit(self, test_remote='cros-internal', test_url=None):
+    """Return a GitilesCommit for HEAD.
+
+    Args:
+      test_remote (str): The name of the remote, for tests.
+      test_url (str): Test data: url for the remote, for tests.
+
+    Returns:
+      (GitilesCommit): The GitilesCommit corresponding to HEAD.
+    """
+    remote = self._step(['remote'], stdout=self.m.raw_io.output(),
+                        test_stdout=test_remote).stdout.splitlines()[0]
+    test_url = (
+        test_url or
+        'https://chrome-internal.googlesource.com/chromeos/manifest-internal')
+    url_parts = urlparse(
+        self._step(['remote', 'get-url', remote], stdout=self.m.raw_io.output(),
+                   test_stdout=test_url).stdout.strip())
+    commit_sha = self.head_commit()
+    ref = 'refs/heads/{}'.format(self.current_branch())
+    return GitilesCommit(host=url_parts.netloc, id=commit_sha, ref=ref,
+                         project=url_parts.path.strip('/'))
