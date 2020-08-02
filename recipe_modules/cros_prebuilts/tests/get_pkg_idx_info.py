@@ -13,7 +13,7 @@ DEPS = [
 
 from collections import namedtuple
 
-from PB.chromiumos.common import BuildTarget, PackageIndexInfo
+from PB.chromiumos.common import BuildTarget, PackageIndexInfo, Profile
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
     CrosPrebuiltsProperties)
@@ -36,58 +36,62 @@ def RunSteps(api, properties):
     data[snap] = {}
     for targ, targ_val in snap_val.targets.items():
       data[snap][targ] = {}
-      for fname, info in targ_val.files.items():
-        data[snap][targ][fname] = info
+      for p_name, prof_val in targ_val.profiles.items():
+        p_name = p_name or 'base'
+        data[snap][targ][p_name] = {}
+        for fname, info in prof_val.files.items():
+          data[snap][targ][p_name][fname] = info
 
   info = api.cros_prebuilts._get_snapshot_package_index_info(
-      [x.id for x in properties.gitiles_commits], properties.build_targets,
-      properties.gs_bucket, test_data_dict=data)
+      [x.id for x in properties.gitiles_commits], properties.build_target,
+      properties.profile, properties.gs_bucket, test_data_dict=data)
   api.assertions.assertEqual(list(properties.expected_package_index_info), info)
 
 
 def GenTests(api):
 
-  def make_build_targets(names):
-    return [BuildTarget(name=x) for x in names]
-
   def make_snapshots(ids, **kwargs):
     return [GitilesCommit(id=x, **kwargs) for x in ids]
 
-  def make_info(snapshot_sha, snapshot_number, target, location=None):
+  def make_info(snapshot_sha, snapshot_number, target, pname, location=None):
     location = location or 'gs://bucket/board/%s/KIND-VER-888/packages' % target
     return PackageIndexInfo(snapshot_sha=snapshot_sha,
                             snapshot_number=snapshot_number,
                             build_target=BuildTarget(name=target),
-                            location=location)
+                            profile=Profile(name=pname), location=location)
 
-  _file = namedtuple('_file', ['sha', 'num', 'target', 'fname', 'location'])
+  _file = namedtuple('_file',
+                     ['sha', 'num', 'btname', 'pname', 'fname', 'location'])
 
   def make_test_data(files):
     data = TestDataMap()
     for f in files:
-      item = data.snapshots[f.sha].targets[f.target].files[f.fname]
+      item = data.snapshots[f.sha].targets[f.btname].profiles[f.pname].files[
+          f.fname]
       item.snapshot_sha = f.sha
       item.snapshot_number = f.num
-      item.build_target.name = f.target
+      item.build_target.name = f.btname
+      item.profile.name = f.pname
       item.location = (
-          f.location or 'gs://bucket/board/%s/KIND-VER-888/packages' % f.target)
+          f.location or 'gs://bucket/board/%s/KIND-VER-888/packages' % f.btname)
     return data
 
   def test_data(use_staging=False, test_data_dict=None,
-                send_snapshot_prebuilts=True, snapshots=None,
-                build_targets=None, expected_package_index_info=None):
+                send_snapshot_prebuilts=True, snapshots=None, build_target=None,
+                profile=None, expected_package_index_info=None):
 
     expected_package_index_info = expected_package_index_info or []
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     snapshots = snapshots or make_snapshots(['111', '333', '222'])
-    build_targets = build_targets or make_build_targets(
-        ['coral', 'amd64-generic', 'arm-generic', 'arm64-generic'])
+    build_target = (
+        build_target if build_target and build_target.name else BuildTarget(
+            name='coral'))
 
     ret = api.test_util.test_child_build('coral', cq=False).build
     ret += api.properties(
         GetPkgIdxInfoProperties(
-            gitiles_commits=snapshots, build_targets=build_targets,
-            gs_bucket=gs_bucket, test_data_dict=test_data_dict,
+            gitiles_commits=snapshots, build_target=build_target,
+            profile=profile, gs_bucket=gs_bucket, test_data_dict=test_data_dict,
             expected_package_index_info=expected_package_index_info))
 
     ret += api.properties(
@@ -107,17 +111,14 @@ def GenTests(api):
   yield api.test(
       'partial-prebuilts',
       test_data(
+          build_target=BuildTarget(name='a'),
           snapshots=make_snapshots(['1', '3', '2']),
-          build_targets=make_build_targets(['a', 'b', 'c', 'd']),
-          test_data_dict=make_test_data([
-              _file('1', 5555, 'a', 'a-kind-881-postsubmit.json', ''),
-              _file('1', 5555, 'a', 'a-asan-kind-882-postsubmit.json', 'other'),
-              _file('3', 5554, 'a', 'a-kind-771-postsubmit.json', ''),
-              _file('3', 5554, 'd', 'd-kind-774-postsubmit.json', ''),
-              _file('2', 5553, 'b', 'b-kind-662-postsubmit.json', ''),
+          profile=Profile(name='prof'), test_data_dict=make_test_data([
+              _file('1', 5555, 'a', 'prof', 'a-prof-881-ps.json', ''),
+              _file('1', 5555, 'a', 'prof', 'a-prof-asan-882-ps.json', 'other'),
+              _file('1', 5555, 'a', 'base', 'a-882-ps.json', 'other'),
+              _file('3', 5554, 'a', 'genb', 'a-ut-only-771-ps.json', ''),
           ]), expected_package_index_info=[
-              make_info('1', 5555, 'a', 'other'),
-              make_info('1', 5555, 'a'),
-              make_info('3', 5554, 'd'),
-              make_info('2', 5553, 'b'),
+              make_info('1', 5555, 'a', 'prof'),
+              make_info('1', 5555, 'a', 'prof', 'other'),
           ]))

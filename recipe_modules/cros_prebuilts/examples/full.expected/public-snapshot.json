@@ -1087,7 +1087,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"location\": \"gs://prebuilt-bucket/snapshot/snap/snapshot-HEAD-SHA/amd64-generic/amd64-generic-postsubmit-8945511751514863184-postsubmit.json\", \n  \"snapshotNumber\": 101, \n  \"snapshotSha\": \"snapshot-HEAD-SHA\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"location\": \"gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json\", \n  \"profile\": {}, \n  \"snapshotNumber\": 101, \n  \"snapshotSha\": \"snapshot-HEAD-SHA\"\n}",
       "[CLEANUP]/metadata_tmp_6/PackageIndexInfo.json"
     ],
     "infra_step": true,
@@ -1098,7 +1098,8 @@
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@  }, @@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"location\": \"gs://prebuilt-bucket/snapshot/snap/snapshot-HEAD-SHA/amd64-generic/amd64-generic-postsubmit-8945511751514863184-postsubmit.json\", @@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"location\": \"gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json\", @@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"profile\": {}, @@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotNumber\": 101, @@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotSha\": \"snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@}@@@",
@@ -1115,7 +1116,7 @@
       "----",
       "rsync",
       "[CLEANUP]/metadata_tmp_6/PackageIndexInfo.json",
-      "gs://prebuilt-bucket/snapshot/snap/snapshot-HEAD-SHA/amd64-generic/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+      "gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.gsutil rsync",
@@ -1135,7 +1136,7 @@
       "ch",
       "-u",
       "AllUsers:R",
-      "gs://prebuilt-bucket/snapshot/snap/snapshot-HEAD-SHA/amd64-generic/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+      "gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.gsutil acl",

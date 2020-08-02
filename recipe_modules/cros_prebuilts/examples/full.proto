@@ -18,4 +18,7 @@ message FullProperties {
 
   // The gs_bucket to use.
   string gs_bucket = 3;
+
+  // The name of the profile to use.
+  chromiumos.Profile profile = 4;
 }

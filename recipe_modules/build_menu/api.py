@@ -16,6 +16,7 @@ from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import Profile
 
 
 class BuildMenuApi(recipe_api.RecipeApi):
@@ -194,11 +195,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     artifacts = config.artifacts
 
     if with_sysroot:
+      # TODO(crbug/1112425): config.build.portage_profile is migrating.
+      profile = Profile(name=config.build.portage_profile.profile)
       package_indexes = self.m.cros_prebuilts.get_package_index_info(
           artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
-          build_target=self.build_target)
-      self.m.sysroot_util.create_sysroot(self.build_target,
-                                         config.build.portage_profile.profile,
+          build_target=self.build_target, profile=profile)
+      self.m.sysroot_util.create_sysroot(self.build_target, profile,
                                          package_indexes=package_indexes)
 
       # Set the target_versions output property, and upload metatdata.
@@ -354,9 +356,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     config = config or self.config
     artifacts = config.artifacts
 
+    # TODO(crbug/1112425): config.build.portage_profile is migrating.
+    profile = Profile(name=config.build.portage_profile.profile)
     if artifacts.prebuilts in self.UPLOADABLE_PREBUILTS:
       self.m.cros_prebuilts.upload_target_prebuilts(
-          self.build_target, config.id.type, artifacts.prebuilts_gs_bucket,
+          self.build_target, profile, config.id.type,
+          artifacts.prebuilts_gs_bucket,
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
   def sign_images(self, config=None):

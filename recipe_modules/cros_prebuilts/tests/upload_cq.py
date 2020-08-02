@@ -9,7 +9,7 @@ DEPS = [
     'cros_prebuilts',
 ]
 
-from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import BuildTarget, Profile
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
     CrosPrebuiltsProperties)
@@ -21,7 +21,8 @@ def RunSteps(api):
   # value.
   api.assertions.assertRaises(ValueError,
                               api.cros_prebuilts.upload_target_prebuilts,
-                              BuildTarget(name='target'), BuilderConfig.Id.CQ,
+                              BuildTarget(name='target'),
+                              Profile(name='profile_name'), BuilderConfig.Id.CQ,
                               'prebuilts_gs_bucket')
 
 

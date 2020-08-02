@@ -182,7 +182,7 @@
   },
   {
     "cmd": [],
-    "name": "deadbeef00000000000000000000000000000000/arm64-generic"
+    "name": "deadbeef00000000000000000000000000000000/amd64-generic/base"
   },
   {
     "cmd": [
@@ -194,11 +194,11 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/arm64-generic"
+      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/amd64-generic/base"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000000/arm64-generic.ensure directory",
+    "name": "deadbeef00000000000000000000000000000000/amd64-generic/base.ensure directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -213,12 +213,12 @@
       "-m",
       "----",
       "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000000/arm64-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/arm64-generic"
+      "gs://prebuilt-bucket/snapshot/deadbeef00000000000000000000000000000000/amd64-generic/base/*.json",
+      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/amd64-generic/base"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000000/arm64-generic.gsutil rsync",
+    "name": "deadbeef00000000000000000000000000000000/amd64-generic/base.gsutil rsync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -231,258 +231,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/arm64-generic"
+      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/amd64-generic/base"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000000/arm64-generic.listdir",
+    "name": "deadbeef00000000000000000000000000000000/amd64-generic/base.listdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "deadbeef00000000000000000000000000000000/amd64-generic"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/amd64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000000/amd64-generic.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000000/amd64-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/amd64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000000/amd64-generic.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/amd64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000000/amd64-generic.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "deadbeef00000000000000000000000000000000/arm-generic"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000000/arm-generic.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000000/arm-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000000/arm-generic.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000000/arm-generic.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "deadbeef00000000000000000000000000000001/arm64-generic"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/arm64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/arm64-generic.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000001/arm64-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/arm64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/arm64-generic.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/arm64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/arm64-generic.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "deadbeef00000000000000000000000000000001/amd64-generic"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/amd64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/amd64-generic.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000001/amd64-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/amd64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/amd64-generic.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/amd64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/amd64-generic.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/amd64-generic/amd64-generic-kind-1003-postsubmit.json@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/amd64-generic/base/amd64-generic-kind-1009-postsubmit.json@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -494,12 +250,12 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/amd64-generic/amd64-generic-kind-1003-postsubmit.json",
+      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/amd64-generic/base/amd64-generic-kind-1009-postsubmit.json",
       "/path/to/tmp/json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/amd64-generic.read amd64-generic-kind-1003-postsubmit.json",
+    "name": "deadbeef00000000000000000000000000000000/amd64-generic/base.read amd64-generic-kind-1009-postsubmit.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -507,369 +263,9 @@
       "@@@STEP_LOG_LINE@proto.output@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@proto.output@  }, @@@",
       "@@@STEP_LOG_LINE@proto.output@  \"location\": \"gs://prebuilt-bucket/board/amd64-generic/KIND-VER-888/packages\", @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1003, @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000001\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "deadbeef00000000000000000000000000000001/arm-generic"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/arm-generic.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000001/arm-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/arm-generic.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000001/arm-generic.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "deadbeef00000000000000000000000000000002/arm64-generic"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000002/arm64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000002/arm64-generic.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000002/arm64-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000002/arm64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000002/arm64-generic.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000002/arm64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000002/arm64-generic.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "deadbeef00000000000000000000000000000002/arm-generic"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000002/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000002/arm-generic.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000002/arm-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000002/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000002/arm-generic.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000002/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000002/arm-generic.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "deadbeef00000000000000000000000000000003/arm64-generic"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000003/arm64-generic.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000003/arm64-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000003/arm64-generic.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm64-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000003/arm64-generic.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm64-generic/arm64-generic-kind-1001-postsubmit.json@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm64-generic/arm64-generic-kind-1001-postsubmit.json",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000003/arm64-generic.read arm64-generic-kind-1001-postsubmit.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@proto.output@{@@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"build_target\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"arm64-generic\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@  }, @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"location\": \"gs://prebuilt-bucket/board/arm64-generic/KIND-VER-888/packages\", @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1001, @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000003\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "deadbeef00000000000000000000000000000003/arm-generic"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000003/arm-generic.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://prebuilt-bucket/snapshot/dead/deadbeef00000000000000000000000000000003/arm-generic/*.json",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000003/arm-generic.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm-generic"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000003/arm-generic.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm-generic/arm-generic-kind-1001-postsubmit.json@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/arm-generic/arm-generic-kind-1001-postsubmit.json",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "deadbeef00000000000000000000000000000003/arm-generic.read arm-generic-kind-1001-postsubmit.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@proto.output@{@@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"build_target\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"arm-generic\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@  }, @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"location\": \"gs://prebuilt-bucket/board/arm-generic/KIND-VER-888/packages\", @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1001, @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000003\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"profile\": {}, @@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1009, @@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000000\"@@@",
       "@@@STEP_LOG_LINE@proto.output@}@@@",
       "@@@STEP_LOG_END@proto.output@@@"
     ]
@@ -1803,7 +1199,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"location\": \"gs://prebuilt-bucket/snapshot/snap/snapshot-HEAD-SHA/amd64-generic/amd64-generic-postsubmit-8945511751514863184-postsubmit.json\", \n  \"snapshotNumber\": 101, \n  \"snapshotSha\": \"snapshot-HEAD-SHA\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"location\": \"gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json\", \n  \"profile\": {}, \n  \"snapshotNumber\": 101, \n  \"snapshotSha\": \"snapshot-HEAD-SHA\"\n}",
       "[CLEANUP]/metadata_tmp_7/PackageIndexInfo.json"
     ],
     "infra_step": true,
@@ -1814,7 +1210,8 @@
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@  }, @@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"location\": \"gs://prebuilt-bucket/snapshot/snap/snapshot-HEAD-SHA/amd64-generic/amd64-generic-postsubmit-8945511751514863184-postsubmit.json\", @@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"location\": \"gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json\", @@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"profile\": {}, @@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotNumber\": 101, @@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotSha\": \"snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@PackageIndexInfo.json@}@@@",
@@ -1831,7 +1228,7 @@
       "----",
       "rsync",
       "[CLEANUP]/metadata_tmp_7/PackageIndexInfo.json",
-      "gs://prebuilt-bucket/snapshot/snap/snapshot-HEAD-SHA/amd64-generic/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+      "gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.gsutil rsync",
@@ -1851,7 +1248,7 @@
       "ch",
       "-u",
       "AllUsers:R",
-      "gs://prebuilt-bucket/snapshot/snap/snapshot-HEAD-SHA/amd64-generic/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+      "gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.gsutil acl",

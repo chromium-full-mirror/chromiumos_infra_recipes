@@ -16,12 +16,13 @@ from PB.chromite.api.image import Image
 from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
-from PB.chromite.api.sysroot import Profile
+from PB.chromite.api.sysroot import Profile as OldProfile
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateResponse
 from PB.chromiumos.common import BASE
 from PB.chromiumos.common import ImageType
+from PB.chromiumos.common import Profile
 
 
 class SysrootUtilApi(recipe_api.RecipeApi):
@@ -71,7 +72,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
     Args:
       build_target (BuildTarget): Which build_target to create a sysroot for.
-      profile (str): The name of the sysroot profile to use, or None.
+      profile (chromiumos.Profile): The profile the sysroot is to use, or None.
       chroot_current (bool): Whether the chroot is current.  (If not, it will be
           updated.
       replace (bool): Whether to replace an existing sysroot.
@@ -95,7 +96,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
     toolchain_cls = self.m.workspace_util.toolchain_cls_applied
     with self.m.step.nest(name or 'create sysroot'):
-      profile = Profile(name=profile) if profile else None
+      # TODO(crbug/1112425): config.build.portage_profile is migrating.
+      profile = (
+          OldProfile(name=profile.name) if profile and profile.name else None)
       flags = SysrootCreateRequest.Flags(chroot_current=chroot_current,
                                          replace=replace,
                                          toolchain_changed=toolchain_cls)

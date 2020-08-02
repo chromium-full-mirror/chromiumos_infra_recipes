@@ -11,45 +11,45 @@ simpler and more consistent.
 
 from recipe_engine import recipe_test_api
 
-from PB.chromiumos.common import PackageIndexInfo
+from PB.chromiumos.common import PackageIndexInfo, Profile
 
 
 class CrosPrebuiltsApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing cros_prebuilts in Chrome OS Recipes."""
 
-  def generate_snapshot_test_data_dict(self, snapshots, build_targets,
+  def generate_snapshot_test_data_dict(self, snapshots, build_target, profile,
                                        gs_bucket):
     """Return the default test_data_dict for get_package_index_info.
 
     Args:
       snapshots (list[str]): List of snapshot git SHA strings, newest first.
-      build_targets (list[BuildTarget]): List of BuildTargets to fetch.
+      build_targets (BuildTarget): BuildTarget to fetch.
+      profile (Profile): The profile for the build.
       gs_bucket (str): Google storage bucket where the prebuilts live.
 
     Returns:
       (dict) test_data_dict to use.
     """
 
-    def add_info(ret, sha, num, build_target, fname, location):
+    def add_info(ret, sha, num, build_target, profile, fname, location):
+      profile = profile or Profile()
+      profile_name = profile.name if profile.name else 'base'
+      info = PackageIndexInfo(snapshot_sha=sha, snapshot_number=num,
+                              build_target=build_target, profile=profile,
+                              location=location)
       target = build_target.name
-      ret.setdefault(sha, {}).setdefault(target, {})[fname] = PackageIndexInfo(
-          snapshot_sha=sha, snapshot_number=num, build_target=build_target,
-          location=location)
+      ret.setdefault(sha, {}).setdefault(target,
+                                         {}).setdefault(profile_name,
+                                                        {})[fname] = info
       return ret
 
     ret = {}
-    # Make a copy of snapshots, and make it 4 elements in length, extending with
-    # the final element if needed.
-    shas = (snapshots[:] + snapshots[-1:] * 3)[:4]
-    # Everything has a prebuilt for the fourth sha.
-    for bt in build_targets:
-      # Everything has a prebuilt in the fourth snapshot.
-      add_info(ret, shas[3], 1001, bt, '%s-kind-1001-postsubmit.json' % bt.name,
-               'gs://%s/board/%s/KIND-VER-888/packages' % (gs_bucket, bt.name))
-
-    # The first build_target given has a prebuilt in the second snapshot.
-    bt = build_targets[0]
-    add_info(ret, shas[1], 1003, bt, '%s-kind-1003-postsubmit.json' % bt.name,
-             'gs://%s/board/%s/KIND-VER-888/packages' % (gs_bucket, bt.name))
+    # Provide answers for at most 4 snapshots.
+    for num, sha in enumerate(snapshots[:4]):
+      add_info(
+          ret, sha, 1009 - num, build_target, profile,
+          '%s-kind-%d-postsubmit.json' % (build_target.name, 1009 - num),
+          'gs://%s/board/%s/KIND-VER-888/packages' %
+          (gs_bucket, build_target.name))
 
     return ret
