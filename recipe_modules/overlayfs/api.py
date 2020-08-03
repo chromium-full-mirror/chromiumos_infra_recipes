@@ -81,8 +81,9 @@ class OverlayfsApi(recipe_api.RecipeApi):
       * mount_path (Path): Path to unmount the OverlayFS from.
 
     """
-    self.m.step('unmount overlay %s' % name, ['sudo', 'umount', mount_path],
-                infra_step=True)
+    unmount_script = self.repo_resource('recipe_scripts/umount_path.sh')
+    cmd = str(unmount_script)
+    self.m.step('unmount overlay %s' % name, [cmd, mount_path], infra_step=True)
 
     self._cleanup_unmount(name, mount_path)
 

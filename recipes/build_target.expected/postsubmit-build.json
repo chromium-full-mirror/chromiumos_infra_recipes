@@ -6069,8 +6069,7 @@
   },
   {
     "cmd": [
-      "sudo",
-      "umount",
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CACHE]/chromiumos"
     ],
     "infra_step": true,
@@ -6081,8 +6080,7 @@
   },
   {
     "cmd": [
-      "sudo",
-      "umount",
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[START_DIR]/chromiumos_workspace"
     ],
     "infra_step": true,
