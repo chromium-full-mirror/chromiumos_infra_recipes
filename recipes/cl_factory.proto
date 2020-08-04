@@ -51,4 +51,8 @@ message ClFactoryProperties {
 
   // Indicates the string replacements to perform.
   repeated ReplaceString replace_strings = 8;
+
+  // Whether to set the input source CL Cq-Depends to the generated CLs.
+  // In cases of stacked CLs this can be problematic, thus the false default.
+  bool set_source_depends = 10;
 }

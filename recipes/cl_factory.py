@@ -104,7 +104,7 @@ def RunSteps(api, properties):
 
     with api.step.nest('generate project change lists') as pres:
       changes, diffs = _make_changes(api, cl_infos, gerrit_changes, properties)
-      if changes and gerrit_changes:
+      if changes and gerrit_changes and properties.set_source_depends:
         _set_source_cq_depends(api, changes, gc_infos, gerrit_changes)
 
     with api.step.nest('summarize results') as pres:
@@ -476,6 +476,21 @@ TEST=CQ
               ccs=['bob@google.com', 'martin@google.com'],
               hashtags=['refactor-audio-config'],
               message_template=message_template,
+          )),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'set_source_depends',
+      build(),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              ccs=['bob@google.com', 'martin@google.com'],
+              hashtags=['refactor-audio-config'],
+              message_template=message_template,
+              set_source_depends=True,
           )),
       api.post_check(post_process.StatusSuccess),
   )
