@@ -4,8 +4,11 @@
 			"id": {
 				"name": "amd64-generic-asan",
 				"branch": "master"
-			},
-			"build": {
+      },
+      "general": {
+        "manifest": "PUBLIC"
+      },
+      "build": {
 				"portageProfile": {
 					"profile": "asan"
 				},
@@ -28,7 +31,8 @@
         "type": "POSTSUBMIT"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "PRIVATE",
@@ -80,7 +84,8 @@
         "type": "CQ"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "NONE",
@@ -128,7 +133,8 @@
         "type": "CQ"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "NONE"
@@ -160,7 +166,8 @@
       "general": {
         "critical": false,
         "environment": "STAGING",
-        "sdkCacheVersion": "2"
+        "sdkCacheVersion": "2",
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "NONE",
@@ -208,7 +215,8 @@
         "type": "POSTSUBMIT"
       },
       "general": {
-        "critical": false
+        "critical": false,
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "PUBLIC",
@@ -256,7 +264,8 @@
         "type": "POSTSUBMIT"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "PRIVATE",
@@ -308,7 +317,8 @@
         "type": "CQ"
       },
       "general": {
-        "critical": false
+        "critical": false,
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "NONE"
@@ -339,7 +349,8 @@
         "type": "CQ"
       },
       "general": {
-        "critical": false
+        "critical": false,
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "NONE"
@@ -363,7 +374,8 @@
         "type": "CQ"
       },
       "general": {
-        "critical": false
+        "critical": false,
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "NONE"
@@ -395,7 +407,8 @@
       },
       "general": {
         "critical": false,
-        "environment": "STAGING"
+        "environment": "STAGING",
+        "manifest": "PUBLIC"
       },
       "artifacts": {
         "prebuilts": "NONE"
@@ -430,7 +443,8 @@
         "environment": "PRODUCTION",
         "runWhen": {
           "mode": "ALWAYS_RUN"
-        }
+        },
+        "manifest": "PRIVATE"
       },
       "artifacts": {
         "prebuilts": "NONE"
@@ -465,7 +479,8 @@
         "type": "POSTSUBMIT"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PUBLIC"
       },
       "chrome": {
         "internal": true
@@ -484,7 +499,8 @@
         "type": "POSTSUBMIT"
       },
       "general": {
-        "critical": false
+        "critical": false,
+        "manifest": "PUBLIC"
       },
       "build": {
         "installPackages": {
@@ -499,7 +515,8 @@
         "type": "POSTSUBMIT"
       },
       "general": {
-        "critical": false
+        "critical": false,
+        "manifest": "PUBLIC"
       },
       "build": {
         "installPackages": {
@@ -522,7 +539,8 @@
       },
       "general": {
         "critical": true,
-        "brokenBefore": "2019-11-01T00:00:00Z"
+        "brokenBefore": "2019-11-01T00:00:00Z",
+        "manifest": "PRIVATE"
       },
       "artifacts": {
         "prebuilts": "NONE",
@@ -566,7 +584,8 @@
       },
       "general": {
         "critical": true,
-        "brokenBefore": "2019-11-01T00:00:00Z"
+        "brokenBefore": "2019-11-01T00:00:00Z",
+        "manifest": "PRIVATE"
       },
       "artifacts": {
         "prebuilts": "NONE"
@@ -591,7 +610,8 @@
         "type": "CQ"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PRIVATE"
       },
       "artifacts": {
         "prebuilts": "NONE",
@@ -645,7 +665,8 @@
         "type": "CQ"
       },
       "general": {
-        "critical": false
+        "critical": false,
+        "manifest": "PRIVATE"
       },
       "build": {
         "installPackages": {
@@ -664,7 +685,8 @@
         "type": "POSTSUBMIT"
       },
       "general": {
-        "critical": false
+        "critical": false,
+        "manifest": "PRIVATE"
       },
       "build": {
         "installPackages": {
@@ -683,7 +705,8 @@
         "type": "POSTSUBMIT"
       },
       "general": {
-        "critical": false
+        "critical": false,
+        "manifest": "PRIVATE"
       },
       "build": {
         "installPackages": {
@@ -702,7 +725,8 @@
         "type": "TOOLCHAIN"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PRIVATE"
       },
       "orchestrator": {
         "child_specs": [],
@@ -732,7 +756,8 @@
         "environment": "PRODUCTION",
         "runWhen": {
           "mode": "ALWAYS_RUN"
-        }
+        },
+        "manifest": "PRIVATE"
       },
       "artifacts": {
         "prebuilts": "NONE",
@@ -819,7 +844,8 @@
         "type": "TOOLCHAIN"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PRIVATE"
       },
       "orchestrator": {
         "child_specs": [
@@ -857,7 +883,8 @@
         "environment": "PRODUCTION",
         "runWhen": {
           "mode": "ALWAYS_RUN"
-        }
+        },
+        "manifest": "PRIVATE"
       },
       "artifacts": {
         "prebuilts": "NONE",
@@ -934,7 +961,8 @@
         "environment": "PRODUCTION",
         "runWhen": {
           "mode": "ALWAYS_RUN"
-        }
+        },
+        "manifest": "PRIVATE"
       },
       "artifacts": {
         "prebuilts": "NONE",
@@ -994,7 +1022,8 @@
         "environment": "PRODUCTION",
         "runWhen": {
           "mode": "ALWAYS_RUN"
-        }
+        },
+        "manifest": "PRIVATE"
       },
       "artifacts": {
         "prebuilts": "NONE",
@@ -1094,7 +1123,8 @@
         "environment": "PRODUCTION",
         "runWhen": {
           "mode": "ALWAYS_RUN"
-        }
+        },
+        "manifest": "PRIVATE"
       },
       "artifacts": {
         "prebuilts": "NONE",
@@ -1201,7 +1231,8 @@
         "type": "POSTSUBMIT"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PRIVATE"
       },
       "orchestrator": {
         "child_specs": [
@@ -1210,6 +1241,9 @@
           },
           {
             "name": "arm-generic-postsubmit"
+          },
+          {
+            "name": "grunt-postsubmit"
           }
         ]
       }
@@ -1221,7 +1255,8 @@
         "type": "CQ"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PRIVATE"
       },
       "orchestrator": {
         "child_specs": [
@@ -1247,7 +1282,8 @@
         "type": "CQ"
       },
       "general": {
-        "critical": true
+        "critical": true,
+        "manifest": "PRIVATE"
       },
       "build": {
         "applyGerritChanges": true
@@ -1265,6 +1301,7 @@
         "runWhen": {
           "mode": "ALWAYS_RUN"
         },
+        "manifest": "PRIVATE",
         "sdkCacheVersion": 1
       },
       "artifacts": {

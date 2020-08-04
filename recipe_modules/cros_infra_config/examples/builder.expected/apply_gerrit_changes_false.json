@@ -11,6 +11,7 @@
       "@@@STEP_LOG_LINE@builder config@general {@@@",
       "@@@STEP_LOG_LINE@builder config@  critical {@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  manifest: PRIVATE@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@build {@@@",
       "@@@STEP_LOG_LINE@builder config@  install_packages {@@@",

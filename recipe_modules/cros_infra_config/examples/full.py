@@ -39,7 +39,8 @@ def GenTests(api):
       api.test_util.test_orchestrator().build,
       api.properties(
           FullProperties(children_names=[
-              'amd64-generic-postsubmit', 'arm-generic-postsubmit'
+              'amd64-generic-postsubmit', 'arm-generic-postsubmit',
+              'grunt-postsubmit'
           ])))
 
   # Verify that override_builder_configs_test_data works.

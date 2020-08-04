@@ -23,7 +23,7 @@ def RunSteps(api):
   api.assertions.assertEqual(completed_builds, [])
   api.assertions.assertEqual(existing_builds, [])
   # This test depends on the number of children in cros_infra_config.test_api.
-  api.assertions.assertEqual(len(new_requests), 2)
+  api.assertions.assertEqual(len(new_requests), 3)
 
 
 def GenTests(api):

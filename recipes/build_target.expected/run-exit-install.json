@@ -39,6 +39,7 @@
       "@@@STEP_LOG_LINE@builder config@    mode: ALWAYS_RUN@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  sdk_cache_version: 1@@@",
+      "@@@STEP_LOG_LINE@builder config@  manifest: PRIVATE@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@  prebuilts: NONE@@@",

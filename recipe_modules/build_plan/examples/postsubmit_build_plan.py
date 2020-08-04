@@ -23,7 +23,7 @@ def RunSteps(api):
   completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
       child_specs, True, [], common_pb2.GitilesCommit())
   api.assertions.assertEqual(completed_builds, [])
-  api.assertions.assertEqual(len(new_requests), 1)
+  api.assertions.assertEqual(len(new_requests), 2)
   api.assertions.assertEqual(new_requests[0].builder.builder,
                              'arm-generic-postsubmit')
   api.assertions.assertEqual(len(existing_builds), 1)
