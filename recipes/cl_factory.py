@@ -17,7 +17,6 @@ something that looks like this:
 bb add \
   -cl https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/3095418 \
   -p 'repo_regexes=["src/project/galaxy"]' \
-  -p command=gen_config \
   -p 'message_template=Hello world\n\nBUG=chromium:1092954\nTEST=None' \
   -p 'reviewers=["reviewer@google.com"]' \
   -p 'hashtags=["mondo-update"]' \
@@ -128,9 +127,6 @@ def _validate_inputs(properties, gerrit_changes):
     raise ValueError(
         'Projects to operate on must be specified by the '
         'repo_regexes property.')
-
-  if not properties.command:
-    raise ValueError('A command property must specify how to modify the repos.')
 
   if not properties.message_template:
     raise ValueError(
@@ -467,7 +463,6 @@ TEST=CQ
               repo_regexes=['src/project/galaxy'],
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
-              command='echo "hello world"',
               message_template=message_template,
           )),
   )
@@ -480,7 +475,6 @@ TEST=CQ
               repo_regexes=['src/project/galaxy'],
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
-              command='echo "hello world"',
               message_template=message_template,
           )),
       no_git_diff_step_data('a'),
@@ -496,7 +490,6 @@ TEST=CQ
               repo_regexes=['src/project/galaxy'],
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
-              command='echo "hello world"',
               message_template=message_template,
               replace_strings=[
                   ClFactoryProperties.ReplaceString(
@@ -516,7 +509,6 @@ TEST=CQ
               repo_regexes=['src/project/galaxy'],
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
-              command='echo "hello world"',
               message_template=message_template,
               full_repo_sync=True,
           )),
@@ -532,7 +524,6 @@ TEST=CQ
               repo_regexes=['src/project/galaxy'],
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
-              command='echo "hello world"',
               message_template=message_template,
           )),
       api.step_data('find gerrit change repos.repo forall',
@@ -553,7 +544,6 @@ TEST=CQ
               repo_regexes=['src/project/galaxy'],
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
-              command='echo "hello world"',
               message_template=message_template,
           )),
       api.step_data('find gerrit change repos.repo forall',
@@ -573,7 +563,6 @@ TEST=CQ
               repo_regexes=['src/project/galaxy'],
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
-              command='echo "hello world"',
               message_template='No such {interpolation}.',
           )),
   )
@@ -586,7 +575,6 @@ TEST=CQ
               repo_regexes=['src/project/galaxy'],
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
-              command='echo "hello world"',
               message_template=message_template,
           )),
       api.expect_exception('ValueError'),
@@ -602,28 +590,11 @@ TEST=CQ
           ClFactoryProperties(
               reviewers=['johndoe@google.com'],
               hashtags=['refactor-audio-config'],
-              command='echo "hello world"',
               message_template=message_template,
           )),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
                        '.*Projects to operate on must be specified.*'),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'no_command_specified',
-      build(),
-      api.properties(
-          ClFactoryProperties(
-              repo_regexes=['src/project/galaxy'],
-              reviewers=['johndoe@google.com'],
-              hashtags=['refactor-audio-config'],
-              message_template=message_template,
-          )),
-      api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
-                       '.*A command property must specify.*'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -634,7 +605,6 @@ TEST=CQ
           repo_regexes = ['src/project/galaxy'],
           reviewers = ['johndoe@google.com'],
           hashtags = ['refactor-audio-config'],
-          command = 'echo "hello world"',
       )),
       api.expect_exception('ValueError'),
       api.post_process(

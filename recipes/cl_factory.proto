@@ -12,10 +12,6 @@ message ClFactoryProperties {
   // 'src/project/galaxy' will match all galaxy projects.
   repeated string repo_regexes = 1;
 
-  // TODO: WIP, figure out approach.
-  // Command to execute on the repos to create the CL.
-  string command = 2;
-
   // Template for forming commit messages. Variables interpolated in the
   // template include:
   //
