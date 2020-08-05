@@ -53,14 +53,20 @@ def RunSteps(api):
   child_result2.state.life_cycle = TaskState.LIFE_CYCLE_COMPLETED
   child_result2.name = 'second test'
   child_result2.task_url = 'newlink.com'
+  test_case0 = child_result2.test_cases.add()
+  test_case0.name = 'tast'
+  test_case0.verdict = TaskState.VERDICT_FAILED
+  test_case0.human_readable_summary = 'failed because reasons'
   test_case1 = child_result2.test_cases.add()
   test_case1.name = 'tast.speaker.IsReallyLoud'
   test_case1.verdict = TaskState.VERDICT_FAILED
   test_case2 = child_result2.test_cases.add()
   test_case2.name = 'tast.cpu.IsVeryFast'
   test_case2.verdict = TaskState.VERDICT_FAILED
+  test_case2.human_readable_summary = 'failed because it was just too fast'
 
   expected_map = {
+      'tast: failed because reasons': 'newlink.com',
       'first test': 'link.com',
       'tast.speaker.IsReallyLoud': 'newlink.com',
       'tast.cpu.IsVeryFast': 'newlink.com',

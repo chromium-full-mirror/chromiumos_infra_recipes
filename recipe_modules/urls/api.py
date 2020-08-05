@@ -87,8 +87,11 @@ class UrlsApi(recipe_api.RecipeApi):
         if (task_result.test_cases and
             task_result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED):
           for tc in task_result.test_cases:
-            if tc.verdict in failure_verdicts and tc.name != 'tast':
-              link_map[tc.name] = task_result.task_url
+            if tc.verdict in failure_verdicts:
+              case_name = tc.name
+              if case_name == 'tast' and tc.human_readable_summary:
+                case_name += ': ' + tc.human_readable_summary
+              link_map[case_name] = task_result.task_url
         else:
           task_name = (
               task_result.name + self.get_state_suffix(task_result.state))
