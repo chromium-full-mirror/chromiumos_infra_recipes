@@ -224,14 +224,15 @@ def redirect_to_test_runner_if_applicable(api, tagged_requests, config):
 
 
 def _should_redirect_to_test_runner(api, requests, config):
-  return (api.random.randint(1, 100) <=
-          _probability_percentage_of_redirecting(api, requests, config))
+  return (api.random.randint(1, 100) <= _probability_percentage_of_redirecting(
+      api, requests, config))
 
 
 def _probability_percentage_of_redirecting(api, requests, config):
   for instruction in config.test_runner_migration.redirect_instructions:
-    matches = set(_matches_constraint(request, instruction.constraint)
-                  for request in requests.values())
+    matches = set(
+        _matches_constraint(request, instruction.constraint)
+        for request in requests.values())
     if len(matches) > 1:
       raise api.step.InfraFailure(
           'Found requests disagreeing whether to redirect to test_runner')
@@ -246,8 +247,8 @@ def _matches_constraint(request, constraint):
   if (constraint.dut_pool and
       constraint.dut_pool != _get_pool(request.params.scheduling)):
     return False
-  if (constraint.quota_account and
-      constraint.quota_account != _get_quota_account(request.params.scheduling)):
+  if (constraint.quota_account and constraint.quota_account !=
+      _get_quota_account(request.params.scheduling)):
     return False
   return True
 
@@ -461,12 +462,31 @@ def _log_enumeration_errors(api, enumeration):
       step.presentation.status = api.step.FAILURE
 
 
-_SUCCESSFUL_TASK_STATES = ['passed', 'failed_before_passing', 'skipped']
-_UNSUCCESSFUL_TASK_STATES = [
-    'failed_and_never_passed', 'bot_parameters_rejected',
-    'timed_out_waiting_for_dut', 'cancelled_before_run', 'cancelled_during_run',
-    'other'
-]
+# The odd-looking string.replaced items below are listed as such to aid in code
+# searchability. Users are most likely to search for these things after seeing
+# them in Milo, and in Milo we display them with spaces rather than underscores.
+_SUCCESSFUL_TASK_STATES = map(
+    lambda s: s.replace(' ', '_'),
+    [
+        'passed',
+        # Flakes are failed test runs that later succeed. e.g. if we run a test
+        # and it fails, but then we retry it and the retry succeeds, we call the
+        # first run a flake and the second run a pass.
+        'flaked',
+        'skipped',
+    ],
+)
+_UNSUCCESSFUL_TASK_STATES = map(
+    lambda s: s.replace(' ', '_'),
+    [
+        'failed all attempts',
+        'bot parameters rejected',
+        'timed out waiting for dut',
+        'cancelled before run',
+        'cancelled during run',
+        'other',
+    ],
+)
 
 _TaskResultsByState = collections.namedtuple(
     '_TaskResultsByState', _SUCCESSFUL_TASK_STATES + _UNSUCCESSFUL_TASK_STATES)
@@ -490,8 +510,8 @@ _FAILED_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 
 def sort_task_results_by_state(task_results):
   task_results_by_state = _TaskResultsByState(
-      passed=[], failed_before_passing=[], failed_and_never_passed=[],
-      skipped=[], bot_parameters_rejected=[], timed_out_waiting_for_dut=[],
+      passed=[], flaked=[], failed_all_attempts=[], skipped=[],
+      bot_parameters_rejected=[], timed_out_waiting_for_dut=[],
       cancelled_before_run=[], cancelled_during_run=[], other=[])
   failed_at_least_once = []
   for tr in task_results:
@@ -520,9 +540,9 @@ def sort_task_results_by_state(task_results):
   passed_set = set([x.name for x in task_results_by_state.passed])
   for tr in failed_at_least_once:
     if tr.name in passed_set:
-      task_results_by_state.failed_before_passing.append(tr)
+      task_results_by_state.flaked.append(tr)
     else:
-      task_results_by_state.failed_and_never_passed.append(tr)
+      task_results_by_state.failed_all_attempts.append(tr)
 
   return task_results_by_state
 
@@ -573,7 +593,7 @@ def _test_request(tag, scheduling=_test_scheduling()):
                   debug_symbols_archive_url='%s-metadata-url' % tag),
           scheduling=scheduling),
       test_plan=Request.TestPlan(suite=[Request.Suite(name='%s-suite' % tag)]),
-      )
+  )
 
 
 def _test_config(tag):
@@ -1410,11 +1430,8 @@ def GenTests(api):
                                   ),
                               ),
                       })))) +  #
-      api.step_data(
-          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-              _test_single_enumeration('foo')))
-  )
-
+      api.step_data('enumerate tests.call binary.enumerate',
+                    stdout=api.raw_io.output(_test_single_enumeration('foo'))))
 
   yield (
       api.test('test_runer redirection default pool match') +  #
@@ -1445,13 +1462,8 @@ def GenTests(api):
                                   ),
                               ),
                       })))) +  #
-      api.step_data(
-          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-              _test_single_enumeration('foo')))
-  )
-
-
-
+      api.step_data('enumerate tests.call binary.enumerate',
+                    stdout=api.raw_io.output(_test_single_enumeration('foo'))))
 
   yield (
       api.test('test_runer redirection pool mismatch') +  #
@@ -1482,10 +1494,8 @@ def GenTests(api):
                                   ),
                               ),
                       })))) +  #
-      api.step_data(
-          'enumerate tests.call binary.enumerate', stdout=api.raw_io.output(
-              _test_single_enumeration('foo')))
-  )
+      api.step_data('enumerate tests.call binary.enumerate',
+                    stdout=api.raw_io.output(_test_single_enumeration('foo'))))
 
   yield (
       api.test('test_runer redirection quota account mismatch') +  #

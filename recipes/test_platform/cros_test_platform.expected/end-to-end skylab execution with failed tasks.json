@@ -433,7 +433,7 @@
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.failed and never passed",
+    "name": "summarize.default task results.failed all attempts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@(log)   foo-failed@logs://bar/baz@@@",
