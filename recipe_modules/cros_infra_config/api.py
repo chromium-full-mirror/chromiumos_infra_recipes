@@ -309,16 +309,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     # If we are not ignoring the changelist in the config then insert any such
     # to the changelist.
-    if config and not self._properties.ignore_config_changelist:
-      if config.orchestrator.gerrit_changes:
-        converted_changes = [
-            ConvertPB(x, common_pb2.GerritChange)
-            for x in config.orchestrator.gerrit_changes
-        ]
-        changes = converted_changes + [
-            x for x in changes if x not in converted_changes
-        ]
-        changed = True
+    extra_changes = []
+    if (config and not self._properties.ignore_config_changelist and
+        config.orchestrator.gerrit_changes):
+      extra_changes = [
+          ConvertPB(x, common_pb2.GerritChange)
+          for x in config.orchestrator.gerrit_changes
+      ]
+    if extra_changes:
+      changes = extra_changes + [x for x in changes if x not in extra_changes]
+      changed = True
 
     if changed:
       # Log what we chose to use (rather than what we were given.)
@@ -326,8 +326,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       step.presentation.properties['commit'] = json_format.MessageToDict(commit)
       step.presentation.properties['changes'] = json.dumps(
           [json_format.MessageToDict(x) for x in changes])
-
-    # When there is a commit, commit and changes are used unchanged.
 
     # Record the decision for later.
     self._gitiles_commit = commit
