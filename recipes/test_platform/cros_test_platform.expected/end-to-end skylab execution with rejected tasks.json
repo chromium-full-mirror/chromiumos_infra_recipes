@@ -250,6 +250,10 @@
       "@@@STEP_LOG_LINE@response@            \"lifeCycle\": \"LIFE_CYCLE_REJECTED\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
+      "@@@STEP_LOG_LINE@response@          \"rejectedTaskDimensions\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"dim2\": \"val2\", @@@",
+      "@@@STEP_LOG_LINE@response@            \"dim1\": \"val1\"@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@response@          \"name\": \"foo\"@@@",
       "@@@STEP_LOG_LINE@response@        }, @@@",
@@ -331,9 +335,9 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8W6Onj6uLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKgWqKoksTg7KLUYaHYxUF00sum4DAhy9XJ1hunPyU8PLcoB\\nqQCyiq309ZMSi4C4SglqNlQyLT8fVS4vMTcVKgEyh2R7YfpBxtXG1tYCABCiWPo=\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuNiT0lNSyzNKRGy5tIQ4k3Lz7fS109KLALiKikmDiclZqCQFl9OfnoxQoKLEyIFZAqxcBQI\\nMAEArnAR2g==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"name\": \"baz\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}}]}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyVjlELgjAQx7+K7DkQffQt5gTDKMSCiJClZ6ymA7eEEr97N9Gohx562Ljbfv/fXU9KqPhdGhI4\\nPdGGGxirDtpSFPaV7FkaxjTLo2WcsJAsHCJFBfRRSIuSJI5YTg80wXuz3iYsQ2hAynB9S0GjWyN3\\n/LT/EqRsxeicl+qya6UlsNKB6555i+dpN2jhCoWBMsMZoaih0UI1enSXovZtqOPStyj23tR7770m\\ncaXUt7fhNUwflv175zlvdcNpGF6BRWue\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTSuJiT0lNSyzNKREK53IR4k3Lz7fS109KLALiKikmDiclZqCQFl9OfnoxQiKKh4slJTPXSIil\\nLDHHCMozBPMMuTgh2oDKhFg4CgSYAEzjGQI=\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo\", \"rejectedTaskDimensions\": {\"dim1\": \"val1\", \"dim2\": \"val2\"}, \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"name\": \"baz\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}}]}@@@"
     ]
   },
   {
@@ -362,8 +366,10 @@
     "name": "summarize.default task results.bot parameters rejected",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(task)  foo (did not run)@foo://bar/baz@@@",
-      "@@@STEP_LINK@(task)  baz (did not run; no task link)@broken-link@@@",
+      "@@@STEP_LOG_LINE@rejected dimensions for foo@{u'dim2': u'val2', u'dim1': u'val1'}@@@",
+      "@@@STEP_LOG_END@rejected dimensions for foo@@@",
+      "@@@STEP_LINK@(task)  foo@foo://bar/baz@@@",
+      "@@@STEP_LINK@(task)  baz (no task link)@broken-link@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

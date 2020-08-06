@@ -354,7 +354,7 @@
     "name": "summarize.default task results.cancelled during run",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(task)  foo-aborted (did not run; no task link)@broken-link@@@",
+      "@@@STEP_LINK@(task)  foo-aborted (no task link)@broken-link@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

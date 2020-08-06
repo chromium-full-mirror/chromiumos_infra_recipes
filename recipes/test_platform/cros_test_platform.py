@@ -541,11 +541,15 @@ def _emit_links(step, task_results):
     if t.state.life_cycle not in [
         TaskState.LIFE_CYCLE_COMPLETED, TaskState.LIFE_CYCLE_RUNNING
     ]:
+      # Log the task dimensions for any rejected tasks.
+      if t.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED and t.rejected_task_dimensions:
+        step.logs['rejected dimensions for ' + t.name] = str(
+            t.rejected_task_dimensions)
+
       if t.task_url:
-        step.links['(task)  ' + t.name + ' (did not run)'] = t.task_url
+        step.links['(task)  ' + t.name] = t.task_url
       else:
-        step.links['(task)  ' + t.name +
-                   ' (did not run; no task link)'] = 'broken-link'
+        step.links['(task)  ' + t.name + ' (no task link)'] = 'broken-link'
       continue
     suffix = ''
     if t.attempt > 0:
@@ -1019,14 +1023,17 @@ def GenTests(api):
                                       life_cycle='LIFE_CYCLE_COMPLETED',
                                       verdict='VERDICT_FAILED'),
                                   task_results=[
-                                      # Include one result with task_url and one without.
+                                      # Include one result with task_url and
+                                      # rejected_task_dimensions, and one without.
                                       ExecuteResponse.TaskResult(
                                           task_url='foo://bar/baz',
-                                          log_url='logs://bar/baz',
-                                          name='foo',
+                                          log_url='logs://bar/baz', name='foo',
                                           state=TaskState(
                                               life_cycle="LIFE_CYCLE_REJECTED"),
-                                      ),
+                                          rejected_task_dimensions={
+                                              'dim1': 'val1',
+                                              'dim2': 'val2',
+                                          }),
                                       ExecuteResponse.TaskResult(
                                           name='baz',
                                           state=TaskState(
