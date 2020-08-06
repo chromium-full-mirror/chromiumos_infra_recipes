@@ -144,7 +144,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       self.m.failures.set_failed_packages(pres, response.failed_packages)
 
   def install_packages(self, config, dep_graph, packages=None,
-                       artifact_build=False, timeout_sec='DEFAULT', name=None):
+                       artifact_build=False, package_indexes=None,
+                       timeout_sec='DEFAULT', name=None):
     """Install packages (possibly fetching Chrome source).
 
     Args:
@@ -153,10 +154,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       packages (list[PackageInfo]): list of packages to install.  Default: all
           packages for the build_target.
       artifact_build (bool): Whether to call update_for_artifact_build.
+      package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
       timeout_sec (int): Step timeout, in seconds, or None for default.
       name (str): Step name to use, or None for default name.
     """
     packages = packages or []
+    package_indexes = package_indexes or []
     install_packages = config.build.install_packages
 
     name = name or 'install packages'
@@ -168,7 +171,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           """Helper to make InstallPackagesRequest."""
           return InstallPackagesRequest(
               chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
-              packages=packages, flags=InstallPackagesRequest.Flags(
+              packages=packages, package_indexes=package_indexes,
+              flags=InstallPackagesRequest.Flags(
                   compile_source=install_packages.compile_source,
                   use_goma=self.m.cros_sdk.has_goma_config(),
                   toolchain_changed=self.m.workspace_util.toolchain_cls_applied

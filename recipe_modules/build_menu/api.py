@@ -2,6 +2,7 @@
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
 """API providing a menu for build steps"""
 
 import collections
@@ -198,9 +199,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if with_sysroot:
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = Profile(name=config.build.portage_profile.profile)
-      package_indexes = self.m.cros_prebuilts.get_package_index_info(
-          artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
-          build_target=self.build_target, profile=profile)
+      package_indexes = None
+      # TODO(crbug/945003): once InstallPackages stops overwriting
+      # /etc/make.conf.board in the sysroot, we can move the code here.
+      #package_indexes = self.m.cros_prebuilts.get_package_index_info(
+      #    config.artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
+      #    build_target=self.build_target, profile=profile)
       self.m.sysroot_util.create_sysroot(self.build_target, profile,
                                          package_indexes=package_indexes)
 
@@ -286,8 +290,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     install_packages = config.build.install_packages
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
+      # TODO(crbug/1112425): config.build.portage_profile is migrating.
+      profile = Profile(name=config.build.portage_profile.profile)
+      # TODO(crbug/945003): once InstallPackages stops overwriting
+      # /etc/make.conf.board in the sysroot, migrate this to the sysroot
+      # creation above.
+      package_indexes = self.m.cros_prebuilts.get_package_index_info(
+          config.artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
+          build_target=self.build_target, profile=profile)
       self.m.sysroot_util.install_packages(config, self.dep_graph, packages,
                                            artifact_build=self._artifact_build,
+                                           package_indexes=package_indexes,
                                            timeout_sec=timeout_sec, name=name)
 
     return not self.m.cros_infra_config.should_exit(install_packages.run_spec)
