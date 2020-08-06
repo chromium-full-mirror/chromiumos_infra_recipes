@@ -117,7 +117,10 @@
   },
   {
     "cmd": [],
-    "name": "111/coral/base"
+    "name": "111/coral/base",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found 0 files@@@"
+    ]
   },
   {
     "cmd": [
@@ -147,7 +150,7 @@
       "-m",
       "----",
       "rsync",
-      "gs://prebuilt-bucket/snapshot/111/coral/base/*.json",
+      "gs://prebuilt-bucket/snapshot/111/coral/base/",
       "[CLEANUP]/metadata_tmp_1/111/coral/base"
     ],
     "infra_step": true,

@@ -117,7 +117,13 @@
   },
   {
     "cmd": [],
-    "name": "1/a/prof"
+    "name": "1/a/prof",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found 2 files@@@",
+      "@@@STEP_LOG_LINE@files found@a-prof-881-ps.json@@@",
+      "@@@STEP_LOG_LINE@files found@a-prof-asan-882-ps.json@@@",
+      "@@@STEP_LOG_END@files found@@@"
+    ]
   },
   {
     "cmd": [
@@ -147,7 +153,7 @@
       "-m",
       "----",
       "rsync",
-      "gs://prebuilt-bucket/snapshot/1/a/prof/*.json",
+      "gs://prebuilt-bucket/snapshot/1/a/prof/",
       "[CLEANUP]/metadata_tmp_1/1/a/prof"
     ],
     "infra_step": true,

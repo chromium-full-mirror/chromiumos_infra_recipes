@@ -17,6 +17,10 @@ from PB.chromiumos.common import PackageIndexInfo, Profile
 class CrosPrebuiltsApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing cros_prebuilts in Chrome OS Recipes."""
 
+  def profile_or_default(self, profile):
+    """Return a default profile if there is no profile."""
+    return profile if profile and profile.name else Profile(name='base')
+
   def generate_snapshot_test_data_dict(self, snapshots, build_target, profile,
                                        gs_bucket):
     """Return the default test_data_dict for get_package_index_info.
@@ -32,14 +36,13 @@ class CrosPrebuiltsApi(recipe_test_api.RecipeTestApi):
     """
 
     def add_info(ret, sha, num, build_target, profile, fname, location):
-      profile = profile or Profile()
-      profile_name = profile.name if profile.name else 'base'
+      profile = self.profile_or_default(profile)
       info = PackageIndexInfo(snapshot_sha=sha, snapshot_number=num,
                               build_target=build_target, profile=profile,
                               location=location)
       target = build_target.name
       ret.setdefault(sha, {}).setdefault(target,
-                                         {}).setdefault(profile_name,
+                                         {}).setdefault(profile.name,
                                                         {})[fname] = info
       return ret
 

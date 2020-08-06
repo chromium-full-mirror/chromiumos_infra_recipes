@@ -1680,11 +1680,11 @@ Returns:
 
 API for uploading CrOS prebuilts to Google Storage.
 
-#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for uploading package prebuilts.
 
-&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#119)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=30, test_data_dict=None):**
+&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#130)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
 
 Return the PackageIndexInfo for this build.
 
@@ -1693,14 +1693,15 @@ Args:
   snapshot (GitilesCommit): The snapshot for this build, or None.
   build_target (BuildTarget): BuildTarget for the build, or None.
   profile (chromiumos.Profile): Profile for the build, or None.
-  count (int): Number of snapshots to check.
+  count (int): Number of snapshots to check, or None.
   test_data_dict (dict): Dictionary of test data:
     test_data_dict[snapshot][target_name][file_name] = PackageIndexInfo
+  name (str): Name for the step, or None.
 
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#378)(self, target, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#384)(self, target, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -5346,9 +5347,9 @@ For more details on the input properties, see cl_factory.proto.
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/utils.py#14)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#28)(api, properties):**
 ### *recipes* / [cros\_prebuilts:tests/get\_pkg\_idx\_info](/recipe_modules/cros_prebuilts/tests/get_pkg_idx_info.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/tests/get_pkg_idx_info.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

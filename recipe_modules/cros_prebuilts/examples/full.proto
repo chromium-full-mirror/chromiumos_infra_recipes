@@ -21,4 +21,7 @@ message FullProperties {
 
   // The name of the profile to use.
   chromiumos.Profile profile = 4;
+
+  // Expected PackageIndexInfo data
+  repeated chromiumos.PackageIndexInfo expected_package_indexes = 5;
 }
