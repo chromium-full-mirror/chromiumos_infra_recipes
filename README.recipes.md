@@ -2079,7 +2079,7 @@ of a build and then mounted into the master and/or workspace paths.
 
 Returns a context where chromiumos and workspace overlays are mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#279)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#280)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2092,7 +2092,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#236)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#237)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 

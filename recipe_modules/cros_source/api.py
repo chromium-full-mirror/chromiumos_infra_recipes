@@ -44,9 +44,9 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosSourceApi, self).__init__(*args, **kwargs)
-    self._snapshot_isolate = (properties.snapshot_isolate
-                              if properties.HasField('snapshot_isolate')
-                              else None)
+    self._snapshot_isolate = (
+        properties.snapshot_isolate
+        if properties.HasField('snapshot_isolate') else None)
 
   @property
   def preload_path(self):
@@ -78,8 +78,8 @@ class CrosSourceApi(recipe_api.RecipeApi):
   @property
   def snapshot_isolated_hash(self):
     """Returns the snapshot isolate hash in use or None."""
-    return (self._snapshot_isolate.isolated_hash if self._snapshot_isolate
-            else None)
+    return (self._snapshot_isolate.isolated_hash
+            if self._snapshot_isolate else None)
 
   def ensure_synced_cache(self, manifest_url=INTERNAL_MANIFEST_URL,
                           init_opts=None, sync_opts=None,
@@ -183,7 +183,8 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
       return new_commits
 
-  @exponential_retry(retries=3, condition=lambda e: getattr(e, 'had_timeout', False))
+  @exponential_retry(retries=3,
+                     condition=lambda e: getattr(e, 'had_timeout', False))
   def sync_snapshot(self, gitiles_commit, manifest_url=INTERNAL_MANIFEST_URL):
     """Sync a checkout to the snapshot.
 
@@ -193,9 +194,9 @@ class CrosSourceApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('sync to snapshot'):
       snapshot_xml = self._get_snapshot(gitiles_commit)
-      self.m.repo.sync_manifest(
-          manifest_url, manifest_data=snapshot_xml, detach=True,
-          optimized_fetch=True, retry_fetches=8)
+      self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
+                                detach=True, optimized_fetch=True,
+                                retry_fetches=8)
 
   def _get_snapshot(self, gitiles_commit):
     """Returns the snapshot to use.
