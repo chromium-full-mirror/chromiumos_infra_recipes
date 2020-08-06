@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
     'depot_tools/gitiles',
+    'cros_infra_config',
     'easy',
     'git',
     'overlayfs',

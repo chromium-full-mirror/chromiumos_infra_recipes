@@ -29,6 +29,10 @@ DEFAULT_CACHE_SYNC_OPTS = dict(
 STAGING_INIT_OPTS = dict(repo_branch='master')
 
 
+def _manifest_url(host, project):
+  return 'https://{}/{}'.format(host, project)
+
+
 class CrosSourceApi(recipe_api.RecipeApi):
   """A module for CrOS-specific source steps."""
 
@@ -37,10 +41,8 @@ class CrosSourceApi(recipe_api.RecipeApi):
   INTERNAL_HOST = 'chrome-internal.googlesource.com'
   INTERNAL_PROJECT = 'chromeos/manifest-internal'
 
-  EXTERNAL_MANIFEST_URL = 'https://{}/{}'.format(EXTERNAL_HOST,
-                                                 EXTERNAL_PROJECT)
-  INTERNAL_MANIFEST_URL = 'https://{}/{}'.format(INTERNAL_HOST,
-                                                 INTERNAL_PROJECT)
+  EXTERNAL_MANIFEST_URL = _manifest_url(EXTERNAL_HOST, EXTERNAL_PROJECT)
+  INTERNAL_MANIFEST_URL = _manifest_url(INTERNAL_HOST, INTERNAL_PROJECT)
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosSourceApi, self).__init__(*args, **kwargs)
@@ -105,6 +107,27 @@ class CrosSourceApi(recipe_api.RecipeApi):
     self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
                                        init_opts=init_opts, sync_opts=sync_opts,
                                        projects=projects)
+
+  def fetch_snapshot_shas(self, count=7 * 24 * 2):
+    """Return snapshot SHAs for the manifest.
+
+    Return SHAs for the most recent |count| commits in the manifest.  The
+    default is to fetch 7 days worth of snapshots, based on (an assumed) 2
+    snapshots per hour.
+
+    Args:
+      * count (int): How many SHAs to return.
+
+    Returns:
+      (list[str]) The list of snapshot SHAs.
+    """
+    snapshot = self.m.cros_infra_config.gitiles_commit
+    manifest_dir = self.m.path.basename(snapshot.project)
+
+    with self.m.context(cwd=self.workspace_path.join(manifest_dir)):
+      return self.m.git.fetch_refs(
+          _manifest_url(snapshot.host, snapshot.project), snapshot.id,
+          count=count)
 
   @contextlib.contextmanager
   def checkout_overlays_context(self):
