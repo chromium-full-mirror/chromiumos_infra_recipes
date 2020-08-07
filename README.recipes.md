@@ -590,7 +590,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#268)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#271)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -607,7 +607,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#308)(self, config=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#311)(self, config=None):**
 
 Build the image and run ebuild tests.
 
@@ -645,7 +645,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#85)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#395)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#398)(self, config=None):**
 
 Generate release payloads for the build.
 
@@ -658,7 +658,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#73)(self):**
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#178)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#181)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -680,7 +680,7 @@ Setup the workspace and chroot for the builder.
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#385)(self, config=None):**
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#388)(self, config=None):**
 
 Sign the uploaded images.
 
@@ -689,14 +689,14 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#77)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#351)(self, config=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#354)(self, config=None):**
 
 Upload artifacts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#366)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#369)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -4647,7 +4647,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#71)(self, changes=None, name='cherry-pick gerrit changes', only_checked_out_projects=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#71)(self, changes=None, name='cherry-pick gerrit changes', fail_not_applicable=False):**
 
 Apply gerrit changes.
 
@@ -4655,7 +4655,7 @@ Args:
   changes (list[GerritChanges]): Changes to apply.  Default: changelist
       saved in cros_infra_config.configure_builder().
   name (string): Step name.  Default: "setup source".
-  only_checked_out_projects (bool): If true, changes to projects that are
+  fail_not_applicable (bool): If true, changes to projects that are
       not currently checked out (as determined by repo forall) will not be
       applied. An example of when this is useful: it is possible that
       changes includes changes to repos this builder is not allowed to read

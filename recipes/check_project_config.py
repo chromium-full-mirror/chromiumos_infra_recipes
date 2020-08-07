@@ -83,7 +83,7 @@ def RunSteps(api, properties):
     api.file.copy('copy old config.jsonproto', project_path, old_project_path)
 
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
-                                     only_checked_out_projects=True)
+                                     fail_not_applicable=True)
 
     with api.step.nest('check for config.jsonproto diff') as pres:
       diff = api.easy.stdout_step(

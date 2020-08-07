@@ -25,7 +25,7 @@ def RunSteps(api):
   with api.assertions.assertRaises(api.step.StepFailure):
     api.workspace_util.apply_changes(changes, name='failing apply changes')
 
-  api.workspace_util.apply_changes(changes, only_checked_out_projects=True,
+  api.workspace_util.apply_changes(changes, fail_not_applicable=True,
                                    name='successful apply changes')
 
 
@@ -38,7 +38,7 @@ def GenTests(api):
           stdout=api.raw_io.output(
               'error: project chromiumos/config not found'),
       ),
-      # When only_checked_out_projects is True, do a repo forall to find out
+      # When fail_not_applicable is True, do a repo forall to find out
       # what repos are checked out.
       api.step_data(
           'successful apply changes.repo forall',

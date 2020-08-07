@@ -59,7 +59,7 @@ def RunSteps(api, properties):
           local_manifest=local_manifest,
           cache_path_override=api.cros_source.workspace_path):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
-                                     only_checked_out_projects=True)
+                                     fail_not_applicable=True)
 
     project = api.repo.project_info(properties.project)
     workspace_path = api.cros_source.workspace_path

@@ -146,7 +146,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self.m.workspace_util.sync_to_commit(staging=self.is_staging)
 
     # Apply any appropriate gerrit changes.
-    self.m.workspace_util.apply_changes()
+    fail_not_applicable = False
+    if config.general.manifest == BuilderConfig.General.PUBLIC:
+      fail_not_applicable = True
+    self.m.workspace_util.apply_changes(fail_not_applicable=fail_not_applicable)
 
     # The Chrome OS verison can be reported once the workspace is synced.
     version = self.m.cros_version.read_workspace_version()
