@@ -294,7 +294,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chromium.googlesource.com/chromiumos/manifest",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all"
     ],
@@ -489,7 +489,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chromium.googlesource.com/chromiumos/manifest",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
       "--manifest-name",

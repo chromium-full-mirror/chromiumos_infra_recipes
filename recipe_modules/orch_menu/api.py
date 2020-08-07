@@ -101,12 +101,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     return self.m.cros_infra_config.gitiles_commit
 
   @property
-  def external_gitiles_commit(self):
-    return self._external_gitiles_commit or common_pb2.GitilesCommit(
-        host=self.m.cros_source.EXTERNAL_HOST,
-        project=self.m.cros_source.EXTERNAL_PROJECT, id="")
-
-  @property
   def gerrit_changes(self):
     return self.m.cros_infra_config.gerrit_changes
 
@@ -432,9 +426,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         self.m.build_plan.get_build_plan(
             child_specs=child_specs,
             enable_history=self._properties.enable_history,
-            gerrit_changes=self.gerrit_changes,
-            internal_snapshot=self.gitiles_commit,
-            external_snapshot=self.external_gitiles_commit))
+            gerrit_changes=self.gerrit_changes, snapshot=self.gitiles_commit))
     parent_step.presentation.step_text = ('{} new, {} recycled'.format(
         len(new_build_requests),
         len(completed_builds) + len(existing_builds)))

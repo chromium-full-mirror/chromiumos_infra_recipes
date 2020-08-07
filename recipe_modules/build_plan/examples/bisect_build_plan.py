@@ -19,8 +19,7 @@ def RunSteps(api):
   child_specs = api.cros_infra_config.get_builder_config(
       'postsubmit-orchestrator').orchestrator.child_specs
   completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
-      child_specs, True, [], common_pb2.GitilesCommit(),
-      common_pb2.GitilesCommit())
+      child_specs, True, [], common_pb2.GitilesCommit())
   api.assertions.assertEqual(completed_builds, [])
   api.assertions.assertEqual(existing_builds, [])
   # This test depends on the number of children in cros_infra_config.test_api.
