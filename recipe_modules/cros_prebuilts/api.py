@@ -29,6 +29,12 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts
     self._disable_overlay_commits = properties.disable_overlay_commits
 
+  @property
+  def _build_id(self):
+    """Get our build id, or swarming task_id."""
+    return str(self.m.buildbucket.build.id or
+               'led_%s' % self.m.swarming.task_id)
+
   def _profile_or_default(self, profile):
     """Return a default profile if there is no profile."""
     return profile if profile and profile.name else Profile(name='base')
@@ -46,9 +52,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """
     label = BuilderConfig.Id.Type.Name(kind).lower()
     version = self.m.cros_version.read_workspace_version()
-    build_id = self.m.buildbucket.build.id
-    return 'gs://%s/board/%s/%s-%s-%d/packages' % (gs_bucket, target.name,
-                                                   label, version, build_id)
+    return 'gs://%s/board/%s/%s-%s-%s/packages' % (
+        gs_bucket, target.name, label, version, self._build_id)
 
   def _get_snapshot_package_index_info(self, snapshots, build_target, profile,
                                        gs_bucket, test_data_dict=None):
@@ -186,7 +191,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       profile = self._profile_or_default(profile)
 
       uri = os.path.join(METADATA_GS_DIR_TMPL, METADATA_GS_FILE_TMPL).format(
-          build_id=self.m.buildbucket.build.id,
+          build_id=self._build_id,
           builder=self.m.buildbucket.build.builder.builder,
           gs_bucket=gs_bucket,
           kind=BuilderConfig.Id.Type.Name(kind).lower(),
@@ -412,7 +417,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           target, upload_uri, package_index_files)
       self._upload(upload_root, upload_paths, upload_uri, acls)
 
-      if not self._disable_overlay_commits:
+      # If we do not have a build id, then we are running outside of
+      # buildbucket.  Do not push the overlay binhost commit in that case.
+      if not self._disable_overlay_commits and self.m.buildbucket.build.id:
         self._set_binhost(target, private, binhost_key, upload_uri)
 
       if self._enable_snapshot_prebuilts:
