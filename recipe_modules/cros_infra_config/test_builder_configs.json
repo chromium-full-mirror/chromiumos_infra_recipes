@@ -54,9 +54,6 @@
         "internal": true
       },
       "build": {
-        "portageProfile": {
-          "profile": "generic_build"
-        },
         "buildImages": {
           "imageTypes": [
             "BASE",
@@ -259,7 +256,7 @@
     },
     {
       "id": {
-        "name": "amd64-generic-exit-after-unittests",
+        "name": "amd64-generic-build-exit-after-unittests",
         "branch": "master",
         "type": "POSTSUBMIT"
       },

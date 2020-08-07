@@ -143,4 +143,4 @@ def GenTests(api):
       'run-exit-tests', api.post_check(post_process.MustRun,
                                        'upload artifacts'),
       api.post_check(post_process.StatusSuccess),
-      builder='amd64-generic-exit-after-unittests')
+      builder='amd64-generic-build-exit-after-unittests')

@@ -26,7 +26,7 @@
     "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
-      "@@@STEP_LOG_LINE@builder config@  name: \"amd64-generic-exit-after-unittests\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"amd64-generic-build-exit-after-unittests\"@@@",
       "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: POSTSUBMIT@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
@@ -1755,7 +1755,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184/partial_metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184/partial_metadata.json@@@"
     ]
   },
   {
@@ -1766,7 +1766,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"amd64-generic-exit-after-unittests\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-exit-after-unittests\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"amd64-generic-build-exit-after-unittests\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-build-exit-after-unittests\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_6/partial_metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1779,12 +1779,12 @@
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"boards\": [@@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@        \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    ], @@@",
-      "@@@STEP_LOG_LINE@partial_metadata.json@    \"bot-config\": \"amd64-generic-exit-after-unittests\", @@@",
+      "@@@STEP_LOG_LINE@partial_metadata.json@    \"bot-config\": \"amd64-generic-build-exit-after-unittests\", @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"branch\": \"master\", @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"build-number\": 0, @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"build_id\": 0, @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"buildbucket_id\": 8945511751514863184, @@@",
-      "@@@STEP_LOG_LINE@partial_metadata.json@    \"builder-name\": \"amd64-generic-exit-after-unittests\", @@@",
+      "@@@STEP_LOG_LINE@partial_metadata.json@    \"builder-name\": \"amd64-generic-build-exit-after-unittests\", @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"builder_type\": \"postsubmit\", @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"child-configs\": [], @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"master_build_id\": 0, @@@",
@@ -1888,7 +1888,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_6/partial_metadata.json",
-      "gs://chromeos-image-archive/amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184/partial_metadata.json"
+      "gs://chromeos-image-archive/amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184/partial_metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -3543,7 +3543,7 @@
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@request@  \"imageTypes\": [@@@",
       "@@@STEP_LOG_LINE@request@    \"BASE\", @@@",
       "@@@STEP_LOG_LINE@request@    \"TEST\"@@@",
@@ -3591,7 +3591,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"builderPath\": \"amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\", \n  \"imageTypes\": [\n    \"BASE\", \n    \"TEST\"\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"builderPath\": \"amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\", \n  \"imageTypes\": [\n    \"BASE\", \n    \"TEST\"\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3603,7 +3603,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"builderPath\": \"amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"builderPath\": \"amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"imageTypes\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"BASE\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"TEST\"@@@",
@@ -3710,7 +3710,7 @@
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@    \"imageTypes\": [@@@",
       "@@@STEP_LOG_LINE@published event@      \"BASE\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"TEST\"@@@",
@@ -3751,7 +3751,7 @@
     },
     "infra_step": true,
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI6oDE/QQiDAjrgMT9BBCAyrXuAaIBnwEKDwoNYW1kNjQtZ2VuZXJpYxICAQMySGFtZDY0LWdl\\nbmVyaWMtZXhpdC1hZnRlci11bml0dGVzdHMvUjk5LTEyMzQuNTYuMC0xMDEtODk0NTUxMTc1MTUx\\nNDg2MzE4NDo+ChNbQ0FDSEVdL2Nyb3NfY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsIhJbU1RB\\nUlRfRElSXS9jaHJvbWWqAVwIARIrChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaDwoNYW1kNjQt\\nZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAMaDwoNYW1kNjQtZ2VuZXJpY9AC0OyA\\n2a7xtZJ82gJIYnVpbGQgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVh\\ndGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI6oDE/QQiDAjrgMT9BBCAyrXuAaIBpQEKDwoNYW1kNjQtZ2VuZXJpYxICAQMyTmFtZDY0LWdl\\nbmVyaWMtYnVpbGQtZXhpdC1hZnRlci11bml0dGVzdHMvUjk5LTEyMzQuNTYuMC0xMDEtODk0NTUx\\nMTc1MTUxNDg2MzE4NDo+ChNbQ0FDSEVdL2Nyb3NfY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFs\\nIhJbU1RBUlRfRElSXS9jaHJvbWWqAVwIARIrChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaDwoN\\nYW1kNjQtZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAMaDwoNYW1kNjQtZ2VuZXJp\\nY9AC0OyA2a7xtZJ82gJIYnVpbGQgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2Vydmlj\\nZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4172,7 +4172,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -4495,7 +4495,7 @@
       "----",
       "rsync",
       "[CLEANUP]/artifacts_tmp_22",
-      "gs://chromeos-image-archive/amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -4510,7 +4510,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -4598,7 +4598,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
     ]
   },
   {
@@ -4609,7 +4609,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"amd64-generic-exit-after-unittests\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-exit-after-unittests\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"create-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:17\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"amd64-generic-build-exit-after-unittests\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-build-exit-after-unittests\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"create-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:17\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_25/metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4622,12 +4622,12 @@
       "@@@STEP_LOG_LINE@metadata.json@    \"boards\": [@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"amd64-generic-exit-after-unittests\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"amd64-generic-build-exit-after-unittests\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"branch\": \"master\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"build-number\": 0, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"build_id\": 0, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 8945511751514863184, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"amd64-generic-exit-after-unittests\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"amd64-generic-build-exit-after-unittests\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"postsubmit\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"child-configs\": [], @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"master_build_id\": 0, @@@",
@@ -4758,7 +4758,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_25/metadata.json",
-      "gs://chromeos-image-archive/amd64-generic-exit-after-unittests/R99-1234.56.0-101-8945511751514863184/metadata.json"
+      "gs://chromeos-image-archive/amd64-generic-build-exit-after-unittests/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
