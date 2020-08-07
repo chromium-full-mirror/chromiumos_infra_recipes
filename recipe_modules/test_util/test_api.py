@@ -93,7 +93,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     that we tweak things to reflect chromeos:
       - project defaults to 'chromeos'.
       - bucket defaults to 'cq' or 'postsubmit, depending on |cq|.
-      - git_repo defaults to the Chrome OS internal manifest.
+      - git_repo defaults to 'https://chromium.googlesource.com/project-a'.
 
     Args:
       cq (bool): whether this is a CQ triggered job, vs scheduled.  This also
@@ -130,9 +130,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
 
     kwargs.setdefault('project', 'chromeos')
     kwargs.setdefault('bucket', 'cq' if cq else 'postsubmit')
-    kwargs.setdefault(
-        'git_repo',
-        'https://chrome-internal.googlesource.com/chromeos/manifest-internal')
+    kwargs.setdefault('git_repo', 'https://chromium.googlesource.com/project-a')
 
     tags = self.m.cros_tags.tags(**tags) if isinstance(tags, dict) else tags
 

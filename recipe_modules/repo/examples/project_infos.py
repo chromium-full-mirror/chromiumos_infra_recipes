@@ -32,7 +32,8 @@ def RunSteps(api, properties):
   if not properties.expected_infos:
     expected = [
         api.repo.ProjectInfo(name=x, path='src/{}'.format(x), remote='cros',
-                             branch='refs/heads/master') for x in 'a', 'b', 'c'
+                             branch='refs/heads/master')
+        for x in api.repo.test_api.test_projects
     ]
   else:
     expected = [
@@ -72,8 +73,8 @@ def GenTests(api):
           ProjectInfosProperties(
               regexes=['src/program/galaxy', 'src/program/other'])))
 
-  missing_refs_heads = '\n'.join(
-      '%s|src/%s|cros|refs/heads/master|' % (p, p) for p in ['a', 'b', 'c'])
+  missing_refs_heads = '\n'.join('%s|src/%s|cros|refs/heads/master|' % (p, p)
+                                 for p in api.repo.test_projects)
   yield api.test(
       'no-upstream-attribute',
       api.step_data('repo forall',

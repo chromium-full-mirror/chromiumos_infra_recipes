@@ -378,7 +378,7 @@
       "@@@STEP_LOG_LINE@gather cq-depend@invalid dep: chromium:IAmNotAnInteger@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@chrome-internal:67890@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
-      "@@@STEP_LOG_LINE@dep local@Failed to find project paths, with failure: No path found for project 'c' branch 'refs/heads/master'@@@",
+      "@@@STEP_LOG_LINE@dep local@Failed to find project paths, with failure: No path found for project 'project-c' branch 'refs/heads/master'@@@",
       "@@@STEP_LOG_LINE@dep local@change None in non-Chrome OS repo not-a-project@@@",
       "@@@STEP_LOG_LINE@dep local@gerrit query failure for cl 1234@@@",
       "@@@STEP_LOG_END@dep local@@@",
@@ -466,7 +466,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"deadbeef\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"c\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project-c\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -497,9 +497,9 @@
     "name": "ensure manifest cq-depend fulfilled (2).repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@a|src/a|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@b|src/b|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@c|src/c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -507,7 +507,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "c",
+      "project-c",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],

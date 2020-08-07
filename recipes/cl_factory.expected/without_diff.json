@@ -214,9 +214,9 @@
     "name": "find regex matching CL repos.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@a|src/a|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@b|src/b|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@c|src/c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -238,9 +238,9 @@
     "name": "find additional repos to sync.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@a|src/a|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@b|src/b|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@c|src/c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -341,11 +341,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "a",
-      "c",
-      "b",
       "chromeos/program/galaxy",
       "chromiumos/config",
+      "project-a",
+      "project-c",
+      "project-b",
       "--ignore-missing",
       "-j",
       "32",
@@ -377,11 +377,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "a",
-      "c",
-      "b",
       "chromeos/program/galaxy",
       "chromiumos/config",
+      "project-a",
+      "project-c",
+      "project-b",
       "--ignore-missing",
       "-j",
       "32",
@@ -456,11 +456,11 @@
       "--retry-fetches",
       "8",
       "--verbose",
-      "a",
-      "c",
-      "b",
       "chromeos/program/galaxy",
-      "chromiumos/config"
+      "chromiumos/config",
+      "project-a",
+      "project-c",
+      "project-b"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -784,9 +784,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "cl-factory",
-      "a",
-      "b",
-      "c"
+      "project-a",
+      "project-b",
+      "project-c"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -798,7 +798,7 @@
   },
   {
     "cmd": [],
-    "name": "generate project change lists.working on project a",
+    "name": "generate project change lists.working on project project-a",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@no diff@@@"
@@ -806,25 +806,25 @@
   },
   {
     "cmd": [],
-    "name": "generate project change lists.working on project a.replace_strings",
+    "name": "generate project change lists.working on project project-a.replace_strings",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate project change lists.working on project a.gen_config",
+    "name": "generate project change lists.working on project project-a.gen_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/src/a/config/bin/gen_config",
-      "[START_DIR]/chromiumos_workspace/src/a/config.star"
+      "[START_DIR]/chromiumos_workspace/src/project-a/config/bin/gen_config",
+      "[START_DIR]/chromiumos_workspace/src/project-a/config.star"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/a",
-    "name": "generate project change lists.working on project a.gen_config.run gen_config config.star",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
+    "name": "generate project change lists.working on project project-a.gen_config.run gen_config config.star",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -835,16 +835,16 @@
       "status",
       "--porcelain"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/a",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
     "infra_step": true,
-    "name": "generate project change lists.working on project a.git status",
+    "name": "generate project change lists.working on project project-a.git status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate project change lists.working on project b",
+    "name": "generate project change lists.working on project project-b",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@no diff@@@"
@@ -852,25 +852,25 @@
   },
   {
     "cmd": [],
-    "name": "generate project change lists.working on project b.replace_strings",
+    "name": "generate project change lists.working on project project-b.replace_strings",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate project change lists.working on project b.gen_config",
+    "name": "generate project change lists.working on project project-b.gen_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/src/b/config/bin/gen_config",
-      "[START_DIR]/chromiumos_workspace/src/b/config.star"
+      "[START_DIR]/chromiumos_workspace/src/project-b/config/bin/gen_config",
+      "[START_DIR]/chromiumos_workspace/src/project-b/config.star"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/b",
-    "name": "generate project change lists.working on project b.gen_config.run gen_config config.star",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project-b",
+    "name": "generate project change lists.working on project project-b.gen_config.run gen_config config.star",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -881,16 +881,16 @@
       "status",
       "--porcelain"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/b",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project-b",
     "infra_step": true,
-    "name": "generate project change lists.working on project b.git status",
+    "name": "generate project change lists.working on project project-b.git status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate project change lists.working on project c",
+    "name": "generate project change lists.working on project project-c",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@no diff@@@"
@@ -898,25 +898,25 @@
   },
   {
     "cmd": [],
-    "name": "generate project change lists.working on project c.replace_strings",
+    "name": "generate project change lists.working on project project-c.replace_strings",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate project change lists.working on project c.gen_config",
+    "name": "generate project change lists.working on project project-c.gen_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/src/c/config/bin/gen_config",
-      "[START_DIR]/chromiumos_workspace/src/c/config.star"
+      "[START_DIR]/chromiumos_workspace/src/project-c/config/bin/gen_config",
+      "[START_DIR]/chromiumos_workspace/src/project-c/config.star"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/c",
-    "name": "generate project change lists.working on project c.gen_config.run gen_config config.star",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project-c",
+    "name": "generate project change lists.working on project project-c.gen_config.run gen_config config.star",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -927,9 +927,9 @@
       "status",
       "--porcelain"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/c",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project-c",
     "infra_step": true,
-    "name": "generate project change lists.working on project c.git status",
+    "name": "generate project change lists.working on project project-c.git status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

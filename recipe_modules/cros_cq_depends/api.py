@@ -109,26 +109,26 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
       }
       test_data = {
           'changes': [
-            {
-              'info': {
-                  # This project name corresponds to a repo test_data project.
-                  'project': 'c',
-                  'branch': 'master',
-                  'current_revision': 'deadbeef',
+              {
+                  'info': {
+                      # This project name corresponds to a repo test_data project.
+                      'project': 'project-c',
+                      'branch': 'master',
+                      'current_revision': 'deadbeef',
+                  },
               },
-            },
-            {
-              'info': {
-                  # Imitates a project outside the chromiumos checkout.
-                  'project': 'not-a-project',
-                  'branch': 'master',
-                  'current_revision': 'deadbeef',
+              {
+                  'info': {
+                      # Imitates a project outside the chromiumos checkout.
+                      'project': 'not-a-project',
+                      'branch': 'master',
+                      'current_revision': 'deadbeef',
+                  },
               },
-            },
-            {
-              'change_number': 1234,
-              'info': None,
-            },
+              {
+                  'change_number': 1234,
+                  'info': None,
+              },
           ]
       }
       gerrit_results = self.m.support.call('gerrit-fetch-changes', json_data,

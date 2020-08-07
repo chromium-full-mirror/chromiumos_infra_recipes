@@ -477,9 +477,9 @@ TEST=CQ
               hashtags=['refactor-audio-config'],
               message_template=message_template,
           )),
-      no_git_diff_step_data('a'),
-      no_git_diff_step_data('b'),
-      no_git_diff_step_data('c'),
+      no_git_diff_step_data('project-a'),
+      no_git_diff_step_data('project-b'),
+      no_git_diff_step_data('project-c'),
   )
 
   yield api.test(

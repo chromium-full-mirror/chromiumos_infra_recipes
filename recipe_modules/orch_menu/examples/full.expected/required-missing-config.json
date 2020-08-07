@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "set up orchestrator",
     "~followup_annotations": [
-      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml@@@",
+      "@@@STEP_LINK@manifest snapshot revision@https://chromium.googlesource.com/project-a/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -68,7 +68,7 @@
     "cmd": [
       "git",
       "clone",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/project-a",
       "."
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -83,7 +83,7 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/project-a",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",

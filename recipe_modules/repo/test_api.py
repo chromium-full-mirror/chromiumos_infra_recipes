@@ -9,6 +9,11 @@ from recipe_engine import recipe_test_api
 class RepoTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the repo module."""
 
+  @property
+  def test_projects(self):
+    """Returns a list of repo project names to use for testing."""
+    return ['project-a', 'project-b', 'project-c']
+
   def local_manifest_step_test_data(self):
     """Returns test data to simulate a local manifest."""
     test_manifest = """

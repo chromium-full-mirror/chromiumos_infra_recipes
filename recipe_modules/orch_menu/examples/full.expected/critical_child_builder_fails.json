@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "set up orchestrator",
     "~followup_annotations": [
-      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml@@@"
+      "@@@STEP_LINK@manifest snapshot revision@https://chromium.googlesource.com/project-a/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml@@@"
     ]
   },
   {
@@ -89,7 +89,7 @@
     "cmd": [
       "git",
       "clone",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/project-a",
       "."
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -104,7 +104,7 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/project-a",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -202,7 +202,7 @@
     "cmd": [
       "git",
       "push",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/project-a",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:refs/heads/postsubmit"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -325,7 +325,7 @@
       "@@@STEP_LOG_LINE@planner_input@  }@@@",
       "@@@STEP_LOG_LINE@planner_input@}@@@",
       "@@@STEP_LOG_LINE@planner_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@planner_input@  serialized_proto: \"\\n chrome-internal.googlesource.com\\022\\032chromeos/manifest-internal\\032(2d72510e447ab60a9728aeea2362d8be2cbd7789\\\"\\021refs/heads/master\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\tproject-a\\032(2d72510e447ab60a9728aeea2362d8be2cbd7789\\\"\\021refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@planner_input@}@@@",
       "@@@STEP_LOG_END@planner_input@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
@@ -391,7 +391,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001a\ufffd\u0001\n$\n\u0018amd64-generic-postsubmit\u0012\u0006master\u0018\u0002\u0012\u0006\n\u0002\b\u00018\u0001\"6\b\u0002\u001a\u0011chromeos-prebuilt\"\u0016chromeos-image-archiveB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u001e\n\u0011\n\u000fchrome_internalz\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0002\u001a1\n\"\n\u0016arm-generic-postsubmit\u0012\u0006master\u0018\u0002\u0012\u0004\n\u00008\u00012\u0005\ufffd\u0001\u0002\u0010\u0002\u001a/\n\u001c\n\u0010grunt-postsubmit\u0012\u0006master\u0018\u0002\u0012\u0004\n\u00008\u00022\u0005\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0001\"}\n{\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
+      "\u0012(2d72510e447ab60a9728aeea2362d8be2cbd7789\u001a\ufffd\u0001\n$\n\u0018amd64-generic-postsubmit\u0012\u0006master\u0018\u0002\u0012\u0006\n\u0002\b\u00018\u0001\"6\b\u0002\u001a\u0011chromeos-prebuilt\"\u0016chromeos-image-archiveB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u001e\n\u0011\n\u000fchrome_internalz\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0002\u001a1\n\"\n\u0016arm-generic-postsubmit\u0012\u0006master\u0018\u0002\u0012\u0004\n\u00008\u00012\u0005\ufffd\u0001\u0002\u0010\u0002\u001a/\n\u001c\n\u0010grunt-postsubmit\u0012\u0006master\u0018\u0002\u0012\u0004\n\u00008\u00022\u0005\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0001\"e\nc\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
       "[CLEANUP]/build-plan-_tmp_3/input.binaryproto"
     ],
     "infra_step": true,
@@ -412,9 +412,9 @@
       "@@@STEP_LOG_LINE@input.binaryproto@\u00008\u00012\u0005\ufffd\u0001\u0002\u0010\u0002\u001a/@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u001c@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0010grunt-postsubmit\u0012\u0006master\u0018\u0002\u0012\u0004@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u00008\u00022\u0005\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0001\"}@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@{@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u00008\u00022\u0005\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0001\"e@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@c@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },
@@ -471,7 +471,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:23Z\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:23Z\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/project-a/+/2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
     ],
     "infra_step": true,
     "name": "run builds.get snapshot builds.buildbucket.search",
@@ -506,7 +506,7 @@
     ],
     "infra_step": true,
     "name": "run builds.schedule new builds.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -537,9 +537,9 @@
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"project-a\", @@@",
       "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
@@ -582,7 +582,7 @@
     ],
     "infra_step": true,
     "name": "run builds.schedule new builds.buildbucket.schedule (2)",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -613,9 +613,9 @@
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"project-a\", @@@",
       "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
@@ -658,7 +658,7 @@
     ],
     "infra_step": true,
     "name": "run builds.schedule new builds.buildbucket.schedule (3)",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"grunt-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133d\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"grunt-postsubmit\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133d\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -689,9 +689,9 @@
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"project-a\", @@@",
       "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
@@ -792,9 +792,9 @@
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chrome-internal.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"project\": \"chromeos/manifest-internal\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"project\": \"project-a\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
@@ -838,9 +838,9 @@
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chrome-internal.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"project\": \"chromeos/manifest-internal\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"project\": \"project-a\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",

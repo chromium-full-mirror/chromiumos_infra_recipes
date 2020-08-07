@@ -283,7 +283,7 @@ class RepoApi(recipe_api.RecipeApi):
 
     def step_test_data():
       data = '\n'.join('%s|src/%s|cros|refs/heads/master|refs/heads/master' %
-                       (p, p) for p in projects or ['a', 'b', 'c'])
+                       (p, p) for p in projects or self.test_api.test_projects)
       return self.m.raw_io.test_api.stream_output(data)
 
     cmd = ['forall'] + projects
