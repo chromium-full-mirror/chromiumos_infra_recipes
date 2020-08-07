@@ -2610,12 +2610,7 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@build is relevant@@@",
-      "@@@SET_BUILD_PROPERTY@pointless_build@false@@@",
-      "@@@SET_BUILD_PROPERTY@relevant_build@true@@@"
-    ]
+    "name": "pointless build check"
   },
   {
     "cmd": [],
@@ -2695,6 +2690,16 @@
     "name": "pointless build check.depgraph relevance check.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "pointless build check.set properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@build is relevant@@@",
+      "@@@SET_BUILD_PROPERTY@pointless_build@false@@@",
+      "@@@SET_BUILD_PROPERTY@relevant_build@true@@@"
     ]
   },
   {

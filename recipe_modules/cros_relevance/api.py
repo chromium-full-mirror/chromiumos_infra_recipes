@@ -128,19 +128,23 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       # If there are no CLs, then this is not a CQ run and should never be
       # treated as pointless.  Likewise if force_relevant is set.
       return False
-    with self.m.step.nest('pointless build check') as presentation:
+
+    with self.m.step.nest('pointless build check'):
       # We need to invert the value of test_value, since we were asked if the
       # build was pointless, and we're calling a function that returns True if
       # the build is relevant.  We want to pass True in the case where the
       # argument is None.
       relevant = self.is_depgraph_affected(gerrit_changes, gitiles_commit,
                                            dep_graph, test_value=not test_value)
+      # Do this in a step instead of a presentaion to avoid multiple lines in
+      # the output properties (in led jobs).
+      step = self.m.step('set properties', cmd=None)
       # TODO(seanabraham): stop writing 'pointless_build' property once Plx
       # scripts have switched over to 'relevant_build'.
-      presentation.properties['pointless_build'] = not relevant
-      presentation.properties['relevant_build'] = relevant
-      presentation.step_text = ('build is relevant'
-                                if relevant else 'build is irrelevant')
+      step.presentation.properties['pointless_build'] = not relevant
+      step.presentation.properties['relevant_build'] = relevant
+      step.presentation.step_text = ('build is relevant'
+                                     if relevant else 'build is irrelevant')
       return not relevant
 
   def _are_paths_affected(self, gerrit_changes, gitiles_commit, relevant_paths,

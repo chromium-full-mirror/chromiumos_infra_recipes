@@ -1729,7 +1729,7 @@ Args:
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#236)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#240)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -1743,7 +1743,7 @@ Args:
 Returns:
   (bool): Whether there are toolchain_cls applied.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#265)(self, sysroot, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#269)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -1806,7 +1806,7 @@ Args:
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#211)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#215)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
