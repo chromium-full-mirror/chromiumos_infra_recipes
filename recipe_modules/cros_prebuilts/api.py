@@ -416,6 +416,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       upload_root, upload_paths = self._prepare_binhost_uploads(
           target, upload_uri, package_index_files)
       self._upload(upload_root, upload_paths, upload_uri, acls)
+      step = self.m.step('set properties', cmd=None)
+      step.presentation.properties['prebuilts_private'] = private
+      step.presentation.properties['prebuilts_uri'] = upload_uri
 
       # If we do not have a build id, then we are running outside of
       # buildbucket.  Do not push the overlay binhost commit in that case.
