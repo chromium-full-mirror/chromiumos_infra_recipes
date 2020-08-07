@@ -60,6 +60,9 @@ def GenTests(api):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     target = 'amd64-generic'
 
+    non_base_profile = (profile and profile.name and profile.name != 'base')
+    expect_commit = not (disable_overlay_commits or non_base_profile)
+
     if expected_package_indexes is None:
       expected_package_indexes = make_package_indexes(
           gs_bucket, target, profile=profile, count=send_snapshot_prebuilts)
@@ -83,16 +86,16 @@ def GenTests(api):
                     disable_overlay_commits=disable_overlay_commits)
         })
 
-    if not disable_overlay_commits:
-      ret += api.post_check(verify_branch,
-                            'staging' if use_staging else 'master')
     ret += api.post_check(MustRun if private else DoesNotRun,
                           'upload prebuilts.read gs acls')
     check = MustRun if enable_snapshot_prebuilts else DoesNotRun
     ret += api.post_check(check, 'upload prebuilts.upload metadata')
     ret += api.post_check(check, 'upload prebuilts.upload metadata.gsutil acl')
-    check = DoesNotRun if disable_overlay_commits else MustRun
+    check = MustRun if expect_commit else DoesNotRun
     ret += api.post_check(check, 'upload prebuilts.update binhost conf file')
+    if expect_commit:
+      ret += api.post_check(verify_branch,
+                            'staging' if use_staging else 'master')
     return ret
 
   def verify_branch(check, steps, branch):

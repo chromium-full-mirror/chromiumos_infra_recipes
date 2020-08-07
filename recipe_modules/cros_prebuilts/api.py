@@ -420,9 +420,14 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       step.presentation.properties['prebuilts_private'] = private
       step.presentation.properties['prebuilts_uri'] = upload_uri
 
-      # If we do not have a build id, then we are running outside of
-      # buildbucket.  Do not push the overlay binhost commit in that case.
-      if not self._disable_overlay_commits and self.m.buildbucket.build.id:
+      # Only buildbucket launched builds with the default profile should commit
+      # BINHOST.conf updates.  Which can be explicitly disabled with the feature
+      # flag.
+      overlay_commit = (
+          self.m.buildbucket.build.id and not self._disable_overlay_commits and
+          self._profile_or_default(profile) == self._profile_or_default(None))
+
+      if overlay_commit:
         self._set_binhost(target, private, binhost_key, upload_uri)
 
       if self._enable_snapshot_prebuilts:
