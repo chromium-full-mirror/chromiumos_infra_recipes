@@ -186,6 +186,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
     with self.m.step.nest("get completed builds") as presentation:
       completed_builds = []
       passed_builds = self.m.cros_history.get_passed_builds()
+      if 'test-failures' in forced_rebuilds:
+        test_failure_builders = self.m.cros_history.get_test_failure_builders()
+
       skip_log = []
       for build in passed_builds:
         # Filter out non-child builds like vm_test, dry run orchestrator or
@@ -199,6 +202,13 @@ class BuildPlanApi(recipe_api.RecipeApi):
         if build.builder.builder in forced_rebuilds or 'all' in forced_rebuilds:
           skip_log.append(
               '{} is skipped because recycling was disabled for this builder.'
+              .format(build.builder.builder))
+          continue
+
+        if ('test-failures' in forced_rebuilds and
+            build.builder.builder in test_failure_builders):
+          skip_log.append(
+              '{} is skipped because recycling was disabled for builders that failed hw tests.'
               .format(build.builder.builder))
           continue
 

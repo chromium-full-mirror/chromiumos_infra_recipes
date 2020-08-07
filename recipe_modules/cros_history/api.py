@@ -9,12 +9,16 @@ from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.testplans.generate_test_plan import TestUnitCommon
+from PB.testplans.generate_test_plan import HwTestUnit
 
 from recipe_engine import recipe_api
 
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
+FAILED_HW_TESTS_KEY = 'hw_test_failures'
+FAILED_TESTS_KEY = 'test_failures'
 PASSED_TESTS_KEY = 'passed_tests'
 SNAPSHOT_BUCKET = 'postsubmit'
 
@@ -67,6 +71,31 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         presentation.links[title] = url
 
       return passed_builds
+
+  def get_test_failure_builders(self):
+    """Find all builders with the given patches that failed HW tests.
+
+    Returns:
+      set[str]: Names of builders with HW testing failures, if any.
+    """
+    current_build = self.m.buildbucket.build
+    past_builds = self.get_matching_builds(current_build)
+
+    test_failure_builders = set()
+    for build in past_builds:
+      build_output = json_format.MessageToDict(build.output.properties)
+      failed_tests = build_output.get(FAILED_TESTS_KEY, [])
+      if not failed_tests:
+        continue
+      failed_hw_tests = [
+          json_format.Parse(test['test_spec'], HwTestUnit())
+          for test in failed_tests.get(FAILED_HW_TESTS_KEY, [])
+      ]
+
+      test_failure_builders |= set(
+          [test.common.builder_name for test in failed_hw_tests])
+
+    return test_failure_builders
 
   def get_passed_tests(self):
     """Find all tests that have passed with the given patches.

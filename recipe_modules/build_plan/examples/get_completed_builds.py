@@ -18,6 +18,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'build_plan',
+    'cros_history',
 ]
 
 PROPERTIES = {
@@ -78,5 +79,18 @@ def GenTests(api):
           'buildbucket.search'),
       api.properties(**{
           'forced_rebuilds': {'amd64-generic-cq'},
+          'expected_completed': []
+      }))
+
+  yield api.test(
+      'one-build-failure-one-test-failure',
+      api.buildbucket.simulated_search_results(
+          builds, 'get completed builds.get change build history.'
+          'buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          [api.cros_history.build_with_failed_tests(['amd64-generic-cq'])],
+          'get completed builds.find matching builds.buildbucket.search'),
+      api.properties(**{
+          'forced_rebuilds': {'test-failures'},
           'expected_completed': []
       }))
