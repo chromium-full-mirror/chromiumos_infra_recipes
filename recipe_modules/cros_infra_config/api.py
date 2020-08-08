@@ -45,10 +45,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Parse properties.config_ref
     self._config_ref = properties.config_ref or 'master'
 
-    # Gitiles commit and gerrit changes for this builder.
-    self._gitiles_commit = None
-    self._gerrit_changes = []
-
     # The sha of the recipes package from cipd.
     self._package_git_revision = None
 
@@ -71,11 +67,11 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @property
   def gitiles_commit(self):
-    return self._gitiles_commit
+    return self.m.src_state.gitiles_commit
 
   @property
   def gerrit_changes(self):
-    return self._gerrit_changes
+    return self.m.src_state.gerrit_changes
 
   @property
   def config(self):
@@ -328,8 +324,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           [json_format.MessageToDict(x) for x in changes])
 
     # Record the decision for later.
-    self._gitiles_commit = commit
-    self._gerrit_changes = changes or []
+    self.m.src_state.gitiles_commit = commit
+    self.m.src_state.gerrit_changes = changes or []
 
   def _get_package_git_revision(self):
     """Return the git_revision from our cipd package."""

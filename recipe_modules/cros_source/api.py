@@ -29,20 +29,8 @@ DEFAULT_CACHE_SYNC_OPTS = dict(
 STAGING_INIT_OPTS = dict(repo_branch='master')
 
 
-def _manifest_url(host, project):
-  return 'https://{}/{}'.format(host, project)
-
-
 class CrosSourceApi(recipe_api.RecipeApi):
   """A module for CrOS-specific source steps."""
-
-  EXTERNAL_HOST = 'chromium.googlesource.com'
-  EXTERNAL_PROJECT = 'chromiumos/manifest'
-  INTERNAL_HOST = 'chrome-internal.googlesource.com'
-  INTERNAL_PROJECT = 'chromeos/manifest-internal'
-
-  EXTERNAL_MANIFEST_URL = _manifest_url(EXTERNAL_HOST, EXTERNAL_PROJECT)
-  INTERNAL_MANIFEST_URL = _manifest_url(INTERNAL_HOST, INTERNAL_PROJECT)
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosSourceApi, self).__init__(*args, **kwargs)
@@ -75,7 +63,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
     This is where the build is processed. It will contain the target base
     checkout and any modifications made by the build.
     """
-    return self.m.path['start_dir'].join('chromiumos_workspace')
+    return self.m.src_state.workspace_path
 
   @property
   def snapshot_isolated_hash(self):
@@ -83,10 +71,9 @@ class CrosSourceApi(recipe_api.RecipeApi):
     return (self._snapshot_isolate.isolated_hash
             if self._snapshot_isolate else None)
 
-  def ensure_synced_cache(self, manifest_url=INTERNAL_MANIFEST_URL,
-                          init_opts=None, sync_opts=None,
-                          cache_path_override=None, is_staging=False,
-                          projects=None):
+  def ensure_synced_cache(self, manifest_url=None, init_opts=None,
+                          sync_opts=None, cache_path_override=None,
+                          is_staging=False, projects=None):
     """Ensure the configured repo cache exists and is synced.
 
     Args:
@@ -99,6 +86,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
       * projects (List[str]): Projects to limit the sync to, or None to sync
       all projects.
     """
+    manifest_url = manifest_url or self.m.src_state.internal_manifest.url
     init_opts = init_opts or {}
     if is_staging:
       init_opts.update(STAGING_INIT_OPTS)
@@ -126,7 +114,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
     with self.m.context(cwd=self.workspace_path.join(manifest_dir)):
       return self.m.git.fetch_refs(
-          _manifest_url(snapshot.host, snapshot.project), snapshot.id,
+          'https://{}/{}'.format(snapshot.host, snapshot.project), snapshot.id,
           count=count)
 
   @contextlib.contextmanager
@@ -206,15 +194,17 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
       return new_commits
 
-  @exponential_retry(retries=3,
-                     condition=lambda e: getattr(e, 'had_timeout', False))
-  def sync_snapshot(self, gitiles_commit, manifest_url=INTERNAL_MANIFEST_URL):
+  retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
+
+  @exponential_retry(retries=3, condition=retry_timeouts)
+  def sync_snapshot(self, gitiles_commit, manifest_url=None):
     """Sync a checkout to the snapshot.
 
     Args:
       gitiles_commit (GitilesCommit): commit to sync to
       manifest_url: URL of manifest repo.  Default: internal manifest
     """
+    manifest_url = manifest_url or self.m.src_state.internal_manifest.url
     with self.m.step.nest('sync to snapshot'):
       snapshot_xml = self._get_snapshot(gitiles_commit)
       self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,

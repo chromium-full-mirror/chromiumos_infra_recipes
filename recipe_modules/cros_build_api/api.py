@@ -303,7 +303,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
         cmd.append(logfile_path)
 
       cmd.extend([
-          self.m.cros_source.workspace_path.join('chromite/bin/build_api'),
+          self.m.src_state.workspace_path.join('chromite/bin/build_api'),
           '--input-json', input_path, '--output-json', output_path,
           '--log-level', self._log_level, endpoint
       ])
@@ -311,7 +311,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
 
       # build_api needs to invoke other chromite/bin binaries, hence this dir
       # needs to be on the PATH.
-      chromite_bin_dir = self.m.cros_source.workspace_path.join('chromite/bin')
+      chromite_bin_dir = self.m.src_state.workspace_path.join('chromite/bin')
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
         try:
           output_proto = reflection.MakeClass(output_type)()

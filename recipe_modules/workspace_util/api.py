@@ -41,7 +41,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
   @property
   def workspace_path(self):
-    return self.m.cros_source.workspace_path
+    return self.m.src_state.workspace_path
 
   @contextlib.contextmanager
   def setup_workspace(self):
@@ -65,8 +65,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       staging (bool): Whether this is a staging build.  Default: False.
     """
     self.m.cros_source.ensure_synced_cache(is_staging=staging)
-    self.m.cros_source.sync_snapshot(commit or
-                                     self.m.cros_infra_config.gitiles_commit)
+    commit = commit or self.m.src_state.gitiles_commit
+    self.m.cros_source.sync_snapshot(commit)
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',
                     fail_not_applicable=False):
@@ -84,7 +84,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
           instead of failing during application.
     """
     patch_sets = []
-    changes = changes or self.m.cros_infra_config.gerrit_changes
+    changes = self.m.src_state.gerrit_changes if changes is None else changes
     if not changes:
       return
 
@@ -134,7 +134,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     Returns:
       (bool) whether there are toolchain patches applied.
     """
-    gitiles_commit = gitiles_commit or self.m.cros_infra_config.gitiles_commit
+    gitiles_commit = gitiles_commit or self.m.src_state.gitiles_commit
     gerrit_changes = gerrit_changes or self._applied_changes
 
     # See if there are any new changes to check.
@@ -191,7 +191,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       init_opts['local_manifest'] = local_manifest
 
     self.m.cros_source.ensure_synced_cache(
-        manifest_url=self.m.cros_source.EXTERNAL_MANIFEST_URL,
+        manifest_url=self.m.src_state.external_manifest.url,
         init_opts=init_opts, cache_path_override=cache_path_override)
     with self.m.context(
         cwd=cache_path_override or self.m.cros_source.cache_path):

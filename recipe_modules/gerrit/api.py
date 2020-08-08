@@ -382,11 +382,11 @@ class GerritApi(recipe_api.RecipeApi):
       GerritChange: The newly created change.
     """
     with self.m.step.nest('create gerrit change for %s' % project) as pres:
-      with self.m.context(cwd=self.m.cros_source.workspace_path):
+      with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info(project)
 
       with self.m.context(
-          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+          cwd=self.m.src_state.workspace_path.join(project_info.path)):
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
                              hashtags=hashtags, send_mail=True)
         gerrit_change_url = self.m.git_cl.status(
@@ -416,7 +416,7 @@ class GerritApi(recipe_api.RecipeApi):
       pres.step_text = ','.join(full_labels)
       pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
 
-      with self.m.context(cwd=self.m.cros_source.workspace_path):
+      with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
 
       branch = project_info.branch.split('/')[-1]
@@ -424,7 +424,7 @@ class GerritApi(recipe_api.RecipeApi):
           ['l=%s' % label for label in full_labels]))
       refspec = 'HEAD:%s' % ref
       with self.m.context(
-          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+          cwd=self.m.src_state.workspace_path.join(project_info.path)):
         # Rebase before pushing so Gerrit does not complain there was no change.
         self.m.git.rebase(force=True)
         self.m.git.push(project_info.remote, refspec)
@@ -445,11 +445,11 @@ class GerritApi(recipe_api.RecipeApi):
       pres.logs['comment text'] = [comment]
       pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
 
-      with self.m.context(cwd=self.m.cros_source.workspace_path):
+      with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
 
       with self.m.context(
-          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+          cwd=self.m.src_state.workspace_path.join(project_info.path)):
         self.m.git_cl('comment', ['-i', gerrit_change.change, '-a', comment])
 
   def get_change_description(self, gerrit_change):
@@ -485,11 +485,11 @@ class GerritApi(recipe_api.RecipeApi):
       pres.links['link to change'] = gerrit_change_url
       pres.logs['description text'] = [description]
 
-      with self.m.context(cwd=self.m.cros_source.workspace_path):
+      with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
 
       with self.m.context(
-          cwd=self.m.cros_source.workspace_path.join(project_info.path)):
+          cwd=self.m.src_state.workspace_path.join(project_info.path)):
         self.m.git_cl.set_description(description, patch_url=gerrit_change_url)
 
   def abandon_change(self, gerrit_change, message=None):

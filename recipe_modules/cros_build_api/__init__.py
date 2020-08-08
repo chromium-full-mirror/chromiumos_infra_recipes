@@ -11,7 +11,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'analysis_service',
-    'cros_source',
+    'src_state',
 ]
 
 from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (

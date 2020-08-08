@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 DEPS = {
     'depot_tools_gerrit': 'depot_tools/gerrit',
     'buildbucket': 'recipe_engine/buildbucket',
@@ -8,12 +13,7 @@ DEPS = {
     'step': 'recipe_engine/step',
     'git': 'git',
     'git_cl': 'git_cl',
-    'support': 'support',
-
-    # TODO(evanhernandez): This is a significant code smell.
-    # A Gerrit module should know nothing about ChromeOS.
-    # Remove these dependencies once we find a better REST
-    # client interface.
-    'cros_source': 'cros_source',
     'repo': 'repo',
+    'src_state': 'src_state',
+    'support': 'support',
 }

@@ -243,9 +243,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
             'expected exactly one Cr-External-Snapshot footer')
       extern_snapshot_id = footer_values[0]
 
+    external_manifest = self.m.src_state.external_manifest
     self._external_gitiles_commit = common_pb2.GitilesCommit(
-        host=self.m.cros_source.EXTERNAL_HOST,
-        project=self.m.cros_source.EXTERNAL_PROJECT,
+        host=external_manifest.host, project=external_manifest.project,
         ref=self.gitiles_commit.ref, id=extern_snapshot_id)
 
     # clone the external manifest repo

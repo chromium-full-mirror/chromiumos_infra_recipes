@@ -10,9 +10,9 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'cros_cache',
-    'cros_source',
     'git',
     'repo',
+    'src_state',
 ]
 
 CHROMIUMOS_CACHE_DIR = 'chromiumos_cache'
@@ -22,8 +22,8 @@ def RunSteps(api):
   with api.step.nest('repo checkout'):
     cache_dir = api.cros_cache.create_cache_dir(CHROMIUMOS_CACHE_DIR)
     with api.context(cwd=cache_dir):
-      api.git.clone(api.cros_source.INTERNAL_MANIFEST_URL, cache_dir)
-      api.repo.init(manifest_url=api.cros_source.INTERNAL_MANIFEST_URL)
+      api.git.clone(api.src_state.internal_manifest.url, cache_dir)
+      api.repo.init(manifest_url=api.src_state.internal_manifest.url)
       api.repo.sync(jobs=32)
 
   with api.context(cwd=cache_dir):

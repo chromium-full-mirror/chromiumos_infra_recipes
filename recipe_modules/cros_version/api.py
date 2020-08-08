@@ -58,8 +58,7 @@ class CrosVersionApi(recipe_api.RecipeApi):
       ValueError: if the version file had unexpected formatting.
     """
     with self.m.step.nest('read chromeos version') as presentation:
-      version_path = self.m.cros_source.workspace_path.join(
-          CHROMEOS_VERSION_PATH)
+      version_path = self.m.src_state.workspace_path.join(CHROMEOS_VERSION_PATH)
       contents = self.m.file.read_raw(
           'read chromeos_version.sh', version_path,
           test_data=self.test_api.chromeos_version_contents)
@@ -81,10 +80,9 @@ class CrosVersionApi(recipe_api.RecipeApi):
         if version_snapshot:
           read_snapshot_step.step_text = 'using snapshot isolate'
         else:
-          with self.m.context(
-              cwd=self.m.cros_source.workspace_path.join('manifest-internal')):
+          with self.m.context(cwd=self.m.src_state.internal_manifest.path):
             snapshot = self.m.buildbucket.gitiles_commit.id
-            self.m.git.fetch_ref(self.m.cros_source.INTERNAL_MANIFEST_URL,
+            self.m.git.fetch_ref(self.m.src_state.internal_manifest.url,
                                  snapshot)
             version_snapshot = self.m.git_footers.position_num(snapshot)
         version_args['snapshot'] = version_snapshot

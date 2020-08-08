@@ -16,7 +16,6 @@ DEPS = [
     'cros_bisect',
     'cros_history',
     'cros_infra_config',
-    'cros_source',
     'cros_tags',
     'cros_test_proctor',
     'failures',
@@ -26,6 +25,7 @@ DEPS = [
     'gitiles',
     'naming',
     'skylab',
+    'src_state',
     'test_util',
 ]
 

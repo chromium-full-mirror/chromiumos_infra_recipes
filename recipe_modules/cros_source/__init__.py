@@ -16,6 +16,7 @@ DEPS = [
     'git',
     'overlayfs',
     'repo',
+    'src_state',
 ]
 
 from PB.recipe_modules.chromeos.cros_source.cros_source import (

@@ -5,5 +5,5 @@
 
 DEPS = [
     'recipe_engine/step',
-    'cros_source',
+    'src_state',
 ]

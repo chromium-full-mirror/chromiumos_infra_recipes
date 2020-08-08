@@ -13,4 +13,5 @@ DEPS = [
     'easy',
     'gerrit',
     'repo',
+    'src_state',
 ]

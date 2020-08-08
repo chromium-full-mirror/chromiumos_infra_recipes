@@ -46,6 +46,7 @@ DEPS = [
     'git_txn',
     'naming',
     'repo',
+    'src_state',
 ]
 
 PROPERTIES = AnnealingProperties
@@ -60,31 +61,30 @@ def RunSteps(api, properties):
     raise ValueError('must set manifest ref')
 
   with api.cros_source.checkout_overlays_context():
-    with api.context(
-        cwd=api.cros_source.workspace_path.join('manifest-internal')):
+    internal_manifest = api.src_state.internal_manifest
+    external_manifest = api.src_state.external_manifest
+    external_full = external_manifest.path.join('full.xml')
+
+    with api.context(cwd=internal_manifest.path):
       api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
-      with api.context(cwd=api.cros_source.workspace_path.join('manifest')):
+      with api.context(cwd=external_manifest.path):
         # Sync manifest/full.xml with manifest-internal/full.xml
         with api.step.nest('sync manifests') as presentation:
 
           def _update_callback():
             """Callback function for git_txn to update manifest/full.xml."""
-            api.file.copy(
-                'Copy manifest-internal/full.xml',
-                api.cros_source.workspace_path.join(
-                    'manifest-internal/full.xml'),
-                api.cros_source.workspace_path.join('manifest/full.xml'))
-            if not api.git.diff_check(
-                api.cros_source.workspace_path.join('manifest/full.xml')):
+            api.file.copy('Copy manifest-internal/full.xml',
+                          internal_manifest.path.join('full.xml'),
+                          external_full)
+            if not api.git.diff_check(external_full):
               return False
             commit_message = 'Syncing with internal manifest.'
-            api.git.add(
-                [api.cros_source.workspace_path.join('manifest/full.xml')])
+            api.git.add([external_full])
             api.git.commit(commit_message)
 
-          if not api.git_txn.update_ref(api.cros_source.EXTERNAL_MANIFEST_URL,
-                                        'master', _update_callback):
+          if not api.git_txn.update_ref(external_manifest.url, 'master',
+                                        _update_callback):
             presentation.step_text = 'No diffs'
 
         # Generate a public snapshot of the manifest in the manifest/ repo.  We
@@ -93,23 +93,21 @@ def RunSteps(api, properties):
         external_snapshot_ref = None
         # Generate the manifest from public repo
         snapshot_xml_extern = api.repo.manifest_snapshot(
-            api.cros_source.workspace_path.join('manifest/full.xml'),
-            step_name='generate external manifest')
+            external_full, step_name='generate external manifest')
 
         # And publish
         with api.step.nest('publish external snapshot'):
           external_snapshot_commit = publish_snapshot(
-              api, api.cros_source.EXTERNAL_MANIFEST_URL, manifest_ref,
-              api.cros_source.workspace_path.join('manifest/snapshot.xml'),
-              snapshot_xml_extern, disable_gerrit=True)
+              api, external_manifest.url, manifest_ref,
+              external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
+              disable_gerrit=True)
           external_snapshot_ref = external_snapshot_commit.id
 
       # snapshot internal manifest
       snapshot_xml_intern = api.repo.manifest_snapshot(
           step_name='generate internal manifest')
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
-          api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
-          snapshot_xml_intern)
+          internal_manifest.url, manifest_ref, snapshot_xml_intern)
 
       # TODO(athilenius): It would be nice to set the 'Info' column here.
       gerrit_commits = []
@@ -128,9 +126,8 @@ def RunSteps(api, properties):
 
       with api.step.nest('publish internal snapshot'):
         internal_snapshot_commit = publish_snapshot(
-            api, api.cros_source.INTERNAL_MANIFEST_URL, manifest_ref,
-            api.cros_source.workspace_path.join(
-                'manifest-internal/snapshot.xml'), snapshot_xml_intern,
+            api, internal_manifest.url, manifest_ref,
+            internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
             gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
             footers=[("Cr-External-Snapshot", external_snapshot_ref)])
 
@@ -145,7 +142,7 @@ def RunSteps(api, properties):
       # run repo sync a second time, after uprevs, or (b) include the uprevs
       # in the NEXT snapshot. We choose the least wasteful option.
       with api.step.nest('uprev packages'), api.context(
-          cwd=api.cros_source.workspace_path):
+          cwd=api.src_state.workspace_path):
         response = api.cros_sdk.uprev_packages(name='uprev ebuilds')
 
         ebuilds_by_repository = collections.defaultdict(list)
@@ -240,7 +237,7 @@ def get_gerrit_changes(api, manifest_diffs):
     gerrit_commits = []
     for diff in manifest_diffs:
       with api.step.nest(diff.path) as step, api.context(
-          cwd=api.cros_source.workspace_path.join(diff.path)):
+          cwd=api.src_state.workspace_path.join(diff.path)):
         commits = api.git.log(diff.from_rev, diff.to_rev, limit=30)
         for commit in commits:
           reviewed_on_footers = api.git_footers.from_message(

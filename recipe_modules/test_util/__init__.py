@@ -8,4 +8,5 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/properties',
     'cros_tags',
+    'src_state',
 ]
