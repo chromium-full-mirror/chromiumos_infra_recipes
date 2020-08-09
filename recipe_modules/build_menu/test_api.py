@@ -31,7 +31,8 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
     return self.depgraph_relevance_return(
         'init sdk.detect toolchain change.path relevancy check', not value)
 
-  def set_build_api_return(self, step, endpoint, data, iteration=1, retcode=0):
+  def set_build_api_return(self, step, endpoint, data='', iteration=1,
+                           retcode=0):
     """Set the return from a Build API call.
 
     Args:

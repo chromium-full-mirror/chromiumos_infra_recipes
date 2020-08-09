@@ -93,7 +93,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
-                                          'SysrootService/InstallPackages', '',
+                                          'SysrootService/InstallPackages',
                                           retcode=1), build_target='coral',
       cq=True)
 
@@ -104,7 +104,7 @@ def GenTests(api):
       api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/BundleArtifacts',
-                                          '', retcode=1), cq=True,
+                                          retcode=1), cq=True,
       build_target='coral')
 
   # CQ build with failures in install packages and bundle artifacts.
@@ -115,9 +115,9 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
-                                          'SysrootService/InstallPackages', '',
+                                          'SysrootService/InstallPackages',
                                           retcode=1),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/BundleArtifacts',
-                                          '', retcode=1), cq=True,
+                                          retcode=1), cq=True,
       build_target='coral')

@@ -70,7 +70,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
-                                          'SysrootService/InstallPackages', '',
+                                          'SysrootService/InstallPackages',
                                           retcode=1))
 
   # Postsubmit build with artifact bundling failure.
@@ -82,7 +82,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/BundleArtifacts',
-                                          '', retcode=1))
+                                          retcode=1))
 
   # Postsubmit build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
@@ -93,11 +93,11 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
-                                          'SysrootService/InstallPackages', '',
+                                          'SysrootService/InstallPackages',
                                           retcode=1),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/BundleArtifacts',
-                                          '', retcode=1))
+                                          retcode=1))
 
   yield api.build_menu.test(
       'run-exit-install', api.post_check(post_process.DoesNotRun,

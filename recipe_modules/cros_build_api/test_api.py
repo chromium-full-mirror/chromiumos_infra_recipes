@@ -348,7 +348,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
 
     return responses_by_service[service][method]
 
-  def set_api_return(self, step, endpoint, data, iteration=1, retcode=0):
+  def set_api_return(self, step, endpoint, data='', iteration=1, retcode=0):
     """Set the return from a Build API call.
 
     Args:

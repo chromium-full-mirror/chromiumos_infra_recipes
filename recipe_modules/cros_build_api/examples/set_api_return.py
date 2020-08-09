@@ -44,5 +44,5 @@ def GenTests(api):
 
   yield api.test(
       'step-failure', api.properties(expect_assertion=True),
-      api.cros_build_api.set_api_return('test step', 'VersionService/Get', '',
+      api.cros_build_api.set_api_return('test step', 'VersionService/Get',
                                         retcode=1))
