@@ -68,8 +68,8 @@ class CrosVersionApi(recipe_api.RecipeApi):
       for k, regex in CHROMEOS_VERSION_RE_MAPPING.items():
         m = regex.search(contents)
         if m is None:
-          raise ValueError(
-              'pattern %r did not match chromeos_version.sh' % regex.pattern)
+          raise ValueError('pattern %r did not match chromeos_version.sh' %
+                           regex.pattern)
         version_args[k] = int(m.group(1))
 
       with self.m.step.nest('read snapshot') as read_snapshot_step:

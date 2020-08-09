@@ -10,11 +10,13 @@ DEPS = [
     'gerrit',
 ]
 
+
 def RunSteps(api):
   change = api.gerrit.create_change('project', reviewers=['jeff'], topic='pupr')
   api.assertions.assertEqual(change.host, 'host-review.googlesource.com')
   api.assertions.assertEqual(change.project, 'project')
   api.assertions.assertEqual(change.change, 123)
+
 
 def GenTests(api):
   yield api.test('basic') + api.gerrit.simulated_create_change(

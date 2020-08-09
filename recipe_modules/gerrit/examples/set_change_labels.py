@@ -10,6 +10,7 @@ DEPS = [
     'gerrit',
 ]
 
+
 def RunSteps(api):
   gerrit_change = GerritChange(
       host='chromium-review.googlesource.com',
@@ -21,8 +22,9 @@ def RunSteps(api):
       api.gerrit.Label.VERIFIED: 1,
   }
   ref = api.gerrit.set_change_labels(gerrit_change, labels)
-  api.assertions.assertEqual(
-      ref, 'refs/for/master%l=Code-Review+2,l=Verified+1')
+  api.assertions.assertEqual(ref,
+                             'refs/for/master%l=Code-Review+2,l=Verified+1')
+
 
 def GenTests(api):
   yield api.test('basic')

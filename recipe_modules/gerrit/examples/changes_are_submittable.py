@@ -11,6 +11,7 @@ DEPS = [
     'gerrit',
 ]
 
+
 def RunSteps(api):
   # TODO(evanhernandez): Need to normalize how we handle test data.
   change = GerritChange(
@@ -21,9 +22,7 @@ def RunSteps(api):
 
   api.gerrit.assert_changes_submittable([change])
   api.assertions.assertRaises(
-      api.step.StepFailure,
-      api.gerrit.assert_changes_submittable,
-      [change],
+      api.step.StepFailure, api.gerrit.assert_changes_submittable, [change],
       test_output_data=api.gerrit.test_api.test_changes_are_submittable(
           errors=['could not cherry pick']))
   api.gerrit.test_api.simulated_changes_are_submittable(submittable=False)

@@ -11,6 +11,7 @@ DEPS = [
     'gerrit',
 ]
 
+
 def RunSteps(api):
   # TODO(evanhernandez): These tests could use some work.
   change = GerritChange(
@@ -44,10 +45,8 @@ def RunSteps(api):
       {'message': api.gerrit.test_api.test_gerrit_change_description()})
   api.assertions.assertEqual(
       patch.to_gerrit_change_proto(),
-      GerritChange(host='chromium-review.googlesource.com',
-                   change=91827,
-                   project='chromium/src',
-                   patchset=1))
+      GerritChange(host='chromium-review.googlesource.com', change=91827,
+                   project='chromium/src', patchset=1))
 
   # Missing FetchInfo.
   del patch._rev_info['fetch']

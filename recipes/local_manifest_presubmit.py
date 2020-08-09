@@ -76,7 +76,8 @@ def RunSteps(api, properties):
       api.step('setup', ['git', 'checkout', '-b', '__presubmit'])
       api.step('set tracking', [
           'git', 'branch', '--set-upstream-to',
-          '%s/%s' % (project.remote, branch)])
+          '%s/%s' % (project.remote, branch)
+      ])
 
       # infra_steps set in context take precedence over infra_step passed
       # to a step, so we make a new context here.
@@ -84,7 +85,8 @@ def RunSteps(api, properties):
           api.gs_step_logging.log_step_to_gs(properties.logging_gs_prefix):
         cmd = [
             'presubmit_support.py',
-            '--json_output', api.json.output(),
+            '--json_output',
+            api.json.output(),
             '--commit',
             '--verbose',
             '--recursive',
@@ -115,8 +117,8 @@ def GenTests(api):
     project_config_cq_build.
     """
     return api.step_data(
-        'cherry-pick gerrit changes.repo forall',
-        stdout=api.raw_io.output('project1|src/project1|cros|refs/heads/master|refs/heads/master'))
+        'cherry-pick gerrit changes.repo forall', stdout=api.raw_io.output(
+            'project1|src/project1|cros|refs/heads/master|refs/heads/master'))
 
   def presubmit_with_output():
     """Returns StepData for a presubmit step with stdout."""
@@ -179,9 +181,7 @@ def GenTests(api):
   )
 
   extra_change = common_pb2.GerritChange(
-      host='chrome-internal.googlesource.com',
-      project='project1',
-      change=101)
+      host='chrome-internal.googlesource.com', project='project1', change=101)
 
   # Checks against making sure a bot_update initialization is not being
   # used. bot_update blows up if it sees more than one change.
@@ -224,9 +224,10 @@ def GenTests(api):
 
   yield api.test(
       'no_project',
-      api.properties(LocalManifestPresubmitProperties(
-          manifest_groups=['partner-config'],
-      )),
+      api.properties(
+          LocalManifestPresubmitProperties(
+              manifest_groups=['partner-config'],
+          )),
       project_config_cq_build(api),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
@@ -248,10 +249,11 @@ def GenTests(api):
 
   yield api.test(
       'no_gerrit_changes',
-      api.properties(LocalManifestPresubmitProperties(
-          project='chromeos',
-          manifest_groups=['partner-config'],
-      )),
+      api.properties(
+          LocalManifestPresubmitProperties(
+              project='chromeos',
+              manifest_groups=['partner-config'],
+          )),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
                        '.*At least one gerrit_change.*'),

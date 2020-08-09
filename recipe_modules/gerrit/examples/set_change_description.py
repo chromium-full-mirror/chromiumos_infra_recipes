@@ -9,6 +9,7 @@ DEPS = [
     'gerrit',
 ]
 
+
 def RunSteps(api):
   gerrit_change = GerritChange(
       host='chromium-review.googlesource.com',
@@ -18,6 +19,7 @@ def RunSteps(api):
 
   # No easy way to test this. Just call the function.
   api.gerrit.set_change_description(gerrit_change, 'my new desc')
+
 
 def GenTests(api):
   yield api.test('basic')

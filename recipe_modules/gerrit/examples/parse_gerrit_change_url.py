@@ -7,7 +7,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.gerrit.examples.parse_gerrit_change_url import (
     ParseGerritChangeUrlProperties)
 
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -16,10 +15,12 @@ DEPS = [
 
 PROPERTIES = ParseGerritChangeUrlProperties
 
+
 def RunSteps(api, properties):
   gerrit_change_url = api.gerrit.parse_gerrit_change_url(
       properties.gerrit_change)
   api.assertions.assertEqual(gerrit_change_url, properties.expected)
+
 
 def GenTests(api):
   yield api.test('parse-full-url') + api.properties(

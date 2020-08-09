@@ -10,11 +10,12 @@ DEPS = [
     'gerrit',
 ]
 
+
 def RunSteps(api):
-  changes = api.gerrit.query_changes(
-      'https://chromium-review.googlesource.com',
-      [('topic', 'pupr')])
+  changes = api.gerrit.query_changes('https://chromium-review.googlesource.com',
+                                     [('topic', 'pupr')])
   api.assertions.assertEqual(len(changes), 1)
+
 
 def GenTests(api):
   yield api.test('basic')

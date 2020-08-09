@@ -10,6 +10,7 @@ DEPS = [
     'gerrit',
 ]
 
+
 def RunSteps(api):
   gerrit_change = GerritChange(
       host='chromium-review.googlesource.com',

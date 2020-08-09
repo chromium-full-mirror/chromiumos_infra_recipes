@@ -9,6 +9,7 @@ DEPS = [
     'gerrit',
 ]
 
+
 def RunSteps(api):
   gerrit_change = GerritChange(
       host='chromium-review.googlesource.com',
@@ -17,6 +18,7 @@ def RunSteps(api):
   )
   # TODO(evanhernandez): An assertion would be nice...
   api.gerrit.add_change_comment(gerrit_change, 'my comment')
+
 
 def GenTests(api):
   yield api.test('basic')

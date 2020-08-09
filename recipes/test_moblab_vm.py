@@ -39,6 +39,7 @@ CACHE_ARTIFACTS = [
     BuilderConfig.Artifacts.AUTOTEST_FILES,
 ]
 
+
 def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context(), \
     api.cros_sdk.cleanup_context(
@@ -69,8 +70,8 @@ def RunSteps(api, properties):
       with api.step.nest('inflate image bundle'):
         image_files = artifact_paths_by_artifact[
             BuilderConfig.Artifacts.IMAGE_ZIP]
-        assert len(image_files) == 1, (
-            'expected one image archive, got: %r' % image_files)
+        assert len(image_files) == 1, ('expected one image archive, got: %r' %
+                                       image_files)
         image_zip = image_files[0]
         image_dir = api.path.mkdtemp(prefix='image-under-test-').join('image')
         api.archive.extract('unzip image.zip', image_zip, image_dir)
@@ -87,14 +88,15 @@ def RunSteps(api, properties):
     def as_payload(path):
       return MoblabVmTestRequest.Payload(
           path=Path(path=str(path), location=Path.OUTSIDE))
+
     # TODO(evanhernandez): Read and present the test results.
     api.cros_build_api.TestService.MoblabVmTest(
-        MoblabVmTestRequest(
-            chroot=api.cros_sdk.chroot,
-            image_payload=as_payload(image_dir),
-            cache_payloads=[as_payload(moblab_cache_dir)]),
+        MoblabVmTestRequest(chroot=api.cros_sdk.chroot,
+                            image_payload=as_payload(image_dir),
+                            cache_payloads=[as_payload(moblab_cache_dir)]),
         name='run moblab vm tests',
     )
+
 
 def GenTests(api):
   yield api.test(

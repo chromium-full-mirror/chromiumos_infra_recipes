@@ -17,6 +17,7 @@ from PB.recipe_modules.chromeos.cros_version.examples.test import (
 
 PROPERTIES = TestInputProperties
 
+
 def RunSteps(api, properties):
   v = api.cros_version.Version(99, 1234, 56, 1, 2)
   api.assertions.assertEqual(str(v), 'R99-1234.56.1-2')
@@ -36,8 +37,7 @@ def GenTests(api):
       'basic',
       api.step_data('read chromeos version (2).read chromeos_version.sh',
                     api.file.read_raw('')),
-      api.properties(
-          TestInputProperties(expected_version_snapshot='101')),
+      api.properties(TestInputProperties(expected_version_snapshot='101')),
   )
 
   yield api.test(
@@ -45,15 +45,12 @@ def GenTests(api):
       api.properties(
           **{
               '$chromeos/cros_source':
-              CrosSourceProperties(
-                  snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-                      isolated_hash='hash!!!',
-                      isolate_server='server.com'
-                  ),
-              )
+                  CrosSourceProperties(
+                      snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+                          isolated_hash='hash!!!', isolate_server='server.com'),
+                  )
           }),
       api.step_data('read chromeos version (2).read chromeos_version.sh',
                     api.file.read_raw('')),
-      api.properties(
-          TestInputProperties(expected_version_snapshot='hash!!!')),
+      api.properties(TestInputProperties(expected_version_snapshot='hash!!!')),
   )

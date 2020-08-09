@@ -16,7 +16,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
-
 # Strip these suffixes from hosts for "short" host display.
 SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
 
@@ -155,24 +154,25 @@ class Label(enum.Enum):
   """Describes some valid Gerrit labels. Not necessarily exhaustive."""
 
   # Whether or not the change can skip submit approvals.
-  BOT_COMMIT = 1;
+  BOT_COMMIT = 1
 
   # Whether or not a change has been reviewed.
-  CODE_REVIEW = 2;
+  CODE_REVIEW = 2
 
   # Describes how the change should be tested and/or whether it should
   # be submitted when finished.
-  COMMIT_QUEUE = 3;
+  COMMIT_QUEUE = 3
 
   # Whether or not the CL has been manually tested.
-  VERIFIED = 4;
+  VERIFIED = 4
 
   @property
   def key(self):
     # FOO_BAR must be Foo-Bar when set via Gerrit.
     return '-'.join([
         word[0].upper() + word[1:].lower()
-        for word in self.name.split('_') if word.strip()
+        for word in self.name.split('_')
+        if word.strip()
     ])
 
 
@@ -274,11 +274,8 @@ class GerritApi(recipe_api.RecipeApi):
                      gerrit_change_url)
     if match:
       host, project, change, patchset = match.groups()
-      return GerritChange(
-          host=host,
-          project=project,
-          change=int(change),
-          patchset=int(patchset.lstrip('/')) if patchset else 0)
+      return GerritChange(host=host, project=project, change=int(change),
+                          patchset=int(patchset.lstrip('/')) if patchset else 0)
 
     # Otherwise, it's a dumb one.
     match = re.match(r'(?:https://)?([^/]+)/(\d+)', gerrit_change_url)
@@ -341,8 +338,8 @@ class GerritApi(recipe_api.RecipeApi):
             'patch_set': int(gc.patchset),
         })
       req = {
-        'gerrit_changes': changes,
-        'temp_dir': self.m.path['cleanup'].join('submittable_check'),
+          'gerrit_changes': changes,
+          'temp_dir': self.m.path['cleanup'].join('submittable_check'),
       }
       if test_output_data is None:
         test_output_data = lambda: self.test_api.test_changes_are_submittable()
@@ -356,11 +353,12 @@ class GerritApi(recipe_api.RecipeApi):
         # Write an error into the failure so that it's surfaced to the user.
         # Currently the program only returns one error, so just use the first.
         error_markdown_lines = [
-          '    {}'.format(s) for s in result['errors'][0].splitlines()]
+            '    {}'.format(s) for s in result['errors'][0].splitlines()
+        ]
         error_msg = '\n'.join(error_markdown_lines)
         raise self.m.step.StepFailure(
             'Merge conflict detected! Please rebase and retry.\n\n{}'.format(
-            error_msg))
+                error_msg))
       presentation.step_text = 'confirmed no merge conflicts'
       return
 
@@ -392,8 +390,7 @@ class GerritApi(recipe_api.RecipeApi):
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
                              hashtags=hashtags, send_mail=True)
         gerrit_change_url = self.m.git_cl.status(
-            field='url', fast=True,
-            step_test_data=functools.partial(
+            field='url', fast=True, step_test_data=functools.partial(
                 self.m.raw_io.test_api.stream_output,
                 self.test_api.test_gerrit_change_url()))
         pres.links['link to change'] = gerrit_change_url
@@ -414,18 +411,17 @@ class GerritApi(recipe_api.RecipeApi):
       str: The new label ref (primarily for testing).
     """
     with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as pres:
-      full_labels = sorted([
-          '%s+%d' % (label.key, value) for label, value in labels.iteritems()])
+      full_labels = sorted(
+          ['%s+%d' % (label.key, value) for label, value in labels.iteritems()])
       pres.step_text = ','.join(full_labels)
-      pres.links['link to change'] = self.parse_gerrit_change_url(
-          gerrit_change)
+      pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
 
       branch = project_info.branch.split('/')[-1]
-      ref = 'refs/for/%s%%%s' % (
-          branch, ','.join(['l=%s' % label for label in full_labels]))
+      ref = 'refs/for/%s%%%s' % (branch, ','.join(
+          ['l=%s' % label for label in full_labels]))
       refspec = 'HEAD:%s' % ref
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project_info.path)):
@@ -447,8 +443,7 @@ class GerritApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('comment on CL %d' % gerrit_change.change) as pres:
       pres.logs['comment text'] = [comment]
-      pres.links['link to change'] = self.parse_gerrit_change_url(
-          gerrit_change)
+      pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
 
       with self.m.context(cwd=self.m.cros_source.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
@@ -484,8 +479,8 @@ class GerritApi(recipe_api.RecipeApi):
       description (str): The new description, in full. Be sure this still
           includes the Change-Id and other essential metadata.
     """
-    with self.m.step.nest(
-        'set CL %d description' % gerrit_change.change) as pres:
+    with self.m.step.nest('set CL %d description' %
+                          gerrit_change.change) as pres:
       gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
       pres.links['link to change'] = gerrit_change_url
       pres.logs['description text'] = [description]
@@ -505,8 +500,7 @@ class GerritApi(recipe_api.RecipeApi):
       message (str): Optional message to post to change.
     """
     with self.m.step.nest('abandon CL %d' % gerrit_change.change) as pres:
-      pres.links['link to change'] = self.parse_gerrit_change_url(
-          gerrit_change)
+      pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
 
       self.m.depot_tools_gerrit.abandon_change(
           self.parse_qualified_gerrit_host(gerrit_change), gerrit_change.change,
@@ -532,8 +526,7 @@ class GerritApi(recipe_api.RecipeApi):
               host=host[len(prefix):] if host.startswith(prefix) else host,
               project=result['project'],
               change=int(result['_number']),
-          )
-          for result in results
+          ) for result in results
       ]
 
       presentation.step_text = 'found %d matching CLs' % len(changes)

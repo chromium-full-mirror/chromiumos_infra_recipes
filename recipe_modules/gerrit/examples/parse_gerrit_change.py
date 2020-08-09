@@ -7,7 +7,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.gerrit.examples.parse_gerrit_change import (
     ParseGerritChangeProperties)
 
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -15,6 +14,7 @@ DEPS = [
 ]
 
 PROPERTIES = ParseGerritChangeProperties
+
 
 def RunSteps(api, properties):
   gerrit_change = api.gerrit.parse_gerrit_change(properties.gerrit_change_url)
@@ -24,14 +24,14 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(gerrit_change.patchset,
                              properties.expected.patchset)
 
+
 def GenTests(api):
   # TODO(evanhernandez): Yuck. Remove this.
   api.gerrit.test_gerrit_change_url()
 
   yield api.test('parse-full-url') + api.properties(
-      gerrit_change_url=(
-          'https://chromium-review.googlesource.com/c/'
-          'chromiumos/chromite/+/12345/6'),
+      gerrit_change_url=('https://chromium-review.googlesource.com/c/'
+                         'chromiumos/chromite/+/12345/6'),
       expected=GerritChange(
           host='chromium-review.googlesource.com',
           project='chromiumos/chromite',
@@ -41,9 +41,8 @@ def GenTests(api):
   )
 
   yield api.test('parse-no-patchset-url') + api.properties(
-      gerrit_change_url=(
-          'https://chromium-review.googlesource.com/c/'
-          'chromiumos/chromite/+/12345'),
+      gerrit_change_url=('https://chromium-review.googlesource.com/c/'
+                         'chromiumos/chromite/+/12345'),
       expected=GerritChange(
           host='chromium-review.googlesource.com',
           project='chromiumos/chromite',
