@@ -1281,7 +1281,7 @@
       "--json_file",
       "/path/to/tmp/json",
       "--message",
-      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to abandon."
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827\n\nPUpr has been set to abandon."
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -1334,7 +1334,7 @@
       "--json_file",
       "/path/to/tmp/json",
       "--message",
-      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to abandon."
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827\n\nPUpr has been set to abandon."
     ],
     "env": {
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
@@ -1586,7 +1586,7 @@
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/1/1/0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/0\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
@@ -1597,7 +1597,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/1/1/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/0\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -1715,7 +1715,7 @@
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/1/1/0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/0\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
@@ -1726,7 +1726,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/1/1/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/0\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",

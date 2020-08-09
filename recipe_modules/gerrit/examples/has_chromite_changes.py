@@ -28,8 +28,8 @@ def RunSteps(api):
   api.assertions.assertEqual(patch.subject, 'Change title')
   api.assertions.assertEqual(patch.short_host, 'chromium')
   api.assertions.assertEqual(patch.display_id, 'chromium:91827')
-  api.assertions.assertEqual(patch.display_url,
-                             'https://chromium-review.googlesource.com/91827')
+  api.assertions.assertEqual(
+      patch.display_url, 'https://chromium-review.googlesource.com/c/91827')
   api.assertions.assertIn('my/fake/file', patch.file_infos)
   api.gerrit.assert_changes_submittable([change])
   # Not submittable

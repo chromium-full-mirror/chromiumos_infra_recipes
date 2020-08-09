@@ -1265,7 +1265,7 @@
     "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827@@@",
       "@@@STEP_LOG_LINE@comment text@@@@",
       "@@@STEP_LOG_LINE@comment text@PUpr has been set to remind you that it likely should be abandoned.@@@",
       "@@@STEP_LOG_END@comment text@@@",
@@ -1298,7 +1298,7 @@
       "-i",
       "91827",
       "-a",
-      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "env_suffixes": {
@@ -1319,7 +1319,7 @@
     "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827@@@",
+      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827@@@",
       "@@@STEP_LOG_LINE@comment text@@@@",
       "@@@STEP_LOG_LINE@comment text@PUpr has been set to remind you that it likely should be abandoned.@@@",
       "@@@STEP_LOG_END@comment text@@@",
@@ -1352,7 +1352,7 @@
       "-i",
       "91827",
       "-a",
-      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
+      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "env_suffixes": {
@@ -1588,7 +1588,7 @@
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/1/1/0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/0\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
@@ -1599,7 +1599,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/1/1/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/0\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -1717,7 +1717,7 @@
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/1/1/0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/0\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
@@ -1728,7 +1728,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/1/1/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/0\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",

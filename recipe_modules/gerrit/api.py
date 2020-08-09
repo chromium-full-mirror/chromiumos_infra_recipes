@@ -77,7 +77,7 @@ class PatchSet(object):
   @property
   def display_url(self):
     """Returns a URL where this PatchSet can be viewed."""
-    return 'https://%s/%d' % (self.host, self.change_id)
+    return 'https://%s/c/%d' % (self.host, self.change_id)
 
   @property
   def created(self):
@@ -187,7 +187,7 @@ class GerritApi(recipe_api.RecipeApi):
     super(GerritApi, self).__init__(*args, **kwargs)
     self._buildbucket_patch_sets = None
 
-  def _gerrit_fetch_changes(self, input, test_output_data=None):
+  def _gerrit_fetch_changes(self, input, gerrit_changes, test_output_data=None):
     """Call gerrit-fetch-changes support tool.
 
     Args:
@@ -198,7 +198,8 @@ class GerritApi(recipe_api.RecipeApi):
       dict: Output data.
     """
     if test_output_data is None:
-      test_output_data = lambda: self.test_api.test_gerrit_fetch_changes(input)
+      test_output_data = lambda: self.test_api.test_gerrit_fetch_changes(
+          input, gerrit_changes)
     return self.m.support.call('gerrit-fetch-changes', input,
                                test_output_data=test_output_data,
                                timeout=10 * 60)
@@ -231,7 +232,7 @@ class GerritApi(recipe_api.RecipeApi):
         'include_files': include_files,
         'include_commit_info': include_commit_info
     }
-    results = self._gerrit_fetch_changes(request,
+    results = self._gerrit_fetch_changes(request, gerrit_changes,
                                          test_output_data=test_output_data)
 
     # Validate all results present.

@@ -10,58 +10,99 @@ from .api import PatchSet
 
 class ChangesTestApi(recipe_test_api.RecipeTestApi):
 
-  def test_response(self, request):
+  def test_response(self, request, gerrit_change, values_dict=None):
+    values = dict(project='chromium/src')
+    values.update(values_dict or {})
+    change_number = request['change_number']
     resp = request.copy()
     resp['info'] = {
-        '_number': request['change_number'],
-        'status': 'NEW',
-        'created': '2017-01-30 13:11:20.000000000',
-        'updated': '2017-02-01 13:11:20.000000000',
-        'submitted': '2017-02-02 13:11:20.000000000',
-        'change_id': 'Ideadbeef',
-        'project': 'chromium/src',
-        'has_review_started': False,
-        'branch': 'master',
-        'subject': 'Change title',
+        '_number': change_number,
+        'status': values.get('status', 'NEW'),
+        'created': values.get('created', '2017-01-30 13:11:20.000000000'),
+        'updated': values.get('updated', '2017-02-01 13:11:20.000000000'),
+        'submitted': values.get('submitted', '2017-02-02 13:11:20.000000000'),
+        'change_id': values.get('change_id', 'Ideadbeef'),
+        'project': values.get('project', 'chromium/src'),
+        'has_review_started': values.get('has_review_started', False),
+        'branch': values.get('branch', 'master'),
+        'subject': values.get('subject', 'Change title'),
     }
-    ref = 'refs/changes/%s/%d/%d' % (
-        str(request['change_number'])[-2:],
-        request['change_number'],
-        request['patch_set'],
-    )
-    resp['revision_info'] = {
-        'commit': {
-            'message': self.test_gerrit_change_description(),
-        },
-        'fetch': {
-            'http': {
-                'url': ('https://%s/chromium/src' % request['host']).replace(
-                    '-review', ''),
-                'ref':
-                    ref,
-            }
-        },
-        'ref': ref,
-        'files': {
-            'my/fake/file': {
-                'status': 'A',
-                'size_delta': 0,
-                'size': 0,
+    ref = values.get(
+        'ref', 'refs/changes/%s/%d/%d' % (
+            ('%02d' % request['change_number'])[-2:],
+            request['change_number'],
+            request['patch_set'],
+        ))
+    resp['revision_info'] = values.get(
+        'revision_info', {
+            'commit': {
+                'message':
+                    values.get('message',
+                               self.test_gerrit_change_description()),
             },
-        },
-    }
+            'fetch': {
+                'http': {
+                    'url':
+                        values.get(
+                            'url', 'https://%s/%s' % (request['host'].replace(
+                                '-review', ''), resp['info']['project'])),
+                    'ref':
+                        ref,
+                }
+            },
+            'ref':
+                ref,
+            'files':
+                values.get('files', {
+                    'my/fake/file': {
+                        'status': 'A',
+                        'size_delta': 0,
+                        'size': 0,
+                    },
+                })
+        })
     return resp
 
-  def test_gerrit_fetch_changes(self, input):
-    return {'changes': map(self.test_response, input['changes'])}
+  def set_gerrit_fetch_changes_response(self, step_name, changes,
+                                        values_dict=None):
+    """Set the response from gerrit-fetch-changes.
+
+    Args:
+      step_name (str): name of the step calling gerrit.fetch_patch_sets.
+      changes (list[GerritChange]): The list of changes which will be found.
+      values_dict (dict): Dictionary of {change_number: values} to provide field
+          values to test_response.
+
+    Returns:
+      (StepTestData) test data instance for the test.
+    """
+    req = []
+    resp = []
+    for change in changes:
+      request = dict(host=change.host, change_number=change.change,
+                     patch_set=change.patchset)
+      req.append(request)
+      values = dict(project=change.project) if change.project else {}
+      values.update(values_dict.get(change.change, {}))
+      resp.append(self.test_response(request, change, values))
+
+    resp = dict(changes=resp)
+    return self.step_data('%s.gerrit-fetch-changes' % (step_name),
+                          stdout=self.m.json.output(resp))
+
+  def test_gerrit_fetch_changes(self, input, gerrit_changes):
+    return {
+        'changes': map(self.test_response, input['changes'], gerrit_changes)
+    }
 
   def test_patch_set(self):
     return PatchSet(
-        self.test_response({
-            'host': 'chromium',
-            'change_number': 12345,
-            'patch_set': 1,
-        }))
+        self.test_response(
+            {
+                'host': 'chromium',
+                'change_number': 12345,
+                'patch_set': 1,
+            }, None))
 
   def test_gerrit_change_url(self):
     return 'https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1'
