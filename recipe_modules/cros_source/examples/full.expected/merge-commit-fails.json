@@ -391,12 +391,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https:/+//snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
       "--format",
       "text"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "sync to snapshot.fetch :snapshot.xml",
+    "name": "sync to snapshot.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -586,6 +586,20 @@
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "-m",
+      "merge gerrit changes"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "name": "apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

@@ -15,14 +15,17 @@ DEPS = [
     'cros_source',
     'git',
     'gerrit',
+    'src_state',
+    'test_util',
 ]
+
+from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties)
-from PB.recipe_modules.chromeos.cros_source.examples.test import (
-    TestInputProperties)
+from PB.recipe_modules.chromeos.cros_source.examples.full import FullProperties
 
-PROPERTIES = TestInputProperties
+PROPERTIES = FullProperties
 
 
 def RunSteps(api, properties):
@@ -38,12 +41,6 @@ def RunSteps(api, properties):
       api.cros_source.ensure_synced_cache(is_staging=True)
       api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
 
-  # Monkey-pack merge to return a StepFailure to test cherry-pick path
-  def merge_fail(_a, _b, infra_step=False):
-    # False means the merge failed
-    return False
-
-  api.git.merge_silent_fail = merge_fail
   commits = api.cros_source.apply_gerrit_patch_sets(
       [api.gerrit.test_api.test_patch_set()])
 
@@ -60,26 +57,54 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield api.test('basic', api.buildbucket.ci_build())
 
-  yield api.test(
-      'merge_commit_fails',
+  def module_properties(props):
+    """Return step_test_data for CrosSourceProperties."""
+    return api.properties(**{'$chromeos/cros_source': props})
+
+  def test(name, *args, **kwargs):
+    """Create a test with properties.
+
+    Args:
+      args (list): args for api.test()
+      kwargs (dict): kwargs for api.test_util.test_build.  Defaults applied:
+        - cq = True.
+        - revision = arbitrary sha.
+
+    Returns:
+      (TestData) the build with cros_source properties included.
+    """
+    kwargs = kwargs or {}
+    kwargs.setdefault('cq', True)
+    kwargs.setdefault('revision', '2d72510e447ab60a9728aeea2362d8be2cbd7789')
+    kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
+
+    return api.test(name, api.test_util.test_build(**kwargs).build, *args)
+
+  yield test('basic', api.post_check(post_process.StatusSuccess))
+
+  yield test(
+      'merge-commit-fails',
+      api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
                     api.raw_io.stream_output('commitsha1 commitsha2')),
-  )
+      api.post_check(post_process.StatusFailure))
 
-  yield api.test(
+  yield test(
+      'cherry-picks',
+      api.step_data('apply gerrit patch sets.git merge', retcode=1),
+      api.step_data('apply gerrit patch sets.git log',
+                    api.raw_io.stream_output('commitsha1')),
+      api.post_check(post_process.StatusSuccess))
+
+  yield test(
       'with-custom-snapshot-isolate',
-      api.properties(
-          **{
-              '$chromeos/cros_source':
-                  CrosSourceProperties(
-                      snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-                          isolated_hash='xxx',
-                          isolate_server='http://server.com',
-                      ),
-                  )
-          }),
-      api.properties(
-          TestInputProperties(expected_snapshot_isolated_hash='xxx')),
-  )
+      module_properties(
+          CrosSourceProperties(
+              snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+                  isolated_hash='xxx',
+                  isolate_server='http://server.com',
+              ),
+          )),
+      api.properties(FullProperties(expected_snapshot_isolated_hash='xxx')),
+      api.post_check(post_process.StatusSuccess))

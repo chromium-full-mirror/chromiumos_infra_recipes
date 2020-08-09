@@ -384,99 +384,22 @@
     "name": "sync to snapshot"
   },
   {
-    "cmd": [],
-    "name": "sync to snapshot.install infra/tools/luci/isolated",
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
+      "--format",
+      "text"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "sync to snapshot.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",
+    "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cipd/infra/tools/luci/isolated/isolated_module_pin"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.install infra/tools/luci/isolated.ensure package directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CACHE]/cipd/infra/tools/luci/isolated/isolated_module_pin",
-      "-ensure-file",
-      "infra/tools/luci/isolated/${platform} isolated_module_pin",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.install infra/tools/luci/isolated.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-isolated_module_\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/isolated/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/cipd/infra/tools/luci/isolated/isolated_module_pin/isolated",
-      "download",
-      "-verbose",
-      "-isolate-server",
-      "http://server.com",
-      "-isolated",
-      "xxx",
-      "-output-dir",
-      "[CLEANUP]/snapshot_tmp_1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.download snapshot.xml from isolate",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/snapshot_tmp_1/snapshot.xml",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.read snapshot.xml",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@snapshot.xml@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@snapshot.xml@@@"
     ]
   },
   {
@@ -681,6 +604,47 @@
   {
     "cmd": [
       "git",
+      "merge",
+      "--abort"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "infra_step": true,
+    "name": "apply gerrit patch sets.git merge --abort",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "infra_step": true,
+    "name": "apply gerrit patch sets.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@merge failed. will try cherry-pick instead@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "cherry-pick",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "name": "apply gerrit patch sets.git cherry-pick",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "rev-parse",
       "HEAD"
     ],
@@ -705,7 +669,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src"
     ],
     "infra_step": true,
     "name": "create project commits archive.project path",
@@ -718,7 +682,7 @@
       "git",
       "bundle",
       "create",
-      "[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src/bundle",
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
@@ -737,7 +701,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\"project_paths\": [\"src/chromium/src\"]}",
-      "[CLEANUP]/create_project_commits_archive_tmp_2/metadata.json"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json"
     ],
     "infra_step": true,
     "name": "create project commits archive.metadata.json",
@@ -754,7 +718,7 @@
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
     "name": "create project commits archive.create archive",
-    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_2/projects/src/chromium/src/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_2/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_2\"}",
+    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -769,7 +733,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_3/archive\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_2/archive\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -794,7 +758,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_3/archive/metadata.json",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/metadata.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -809,7 +773,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_3/archive/a/b/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b",
@@ -849,7 +813,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_3/archive/a/b/c/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/c/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",

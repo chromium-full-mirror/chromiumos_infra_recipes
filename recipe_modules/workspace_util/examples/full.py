@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/properties',
     'cros_infra_config',
     'repo',
+    'src_state',
     'workspace_util',
 ]
 
@@ -56,9 +57,9 @@ def GenTests(api):
                         build_target='atlas', tags=None,
                         revision='2d72510e447ab60a9728aeea2362d8be2cbd7789',
                         cls=None, toolchain_cls_applied=False):
-    build = api.buildbucket.ci_build_message(project=project, bucket=bucket,
-                                             builder=builder, tags=tags,
-                                             revision=revision)
+    build = api.buildbucket.ci_build_message(
+        project=project, bucket=bucket, builder=builder, tags=tags,
+        revision=revision, git_repo=api.src_state.internal_manifest.url)
     if not revision:
       build.input.gitiles_commit.Clear()
     if cls:

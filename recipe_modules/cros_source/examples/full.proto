@@ -6,6 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_source.examples;
 
-message TestInputProperties {
+message FullProperties {
   string expected_snapshot_isolated_hash = 1;
 }

@@ -453,7 +453,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chromium.googlesource.com/chromeos/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
       "--format",
       "text"
     ],
@@ -895,7 +895,7 @@
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\030\\322\\t\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\010chromeos\\032(2d72510e447ab60a9728aeea2362d8be2cbd7789\\\"\\021refs/heads/master\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chrome-internal.googlesource.com\\022\\032chromeos/manifest-internal\\032(2d72510e447ab60a9728aeea2362d8be2cbd7789\\\"\\021refs/heads/master\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"some/other/dir\"@@@",
@@ -952,7 +952,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2(2d72510e447ab60a9728aeea2362d8be2cbd7789:\u0005\n\u0003\u0018\ufffd\tBd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0010\n\u000esome/other/dir",
+      "2(2d72510e447ab60a9728aeea2362d8be2cbd7789:\u0005\n\u0003\u0018\ufffd\tB}\n{\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0010\n\u000esome/other/dir",
       "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto"
     ],
     "infra_step": true,
@@ -960,9 +960,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@2(2d72510e447ab60a9728aeea2362d8be2cbd7789:\u0005@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\tBd@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@b@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0010@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\tB}@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@{@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0010@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dir@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]

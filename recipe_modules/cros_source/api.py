@@ -109,7 +109,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
     Returns:
       (list[str]) The list of snapshot SHAs.
     """
-    snapshot = self.m.cros_infra_config.gitiles_commit
+    snapshot = self.m.src_state.gitiles_commit
     manifest_dir = self.m.path.basename(snapshot.project)
 
     with self.m.context(cwd=self.workspace_path.join(manifest_dir)):

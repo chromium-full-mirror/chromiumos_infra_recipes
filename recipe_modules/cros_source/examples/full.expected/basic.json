@@ -391,7 +391,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chromium.googlesource.com/project/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
       "--format",
       "text"
     ],
@@ -591,39 +591,12 @@
     "cmd": [
       "git",
       "merge",
-      "--abort"
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "-m",
+      "merge gerrit changes"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "apply gerrit patch sets.git merge --abort",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "--pretty=%P",
-      "-n 1",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "apply gerrit patch sets.git log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@merge failed. will try cherry-pick instead@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "cherry-pick",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
-    "name": "apply gerrit patch sets.git cherry-pick",
+    "name": "apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

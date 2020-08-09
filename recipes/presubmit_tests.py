@@ -20,7 +20,9 @@ DEPS = [
     'git',
     'gitiles',
     'repo',
+    'src_state',
     'workspace_util',
+    'test_util',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -122,33 +124,31 @@ def GenTests(api):
                               project='p2', change=2341),
   ]
 
-  def test_builder(builder='infra-presubmit', gitiles=True, changes=True):
-    """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                             builder=builder)
-    if not gitiles:
-      build.input.gitiles_commit.Clear()
-    if changes:
-      build.input.gerrit_changes.extend(mock_CLs)
-    return api.buildbucket.build(build)
+  def test_builder(**kwargs):
+    """Generate a test build."""
+    kwargs.setdefault('builder', 'infra-presubmit')
+    kwargs.setdefault('bucket', 'cq')
+    kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
+    return api.test_util.test_build(**kwargs).build
 
-  yield api.test('basic', test_builder())
+  yield api.test('basic', test_builder(extra_changes=mock_CLs))
 
-  yield api.test('missing', test_builder(builder='missing'))
+  yield api.test('missing',
+                 test_builder(builder='missing', extra_changes=mock_CLs))
 
-  yield api.test('no-gitiles-given', test_builder(gitiles=False))
+  yield api.test('no-gitiles-given',
+                 test_builder(revision=None, extra_changes=mock_CLs))
 
-  yield api.test('no-changes-given', test_builder(gitiles=False, changes=False))
+  yield api.test('no-changes-given', test_builder(revision=None))
 
-  yield api.test('excluded-change', test_builder(),
+  yield api.test('excluded-change', test_builder(extra_changes=mock_CLs),
                  api.properties(project_names=['p1']))
 
-  yield api.test(
-      'no-config-gitiles',
-      test_builder(builder='amd64-generic-cq', gitiles=False, changes=False))
+  yield api.test('no-config-gitiles',
+                 test_builder(builder='amd64-generic-cq', revision=None))
 
-  yield api.test('has-PRESUBMIT.py', test_builder(),
+  yield api.test('has-PRESUBMIT.py', test_builder(extra_changes=mock_CLs),
                  api.properties(test_filename='PRESUBMIT.py'))
 
-  yield api.test('has-PRESUBMIT.cfg', test_builder(),
+  yield api.test('has-PRESUBMIT.cfg', test_builder(extra_changes=mock_CLs),
                  api.properties(test_filename='PRESUBMIT.cfg'))
