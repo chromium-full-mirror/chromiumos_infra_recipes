@@ -16,19 +16,17 @@ from PB.recipes.chromeos.test_moblab_vm import TestMoblabVmProperties
 
 DEPS = [
     'recipe_engine/archive',
-    'recipe_engine/buildbucket',
-    'recipe_engine/context',
-    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'build_menu',
     'cros_artifacts',
     'cros_build_api',
     'cros_sdk',
-    'cros_source',
     'cros_test_plan',
     'gerrit',
+    'test_util',
 ]
 
 PROPERTIES = TestMoblabVmProperties
@@ -41,89 +39,69 @@ CACHE_ARTIFACTS = [
 
 
 def RunSteps(api, properties):
-  with api.cros_source.checkout_overlays_context(), \
-    api.cros_sdk.cleanup_context(
-        checkout_path=api.cros_source.workspace_path):
-    # Ensure that the workspace aligns with the image that was built.
-    # Though this seems wasteful, it will catch bugs introduced to the build
-    # API and any scripts it depends on.
-    with api.context(cwd=api.cros_source.workspace_path):
-      api.cros_source.ensure_synced_cache()
-      api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
-      gerrit_changes = api.buildbucket.build.input.gerrit_changes
-      if gerrit_changes:
-        with api.step.nest('cherry-pick gerrit changes'):
-          patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
-          api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
-      api.cros_sdk.create_chroot(version=None, use_image=False,
-                                 timeout_sec=None)
-      api.cros_sdk.update_chroot(
-          api.buildbucket.gitiles_commit, gerrit_changes,
-          toolchain_targets=[BuildTarget(name='moblab-generic-vm')])
+  with api.build_menu.configure_builder(missing_ok=True):
+    return DoRunSteps(api, properties)
 
-    with api.step.nest('prepare artifacts'):
-      artifact_paths_by_artifact = api.cros_artifacts.download_artifacts(
-          properties.build_payload,
-          [BuilderConfig.Artifacts.IMAGE_ZIP] + CACHE_ARTIFACTS)
 
-      with api.step.nest('inflate image bundle'):
-        image_files = artifact_paths_by_artifact[
-            BuilderConfig.Artifacts.IMAGE_ZIP]
-        assert len(image_files) == 1, ('expected one image archive, got: %r' %
-                                       image_files)
-        image_zip = image_files[0]
-        image_dir = api.path.mkdtemp(prefix='image-under-test-').join('image')
-        api.archive.extract('unzip image.zip', image_zip, image_dir)
+def DoRunSteps(api, properties):
+  api.build_menu.setup_workspace_and_chroot(no_chroot_timeout=True)
 
-      with api.step.nest('group artifacts for moblab image cache'):
-        moblab_cache_dir = api.path.mkdtemp(prefix='moblab-cache-artifacts-')
-        for artifact in CACHE_ARTIFACTS:
-          artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
-          artifact_paths = artifact_paths_by_artifact[artifact]
-          for artifact_path in artifact_paths:
-            api.file.copy('add %s to cache payload' % artifact_name,
-                          artifact_path, moblab_cache_dir)
+  with api.step.nest('prepare artifacts'):
+    artifact_paths_by_artifact = api.cros_artifacts.download_artifacts(
+        properties.build_payload,
+        [BuilderConfig.Artifacts.IMAGE_ZIP] + CACHE_ARTIFACTS)
 
-    def as_payload(path):
-      return MoblabVmTestRequest.Payload(
-          path=Path(path=str(path), location=Path.OUTSIDE))
+    with api.step.nest('inflate image bundle'):
+      image_files = artifact_paths_by_artifact[
+          BuilderConfig.Artifacts.IMAGE_ZIP]
+      assert len(image_files) == 1, ('expected one image archive, got: %r' %
+                                     image_files)
+      image_zip = image_files[0]
+      image_dir = api.path.mkdtemp(prefix='image-under-test-').join('image')
+      api.archive.extract('unzip image.zip', image_zip, image_dir)
 
-    # TODO(evanhernandez): Read and present the test results.
-    api.cros_build_api.TestService.MoblabVmTest(
-        MoblabVmTestRequest(chroot=api.cros_sdk.chroot,
-                            image_payload=as_payload(image_dir),
-                            cache_payloads=[as_payload(moblab_cache_dir)]),
-        name='run moblab vm tests',
-    )
+    with api.step.nest('group artifacts for moblab image cache'):
+      moblab_cache_dir = api.path.mkdtemp(prefix='moblab-cache-artifacts-')
+      for artifact in CACHE_ARTIFACTS:
+        artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
+        artifact_paths = artifact_paths_by_artifact[artifact]
+        for artifact_path in artifact_paths:
+          api.file.copy('add %s to cache payload' % artifact_name,
+                        artifact_path, moblab_cache_dir)
+
+  def as_payload(path):
+    return MoblabVmTestRequest.Payload(
+        path=Path(path=str(path), location=Path.OUTSIDE))
+
+  # TODO(evanhernandez): Read and present the test results.
+  api.cros_build_api.TestService.MoblabVmTest(
+      MoblabVmTestRequest(chroot=api.cros_sdk.chroot,
+                          image_payload=as_payload(image_dir),
+                          cache_payloads=[as_payload(moblab_cache_dir)]),
+      name='run moblab vm tests',
+  )
 
 
 def GenTests(api):
+
+  def test_build():
+    return api.test_util.test_child_build(
+        'moblab-generic-vm', builder='moblab-vm-test', cq=True,
+        revision='0572e38c2b2073613ee5b861a9165335621bf54a').build
+
   yield api.test(
-      'basic',
-      # TODO(evanhernandez): Create a good fake config for moblab vm tests.
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq'),
-      api.cq(full_run=True),
+      'basic', test_build(),
       api.properties(
           name='moblab-vm-name',
-          build_payload=api.cros_test_plan.test_unit_common().build_payload),
-  )
+          build_payload=api.cros_test_plan.test_unit_common().build_payload))
 
   yield api.test(
-      'initsdk-destroy-chroot-tests',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq'),
-      api.step_data(
-          'init sdk.call chromite.api.SdkService/Create.call build API script',
-          retcode=1),
-  )
+      'initsdk-destroy-chroot-tests', test_build(),
+      api.cros_build_api.set_api_return('init sdk', 'SdkService/Create',
+                                        retcode=1))
 
   yield api.test(
-      'updatesdk-destroy-chroot-tests',
-      api.buildbucket.try_build(project='chromeos', bucket='cq',
-                                builder='amd64-generic-cq'),
-      api.step_data(
-          'update sdk.call chromite.api.SdkService/Update.call build API script',
-          retcode=1),
-  )
+      'updatesdk-destroy-chroot-tests', test_build(),
+      api.cros_build_api.set_api_return('update sdk', 'SdkService/Update',
+                                        retcode=1))

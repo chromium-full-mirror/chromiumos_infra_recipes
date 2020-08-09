@@ -133,7 +133,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         raise recipe_api.StepFailure('Missing configuration for {}'.format(
             self.m.buildbucket.build.builder.builder))
 
-  def setup_workspace_and_chroot(self):
+  def setup_workspace_and_chroot(self, no_chroot_timeout=False):
     """Setup the workspace and chroot for the builder.
 
     Returns:
@@ -167,8 +167,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       timeout = None if config.build.sdk_update.compile_source else 'DEFAULT'
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, use_image=self.is_staging,
-          timeout_sec=None
-          if config.build.sdk_update.compile_source else 'DEFAULT')
+          timeout_sec=None if config.build.sdk_update.compile_source or
+          no_chroot_timeout else 'DEFAULT')
       self._chroot_created = True
 
       self.m.cros_sdk.update_chroot(

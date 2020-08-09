@@ -673,7 +673,7 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#136)(self):**
+&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#136)(self, no_chroot_timeout=False):**
 
 Setup the workspace and chroot for the builder.
 
@@ -6103,11 +6103,13 @@ Verifies a repo manifest.
 &mdash; **def [RunSteps](/recipes/test_manifest.py#26)(api, properties):**
 ### *recipes* / [test\_moblab\_vm](/recipes/test_moblab_vm.py)
 
-[DEPS](/recipes/test_moblab_vm.py#17): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_moblab_vm.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [test\_util](#recipe_modules-test_util), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for running Moblab VM tests.
 
-&mdash; **def [RunSteps](/recipes/test_moblab_vm.py#43)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/test_moblab_vm.py#47)(api, properties):**
+
+&mdash; **def [RunSteps](/recipes/test_moblab_vm.py#41)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
 [DEPS](/recipes/test_platform/cros_test_platform.py#44): [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
