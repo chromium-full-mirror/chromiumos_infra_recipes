@@ -4429,7 +4429,7 @@
       ]
     },
     "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call build API script",
-    "timeout": 7200,
+    "timeout": 9000,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

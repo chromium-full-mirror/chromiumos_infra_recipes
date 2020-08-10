@@ -645,7 +645,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#85)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#398)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#401)(self, config=None):**
 
 Generate release payloads for the build.
 
@@ -680,7 +680,7 @@ Setup the workspace and chroot for the builder.
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#388)(self, config=None):**
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#391)(self, config=None):**
 
 Sign the uploaded images.
 
@@ -689,14 +689,14 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#77)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#354)(self, config=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#357)(self, config=None):**
 
 Upload artifacts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#369)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#372)(self, config=None):**
 
 Upload prebuilts from the build.
 
