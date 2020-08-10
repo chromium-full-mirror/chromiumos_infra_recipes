@@ -90,7 +90,10 @@
   },
   {
     "cmd": [],
-    "name": "git transaction"
+    "name": "git transaction",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
+    ]
   },
   {
     "cmd": [
@@ -304,9 +307,7 @@
     "cmd": [],
     "name": "git transaction.diffing repo to find changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@changed files@a/b/text.txt, other_test.txt@@@",
-      "@@@STEP_LOG_END@changed files@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -321,57 +322,6 @@
     "name": "git transaction.diffing repo to find changes.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "Automatically merging HWID and model.yaml information.\nThis commit was performed automatically by project_migrator.py.",
-      "[CLEANUP]/commit_msg_tmp_1"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "infra_step": true,
-    "name": "git transaction.diffing repo to find changes.write commit message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Automatically merging HWID and model.yaml information.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@This commit was performed automatically by project_migrator.py.@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_1"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "infra_step": true,
-    "name": "git transaction.diffing repo to find changes.git commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "--porcelain",
-      "https://example.com/some/project/repo",
-      "HEAD:refs/heads/master"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "infra_step": true,
-    "name": "git transaction.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

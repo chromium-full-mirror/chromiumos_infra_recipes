@@ -99,8 +99,9 @@ def RunSteps(api, properties):
   with api.step.nest('cloning destination repo'):
     api.git.clone(properties.dest_repo, target_path=dest_repo_path)
 
-  # And copy files over
-  with api.context(cwd=dest_repo_path):
+  def merge_configs():
+    """Copy files and merge with existing config to generate output.  This
+    is intended to be called from git_txn.update_ref"""
     api.file.ensure_directory('ensure %s directory exists' % dest_file_path,
                               dest_file_path)
 
@@ -159,16 +160,23 @@ def RunSteps(api, properties):
     api.git.add([DST_CONFIG])
 
     # Commit changes (if any)
-    changed_files = api.git.get_diff_files('HEAD')
-    if changed_files:
-      commit_msg = \
-'''Updating model.yaml and HWID database due to external commit.
+    with api.step.nest('diffing repo to find changes') as presentation:
+      changed_files = api.git.get_diff_files('HEAD')
+      if changed_files:
+        presentation.logs['changed files'] = ", ".join(changed_files)
+      else:
+        return False
 
-This commit was performed automatically by the project_migrator.py recipe.
-'''
-      dest_ref = 'refs/heads/master'
-      api.git_txn.update_ref(properties.dest_repo,
-                             dest_ref, lambda: api.git.commit(commit_msg))
+      # Add and commit
+      commit_msg = \
+        '''Automatically merging HWID and model.yaml information.
+This commit was performed automatically by project_migrator.py.'''
+      api.git.commit(commit_msg)
+
+  # Update the repo atomically
+  with api.context(cwd=dest_repo_path):
+    dest_ref = 'refs/heads/master'
+    api.git_txn.update_ref(properties.dest_repo, dest_ref, merge_configs)
 
 
 def GenTests(api):
@@ -210,3 +218,22 @@ def GenTests(api):
       api.properties(**{
           'dest_repo': 'https://example.com/some/project/repo',
       }), api.expect_exception('ValueError'))
+
+  yield api.test(
+      'no_changed_files',
+      api.properties(
+          **{
+              'dest_repo': 'https://example.com/some/project/repo',
+              'public_yaml': {
+                  'repo': 'https://example.com/public/',
+                  'path': 'some/model.yaml'
+              },
+              'private_yaml': {
+                  'repo': 'https://example.com/private/',
+                  'path': 'some/model.yaml'
+              },
+              'hwid_key': 'some_key',
+              'project_name': 'test_project'
+          }),
+      api.step_data('git transaction.diffing repo to find changes.git diff',
+                    stdout=api.raw_io.output('')))
