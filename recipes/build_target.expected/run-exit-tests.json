@@ -369,7 +369,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/project-a",
       "--groups",
       "all"
     ],

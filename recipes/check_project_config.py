@@ -25,16 +25,26 @@ DEPS = [
     'recipe_engine/python',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'cros_source',
+    'cros_infra_config',
     'gerrit',
     'gs_step_logging',
     'iterutils',
     'repo',
+    'src_state',
     'workspace_util',
 ]
 
 
 def RunSteps(api, properties):
+  # Because we use workspace_util to handle the source checkout, we need to call
+  # configure_builder even though we don't have a builder config.
+  commit = api.src_state.gitiles_commit
+  if not commit.project:
+    commit = (
+        api.src_state.external_manifest if properties.use_external_manifest else
+        api.src_state.internal_manifest)
+  api.cros_infra_config.configure_builder(commit, api.src_state.gerrit_changes)
+
   if not properties.manifest_groups:
     raise ValueError('At least one manifest group must be specified.')
 
@@ -67,8 +77,8 @@ def RunSteps(api, properties):
   with api.context(infra_steps=True), \
       api.workspace_util.sync_to_manifest_groups(
           properties.manifest_groups,
-          local_manifest,
-          api.cros_source.workspace_path):
+          local_manifest=local_manifest,
+          cache_path_override=api.src_state.workspace_path):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
                                      fail_not_applicable=True)
 

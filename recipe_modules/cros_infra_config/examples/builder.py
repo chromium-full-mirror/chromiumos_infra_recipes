@@ -27,12 +27,14 @@ def RunSteps(api, properties):
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
+  api.assertions.assertFalse(api.cros_infra_config.is_configured)
   is_staging = None
   if properties.HasField('is_staging'):
     is_staging = properties.is_staging.value
   config = api.cros_infra_config.configure_builder(commit=commit,
                                                    changes=changes,
                                                    is_staging=is_staging)
+  api.assertions.assertTrue(api.cros_infra_config.is_configured)
   api.assertions.assertEqual(config, api.cros_infra_config.config)
 
   builder = config.id.name if config else 'nosuch-cq'

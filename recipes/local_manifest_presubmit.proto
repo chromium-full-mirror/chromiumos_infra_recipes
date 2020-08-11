@@ -52,4 +52,7 @@ message LocalManifestPresubmitProperties {
   // files from the changes. You need to set this to true for projects where
   // this fires and could be impacted by changes in other projects.
   bool presubmit_all_files = 5;
+
+  // Whether to use the external manifest repo.
+  bool use_external_manifest = 6;
 }

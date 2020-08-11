@@ -61,4 +61,7 @@ message CheckProjectConfigProperties {
 
     // Path to the factory config directory, relative to the project repo.
     string factory_dir = 7;
+
+    // Whether to use the external manifest repo.
+    bool use_external_manifest = 8;
 }

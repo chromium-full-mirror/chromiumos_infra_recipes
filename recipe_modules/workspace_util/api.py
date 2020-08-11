@@ -64,8 +64,11 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
           saved in cros_infra_config.configure_builder().
       staging (bool): Whether this is a staging build.  Default: False.
     """
-    self.m.cros_source.ensure_synced_cache(is_staging=staging)
+    assert self.m.cros_infra_config.is_configured, 'builder not configured'
     commit = commit or self.m.src_state.gitiles_commit
+    self.m.cros_source.ensure_synced_cache(
+        is_staging=staging, gitiles_commit=commit,
+        manifest_url='https://{}/{}'.format(commit.host, commit.project))
     self.m.cros_source.sync_snapshot(commit)
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',
@@ -153,7 +156,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
   @contextlib.contextmanager
   def sync_to_manifest_groups(self, manifest_groups, local_manifest=None,
-                              cache_path_override=None):
+                              cache_path_override=None, gitiles_commit=None):
     """Returns a context with manifest groups checked out to cwd.
 
     The subset of repos in the external manifest + local_manifest matching
@@ -183,7 +186,10 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
           syncing a local manifest.
       cache_path_override (Path): Path to sync into. If None, the default
           caching of cros_source.ensure_synced_cache is used.
+      gitiles_commit (GitilesCommit): The gitiles_commit to sync to.  Default:
+          commit saved in cros_infra_config.configure_builder().
     """
+    assert self.m.cros_infra_config.is_configured, 'builder not configured'
     init_opts = {
         'groups': manifest_groups,
     }
@@ -191,6 +197,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       init_opts['local_manifest'] = local_manifest
 
     self.m.cros_source.ensure_synced_cache(
+        gitiles_commit=gitiles_commit,
         manifest_url=self.m.src_state.external_manifest.url,
         init_opts=init_opts, cache_path_override=cache_path_override)
     with self.m.context(

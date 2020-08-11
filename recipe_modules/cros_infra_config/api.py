@@ -51,6 +51,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Is this builder running in the staging bucket?
     self._is_staging = False
 
+    # Is the builder configured?
+    self._is_configured = False
+
   def initialize(self):
     # If the builder is in the staging bucket, or has a name that begins
     # 'staging-', then assume we are in staging.
@@ -60,6 +63,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     # Hold off on the other fields until they are used, to avoid unnecessary
     # clutter in the expectations files.
+
+  @property
+  def is_configured(self):
+    return self._is_configured
 
   @property
   def package_git_revision(self):
@@ -397,6 +404,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
       self._determine_repo_state(config, commit, changes)
 
+    self._is_configured = True
     return config
 
   def get_build_target(self, build=None):

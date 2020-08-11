@@ -25,10 +25,11 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/depot_tools',
-    'cros_source',
+    'cros_infra_config',
     'git',
     'gs_step_logging',
     'repo',
+    'src_state',
     'workspace_util',
 ]
 
@@ -37,6 +38,15 @@ DEPS = [
 
 
 def RunSteps(api, properties):
+  # Because we use workspace_util to handle the source checkout, we need to call
+  # configure_builder even though we don't have a builder config.
+  commit = api.src_state.gitiles_commit
+  if not commit.project:
+    commit = (
+        api.src_state.external_manifest if properties.use_external_manifest else
+        api.src_state.internal_manifest)
+  api.cros_infra_config.configure_builder(commit, api.src_state.gerrit_changes)
+
   if not properties.project:
     raise ValueError('The project must be specified.')
 
@@ -57,12 +67,12 @@ def RunSteps(api, properties):
       api.workspace_util.sync_to_manifest_groups(
           manifest_groups=properties.manifest_groups,
           local_manifest=local_manifest,
-          cache_path_override=api.cros_source.workspace_path):
+          cache_path_override=api.src_state.workspace_path):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
                                      fail_not_applicable=True)
 
     project = api.repo.project_info(properties.project)
-    workspace_path = api.cros_source.workspace_path
+    workspace_path = api.src_state.workspace_path
     project_path = workspace_path.join(project.path)
 
     with api.step.nest('prepare and execute presubmit'), \

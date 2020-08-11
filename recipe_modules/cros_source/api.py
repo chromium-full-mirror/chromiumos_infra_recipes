@@ -73,7 +73,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
   def ensure_synced_cache(self, manifest_url=None, init_opts=None,
                           sync_opts=None, cache_path_override=None,
-                          is_staging=False, projects=None):
+                          is_staging=False, projects=None, gitiles_commit=None):
     """Ensure the configured repo cache exists and is synced.
 
     Args:
@@ -85,7 +85,13 @@ class CrosSourceApi(recipe_api.RecipeApi):
       * is_staging (bool): Flag to indicate canary staging environment
       * projects (List[str]): Projects to limit the sync to, or None to sync
       all projects.
+      * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
+      current value.
     """
+    gitiles_commit = gitiles_commit or self.m.src_state.gitiles_commit
+    gitiles_commit = (
+        gitiles_commit if gitiles_commit.host else
+        self.m.src_state.internal_manifest.as_gitiles_commit_proto)
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
     init_opts = init_opts or {}
     if is_staging:
