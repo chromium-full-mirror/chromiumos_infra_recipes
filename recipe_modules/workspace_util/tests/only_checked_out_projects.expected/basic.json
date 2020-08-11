@@ -76,7 +76,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromiumos/config\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
@@ -90,7 +90,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/23/123/0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///chromiumos/config\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -112,7 +112,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"privateproject1\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
@@ -126,7 +126,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/456/0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///privateproject1\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -148,7 +148,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"privateproject2\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
@@ -162,7 +162,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/89/789/0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///privateproject2\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -206,7 +206,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromium/src",
+      "chromiumos/config",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -264,7 +264,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromiumos/config\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
@@ -278,7 +278,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/23/123/0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///chromiumos/config\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -300,7 +300,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"privateproject1\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
@@ -314,7 +314,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/456/0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https:///privateproject1\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -357,7 +357,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromium/src",
+      "chromiumos/config",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -366,7 +366,7 @@
     "name": "successful apply changes.apply gerrit patch sets.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/config|src/chromiumos/config|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -374,10 +374,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https:///chromium/src",
+      "https:///chromiumos/config",
       "refs/changes/23/123/0:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -390,7 +390,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -405,7 +405,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
     "name": "successful apply changes.apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -417,7 +417,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -428,7 +428,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromium/src",
+      "privateproject1",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -437,7 +437,7 @@
     "name": "successful apply changes.apply gerrit patch sets.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@privateproject1|src/privateproject1|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -445,10 +445,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https:///chromium/src",
+      "https:///privateproject1",
       "refs/changes/56/456/0:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/privateproject1",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git fetch (2)",
     "~followup_annotations": [
@@ -461,7 +461,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/privateproject1",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse (3)",
     "~followup_annotations": [
@@ -476,7 +476,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/privateproject1",
     "name": "successful apply changes.apply gerrit patch sets.git merge (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -488,7 +488,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/privateproject1",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse (4)",
     "~followup_annotations": [

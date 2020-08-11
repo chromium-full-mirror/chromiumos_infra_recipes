@@ -241,7 +241,7 @@ def GenTests(api):
           [
               'git',
               'fetch',
-              'https://chrome-internal.googlesource.com/chromium/src',
+              'https://chrome-internal.googlesource.com/project1',
               'refs/changes/56/123456/7:',
           ],
       ),

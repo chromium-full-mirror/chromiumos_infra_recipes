@@ -121,6 +121,8 @@ def GenTests(api):
       common_pb2.GerritChange(host='chromium.googlesource.com', project='p1',
                               change=1234),
       common_pb2.GerritChange(host='chrome-internal.googlesource.com',
+                              project='p1', change=1235),
+      common_pb2.GerritChange(host='chrome-internal.googlesource.com',
                               project='p2', change=2341),
   ]
 

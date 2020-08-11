@@ -11,7 +11,8 @@ from .api import PatchSet
 class ChangesTestApi(recipe_test_api.RecipeTestApi):
 
   def test_response(self, request, gerrit_change, values_dict=None):
-    values = dict(project='chromium/src')
+    project = gerrit_change.project if gerrit_change else ''
+    values = dict(project=project or 'chromium/src')
     values.update(values_dict or {})
     change_number = request['change_number']
     resp = request.copy()
