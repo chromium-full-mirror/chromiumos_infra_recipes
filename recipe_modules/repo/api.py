@@ -171,7 +171,8 @@ class RepoApi(recipe_api.RecipeApi):
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,
            optimized_fetch=False, cache_dir=None, timeout=None,
-           retry_fetches=None, projects=None, verbose=False):
+           retry_fetches=None, projects=None, verbose=False,
+           no_manifest_update=False):
     """Executes 'repo sync' with the given arguments.
 
     Args:
@@ -187,6 +188,7 @@ class RepoApi(recipe_api.RecipeApi):
       * projects (List[str]): Projects to limit the sync to, or None to sync
         all projects.
       * verbose (bool): Whether to produce verbose output.
+      * no_manifest_update (bool): Whether to disable updating the manifest.
     """
     assert _kwonly is (), 'sync accepts no positional args'
     cmd = ['sync']
@@ -210,6 +212,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--retry-fetches', '%d' % retry_fetches]
     if verbose:
       cmd += ['--verbose']
+    if no_manifest_update:
+      cmd += ['--no-manifest-update']
     if projects:
       cmd += projects
     self._step(cmd, name=None, timeout=timeout)

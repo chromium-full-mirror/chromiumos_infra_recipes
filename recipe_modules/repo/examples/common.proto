@@ -95,4 +95,7 @@ message SyncOpts {
 
   // verbose (bool): Whether to produce verbose output.
   bool verbose = 11;
+
+  // no_manifest_update (bool): Whether to disable updating the manifest.
+  bool no_manifest_update = 12;
 }

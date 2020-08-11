@@ -79,9 +79,8 @@ def GenTests(api):
                   repo_branch='next',
                   local_manifest=local_manifest,
                   verbose=True,
-              ), sync_opts=common.SyncOpts(force_sync=True, detach=True,
-                                           current_branch=True, jobs=99,
-                                           manifest_name='snapshot.xml',
-                                           no_tags=True, optimized_fetch=True,
-                                           cache_dir='/tmp/cache',
-                                           retry_fetches=8, verbose=True))))
+              ), sync_opts=common.SyncOpts(
+                  force_sync=True, detach=True, current_branch=True, jobs=99,
+                  manifest_name='snapshot.xml', no_tags=True,
+                  optimized_fetch=True, cache_dir='/tmp/cache', retry_fetches=8,
+                  verbose=True, no_manifest_update=True))))
