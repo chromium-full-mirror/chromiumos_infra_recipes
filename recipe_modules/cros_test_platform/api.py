@@ -7,6 +7,8 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.steps.enumeration import \
   EnumerationRequests, EnumerationResponses
 from PB.test_platform.steps.scheduler_traffic_split import \
@@ -138,6 +140,56 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     return self._run('compute-backfill', request, ComputeBackfillRequests,
                      ComputeBackfillResponses)
 
+  def execute_luciexe(self, request):
+    """Execute work via `luciexe` binary for cros_test_platform
+
+    crbug.com/1112514: This is an alternative binary target for
+    cros_test_platform which will eventually replace all the subcommands of the
+    cros_test_platform binary.
+
+    Args:
+      request: a ExecuteRequests.
+
+    Returns: ExecuteResponses.
+    """
+    self._ensure_cros_test_platform()
+    with self.m.step.nest('call binary') as s:
+      cmd = self._cipd_dir.join("luciexe")
+      sub_cwd = self.m.path['start_dir'].join('luciexe')
+      input_json = sub_cwd.join("input.json")
+      output_json = sub_cwd.join("output.json")
+
+      self.m.file.write_proto("write input", input_json, request, 'JSONPB')
+
+      # sub_build() raises StepFailure if the sub-build completes in FAILURE
+      # and InfraFailure if sub-build completes in INFRA_FAILURE.
+      #
+      # crbug.com/1115207: We currently interpret all failures in the
+      # sub-luciexe as InfraFailure because test failures are bubbled up later
+      # in the summary step. As test summary updates are moved into the luciexe,
+      # we will no longer need to return the responses from this sub_build()
+      # invocation and will instead start surfacing test failures as
+      # StepFailure.
+      with self.m.context(cwd=sub_cwd, infra_steps=True):
+        self.m.step.sub_build(
+            "launch luciexe",
+            [cmd, '-input_json', input_json, '-output_json', output_json],
+            self.m.buildbucket.build,
+            output_path=sub_cwd.join('build.json'),
+            step_test_data=lambda: self.m.step.test_api.sub_build(
+                build_pb2.Build(status=common_pb2.SUCCESS)),
+        )
+
+      responses = self.m.file.read_proto(
+          "read output",
+          output_json,
+          ExecuteResponses,
+          'JSONPB',
+          test_proto=ExecuteResponses(),
+      )
+      s.logs['responses'] = [json_format.MessageToJson(responses)]
+      return responses
+
   def _ensure_cros_test_platform(self):
     """Ensure the cros_test_platform CLI is installed."""
     if self._cmd:
@@ -152,4 +204,5 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
                          self._version)
         self.m.cipd.ensure(cipd_dir, pkgs)
 
+        self._cipd_dir = cipd_dir
         self._cmd = cipd_dir.join('cros_test_platform')

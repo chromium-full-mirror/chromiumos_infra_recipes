@@ -5,13 +5,16 @@
 from PB.recipe_modules.chromeos.cros_test_platform.cros_test_platform import \
     CrosTestPlatformModuleProperties
 
+
 DEPS = [
+    'easy',
+    'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'easy',
 ]
 
 PROPERTIES = CrosTestPlatformModuleProperties

@@ -214,27 +214,37 @@ def push_build_id(api, config):
           'decision: skip pubulishing build ID')
 
 
-def execute(api, requests, enumerations, config):
+def execute(api, requests):
   """Execute request in the correct backend.
 
+  Args:
+    requests: ExecutionRequests payload.
+  """
+  with api.step.nest('execute'):
+    return api.cros_test_platform.skylab_execute(requests)
+
+
+def _execute_requests(api, requests, enumerations, config):
+  """Create the request payload for execution.
   Args:
     requests: {tag: test_platform.Request} dict.
     enumerations: {tag: EnumerationResponse} dict.
     config: test_platform.Config instance.
+
+  Returns:
+    ExecutionRequests payload.
   """
-  with api.step.nest('execute'):
-    _ensure_all_requests_enumerated(requests, enumerations)
-    exec_reqs = ExecuteRequests(
-        tagged_requests={
-            t: ExecuteRequest(
-                request_params=_set_notification(r.params, config),
-                enumeration=enumerations[t], config=config)
-            for t, r in requests.iteritems()
-        },
-        build=Build(id=api.buildbucket.build.id,
-                    create_time=api.buildbucket.build.create_time),
-    )
-    return api.cros_test_platform.skylab_execute(exec_reqs)
+  _ensure_all_requests_enumerated(requests, enumerations)
+  return ExecuteRequests(
+      tagged_requests={
+          t: ExecuteRequest(
+              request_params=_set_notification(r.params, config),
+              enumeration=enumerations[t], config=config)
+          for t, r in requests.iteritems()
+      },
+      build=Build(id=api.buildbucket.build.id,
+                  create_time=api.buildbucket.build.create_time),
+  )
 
 
 def _set_notification(params, config):
@@ -268,7 +278,8 @@ def RunSteps(api, properties):
   requests = split(api, requests, properties.config)
   with api.context(infra_steps=True):
     enumerations = enumerate_tests(api, requests)
-    responses = execute(api, requests, enumerations, properties.config)
+    responses = execute(
+        api, _execute_requests(api, requests, enumerations, properties.config))
     tagged_responses = responses.tagged_responses
     set_output_properties(api, responses)
     # Push the Build ID to notify the subscribers that CTP run completed.

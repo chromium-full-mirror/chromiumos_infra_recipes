@@ -53,6 +53,11 @@ def RunSteps(api):
   resp = api.cros_test_platform.compute_backfill(req)
   api.assertions.assertEqual(resp, ComputeBackfillResponses())
 
+  with api.assertions.assertRaises(ValueError):
+    api.cros_test_platform.execute_luciexe(None)
+  resp = api.cros_test_platform.execute_luciexe(ExecuteRequests())
+  api.assertions.assertEqual(exec_resp, ExecuteResponses())
+
 
 def GenTests(api):
   # TODO(crbug.com/1030538): Remove once the default label logic is removed.
