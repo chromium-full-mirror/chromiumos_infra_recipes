@@ -1,6 +1,13 @@
 [
   {
     "cmd": [],
+    "name": "publish build ID",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "validate request"
   },
   {
@@ -331,6 +338,13 @@
       "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyVjlELgjAQx7+K7DkQffQt5gTDKMSCiJClZ6ymA7eEEr97N9Gohx562Ljbfv/fXU9KqPhdGhI4\\nPdGGGxirDtpSFPaV7FkaxjTLo2WcsJAsHCJFBfRRSIuSJI5YTg80wXuz3iYsQ2hAynB9S0GjWyN3\\n/LT/EqRsxeicl+qya6UlsNKB6555i+dpN2jhCoWBMsMZoaih0UI1enSXovZtqOPStyj23tR7770m\\ncaXUt7fhNUwflv175zlvdcNpGF6BRWue\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTSuJiT0lNSyzNKREK53IR4k3Lz7fS109KLALiKikmDiclZqCQFl9OfnoxQiKKh4slJTPXSIil\\nLDHHCMozBPMMuTgh2oDKhFg4CgSYAEzjGQI=\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo\", \"rejectedTaskDimensions\": {\"dim1\": \"val1\", \"dim2\": \"val2\"}, \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"name\": \"baz\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish build ID (2)",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
     ]
   },
   {

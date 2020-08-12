@@ -1,6 +1,13 @@
 [
   {
     "cmd": [],
+    "name": "publish build ID",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "validate request"
   },
   {
@@ -436,6 +443,13 @@
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVipOTc7PS1GyUqhWKi5JLEkFs8pSi1Iyk0uAbKUw1yAXT+eQeDdHTx9XFyUdBaWczLRU58rk\\nHJBSJR9PN9d450hnHyDp7xvg4xoCVFQLVFWSWJwdlFpcmlNSDFQXTWXTc/LTQ4tyQEqArGIrff2k\\nxCIgrlKC2gyVTMvPR5XLS8wFGwzk6qYlZuakpijVxoIMTMssKi4ZaaEAlEAKhVoAbsagOg==\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuZiK05Nzs9LEbLkMhTiTcvPt9LXT0osAuIqKRaOAgEmJS4gUzctMTMnNUWLLyc/vRihQgis\\nQsiJizUts6i4BI8ZQEG8ZgAAyqkkig==\\n\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish build ID (2)",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
     ]
   },
   {

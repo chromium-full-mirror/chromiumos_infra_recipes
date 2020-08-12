@@ -6216,15 +6216,15 @@ Recipe for running Moblab VM tests.
 &mdash; **def [RunSteps](/recipes/test_moblab_vm.py#41)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#44): [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#46): [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#254)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#260)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#121)(api, requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#123)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -6234,7 +6234,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#210)(api, requests, enumerations, config):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#216)(api, requests, enumerations, config):**
 
 Execute request in the correct backend.
 
@@ -6243,17 +6243,17 @@ Args:
   enumerations: {tag: EnumerationResponse} dict.
   config: test_platform.Config instance.
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#273)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#279)(api, requests, responses):**
 
-&mdash; **def [push\_build\_id](/recipes/test_platform/cros_test_platform.py#205)(api, config):**
+&mdash; **def [push\_build\_id](/recipes/test_platform/cros_test_platform.py#207)(api, config):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#370)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#376)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#438)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#444)(task_results):**
 
-&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#163)(api, requests, config):**
+&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#165)(api, requests, config):**
 
 Run the almost no-op traffic splitter step.
 
@@ -6271,9 +6271,9 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#313)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#319)(api, enumerations, responses):**
 
-&mdash; **def [validate\_requests](/recipes/test_platform/cros_test_platform.py#58)(api, requests):**
+&mdash; **def [validate\_requests](/recipes/test_platform/cros_test_platform.py#60)(api, requests):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#13): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

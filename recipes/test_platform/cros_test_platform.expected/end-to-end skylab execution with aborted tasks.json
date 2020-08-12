@@ -1,6 +1,13 @@
 [
   {
     "cmd": [],
+    "name": "publish build ID",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "validate request"
   },
   {
@@ -319,6 +326,13 @@
       "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8W6Onj6uLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPq7xjk7+QSFAJbVANSWJxdlBqcVAk4uBqqKRzSZGe15iLlg6LT9fNzEpv6gk\\nNUWpNra2FgDicDb4\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTUuFiT0lNSyzNKRGS5BKUYuIIUOJOy8/XTUzKLypJTRFi4QgQYAIArJ4I5g==\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_ABORTED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"name\": \"foo-aborted\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_ABORTED\"}}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish build ID (2)",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
     ]
   },
   {

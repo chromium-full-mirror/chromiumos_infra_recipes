@@ -9,12 +9,14 @@ TODO: Migrate to a recipes repo owned by the test team.
 """
 
 from PB.chromite.api import test_metadata
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.test_platform.cros_test_platform import \
   CrosTestPlatformProperties
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
   CrosTestPostprocessRequest
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
   TestResult as PostProcessTestResult
+from PB.test_platform import result_flow as result_flow_pb2
 from PB.test_platform.steps.enumeration import \
   EnumerationRequest, EnumerationRequests
 from PB.test_platform.steps.enumeration import \
@@ -203,8 +205,12 @@ def _is_non_empty_proto(p):
 
 
 def push_build_id(api, config):
-  if config.pubsub.topic and config.pubsub.project:
-    api.result_flow.publish(config.pubsub.project, config.pubsub.topic)
+  with api.step.nest('publish build ID') as step:
+    if api.buildbucket.build.id and config.pubsub.topic and config.pubsub.project:
+      api.result_flow.publish(config.pubsub.project, config.pubsub.topic)
+    else:
+      step.presentation.step_summary_text = (
+          'decision: skip pubulishing build ID')
 
 
 def execute(api, requests, enumerations, config):
@@ -602,6 +608,23 @@ def GenTests(api):
   # Config set the pubsub topic to push build ID.
   yield (
       api.test('Config has pubsub topic to publish CTP build ID') +  #
+      api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=Request(), config=Config(
+                  pubsub=Config.PubSub(project='foo-proj', topic='foo-topic'))))
+      +  #
+      api.step_data(
+          'publish build ID.call `result_flow`.publish',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  result_flow_pb2.publish.PublishResponse(
+                      state=result_flow_pb2.common.SUCCEEDED)))))
+
+  # Recipe running outside Buildbucket should skip publishing build ID.
+  yield (
+      api.test('Recipe runs without Build ID') +  #
+      api.buildbucket.build(build_pb2.Build(id=0)) +  #
       api.properties(
           CrosTestPlatformProperties(
               request=Request(), config=Config(
@@ -611,7 +634,7 @@ def GenTests(api):
   # Config set the pubsub topic for test_runner.
   yield (
       api.test('Config has pubsub topic to publish test runner build ID') +  #
-      api.buildbucket.build(Build(id=8874582904031090640)) +  #
+      api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
       api.properties(
           CrosTestPlatformProperties(
               request=_test_request('foo'),

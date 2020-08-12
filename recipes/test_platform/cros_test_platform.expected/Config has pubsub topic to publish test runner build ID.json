@@ -1,6 +1,13 @@
 [
   {
     "cmd": [],
+    "name": "publish build ID",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "validate request"
   },
   {
@@ -311,6 +318,13 @@
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\\n\"@@@",
       "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\\n\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish build ID (2)",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
     ]
   },
   {

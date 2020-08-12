@@ -1,77 +1,9 @@
 [
   {
     "cmd": [],
-    "name": "publish build ID"
-  },
-  {
-    "cmd": [],
-    "name": "publish build ID.call `result_flow`",
+    "name": "publish build ID",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"8874582904031090640\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "publish build ID.call `result_flow`.ensure result_flow",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/result_flow",
-      "-ensure-file",
-      "chromiumos/infra/result_flow/${platform} latest",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "publish build ID.call `result_flow`.ensure result_flow.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/result_flow/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/result_flow/result_flow",
-      "publish",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout"
-    ],
-    "name": "publish build ID.call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"8874582904031090640\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
     ]
   },
   {
@@ -240,8 +172,7 @@
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"build\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"createTime\": \"1970-01-01T00:00:00Z\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"id\": \"8874582904031090640\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"createTime\": \"1970-01-01T00:00:00Z\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
@@ -258,7 +189,7 @@
     ],
     "infra_step": true,
     "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\", \n    \"id\": \"8874582904031090640\"\n  }\n}",
+    "stdin": "{\n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -273,39 +204,9 @@
   },
   {
     "cmd": [],
-    "name": "publish build ID (2)"
-  },
-  {
-    "cmd": [],
-    "name": "publish build ID (2).call `result_flow`",
+    "name": "publish build ID (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"8874582904031090640\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/result_flow/result_flow",
-      "publish",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout"
-    ],
-    "infra_step": true,
-    "name": "publish build ID (2).call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"8874582904031090640\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
     ]
   },
   {

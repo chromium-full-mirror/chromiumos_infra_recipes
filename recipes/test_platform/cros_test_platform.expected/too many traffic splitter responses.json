@@ -1,6 +1,13 @@
 [
   {
     "cmd": [],
+    "name": "publish build ID",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "validate request"
   },
   {
@@ -260,11 +267,11 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 264, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 270, in RunSteps",
       "    responses = execute(api, requests, enumerations, properties.config)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 219, in execute",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 225, in execute",
       "    _ensure_all_requests_enumerated(requests, enumerations)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 251, in _ensure_all_requests_enumerated",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 257, in _ensure_all_requests_enumerated",
       "    raise ValueError('No enumerations for requests tagged %s' % missing)",
       "ValueError: No enumerations for requests tagged set([u'default', u'one_too_many'])"
     ]
