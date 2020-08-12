@@ -1520,7 +1520,7 @@ Generate start time in seconds.
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#440)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#442)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -1551,7 +1551,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#343)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#344)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1562,7 +1562,8 @@ Set the bisect_builder and use_flags.
 Args:
   commit (GitilesCommit): The gitiles commit to use.  Default:
       common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
-  changes (GerritChanges): The gerrit changes to apply.  Default: [].
+  changes (list[GerritChange]): The gerrit changes to apply.  Default: the
+      gerrit_changes from buildbucket.
   is_staging (bool): Whether the builder is staging, or None to have
       configure_builder determine, based on buildbucket bucket and/or
       config.general.environment.
@@ -1591,7 +1592,7 @@ Get BotPolicies as defined in infra/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#400)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#402)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -1602,7 +1603,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#426)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#428)(self, build=None):**
 
 Return the build target name from input properties.
 

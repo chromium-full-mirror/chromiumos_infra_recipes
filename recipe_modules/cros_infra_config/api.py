@@ -275,9 +275,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       config (BuilderConfig): The builder config, or None.
       commit (GitilesCommit): The gitiles commit to use.  Default:
           common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
-      changes: (GerritChanges): The gerrit changes to apply.  Default: [].
+      changes: (list[GerritChange]): The gerrit changes to apply.  Default: The
+          currently stored list (initially the list from buildbucket.)
     """
-    changes = changes or []
+    changes = self.m.src_state.gerrit_changes if changes is None else changes
     changed = False
     if not commit or not commit.project:
       # No gitiles_commit: we were (likely) launched directly by either
@@ -351,7 +352,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Args:
       commit (GitilesCommit): The gitiles commit to use.  Default:
           common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
-      changes (GerritChanges): The gerrit changes to apply.  Default: [].
+      changes (list[GerritChange]): The gerrit changes to apply.  Default: the
+          gerrit_changes from buildbucket.
       is_staging (bool): Whether the builder is staging, or None to have
           configure_builder determine, based on buildbucket bucket and/or
           config.general.environment.
