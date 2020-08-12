@@ -152,13 +152,6 @@
   },
   {
     "cmd": [],
-    "name": "redirect to test_runner if applicable",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@decision: send child tasks to test_runner@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "enumerate tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
@@ -260,9 +253,6 @@
       "@@@STEP_LOG_LINE@request@        \"hardwareAttributes\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"migrations\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"useTestRunner\": true@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"notification\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"pubsubTopic\": \"projects/foo-proj/topics/foo-topic\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
@@ -278,17 +268,6 @@
       "@@@STEP_LOG_LINE@request@            \"project\": \"foo-proj\", @@@",
       "@@@STEP_LOG_LINE@request@            \"topic\": \"foo-topic\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"testRunnerMigration\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"redirectInstructions\": [@@@",
-      "@@@STEP_LOG_LINE@request@            {@@@",
-      "@@@STEP_LOG_LINE@request@              \"percentOfRequests\": 100, @@@",
-      "@@@STEP_LOG_LINE@request@              \"constraint\": {@@@",
-      "@@@STEP_LOG_LINE@request@                \"quotaAccount\": \"foo-qs-account\", @@@",
-      "@@@STEP_LOG_LINE@request@                \"dutPool\": \"foo-pool\"@@@",
-      "@@@STEP_LOG_LINE@request@              }@@@",
-      "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"enumeration\": {@@@",
@@ -321,7 +300,7 @@
     ],
     "infra_step": true,
     "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"qsAccount\": \"foo-qs-account\", \n          \"unmanagedPool\": \"foo-pool\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"migrations\": {\n          \"useTestRunner\": true\n        }, \n        \"notification\": {\n          \"pubsubTopic\": \"projects/foo-proj/topics/foo-topic\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"testRunner\": {\n          \"buildbucket\": {}, \n          \"pubsub\": {\n            \"project\": \"foo-proj\", \n            \"topic\": \"foo-topic\"\n          }\n        }, \n        \"testRunnerMigration\": {\n          \"redirectInstructions\": [\n            {\n              \"percentOfRequests\": 100, \n              \"constraint\": {\n                \"quotaAccount\": \"foo-qs-account\", \n                \"dutPool\": \"foo-pool\"\n              }\n            }\n          ]\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\", \n    \"id\": \"8874582904031090640\"\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"qsAccount\": \"foo-qs-account\", \n          \"unmanagedPool\": \"foo-pool\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"notification\": {\n          \"pubsubTopic\": \"projects/foo-proj/topics/foo-topic\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"testRunner\": {\n          \"buildbucket\": {}, \n          \"pubsub\": {\n            \"project\": \"foo-proj\", \n            \"topic\": \"foo-topic\"\n          }\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\", \n    \"id\": \"8874582904031090640\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

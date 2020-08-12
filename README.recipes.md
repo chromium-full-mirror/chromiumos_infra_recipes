@@ -6222,7 +6222,7 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#326)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#254)(api, properties):**
 
 &mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#121)(api, requests):**
 
@@ -6234,7 +6234,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#282)(api, requests, enumerations, config):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#210)(api, requests, enumerations, config):**
 
 Execute request in the correct backend.
 
@@ -6243,26 +6243,15 @@ Args:
   enumerations: {tag: EnumerationResponse} dict.
   config: test_platform.Config instance.
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#346)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#273)(api, requests, responses):**
 
-&mdash; **def [push\_build\_id](/recipes/test_platform/cros_test_platform.py#277)(api, config):**
+&mdash; **def [push\_build\_id](/recipes/test_platform/cros_test_platform.py#205)(api, config):**
 
-&mdash; **def [redirect\_to\_test\_runner\_if\_applicable](/recipes/test_platform/cros_test_platform.py#205)(api, tagged_requests, config):**
-
-Decided whether to send traffic to skylab_swarming_worker or test_runner
-and modify the requests accordingly.
-
-Args:
-  * requests: {tag: test_platform.Request} dict.
-  * config: test_platform.Config instance.
-
-Raises: StepFailure if no consistent decision can be achieved.
-
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#443)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#370)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#511)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#438)(task_results):**
 
 &mdash; **def [split](/recipes/test_platform/cros_test_platform.py#163)(api, requests, config):**
 
@@ -6282,7 +6271,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#386)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#313)(api, enumerations, responses):**
 
 &mdash; **def [validate\_requests](/recipes/test_platform/cros_test_platform.py#58)(api, requests):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)

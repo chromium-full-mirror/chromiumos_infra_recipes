@@ -172,13 +172,6 @@
   },
   {
     "cmd": [],
-    "name": "redirect to test_runner if applicable",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@decision: send child tasks to skylab_swarming_worker@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "enumerate tests"
   },
   {
