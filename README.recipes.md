@@ -1520,7 +1520,7 @@ Generate start time in seconds.
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#450)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#444)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -1551,7 +1551,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#351)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#345)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1592,7 +1592,7 @@ Get BotPolicies as defined in infra/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#410)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#404)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -1603,7 +1603,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#436)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#430)(self, build=None):**
 
 Return the build target name from input properties.
 
@@ -4266,7 +4266,7 @@ Args:
   request: a SaveRequest.
 ### *recipe_modules* / [src\_state](/recipe_modules/src_state)
 
-[DEPS](/recipe_modules/src_state/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/src_state/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API providing frequently needed values, that we sometimes override.
 
@@ -4286,11 +4286,11 @@ There are two classes of properties in this module.
   - gerrit_changes: some builders add changes to the build, and others ignore
     the changes completely.
 
-#### **class [SrcStateApi](/recipe_modules/src_state/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SrcStateApi](/recipe_modules/src_state/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Source State related attributes for Chrome OS recipes.
 
-&emsp; **@property**<br>&mdash; **def [external\_manifest](/recipe_modules/src_state/api.py#57)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_manifest](/recipe_modules/src_state/api.py#61)(self):**
 
 Information about external manifest.
 
@@ -4299,23 +4299,23 @@ Provides immutable information about the Chrome OS external manifest.
 Returns:
   (ManifestProject): information about the external manifest.
 
-&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#104)(self, gerrit_changes):**
+&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#113)(self, gerrit_changes):**
 
 Set the gerrit_changes that will be used for the build.
 
 Args:
   gerrit_changes (list[GerritChanges]): The gitiles host.
 
-&emsp; **@gitiles_commit.setter**<br>&mdash; **def [gitiles\_commit](/recipe_modules/src_state/api.py#81)(self, gitiles_commit):**
+&emsp; **@gitiles_commit.setter**<br>&mdash; **def [gitiles\_commit](/recipe_modules/src_state/api.py#85)(self, gitiles_commit):**
 
 Set the gitiles_commit that will be used for the build.
 
 Args:
   gitiles_commit (GitilesCommit): The value to use.
 
-&mdash; **def [initialize](/recipe_modules/src_state/api.py#32)(self):**
+&mdash; **def [initialize](/recipe_modules/src_state/api.py#36)(self):**
 
-&emsp; **@property**<br>&mdash; **def [internal\_manifest](/recipe_modules/src_state/api.py#46)(self):**
+&emsp; **@property**<br>&mdash; **def [internal\_manifest](/recipe_modules/src_state/api.py#50)(self):**
 
 Information about internal manifest.
 
@@ -4324,7 +4324,7 @@ Provides immutable information about the Chrome OS internal manifest.
 Returns:
   (ManifestProject): information about the internal manifest.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/src_state/api.py#36)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/src_state/api.py#40)(self):**
 
 The "workspace" checkout path.
 

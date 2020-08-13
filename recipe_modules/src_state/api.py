@@ -22,6 +22,10 @@ There are two classes of properties in this module.
     the changes completely.
 """
 
+from google.protobuf.json_format import MessageToDict
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+import json
 from recipe_engine import recipe_api
 from . import common
 
@@ -85,7 +89,12 @@ class SrcStateApi(recipe_api.RecipeApi):
     Args:
       gitiles_commit (GitilesCommit): The value to use.
     """
-    self._gitiles_commit = gitiles_commit
+    if gitiles_commit != self._gitiles_commit:
+      with self.m.step.nest('update src_state.gitiles_commit'):
+        step = self.m.step('set gitiles_commit', cmd=None)
+        step.presentation.properties['commit'] = MessageToDict(gitiles_commit or
+                                                               GitilesCommit())
+        self._gitiles_commit = gitiles_commit
 
   @property
   def gerrit_changes(self):
@@ -108,4 +117,11 @@ class SrcStateApi(recipe_api.RecipeApi):
     Args:
       gerrit_changes (list[GerritChanges]): The gitiles host.
     """
-    self._gerrit_changes = gerrit_changes
+    if ((self._gerrit_changes is None and gerrit_changes is not None) or
+        list(self.gerrit_changes) != gerrit_changes):
+      with self.m.step.nest('update src_state.gerrit_changes'):
+        step = self.m.step('set gerrit_changes', cmd=None)
+        step.presentation.properties['changes'] = json.dumps(
+            '' if gerrit_changes is None else
+            [MessageToDict(x) for x in gerrit_changes])
+        self._gerrit_changes = gerrit_changes

@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/path',
+    'recipe_engine/step',
 ]
 
 # This module is intended to be something that any of our modules can depend on

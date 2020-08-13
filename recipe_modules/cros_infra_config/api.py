@@ -324,14 +324,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       changes = extra_changes + [x for x in changes if x not in extra_changes]
       changed = True
 
-    if changed:
-      # Log what we chose to use (rather than what we were given.)
-      step = self.m.step('repo state', cmd=None)
-      step.presentation.properties['commit'] = json_format.MessageToDict(commit)
-      step.presentation.properties['changes'] = json.dumps(
-          [json_format.MessageToDict(x) for x in changes])
-
-    # Record the decision for later.
+    # Record the decision for later.  Saving the values in src_state will log
+    # what we chose to use (rather than what we were given.)
     self.m.src_state.gitiles_commit = commit
     self.m.src_state.gerrit_changes = changes or []
 

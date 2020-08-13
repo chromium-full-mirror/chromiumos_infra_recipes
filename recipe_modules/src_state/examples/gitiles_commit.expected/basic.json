@@ -1,5 +1,29 @@
 [
   {
+    "cmd": [],
+    "name": "update src_state.gitiles_commit"
+  },
+  {
+    "cmd": [],
+    "name": "update src_state.gitiles_commit.set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"host\", \"id\": \"SHA\", \"project\": \"project\", \"ref\": \"refs/heads/foo\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update src_state.gitiles_commit (2)"
+  },
+  {
+    "cmd": [],
+    "name": "update src_state.gitiles_commit (2).set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@commit@{}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

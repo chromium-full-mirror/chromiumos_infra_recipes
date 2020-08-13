@@ -40,9 +40,9 @@ def RunSteps(api, properties):
   # configure_builder even though we don't have a builder config.
   commit = api.src_state.gitiles_commit
   if not commit.project:
-    commit = (
-        api.src_state.external_manifest if properties.use_external_manifest else
-        api.src_state.internal_manifest)
+    commit = (api.src_state.external_manifest
+              if properties.use_external_manifest else
+              api.src_state.internal_manifest).as_gitiles_commit_proto
   api.cros_infra_config.configure_builder(commit, api.src_state.gerrit_changes)
 
   if not properties.manifest_groups:

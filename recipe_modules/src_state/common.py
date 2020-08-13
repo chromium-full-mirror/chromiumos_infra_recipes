@@ -33,6 +33,9 @@ class ManifestProject(object):
     relpath (str): The location of the source tree, relative to the
       workspace_path.
     path (Path): The checked out source tree.
+    url (str): The url for the project.
+    as_gitiles_commit_proto (GitilesCommit): The GitilesCommit for this branch
+      of the manifest.
   """
 
   def __init__(self, host, project, relpath, workspace_path, ref=None,
@@ -48,6 +51,14 @@ class ManifestProject(object):
 
   def __str__(self):
     return self.url
+
+  def __eq__(self, other):
+    """Compare for equality."""
+    # There are several attributes that are redundant:
+    # - host, project: url handles these.
+    # - relpath: path handles this.
+    return (self.url == other.url and self.path == other.path and
+            self.ref == other.ref and self.gerrit_host == other.gerrit_host)
 
   @property
   def as_gitiles_commit_proto(self):

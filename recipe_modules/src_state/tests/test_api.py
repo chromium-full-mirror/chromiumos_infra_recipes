@@ -22,7 +22,7 @@ def RunSteps(api):
 
   manifest = api.src_state.external_manifest
   test_manifest = api.src_state.test_api.external_manifest
-  api.assertions.assertEqual(manifest.url, test_manifest.url)
+  api.assertions.assertEqual(manifest, test_manifest)
 
 
 def GenTests(api):

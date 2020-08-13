@@ -34,6 +34,9 @@ def RunSteps(api):
                     ref='refs/heads/master'),
       internal_manifest.as_gitiles_commit_proto)
 
+  api.assertions.assertNotEqual(internal_manifest,
+                                api.src_state.external_manifest)
+
 
 def GenTests(api):
   yield api.test('basic', api.test_util.test_build().build)
