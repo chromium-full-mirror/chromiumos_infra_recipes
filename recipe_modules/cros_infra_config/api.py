@@ -298,7 +298,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       if not commit or not commit.project:
         commit = common_pb2.GitilesCommit(
             host='chrome-internal.googlesource.com',
-            project='chromeos/manifest-internal', ref='refs/heads/snapshot')
+            project='chromeos/manifest-internal',
+            ref='refs/heads/{}snapshot'.format(
+                'staging-' if self._is_staging else ''))
       # We will need commit.id later.  Add it if necessary.
       if not commit.id:
         test_data = dict(
