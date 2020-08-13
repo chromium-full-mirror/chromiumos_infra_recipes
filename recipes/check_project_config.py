@@ -20,14 +20,12 @@ PROPERTIES = CheckProjectConfigProperties
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/file',
     'recipe_engine/properties',
     'recipe_engine/path',
     'recipe_engine/python',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_source',
-    'easy',
     'gerrit',
     'gs_step_logging',
     'iterutils',
@@ -71,34 +69,8 @@ def RunSteps(api, properties):
           properties.manifest_groups,
           local_manifest,
           api.cros_source.workspace_path):
-
-    project_path = api.context.cwd.join(
-        properties.project_config_bundle_checkout_path.repo_checkout_path,
-        properties.project_config_bundle_checkout_path.config_path)
-
-    old_project_path = api.context.cwd.join(
-        properties.project_config_bundle_checkout_path.repo_checkout_path,
-        properties.project_config_bundle_checkout_path.config_path + '.old')
-
-    api.file.copy('copy old config.jsonproto', project_path, old_project_path)
-
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
                                      fail_not_applicable=True)
-
-    with api.step.nest('check for config.jsonproto diff') as pres:
-      diff = api.easy.stdout_step(
-          'diff config.jsonproto',
-          ['diff', str(old_project_path),
-           str(project_path)], ok_ret=(0, 1))
-      if diff:
-        pres.step_text = 'diff'
-        pres.logs['diff'] = diff
-        _add_diff_comments(
-            api, diff,
-            properties.project_config_bundle_checkout_path.repo_checkout_path,
-            api.buildbucket.build.input.gerrit_changes)
-      else:
-        pres.step_text = 'no diff'
 
     chromiumos_config_path = properties.chromiumos_config_checkout_path
 
@@ -129,6 +101,10 @@ def RunSteps(api, properties):
         properties.program_config_bundle_checkout_path.repo_checkout_path,
         properties.program_config_bundle_checkout_path.config_path)
 
+    project_path = api.context.cwd.join(
+        properties.project_config_bundle_checkout_path.repo_checkout_path,
+        properties.project_config_bundle_checkout_path.config_path)
+
     factory_dir = api.context.cwd.join(
         properties.project_config_bundle_checkout_path.repo_checkout_path,
         properties.factory_dir,
@@ -155,16 +131,6 @@ def RunSteps(api, properties):
       )
 
 
-def _add_diff_comments(api, diff, project_path, gerrit_changes):
-  # Only add the diff comment on the gerrit CL for the project with the diff.
-  info = api.repo.project_info(project_path)
-  for change in gerrit_changes:
-    if info.name == str(change.project):
-      api.repo.start('check_project_config', projects=[info.name])
-      comment = 'config.jsonproto diff introduced by change:\n\n{}'.format(diff)
-      api.gerrit.add_change_comment(change, comment)
-
-
 def GenTests(api):
 
   def properties_dict(extra_props={}):
@@ -186,7 +152,7 @@ def GenTests(api):
             ),
         'project_config_bundle_checkout_path':
             ConfigBundleCheckoutPath(
-                repo_checkout_path='project1',
+                repo_checkout_path='src/project/testproject',
                 config_path='generated/config.binaryproto',
             ),
         'logging_gs_prefix':
@@ -229,8 +195,6 @@ def GenTests(api):
       # The input GerritChange is in a checked out project.
       checked_out_projects(api),
       check_constraints_with_output(),
-      api.step_data('check for config.jsonproto diff.diff config.jsonproto',
-                    stdout=api.raw_io.output('big diff')),
       api.post_process(post_process.StepCommandContains,
                        'ensure synced checkout.repo init',
                        ['--groups', 'partner-config']),
