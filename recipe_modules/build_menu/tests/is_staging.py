@@ -30,7 +30,7 @@ def RunSteps(api, properties):
     kwargs['is_staging'] = is_staging
 
   with api.build_menu.configure_builder(**kwargs) as config:
-    api.easy.set_property_step('is_staging', str(api.build_menu.is_staging))
+    api.easy.set_properties_step(is_staging=str(api.build_menu.is_staging))
     if properties.expected_is_staging:
       api.assertions.assertTrue(api.build_menu.is_staging)
     else:

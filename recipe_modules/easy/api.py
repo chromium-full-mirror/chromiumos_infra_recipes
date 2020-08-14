@@ -12,19 +12,27 @@ from google.protobuf import json_format
 class EasyApi(recipe_api.RecipeApi):
   """A module for easy steps."""
 
-  def set_property_step(self, property_name, value, step_name=None):
-    """An empty step to set a property in output.properties.
+  def set_properties_step(self, step_name=None, **kwargs):
+    """An empty step to set properties in output.properties.
 
     Args:
-      property_name (str): The name of the property.
-      value: The value of the property to be set. Can be
-        int, float, list, or dict.
       step_name (str): The name of the step.
+      kwargs: Keyword arguments to set as properties, key is property name
+          and value is property value. Key must be a string, value may be
+          int, float, list, or dict.
+
+    Returns:
+      See 'step.__call__'.
     """
     if not step_name:
-      step_name = 'set ' + property_name
+      if len(kwargs) == 1:
+        step_name = 'set ' + kwargs.keys()[0]
+      else:
+        step_name = 'set properties'
     step = self.m.step(step_name, cmd=None)
-    step.presentation.properties[property_name] = value
+    for k, v in kwargs.iteritems():
+      step.presentation.properties[k] = v
+    return step
 
   def step(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None,
            **kwargs):

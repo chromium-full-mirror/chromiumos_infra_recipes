@@ -1727,13 +1727,13 @@ Args:
   private (bool): Whether or not the target prebuilts are private.
 ### *recipe_modules* / [cros\_relevance](/recipe_modules/cros_relevance)
 
-[DEPS](/recipe_modules/cros_relevance/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_relevance/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#240)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#239)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -1747,7 +1747,7 @@ Args:
 Returns:
   (bool): Whether there are toolchain_cls applied.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#269)(self, sysroot, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#268)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -1810,7 +1810,7 @@ Args:
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#215)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#214)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -2408,17 +2408,20 @@ APIs for easy steps.
 
 A module for easy steps.
 
-&mdash; **def [set\_property\_step](/recipe_modules/easy/api.py#15)(self, property_name, value, step_name=None):**
+&mdash; **def [set\_properties\_step](/recipe_modules/easy/api.py#15)(self, step_name=None, \*\*kwargs):**
 
-An empty step to set a property in output.properties.
+An empty step to set properties in output.properties.
 
 Args:
-  property_name (str): The name of the property.
-  value: The value of the property to be set. Can be
-    int, float, list, or dict.
   step_name (str): The name of the step.
+  kwargs: Keyword arguments to set as properties, key is property name
+      and value is property value. Key must be a string, value may be
+      int, float, list, or dict.
 
-&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#81)(self, name, cmd, step_test_data=None, test_stdout=None, ignore_exceptions=False, \*\*kwargs):**
+Returns:
+  See 'step.__call__'.
+
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#89)(self, name, cmd, step_test_data=None, test_stdout=None, ignore_exceptions=False, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data deserialized from JSON.
 
@@ -2432,7 +2435,7 @@ Args:
 Returns:
   dict|list: JSON-deserialized stdout data.
 
-&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#109)(self, name, cmd, message_type, test_output=None, \*\*kwargs):**
+&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#117)(self, name, cmd, message_type, test_output=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 
@@ -2446,7 +2449,7 @@ Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 Returns:
   message_type: JSON-pb deserialized proto message.
 
-&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#57)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#65)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data.
 
@@ -2460,7 +2463,7 @@ Args:
 Returns:
   str: Raw stdout data.
 
-&mdash; **def [step](/recipe_modules/easy/api.py#29)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
+&mdash; **def [step](/recipe_modules/easy/api.py#37)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
 
 Convenience features on top of the normal 'step' call.
 
@@ -4526,11 +4529,11 @@ Returns:
 
 [DEPS](/recipe_modules/tast_exec/__init__.py#6): [easy](#recipe_modules-easy), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to execute tast commands.
 
-&mdash; **def [run](/recipe_modules/tast_exec/api.py#18)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path):**
+&mdash; **def [run](/recipe_modules/tast_exec/api.py#17)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path):**
 
 Run tast tests.
 

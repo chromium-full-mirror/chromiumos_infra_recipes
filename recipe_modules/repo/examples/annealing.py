@@ -43,8 +43,8 @@ def RunSteps(api, properties):
     api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
                                     manifest_url, init_opts=init_opts,
                                     sync_opts=sync_opts, projects=projects)
-    api.easy.set_property_step('commit',
-                               MessageToDict(api.repo.manifest_gitiles_commit))
+    api.easy.set_properties_step(
+        commit=MessageToDict(api.repo.manifest_gitiles_commit))
 
     manifest_data = ('<manifest></manifest>' if not properties.manifest_data
                      else properties.manifest_data.encode('utf-8'))

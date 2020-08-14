@@ -132,7 +132,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     # TODO(dhanyaganesh): Figure out why this is failing.
     #if len(tests) != len(set(tests)):
     #      raise ValueError('test names must be unique, found: %r' % tests)
-    self.m.easy.set_property_step(PASSED_TESTS_KEY, list(set(tests)))
+    self.m.easy.set_properties_step(**{PASSED_TESTS_KEY: list(set(tests))})
 
   def get_snapshot_builds(self, snapshot, builder_list=None, statuses=None,
                           patches=None):

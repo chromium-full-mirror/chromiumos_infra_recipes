@@ -335,6 +335,6 @@ class ChromeApi(recipe_api.RecipeApi):
     }
     presentation.step_text = (' '.join(k for k, v in csnr.items() if v) or
                               'not needed')
-    self.m.easy.set_property_step('chrome_source_reasons', csnr)
+    self.m.easy.set_properties_step(chrome_source_reasons=csnr)
 
     return response.needs_chrome_source

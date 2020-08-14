@@ -57,10 +57,10 @@ def RunSteps(api):
         bot_stats.append(bot_count)
         task_stats.append(task_count)
 
-    api.easy.set_property_step('bot_stats', bot_stats)
-    api.easy.set_property_step('task_stats', task_stats)
+    props = {'bot_stats': bot_stats, 'task_stats': task_stats}
     if pend_stats:
-      api.easy.set_property_step('pend_stats', pend_stats)
+      props['pend_stats'] = pend_stats
+    api.easy.set_properties_step(**props)
 
 
 def _bind_dimensions(dimensions):

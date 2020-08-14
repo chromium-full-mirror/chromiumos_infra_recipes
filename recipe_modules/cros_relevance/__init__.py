@@ -12,4 +12,5 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'repo',
+    'easy',
 ]

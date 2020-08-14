@@ -367,8 +367,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     build = self.m.buildbucket.build
     with self.m.step.nest(name) as presentation:
-      self.m.easy.set_property_step('recipes_git_revision',
-                                    self.package_git_revision)
+      self.m.easy.set_properties_step(
+          recipes_git_revision=self.package_git_revision)
 
       config = self.config
       if config:

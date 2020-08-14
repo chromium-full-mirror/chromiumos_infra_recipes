@@ -395,8 +395,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                   'files': files
               })
 
-      self.m.easy.set_property_step('published', published,
-                                    step_name='publish artifact GS paths')
+      self.m.easy.set_properties_step(published=published,
+                                      step_name='publish artifact GS paths')
 
       return links
 
@@ -470,8 +470,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           else:
             raise
 
-      self.m.easy.set_property_step(
-          'artifacts', {
+      self.m.easy.set_properties_step(
+          artifacts={
               'gs_bucket': gs_bucket,
               'gs_path': gs_path,
               'files_by_artifact': files_by_artifact,
@@ -579,9 +579,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         ret = self._prepare_for_build_100(chroot, sysroot, artifacts_info,
                                           test_data=test_data)
 
-      self.m.easy.set_property_step(
-          'artifact_prep',
-          json_format.MessageToDict(
+      self.m.easy.set_properties_step(
+          artifact_prep=json_format.MessageToDict(
               artifacts.PrepareForBuildResponse(build_relevance=ret)),
           step_name='set artifact_prep')
       if ret == artifacts.PrepareForBuildResponse.NEEDED:

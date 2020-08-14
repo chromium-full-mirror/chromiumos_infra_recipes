@@ -138,11 +138,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                                            dep_graph, test_value=not test_value)
       # Do this in a step instead of a presentaion to avoid multiple lines in
       # the output properties (in led jobs).
-      step = self.m.step('set properties', cmd=None)
       # TODO(seanabraham): stop writing 'pointless_build' property once Plx
       # scripts have switched over to 'relevant_build'.
-      step.presentation.properties['pointless_build'] = not relevant
-      step.presentation.properties['relevant_build'] = relevant
+      step = self.m.easy.set_properties_step(pointless_build=not relevant,
+                                             relevant_build=relevant)
       step.presentation.step_text = ('build is relevant'
                                      if relevant else 'build is irrelevant')
       return not relevant

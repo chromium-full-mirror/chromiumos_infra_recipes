@@ -37,7 +37,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
     return self._test_bisection_count
 
   def _set_bisect_builder(self, builder):
-    self.m.easy.set_property_step('BISECT_BUILDER', builder)
+    self.m.easy.set_properties_step(BISECT_BUILDER=builder)
 
   def set_bisect_builder(self, build_target_name):
     """Sets the BISECT_BUILDER output property for the build target recipe.
@@ -109,7 +109,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
       return
     payload = self._create_failures_payload(
         failed_packages, failed_step, needs_bisection)
-    self.m.easy.set_property_step('compile_failures', payload)
+    self.m.easy.set_properties_step(compile_failures=payload)
 
   def set_test_failures(self, hw_results, needs_bisection):
     """Outputs the failed hardware tests, if any, for FindIt consumption.
@@ -147,7 +147,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
           'hw_test_failures': hw_test_failures,
           'needs_bisection': needs_bisection,
       }
-      self.m.easy.set_property_step('test_failures', payload)
+      self.m.easy.set_properties_step(test_failures=payload)
 
   def get_packages(self):
     """Returns packages to build as specified by FindIt or empty list.

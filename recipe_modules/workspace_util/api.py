@@ -149,7 +149,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
           gitiles_commit=gitiles_commit, gerrit_changes=gerrit_changes,
           chroot=chroot, test_value=test_value)
       self.checked_changes.extend(to_check)
-      self.m.easy.set_property_step('testing_toolchain', changed)
+      self.m.easy.set_properties_step(testing_toolchain=changed)
       detect.step_text = 'change detected' if changed else 'no change'
       return changed
 

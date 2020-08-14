@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
-# found in the LICENSE file
+# found in the LICENSE file.
 
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
@@ -51,8 +50,8 @@ class TastExecApi(recipe_api.RecipeApi):
       failures += retry_failures
       failed_test_cases += retry_tcs
 
-    self.m.easy.set_property_step('all_test_cases', all_test_cases)
-    self.m.easy.set_property_step('failed_test_cases', failed_test_cases)
+    self.m.easy.set_properties_step(all_test_cases=all_test_cases,
+                                    failed_test_cases=failed_test_cases)
     self.m.tast_results.record_logs(SYS_LOG_DIR)
 
     return failures, empty_result
