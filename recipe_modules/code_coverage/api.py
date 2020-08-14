@@ -35,7 +35,11 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     result = self.m.python.succeeding_step('Set builder output properties', '')
     result.presentation.properties['coverage_metadata_gs_paths'] = (
         self._coverage_metadata_gs_paths)
+    result.presentation.properties['mimic_builder_names'] = [
+        self.m.buildbucket.build.builder.builder
+    ]
     result.presentation.properties['coverage_gs_bucket'] = self._gs_bucket
+    result.presentation.properties['coverage_is_presubmit'] = False
 
   def process_coverage_data(self, build_target):
     """Processes the coverage data for metadata."""

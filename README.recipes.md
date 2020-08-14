@@ -954,7 +954,7 @@ A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#40)(self, build_target):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#44)(self, build_target):**
 
 Processes the coverage data for metadata.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
