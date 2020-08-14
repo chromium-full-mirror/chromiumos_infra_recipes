@@ -207,7 +207,8 @@ def _is_non_empty_proto(p):
 def push_build_id(api, config):
   with api.step.nest('publish build ID') as step:
     if api.buildbucket.build.id and config.pubsub.topic and config.pubsub.project:
-      api.result_flow.publish(config.pubsub.project, config.pubsub.topic)
+      api.result_flow.publish(project_id=config.pubsub.project,
+                              topic_id=config.pubsub.topic, build_type='ctp')
     else:
       step.presentation.step_summary_text = (
           'decision: skip pubulishing build ID')

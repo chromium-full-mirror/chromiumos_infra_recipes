@@ -59,17 +59,33 @@ class ResultFlowCommand(recipe_api.RecipeApi):
       presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
-  def publish(self, project_id, topic_id):
+  def publish(self, project_id, topic_id, build_type,
+              should_poll_for_completion=False, parent_uid=""):
     """Run the result_flow to publish build's own build ID to Pubsub.
 
     Args:
       * project_id (str): The project name
       * topic_id (str): The topic name
+      * build_type (str): Allowed values are "ctp" and "test_runner"
+      * should_poll_for_completion (bool): If true, the consumers should not ACK the message until the build is complete.
+      * parent_uid (str): An attribute placed inside the message
     Returns:
       JSON proto of test_platform.result_flow.PublishResponse
     """
     req = PublishRequest(build_id=self.m.buildbucket.build.id,
-                         ctp=PubSubConfig(project=project_id, topic=topic_id))
+                         should_poll_for_completion=should_poll_for_completion,
+                         parent_uid=parent_uid)
+    pubsub = PubSubConfig(project=project_id, topic=topic_id)
+    if build_type == 'ctp':
+      req.ctp.project = project_id
+      req.ctp.topic = topic_id
+    elif build_type == 'test_runner':
+      req.test_runner.project = project_id
+      req.test_runner.topic = topic_id
+    else:
+      raise ValueError(
+          'Unknown build_type %s, the only supported values are "ctp" and "test_runner"'
+          % build_type)
     return self._run('publish', req, PublishRequest, PublishResponse)
 
   def pipe_ctp_data(self, request):

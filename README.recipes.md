@@ -4153,7 +4153,7 @@ Prints the current version information of repo.
 
 Module for issuing result flow commands
 
-&mdash; **def [pipe\_ctp\_data](/recipe_modules/result_flow/api.py#75)(self, request):**
+&mdash; **def [pipe\_ctp\_data](/recipe_modules/result_flow/api.py#91)(self, request):**
 
 Pipe CTP data to TestPlanRun table in BQ.
 
@@ -4162,7 +4162,7 @@ Args:
 Returns:
   JSON proto of test_platform.result_flow.CTPResponse
 
-&mdash; **def [pipe\_test\_runner\_data](/recipe_modules/result_flow/api.py#85)(self, request):**
+&mdash; **def [pipe\_test\_runner\_data](/recipe_modules/result_flow/api.py#101)(self, request):**
 
 Pipe test runner data to TestRun/TestCase tables in BQ.
 
@@ -4171,13 +4171,16 @@ Args:
 Returns:
   JSON proto of test_platform.result_flow.TestRunnerResponse
 
-&mdash; **def [publish](/recipe_modules/result_flow/api.py#62)(self, project_id, topic_id):**
+&mdash; **def [publish](/recipe_modules/result_flow/api.py#62)(self, project_id, topic_id, build_type, should_poll_for_completion=False, parent_uid=''):**
 
 Run the result_flow to publish build's own build ID to Pubsub.
 
 Args:
   * project_id (str): The project name
   * topic_id (str): The topic name
+  * build_type (str): Allowed values are "ctp" and "test_runner"
+  * should_poll_for_completion (bool): If true, the consumers should not ACK the message until the build is complete.
+  * parent_uid (str): An attribute placed inside the message
 Returns:
   JSON proto of test_platform.result_flow.PublishResponse
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
@@ -6230,7 +6233,7 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#260)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#261)(api, properties):**
 
 &mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#123)(api, requests):**
 
@@ -6242,7 +6245,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#216)(api, requests, enumerations, config):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#217)(api, requests, enumerations, config):**
 
 Execute request in the correct backend.
 
@@ -6251,15 +6254,15 @@ Args:
   enumerations: {tag: EnumerationResponse} dict.
   config: test_platform.Config instance.
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#279)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#280)(api, requests, responses):**
 
 &mdash; **def [push\_build\_id](/recipes/test_platform/cros_test_platform.py#207)(api, config):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#376)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#377)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#444)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#445)(task_results):**
 
 &mdash; **def [split](/recipes/test_platform/cros_test_platform.py#165)(api, requests, config):**
 
@@ -6279,7 +6282,7 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#319)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#320)(api, enumerations, responses):**
 
 &mdash; **def [validate\_requests](/recipes/test_platform/cros_test_platform.py#60)(api, requests):**
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)

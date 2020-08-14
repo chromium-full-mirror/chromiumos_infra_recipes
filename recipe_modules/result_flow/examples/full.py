@@ -30,7 +30,12 @@ def RunSteps(api):
 
   with api.assertions.assertRaises(TypeError):
     api.result_flow.publish()
-  api.result_flow.publish('foo-proj', 'foo-topic')
+  with api.assertions.assertRaises(ValueError):
+    api.result_flow.publish('foo-proj', 'foo-topic', 'invalid-build-type')
+  api.result_flow.publish('foo-proj', 'foo-topic', 'ctp')
+  api.result_flow.publish('foo-proj', 'foo-topic', 'test_runner',
+                          parent_uid='foo-parent-uid',
+                          should_poll_for_completion=True)
 
 
 def GenTests(api):

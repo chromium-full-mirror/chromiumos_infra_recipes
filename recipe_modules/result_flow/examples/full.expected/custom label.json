@@ -132,6 +132,39 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "call `result_flow` (6)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"123456789\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"foo-parent-uid\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/result_flow/result_flow",
+      "publish",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "name": "call `result_flow` (6).publish",
+    "stdin": "{\n  \"buildId\": \"123456789\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true, \n  \"parentUid\": \"foo-parent-uid\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
