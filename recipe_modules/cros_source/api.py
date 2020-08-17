@@ -51,8 +51,9 @@ class CrosSourceApi(recipe_api.RecipeApi):
   def cache_path(self):
     """The cached checkout path.
 
-    This is the cached version of source, usually updated once at the beginning
-    of a build and then mounted into the master and/or workspace paths.
+    This is the cached version of source (the internal manifest checkout),
+    usually updated once at the beginning of a build and then mounted into the
+    master and/or workspace paths.
     """
     return self.m.path['cache'].join('chromiumos')
 
@@ -88,16 +89,24 @@ class CrosSourceApi(recipe_api.RecipeApi):
       * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
       current value.
     """
+    cache_path = cache_path_override or self.cache_path
+    manifest_url = manifest_url or self.m.src_state.internal_manifest.url
+    if (cache_path == self.cache_path and
+        manifest_url != self.m.src_state.internal_manifest.url):
+      with self.m.step.nest('override manifest url') as presentation:
+        presentation.step_text = (
+            'overriding manifest_url {} because of cache_path {}'.format(
+                manifest_url, str(cache_path)))
+      manifest_url = self.m.src_state.internal_manifest.url
+
     gitiles_commit = gitiles_commit or self.m.src_state.gitiles_commit
     gitiles_commit = (
         gitiles_commit if gitiles_commit.host else
         self.m.src_state.internal_manifest.as_gitiles_commit_proto)
-    manifest_url = manifest_url or self.m.src_state.internal_manifest.url
     init_opts = init_opts or {}
     if is_staging:
       init_opts.update(STAGING_INIT_OPTS)
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
-    cache_path = cache_path_override or self.cache_path
     self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
                                        init_opts=init_opts, sync_opts=sync_opts,
                                        projects=projects)

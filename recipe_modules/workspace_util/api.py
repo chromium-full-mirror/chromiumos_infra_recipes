@@ -66,9 +66,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     """
     assert self.m.cros_infra_config.is_configured, 'builder not configured'
     commit = commit or self.m.src_state.gitiles_commit
-    self.m.cros_source.ensure_synced_cache(
-        is_staging=staging, gitiles_commit=commit,
-        manifest_url='https://{}/{}'.format(commit.host, commit.project))
+    self.m.cros_source.ensure_synced_cache(is_staging=staging,
+                                           gitiles_commit=commit)
     self.m.cros_source.sync_snapshot(commit)
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',

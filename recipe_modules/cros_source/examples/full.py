@@ -58,53 +58,30 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def module_properties(props):
-    """Return step_test_data for CrosSourceProperties."""
-    return api.properties(**{'$chromeos/cros_source': props})
+  yield api.cros_source.test('basic',
+                             api.post_check(post_process.StatusSuccess))
 
-  def test(name, *args, **kwargs):
-    """Create a test with properties.
-
-    Args:
-      args (list): args for api.test()
-      kwargs (dict): kwargs for api.test_util.test_build.  Defaults applied:
-        - cq = True.
-        - revision = arbitrary sha.
-
-    Returns:
-      (TestData) the build with cros_source properties included.
-    """
-    kwargs = kwargs or {}
-    kwargs.setdefault('cq', True)
-    kwargs.setdefault('revision', '2d72510e447ab60a9728aeea2362d8be2cbd7789')
-    kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
-
-    return api.test(name, api.test_util.test_build(**kwargs).build, *args)
-
-  yield test('basic', api.post_check(post_process.StatusSuccess))
-
-  yield test(
+  yield api.cros_source.test(
       'merge-commit-fails',
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
                     api.raw_io.stream_output('commitsha1 commitsha2')),
       api.post_check(post_process.StatusFailure))
 
-  yield test(
+  yield api.cros_source.test(
       'cherry-picks',
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
                     api.raw_io.stream_output('commitsha1')),
       api.post_check(post_process.StatusSuccess))
 
-  yield test(
+  yield api.cros_source.test(
       'with-custom-snapshot-isolate',
-      module_properties(
-          CrosSourceProperties(
-              snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-                  isolated_hash='xxx',
-                  isolate_server='http://server.com',
-              ),
-          )),
       api.properties(FullProperties(expected_snapshot_isolated_hash='xxx')),
-      api.post_check(post_process.StatusSuccess))
+      api.post_check(post_process.StatusSuccess),
+      cros_source_properties=CrosSourceProperties(
+          snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+              isolated_hash='xxx',
+              isolate_server='http://server.com',
+          ),
+      ))

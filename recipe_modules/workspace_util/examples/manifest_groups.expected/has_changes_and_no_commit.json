@@ -178,6 +178,13 @@
   },
   {
     "cmd": [],
+    "name": "override manifest url",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@overriding manifest_url https://chromium.googlesource.com/chromiumos/manifest because of cache_path [CACHE]/chromiumos@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "ensure synced checkout"
   },
   {
@@ -237,7 +244,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chromium.googlesource.com/chromiumos/manifest",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
       "--groups",
