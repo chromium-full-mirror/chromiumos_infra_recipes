@@ -13,8 +13,6 @@ from PB.test_platform.steps.enumeration import \
 from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitRequests, SchedulerTrafficSplitResponses
 from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
-from PB.test_platform.steps.compute_backfill import \
-  ComputeBackfillRequests, ComputeBackfillResponses
 
 # This exit code is returned by cros_test_platform runs that had an error but
 # produced a response anyway.
@@ -116,28 +114,6 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     """
     return self._run('skylab-execute', request, ExecuteRequests,
                      ExecuteResponses)
-
-  def autotest_execute(self, request):
-    """Execute work via `autotest-execute` subcommand.
-
-    Args:
-      request: a ExecuteRequest.
-
-    Returns: ExecuteResponse.
-    """
-    return self._run('autotest-execute', request, ExecuteRequests,
-                     ExecuteResponses)
-
-  def compute_backfill(self, request):
-    """Compute the backfill request for this build
-
-    Args:
-      request: a ComputeBackfillRequests.
-
-    Returns: ComputeBackfillResponses.
-    """
-    return self._run('compute-backfill', request, ComputeBackfillRequests,
-                     ComputeBackfillResponses)
 
   def execute_luciexe(self, request):
     """Execute work via `luciexe` binary for cros_test_platform

@@ -17,8 +17,6 @@ from PB.test_platform.steps.enumeration import \
 from PB.test_platform.steps.scheduler_traffic_split import \
   SchedulerTrafficSplitRequests, SchedulerTrafficSplitResponses
 from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
-from PB.test_platform.steps.compute_backfill import \
-  ComputeBackfillRequests, ComputeBackfillResponses
 
 
 def RunSteps(api):
@@ -29,11 +27,7 @@ def RunSteps(api):
   with api.assertions.assertRaises(ValueError):
     api.cros_test_platform.skylab_execute(None)
   with api.assertions.assertRaises(ValueError):
-    api.cros_test_platform.autotest_execute(None)
-  with api.assertions.assertRaises(ValueError):
     api.cros_test_platform.execute_luciexe(None)
-  with api.assertions.assertRaises(ValueError):
-    api.cros_test_platform.compute_backfill(None)
 
   with api.step.nest('callsite-enumerate'):
     api.assertions.assertEqual(
@@ -51,20 +45,10 @@ def RunSteps(api):
         ExecuteResponses(),
         api.cros_test_platform.skylab_execute(ExecuteRequests()),
     )
-  with api.step.nest('callsite-autotest-execute'):
-    api.assertions.assertEqual(
-        ExecuteResponses(),
-        api.cros_test_platform.autotest_execute(ExecuteRequests()),
-    )
   with api.step.nest('callsite-execute-luciexe'):
     api.assertions.assertEqual(
         ExecuteResponses(),
         api.cros_test_platform.execute_luciexe(ExecuteRequests()),
-    )
-  with api.step.nest('callsite-compute-backfill'):
-    api.assertions.assertEqual(
-        ComputeBackfillResponses(),
-        api.cros_test_platform.compute_backfill(ComputeBackfillRequests()),
     )
 
 

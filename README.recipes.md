@@ -2264,29 +2264,11 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#9): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [autotest\_execute](/recipe_modules/cros_test_platform/api.py#120)(self, request):**
-
-Execute work via `autotest-execute` subcommand.
-
-Args:
-  request: a ExecuteRequest.
-
-Returns: ExecuteResponse.
-
-&mdash; **def [compute\_backfill](/recipe_modules/cros_test_platform/api.py#131)(self, request):**
-
-Compute the backfill request for this build
-
-Args:
-  request: a ComputeBackfillRequests.
-
-Returns: ComputeBackfillResponses.
-
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#86)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#84)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -2295,7 +2277,7 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#142)(self, request):**
+&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#118)(self, request):**
 
 Execute work via `luciexe` binary for cros_test_platform
 
@@ -2308,7 +2290,7 @@ Args:
 
 Returns: ExecuteResponses.
 
-&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#97)(self, request):**
+&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#95)(self, request):**
 
 Determine scheduler via `scheduler-traffic-split` subcommand.
 
@@ -2317,7 +2299,7 @@ Args:
 
 Returns: SchedulerTrafficSplitResponses.
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#109)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#107)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 
@@ -5540,7 +5522,7 @@ For more details on the input properties, see cl_factory.proto.
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#22)(api):**
 ### *recipes* / [cros\_test\_postprocess:examples/full](/recipe_modules/cros_test_postprocess/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_postprocess/examples/full.py#6): [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/path][recipe_engine/recipe_modules/path]
