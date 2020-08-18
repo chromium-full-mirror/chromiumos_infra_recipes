@@ -10,16 +10,26 @@
     "cmd": [],
     "name": "call binary (2)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (2).ensure cros_test_platform",
+    "name": "call binary (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "call binary (4)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure cros_test_platform"
   },
   {
     "cmd": [
@@ -35,9 +45,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "call binary (2).ensure cros_test_platform.ensure_installed",
+    "name": "ensure cros_test_platform.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -53,9 +63,36 @@
   },
   {
     "cmd": [],
-    "name": "call binary (2).pre-execution debug data",
+    "name": "call binary (5)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call binary (6)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "callsite-enumerate"
+  },
+  {
+    "cmd": [],
+    "name": "callsite-enumerate.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "callsite-enumerate.call binary.pre-execution debug data",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform enumerate -input_json /dev/stdin -output_json /dev/stdout@@@",
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{}@@@",
@@ -71,32 +108,30 @@
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "call binary (2).enumerate",
+    "name": "callsite-enumerate.call binary.enumerate",
     "stdin": "{}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (3)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "callsite-scheduler-traffic-split"
   },
   {
     "cmd": [],
-    "name": "call binary (4)",
+    "name": "callsite-scheduler-traffic-split.call binary",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (4).pre-execution debug data",
+    "name": "callsite-scheduler-traffic-split.call binary.pre-execution debug data",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform scheduler-traffic-split -input_json /dev/stdin -output_json /dev/stdout -rip-cautotest@@@",
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{}@@@",
@@ -113,32 +148,30 @@
       "/dev/stdout",
       "-rip-cautotest"
     ],
-    "name": "call binary (4).scheduler-traffic-split",
+    "name": "callsite-scheduler-traffic-split.call binary.scheduler-traffic-split",
     "stdin": "{}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (5)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "callsite-skylab-execute"
   },
   {
     "cmd": [],
-    "name": "call binary (6)",
+    "name": "callsite-skylab-execute.call binary",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (6).pre-execution debug data",
+    "name": "callsite-skylab-execute.call binary.pre-execution debug data",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform skylab-execute -input_json /dev/stdin -output_json /dev/stdout@@@",
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{}@@@",
@@ -154,32 +187,30 @@
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "call binary (6).skylab-execute",
+    "name": "callsite-skylab-execute.call binary.skylab-execute",
     "stdin": "{}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (7)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "callsite-autotest-execute"
   },
   {
     "cmd": [],
-    "name": "call binary (8)",
+    "name": "callsite-autotest-execute.call binary",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (8).pre-execution debug data",
+    "name": "callsite-autotest-execute.call binary.pre-execution debug data",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform autotest-execute -input_json /dev/stdin -output_json /dev/stdout@@@",
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{}@@@",
@@ -195,66 +226,25 @@
       "-output_json",
       "/dev/stdout"
     ],
-    "name": "call binary (8).autotest-execute",
+    "name": "callsite-autotest-execute.call binary.autotest-execute",
     "stdin": "{}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (9)",
+    "name": "callsite-execute-luciexe",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call binary (10)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "call binary (10).pre-execution debug data",
+    "name": "callsite-execute-luciexe.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform compute-backfill -input_json /dev/stdin -output_json /dev/stdout@@@",
-      "@@@STEP_LOG_END@cmd@@@",
-      "@@@STEP_LOG_LINE@request@{}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "compute-backfill",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout"
-    ],
-    "name": "call binary (10).compute-backfill",
-    "stdin": "{}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "call binary (11)",
-    "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "call binary (12)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@responses@{}@@@",
-      "@@@STEP_LOG_END@responses@@@"
     ]
   },
   {
@@ -269,9 +259,9 @@
       "[START_DIR]/luciexe/input.json"
     ],
     "infra_step": true,
-    "name": "call binary (12).write input",
+    "name": "callsite-execute-luciexe.call binary.write input",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@input.json@@@"
     ]
   },
@@ -294,32 +284,21 @@
       "TMPDIR": "[CLEANUP]/tmp_tmp_1"
     },
     "infra_step": true,
-    "name": "call binary (12).launch luciexe",
+    "name": "callsite-execute-luciexe.call binary.launch luciexe",
     "stdin": "\u0012\u0000",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Merge Step Error: Can't find the final build output for luciexe.@@@",
+      "@@@STEP_LOG_LINE@step.sub_build (read error)@Proto file was missing or unreadable:@@@",
+      "@@@STEP_LOG_LINE@step.sub_build (read error)@  [START_DIR]/luciexe/build.json@@@",
+      "@@@STEP_LOG_END@step.sub_build (read error)@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[START_DIR]/luciexe/output.json",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "call binary (12).read output",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@proto.output@{}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
-    ]
-  },
-  {
+    "failure": {
+      "humanReason": "Infra Failure: Step('callsite-execute-luciexe.call binary.launch luciexe') (retcode: 0)"
+    },
     "name": "$result"
   }
 ]

@@ -7,8 +7,7 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 from PB.test_platform.steps.enumeration import \
   EnumerationRequests, EnumerationResponses
 from PB.test_platform.steps.scheduler_traffic_split import \
@@ -176,8 +175,6 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
             [cmd, '-input_json', input_json, '-output_json', output_json],
             self.m.buildbucket.build,
             output_path=sub_cwd.join('build.json'),
-            step_test_data=lambda: self.m.step.test_api.sub_build(
-                build_pb2.Build(status=common_pb2.SUCCESS)),
         )
 
       responses = self.m.file.read_proto(
@@ -185,7 +182,6 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
           output_json,
           ExecuteResponses,
           'JSONPB',
-          test_proto=ExecuteResponses(),
       )
       s.logs['responses'] = [json_format.MessageToJson(responses)]
       return responses
