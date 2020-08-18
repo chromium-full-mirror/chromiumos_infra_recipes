@@ -8,6 +8,14 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.publish build ID",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.validate request",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -272,6 +280,14 @@
     "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\"\n  }, \n  \"dutId\": \"dummy-dut-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
     ]
   },
   {

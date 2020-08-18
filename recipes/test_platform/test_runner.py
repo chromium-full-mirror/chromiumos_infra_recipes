@@ -7,6 +7,7 @@
 
 import os
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusProperties
 from PB.recipe_modules.chromeos.autotest_status_parser.autotest_status_parser \
@@ -25,6 +26,7 @@ from google.protobuf import timestamp_pb2
 from posixpath import join as url_join
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -33,6 +35,7 @@ DEPS = [
     'recipe_engine/uuid',
     'autotest_status_parser',
     'phosphorus',
+    'result_flow',
     'skylab_local_state',
 ]
 
@@ -332,6 +335,33 @@ def _upload_to_tko_config(api, phosphorus_config, run_test_response):
   return ret
 
 
+def publish_to_result_flow(api, config, request,
+                           should_poll_for_completion=False):
+  """Publish build info to result_flow PubSub
+
+  Args:
+  * config: test_runner.Config instance.
+  * request: test_runner.Request instance.
+  * should_poll_for_completion (bool): If true, the consumers should not ACK
+                                       the message until the build is complete.
+  """
+  with api.step.nest('publish build ID') as step:
+    if not api.buildbucket.build.id:
+      step.presentation.step_summary_text = 'Skipped: Build ID not set'
+      return
+    if not config.result_flow_pubsub.topic:
+      step.presentation.step_summary_text = 'Skipped: PubSub topic not set'
+      return
+    if not config.result_flow_pubsub.project:
+      step.presentation.step_summary_text = 'Skipped: PubSub project not set'
+      return
+    api.result_flow.publish(
+        project_id=config.result_flow_pubsub.project,
+        topic_id=config.result_flow_pubsub.topic, build_type='test_runner',
+        should_poll_for_completion=should_poll_for_completion,
+        parent_uid=request.parent_request_uid)
+
+
 _DUT_STATE_NEEDS_REPAIR = "needs_repair"
 
 
@@ -352,6 +382,8 @@ def execution_steps(api, properties, envvars):
   * InfraFailure.
   """
   with api.step.nest('execution steps'):
+    publish_to_result_flow(api, properties.config, properties.request)
+
     upload_response = None
     validate_request(api, properties)
     dut_hostname = _get_dut_hostname(api, envvars)
@@ -403,6 +435,8 @@ def execution_steps(api, properties, envvars):
     finally:
       with api.step.nest('save local DUT state'):
         state_store.save_and_seal(api, dut_state)
+      publish_to_result_flow(api, properties.config, properties.request,
+                             should_poll_for_completion=True)
     set_output_properties(api, result=result)
     return prejob_response, run_test_response, result
 
@@ -564,6 +598,9 @@ def GenTests(api):
   _gs_root = "gs://bucket/foo/bar"
   _sync_subdir = "synchronous_subdir"
 
+  def _set_build_id(id):
+    return api.buildbucket.build(build_pb2.Build(id=id))
+
   # Required for initial module set up.
   def _misc_properties():
     return (api.properties(
@@ -580,7 +617,11 @@ def GenTests(api):
                 },
                 'output': {
                     'gs_root_dir': _gs_root
-                }
+                },
+                'result_flow_pubsub': {
+                    'project': 'foo-proj',
+                    'topic': 'foo-topic',
+                },
             }), **{
                 '$chromeos/autotest_status_parser':
                     AutotestStatusParserProperties(
@@ -667,6 +708,7 @@ def GenTests(api):
 
   yield api.test(
       'success',
+      _set_build_id(id=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -735,6 +777,7 @@ def GenTests(api):
 
   yield api.test(
       'upload_to_gs',
+      _set_build_id(id=42),
       _misc_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
@@ -768,6 +811,7 @@ def GenTests(api):
 
   yield api.test(
       'get_results_crash',
+      _set_build_id(id=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -780,6 +824,7 @@ def GenTests(api):
 
   yield api.test(
       'results_summary',
+      _set_build_id(id=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -806,6 +851,7 @@ def GenTests(api):
 
   yield api.test(
       'failed prejob with missing failures in result',
+      _set_build_id(id=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -814,9 +860,47 @@ def GenTests(api):
 
   yield api.test(
       'failed run-test with missing failures in result',
+      _set_build_id(id=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
       _run_test_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
+  )
+
+  yield api.test(
+      'skip result_flow pubsub due to missing build ID',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+  )
+
+  yield api.test(
+      'skip result_flow pubsub due to missing topic',
+      _set_build_id(id=42),
+      _misc_properties(),
+      api.properties(
+          TestRunnerProperties(config={
+              'result_flow_pubsub': {
+                  'topic': '',
+                  'project': 'foo-proj',
+              },
+          })),
+      _request_properties(),
+      _mock_load_step(),
+  )
+
+  yield api.test(
+      'skip result_flow pubsub due to missing project',
+      _set_build_id(id=42),
+      _misc_properties(),
+      api.properties(
+          TestRunnerProperties(config={
+              'result_flow_pubsub': {
+                  'topic': 'foo-topic',
+                  'project': '',
+              },
+          })),
+      _request_properties(),
+      _mock_load_step(),
   )

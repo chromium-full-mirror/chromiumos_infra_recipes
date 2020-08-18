@@ -8,6 +8,14 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.publish build ID",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.validate request",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -26,11 +34,11 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 461, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 495, in RunSteps",
       "    api, properties, envvars)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 356, in execution_steps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 388, in execution_steps",
       "    validate_request(api, properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 54, in validate_request",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 57, in validate_request",
       "    raise ValueError(\"Test name must be specified\")",
       "ValueError: Test name must be specified"
     ]
