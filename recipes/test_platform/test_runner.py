@@ -21,6 +21,7 @@ from PB.test_platform import skylab_local_state
 from PB.test_platform.skylab_test_runner.result import AsyncResults, Result
 from PB.test_platform.skylab_test_runner.config import Config
 
+from google.protobuf import duration_pb2
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 from posixpath import join as url_join
@@ -86,13 +87,9 @@ def prejob(api, config=None, request=None, dut_hostname='', load_response=None,
       # duration or the request's deadline (if provided).
       prejob_request.deadline.seconds = (
           api.time.ms_since_epoch() / 1000 + max_duration_seconds)
-      if request.HasField('deadline'):
-        if request.deadline.seconds < prejob_request.deadline.seconds:
-          # Must explicitly check for existence of deadline.
-          # Reading the deadline from a request where the field is unset returns
-          # the zero value. The zero value google.protobuf.Timestamp translates to
-          # a non-zero time.Time in Go.
-          prejob_request.deadline.MergeFrom(request.deadline)
+      deadline = _deadline(api, request)
+      if deadline.seconds < prejob_request.deadline.seconds:
+        prejob_request.deadline.MergeFrom(deadline)
       return api.phosphorus.prejob(prejob_request)
 
 
@@ -127,13 +124,38 @@ def run_test(api, config=None, request=None, output_config=None,
         environment=phosphorus.runtest.RunTestRequest.Environment(
             gs_root_dir=output_config.gs_root_dir),
     )
-    if request.HasField('deadline'):
-      # Must explicitly check for existence of deadline.
-      # Reading the deadline from a request where the field is unset returns
-      # the zero value. The zero value google.protobuf.Timestamp translates to
-      # a non-zero time.Time in Go.
-      run_test_request.deadline.MergeFrom(request.deadline)
+    deadline = _deadline(api, request)
+    run_test_request.deadline.MergeFrom(deadline)
     return api.phosphorus.run_test(run_test_request)
+
+
+def _deadline(api, request):
+  """Determine the deadline for this build.
+
+  Args:
+    request: skylab_test_runner.Request instance.
+
+  Returns:
+    google.protobuf.Timestamp instance.
+  """
+  build_deadline = _build_deadline(api)
+  # Must explicitly check for existence of deadline.
+  # Reading the deadline from a request where the field is unset returns
+  # the zero value. The zero value google.protobuf.Timestamp translates to
+  # a non-zero time.Time in Go.
+  if not request.HasField('deadline'):
+    return build_deadline
+  if build_deadline.seconds < request.deadline.seconds:
+    return build_deadline
+  return request.deadline
+
+
+def _build_deadline(api):
+  """Determine the deadline for this buildbucket build."""
+  build_timeout = api.buildbucket.build.execution_timeout
+  build_deadline = api.buildbucket.build.start_time
+  build_deadline.seconds += build_timeout.seconds
+  return build_deadline
 
 
 def upload_sync_results(api, config=None, output_config=None):
@@ -601,6 +623,7 @@ def GenTests(api):
   def _set_build_id(id):
     return api.buildbucket.build(build_pb2.Build(id=id))
 
+
   # Required for initial module set up.
   def _misc_properties():
     return (api.properties(
@@ -716,13 +739,33 @@ def GenTests(api):
       _successful_run_test_step(),
   )
 
-  r = _canned_test_runner_request()
+  r_with_deadline = _canned_test_runner_request()
   current_time_sec = 2369692800
-  r['deadline'] = timestamp_pb2.Timestamp(seconds=current_time_sec + 55)
-  yield api.test('success with deadline', _misc_properties(),
-                 api.properties(TestRunnerProperties(request=r)),
-                 _mock_load_step(), _successful_prejob_step(),
-                 _successful_run_test_step()) + api.time.seed(current_time_sec)
+  r_with_deadline['deadline'] = timestamp_pb2.Timestamp(
+      seconds=current_time_sec + 55)
+  yield api.test(
+      'success with build deadline',
+      api.buildbucket.build(
+          build_pb2.Build(
+              id=22,
+              start_time=timestamp_pb2.Timestamp(seconds=current_time_sec),
+              execution_timeout=duration_pb2.Duration(seconds=30),
+          )), _misc_properties(),
+      api.properties(TestRunnerProperties(request=r_with_deadline)),
+      _mock_load_step(), _successful_prejob_step(),
+      _successful_run_test_step()) + api.time.seed(current_time_sec)
+
+  yield api.test(
+      'success with request deadline',
+      api.buildbucket.build(
+          build_pb2.Build(
+              id=22,
+              start_time=timestamp_pb2.Timestamp(seconds=current_time_sec),
+              execution_timeout=duration_pb2.Duration(seconds=66),
+          )), _misc_properties(),
+      api.properties(TestRunnerProperties(request=r_with_deadline)),
+      _mock_load_step(), _successful_prejob_step(),
+      _successful_run_test_step()) + api.time.seed(current_time_sec)
 
   yield api.test(
       'prejob_crash',
