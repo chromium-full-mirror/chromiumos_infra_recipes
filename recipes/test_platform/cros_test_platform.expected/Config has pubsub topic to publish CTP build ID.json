@@ -227,40 +227,75 @@
     "name": "execute.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execute.call binary.pre-execution debug data",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform skylab-execute -input_json /dev/stdin -output_json /dev/stdout@@@",
-      "@@@STEP_LOG_END@cmd@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"build\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"createTime\": \"1970-01-01T00:00:00Z\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"id\": \"8874582904031090640\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_LINE@responses@{}@@@",
+      "@@@STEP_LOG_END@responses@@@"
     ]
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "skylab-execute",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout"
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"build\": {\n\"create_time\": \"1970-01-01T00:00:00Z\", \n\"id\": \"8874582904031090640\"\n}\n}",
+      "[START_DIR]/input.json"
     ],
     "infra_step": true,
-    "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\", \n    \"id\": \"8874582904031090640\"\n  }\n}",
+    "name": "execute.call binary.write input",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input.json@build {@@@",
+      "@@@STEP_LOG_LINE@input.json@  create_time {@@@",
+      "@@@STEP_LOG_LINE@input.json@  }@@@",
+      "@@@STEP_LOG_LINE@input.json@  id: 8874582904031090640@@@",
+      "@@@STEP_LOG_LINE@input.json@}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/luciexe",
+      "--output",
+      "[CLEANUP]/tmp_tmp_1/sub_build.pb",
+      "--",
+      "-input_json",
+      "[START_DIR]/input.json",
+      "-output_json",
+      "[START_DIR]/output.json"
+    ],
+    "env": {
+      "MAC_CHROMIUM_TMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TEMP": "[CLEANUP]/tmp_tmp_2",
+      "TEMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TMP": "[CLEANUP]/tmp_tmp_2",
+      "TMPDIR": "[CLEANUP]/tmp_tmp_2"
+    },
+    "infra_step": true,
+    "name": "execute.call binary.launch luciexe",
+    "stdin": "\b\u042f\ufffd\ufffd\ufffd\u0136\ufffd{",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/output.json",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "execute.call binary.read output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
     ]
   },
   {

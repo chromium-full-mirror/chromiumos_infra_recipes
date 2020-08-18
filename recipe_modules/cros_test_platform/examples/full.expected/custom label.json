@@ -201,7 +201,7 @@
       "/path/to/tmp/json",
       "copy",
       "{}",
-      "[START_DIR]/luciexe/input.json"
+      "[START_DIR]/input.json"
     ],
     "infra_step": true,
     "name": "callsite-execute-luciexe.call binary.write input",
@@ -214,19 +214,19 @@
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/luciexe",
       "--output",
-      "[START_DIR]/luciexe/build.json",
+      "[CLEANUP]/tmp_tmp_1/sub_build.pb",
+      "--",
       "-input_json",
-      "[START_DIR]/luciexe/input.json",
+      "[START_DIR]/input.json",
       "-output_json",
-      "[START_DIR]/luciexe/output.json"
+      "[START_DIR]/output.json"
     ],
-    "cwd": "[START_DIR]/luciexe",
     "env": {
-      "MAC_CHROMIUM_TMPDIR": "[CLEANUP]/tmp_tmp_1",
-      "TEMP": "[CLEANUP]/tmp_tmp_1",
-      "TEMPDIR": "[CLEANUP]/tmp_tmp_1",
-      "TMP": "[CLEANUP]/tmp_tmp_1",
-      "TMPDIR": "[CLEANUP]/tmp_tmp_1"
+      "MAC_CHROMIUM_TMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TEMP": "[CLEANUP]/tmp_tmp_2",
+      "TEMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TMP": "[CLEANUP]/tmp_tmp_2",
+      "TMPDIR": "[CLEANUP]/tmp_tmp_2"
     },
     "infra_step": true,
     "name": "callsite-execute-luciexe.call binary.launch luciexe",
@@ -243,7 +243,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/luciexe/output.json",
+      "[START_DIR]/output.json",
       "/path/to/tmp/json"
     ],
     "infra_step": true,

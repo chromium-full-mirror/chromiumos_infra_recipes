@@ -130,7 +130,10 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     self._ensure_cros_test_platform()
     with self.m.step.nest('call binary') as s:
       cmd = self._cipd_dir.join("luciexe")
-      sub_cwd = self.m.path['start_dir'].join('luciexe')
+      # Simply use the same directory for the sub-build because I'm lazy and
+      # because the intent is to unwrap the sub-build completely to replace this
+      # parent build eventually.
+      sub_cwd = self.m.path['start_dir']
       input_json = sub_cwd.join("input.json")
       output_json = sub_cwd.join("output.json")
 
@@ -148,9 +151,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       with self.m.context(cwd=sub_cwd, infra_steps=True):
         self.m.step.sub_build(
             "launch luciexe",
-            [cmd, '-input_json', input_json, '-output_json', output_json],
+            [cmd, '--', '-input_json', input_json, '-output_json', output_json],
             self.m.buildbucket.build,
-            output_path=sub_cwd.join('build.json'),
         )
 
       responses = self.m.file.read_proto(
