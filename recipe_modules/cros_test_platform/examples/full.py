@@ -53,9 +53,6 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  # TODO(crbug.com/1030538): Remove once the default label logic is removed.
-  yield api.test('default label')
-
   yield api.test(
       'custom label',
       api.properties(
