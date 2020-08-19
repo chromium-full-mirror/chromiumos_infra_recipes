@@ -336,8 +336,7 @@
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"deadline\": \"1970-01-01T00:00:00Z\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -357,7 +356,7 @@
       "/dev/stdout"
     ],
     "name": "execution steps.run test.call `phosphorus`.run-test",
-    "stdin": "{\n  \"environment\": {\n    \"gsRootDir\": \"gs://bucket/foo/bar\"\n  }, \n  \"autotest\": {\n    \"name\": \"dummy_name\"\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"deadline\": \"1970-01-01T00:00:00Z\"\n}",
+    "stdin": "{\n  \"environment\": {\n    \"gsRootDir\": \"gs://bucket/foo/bar\"\n  }, \n  \"autotest\": {\n    \"name\": \"dummy_name\"\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
