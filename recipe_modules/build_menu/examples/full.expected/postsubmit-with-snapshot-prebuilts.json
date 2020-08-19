@@ -1661,6 +1661,136 @@
   },
   {
     "cmd": [],
+    "name": "find prebuilts"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/project-a",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/project-a",
+    "infra_step": true,
+    "name": "find prebuilts.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "FETCH_HEAD~336..FETCH_HEAD",
+      "--pretty=%H"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/project-a",
+    "infra_step": true,
+    "name": "find prebuilts.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found 1 file@@@",
+      "@@@STEP_LOG_LINE@files found@amd64-generic-kind-1009-postsubmit.json@@@",
+      "@@@STEP_LOG_END@files found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/metadata_tmp_6/deadbeef00000000000000000000000000000000/amd64-generic/base"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base.ensure directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "rsync",
+      "gs://chromeos-prebuilt/snapshot/deadbeef00000000000000000000000000000000/amd64-generic/base/",
+      "[CLEANUP]/metadata_tmp_6/deadbeef00000000000000000000000000000000/amd64-generic/base"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base.gsutil rsync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/metadata_tmp_6/deadbeef00000000000000000000000000000000/amd64-generic/base"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base.listdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/metadata_tmp_6/deadbeef00000000000000000000000000000000/amd64-generic/base/amd64-generic-kind-1009-postsubmit.json@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/metadata_tmp_6/deadbeef00000000000000000000000000000000/amd64-generic/base/amd64-generic-kind-1009-postsubmit.json",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base.read amd64-generic-kind-1009-postsubmit.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"build_target\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"location\": \"gs://chromeos-prebuilt/board/amd64-generic/KIND-VER-888/packages\", @@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"profile\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"base\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1009, @@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000000\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "create sysroot"
   },
   {
@@ -1685,7 +1815,20 @@
       "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"chrootCurrent\": true, @@@",
       "@@@STEP_LOG_LINE@request@    \"replace\": true@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"packageIndexes\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"snapshotNumber\": 1009, @@@",
+      "@@@STEP_LOG_LINE@request@      \"profile\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"name\": \"base\"@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"snapshotSha\": \"deadbeef00000000000000000000000000000000\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": \"gs://chromeos-prebuilt/board/amd64-generic/KIND-VER-888/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -1707,8 +1850,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"chrootCurrent\": true, \n    \"replace\": true\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"chrootCurrent\": true, \n    \"replace\": true\n  }, \n  \"packageIndexes\": [\n    {\n      \"buildTarget\": {\n        \"name\": \"amd64-generic\"\n      }, \n      \"snapshotNumber\": 1009, \n      \"profile\": {\n        \"name\": \"base\"\n      }, \n      \"snapshotSha\": \"deadbeef00000000000000000000000000000000\", \n      \"location\": \"gs://chromeos-prebuilt/board/amd64-generic/KIND-VER-888/packages\"\n    }\n  ]\n}",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1732,7 +1875,20 @@
       "@@@STEP_LOG_LINE@input_proto.json@  \"flags\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chrootCurrent\": true, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"replace\": true@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"packageIndexes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"snapshotNumber\": 1009, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"profile\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        \"name\": \"base\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"snapshotSha\": \"deadbeef00000000000000000000000000000000\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"location\": \"gs://chromeos-prebuilt/board/amd64-generic/KIND-VER-888/packages\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  ]@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -1741,9 +1897,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SysrootService/Create"
@@ -1768,7 +1924,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1819,7 +1975,20 @@
       "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"chrootCurrent\": true, @@@",
       "@@@STEP_LOG_LINE@published event@      \"replace\": true@@@",
-      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@    }, @@@",
+      "@@@STEP_LOG_LINE@published event@    \"packageIndexes\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }, @@@",
+      "@@@STEP_LOG_LINE@published event@        \"snapshotNumber\": 1009, @@@",
+      "@@@STEP_LOG_LINE@published event@        \"profile\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"name\": \"base\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }, @@@",
+      "@@@STEP_LOG_LINE@published event@        \"snapshotSha\": \"deadbeef00000000000000000000000000000000\", @@@",
+      "@@@STEP_LOG_LINE@published event@        \"location\": \"gs://chromeos-prebuilt/board/amd64-generic/KIND-VER-888/packages\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"sysrootCreateResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
@@ -1852,7 +2021,7 @@
     },
     "infra_step": true,
     "name": "create sysroot.call chromite.api.SysrootService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI0oDE/QQiDAjTgMT9BBCAyrXuAeIBQwoPCg1hbWQ2NC1nZW5lcmljEgQIARABIioKE1tDQUNI\\nRV0vY3Jvc19jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWzqASkKJwoUL2J1aWxkL2FtZDY0LWdl\\nbmVyaWMSDwoNYW1kNjQtZ2VuZXJpY9AC0OyA2a7xtZJ82gJMY3JlYXRlIHN5c3Jvb3R8Y2FsbCBj\\naHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI0oDE/QQiDAjTgMT9BBCAyrXuAeIBzgEKDwoNYW1kNjQtZ2VuZXJpYxIECAEQASIqChNbQ0FD\\nSEVdL2Nyb3NfY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsKogBCihkZWFkYmVlZjAwMDAwMDAw\\nMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwEPEHGg8KDWFtZDY0LWdlbmVyaWMiQGdzOi8vY2hyb21l\\nb3MtcHJlYnVpbHQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9LSU5ELVZFUi04ODgvcGFja2FnZXMqBgoE\\nYmFzZeoBKQonChQvYnVpbGQvYW1kNjQtZ2VuZXJpYxIPCg1hbWQ2NC1nZW5lcmlj0ALQ7IDZrvG1\\nknzaAkxjcmVhdGUgc3lzcm9vdHxjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9DcmVh\\ndGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1894,7 +2063,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1923,9 +2092,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.PackageService/GetTargetVersions"
@@ -1949,7 +2118,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1996,7 +2165,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"amd64-generic-postsubmit\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
-      "[CLEANUP]/metadata_tmp_8/partial_metadata.json"
+      "[CLEANUP]/metadata_tmp_9/partial_metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2116,7 +2285,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/metadata_tmp_8/partial_metadata.json",
+      "[CLEANUP]/metadata_tmp_9/partial_metadata.json",
       "gs://chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184/partial_metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2171,7 +2340,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }, \n    \"path\": \"/build/amd64-generic\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2206,9 +2375,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.DependencyService/GetBuildDependencyGraph"
@@ -2232,7 +2401,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2406,7 +2575,7 @@
       "/path/to/tmp/json",
       "copy",
       "2(2d72510e447ab60a9728aeea2362d8be2cbd7789Be\nc\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
-      "[CLEANUP]/pointless-build-_tmp_10/input.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_11/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2424,9 +2593,9 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_10/input.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_11/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_10/output.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_11/output.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2443,7 +2612,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/pointless-build-_tmp_10/output.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_11/output.binaryproto",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2495,7 +2664,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"flags\": {}, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }, \n    \"path\": \"/build/amd64-generic\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2528,9 +2697,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SysrootService/InstallToolchain"
@@ -2555,7 +2724,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2639,136 +2808,6 @@
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "find prebuilts"
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/project-a",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/project-a",
-    "infra_step": true,
-    "name": "find prebuilts.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "FETCH_HEAD~336..FETCH_HEAD",
-      "--pretty=%H"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/project-a",
-    "infra_step": true,
-    "name": "find prebuilts.git log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found 1 file@@@",
-      "@@@STEP_LOG_LINE@files found@amd64-generic-kind-1009-postsubmit.json@@@",
-      "@@@STEP_LOG_END@files found@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/metadata_tmp_12/deadbeef00000000000000000000000000000000/amd64-generic/base"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base.ensure directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "rsync",
-      "gs://chromeos-prebuilt/snapshot/deadbeef00000000000000000000000000000000/amd64-generic/base/",
-      "[CLEANUP]/metadata_tmp_12/deadbeef00000000000000000000000000000000/amd64-generic/base"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base.gsutil rsync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/metadata_tmp_12/deadbeef00000000000000000000000000000000/amd64-generic/base"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base.listdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/metadata_tmp_12/deadbeef00000000000000000000000000000000/amd64-generic/base/amd64-generic-kind-1009-postsubmit.json@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/metadata_tmp_12/deadbeef00000000000000000000000000000000/amd64-generic/base/amd64-generic-kind-1009-postsubmit.json",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "find prebuilts.deadbeef00000000000000000000000000000000/amd64-generic/base.read amd64-generic-kind-1009-postsubmit.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@proto.output@{@@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"build_target\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@  }, @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"location\": \"gs://chromeos-prebuilt/board/amd64-generic/KIND-VER-888/packages\", @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"profile\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"base\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@  }, @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1009, @@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000000\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
     ]
   },
   {

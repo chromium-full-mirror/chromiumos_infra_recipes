@@ -49,6 +49,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._force_relevant_build = props.force_relevant_build
     self._artifact_build = props.artifact_build
     self._test_with_code_coverage = props.test_with_code_coverage
+    # Prebuilt information for the builder.  Created in setup_sysroot, used
+    # there and install_packages.
+    self._package_indexes = None
 
   @property
   def build_target(self):
@@ -202,14 +205,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if with_sysroot:
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = Profile(name=config.build.portage_profile.profile)
-      package_indexes = None
-      # TODO(crbug/945003): once InstallPackages stops overwriting
-      # /etc/make.conf.board in the sysroot, we can move the code here.
-      #package_indexes = self.m.cros_prebuilts.get_package_index_info(
-      #    config.artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
-      #    build_target=self.build_target, profile=profile)
+      self._package_indexes = self.m.cros_prebuilts.get_package_index_info(
+          config.artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
+          build_target=self.build_target, profile=profile)
       self.m.sysroot_util.create_sysroot(self.build_target, profile,
-                                         package_indexes=package_indexes)
+                                         package_indexes=self._package_indexes)
 
       # Set the target_versions output property, and upload metatdata.
       # This requires a sysroot for at least the package versions.
@@ -295,16 +295,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = Profile(name=config.build.portage_profile.profile)
-      # TODO(crbug/945003): once InstallPackages stops overwriting
-      # /etc/make.conf.board in the sysroot, migrate this to the sysroot
-      # creation above.
-      package_indexes = self.m.cros_prebuilts.get_package_index_info(
-          config.artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
-          build_target=self.build_target, profile=profile)
-      self.m.sysroot_util.install_packages(config, self.dep_graph, packages,
-                                           artifact_build=self._artifact_build,
-                                           package_indexes=package_indexes,
-                                           timeout_sec=timeout_sec, name=name)
+      self.m.sysroot_util.install_packages(
+          config, self.dep_graph, packages, artifact_build=self._artifact_build,
+          package_indexes=self._package_indexes, timeout_sec=timeout_sec,
+          name=name)
 
     return not self.m.cros_infra_config.should_exit(install_packages.run_spec)
 
