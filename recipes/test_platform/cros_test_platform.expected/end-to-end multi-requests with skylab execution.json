@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "publish build ID",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
+      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
     ]
   },
   {
@@ -388,7 +388,7 @@
     "cmd": [],
     "name": "publish build ID (2)",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@decision: skip pubulishing build ID@@@"
+      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
     ]
   },
   {

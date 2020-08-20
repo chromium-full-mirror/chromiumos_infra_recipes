@@ -204,14 +204,27 @@ def _is_non_empty_proto(p):
   return bool(p.ByteSize())
 
 
-def push_build_id(api, config):
+def publish_to_result_flow(api, config, should_poll_for_completion=False):
+  """Publish build info to result_flow PubSub
+
+  Args:
+  * config: test_platform.Config instance.
+  * should_poll_for_completion (bool): If true, the consumers should not ACK
+                                       the message until the build is complete.
+  """
   with api.step.nest('publish build ID') as step:
-    if api.buildbucket.build.id and config.pubsub.topic and config.pubsub.project:
-      api.result_flow.publish(project_id=config.pubsub.project,
-                              topic_id=config.pubsub.topic, build_type='ctp')
-    else:
-      step.presentation.step_summary_text = (
-          'decision: skip pubulishing build ID')
+    if not api.buildbucket.build.id:
+      step.presentation.step_summary_text = 'Skipped: Build ID not set'
+      return
+    if not config.pubsub.topic:
+      step.presentation.step_summary_text = 'Skipped: PubSub topic not set'
+      return
+    if not config.pubsub.project:
+      step.presentation.step_summary_text = 'Skipped: PubSub project not set'
+      return
+    api.result_flow.publish(
+        project_id=config.pubsub.project, topic_id=config.pubsub.topic,
+        build_type='ctp', should_poll_for_completion=should_poll_for_completion)
 
 
 def execute(api, requests):
@@ -272,7 +285,7 @@ def RunSteps(api, properties):
   requests = _get_requests_from_properties(properties)
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.
-  push_build_id(api, properties.config)
+  publish_to_result_flow(api, properties.config)
   validate_requests(api, requests)
   # Traffic split failures can be due to malformed requests.
   requests = split(api, requests, properties.config)
@@ -282,8 +295,10 @@ def RunSteps(api, properties):
         api, _execute_requests(api, requests, enumerations, properties.config))
     tagged_responses = responses.tagged_responses
     set_output_properties(api, responses)
-    # Push the Build ID to notify the subscribers that CTP run completed.
-    push_build_id(api, properties.config)
+    # Push the Build ID to notify the subscribers that test plan execution
+    # is completed.
+    publish_to_result_flow(api, properties.config,
+                           should_poll_for_completion=True)
     postprocess(api, requests, tagged_responses)
   summarize(api, enumerations, tagged_responses)
 
@@ -613,7 +628,7 @@ def GenTests(api):
                              priority=100, qs_account='foo-qs-account')),
                  ))))
 
-  # Config set the pubsub topic to push build ID.
+  # Config set the result flow pubsub project and topic should push build ID.
   yield (
       api.test('Config has pubsub topic to publish CTP build ID') +  #
       api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
@@ -642,6 +657,26 @@ def GenTests(api):
       +  #
       api.cros_test_platform.set_execute_luciexe_response(
           'execute', ExecuteResponses()))
+
+  # Config missing result flow topic name should skip publishing build ID.
+  yield (api.test('Recipe runs without result flow pubsub topic') +  #
+         api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=Request(),
+                 config=Config(pubsub=Config.PubSub(project='foo-proj')))) +  #
+         api.cros_test_platform.set_execute_luciexe_response(
+             'execute', ExecuteResponses()))
+
+  # Config missing result flow project name should skip publishing build ID.
+  yield (api.test('Recipe runs without result flow pubsub project') +  #
+         api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=Request(),
+                 config=Config(pubsub=Config.PubSub(topic='foo-topic')))) +  #
+         api.cros_test_platform.set_execute_luciexe_response(
+             'execute', ExecuteResponses()))
 
   # Config set the pubsub topic for test_runner.
   yield (
