@@ -1,0 +1,9 @@
+[
+  {
+    "cmd": [],
+    "name": "get packages dependencies"
+  },
+  {
+    "name": "$result"
+  }
+]
