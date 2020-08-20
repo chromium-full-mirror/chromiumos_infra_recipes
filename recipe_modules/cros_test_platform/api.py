@@ -7,7 +7,7 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
-
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.test_platform.steps.enumeration import \
   EnumerationRequests, EnumerationResponses
 from PB.test_platform.steps.scheduler_traffic_split import \
@@ -139,6 +139,14 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
       self.m.file.write_proto("write input", input_json, request, 'JSONPB')
 
+      # crbug.com/1119441: Clear out some output fields from a clone of the
+      # parent Build that may have been already populated so far, because
+      # sub_build() doesn't do it for us yet.
+      build = build_pb2.Build()
+      build.CopyFrom(self.m.buildbucket.build)
+      for ofield in ['output', 'status', 'summary_markdown', 'steps']:
+        build.ClearField(ofield)
+
       # sub_build() raises StepFailure if the sub-build completes in FAILURE
       # and InfraFailure if sub-build completes in INFRA_FAILURE.
       #
@@ -152,7 +160,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
         self.m.step.sub_build(
             "launch luciexe",
             [cmd, '--', '-input_json', input_json, '-output_json', output_json],
-            self.m.buildbucket.build,
+            build,
         )
 
       responses = self.m.file.read_proto(
