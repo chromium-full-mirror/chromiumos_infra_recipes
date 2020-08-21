@@ -33,6 +33,7 @@ class SkylabApi(recipe_api.RecipeApi):
     # instead of the "latest" tag.
     self._version = str(properties.skylab_version) or 'latest'
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
+    self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
 
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
@@ -81,7 +82,7 @@ class SkylabApi(recipe_api.RecipeApi):
         reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
 
       bb_request = self.m.buildbucket.schedule_request(
-          'cros_test_platform',
+          self._ctp_builder,
           bucket='testplatform',
           properties={
               'requests': reqs,
@@ -145,7 +146,7 @@ class SkylabApi(recipe_api.RecipeApi):
 
       request_dict = json_format.MessageToDict(req)
       bb_request = self.m.buildbucket.schedule_request(
-          'cros_test_platform',
+          self._ctp_builder,
           bucket='testplatform',
           properties={
               'request': request_dict,

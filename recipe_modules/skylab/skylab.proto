@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.skylab;
 
 message SkylabProperties {
+  string ctp_builder = 5;
   string skylab_server = 1;
   string skylab_version = 2;
   string skylab_qs_account = 3;

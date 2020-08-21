@@ -4191,7 +4191,7 @@ Returns:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#112)(self, test, unit, timeout, name=None):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#113)(self, test, unit, timeout, name=None):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -4204,7 +4204,7 @@ Args:
 Returns:
   SkylabTask: with buildbucket_id of the recipe launched.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#41)(self, unit_hw_tests, timeout, name=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#42)(self, unit_hw_tests, timeout, name=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -4216,11 +4216,11 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#37)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#38)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#232)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#233)(self, tasks, timeout):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -4231,7 +4231,7 @@ Args:
 Returns:
   list[SkylabResult]: The results for each suite.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#186)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#187)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
