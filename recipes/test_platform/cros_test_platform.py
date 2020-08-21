@@ -250,29 +250,13 @@ def _execute_requests(api, requests, enumerations, config):
   _ensure_all_requests_enumerated(requests, enumerations)
   return ExecuteRequests(
       tagged_requests={
-          t: ExecuteRequest(
-              request_params=_set_notification(r.params, config),
-              enumeration=enumerations[t], config=config)
+          t: ExecuteRequest(request_params=r.params,
+                            enumeration=enumerations[t], config=config)
           for t, r in requests.iteritems()
       },
       build=Build(id=api.buildbucket.build.id,
                   create_time=api.buildbucket.build.create_time),
   )
-
-
-def _set_notification(params, config):
-  """Attach PubSub topic to each ExecuteRequest.
-
-  Returns:
-  same test_platform.Request.Params instance of input.
-  """
-  pubsub = config.test_runner.pubsub
-  if pubsub.project and pubsub.topic:
-    # The topic attached here is for notifying the cros_test_platform's
-    # internal pipeline to process the test runner output.
-    params.notification.pubsub_topic = "projects/%s/topics/%s" % (
-        pubsub.project, pubsub.topic)
-  return params
 
 
 def _ensure_all_requests_enumerated(requests, enumerations):
@@ -677,43 +661,6 @@ def GenTests(api):
                  config=Config(pubsub=Config.PubSub(topic='foo-topic')))) +  #
          api.cros_test_platform.set_execute_luciexe_response(
              'execute', ExecuteResponses()))
-
-  # Config set the pubsub topic for test_runner.
-  yield (
-      api.test('Config has pubsub topic to publish test runner build ID') +  #
-      api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
-      api.properties(
-          CrosTestPlatformProperties(
-              request=_test_request('foo'),
-              config=Config(
-                  test_runner=Config.TestRunner(
-                      buildbucket=Config.Buildbucket(), pubsub=Config.PubSub(
-                          project='foo-proj', topic='foo-topic')),
-              ),
-          ),
-      ) +  #
-      api.cros_test_platform.set_scheduler_traffic_split_response(
-          'traffic split',
-          SchedulerTrafficSplitResponses(
-              tagged_responses={
-                  'default':
-                      SchedulerTrafficSplitResponse(
-                          skylab_request=_test_request(
-                              tag='foo',
-                              scheduling=Request.Params.Scheduling(
-                                  unmanaged_pool='foo-pool',
-                                  qs_account='foo-qs-account',
-                              ),
-                          ),
-                      ),
-              }),
-      ) +  #
-      api.cros_test_platform.set_enumerate_response_json(
-          'enumerate tests',
-          _test_single_enumeration('foo'),
-      ) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
-          'execute', ExecuteResponses()))
 
   # An end-to-end run with traffic splitting to skylab.
   yield (api.test('end-to-end skylab execution with passed tasks') +  #
