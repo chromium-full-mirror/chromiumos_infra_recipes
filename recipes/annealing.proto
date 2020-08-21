@@ -7,7 +7,6 @@ syntax = "proto3";
 package recipes.chromeos.annealing;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
-
 message AnnealingProperties {
   // The name of the git branch to create snapshots on. Required.
   string manifest_ref = 1;
@@ -20,6 +19,27 @@ message AnnealingProperties {
   // state. For example, Annealing has not succeeded in a long time, so the
   // message length exceeds Git limits.
   bool disable_gerrit_commits_in_commit_message = 3;
+
+  // Jobs to trigger based on gitiles commits.
+  // Once the uprev is published, if any of the regexp triggers hit, then the
+  // named job(s) will be launched with the new gitiles_commit.
+  message PathTrigger {
+    // The path of the repo, relative to workspace_path.
+    string repo_path = 1;
+
+    // Paths to pass to git log.  If empty, then trigger on any commit to the
+    // repo.
+    repeated string file_paths = 2;
+
+    // The BB task to schedule.
+    message Job {
+      string project = 1;
+      string bucket = 2;
+      string builder = 3;
+    }
+    repeated Job jobs = 3;
+  }
+  repeated PathTrigger path_triggers = 4;
 }
 
 // Annealing determines what Gerrit changes have landed since its last run,

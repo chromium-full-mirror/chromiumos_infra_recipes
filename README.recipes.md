@@ -2941,7 +2941,7 @@ Args:
   * commit (str): The commit to cherry pick.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#416)(self, repo_url, target_path=None, timeout_sec=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#420)(self, repo_url, target_path=None, timeout_sec=None):**
 
 Clones a Git repo into the current directory.
 
@@ -2961,7 +2961,7 @@ Args:
   * author (str): The author to use in the commit. Ordinarily not used,
       added to test permission oddities by forcing forged commit failure.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#402)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#406)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -2993,7 +2993,7 @@ Returns:
       otherwise.
   
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#449)(self, refspec, default):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#453)(self, refspec, default):**
 
 Splits the branch from the refspec.
 
@@ -3055,7 +3055,7 @@ Args:
 Returns:
   A list[str] of changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#464)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#468)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -3068,7 +3068,7 @@ Returns: list[str] parent commit sha.
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#487)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#491)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -3087,7 +3087,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#477)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#481)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -3096,7 +3096,7 @@ Args:
 
 Returns: Bool if the commit has more than 1 parent.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#372)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#376)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -3106,7 +3106,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#347)(self, from_rev, to_rev, limit=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#347)(self, from_rev, to_rev, limit=None, paths=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -3114,6 +3114,7 @@ Args:
   from_rev (str): From revision
   to_rev (str): To revision
   limit (int): Maximum number of commits to log.
+  paths (list[str]): pathspecs to use.
 
 Returns:
   List(Commit) A list of commit metas.
@@ -3157,7 +3158,7 @@ Args:
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#430)(self, force=False):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#434)(self, force=False):**
 
 Run `git rebase` with the given arguments.
 
@@ -3171,14 +3172,14 @@ Return the git repository root for the current directory.
 Returns:
   str: The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#441)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#445)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   * args list[str]: args for `git config`.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#384)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#388)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -4876,7 +4877,7 @@ Recipe for building an AFDO benchmark profile.
 &mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#43)(api, properties):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#30): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#30): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS annealing builders.
 
@@ -4890,65 +4891,7 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#55)(api, properties):**
-
-&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#226)(api, manifest_diffs):**
-
-Find all Gerrit changes that landed since the last snapshot.
-
-Args:
-  * api (object): See RunSteps documentation.
-  * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
-
-Returns:
-  list[Commit]: The Gerrit-reviewed commits since the last snapshot.
-
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#260)(api, repo_url, ref, commit_id):**
-
-Create a GitilesCommit for the given |repo_url|, |ref|, and |commit_id|.
-
-&mdash; **def [make\_message](/recipes/annealing.py#271)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
-
-Creates and returns the commit message with a Cr-Commit-Position.
-
-Creates and returns the commit message with a Cr-Commit-Position
-suitable for use by FindIt, as in:
-
-Cr-Commit-Position: refs/heads/snapshot@{#%d}
-
-Also appends the commit messages for all Gerrit changes since the last
-snapshot.
-
-Args:
-  * api (object): See RunSteps documentation.
-  * manifest_ref (str): The git reference to use in the commit message.
-  * gerrit_commits (list[Commit]): List of Gerrit-pushed commits since the
-      last snapshot.
-  * disable_gerrit_commits (bool): If true, gerrit_commits will not be written
-      in the message.
-
-Returns:
-  A string containing the commit message.
-
-&mdash; **def [publish\_snapshot](/recipes/annealing.py#183)(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml, gerrit_commits=None, disable_gerrit=False, footers=[]):**
-
-Generate snapshot.xml file and commit it to a ref.
-
-Does not call api.context() so the cwd should be set to the appropriate
-path in the workspace for a git fetch to work.
-
-Args:
-    api (object):   See RunSteps documentation
-    repo_url:       URL to git repo to publish snapshot.xml file to
-    snapshot_ref:   git ref to publish to (e.g.: "snapshot")
-    snapshot_file:  location of snapshot.xml to write
-    snapshot_xml:   contents to write to snapshot.xml in cwd
-    gerrit_commits: List of gerrit commits to reference in commit message
-    disable_gerrit: If True, disable gerrit commits in commit message
-    footers:        List of (key,value) pairs to add as footers
-
-Returns:
-    GitilesCommit object representing the new commit.
+&mdash; **def [RunSteps](/recipes/annealing.py#56)(api, properties):**
 ### *recipes* / [autotest\_status\_parser:examples/full](/recipe_modules/autotest_status_parser/examples/full.py)
 
 [DEPS](/recipe_modules/autotest_status_parser/examples/full.py#6): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

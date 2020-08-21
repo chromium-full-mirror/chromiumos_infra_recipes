@@ -344,13 +344,14 @@ class GitApi(recipe_api.RecipeApi):
     finally:
       self.checkout(head)
 
-  def log(self, from_rev, to_rev, limit=None):
+  def log(self, from_rev, to_rev, limit=None, paths=None):
     """Returns all the `Commit` between `from_rev` and `to_rev`.
 
     Args:
       from_rev (str): From revision
       to_rev (str): To revision
       limit (int): Maximum number of commits to log.
+      paths (list[str]): pathspecs to use.
 
     Returns:
       List(Commit) A list of commit metas.
@@ -358,6 +359,9 @@ class GitApi(recipe_api.RecipeApi):
     cmd = ['log', '--pretty=%H%x1E%B%x00', '%s...%s' % (from_rev, to_rev)]
     if limit is not None:
       cmd.append('-%d' % limit)
+    if paths:
+      cmd.append('--')
+      cmd.extend(paths)
     step_data = self._step(
         cmd, stdout=self.m.raw_io.output(),
         test_stdout='%s\x1Emessage\x00' % self.test_api.test_commit_id)

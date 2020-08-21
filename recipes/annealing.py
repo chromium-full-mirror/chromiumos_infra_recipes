@@ -37,6 +37,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_build_api',
     'cros_cq_depends',
+    'cros_infra_config',
     'cros_sdk',
     'cros_source',
     'cros_tags',
@@ -97,7 +98,7 @@ def RunSteps(api, properties):
 
         # And publish
         with api.step.nest('publish external snapshot'):
-          external_snapshot_commit = publish_snapshot(
+          external_snapshot_commit = _publish_snapshot(
               api, external_manifest.url, manifest_ref,
               external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
               disable_gerrit=True)
@@ -122,10 +123,11 @@ def RunSteps(api, properties):
 
         # Then, get the diffs. We are specifically interested in what
         # gerrit changes have landed.
-        gerrit_commits = get_gerrit_changes(api, manifest_diffs)
+        gerrit_commits, jobs = _get_gerrit_changes(api, manifest_diffs,
+                                                   properties.path_triggers)
 
       with api.step.nest('publish internal snapshot'):
-        internal_snapshot_commit = publish_snapshot(
+        internal_snapshot_commit = _publish_snapshot(
             api, internal_manifest.url, manifest_ref,
             internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
             gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
@@ -133,6 +135,9 @@ def RunSteps(api, properties):
 
         # Use new snapshot commit as the build output
         api.buildbucket.set_output_gitiles_commit(internal_snapshot_commit)
+
+      if jobs:
+        _schedule_triggered_builds(api, internal_snapshot_commit, jobs)
 
       # It may seem weird that we publish uprevs after publishing the snapshot.
       # Unfortunately, publishing uprevs takes ~10 minutes, in which time it is
@@ -180,8 +185,26 @@ def RunSteps(api, properties):
                    dry_run=not properties.publish_uprevs)
 
 
-def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
-                     gerrit_commits=None, disable_gerrit=False, footers=[]):
+def _schedule_triggered_builds(api, commit, jobs):
+  """Schedule any triggered jobs.
+
+  Args:
+    jobs: list(PathTrigger.Job) to be launched.
+  """
+  props = api.cros_infra_config.props_for_child_build
+  requests = []
+  for job in jobs:
+    requests.append(
+        api.buildbucket.schedule_request(
+            project=job.project or api.buildbucket.build.builder.project,
+            bucket=job.bucket or api.buildbucket.build.builder.bucket,
+            builder=job.builder, gitiles_commit=commit, properties=props))
+  api.buildbucket.schedule(requests, url_title_fn=api.naming.get_build_title,
+                           step_name='schedule triggered builds')
+
+
+def _publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
+                      gerrit_commits=None, disable_gerrit=False, footers=[]):
   """Generate snapshot.xml file and commit it to a ref.
 
   Does not call api.context() so the cwd should be set to the appropriate
@@ -209,8 +232,8 @@ def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
 
   with api.git.head_context():
     api.git.checkout('FETCH_HEAD')
-    commit_message = make_message(api, snapshot_ref, gerrit_commits,
-                                  disable_gerrit)
+    commit_message = _make_message(api, snapshot_ref, gerrit_commits,
+                                   disable_gerrit)
 
     if footers:
       commit_message += "\n"
@@ -219,20 +242,24 @@ def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
 
     api.git_txn.update_ref_write_file(repo_url, snapshot_ref, commit_message,
                                       snapshot_file, snapshot_xml)
-    return make_gitiles_commit(api, repo_url, 'refs/heads/%s' % snapshot_ref,
-                               api.git.head_commit())
+    return _make_gitiles_commit(api, repo_url, 'refs/heads/%s' % snapshot_ref,
+                                api.git.head_commit())
 
 
-def get_gerrit_changes(api, manifest_diffs):
+def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
   """Find all Gerrit changes that landed since the last snapshot.
 
   Args:
     * api (object): See RunSteps documentation.
     * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
+    * path_triggers (list[PathTrigger]): Paths that trigger jobs.
 
   Returns:
-    list[Commit]: The Gerrit-reviewed commits since the last snapshot.
+    tuple(
+      list[Commit]: The Gerrit-reviewed commits since the last snapshot,
+      list[PathTrigger.Job]: List of jobs to trigger when done.)
   """
+  jobs = []
   with api.step.nest('record new gerrit changes'):
     gerrit_changes = []
     gerrit_commits = []
@@ -251,13 +278,19 @@ def get_gerrit_changes(api, manifest_diffs):
             step.presentation.links[gerrit_change_title] = gerrit_change_url
             gerrit_changes.append(gerrit_change)
             gerrit_commits.append(commit)
+        # See if we hit any triggers.
+        for trigger in path_triggers or []:
+          if (diff.path == trigger.repo_path and not trigger.file_paths or
+              api.git.log(diff.from_rev, diff.to_rev, limit=1,
+                          paths=trigger.file_paths)):
+            jobs.extend(trigger.jobs)
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.
     # Stop this once the Milo blame list accepts Gerrit changes as input.
-    return gerrit_commits
+    return gerrit_commits, jobs
 
 
-def make_gitiles_commit(api, repo_url, ref, commit_id):
+def _make_gitiles_commit(api, repo_url, ref, commit_id):
   """Create a GitilesCommit for the given |repo_url|, |ref|, and |commit_id|."""
   url = urlparse.urlparse(repo_url)
   return common_pb2.GitilesCommit(
@@ -268,7 +301,7 @@ def make_gitiles_commit(api, repo_url, ref, commit_id):
   )
 
 
-def make_message(api, manifest_ref, gerrit_commits, disable_gerrit_commits):
+def _make_message(api, manifest_ref, gerrit_commits, disable_gerrit_commits):
   """Creates and returns the commit message with a Cr-Commit-Position.
 
   Creates and returns the commit message with a Cr-Commit-Position
@@ -319,6 +352,37 @@ def GenTests(api):
   yield api.test(
       'snapshot-manifest-has-manifest-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers',
+          api.gerrit.test_gerrit_change_url()),
+  )
+
+  yield api.test(
+      'snapshot-manifest-has-manifest-change-that-triggers',
+      api.properties(
+          AnnealingProperties(
+              manifest_ref='snapshot', path_triggers=[
+                  AnnealingProperties.PathTrigger(
+                      repo_path='NAME', file_paths=['dir/package/pkg*.ebuild'],
+                      jobs=[
+                          AnnealingProperties.PathTrigger.Job(
+                              builder='triggered-build')
+                      ])
+              ])),
       api.step_data(
           'generate external manifest',
           stdout=api.raw_io.output('<manifest visibility="external">'

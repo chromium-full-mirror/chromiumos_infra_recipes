@@ -33,7 +33,7 @@ def RunSteps(api):
     has_diffs = api.git.diff_check('some/file/path')
     presentation.text = has_diffs
 
-  [commit] = api.git.log('START_REF', 'END_REF', limit=30)
+  [commit] = api.git.log('START_REF', 'END_REF', limit=30, paths=['file*'])
   api.assertions.assertEqual(commit.rev, commit_id)
   api.assertions.assertEqual(commit.message, 'message')
   api.git.add(['some/file/path', 'some/other/path'])
