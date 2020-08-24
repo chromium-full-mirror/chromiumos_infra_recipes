@@ -10,4 +10,8 @@ message CodeCoverageProperties {
   // GS bucket to which coverage data should be saved.
   // Defaults to cros-code-coverage-data.
   string gs_bucket = 1;
+
+  // The Chrome OS project that holds the code that coverage is being generated
+  // for. The project should be visible on https://chromium.googlesource.com/.
+  string project = 2;
 }

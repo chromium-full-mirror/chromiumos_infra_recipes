@@ -8,6 +8,6 @@ PACKAGE_MAPPING = [
         'prefix':
             'tmp/portage/chromeos-base/diagnostics-[^/]*/work/diagnostics-[^/]*/diagnostics',
         'src_path':
-            'src/platform2/diagnostics',
+            'diagnostics',
     },
 ]

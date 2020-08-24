@@ -6,6 +6,10 @@
 from recipe_engine import recipe_api
 
 DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
+DEFAULT_CODE_PROJECT = 'chromiumos/platform2'
+
+PUBLIC_CODE_HOST = 'chromium'
+BRANCH = 'refs/heads/master'
 
 
 class CodeCoverageApi(recipe_api.RecipeApi):
@@ -19,6 +23,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     self._coverage_metadata_gs_paths = []
     # The bucket to which code coverage data should be uploaded.
     self._gs_bucket = props.gs_bucket or DEFAULT_BUCKET_NAME
+    # The project that contains the code this coverage data is being generated for.
+    self._project = props.project or DEFAULT_CODE_PROJECT
 
   @property
   def metadata_dir(self):
@@ -40,6 +46,17 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     ]
     result.presentation.properties['coverage_gs_bucket'] = self._gs_bucket
     result.presentation.properties['coverage_is_presubmit'] = False
+
+    # Override the default parameters so that code coverage processor knows where
+    # to look for the code. This location needs to be public.
+    result.presentation.properties['coverage_override_gitiles_commit'] = True
+    result.presentation.properties[
+        'gitiles_commit_host'] = PUBLIC_CODE_HOST + '.googlesource.com'
+    result.presentation.properties['gitiles_commit_project'] = self._project
+    result.presentation.properties['gitiles_commit_ref'] = BRANCH
+    result.presentation.properties[
+        'gitiles_commit_id'] = self.m.gitiles.fetch_revision(
+            PUBLIC_CODE_HOST, self._project, BRANCH)
 
   def process_coverage_data(self, build_target):
     """Processes the coverage data for metadata."""

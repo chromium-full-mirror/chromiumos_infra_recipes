@@ -7,6 +7,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'depot_tools/gsutil',
+    'gitiles',
     'recipe_engine/buildbucket',
     'recipe_engine/path',
     'recipe_engine/python',
