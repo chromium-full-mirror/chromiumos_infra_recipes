@@ -1,0 +1,30 @@
+[
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "output",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"octopus-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "find recent green octopus build",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "No successful builds found for builder octopus-postsubmit"
+    },
+    "name": "$result"
+  }
+]

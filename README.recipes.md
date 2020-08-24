@@ -305,6 +305,7 @@
   * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Moblab VM tests.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
+  * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) &mdash; Recipe that triggers cros_test_platform runs.
   * [test_platform/ctp_uprev](#recipes-test_platform_ctp_uprev)
   * [test_platform/multi_bot/follower](#recipes-test_platform_multi_bot_follower)
   * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader)
@@ -6323,6 +6324,13 @@ Returns: bool, [test_platform.Request]
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#13): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#70)(api, properties):**
+### *recipes* / [test\_platform/ctp\_traffic\_generator](/recipes/test_platform/ctp_traffic_generator.py)
+
+[DEPS](/recipes/test_platform/ctp_traffic_generator.py#20): [cros\_test\_platform](#recipe_modules-cros_test_platform), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe that triggers cros_test_platform runs.
+
+&mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#32)(api):**
 ### *recipes* / [test\_platform/ctp\_uprev](/recipes/test_platform/ctp_uprev.py)
 
 [DEPS](/recipes/test_platform/ctp_uprev.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
