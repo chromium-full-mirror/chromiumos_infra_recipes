@@ -9,7 +9,7 @@ package recipes.chromeos.annealing;
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
 message AnnealingProperties {
-  // The name of the git reference to create snapshots on. Required.
+  // The name of the git branch to create snapshots on. Required.
   string manifest_ref = 1;
 
   // Whether or not to publish uprevs.

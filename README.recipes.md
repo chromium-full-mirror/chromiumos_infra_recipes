@@ -4892,7 +4892,7 @@ The annealing builders run in serial and do the following:
 
 &mdash; **def [RunSteps](/recipes/annealing.py#55)(api, properties):**
 
-&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#225)(api, manifest_diffs):**
+&mdash; **def [get\_gerrit\_changes](/recipes/annealing.py#226)(api, manifest_diffs):**
 
 Find all Gerrit changes that landed since the last snapshot.
 
@@ -4903,11 +4903,11 @@ Args:
 Returns:
   list[Commit]: The Gerrit-reviewed commits since the last snapshot.
 
-&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#259)(api, repo_url, commit_id):**
+&mdash; **def [make\_gitiles\_commit](/recipes/annealing.py#260)(api, repo_url, ref, commit_id):**
 
-Create a GitilesCommit for the given |repo_url| and |commit_id|.
+Create a GitilesCommit for the given |repo_url|, |ref|, and |commit_id|.
 
-&mdash; **def [make\_message](/recipes/annealing.py#270)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
+&mdash; **def [make\_message](/recipes/annealing.py#271)(api, manifest_ref, gerrit_commits, disable_gerrit_commits):**
 
 Creates and returns the commit message with a Cr-Commit-Position.
 
@@ -4940,7 +4940,7 @@ path in the workspace for a git fetch to work.
 Args:
     api (object):   See RunSteps documentation
     repo_url:       URL to git repo to publish snapshot.xml file to
-    snapshot_ref:   git ref to publish to (e.g.: "refs/heads/snapshot")
+    snapshot_ref:   git ref to publish to (e.g.: "snapshot")
     snapshot_file:  location of snapshot.xml to write
     snapshot_xml:   contents to write to snapshot.xml in cwd
     gerrit_commits: List of gerrit commits to reference in commit message

@@ -190,7 +190,7 @@ def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
   Args:
       api (object):   See RunSteps documentation
       repo_url:       URL to git repo to publish snapshot.xml file to
-      snapshot_ref:   git ref to publish to (e.g.: "refs/heads/snapshot")
+      snapshot_ref:   git ref to publish to (e.g.: "snapshot")
       snapshot_file:  location of snapshot.xml to write
       snapshot_xml:   contents to write to snapshot.xml in cwd
       gerrit_commits: List of gerrit commits to reference in commit message
@@ -219,7 +219,8 @@ def publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
 
     api.git_txn.update_ref_write_file(repo_url, snapshot_ref, commit_message,
                                       snapshot_file, snapshot_xml)
-    return make_gitiles_commit(api, repo_url, api.git.head_commit())
+    return make_gitiles_commit(api, repo_url, 'refs/heads/%s' % snapshot_ref,
+                               api.git.head_commit())
 
 
 def get_gerrit_changes(api, manifest_diffs):
@@ -256,13 +257,13 @@ def get_gerrit_changes(api, manifest_diffs):
     return gerrit_commits
 
 
-def make_gitiles_commit(api, repo_url, commit_id):
-  """Create a GitilesCommit for the given |repo_url| and |commit_id|."""
+def make_gitiles_commit(api, repo_url, ref, commit_id):
+  """Create a GitilesCommit for the given |repo_url|, |ref|, and |commit_id|."""
   url = urlparse.urlparse(repo_url)
   return common_pb2.GitilesCommit(
       host=url.hostname,
       project=url.path[1:], # strip leading /
-      ref='refs/heads/master',
+      ref=ref,
       id=commit_id,
   )
 
