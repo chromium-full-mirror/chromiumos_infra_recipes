@@ -4211,27 +4211,30 @@ Returns:
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#113)(self, test, unit, timeout, name=None):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#117)(self, test, unit, timeout, name=None, async_suite_run=False):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
 Args:
-  test (HwTest): A hardware test config.
-  unit (HwTestUnit): The unit the test was defined in.
-  timeout (Duration): Timeout in timestamp_pb2.Duration.
-  name (str): The step name. Defaults to 'schedule <test title>'
+* tests (list[UnitHwTest]): Hardware test suites to execute
+* timeout (Duration): Timeout in timestamp_pb2.Duration.
+* name (str): The step name. Defaults to 'schedule skylab tests v2'
+* async_suite_run (bool): If set, indicates that caller does not intend to wait for
+  the scheduled suite to complete, and the child build can outlive the parent build.
 
 Returns:
   SkylabTask: with buildbucket_id of the recipe launched.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#42)(self, unit_hw_tests, timeout, name=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#42)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
 Args:
-  tests (list[UnitHwTest]): Hardware test suites to execute
-  timeout (Duration): Timeout in timestamp_pb2.Duration.
-  name (str): The step name. Defaults to 'schedule skylab tests v2'
+* tests (list[UnitHwTest]): Hardware test suites to execute
+* timeout (Duration): Timeout in timestamp_pb2.Duration.
+* name (str): The step name. Defaults to 'schedule skylab tests v2'
+* async_suite_run (bool): If set, indicates that caller does not intend to wait for
+  the scheduled suites to complete, and the child build can outlive the parent build.
 
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
@@ -4240,7 +4243,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#233)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#240)(self, tasks, timeout):**
 
 Wait for all Skylab suites to finish and return the results.
 
@@ -4251,7 +4254,7 @@ Args:
 Returns:
   list[SkylabResult]: The results for each suite.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#187)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#194)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 

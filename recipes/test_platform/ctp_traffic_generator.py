@@ -34,7 +34,8 @@ def RunSteps(api):
   test = test_unit.hw_test_cfg.hw_test[0]
   timeout = duration_pb2.Duration(seconds=TIMEOUT_SECONDS)
 
-  api.skylab.create_recipe(test, test_unit, timeout, 'trigger CTP builder')
+  api.skylab.create_recipe(test, test_unit, timeout, name='trigger CTP builder',
+                           async_suite_run=True)
 
 
 def _construct_test_unit(api, board, test_suite):

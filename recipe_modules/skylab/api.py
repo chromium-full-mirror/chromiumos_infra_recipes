@@ -39,13 +39,16 @@ class SkylabApi(recipe_api.RecipeApi):
     """Override the quota scheduler account at runtime."""
     self._qs_account = qs_account
 
-  def schedule_suites(self, unit_hw_tests, timeout, name=None):
+  def schedule_suites(self, unit_hw_tests, timeout, name=None,
+                      async_suite_run=False):
     """Schedule HW test suites by invoking the cros_test_platform recipe.
 
     Args:
-      tests (list[UnitHwTest]): Hardware test suites to execute
-      timeout (Duration): Timeout in timestamp_pb2.Duration.
-      name (str): The step name. Defaults to 'schedule skylab tests v2'
+    * tests (list[UnitHwTest]): Hardware test suites to execute
+    * timeout (Duration): Timeout in timestamp_pb2.Duration.
+    * name (str): The step name. Defaults to 'schedule skylab tests v2'
+    * async_suite_run (bool): If set, indicates that caller does not intend to wait for
+      the scheduled suites to complete, and the child build can outlive the parent build.
 
     Returns:
       list[SkylabTask]: with buildbucket_id of the recipe launched.
@@ -81,6 +84,7 @@ class SkylabApi(recipe_api.RecipeApi):
         self._enable_test_retries(req)
         reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
 
+      swarming_parent_run_id = None if async_suite_run else self.m.swarming.task_id
       bb_request = self.m.buildbucket.schedule_request(
           self._ctp_builder,
           bucket='testplatform',
@@ -88,7 +92,7 @@ class SkylabApi(recipe_api.RecipeApi):
               'requests': reqs,
           },
           gerrit_changes=[],
-          swarming_parent_run_id=self.m.swarming.task_id,
+          swarming_parent_run_id=swarming_parent_run_id,
           # Disable inheriting the version from the parent builder.
           exe_cipd_version='')
       build = self.m.buildbucket.schedule([bb_request])[0]
@@ -110,14 +114,16 @@ class SkylabApi(recipe_api.RecipeApi):
       scheduling.unmanaged_pool = pool_name
     return
 
-  def create_recipe(self, test, unit, timeout, name=None):
+  def create_recipe(self, test, unit, timeout, name=None,
+                    async_suite_run=False):
     """Schedule a HW test suite by invoking the cros_test_platform recipe.
 
     Args:
-      test (HwTest): A hardware test config.
-      unit (HwTestUnit): The unit the test was defined in.
-      timeout (Duration): Timeout in timestamp_pb2.Duration.
-      name (str): The step name. Defaults to 'schedule <test title>'
+    * tests (list[UnitHwTest]): Hardware test suites to execute
+    * timeout (Duration): Timeout in timestamp_pb2.Duration.
+    * name (str): The step name. Defaults to 'schedule skylab tests v2'
+    * async_suite_run (bool): If set, indicates that caller does not intend to wait for
+      the scheduled suite to complete, and the child build can outlive the parent build.
 
     Returns:
       SkylabTask: with buildbucket_id of the recipe launched.
@@ -145,6 +151,7 @@ class SkylabApi(recipe_api.RecipeApi):
       self._enable_test_retries(req)
 
       request_dict = json_format.MessageToDict(req)
+      swarming_parent_run_id = None if async_suite_run else self.m.swarming.task_id
       bb_request = self.m.buildbucket.schedule_request(
           self._ctp_builder,
           bucket='testplatform',
@@ -153,7 +160,7 @@ class SkylabApi(recipe_api.RecipeApi):
           },
           tags=self.m.cros_tags.tags(**tags),
           gerrit_changes=[],
-          swarming_parent_run_id=self.m.swarming.task_id,
+          swarming_parent_run_id=swarming_parent_run_id,
           # Disable inheriting the version from the parent builder.
           exe_cipd_version='')
       build = self.m.buildbucket.schedule([bb_request])[0]
