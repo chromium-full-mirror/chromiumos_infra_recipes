@@ -73,6 +73,7 @@
       "-output_json",
       "/dev/stdout"
     ],
+    "infra_step": true,
     "name": "execution steps.publish build ID.call `result_flow`.publish",
     "stdin": "{\n  \"buildId\": \"42\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
@@ -548,6 +549,7 @@
       "-output_json",
       "/dev/stdout"
     ],
+    "infra_step": true,
     "name": "execution steps.publish build ID (2).call `result_flow`.publish",
     "stdin": "{\n  \"buildId\": \"42\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true\n}",
     "~followup_annotations": [

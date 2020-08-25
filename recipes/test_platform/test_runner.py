@@ -371,20 +371,21 @@ def publish_to_result_flow(api, config, request,
                                        the message until the build is complete.
   """
   with api.step.nest('publish build ID') as step:
-    if not api.buildbucket.build.id:
-      step.presentation.step_summary_text = 'Skipped: Build ID not set'
-      return
-    if not config.result_flow_pubsub.topic:
-      step.presentation.step_summary_text = 'Skipped: PubSub topic not set'
-      return
-    if not config.result_flow_pubsub.project:
-      step.presentation.step_summary_text = 'Skipped: PubSub project not set'
-      return
-    api.result_flow.publish(
-        project_id=config.result_flow_pubsub.project,
-        topic_id=config.result_flow_pubsub.topic, build_type='test_runner',
-        should_poll_for_completion=should_poll_for_completion,
-        parent_uid=request.parent_request_uid)
+    with api.context(infra_steps=True):
+      if not api.buildbucket.build.id:
+        step.presentation.step_summary_text = 'Skipped: Build ID not set'
+        return
+      if not config.result_flow_pubsub.topic:
+        step.presentation.step_summary_text = 'Skipped: PubSub topic not set'
+        return
+      if not config.result_flow_pubsub.project:
+        step.presentation.step_summary_text = 'Skipped: PubSub project not set'
+        return
+      api.result_flow.publish(
+          project_id=config.result_flow_pubsub.project,
+          topic_id=config.result_flow_pubsub.topic, build_type='test_runner',
+          should_poll_for_completion=should_poll_for_completion,
+          parent_uid=request.parent_request_uid)
 
 
 _DUT_STATE_NEEDS_REPAIR = "needs_repair"
