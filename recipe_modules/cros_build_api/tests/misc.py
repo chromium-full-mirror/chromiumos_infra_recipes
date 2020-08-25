@@ -91,6 +91,7 @@ def RunSteps(api):
       'DependencyService': {
           'GetBuildDependencyGraph': depgraph.GetBuildDependencyGraphResponse,
           'GetToolchainPaths': depgraph.GetToolchainPathsResponse,
+          'List': depgraph.ListResponse,
       },
       'ImageService': {
           'Create': image.CreateImageResult,

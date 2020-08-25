@@ -138,6 +138,15 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             },
         ],
     )
+    responses['List'] = jsonify(
+        package_deps=[
+            {
+                "category": "chromeos-base",
+                "package_name": "chrome-icu",
+                "version": "1-r52"
+            },
+        ],
+    )
     return responses
 
   @property
