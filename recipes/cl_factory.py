@@ -57,8 +57,8 @@ _CHANGE_ID_REGEX = re.compile(r'^Change-Id: ', re.MULTILINE)
 
 
 def RunSteps(api, properties):
+  _validate_inputs(properties)
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
-  _validate_inputs(properties, gerrit_changes)
 
   with api.cros_source.checkout_overlays_context(), \
     api.context(cwd=api.cros_source.workspace_path):
@@ -110,7 +110,7 @@ def RunSteps(api, properties):
           pres.logs['gerrit_commands'] = gerrit_commands
 
 
-def _validate_inputs(properties, gerrit_changes):
+def _validate_inputs(properties):
   """Validates the inputs to this recipe.
 
   Validates that the inputs to this recipe. An exception is thrown if a problem
@@ -118,11 +118,7 @@ def _validate_inputs(properties, gerrit_changes):
 
   Args:
     properties (ClFactoryProperties): recipe input properties.
-    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe.
   """
-  if not gerrit_changes:
-    raise ValueError('Gerrit changes to apply must be specified.')
-
   if not properties.repo_regexes:
     raise ValueError(
         'Projects to operate on must be specified by the '
@@ -465,6 +461,7 @@ TEST=CQ
               hashtags=['refactor-audio-config'],
               message_template=message_template,
           )),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -480,6 +477,7 @@ TEST=CQ
       no_git_diff_step_data('project-a'),
       no_git_diff_step_data('project-b'),
       no_git_diff_step_data('project-c'),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -499,6 +497,29 @@ TEST=CQ
                   )
               ],
           )),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  # Users may want to only replace strings, with no gerrit changes inputs
+  # specified.
+  yield api.test(
+      'no_gerrit_changes_specified',
+      build(changes=False),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+              message_template=message_template,
+              replace_strings=[
+                  ClFactoryProperties.ReplaceString(
+                      file_glob='*.star',
+                      before='1345.6',
+                      after='1421.9',
+                  )
+              ],
+          )),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -512,6 +533,7 @@ TEST=CQ
               message_template=message_template,
               full_repo_sync=True,
           )),
+      api.post_check(post_process.StatusSuccess),
   )
 
   # Here we replace the canned forall return to exercise the set logic
@@ -532,6 +554,7 @@ TEST=CQ
                     stdout=api.raw_io.output(forall_output('c', 'd'))),
       api.step_data('find additional repos to sync.repo forall',
                     stdout=api.raw_io.output(forall_output('c', 'e'))),
+      api.post_check(post_process.StatusSuccess),
   )
 
   # Here we replace the canned forall return to simulate the user providing
@@ -565,22 +588,7 @@ TEST=CQ
               hashtags=['refactor-audio-config'],
               message_template='No such {interpolation}.',
           )),
-  )
-
-  yield api.test(
-      'no_gerrit_changes_specified',
-      build(changes=False),
-      api.properties(
-          ClFactoryProperties(
-              repo_regexes=['src/project/galaxy'],
-              reviewers=['johndoe@google.com'],
-              hashtags=['refactor-audio-config'],
-              message_template=message_template,
-          )),
-      api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
-                       '.*Gerrit changes to apply must be specified.*'),
-      api.post_process(post_process.DropExpectation),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
