@@ -37,6 +37,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     super(BuildMenuApi, self).__init__(*args, **kwargs)
     self._chroot_created = False
     self._dep_graph = None
+    self._is_slim = False
+
     # Our properties: BuildMenuProperties ($chromeos/build_menu).
     # TODO(crbug/1099259): Inherit missing properties from the recipe.
     if not props.build_target.name:
@@ -106,7 +108,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
       BuilderConfig or None, with an active context.
     """
     with self.m.bot_cost.build_cost_context():
-      changes = self.m.buildbucket.build.input.gerrit_changes
+      build = self.m.buildbucket.build
+      changes = build.input.gerrit_changes
+      self._is_slim = build.builder.builder.endswith('-slim-cq')
       config = self.m.cros_infra_config.configure_builder(
           self.m.buildbucket.gitiles_commit, changes, is_staging=is_staging)
       if (changes and config and not config.build.apply_gerrit_changes):
@@ -134,7 +138,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       else:
         # No config, and missing_ok is False.
         raise recipe_api.StepFailure('Missing configuration for {}'.format(
-            self.m.buildbucket.build.builder.builder))
+            build.builder.builder))
 
   def setup_workspace_and_chroot(self, no_chroot_timeout=False):
     """Setup the workspace and chroot for the builder.
@@ -292,11 +296,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
         compile_source=config.build.install_toolchain.compile_source)
 
     install_packages = config.build.install_packages
+    relevant_packages = packages
+    if self._is_slim:
+      relevant_packages = self.m.cros_relevance.get_package_dependencies(
+          sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
+          patch_sets=self.m.workspace_util.patch_sets, packages=packages)
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = Profile(name=config.build.portage_profile.profile)
       self.m.sysroot_util.install_packages(
-          config, self.dep_graph, packages, artifact_build=self._artifact_build,
+          config, self.dep_graph, relevant_packages,
+          artifact_build=self._artifact_build,
           package_indexes=self._package_indexes, timeout_sec=timeout_sec,
           name=name)
 
@@ -327,12 +337,18 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # If we should run ebuild tests, do that.
     if self.m.cros_infra_config.should_run(unit_tests.ebuilds_run_spec):
       with self.m.step.nest('run ebuild tests') as presentation:
+        relevant_testable_packages = unit_tests.packages
+        if self._is_slim:
+          relevant_testable_packages = self.m.cros_relevance.get_package_dependencies(
+              sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
+              patch_sets=self.m.workspace_util.patch_sets,
+              packages=unit_tests.packages)
         response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
             BuildTargetUnitTestRequest(
                 build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
                 result_path=str(self.m.path.mkdtemp()),
                 package_blacklist=unit_tests.package_blacklist,
-                packages=unit_tests.packages,
+                packages=relevant_testable_packages,
                 flags=BuildTargetUnitTestRequest.Flags(
                     code_coverage=self._test_with_code_coverage,
                     empty_sysroot=unit_tests.empty_sysroot)),

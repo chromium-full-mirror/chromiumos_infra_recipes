@@ -60,6 +60,9 @@ def GenTests(api):
   # Normal CQ build, with one gerrit_change.
   yield api.build_menu.test('cq-build', cq=True)
 
+  # Slim CQ build, with one gerrit_change.
+  yield api.build_menu.test('slim-cq-build', cq=True, build_target='atlas-slim')
+
   # This covers the env_info.pointless check.
   yield api.build_menu.test('pointless-cq-build', cq=True, pointless=True)
 

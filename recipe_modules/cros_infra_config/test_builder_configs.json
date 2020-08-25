@@ -134,7 +134,18 @@
         "manifest": "PUBLIC"
       },
       "artifacts": {
-        "prebuilts": "NONE"
+        "prebuilts": "NONE", 
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        }        
       },
       "chrome": {
         "internal": true
@@ -350,8 +361,19 @@
         "manifest": "PUBLIC"
       },
       "artifacts": {
-        "prebuilts": "NONE"
-      },
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        }      
+      },      
       "chrome": {
         "internal": true
       },
@@ -585,7 +607,18 @@
         "manifest": "PRIVATE"
       },
       "artifacts": {
-        "prebuilts": "NONE"
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        }        
       },
       "chrome": {
         "internal": true

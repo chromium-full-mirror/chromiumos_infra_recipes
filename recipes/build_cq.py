@@ -66,6 +66,14 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess), cq=True, build_target='coral')
 
+  # Slim CQ build, with one gerrit_change.
+  yield api.build_menu.test(
+      'slim-cq-build', api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess), cq=True,
+      build_target='atlas-slim')
+
   # This covers the Relevance check.
   yield api.build_menu.test(
       'prepare-for-build-pointless',

@@ -8,9 +8,8 @@ from collections import namedtuple
 
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.chromite.api.depgraph import GetToolchainPathsRequest
-# TODO (crbug/1111319): Uncomment out once crrev.com/c/2347449 and
-# crrev.com/c/2347393 land.
-# from PB.chromite.api.depgraph import ListRequest
+from PB.chromite.api.depgraph import ListRequest
+from PB.chromite.api.depgraph import SourcePath
 from PB.chromiumos.common import ProtoBytes as common_proto_bytes
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanRequest
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanResponse
@@ -302,7 +301,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         to the build, if any.
 
     Returns:
-      Set[str]: The union of all paths in the patchsets.
+      List[Path]: The union of all paths in the patchsets.
     """
     with self.m.step.nest('get affected paths'):
       affected_paths = []
@@ -311,7 +310,9 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
             patch_set.project, patch_set.branch)
         for src_path in src_paths:
           for path in patch_set.file_infos.keys():
-            affected_paths.extend(['%s/%s' % (src_path, path)])
+            path = SourcePath()
+            path.path = '%s/%s' % (src_path, path)
+            affected_paths.append(path)
       return affected_paths
 
   def get_package_dependencies(self, sysroot, chroot, patch_sets=None,
@@ -321,9 +322,9 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Args:
       sysroot (Sysroot): The Sysroot being used.
       chroot (chromiumos.Chroot): The chroot it is being run in.
-      patch_sets (List[gerrit.PatchSet]): The list of paths to consider when
-        retrieving the board's package dependencies. If empty / None returns all
-        package dependencies.
+      patch_sets (List[gerrit.PatchSet]): The changes applied to the build.
+        Used to determine the affected paths. If empty / None returns package
+        dependencies for all paths.
       packages (list[chromiumos.PackageInfo]): The list of packages for which to
         get dependencies. If none are specified the standard list of packages is
         used.
@@ -331,16 +332,12 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Returns:
       (List[str]): A list of package dependencies for the build target.
     """
-    with self.m.step.nest('get packages dependencies'):
-      if not patch_sets:
-        return []
+    with self.m.step.nest('get package dependencies'):
       affected_paths = self._get_affected_paths(patch_sets)
-      # TODO (crbug/1111319): Uncomment out crrev.com/c/2347449 and
-      # crrev.com/c/2347393 land.
-      # resp = self.m.cros_build_api.DependencyService.List(
-      #     ListRequest(sysroot=sysroot, chroot=chroot, src_paths=affected_paths,
-      #                 packages=packages))
-      # return resp.package_deps
+      resp = self.m.cros_build_api.DependencyService.List(
+          ListRequest(sysroot=sysroot, chroot=chroot, src_paths=affected_paths,
+                      packages=packages))
+      return resp.package_deps
 
   def _ensure_binaries(self):
     """Ensure this module's binaries are installed."""
