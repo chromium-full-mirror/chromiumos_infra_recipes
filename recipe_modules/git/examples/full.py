@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'git',
 ]
@@ -33,23 +34,25 @@ def RunSteps(api):
     has_diffs = api.git.diff_check('some/file/path')
     presentation.text = has_diffs
 
-  [commit] = api.git.log('START_REF', 'END_REF', limit=30, paths=['file*'])
-  api.assertions.assertEqual(commit.rev, commit_id)
-  api.assertions.assertEqual(commit.message, 'message')
-  api.git.add(['some/file/path', 'some/other/path'])
-  api.git.is_reachable('deadbeef')
-  api.git.show_file('deadbeef', 'some/path')
-  api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')
-  api.assertions.assertEqual(
-      api.git.get_diff_files('master', 'HEAD'),
-      ['a/b/text.txt', 'other_test.txt'])
-  api.assertions.assertEqual(
-      api.git.get_diff_files('master'), ['a/b/text.txt', 'other_test.txt'])
-  api.assertions.assertEqual(api.git.get_diff_files(),
-                             ['a/b/text.txt', 'other_test.txt'])
-  api.assertions.assertFalse(api.git.get_diff_files(test_stdout='\n'), [])
-  api.assertions.assertEqual(api.git.get_working_dir_diff_files(),
-                             ['changed.txt', 'new.txt'])
+  commits = api.git.log('START_REF', 'END_REF', limit=30, paths=['file*'])
+  if commits:
+    [commit] = commits
+    api.assertions.assertEqual(commit.rev, commit_id)
+    api.assertions.assertEqual(commit.message, 'message')
+    api.git.add(['some/file/path', 'some/other/path'])
+    api.git.is_reachable('deadbeef')
+    api.git.show_file('deadbeef', 'some/path')
+    api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')
+    api.assertions.assertEqual(
+        api.git.get_diff_files('master', 'HEAD'),
+        ['a/b/text.txt', 'other_test.txt'])
+    api.assertions.assertEqual(
+        api.git.get_diff_files('master'), ['a/b/text.txt', 'other_test.txt'])
+    api.assertions.assertEqual(api.git.get_diff_files(),
+                               ['a/b/text.txt', 'other_test.txt'])
+    api.assertions.assertFalse(api.git.get_diff_files(test_stdout='\n'), [])
+    api.assertions.assertEqual(api.git.get_working_dir_diff_files(),
+                               ['changed.txt', 'new.txt'])
 
   with api.git.head_context():
     pass
@@ -77,6 +80,11 @@ def GenTests(api):
   yield api.test(
       'diff_check',
       api.git.diff_check(True),
+  )
+
+  yield api.test(
+      'log_yields_no_output',
+      api.step_data('git log', stdout=api.raw_io.output('')),
   )
 
   yield api.test(

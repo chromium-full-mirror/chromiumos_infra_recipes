@@ -2941,7 +2941,7 @@ Args:
   * commit (str): The commit to cherry pick.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#420)(self, repo_url, target_path=None, timeout_sec=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#423)(self, repo_url, target_path=None, timeout_sec=None):**
 
 Clones a Git repo into the current directory.
 
@@ -2961,7 +2961,7 @@ Args:
   * author (str): The author to use in the commit. Ordinarily not used,
       added to test permission oddities by forcing forged commit failure.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#406)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#409)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -2993,7 +2993,7 @@ Returns:
       otherwise.
   
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#453)(self, refspec, default):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#456)(self, refspec, default):**
 
 Splits the branch from the refspec.
 
@@ -3055,7 +3055,7 @@ Args:
 Returns:
   A list[str] of changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#468)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#471)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -3068,7 +3068,7 @@ Returns: list[str] parent commit sha.
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#491)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#494)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -3087,7 +3087,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#481)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#484)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -3096,7 +3096,7 @@ Args:
 
 Returns: Bool if the commit has more than 1 parent.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#376)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#379)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -3158,7 +3158,7 @@ Args:
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#434)(self, force=False):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#437)(self, force=False):**
 
 Run `git rebase` with the given arguments.
 
@@ -3172,14 +3172,14 @@ Return the git repository root for the current directory.
 Returns:
   str: The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#445)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#448)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   * args list[str]: args for `git config`.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#388)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#391)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -5726,9 +5726,9 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/git/examples/fetch_refs.py#22)(api, properties):**
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
-[DEPS](/recipe_modules/git/examples/full.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git/examples/full.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#18)(api):**
 ### *recipes* / [git\_cl:examples/forwarding](/recipe_modules/git_cl/examples/forwarding.py)
 
 [DEPS](/recipe_modules/git_cl/examples/forwarding.py#6): [git\_cl](#recipe_modules-git_cl)

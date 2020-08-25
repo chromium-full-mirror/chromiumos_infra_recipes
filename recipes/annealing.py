@@ -280,9 +280,10 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
             gerrit_commits.append(commit)
         # See if we hit any triggers.
         for trigger in path_triggers or []:
-          if (diff.path == trigger.repo_path and not trigger.file_paths or
-              api.git.log(diff.from_rev, diff.to_rev, limit=1,
-                          paths=trigger.file_paths)):
+          if (diff.path == trigger.repo_path and
+              (not trigger.file_paths or
+               api.git.log(diff.from_rev, diff.to_rev, limit=1,
+                           paths=trigger.file_paths))):
             jobs.extend(trigger.jobs)
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.

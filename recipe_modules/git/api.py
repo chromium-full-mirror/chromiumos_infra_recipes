@@ -368,9 +368,12 @@ class GitApi(recipe_api.RecipeApi):
     stdout = step_data.stdout.strip().rstrip('\x00')
 
     commits = []
-    for record in stdout.split('\x00'):
-      ref, message = record.split('\x1E')
-      commits.append(self.Commit(ref.strip('\n'), message))
+    if stdout:
+      # We need to check for an empty stdout, because ''.split('\x00')
+      # returns [''].
+      for record in stdout.split('\x00'):
+        ref, message = record.split('\x1E')
+        commits.append(self.Commit(ref.strip('\n'), message))
     return commits
 
   def is_reachable(self, revision):
