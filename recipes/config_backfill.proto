@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package recipes.chromeos.project_migrator;
+package recipes.chromeos.config_backfill;
 
 // Repo and path to model.yaml
 message ModelYamlConfig {
@@ -8,17 +8,17 @@ message ModelYamlConfig {
   string path = 2; // path inside URL to model.yaml
 }
 
-message ProjectMigratorProperties {
+message ConfigBackfillProperties {
   // Destination repo for changes
   string dest_repo = 1;
 
-  // Repo and path to public model.yaml
+  // Repo and path to public model.yaml (optional)
   ModelYamlConfig public_yaml = 2;
 
-  // Repo and path to private model.yaml
+  // Repo and path to private model.yaml (optional)
   ModelYamlConfig private_yaml = 3;
 
-  // Key for HWID database
+  // Key for HWID database (optional)
   string hwid_key = 4;
 
   // When no input config data is available, the project

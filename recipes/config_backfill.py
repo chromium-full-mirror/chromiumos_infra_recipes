@@ -3,21 +3,17 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Run on changes to model.yaml and HWID databases.
+"""Copy legacy configuration and generate backfilled configuration."""
 
-Copies the changed files into a project-local location and regenerates merged
-configuration data.
-"""
-
-# This builder is meant to be triggered off of single file changes after they've
-# made it to gitiles.  The input properties tell us where the public/private
-# yaml files are (if any) and what key to use in the HWID database.
+# When run, this recipe will copy configured legacy configuration data to
+# per-project repos (including model.yaml and HWID data).  After the data
+# is copied, the config.jsonproto is generated from any existing starlark,
+# and the join_config_payloads.py script is used to backfill the legacy
+# configuration information into a joined.jsonproto.
 #
-# When run, the model.yaml and HWID repos are cloned, the data merged and copied
-# over to the destination repo.  As long as the pending diff is non-empty a new
-# commit is made with the merged data and updated configs.
+# Any resulting changes are then committed to the configured destination.
 
-from PB.recipes.chromeos.project_migrator import ProjectMigratorProperties
+from PB.recipes.chromeos.config_backfill import ConfigBackfillProperties
 from recipe_engine import post_process
 
 # Recipe dependencies
@@ -35,7 +31,7 @@ DEPS = [
     'recipe_engine/step',
 ]
 
-PROPERTIES = ProjectMigratorProperties
+PROPERTIES = ConfigBackfillProperties
 
 # Repo URL configuration
 CROS_HWID_REPO = 'https://chrome-internal.googlesource.com/chromeos/chromeos-hwid'
@@ -99,7 +95,27 @@ def RunSteps(api, properties):
   with api.step.nest('cloning destination repo'):
     api.git.clone(properties.dest_repo, target_path=dest_repo_path)
 
-  def merge_configs():
+  def _generate_config():
+    """Generate the config.jsonproto from the project starlark (if any).
+
+    Expects to be run from within the project repo (ie ${CWD}/config/bin/gen_config
+    is the path to the gen_config script)"""
+    cwd = api.context.cwd
+    gen_config_path = cwd.join('config', 'bin', 'gen_config')
+    config_path = cwd.join('config.star')
+
+    api.path.mock_add_paths(gen_config_path)
+    api.path.mock_add_paths(config_path)
+
+    with api.step.nest('generate config.jsonproto') as presentation:
+      if not api.path.exists(gen_config_path):  # pragma: nocover
+        presentation.step_text = 'gen_config not found'
+      elif not api.path.exists(config_path):  # pragma: nocover
+        presentation.step_text = 'no config.star'
+      else:
+        api.step('running gen_config', [gen_config_path, config_path])
+
+  def _merge_configs():
     """Copy files and merge with existing config to generate output.  This
     is intended to be called from git_txn.update_ref"""
     api.file.ensure_directory('ensure %s directory exists' % dest_file_path,
@@ -169,14 +185,20 @@ def RunSteps(api, properties):
 
       # Add and commit
       commit_msg = \
-        '''Automatically merging HWID and model.yaml information.
-This commit was performed automatically by project_migrator.py.'''
+        '''Generating config payload and merging legacy configs.
+
+        This action was performed automatically by config_backfill.py'''
       api.git.commit(commit_msg)
+
+  # Both steps
+  def do_run():
+    _generate_config()
+    return _merge_configs()
 
   # Update the repo atomically
   with api.context(cwd=dest_repo_path):
     dest_ref = 'refs/heads/master'
-    api.git_txn.update_ref(properties.dest_repo, dest_ref, merge_configs)
+    api.git_txn.update_ref(properties.dest_repo, dest_ref, do_run)
 
 
 def GenTests(api):
