@@ -575,6 +575,7 @@ class SkylabStateStore(object):
           config=skylab_local_state.common.Config(
               admin_service=self._config.lab.admin_service,
               cros_inventory_service=self._config.lab.cros_inventory_service,
+              cros_ufs_service=self._config.lab.cros_ufs_service,
               autotest_dir=self._config.harness.autotest_dir,
           ), dut_name=self._dut_hostname, run_id=self._run_id,
           dut_id=self._dut_id)
@@ -613,6 +614,7 @@ class SkylabStateStore(object):
           config=skylab_local_state.common.Config(
               admin_service=self._config.lab.admin_service,
               cros_inventory_service=self._config.lab.cros_inventory_service,
+              cros_ufs_service=self._config.lab.cros_ufs_service,
               autotest_dir=self._config.harness.autotest_dir,
           ), results_dir=self._results_dir, dut_name=self._dut_hostname,
           dut_id=self._dut_id, dut_state=dut_state,
@@ -642,7 +644,8 @@ def GenTests(api):
             config={
                 'lab': {
                     'admin_service': 'foo-service',
-                    'cros_inventory_service': 'inv-service'
+                    'cros_inventory_service': 'inv-service',
+                    'cros_ufs_service': 'ufs-service'
                 },
                 'harness': {
                     'autotest_dir': '/path/to/autotest',
