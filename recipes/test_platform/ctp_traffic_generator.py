@@ -44,7 +44,7 @@ def _construct_test_unit(api, board, test_suite):
   return HwTestUnit(
       common=TestUnitCommon(
           build_payload=BuildPayload(
-              artifacts_gs_bucket='gs://chromeos-image-archive',
+              artifacts_gs_bucket='chromeos-image-archive',
               artifacts_gs_path=last_successful_board_build.output
               .properties['artifacts']['gs_path'])),
       hw_test_cfg=HwTestCfg(
