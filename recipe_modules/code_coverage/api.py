@@ -25,6 +25,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     self._gs_bucket = props.gs_bucket or DEFAULT_BUCKET_NAME
     # The project that contains the code this coverage data is being generated for.
     self._project = props.project or DEFAULT_CODE_PROJECT
+    # The commit id of BRANCH for the project.
+    self._commit_id = None
 
   @property
   def metadata_dir(self):
@@ -54,14 +56,14 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         'gitiles_commit_host'] = PUBLIC_CODE_HOST + '.googlesource.com'
     result.presentation.properties['gitiles_commit_project'] = self._project
     result.presentation.properties['gitiles_commit_ref'] = BRANCH
-    result.presentation.properties[
-        'gitiles_commit_id'] = self.m.gitiles.fetch_revision(
-            PUBLIC_CODE_HOST, self._project, BRANCH)
+    result.presentation.properties['gitiles_commit_id'] = self._commit_id
 
   def process_coverage_data(self, build_target):
     """Processes the coverage data for metadata."""
     with self.m.step.nest('process code coverage data'):
       try:
+        self._commit_id = self.m.gitiles.fetch_revision(PUBLIC_CODE_HOST,
+                                                        self._project, BRANCH)
         self._generate_and_upload_metadata(build_target)
       except:  # pylint: disable=bare-except
         self.m.step.active_result.presentation.properties[
