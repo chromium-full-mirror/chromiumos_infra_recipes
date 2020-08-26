@@ -190,6 +190,7 @@ def _make_cl(api, info, properties, gerrit_changes):
   cl = api.gerrit.create_change(
       project=project_path,
       reviewers=list(properties.reviewers),
+      ccs=list(properties.ccs),
       hashtags=list(properties.hashtags),
   )
   return cl, diff
@@ -458,6 +459,7 @@ TEST=CQ
           ClFactoryProperties(
               repo_regexes=['src/project/galaxy'],
               reviewers=['johndoe@google.com'],
+              ccs=['bob@google.com', 'martin@google.com'],
               hashtags=['refactor-audio-config'],
               message_template=message_template,
           )),

@@ -25,6 +25,9 @@ message ClFactoryProperties {
   // Reviewers to add to the created CLs.
   repeated string reviewers = 4;
 
+  // CCs to add to the created CLs.
+  repeated string ccs = 9;
+
   // Hashtags to add to the created CLs.
   repeated string hashtags = 5;
 

@@ -947,6 +947,10 @@
       "--force",
       "--reviewers",
       "johndoe@google.com",
+      "--cc",
+      "bob@google.com",
+      "--cc",
+      "martin@google.com",
       "--hashtag",
       "refactor-audio-config",
       "--send-mail"
@@ -1140,6 +1144,10 @@
       "--force",
       "--reviewers",
       "johndoe@google.com",
+      "--cc",
+      "bob@google.com",
+      "--cc",
+      "martin@google.com",
       "--hashtag",
       "refactor-audio-config",
       "--send-mail"
@@ -1333,6 +1341,10 @@
       "--force",
       "--reviewers",
       "johndoe@google.com",
+      "--cc",
+      "bob@google.com",
+      "--cc",
+      "martin@google.com",
       "--hashtag",
       "refactor-audio-config",
       "--send-mail"
