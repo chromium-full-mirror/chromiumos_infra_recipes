@@ -93,6 +93,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         self.m.cros_sdk.chroot.path,
         '--checkout-dir',
         self.m.cros_source.workspace_path,
+        '--project-dir',
+        self.m.cros_source.find_project_paths(self._project, BRANCH)[0],
         '--output-dir',
         self.metadata_dir,
         '--build-target',

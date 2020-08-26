@@ -436,6 +436,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     compressed_data = converter._convert_metadata(
         chroot_dir='/path/to/chroot',
         checkout_dir='/path/to/checkout_dir',
+        project_dir='project_dir',
         output_dir='/path/to/output_dir',
         build_target='betty',
         diff_mapping=None,

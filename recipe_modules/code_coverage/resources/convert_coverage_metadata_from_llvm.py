@@ -400,8 +400,8 @@ def _load_files_coverage_data(coverage_files, build_target, diff_mapping):
   return files_coverage_data
 
 
-def _convert_metadata(chroot_dir, checkout_dir, output_dir, build_target,
-                      diff_mapping):
+def _convert_metadata(chroot_dir, checkout_dir, project_dir, output_dir,
+                      build_target, diff_mapping):
   """Convert coverage metadata from LLVM format.
 
   Args:
@@ -442,7 +442,7 @@ def _convert_metadata(chroot_dir, checkout_dir, output_dir, build_target,
 
   if diff_mapping is None:
     repository_util.add_git_revisions_to_coverage_files_metadata(
-        files_coverage_data, checkout_dir)
+        files_coverage_data, os.path.join(checkout_dir, project_dir))
   minutes = (time.time() - start_time) / 60
   logging.info('Processing coverage data for %d files took %.0f minutes',
                len(files_coverage_data), minutes)
@@ -486,6 +486,10 @@ def _parse_args(args):
   parser.add_argument('--checkout-dir', required=True, type=str,
                       help='absolute path to the chromiumos checkout directory')
   parser.add_argument(
+      '--project-dir', required=True, type=str,
+      help='relative path from the chromiumos directory to the project directory'
+  )
+  parser.add_argument(
       '--output-dir', required=True, type=str,
       help='absolute path to the directory to store the metadata, must exist')
   parser.add_argument('--build-target', required=True, type=str,
@@ -502,6 +506,10 @@ def main():
   # Validate parameters
   if not os.path.exists(params.checkout_dir):
     raise RuntimeError('Checkout directory %s must exist' % params.checkout_dir)
+
+  abs_project_dir = os.path.join(params.checkout_dir, params.project_dir)
+  if not os.path.exists(abs_project_dir):
+    raise RuntimeError('Project directory %s must exist' % abs_project_dir)
 
   if not os.path.exists(params.output_dir):
     raise RuntimeError('Output directory %s must exist' % params.output_dir)
@@ -523,8 +531,8 @@ def main():
       diff_mapping = json.load(f)
 
   compressed_data = _convert_metadata(params.chroot_dir, params.checkout_dir,
-                                      params.output_dir, params.build_target,
-                                      diff_mapping)
+                                      params.project_dir, params.output_dir,
+                                      params.build_target, diff_mapping)
 
   with open(os.path.join(params.output_dir, 'all.json.gz'), 'wb') as f:
     f.write(zlib.compress(json.dumps(compressed_data)))
