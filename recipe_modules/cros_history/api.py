@@ -224,19 +224,25 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
     tags = [] if not tags else tags
 
-    # BuildRange and TimeRange are mutually exclusive.
+    # Crbug/1122589: Always exclude builds created after us, to avoid deadlock.
+    # Empirically, if we use end_build_id=our_build_id, it includes us in the
+    # results, while end_time=my_create_time excludes us from the results.
+    # See also crbug.com/996706.
     if start_build_id:
       build_range = builds_service_pb2.BuildRange(start_build_id=start_build_id)
-      create_time = None
+      create_time = common_pb2.TimeRange(
+          end_time=self.m.buildbucket.build.create_time)
     else:
       build_range = None
       create_time = common_pb2.TimeRange(
           start_time=timestamp_pb2.Timestamp(
-              seconds=int(self.start_time_in_seconds)))
+              seconds=int(self.start_time_in_seconds)),
+          end_time=self.m.buildbucket.build.create_time)
 
     if snapshot is not None:
-      # we can't use the snapshot directly because output_gitiles_commit
-      # is not currently implemented, TODO(crbug/990539)
+      # TODO(crbug/990539): We can't use the snapshot directly because
+      # BuildPredicate.output_gitiles_commit is not currently implemented by
+      # buildbucket.search.
       tags.extend(
           self.m.cros_tags.tags(
               buildset=self._buildset_tag_from_snapshot(snapshot)))
@@ -265,10 +271,6 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
     builds = self.m.buildbucket.search(
         predicates, limit=limit, url_title_fn=self.m.naming.get_build_title)
-
-    # We are likely to have found ourselves, due to the group_key.
-    # Remove this after
-    builds = [b for b in builds if b.id != self.m.buildbucket.build.id]
 
     # Filter out builds that were run on a superset of the input patches.
     # e.g. if we're trying to get the history for runs on [cl1#1], we aren't

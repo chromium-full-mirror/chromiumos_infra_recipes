@@ -21,9 +21,9 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}",
+      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"1234\"}]}",
       "-predicate",
-      "{\"builder\": {}, \"createTime\": {\"startTime\": \"2012-05-09T12:53:21Z\"}, \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"GROUP_KEY\"}]}"
+      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:21Z\"}, \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"GROUP_KEY\"}]}"
     ],
     "infra_step": true,
     "name": "get change build history.buildbucket.search",

@@ -37,11 +37,3 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           [build_msg(100, create_time=100)],
           'find matching builds.buildbucket.search'))
-
-  yield api.test(
-      'found_ourselves', api.buildbucket.build(build_msg(400, create_time=400)),
-      api.cq(full_run=True),
-      api.buildbucket.simulated_search_results(
-          [build_msg(100, create_time=100),
-           build_msg(400, create_time=400)],
-          'find matching builds.buildbucket.search'))
