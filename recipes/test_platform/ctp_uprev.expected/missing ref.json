@@ -26,9 +26,9 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 103, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 111, in RunSteps",
       "    validate(api, instruction)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 39, in validate",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 42, in validate",
       "    'No ref to update for package %s' % instruction.package_name)",
       "ValueError: No ref to update for package chromiumos/infra/phosphorus/linux-amd64"
     ]

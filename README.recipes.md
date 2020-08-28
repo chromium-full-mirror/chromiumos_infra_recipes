@@ -6284,11 +6284,11 @@ Recipe that triggers cros_test_platform runs.
 &mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#32)(api):**
 ### *recipes* / [test\_platform/ctp\_uprev](/recipes/test_platform/ctp_uprev.py)
 
-[DEPS](/recipes/test_platform/ctp_uprev.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/ctp_uprev.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-&mdash; **def [RunSteps](/recipes/test_platform/ctp_uprev.py#100)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/ctp_uprev.py#108)(api, properties):**
 
-&mdash; **def [get\_current\_instance](/recipes/test_platform/ctp_uprev.py#60)(api, instruction):**
+&mdash; **def [get\_current\_instance](/recipes/test_platform/ctp_uprev.py#63)(api, instruction):**
 
 Get the current version of the ref.
 
@@ -6300,19 +6300,20 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#79)(api, instruction):**
+&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#82)(api, instruction, tag_release_version):**
 
 Change CIPD ref of a package according to the instructions.
 
 Args:
   * instruction (ctp_uprev.Instruction): A complete set of args for
     `cipd set-ref`.
+  * tag_release_version: whether to tag the package with the release version or not.
 Returns:
   ctp_uprev.Instance
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [validate](/recipes/test_platform/ctp_uprev.py#27)(api, instruction):**
+&mdash; **def [validate](/recipes/test_platform/ctp_uprev.py#30)(api, instruction):**
 
 Validate instructions for uprevving a specific package.
 

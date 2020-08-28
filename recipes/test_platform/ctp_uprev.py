@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/cipd',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/time',
 ]
 
 PROPERTIES = ctp_uprev.Properties
@@ -22,6 +23,8 @@ _GO_BINARIES = ['cros_test_platform',
                 'skylab_local_state',
                 'phosphorus',
                 'autotest_status_parser']
+
+_RELEASE_VERSION_TAG = 'ctp_release_version'
 
 
 def validate(api, instruction):
@@ -76,19 +79,24 @@ def get_current_instance(api, instruction):
                                      id=instance_id)
 
 
-def uprev_package(api, instruction):
+def uprev_package(api, instruction, tag_release_version):
   """Change CIPD ref of a package according to the instructions.
 
   Args:
     * instruction (ctp_uprev.Instruction): A complete set of args for
       `cipd set-ref`.
+    * tag_release_version: whether to tag the package with the release version or not.
   Returns:
     ctp_uprev.Instance
   Raises:
     A StepFailure if the CIPD tool call fails.
   """
+  release_version = 'ctp_' + api.time.utcnow().isoformat()
   with api.step.nest('uprev the "%s" ref of the "%s" package to "%s"' %
       (instruction.ref, instruction.package_name, instruction.version)):
+    if tag_release_version:
+      api.cipd.set_tag(instruction.package_name, instruction.version,
+                       {_RELEASE_VERSION_TAG: release_version})
     instance_id = api.cipd.set_ref(
         instruction.package_name,
         instruction.version,
@@ -104,39 +112,51 @@ def RunSteps(api, properties):
       properties.response.old_versions.extend([
           get_current_instance(api, instruction)])
       properties.response.new_versions.extend([
-          uprev_package(api, instruction)])
+          uprev_package(api, instruction, properties.config.tag_release_version)
+      ])
 
 
 def GenTests(api):
   yield api.test(
-      'basic',
+      'basic without release tagging',
+      api.properties(
+          ctp_uprev.Properties(
+              config=ctp_uprev.Config(instructions=[
+                  ctp_uprev.Instruction(
+                      package_name='chromiumos/infra/phosphorus/linux-amd64',
+                      ref='foo-phosphorus-ref',
+                      version='foo-phosphorus-version'),
+                  ctp_uprev.Instruction(
+                      package_name='infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
+                      ref='foo-recipe-ref', version='foo-recipe-version'),
+              ]))),
+  )
+
+  yield api.test(
+      'basic with release tagging',
       api.properties(
           ctp_uprev.Properties(
               config=ctp_uprev.Config(
                   instructions=[
                       ctp_uprev.Instruction(
-                          package_name=
-'chromiumos/infra/phosphorus/linux-amd64',
+                          package_name='chromiumos/infra/phosphorus/linux-amd64',
                           ref='foo-phosphorus-ref',
                           version='foo-phosphorus-version'),
                       ctp_uprev.Instruction(
-                          package_name=
-'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
-                          ref='foo-recipe-ref',
-                          version='foo-recipe-version'),
-                      ]))),
-  )
+                          package_name='infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
+                          ref='foo-recipe-ref', version='foo-recipe-version'),
+                  ], tag_release_version=True))),
+  ) + api.time.seed(123)
 
   yield api.test(
       'missing ref',
       api.properties(
           ctp_uprev.Properties(
-              config=ctp_uprev.Config(
-                  instructions=[
-                      ctp_uprev.Instruction(
-                          package_name=
-'chromiumos/infra/phosphorus/linux-amd64',
-                          version='foo-version')]))),
+              config=ctp_uprev.Config(instructions=[
+                  ctp_uprev.Instruction(
+                      package_name='chromiumos/infra/phosphorus/linux-amd64',
+                      version='foo-version')
+              ]))),
       api.expect_exception("ValueError"),
   )
 
@@ -144,12 +164,11 @@ def GenTests(api):
       'missing version',
       api.properties(
           ctp_uprev.Properties(
-              config=ctp_uprev.Config(
-                  instructions=[
-                      ctp_uprev.Instruction(
-                          package_name=
-'chromiumos/infra/phosphorus/linux-amd64',
-                          ref='foo-ref')]))),
+              config=ctp_uprev.Config(instructions=[
+                  ctp_uprev.Instruction(
+                      package_name='chromiumos/infra/phosphorus/linux-amd64',
+                      ref='foo-ref')
+              ]))),
       api.expect_exception("ValueError"),
   )
 

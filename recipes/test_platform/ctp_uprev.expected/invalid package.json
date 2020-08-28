@@ -26,9 +26,9 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 103, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 111, in RunSteps",
       "    validate(api, instruction)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 47, in validate",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 50, in validate",
       "    (instruction.package_name, package_whitelist))",
       "ValueError: Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/skylab_local_state/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/autotest_status_parser/linux-amd64']"
     ]
