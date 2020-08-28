@@ -205,6 +205,7 @@
     },
     "infra_step": true,
     "name": "execute.call binary.launch luciexe",
+    "stdin": "2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",
