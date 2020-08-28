@@ -23,7 +23,7 @@ CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 CHROMIUM_REBUILD_REGEXES = {
     'chromiumos/overlays/chromiumos-overlay': [
         re.compile('chromeos-base/chromeos-chrome/'
-                   'chromeos-chrome-9999\.ebuild$')
+                   'chromeos-chrome-[0-9].+\.ebuild$')
     ],
 }
 

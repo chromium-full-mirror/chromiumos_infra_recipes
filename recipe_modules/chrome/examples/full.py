@@ -39,6 +39,8 @@ def jsonify(**kwargs):
 
 def RunSteps(api, properties):
 
+  # TODO(1098567): Add method to gerrit/test_api.py to generate patch_sets, and
+  # add a test to confirm that 9999 and 86.0.1234.0_rc-r2.ebuild hits.
   def patch_set(files):
     """Return a patchset.
 
