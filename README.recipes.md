@@ -254,6 +254,7 @@
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [paygen](#recipes-paygen) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
+  * [paygen_orchestrator](#recipes-paygen_orchestrator) &mdash; Recipe for orchestrating ChromeOS payloads (AU deltas etc).
   * [phosphorus:examples/full](#recipes-phosphorus_examples_full)
   * [portage:examples/full](#recipes-portage_examples_full)
   * [presubmit_cq](#recipes-presubmit_cq) &mdash; Launches presubmit tests for CQ.
@@ -5906,11 +5907,18 @@ All builders run against the same source tree.
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
 ### *recipes* / [paygen](/recipes/paygen.py)
 
-[DEPS](/recipes/paygen.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen.py#13)(api):**
+&mdash; **def [RunSteps](/recipes/paygen.py#16)(api):**
+### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
+
+[DEPS](/recipes/paygen_orchestrator.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for orchestrating ChromeOS payloads (AU deltas etc).
+
+&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#16)(api):**
 ### *recipes* / [phosphorus:examples/full](/recipe_modules/phosphorus/examples/full.py)
 
 [DEPS](/recipe_modules/phosphorus/examples/full.py#6): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
