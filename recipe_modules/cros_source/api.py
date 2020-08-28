@@ -90,6 +90,13 @@ class CrosSourceApi(recipe_api.RecipeApi):
       * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
       current value.
     """
+    if self._enable_custom_overlays:
+      self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
+                             persist=True)
+      self.m.path.mock_add_paths(self.cache_path.join('.repo'))
+      self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
+      self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
+
     cache_path = cache_path_override or self.cache_path
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
     if (cache_path == self.cache_path and
@@ -135,13 +142,15 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
   @contextlib.contextmanager
   def checkout_overlays_context(self):
-    """Returns a context where chromiumos and workspace overlays are mounted."""
+    """Returns a context where overlays can be mounted."""
     with self.m.overlayfs.cleanup_context():
-      self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
-                             persist=True)
-      self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
-      self.m.path.mock_add_paths(self.cache_path.join('.repo'))
-      self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
+      if not self._enable_custom_overlays:
+        self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
+                               persist=True)
+        self.m.path.mock_add_paths(self.cache_path.join('.repo'))
+        self.m.overlayfs.mount('workspace', self.cache_path,
+                               self.workspace_path)
+        self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
       yield
 
   def find_project_paths(self, project, branch):

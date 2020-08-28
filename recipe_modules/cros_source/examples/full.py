@@ -85,3 +85,9 @@ def GenTests(api):
               isolate_server='http://server.com',
           ),
       ))
+
+  yield api.cros_source.test(
+      'enable-custom-overlays', api.post_check(post_process.StatusSuccess),
+      cros_source_properties=CrosSourceProperties(
+          enable_custom_overlays=True,
+      ))

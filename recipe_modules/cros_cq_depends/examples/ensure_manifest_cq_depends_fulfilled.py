@@ -15,9 +15,9 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.cros_source.ensure_synced_cache()
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path):
+    api.cros_source.ensure_synced_cache()
     api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled([])
 
     diffs = [api.repo.ManifestDiff('NAME', 'PATH', 'FROM_REV', 'TO_REV')]
