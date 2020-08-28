@@ -315,6 +315,7 @@ class ChromeApi(recipe_api.RecipeApi):
           for dep_package in package.dependency_packages:
             flattened_packages.append(dep_package)
 
+        response.builds_chrome = True
         raw_reasons = [
             _type.NO_PREBUILT if not self.has_chrome_prebuilt(
                 target, chroot, ignore_prebuilts=ignore_prebuilts) else None,
@@ -335,6 +336,7 @@ class ChromeApi(recipe_api.RecipeApi):
     }
     presentation.step_text = (' '.join(k for k, v in csnr.items() if v) or
                               'not needed')
-    self.m.easy.set_properties_step(chrome_source_reasons=csnr)
+    self.m.easy.set_properties_step(chrome_source_reasons=csnr,
+                                    builds_chrome=response.builds_chrome)
 
     return response.needs_chrome_source

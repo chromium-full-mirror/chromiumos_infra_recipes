@@ -2894,9 +2894,10 @@
   },
   {
     "cmd": [],
-    "name": "install packages.check chrome source needed.set chrome_source_reasons",
+    "name": "install packages.check chrome source needed.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@builds_chrome@true@@@",
       "@@@SET_BUILD_PROPERTY@chrome_source_reasons@{\"compile_source\": false, \"follower_lacks_prebuilt\": true, \"local_uprev\": false, \"no_prebuilt\": true}@@@"
     ]
   },
