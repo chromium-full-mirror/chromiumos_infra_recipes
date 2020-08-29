@@ -140,8 +140,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
         raise recipe_api.StepFailure('Missing configuration for {}'.format(
             build.builder.builder))
 
+  @contextlib.contextmanager
   def setup_workspace_and_chroot(self, no_chroot_timeout=False):
     """Setup the workspace and chroot for the builder.
+
+    This context manager sets up the workspace path.
 
     Returns:
       (bool): Whether the build is relevant.
@@ -150,40 +153,41 @@ class BuildMenuApi(recipe_api.RecipeApi):
     config = self.config_or_default
 
     # Set up source checkouts.
-    self.m.workspace_util.sync_to_commit(staging=self.is_staging)
+    with self.m.workspace_util.sync_to_commit(staging=self.is_staging):
 
-    # Apply any appropriate gerrit changes.
-    fail_not_applicable = False
-    if config.general.manifest == BuilderConfig.General.PUBLIC:
-      fail_not_applicable = True
-    self.m.workspace_util.apply_changes(fail_not_applicable=fail_not_applicable)
+      # Apply any appropriate gerrit changes.
+      fail_not_applicable = False
+      if config.general.manifest == BuilderConfig.General.PUBLIC:
+        fail_not_applicable = True
+      self.m.workspace_util.apply_changes(
+          fail_not_applicable=fail_not_applicable)
 
-    # The Chrome OS verison can be reported once the workspace is synced.
-    version = self.m.cros_version.read_workspace_version()
-    self.m.easy.set_properties_step(chromeos_version=str(version))
+      # The Chrome OS verison can be reported once the workspace is synced.
+      version = self.m.cros_version.read_workspace_version()
+      self.m.easy.set_properties_step(chromeos_version=str(version))
 
-    relevance = Relevance.UNKNOWN
-    if self._artifact_build:
-      # Early check to see if the build is pointless. (No chroot nor
-      # sysroot yet.)
-      relevance = self.m.sysroot_util.update_for_artifact_build(
-          None, config.artifacts, force_relevance=self._force_relevant_build)
+      relevance = Relevance.UNKNOWN
+      if self._artifact_build:
+        # Early check to see if the build is pointless. (No chroot nor
+        # sysroot yet.)
+        relevance = self.m.sysroot_util.update_for_artifact_build(
+            None, config.artifacts, force_relevance=self._force_relevant_build)
 
-    if not self._artifact_build or relevance != Relevance.POINTLESS:
-      self.m.cros_sdk.uprev_packages()
-      timeout = None if config.build.sdk_update.compile_source else 'DEFAULT'
-      self.m.cros_sdk.create_chroot(
-          version=config.general.sdk_cache_version, use_image=self.is_staging,
-          timeout_sec=None if config.build.sdk_update.compile_source or
-          no_chroot_timeout else 'DEFAULT')
-      self._chroot_created = True
+      if not self._artifact_build or relevance != Relevance.POINTLESS:
+        self.m.cros_sdk.uprev_packages()
+        timeout = None if config.build.sdk_update.compile_source else 'DEFAULT'
+        self.m.cros_sdk.create_chroot(
+            version=config.general.sdk_cache_version, use_image=self.is_staging,
+            timeout_sec=None if config.build.sdk_update.compile_source or
+            no_chroot_timeout else 'DEFAULT')
+        self._chroot_created = True
 
-      self.m.cros_sdk.update_chroot(
-          self.gitiles_commit, self.gerrit_changes,
-          toolchain_targets=[self.build_target],
-          build_source=config.build.sdk_update.compile_source)
+        self.m.cros_sdk.update_chroot(
+            self.gitiles_commit, self.gerrit_changes,
+            toolchain_targets=[self.build_target],
+            build_source=config.build.sdk_update.compile_source)
 
-    return relevance != Relevance.POINTLESS
+      yield relevance != Relevance.POINTLESS
 
   def setup_sysroot_and_determine_relevance(self, with_sysroot=True,
                                             packages=None):

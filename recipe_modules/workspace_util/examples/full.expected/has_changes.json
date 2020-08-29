@@ -278,7 +278,6 @@
       "0777",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.ensure root path",
     "~followup_annotations": [

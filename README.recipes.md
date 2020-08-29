@@ -601,7 +601,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#275)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#279)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -618,7 +618,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#315)(self, config=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#319)(self, config=None):**
 
 Build the image and run ebuild tests.
 
@@ -656,7 +656,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#90)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#411)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#415)(self, config=None):**
 
 Generate release payloads for the build.
 
@@ -669,7 +669,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#78)(self):**
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#188)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#192)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -684,14 +684,16 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#143)(self, no_chroot_timeout=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#143)(self, no_chroot_timeout=False):**
 
 Setup the workspace and chroot for the builder.
+
+This context manager sets up the workspace path.
 
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#401)(self, config=None):**
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#405)(self, config=None):**
 
 Sign the uploaded images.
 
@@ -700,14 +702,14 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#82)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#367)(self, config=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#371)(self, config=None):**
 
 Upload artifacts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#382)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#386)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -4754,7 +4756,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#73)(self, changes=None, name='cherry-pick gerrit changes', fail_not_applicable=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#78)(self, changes=None, name='cherry-pick gerrit changes', fail_not_applicable=False):**
 
 Apply gerrit changes.
 
@@ -4771,7 +4773,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#33)(self):**
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#119)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#124)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -4804,16 +4806,18 @@ Returns:
   workspace path.  Note that api.cros_source.cleanup_context() is generally
   going to be needed.
 
-&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#59)(self, commit=None, staging=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#58)(self, commit=None, staging=False):**
 
 Sync the source tree.
+
+This context manager syncs the workspace path.
 
 Args:
   commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#156)(self, manifest_groups, local_manifest=None, cache_path_override=None, gitiles_commit=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#161)(self, manifest_groups, local_manifest=None, cache_path_override=None, gitiles_commit=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -4871,7 +4875,7 @@ All builders run against the same source tree.
 
 Recipe for building an AFDO benchmark profile.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_process.py#29)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/afdo_process.py#30)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/afdo_process.py#23)(api, properties):**
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
@@ -4993,7 +4997,7 @@ Renames a branch using `cros branch rename`.
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#26)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#27)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_cq.py#20)(api, properties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
@@ -5009,6 +5013,8 @@ builder profiles.
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [DoRunSteps](/recipe_modules/build_menu/examples/full.py#37)(api, properties):**
 
 &mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#24)(api, properties):**
 ### *recipes* / [build\_menu:tests/is\_staging](/recipe_modules/build_menu/tests/is_staging.py)
@@ -5085,7 +5091,7 @@ Recipe for building a BuildTarget image for release.
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#26)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#27)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_target.py#20)(api, properties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
@@ -6202,7 +6208,7 @@ Verifies a repo manifest.
 
 Recipe for running Moblab VM tests.
 
-&mdash; **def [DoRunSteps](/recipes/test_moblab_vm.py#47)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/test_moblab_vm.py#48)(api, properties):**
 
 &mdash; **def [RunSteps](/recipes/test_moblab_vm.py#41)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
@@ -6517,6 +6523,8 @@ The steps specific to VM testing are:
   2. Download the test image.
   3. If the VM tests run within the autotest harness, build autotest.
   4. Call the build API to run VM tests.
+
+&mdash; **def [DoRunSteps](/recipes/test_vm.py#57)(api, properties):**
 
 &mdash; **def [RunSteps](/recipes/test_vm.py#47)(api, properties):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)

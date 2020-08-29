@@ -372,7 +372,6 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "metadata setup.buildbucket.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
@@ -419,7 +418,6 @@
       "0777",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.ensure root path",
     "~followup_annotations": [
@@ -5028,7 +5026,6 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "finalize metadata.buildbucket.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
@@ -5066,7 +5063,6 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "finalize metadata.buildbucket.get (2)",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
@@ -5116,7 +5112,6 @@
       "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"coral\"\n    ], \n    \"bot-config\": \"coral-cq\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"coral-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"create-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:20\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_28/metadata.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.writing metadata.json",
     "~followup_annotations": [
@@ -5196,7 +5191,6 @@
       "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -5264,7 +5258,6 @@
       "[CLEANUP]/metadata_tmp_28/metadata.json",
       "gs:///coral-cq/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.gsutil cp",
     "timeout": 600,
@@ -5317,7 +5310,6 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_29/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
     "~followup_annotations": [
@@ -5349,7 +5341,6 @@
       "debug",
       "chromite.api.SdkService/Clean"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -5371,7 +5362,6 @@
       "[CLEANUP]/build_api_messages_tmp_29/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -5433,7 +5423,6 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_30/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
     "~followup_annotations": [
@@ -5465,7 +5454,6 @@
       "debug",
       "chromite.api.SdkService/Unmount"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -5487,7 +5475,6 @@
       "[CLEANUP]/build_api_messages_tmp_30/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -5525,7 +5512,6 @@
       "remove",
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace.remove original chroot link",
     "~followup_annotations": [
@@ -5540,7 +5526,6 @@
       "a+rwX,-t",
       "[CACHE]/cros_chroot"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot",
     "~followup_annotations": [

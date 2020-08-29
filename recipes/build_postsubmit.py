@@ -18,13 +18,12 @@ PROPERTIES = BuildTargetProperties
 
 
 def RunSteps(api, properties):
-  with api.build_menu.configure_builder() as config:
-    if config:
-      return DoRunSteps(api, config, properties)
+  with api.build_menu.configure_builder() as config, \
+      api.build_menu.setup_workspace_and_chroot():
+    return DoRunSteps(api, config, properties)
 
 
 def DoRunSteps(api, config, properties):
-  api.build_menu.setup_workspace_and_chroot()
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   packages = env_info.packages
 

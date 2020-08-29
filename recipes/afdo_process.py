@@ -21,9 +21,10 @@ PROPERTIES = AfdoProcessProperties
 
 
 def RunSteps(api, properties):
-  with api.build_menu.configure_builder() as config:
-    if config:
-      DoRunSteps(api, config, properties)
+  with api.build_menu.configure_builder() as config, \
+      api.build_menu.setup_workspace_and_chroot() as is_relevant:
+    if is_relevant:
+      return DoRunSteps(api, config, properties)
 
 
 def DoRunSteps(api, config, properties):
@@ -31,9 +32,6 @@ def DoRunSteps(api, config, properties):
   # from the config.
   config.artifacts.artifacts_info.toolchain.input_artifacts.extend(
       properties.input_artifacts or [])
-
-  if not api.build_menu.setup_workspace_and_chroot():
-    return
 
   # This update_for_artifact_build call will download the input artifacts into
   # the chroot.  This builder is only appropriate to use if there are no package

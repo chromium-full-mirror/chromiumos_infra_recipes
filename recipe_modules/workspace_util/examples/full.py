@@ -36,8 +36,8 @@ def RunSteps(api, properties):
                                                    changes=changes)
   # Note that any use case involving a chroot (SDK) will say:
   #   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
-  with api.workspace_util.setup_workspace():
-    api.workspace_util.sync_to_commit()
+  with api.workspace_util.setup_workspace(), \
+      api.workspace_util.sync_to_commit():
     api.workspace_util.apply_changes()
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))

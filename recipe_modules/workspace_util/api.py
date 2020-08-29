@@ -52,12 +52,14 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       workspace path.  Note that api.cros_source.cleanup_context() is generally
       going to be needed.
     """
-    with self.m.cros_source.checkout_overlays_context(), \
-        self.m.context(cwd=self.m.cros_source.workspace_path):
+    with self.m.cros_source.checkout_overlays_context():
       yield
 
+  @contextlib.contextmanager
   def sync_to_commit(self, commit=None, staging=False):
     """Sync the source tree.
+
+    This context manager syncs the workspace path.
 
     Args:
       commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
@@ -68,7 +70,10 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     commit = commit or self.m.src_state.gitiles_commit
     self.m.cros_source.ensure_synced_cache(is_staging=staging,
                                            gitiles_commit=commit)
-    self.m.cros_source.sync_snapshot(commit)
+
+    with self.m.context(cwd=self.m.cros_source.workspace_path):
+      self.m.cros_source.sync_snapshot(commit)
+      yield
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',
                     fail_not_applicable=False):

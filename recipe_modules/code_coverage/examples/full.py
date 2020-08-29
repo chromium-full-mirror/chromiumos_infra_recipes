@@ -11,8 +11,8 @@ from recipe_engine import post_process
 
 
 def RunSteps(api):
-  with api.build_menu.configure_builder():
-    api.build_menu.setup_workspace_and_chroot()
+  with api.build_menu.configure_builder(), \
+        api.build_menu.setup_workspace_and_chroot():
     api.build_menu.setup_sysroot_and_determine_relevance()
 
     api.build_menu.bootstrap_sysroot_and_install_packages()

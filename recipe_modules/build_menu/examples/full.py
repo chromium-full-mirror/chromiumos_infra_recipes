@@ -31,8 +31,11 @@ def RunSteps(api, properties):
       api.assertions.assertTrue(properties.expect_missing_config)
       api.assertions.assertIsNotNone(api.build_menu.config_or_default)
       return
+    return DoRunSteps(api, properties)
 
-    relevant = api.build_menu.setup_workspace_and_chroot()
+
+def DoRunSteps(api, properties):
+  with api.build_menu.setup_workspace_and_chroot() as relevant:
     env_info = api.build_menu.setup_sysroot_and_determine_relevance(
         not properties.no_sysroot)
     if properties.forced_relevant:

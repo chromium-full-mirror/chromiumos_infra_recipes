@@ -45,16 +45,21 @@ VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
 
 
 def RunSteps(api, properties):
-  with api.build_menu.configure_builder(missing_ok=True):
-    # We expect that we do not have a config, but we do have some non-default
-    # values.  In the event that a config _IS_ present, let that win.
-    config = api.build_menu.config_or_default
 
-    # Ensure that the workspace aligns with the image that was built.
-    # Though this seems wasteful, it will catch bugs introduced to the build
-    # API and any scripts it depends on.
-    api.build_menu.setup_workspace_and_chroot()
+  # Ensure that the workspace aligns with the image that was built.
+  # Though this seems wasteful, it will catch bugs introduced to the build
+  # API and any scripts it depends on.
+  with api.build_menu.configure_builder(missing_ok=True), \
+      api.build_menu.setup_workspace_and_chroot():
+    return DoRunSteps(api, properties)
 
+
+def DoRunSteps(api, properties):
+  # We expect that we do not have a config, but we do have some non-default
+  # values.  In the event that a config _IS_ present, let that win.
+  config = api.build_menu.config_or_default
+
+  with api.build_menu.setup_workspace_and_chroot():
     with api.step.nest('download vm image'):
       test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
       test_image_zip = test_artifacts_dir.join('image.zip')

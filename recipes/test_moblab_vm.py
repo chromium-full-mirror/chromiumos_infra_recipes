@@ -40,13 +40,12 @@ CACHE_ARTIFACTS = [
 
 def RunSteps(api, properties):
 
-  with api.build_menu.configure_builder(missing_ok=True):
+  with api.build_menu.configure_builder(missing_ok=True), \
+      api.build_menu.setup_workspace_and_chroot(no_chroot_timeout=True):
     return DoRunSteps(api, properties)
 
 
 def DoRunSteps(api, properties):
-  api.build_menu.setup_workspace_and_chroot(no_chroot_timeout=True)
-
   with api.step.nest('prepare artifacts'):
     artifact_paths_by_artifact = api.cros_artifacts.download_artifacts(
         properties.build_payload,

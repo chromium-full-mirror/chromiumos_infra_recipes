@@ -19,15 +19,14 @@ from PB.chromite.api.test import ChromitePytestRequest, ChromiteUnitTestRequest
 
 
 def RunSteps(api):
-  with api.build_menu.configure_builder() as config:
-    if config:
-      api.build_menu.setup_workspace_and_chroot()
-      api.cros_build_api.TestService.ChromitePytest(
-          ChromitePytestRequest(chroot=api.cros_sdk.chroot),
-          name='run chromite pytest')
-      api.cros_build_api.TestService.ChromiteUnitTest(
-          ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot),
-          name='run chromite unit tests')
+  with api.build_menu.configure_builder() as config, \
+      api.build_menu.setup_workspace_and_chroot():
+    api.cros_build_api.TestService.ChromitePytest(
+        ChromitePytestRequest(chroot=api.cros_sdk.chroot),
+        name='run chromite pytest')
+    api.cros_build_api.TestService.ChromiteUnitTest(
+        ChromiteUnitTestRequest(chroot=api.cros_sdk.chroot),
+        name='run chromite unit tests')
 
 
 def GenTests(api):
