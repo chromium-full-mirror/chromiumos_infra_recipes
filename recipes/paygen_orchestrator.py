@@ -7,6 +7,7 @@
 
 DEPS = [
     'recipe_engine/step',
+    'cros_paygen',
     'cros_sdk',
     'cros_source',
     'workspace_util',
@@ -16,6 +17,11 @@ DEPS = [
 def RunSteps(api):
   with api.workspace_util.setup_workspace(), \
                   api.cros_sdk.cleanup_context():
+
+    # Get the current paygen configuration.
+
+    # TODO(engeg@): Integrate test data or move most logic to module.
+    # paygen_config = api.cros_paygen.get_builder_config(builder_name='arkham')
 
     # Sync chromite only.
     api.cros_source.ensure_synced_cache(projects=['chromiumos/chromite'])
@@ -27,7 +33,6 @@ def RunSteps(api):
     # Collect and handle failures.
 
     # Schedule AU tests if configured, don't wait for them.
-
 
 def GenTests(api):
   yield api.test('basic')

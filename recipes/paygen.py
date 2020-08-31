@@ -7,24 +7,32 @@
 
 DEPS = [
     'recipe_engine/step',
+    'cros_build_api',
     'cros_sdk',
     'cros_source',
     'workspace_util',
 ]
 
+from PB.recipes.chromeos.paygen import PaygenProperties
 
-def RunSteps(api):
-  with api.workspace_util.setup_workspace(), \
-                  api.cros_sdk.cleanup_context():
+PROPERTIES = PaygenProperties
 
-    # Sync chromite only.
-    api.cros_source.ensure_synced_cache(projects=['chromiumos/chromite'])
 
-    # Ensure delta_generator is available.
+def RunSteps(api, properties):
+  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
+    with api.step.nest('initialization') as presentation:
 
-    # Execute build api endpoint for paygen.
+      # Sync chromite only.
+      api.cros_source.ensure_synced_cache(projects=['chromiumos/chromite'])
 
-    # Return status.
+      # Create chroot.
+      api.cros_sdk.create_chroot(version=None, use_image=False,
+                                 timeout_sec=None)
+
+    with api.step.nest('doing paygen') as presentation:
+      # Execute build api endpoint for paygen.
+      response = api.cros_build_api.PayloadService.GeneratePayload(
+          properties.request, name='making single payload')
 
 
 def GenTests(api):

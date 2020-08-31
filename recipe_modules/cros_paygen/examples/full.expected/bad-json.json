@@ -1,0 +1,47 @@
+[
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-build-release-console/paygen.json"
+    ],
+    "infra_step": true,
+    "name": "gsutil cat"
+  },
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
+      "    recipe_result = self.global_symbols['RunSteps'](*args)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/examples/full.py\", line 53, in RunSteps",
+      "    len(api.cros_paygen.get_builder_config(builder_name='arkham')), 1)",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
+      "    return func(*a, **kw)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 90, in get_builder_config",
+      "    for b in self._config['delta']:",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
+      "    return func(*a, **kw)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 39, in _config",
+      "    raise BadPaygenConfig()",
+      "BadPaygenConfig"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: BadPaygenConfig()"
+    },
+    "name": "$result"
+  }
+]

@@ -23,6 +23,7 @@
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
   * [cros_infra_config](#recipe_modules-cros_infra_config)
+  * [cros_paygen](#recipe_modules-cros_paygen) &mdash; API for working with Paygen and its config.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
   * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
@@ -165,6 +166,7 @@
   * [cros_infra_config:tests/configure_builder](#recipes-cros_infra_config_tests_configure_builder)
   * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils)
+  * [cros_paygen:examples/full](#recipes-cros_paygen_examples_full)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
@@ -1234,7 +1236,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#132)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#136)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -1251,7 +1253,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform sane validations and then call the build API command.
 
-&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#211)(self, test_data=None):**
+&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#215)(self, test_data=None):**
 
 Get the Build API version.
 
@@ -1260,7 +1262,7 @@ The version is always queried, and the result cached.
 Returns:
   CrosBuildApi.Version, the version of the Build API.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#257)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#261)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None):**
 
 Call the build API with the given input proto.
 
@@ -1287,7 +1289,7 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#228)(output_proto):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#232)(output_proto):**
 
 Function to append a list of failed package to the failure step.
 
@@ -1301,7 +1303,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#383)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#387)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -1312,11 +1314,11 @@ Args:
 Returns:
   bool: Whether `method` can be called on `stub`.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#181)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#185)(self):**
 
 Expose all client stubs defined in this module.
 
-&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#198)(self, major=1, minor=0, bug=0):**
+&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#202)(self, major=1, minor=0, bug=0):**
 
 Is the Build API at least |major|.|minor|.|bug|.
 
@@ -1328,9 +1330,9 @@ Args:
 Returns:
   bool, whether the version is a least the required value.
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#380)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#384)(self, output_proto, response_lambda):**
 
-&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#194)(self):**
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#198)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
 
 [DEPS](/recipe_modules/cros_cache/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1692,6 +1694,47 @@ Returns:
 &mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#242)(self, run_spec):**
 
 &mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#239)(self, run_spec):**
+### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
+
+[DEPS](/recipe_modules/cros_paygen/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+API for working with Paygen and its config.
+
+#### **class [CrosPaygenApi](/recipe_modules/cros_paygen/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for CrOS-specific paygen steps.
+
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_paygen/api.py#58)(self, builder_name, \*\*kwargs):**
+
+Return the configs matching the queryor  [].
+
+Args:
+  builder_name (String): The name of the builders to return configuration for.
+  **kwargs: Match keyword to top level dictionary contents. For example passing
+            delta_payload_tests=true will match only if matched.
+
+Returns:
+ A list of dictionaries of the matching configurations. For example:
+
+  [
+   {
+    "board": {
+            "public_codename": "cyan",
+            "is_active": true,
+            "builder_name": "cyan"
+    },
+    "delta_type": "MILESTONE",
+    "channel": "stable",
+    "chrome_os_version": "13020.87.0",
+    "chrome_version": "83.0.4103.119",
+    "milestone": 83,
+    "generate_delta": true,
+    "delta_payload_tests": true,
+    "full_payload_tests": false
+    },
+   {...},
+   {...}
+  ]
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -5351,6 +5394,11 @@ Require a given condition be true or throw a ValueError.
 [DEPS](/recipe_modules/cros_infra_config/tests/utils.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/utils.py#14)(api):**
+### *recipes* / [cros\_paygen:examples/full](/recipe_modules/cros_paygen/examples/full.py)
+
+[DEPS](/recipe_modules/cros_paygen/examples/full.py#5): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/full.py#51)(api, properties):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -5850,18 +5898,18 @@ All builders run against the same source tree.
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
 ### *recipes* / [paygen](/recipes/paygen.py)
 
-[DEPS](/recipes/paygen.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen.py#16)(api):**
+&mdash; **def [RunSteps](/recipes/paygen.py#21)(api, properties):**
 ### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
 
-[DEPS](/recipes/paygen_orchestrator.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen_orchestrator.py#8): [cros\_paygen](#recipe_modules-cros_paygen), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#16)(api):**
+&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#17)(api):**
 ### *recipes* / [phosphorus:examples/full](/recipe_modules/phosphorus/examples/full.py)
 
 [DEPS](/recipe_modules/phosphorus/examples/full.py#6): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
