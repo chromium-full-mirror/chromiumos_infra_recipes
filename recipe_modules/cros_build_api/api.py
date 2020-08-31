@@ -101,6 +101,10 @@ class PackageService(Stub):
   """Stub for PackageService."""
 
 
+class PayloadService(Stub):
+  """Stub for PayloadService."""
+
+
 class ImageService(Stub):
   """Stub for ImageService."""
 

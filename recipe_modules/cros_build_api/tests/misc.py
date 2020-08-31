@@ -19,6 +19,7 @@ from PB.chromite.api import binhost
 from PB.chromite.api import depgraph
 from PB.chromite.api import image
 from PB.chromite.api import packages
+from PB.chromite.api import payload
 from PB.chromite.api import sdk
 from PB.chromite.api import sysroot
 from PB.chromite.api import test
@@ -110,6 +111,9 @@ def RunSteps(api):
           'NeedsChromeSource': packages.NeedsChromeSourceResponse,
           'Uprev': packages.UprevPackagesResponse,
           'UprevVersionedPackage': packages.UprevVersionedPackageResponse,
+      },
+      'PayloadService': {
+          'GeneratePayload': payload.GenerationResponse,
       },
       'SdkService': {
           'Clean': sdk.CleanResponse,

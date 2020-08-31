@@ -235,6 +235,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def payload_service_responses(self):
+    """Generate responses for PayloadService."""
+    responses = {}
+    responses['GeneratePayload'] = jsonify(success=True)
+    return responses
+
+  @property
   def sdk_service_responses(self):
     """Generate responses for SdkService."""
     responses = {}
@@ -320,6 +327,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'DependencyService': self.dependency_service_responses,
         'ImageService': self.image_service_responses,
         'PackageService': self.package_service_responses,
+        'PayloadService': self.payload_service_responses,
         'SdkService': self.sdk_service_responses,
         'SysrootService': self.sysroot_service_responses,
         'TestService': self.test_service_responses,
