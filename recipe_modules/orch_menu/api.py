@@ -380,6 +380,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
           relevant_builds.append(build.builder.builder)
       pres.logs['relevant_builds'] = sorted(relevant_builds or
                                             ['no relevant builds'])
+      self.m.easy.set_properties_step(
+          child_builds_relevant=len(relevant_builds))
       failures = self.m.failures.get_build_failures(completed_builds)
 
     # Recheck the BuilderConfigs at HEAD to see if any failed builds are now

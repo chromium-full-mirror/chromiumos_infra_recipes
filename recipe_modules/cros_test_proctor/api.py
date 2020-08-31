@@ -315,6 +315,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     test_to_build_map = {} if test_to_build_map is None else test_to_build_map
     with self.m.step.nest('schedule hardware tests'):
       tests_to_run = []
+      hw_build_targets = set()
       for unit in test_plan.hw_test_units:
         for test in unit.hw_test_cfg.hw_test:
           if test.common.display_name not in passed_tests:
@@ -323,12 +324,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             test_to_build_map[test_name] = build_target.name
             tests_to_run.append(
                 self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
+            hw_build_targets.add(build_target.name)
             if not multi_req:
               skylab_tasks.append(
                   self.m.skylab.create_recipe(test, unit, timeout))
       if multi_req and tests_to_run:
         skylab_tasks.extend(
             self.m.skylab.schedule_suites(tests_to_run, timeout))
+      self.m.easy.set_properties_step(
+          hw_test_build_targets=len(hw_build_targets))
+      self.m.easy.set_properties_step(hw_test_suites=len(tests_to_run))
     return skylab_tasks
 
   def _schedule_autotest_vm_tests(self, test_plan, passed_tests, snapshot,

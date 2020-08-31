@@ -2237,6 +2237,22 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.set hw_test_build_targets",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@hw_test_build_targets@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.set hw_test_suites",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@hw_test_suites@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "batch",
@@ -5954,6 +5970,22 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@4321@https://cr-buildbucket.appspot.com/build/4321@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run baseline tests.schedule baseline tests.schedule hardware tests.set hw_test_build_targets",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@hw_test_build_targets@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run baseline tests.schedule baseline tests.schedule hardware tests.set hw_test_suites",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@hw_test_suites@2@@@"
     ]
   },
   {

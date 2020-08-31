@@ -898,6 +898,14 @@
   },
   {
     "cmd": [],
+    "name": "check build results.set child_builds_relevant",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@child_builds_relevant@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check build results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -3206,6 +3214,22 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@4321@https://beefy-dot-cr-buildbucket.appspot.com/build/4321@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.set hw_test_build_targets",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@hw_test_build_targets@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.set hw_test_suites",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@hw_test_suites@2@@@"
     ]
   },
   {

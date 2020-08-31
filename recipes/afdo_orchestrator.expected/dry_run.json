@@ -1086,6 +1086,14 @@
   },
   {
     "cmd": [],
+    "name": "check build results.set child_builds_relevant",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@child_builds_relevant@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check build results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
