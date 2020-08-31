@@ -16,4 +16,7 @@ message CrosSourceProperties {
   // Used to specify a custom manifest snapshot to sync to as a
   // snapshot.xml file residing in the isolate.
   SnapshotIsolate snapshot_isolate = 2;
+
+  // Feature flag: whether to allow mounting the external or custom overlay.
+  bool enable_custom_overlays = 3;
 }

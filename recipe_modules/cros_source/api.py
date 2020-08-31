@@ -37,6 +37,7 @@ class CrosSourceApi(recipe_api.RecipeApi):
     self._snapshot_isolate = (
         properties.snapshot_isolate
         if properties.HasField('snapshot_isolate') else None)
+    self._enable_custom_overlays = properties.enable_custom_overlays
 
   @property
   def preload_path(self):
