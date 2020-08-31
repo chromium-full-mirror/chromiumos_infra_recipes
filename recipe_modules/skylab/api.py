@@ -84,6 +84,9 @@ class SkylabApi(recipe_api.RecipeApi):
         self._enable_test_retries(req)
         reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
 
+      # We're sending this only to add a link back to the parent. This will not
+      # cause cascading termination. For that see swarming_parent_run_id.
+      bb_tags = {'parent_buildbucket_id': str(self.m.buildbucket.build.id)}
       swarming_parent_run_id = None if async_suite_run else self.m.swarming.task_id
       bb_request = self.m.buildbucket.schedule_request(
           self._ctp_builder,
@@ -91,6 +94,7 @@ class SkylabApi(recipe_api.RecipeApi):
           properties={
               'requests': reqs,
           },
+          tags=self.m.cros_tags.tags(**bb_tags),
           gerrit_changes=[],
           swarming_parent_run_id=swarming_parent_run_id,
           # Disable inheriting the version from the parent builder.
@@ -149,6 +153,9 @@ class SkylabApi(recipe_api.RecipeApi):
       request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
       req.params.decorations.tags.extend(request_tags)
       self._enable_test_retries(req)
+      # We're sending this only to add a link back to the parent. This will not
+      # cause cascading termination. For that see swarming_parent_run_id.
+      tags['parent_buildbucket_id'] = str(self.m.buildbucket.build.id)
 
       request_dict = json_format.MessageToDict(req)
       swarming_parent_run_id = None if async_suite_run else self.m.swarming.task_id
