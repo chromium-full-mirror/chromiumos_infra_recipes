@@ -407,7 +407,13 @@ def execution_steps(api, properties, envvars):
   Raises:
   * InfraFailure.
   """
-  with api.step.nest('execution steps'):
+  with api.step.nest('execution steps') as presentation:
+    build = api.buildbucket.build
+    # Providing link to parent if parent tag exists.
+    parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
+    if parent:  #pragma: no cover
+      presentation.links['parent link'] = (
+          api.buildbucket.build_url(build_id=parent[0]))
     publish_to_result_flow(api, properties.config, properties.request)
 
     upload_response = None

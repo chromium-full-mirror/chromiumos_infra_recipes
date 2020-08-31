@@ -6347,7 +6347,7 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#519)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#525)(api, properties, envvars):**
 
 &mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#394)(api, properties, envvars):**
 
@@ -6422,7 +6422,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#470)(api, phosphorus_config, properties, dut_hostname):**
+&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#476)(api, phosphorus_config, properties, dut_hostname):**
 
 Run the test execution and all steps that explicitly depend on it.
 
