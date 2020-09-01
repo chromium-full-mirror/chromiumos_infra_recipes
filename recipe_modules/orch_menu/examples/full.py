@@ -83,9 +83,28 @@ def GenTests(api):
   def orch_menu_properties(**kwargs):
     return {'$chromeos/orch_menu': kwargs}
 
-  yield api.orch_menu.test('basic', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
-                           with_manifest_refs=True, with_history=True)
+  yield api.orch_menu.test(
+      'basic', data.ctp_normal, api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun,
+                     'update manifest ref refs/heads/test.git push'),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test')),
+      with_manifest_refs=True, with_history=True)
+
+  summary = ('2 hw tests failed\n\n- htarget.hw.bvt-cq:\n\n'
+             '- htarget.hw.bvt-inline:')
+  yield api.orch_menu.test(
+      'test-failure', data.ctp_failure,
+      api.properties(
+          FullProperties(
+              expected_recipe_result=RawResult(status=common_pb2.FAILURE,
+                                               summary_markdown=summary))),
+      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.DoesNotRun,
+                     'update manifest ref refs/heads/test.git push'),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test')),
+      with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
       'two-footers',

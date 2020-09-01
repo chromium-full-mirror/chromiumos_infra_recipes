@@ -584,5 +584,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
         self._properties.enable_history)
     self._builds_status.update([], test_failures)
 
-    self.push_manifest_refs(self._properties.update_manifest_refs.test)
+    if not self._builds_status.fatal_failures:
+      self.push_manifest_refs(self._properties.update_manifest_refs.test)
     return self._builds_status

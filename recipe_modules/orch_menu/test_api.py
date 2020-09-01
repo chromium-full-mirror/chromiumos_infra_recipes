@@ -17,6 +17,7 @@ from recipe_engine import recipe_test_api
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
     BatchResponse)
+from PB.test_platform.taskstate import TaskState
 
 
 class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
@@ -204,11 +205,13 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         bisect_properties (StepData): Properties for cros_bisect module.
         ctp_normal (StepTestData): StepTestData for normal buildset.
         ctp_bisect (StepTestData): StepTestData for bisect build.
+        ctp_failure (StepTestData): StepTestData for build failing tests.
     """
     _ret = namedtuple('_standard_test_data', [
         'orchestrator', 'inflight_orchestrator', 'annealing_builds', 'builds',
         'crit_fail', 'non_crit_fail', 'process_child', 'follow_on_orchestrator',
-        'bisect_builds', 'bisect_properties', 'ctp_normal', 'ctp_bisect'
+        'bisect_builds', 'bisect_properties', 'ctp_normal', 'ctp_bisect',
+        'ctp_failure'
     ])
 
     def _child_build_msg(name, with_history=False, **kwargs):
@@ -317,18 +320,34 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         _ctp_sched_resp(id1),
         'run tests.schedule tests.schedule hardware tests.'
         'schedule kip.hw.bvt-cq.buildbucket.schedule')
+    ctp_failure = self.m.buildbucket.simulated_schedule_output(
+        _ctp_sched_resp(id1),
+        'run tests.schedule tests.schedule hardware tests.'
+        'schedule htarget.hw.bvt-cq.buildbucket.schedule')
 
     ctp_normal += self.m.buildbucket.simulated_schedule_output(
         _ctp_sched_resp(id2),
         'run tests.schedule tests.schedule hardware tests.'
         'schedule htarget.hw.bvt-inline.buildbucket.schedule')
+    ctp_failure += self.m.buildbucket.simulated_schedule_output(
+        _ctp_sched_resp(id2),
+        'run tests.schedule tests.schedule hardware tests.'
+        'schedule htarget.hw.bvt-inline.buildbucket.schedule')
 
-    skylab_resp = lambda x: self.m.skylab.test_with_execute_response_json(id=x)
+    def _skylab_resp(task_id, passed=True):
+      verdict = TaskState.VERDICT_PASSED if passed else TaskState.VERDICT_FAILED
+      return self.m.skylab.test_with_execute_response_json(
+          id=task_id, task_state=TaskState(verdict=verdict))
+
     ctp_normal += self.m.buildbucket.simulated_collect_output(
-        [skylab_resp(id1), skylab_resp(id2)],
+        [_skylab_resp(id1), _skylab_resp(id2)],
         'run tests.collect tests.collect skylab tasks.buildbucket.collect')
     ctp_bisect += self.m.buildbucket.simulated_collect_output(
-        [skylab_resp(id1)],
+        [_skylab_resp(id1)],
+        'run tests.collect tests.collect skylab tasks.buildbucket.collect')
+    ctp_failure += self.m.buildbucket.simulated_collect_output(
+        [_skylab_resp(id1, False),
+         _skylab_resp(id2, False)],
         'run tests.collect tests.collect skylab tasks.buildbucket.collect')
 
     # The only things we care about are output.properties.name and status.
@@ -342,10 +361,18 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     ctp_normal += self.m.buildbucket.simulated_collect_output(
         [vm_test_build('moblab-vm-test')],
         'run tests.collect tests.collect moblab vm tests')
+    ctp_failure += self.m.buildbucket.simulated_collect_output(
+        [vm_test_build('vm-test')],
+        'run tests.collect tests.collect autotest vm tests')
+    ctp_failure += self.m.buildbucket.simulated_collect_output(
+        [vm_test_build('moblab-vm-test')],
+        'run tests.collect tests.collect moblab vm tests')
 
     # We collect tast tests still, but none of them are executed.
     ctp_normal += self.m.buildbucket.simulated_collect_output(
         [], 'run tests.collect tests.collect tast vm tests')
+    ctp_failure += self.m.buildbucket.simulated_collect_output(
+        [], 'run tests.collect tests.collect tast vm tests')
 
-    values.extend([ctp_normal, ctp_bisect])
+    values.extend([ctp_normal, ctp_bisect, ctp_failure])
     return _ret(*values)
