@@ -33,6 +33,7 @@ if [[ -z "${instance_id}" ]]; then
 fi
 
 if [[ "${prompt}" == "yes" ]]; then
+  echo "CIPD versions can be found here: https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/"
   read -p "Release version ${instance_id}? (y/N) " answer
 
   if [[ "${answer^^}" != "Y" ]]; then
