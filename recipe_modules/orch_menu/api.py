@@ -112,7 +112,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
   def builds_status(self):
     return self._builds_status
 
-  def get_manifest_info(self, external=False):
+  def _get_manifest_info(self, external=False):
     """Return information about a manifest repo.
 
     Args:
@@ -175,14 +175,14 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
       if config:
         # Update the start ref to indicate we've begun processing the snapshot.
-        self.push_manifest_refs(self._properties.update_manifest_refs.start)
+        self._push_manifest_refs(self._properties.update_manifest_refs.start)
 
         if self.gerrit_changes:
           # Any changes we have must be submittable.
-          self.assert_changes_submittable()
+          self.m.gerrit.assert_changes_submittable(self.gerrit_changes)
 
       # If we are waiting on inflight orchestrators, do that now.
-      self.wait_for_inflight_orchestrator()
+      self._wait_for_inflight_orchestrator()
 
       # Yield while inside of the bot_cost.cq_run_cost_context.
       yield config
@@ -225,8 +225,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
     if not self._has_manifest_refs:
       return
 
-    self._internal_repo_path = self.clone_repo('internal manifest',
-                                               self.gitiles_commit)
+    self._internal_repo_path = self._clone_repo('internal manifest',
+                                                self.gitiles_commit)
 
     # Read the Cr-External-Snapshot footer to get ref of external snapshot
     # that corresponds with the internal snapshot.
@@ -249,10 +249,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
         ref=self.gitiles_commit.ref, id=extern_snapshot_id)
 
     # clone the external manifest repo
-    self._external_repo_path = self.clone_repo('external manifest',
-                                               self._external_gitiles_commit)
+    self._external_repo_path = self._clone_repo('external manifest',
+                                                self._external_gitiles_commit)
 
-  def clone_repo(self, name, commit):
+  def _clone_repo(self, name, commit):
     """Clone a repo into a temporary directory.
 
     Args:
@@ -270,7 +270,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         self.m.git.fetch_ref(url, commit.id, timeout_sec=60 * 60)
     return path
 
-  def push_manifest_refs(self, ref):
+  def _push_manifest_refs(self, ref):
     """Update the remote ref (if any).
 
     If |ref| evaluates to False, do nothing.
@@ -280,7 +280,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     """
     if ref:
       for external in False, True:
-        manifest = self.get_manifest_info(external)
+        manifest = self._get_manifest_info(external)
         with self.m.step.nest('update %s ref %s' % (manifest.name, ref)), \
             self.m.context(cwd=manifest.path):
           self.m.git.push(manifest.url,
@@ -308,7 +308,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           presentation, failures, configs)
       return _non_crit_ret(configs, failures)
 
-  def wait_for_inflight_orchestrator(self):
+  def _wait_for_inflight_orchestrator(self):
     """If there is an inflight orchestrator, wait for it."""
 
     if not (self.gerrit_changes and self._properties.enable_history and
@@ -347,11 +347,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
           timeout=60 * 60 * 23,
       )
 
-  def assert_changes_submittable(self):
-    """Verify that any changes are submittable."""
-    if self.gerrit_changes:
-      self.m.gerrit.assert_changes_submittable(self.gerrit_changes)
-
   def plan_and_run_children(self, run_step_name=None, results_step_name=None,
                             check_critical_step_name=None):
     """Plan, schedule, and run child builders.
@@ -366,7 +361,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       (BuildsStatus): The current status of the builds.
     """
     with self.m.step.nest(run_step_name or 'run builds') as pres:
-      completed_builds = self.filter_schedule_wait_builds(
+      completed_builds = self._filter_schedule_wait_builds(
           pres, self._bisect_builder_child_specs())
 
     with self.m.step.nest(results_step_name or 'check build results') as pres:
@@ -395,7 +390,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     if not self._builds_status.fatal_failures:
       # If we've made it this far, the child builders were successful
       # and we can update the build success manifest ref if it is specified.
-      self.push_manifest_refs(self._properties.update_manifest_refs.build)
+      self._push_manifest_refs(self._properties.update_manifest_refs.build)
 
     return self._builds_status
 
@@ -412,7 +407,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         for cb in self.m.cros_bisect.get_test_child_builders()
     ] or self.config.orchestrator.child_specs
 
-  def filter_schedule_wait_builds(self, parent_step, child_specs):
+  def _filter_schedule_wait_builds(self, parent_step, child_specs):
     """Find the builds we need, filter those already started, run, and collect.
 
     Most of the heavy lifting is done in get_build_plan.
@@ -448,7 +443,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     child_targets_dict = {cs.name.rsplit('-', 1)[0]: cs for cs in child_specs}
     collect_builds = [
         b for b in existing_builds
-        if self.should_collect(b, child_specs_dict, child_targets_dict)
+        if self._should_collect(b, child_specs_dict, child_targets_dict)
     ]
 
     # Collect all existing builds, add to completed builds
@@ -465,7 +460,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     return completed_builds
 
-  def should_collect(self, build, child_specs_dict, child_targets_dict):
+  def _should_collect(self, build, child_specs_dict, child_targets_dict):
     """Returns whether the orchestrator should collect the build.
 
     Args:
@@ -585,5 +580,5 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self._builds_status.update([], test_failures)
 
     if not self._builds_status.fatal_failures:
-      self.push_manifest_refs(self._properties.update_manifest_refs.test)
+      self._push_manifest_refs(self._properties.update_manifest_refs.test)
     return self._builds_status

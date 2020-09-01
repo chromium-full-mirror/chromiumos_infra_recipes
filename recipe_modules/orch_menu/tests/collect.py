@@ -28,7 +28,8 @@ def RunSteps(api, properties):
 
   api.assertions.assertEqual(
       properties.expected_collect,
-      api.orch_menu.should_collect(build, child_specs_dict, child_targets_dict))
+      api.orch_menu._should_collect(build, child_specs_dict,
+                                    child_targets_dict))
 
 
 def GenTests(api):
