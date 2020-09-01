@@ -1306,6 +1306,10 @@
           },
           {
             "name": "atlas-cq"
+          },
+          {
+            "name": "cave-cq",
+            "collectHandling": "COLLECT_AFTER_HW_TEST"
           }
         ]
       }
@@ -1457,6 +1461,36 @@
             "version": ""
           }
         ]
+      }
+    },
+    {
+      "id": {
+        "name": "cave-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "applyGerritChanges": true,
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "buildImages": {
+          "imageTypes": [
+            "TEST",
+            "BASE"
+          ]
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN"
       }
     }
   ]

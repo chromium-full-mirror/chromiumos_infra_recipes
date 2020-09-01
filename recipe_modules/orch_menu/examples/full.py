@@ -143,7 +143,8 @@ def GenTests(api):
           FullProperties(expected_completed_builds=data.builds,
                          expected_enable_history=True)),
       annealing_builds=data.annealing_builds, collect_builds=data.builds,
-      with_history=True, with_manifest_refs=True)
+      history_builds=data.history_builds, with_history=True,
+      with_manifest_refs=True)
 
   # Joins an inflight orchestrator run.
   yield api.orch_menu.test(
@@ -153,29 +154,36 @@ def GenTests(api):
           post_process.MustRun,
           'find inflight orchestrator.waiting for existing runs.wait'),
       api.properties(
-          FullProperties(expected_completed_builds=data.builds,
-                         expected_enable_history=True)), cq=True,
-      collect_builds=data.builds, with_history=True, git_footers=[],
+          FullProperties(
+              expected_completed_builds=data.builds + data.after_builds,
+              expected_enable_history=True)), cq=True,
+      collect_builds=data.builds, history_builds=data.history_builds,
+      collect_after_builds=data.after_builds, with_history=True, git_footers=[],
       inflight_orch=[data.inflight_orchestrator])
 
   # Runs when there is no inflight orchestrator.
   yield api.orch_menu.test(
       'no-inflight-orchestrator', data.ctp_normal,
       api.properties(
-          FullProperties(expected_completed_builds=data.builds,
-                         expected_enable_history=True)), cq=True,
-      collect_builds=data.builds, with_history=True, git_footers=[],
+          FullProperties(
+              expected_completed_builds=data.builds + data.after_builds,
+              expected_enable_history=True)), cq=True,
+      collect_builds=data.builds, history_builds=data.history_builds,
+      collect_after_builds=data.after_builds, with_history=True, git_footers=[],
       inflight_orch=[])
 
   # Collect times out
   yield api.orch_menu.test('collect-children-timeout', data.ctp_normal,
-                           api.step_data('run builds.collect.wait', retcode=1),
-                           collect_builds=data.builds, collect_timeout=True,
-                           with_manifest_refs=True, with_history=True)
+                           api.step_data('run builds.collect.wait',
+                                         retcode=1), collect_builds=data.builds,
+                           history_builds=data.history_builds,
+                           collect_timeout=True, with_manifest_refs=True,
+                           with_history=True)
 
   yield api.orch_menu.test(
       'quota-scheduler-override', data.ctp_normal, collect_builds=data.builds,
-      cq=True, with_history=True, git_footers=[],
+      history_builds=data.history_builds, cq=True, with_history=True,
+      git_footers=[],
       tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/chromeos-chrome'))
 
   # Bisection
@@ -194,7 +202,8 @@ def GenTests(api):
           FullProperties(
               expected_completed_builds=data.builds + [data.process_child],
               process_child=data.process_child.builder.builder,
-          )), collect_builds=data.builds, process_child=data.process_child,
+          )), collect_builds=data.builds, history_builds=data.history_builds,
+      process_child=data.process_child,
       follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
       builder='orderfile-generate-orchestrator')
 
@@ -205,9 +214,10 @@ def GenTests(api):
           FullProperties(
               expected_completed_builds=data.builds + [data.process_child],
               process_child=data.process_child.builder.builder,
-          )), collect_builds=data.builds, process_child=data.process_child,
-      process_child_timeout=True, follow_on_orch=data.follow_on_orchestrator,
-      bucket='toolchain', builder='orderfile-generate-orchestrator')
+          )), collect_builds=data.builds, history_builds=data.history_builds,
+      process_child=data.process_child, process_child_timeout=True,
+      follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
+      builder='orderfile-generate-orchestrator')
 
   # Follow-on orchestrator.
   yield api.orch_menu.test(
@@ -215,8 +225,9 @@ def GenTests(api):
       api.properties(
           FullProperties(expected_completed_builds=data.builds +
                          [data.follow_on_orchestrator])),
-      collect_builds=data.builds, follow_on_orch=data.follow_on_orchestrator,
-      bucket='toolchain', builder='orderfile-generate-orchestrator')
+      collect_builds=data.builds, history_builds=data.history_builds,
+      follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
+      builder='orderfile-generate-orchestrator')
 
   # Follow-on orchestrator times out.
   yield api.orch_menu.test(
@@ -224,9 +235,9 @@ def GenTests(api):
       api.properties(
           FullProperties(expected_completed_builds=data.builds +
                          [data.follow_on_orchestrator])),
-      collect_builds=data.builds, follow_on_orch=data.follow_on_orchestrator,
-      follow_on_timeout=True, bucket='toolchain',
-      builder='orderfile-generate-orchestrator')
+      collect_builds=data.builds, history_builds=data.history_builds,
+      follow_on_orch=data.follow_on_orchestrator, follow_on_timeout=True,
+      bucket='toolchain', builder='orderfile-generate-orchestrator')
 
   summary = (
       '1 build failed\n\n- amd64-generic-postsubmit: [build page](https://'
@@ -239,11 +250,12 @@ def GenTests(api):
               expected_completed_builds=data.crit_fail,
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
-      collect_builds=data.crit_fail, with_manifest_refs=True, with_history=True)
+      collect_builds=data.crit_fail, history_builds=data.history_builds,
+      with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
       'non-critical_child_builder_fails', data.ctp_normal,
       api.properties(
           FullProperties(expected_completed_builds=data.non_crit_fail)),
-      collect_builds=data.non_crit_fail, with_manifest_refs=True,
-      with_history=True)
+      collect_builds=data.non_crit_fail, history_builds=data.history_builds,
+      with_manifest_refs=True, with_history=True)

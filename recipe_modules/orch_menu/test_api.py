@@ -43,9 +43,13 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         True.
       annealing_builds (list): List of build messages to return when we are
         collecting annealing snapshot builds, or None.
+      history_builds (list): List of build messages to return when we are
+        checking history, or None.
       collect_builds (list): List of build messages to return when we are
         collecting child builds, or None.
       collect_timeout (bool): Wheter the child builds time out.
+      collect_after_builds (list): List of build messages to return when we are
+        collect_aftering child builds, or None.
       process_child (Build): The Build message for a process child, or None.
       process_child_timeout (bool): Whether the process child times out.
       follow_on_orch (Build): The Build message for a follow-on orchestrator, or
@@ -63,8 +67,10 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     git_footers = kwargs.pop('git_footers', None)
     inflight_orch = kwargs.pop('inflight_orch', None)
     annealing_builds = kwargs.pop('annealing_builds', None)
+    history_builds = kwargs.pop('history_builds', None)
     collect_builds = kwargs.pop('collect_builds', None)
     collect_timeout = kwargs.pop('collect_timeout', None)
+    collect_after_builds = kwargs.pop('collect_after_builds', None)
     process_child = kwargs.pop('process_child', None)
     process_child_timeout = kwargs.pop('process_child_timeout', False)
     follow_on_orch = kwargs.pop('follow_on_orch', None)
@@ -95,10 +101,10 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         args.append(
             self.m.git_footers.simulated_get_footers(
                 git_footers, 'run builds.get build history'))
-      if cq and collect_builds is not None:
+      if cq and history_builds is not None:
         args.append(
             self.m.buildbucket.simulated_search_results(
-                [x for x in collect_builds if x.status == common_pb2.SUCCESS],
+                [x for x in history_builds if x.status == common_pb2.SUCCESS],
                 'run builds.get build history.get completed builds.'
                 'get change build history.buildbucket.search'))
       if inflight_orch is not None:
@@ -119,10 +125,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
               'run builds.get snapshot builds.buildbucket.search'))
 
     if collect_builds is not None:
-      if with_history and cq:
-        collect_builds = [
-            x for x in collect_builds if x.status != common_pb2.SUCCESS
-        ]
       if collect_timeout:
         args.extend([
             self.step_data('run builds.collect.wait', retcode=1),
@@ -133,6 +135,11 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         args.append(
             self.m.buildbucket.simulated_collect_output(collect_builds,
                                                         'run builds.collect'))
+    if collect_after_builds is not None:
+      args.append(
+          self.m.buildbucket.simulated_collect_output(
+              collect_after_builds, 'final build collect.collect'))
+
     if process_child:
       process_name = 'run {}'.format(process_child.builder.builder)
       args.append(
@@ -209,9 +216,9 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     """
     _ret = namedtuple('_standard_test_data', [
         'orchestrator', 'inflight_orchestrator', 'annealing_builds', 'builds',
-        'crit_fail', 'non_crit_fail', 'process_child', 'follow_on_orchestrator',
-        'bisect_builds', 'bisect_properties', 'ctp_normal', 'ctp_bisect',
-        'ctp_failure'
+        'history_builds', 'after_builds', 'crit_fail', 'non_crit_fail',
+        'process_child', 'follow_on_orchestrator', 'bisect_builds',
+        'bisect_properties', 'ctp_normal', 'ctp_bisect', 'ctp_failure'
     ])
 
     def _child_build_msg(name, with_history=False, **kwargs):
@@ -265,7 +272,16 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                          output_properties=_output_properties()),
         _child_build_msg('atlas', cq=True, build_id=8922054662172514002,
                          start_time=1562475245, revision=None, critical='YES',
-                         output_properties=_output_properties())
+                         output_properties=_output_properties()),
+    ]
+    history_builds = [b for b in builds if b.status == 'SUCCESS']
+    collect_builds = [
+        b for b in builds if b.status != 'SUCCESS' or b.start_time
+    ]
+    after_builds = [
+        _child_build_msg('cave', cq=True, build_id=8922054662172514003,
+                         start_time=1562475245, revision=None, critical='YES',
+                         output_properties=_output_properties()),
     ]
     bisect_build = _child_build_msg('amd64-generic')
     self.m.cros_bisect.add_output_props(bisect_build, 'amd64-generic')
@@ -296,9 +312,9 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     ]
 
     values = [
-        orchestrator, inflight_orchestrator, annealing_builds, builds,
-        crit_fail, non_crit_fail, process_child, follow_on_orchestrator,
-        [bisect_build], bisect_props
+        orchestrator, inflight_orchestrator, annealing_builds, collect_builds,
+        history_builds, after_builds, crit_fail, non_crit_fail, process_child,
+        follow_on_orchestrator, [bisect_build], bisect_props
     ]
 
     def _ctp_sched_resp(build_id):

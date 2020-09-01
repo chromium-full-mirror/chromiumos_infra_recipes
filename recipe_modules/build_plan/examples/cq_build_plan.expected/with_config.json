@@ -174,6 +174,32 @@
       "@@@STEP_LOG_LINE@planner_input@    ebuilds_run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@planner_input@  }@@@",
       "@@@STEP_LOG_LINE@planner_input@}@@@",
+      "@@@STEP_LOG_LINE@planner_input@builder_configs {@@@",
+      "@@@STEP_LOG_LINE@planner_input@  id {@@@",
+      "@@@STEP_LOG_LINE@planner_input@    name: \"cave-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    type: CQ@@@",
+      "@@@STEP_LOG_LINE@planner_input@  }@@@",
+      "@@@STEP_LOG_LINE@planner_input@  chrome {@@@",
+      "@@@STEP_LOG_LINE@planner_input@    internal: true@@@",
+      "@@@STEP_LOG_LINE@planner_input@  }@@@",
+      "@@@STEP_LOG_LINE@planner_input@  build {@@@",
+      "@@@STEP_LOG_LINE@planner_input@    use_flags {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      flag: \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    }@@@",
+      "@@@STEP_LOG_LINE@planner_input@    apply_gerrit_changes: true@@@",
+      "@@@STEP_LOG_LINE@planner_input@    build_images {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      image_types: TEST@@@",
+      "@@@STEP_LOG_LINE@planner_input@      image_types: BASE@@@",
+      "@@@STEP_LOG_LINE@planner_input@    }@@@",
+      "@@@STEP_LOG_LINE@planner_input@    install_packages {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      run_spec: RUN@@@",
+      "@@@STEP_LOG_LINE@planner_input@    }@@@",
+      "@@@STEP_LOG_LINE@planner_input@  }@@@",
+      "@@@STEP_LOG_LINE@planner_input@  unit_tests {@@@",
+      "@@@STEP_LOG_LINE@planner_input@    ebuilds_run_spec: RUN@@@",
+      "@@@STEP_LOG_LINE@planner_input@  }@@@",
+      "@@@STEP_LOG_LINE@planner_input@}@@@",
       "@@@STEP_LOG_LINE@planner_input@gitiles_commit {@@@",
       "@@@STEP_LOG_LINE@planner_input@}@@@",
       "@@@STEP_LOG_END@planner_input@@@",
@@ -234,7 +260,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\n'\n%\n chromium-review.googlesource.com\u0018\ufffd\t\u001ar\n\u001c\n\u0010amd64-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0006\n\u0002\b\u00018\u0001\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u001a\n\u0011\n\u000fchrome_internal0\u0001\ufffd\u0001\u0002\u0010\u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001aP\n\u001a\n\u000earm-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0005\ufffd\u0001\u0002\u0010\u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001aZ\n$\n\u0018arm-generic-pointless-cq\u0012\u0006master\u0018\u0001\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0005\ufffd\u0001\u0002\u0010\u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001a_\n\u0014\n\batlas-cq\u0012\u0006master\u0018\u0001\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u00070\u0001\ufffd\u0001\u0002\u0010\u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\"\u0000",
+      "\n'\n%\n chromium-review.googlesource.com\u0018\ufffd\t\u001ar\n\u001c\n\u0010amd64-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0006\n\u0002\b\u00018\u0001\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u001a\n\u0011\n\u000fchrome_internal0\u0001\ufffd\u0001\u0002\u0010\u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001aP\n\u001a\n\u000earm-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0005\ufffd\u0001\u0002\u0010\u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001aZ\n$\n\u0018arm-generic-pointless-cq\u0012\u0006master\u0018\u0001\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0005\ufffd\u0001\u0002\u0010\u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001a_\n\u0014\n\batlas-cq\u0012\u0006master\u0018\u0001\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u00070\u0001\ufffd\u0001\u0002\u0010\u0002:\u001d\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002\u001a?\n\u0013\n\u0007cave-cq\u0012\u0006master\u0018\u0001*\u0002\b\u00012 \n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0003\u0001\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0002\"\u0000",
       "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -270,7 +296,12 @@
       "@@@STEP_LOG_LINE@input.binaryproto@\u0005\u0012\u0003@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0001\u0001*\u0002\b\u00012\u00070\u0001\ufffd\u0001\u0002\u0010\u0002:\u001d\"\u0019@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\bchromite\u0012@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@chromeos-base(\u0002\"\u0000@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@chromeos-base(\u0002\u001a?@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0013@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0007cave-cq\u0012\u0006master\u0018\u0001*\u0002\b\u00012 @@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0011@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000fchrome_internal0\u0001z\u0004@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0003\u0001\ufffd\u0001\u0002\u0010\u0002:\u0002(\u0002\"\u0000@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },
@@ -558,11 +589,12 @@
     "cmd": [],
     "name": "filter builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@need 1 new build (filtered 3)@@@",
+      "@@@STEP_TEXT@need 1 new build (filtered 4)@@@",
       "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_LINE@filter log@amd64-generic already passed@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-cq is non-critical and this is a CQ rerun@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@cave-cq build is not needed for changes@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },
@@ -571,7 +603,7 @@
     "name": "filter builds.set build_plan_skip_for_source_rules",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@1@@@"
+      "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@2@@@"
     ]
   },
   {

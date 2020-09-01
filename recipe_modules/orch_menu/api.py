@@ -5,7 +5,7 @@
 
 """API providing a menu for orchestrator steps"""
 
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 import contextlib
 
 from google.protobuf.json_format import MessageToDict
@@ -29,19 +29,23 @@ class BuildsStatus(object):
     testable_builds (list[Build]): The list of testable builds.
     failures (list[Failure]): The list of failures.
     fatal_failures (list[Failure]): The list of fatal failures.
+    running_builds (list[Build]): The still-running builds (to be collected
+        after HW test.)
   """
 
-  def __init__(self, completed, failures, configs):
+  def __init__(self, completed, failures, configs, running=None):
     """
 
     Args:
       completed (list[Build]): The builds.
       failures (list[Failure]): The failures
       configs (dict{name: BuilderConfig}): Builder config dictionary.
+      running (list[Build]): The running builds, or None.
     """
     self.completed_builds = completed
     self.failures = failures
     self._configs = configs
+    self.running_builds = running or []
 
   @property
   def testable_builds(self):
@@ -51,19 +55,29 @@ class BuildsStatus(object):
   def fatal_failures(self):
     return [f for f in self.failures if f.fatal]
 
-  def update(self, completed, failures, configs=None):
+  def update(self, completed, failures, configs=None, running=None):
     """Update the status.
 
-    Add the new builds and failures to our attributes.
+    Add the new builds and failures to our attributes.  Remove completed builds
+    from running list.
 
     Args:
       completed (list[Build]): The builds.
       failures (list[Failure]): The failures
       configs (dict{name: BuilderConfig}): Builder config dictionary.
+      running (list[Build]): The still-running builds, or None.
     """
+    completed_ids = set(b.id for b in completed)
     self._configs = configs or self._configs
     self.completed_builds += completed
     self.failures += failures
+    # Remove any just completed builds from self.running_builds.
+    self.running_builds = [
+        b for b in self.running_builds if b.id not in completed_ids
+    ]
+    # Add any new running builds to self.running_builds.
+    running_ids = set(b.id for b in self.running_builds)
+    self.running_builds += [b for b in running or [] if not b.id in running_ids]
 
   def _is_testable(self, build):
     """Whether the build is testable."""
@@ -193,6 +207,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
     Returns:
       (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
     """
+    # If there are any remaining children to collect, collect them now.
+    self._collect_remaining_children()
+
     # Recheck the BuilderConfigs at HEAD, one last time, to see if any
     # failed builders are now noncritical.
     result = self._non_critical_build_check('clean up orchestrator',
@@ -361,12 +378,27 @@ class OrchMenuApi(recipe_api.RecipeApi):
       (BuildsStatus): The current status of the builds.
     """
     with self.m.step.nest(run_step_name or 'run builds') as pres:
-      completed_builds = self._filter_schedule_wait_builds(
+      completed_builds, collect_after = self._filter_schedule_wait_builds(
           pres, self._bisect_builder_child_specs())
 
+    check_result = self._collect_and_check_build_results(
+        completed_builds, results_step_name=results_step_name,
+        check_critical_step_name=check_critical_step_name)
+
+    self._builds_status.update(completed_builds, check_result.failures,
+                               check_result.configs, collect_after)
+    if not self._builds_status.fatal_failures:
+      # If we've made it this far, the relevant child builders were successful
+      # and we can update the build success manifest ref if it is specified.
+      self._push_manifest_refs(self._properties.update_manifest_refs.build)
+
+    return self._builds_status
+
+  def _collect_and_check_build_results(self, builds, results_step_name=None,
+                                       check_critical_step_name=None):
     with self.m.step.nest(results_step_name or 'check build results') as pres:
       relevant_builds = []
-      for build in completed_builds:
+      for build in builds:
         if build.status in (common_pb2.STARTED, common_pb2.SCHEDULED):
           pres.text = 'some builds are running/pending'
         # Assume relevant if the child doesn't have the relevant_build prop.
@@ -377,22 +409,13 @@ class OrchMenuApi(recipe_api.RecipeApi):
                                             ['no relevant builds'])
       self.m.easy.set_properties_step(
           child_builds_relevant=len(relevant_builds))
-      failures = self.m.failures.get_build_failures(completed_builds)
+      failures = self.m.failures.get_build_failures(builds)
 
     # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
     # non-critical.
-    check_result = self._non_critical_build_check(
-        check_critical_step_name or 'non-critical build check',
-        completed_builds, failures)
-
-    self._builds_status.update(completed_builds, check_result.failures,
-                               check_result.configs)
-    if not self._builds_status.fatal_failures:
-      # If we've made it this far, the child builders were successful
-      # and we can update the build success manifest ref if it is specified.
-      self._push_manifest_refs(self._properties.update_manifest_refs.build)
-
-    return self._builds_status
+    return self._non_critical_build_check(
+        check_critical_step_name or 'non-critical build check', builds,
+        failures)
 
   def _bisect_builder_child_specs(self):
     """Get the child_spec list from cros_bisect.
@@ -439,41 +462,48 @@ class OrchMenuApi(recipe_api.RecipeApi):
             if self._properties.stagger_children_seconds:
               self.m.time.sleep(self._properties.stagger_children_seconds)
 
+    collect_when_dict = defaultdict(list)
     child_specs_dict = {cs.name: cs for cs in child_specs}
     child_targets_dict = {cs.name.rsplit('-', 1)[0]: cs for cs in child_specs}
-    collect_builds = [
-        b for b in existing_builds
-        if self._should_collect(b, child_specs_dict, child_targets_dict)
-    ]
+    for b in existing_builds:
+      collect_when_dict[self._collect_value(b.builder.builder, child_specs_dict,
+                                            child_targets_dict)].append(b)
 
     # Collect all existing builds, add to completed builds
+    build_ids = [
+        b.id
+        for b in collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT]
+    ]
+    completed_builds += self._collect_builds(build_ids)
+    return completed_builds, collect_when_dict[
+        BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST]
+
+  def _collect_builds(self, build_ids):
     fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
-    build_ids = [b.id for b in collect_builds]
     try:
-      completed_builds += self.m.buildbucket.collect_builds(
+      return self.m.buildbucket.collect_builds(
           build_ids, timeout=60 * 60 * 36, step_name='collect',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()
     except self.m.step.StepFailure:
-      completed_builds += self.m.buildbucket.get_multi(
+      return self.m.buildbucket.get_multi(
           build_ids, step_name='get',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()
 
-    return completed_builds
-
-  def _should_collect(self, build, child_specs_dict, child_targets_dict):
-    """Returns whether the orchestrator should collect the build.
+  def _collect_value(self, builder_name, child_specs_dict, child_targets_dict):
+    """Returns whether the orchestrator should collect the build, and when.
 
     Args:
-      build (Build): the build to check whether to collect.
+      builder_name (str): the name of the builder to check whether to collect.
       child_specs_dict (dict): mapping of builder name to ChildSpec.
       child_targets_dict (dict): fuzzy mapping of build_target to ChildSpec.
         Fuzzy in the sense that it just chops off from the last '-' to the end
         of the string. Intended to pick up the *-snapshot cases. See more below.
 
     Returns:
-      (bool) Whether to collect the build.
+      (BuilderConfig.Orchestrator.ChildSpec) Whether to collect the build, and
+      when.
     """
-    builder_name = build.builder.builder
+    ret = BuilderConfig.Orchestrator.ChildSpec.COLLECT
     child_spec = child_specs_dict.get(builder_name)
     if not child_spec:
       # Missed lookup, the existing build name was not a name in child_specs.
@@ -481,11 +511,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # orchestrator's child has a *-postsubmit name.
       # TODO(crbug/991996): Refactor: use something other than string manip.
       child_spec = child_targets_dict.get(builder_name.rsplit('-', 1)[0])
-    if not child_spec:
-      # Missed lookup even after fallback for *-snapshot.
-      return True
-    return (child_spec.collect_handling !=
-            BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT)
+    if child_spec:
+      return child_spec.collect_handling or ret
+    # Missed lookup even after fallback for *-snapshot.
+    return ret
 
   def run_follow_on_orchestrator(self):
     """Run the follow_on_orchestrator, if any.  Wait if necessary."""
@@ -579,6 +608,25 @@ class OrchMenuApi(recipe_api.RecipeApi):
         self._properties.enable_history)
     self._builds_status.update([], test_failures)
 
-    if not self._builds_status.fatal_failures:
+    if not self._collect_remaining_children().fatal_failures:
       self._push_manifest_refs(self._properties.update_manifest_refs.test)
+
+    return self._builds_status
+
+  def _collect_remaining_children(self, step_name='final build collect'):
+    """Collect any remaining children.
+
+    Args:
+      step_name (str): The name for the step.
+
+    Returns:
+      (BuildsStatus): The current status of the builds.
+    """
+    if self._builds_status.running_builds:
+      with self.m.step.nest('final build collect'):
+        completed_builds = self._collect_builds(
+            [b.id for b in self._builds_status.running_builds])
+        check_result = self._collect_and_check_build_results(completed_builds)
+        self._builds_status.update(completed_builds, check_result.failures,
+                                   check_result.configs)
     return self._builds_status

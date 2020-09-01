@@ -28,8 +28,8 @@ def RunSteps(api, properties):
 
   api.assertions.assertEqual(
       properties.expected_collect,
-      api.orch_menu._should_collect(build, child_specs_dict,
-                                    child_targets_dict))
+      api.orch_menu._collect_value(build.builder.builder, child_specs_dict,
+                                   child_targets_dict))
 
 
 def GenTests(api):
@@ -43,8 +43,13 @@ def GenTests(api):
   # child_targets_dict, and verify that we get the right answer each time.
   for spec_name, spec_value in CollectHandling.items():
     for target_name, target_value in CollectHandling.items():
-      properties = CollectProperties(
-          expected_collect=(spec_value or target_value) != ChildSpec.NO_COLLECT)
+      if spec_value:
+        expected_collect = spec_value
+      elif target_value:
+        expected_collect = target_value
+      else:
+        expected_collect = ChildSpec.COLLECT
+      properties = CollectProperties(expected_collect=expected_collect)
       if spec_value:
         properties.child_spec.name = builder
         properties.child_spec.collect_handling = spec_value
