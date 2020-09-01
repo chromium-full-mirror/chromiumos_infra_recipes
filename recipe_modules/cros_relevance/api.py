@@ -310,9 +310,9 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
             patch_set.project, patch_set.branch)
         for src_path in src_paths:
           for path in patch_set.file_infos.keys():
-            path = SourcePath()
-            path.path = '%s/%s' % (src_path, path)
-            affected_paths.append(path)
+            affected_path = SourcePath()
+            affected_path.path = '%s/%s' % (src_path, path)
+            affected_paths.append(affected_path)
       return affected_paths
 
   def get_package_dependencies(self, sysroot, chroot, patch_sets=None,
