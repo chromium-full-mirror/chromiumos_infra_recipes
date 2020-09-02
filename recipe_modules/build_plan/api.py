@@ -84,6 +84,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     filtered_snapshot_builds = []
 
+    count_skip_for_source_rules = 0
+    count_skip_since_already_passed = 0
+    count_skip_wait_on_other_run = 0
+    count_skip_noncritical_on_rerun = 0
+
     with self.m.step.nest('filter builds') as presentation:
       for child_spec in child_specs:
         # Get the builder variant in the build plan.
@@ -94,6 +99,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         else:
           filter_log.append('{} build is not needed for changes'.format(
               child_spec.name))
+          count_skip_for_source_rules += 1
           continue
 
         child_builder_config = self.m.cros_infra_config.get_builder_config(
@@ -109,6 +115,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # No need to retry previously-passed builds.
         if child_builder_name in completed_builders:
           filter_log.append('{} already passed'.format(child_builder_spec))
+          count_skip_since_already_passed += 1
           continue
 
         # We've already found an existing build, we'll just wait on it later.
@@ -118,12 +125,14 @@ class BuildPlanApi(recipe_api.RecipeApi):
           filtered_snapshot_builds.append(snapshot_build)
           filter_log.append(
               '{} exists, will join on it'.format(child_builder_spec))
+          count_skip_wait_on_other_run += 1
           continue
 
         # Don't retry non-critical builds.
         if not critical and is_retry:
           filter_log.append('{} is non-critical and this is a CQ rerun'.format(
               child_builder_name))
+          count_skip_noncritical_on_rerun += 1
           continue
 
         tags = self.m.cros_tags.make_schedule_tags(snapshot)
@@ -158,6 +167,18 @@ class BuildPlanApi(recipe_api.RecipeApi):
       presentation.step_text = ('need {} new build{} (filtered {})'.format(
           len(new_build_requests), '' if len(new_build_requests) == 1 else 's',
           len(child_specs) - len(new_build_requests)))
+
+      self.m.easy.set_properties_step(
+          build_plan_skip_for_source_rules=count_skip_for_source_rules)
+      self.m.easy.set_properties_step(
+          build_plan_skip_for_already_passed=count_skip_since_already_passed)
+      self.m.easy.set_properties_step(
+          build_plan_skip_for_wait_on_other_run=count_skip_wait_on_other_run)
+      self.m.easy.set_properties_step(
+          build_plan_skip_for_noncritical_on_rerun=count_skip_noncritical_on_rerun
+      )
+      self.m.easy.set_properties_step(
+          build_plan_new_build_requests=len(new_build_requests))
 
     return completed_builds, filtered_snapshot_builds, new_build_requests
 
