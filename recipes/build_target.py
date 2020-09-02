@@ -39,24 +39,25 @@ def DoRunSteps(api, config, properties):
   # to be no artifacts to upload, in which case the upload_artifacts call should
   # "bundle everything", and then "upload all none" of the artifacts.
 
-  forgive_upload_failure = False
+  raise_upload_failure = True
   try:
     if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
       if api.build_menu.build_and_test_images(config=config):
         api.build_menu.upload_prebuilts(config)
   except StepFailure:
     # A StepFailure means build failed, we want to forgive an upload failure.
-    forgive_upload_failure = True
+    raise_upload_failure = False
     raise
   finally:
     # Always try to upload artifacts.  If there are none, it is a noop.
     try:
-      api.build_menu.upload_artifacts(config)
+      api.build_menu.upload_artifacts(config,
+                                      disable_publish=not raise_upload_failure)
     except StepFailure:
       # TODO(crbug/1086630): We do not need to catch StepFailure here after
       # 2020-12-31.
       # Do not fail if we already did.  See also crrev.com/c/2241753.
-      if not forgive_upload_failure:
+      if raise_upload_failure:
         raise
 
 
@@ -73,6 +74,8 @@ def GenTests(api):
       'pointless-cq-build',
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusSuccess), cq=True, pointless=True)
 
   # Normal postsubmit build.
@@ -86,6 +89,8 @@ def GenTests(api):
   yield api.build_menu.test(
       'install-packages-fail',
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return('install packages',
@@ -117,10 +122,26 @@ def GenTests(api):
   yield api.build_menu.test(
       'prepare-for-build-pointless',
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StatusSuccess), cq=True,
       input_properties=BuildTargetProperties(artifact_build=True),
       artifact_pointless=True)
+
+  # Failed artifact_build must not publish
+  yield api.build_menu.test(
+      'failed-artifact-build',
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.post_check(post_process.StatusAnyFailure),
+      api.build_menu.set_build_api_return('install packages',
+                                          'SysrootService/InstallPackages',
+                                          retcode=1),
+      input_properties=BuildTargetProperties(artifact_build=True),
+  )
 
   yield api.build_menu.test(
       'run-exit-install',

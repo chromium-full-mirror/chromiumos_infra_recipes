@@ -46,7 +46,8 @@ def DoRunSteps(api, config, properties):
     raise
   finally:
     try:
-      api.build_menu.upload_artifacts(config)
+      api.build_menu.upload_artifacts(config,
+                                      disable_publish=not raise_upload_failure)
     except StepFailure:
       # TODO(crbug/1086630): We do not need to catch StepFailure here after
       # 2020-12-31.
@@ -61,6 +62,8 @@ def GenTests(api):
       'cq-build', api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusSuccess), cq=True, build_target='coral')
 
   # Slim CQ build, with one gerrit_change.
@@ -77,6 +80,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusSuccess), cq=True, build_target='coral',
       input_properties=BuildTargetProperties(artifact_build=True),
       artifact_pointless=True)
@@ -87,6 +92,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusSuccess), cq=True, build_target='coral',
       pointless=True)
 
@@ -96,6 +103,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',

@@ -656,7 +656,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#90)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#415)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#417)(self, config=None):**
 
 Generate release payloads for the build.
 
@@ -693,7 +693,7 @@ This context manager sets up the workspace path.
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#405)(self, config=None):**
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#407)(self, config=None):**
 
 Sign the uploaded images.
 
@@ -702,14 +702,15 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#82)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#371)(self, config=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#371)(self, config=None, disable_publish=False):**
 
 Upload artifacts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
+  disable_publish (bool): Whether to disable publishing artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#386)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#388)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -988,7 +989,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#496)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#509)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1003,7 +1004,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#529)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#542)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1028,7 +1029,7 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#549)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#562)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1049,7 +1050,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#420)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, name=None, test_data=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#420)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, disable_publish=False, name=None, test_data=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -1068,6 +1069,7 @@ Args:
   artifacts_info (ArtifactsByService): Information about artifacts.
   chroot (Chroot): chroot to use
   sysroot (Sysroot): sysroot to use
+  disable_publish (bool): whether to disable publishing of artifacts.
   name (str): The step name. Defaults to 'upload artifacts'.
   test_data (str): Some data for this step to return when running under
       simulation.  The string "@@DIR@@" is replaced with the output_dir
@@ -5126,7 +5128,7 @@ Require a given condition be true or throw a ValueError.
 
 [DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#25)(api, properties):**
 ### *recipes* / [cros\_artifacts:examples/prepare\_for\_build](/recipe_modules/cros_artifacts/examples/prepare_for_build.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/prepare_for_build.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

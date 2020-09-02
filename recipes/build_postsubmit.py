@@ -42,7 +42,8 @@ def DoRunSteps(api, config, properties):
     raise
   finally:
     try:
-      api.build_menu.upload_artifacts(config)
+      api.build_menu.upload_artifacts(config,
+                                      disable_publish=not raise_upload_failure)
     except StepFailure:
       # TODO(crbug/1086630): We do not need to catch StepFailure here after
       # 2020-12-31.
@@ -67,6 +68,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',

@@ -419,7 +419,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
   def upload_artifacts(self, builder_name, target, kind, gs_bucket,
                        artifacts_info=None, chroot=None, sysroot=None,
-                       name=None, test_data=None):
+                       disable_publish=False, name=None, test_data=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -437,6 +437,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       artifacts_info (ArtifactsByService): Information about artifacts.
       chroot (Chroot): chroot to use
       sysroot (Sysroot): sysroot to use
+      disable_publish (bool): whether to disable publishing of artifacts.
       name (str): The step name. Defaults to 'upload artifacts'.
       test_data (str): Some data for this step to return when running under
           simulation.  The string "@@DIR@@" is replaced with the output_dir
@@ -477,6 +478,18 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
               'files_by_artifact': files_by_artifact,
           }, step_name='output artifact GS paths')
 
+      # We upload artifacts whether the build passed or failed (see
+      # crbug/1086630).
+      #
+      # Publishing artifacts is a "Push to Production" step.  As such,
+      # dry-run and failed builds must not publish artifacts.  The caller can
+      # disable publishing (for failing builds)
+      if disable_publish:
+        presentation.step_text = 'Artifact publishing disabled.'
+        return
+
+      # Builders that publish artifacts should not recycyle dry-run builds,
+      # since we treat them differently here.
       if self.m.cq.state == self.m.cq.DRY:
         presentation.step_text = 'Not publishing artifacts in dry run'
         return

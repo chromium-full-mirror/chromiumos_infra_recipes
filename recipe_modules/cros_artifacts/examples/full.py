@@ -17,6 +17,7 @@ from PB.chromiumos.builder_config import BuilderConfig
 
 from PB.recipe_modules.chromeos.cros_artifacts.examples.test import (
     TestInputProperties)
+from recipe_engine import post_process
 
 PROPERTIES = TestInputProperties
 
@@ -58,13 +59,25 @@ def RunSteps(api, properties):
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
+      disable_publish=properties.disable_publish,
   )
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.post_check(post_process.MustRun,
+                     'upload artifacts.publish artifacts'))
 
-  yield api.test('dry-run', api.cq(dry_run=True))
+  yield api.test(
+      'dry-run', api.cq(dry_run=True),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'))
+
+  yield api.test(
+      'disabled', api.properties(TestInputProperties(disable_publish=True)),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'))
 
   yield api.test('api-1.0.0',
                  api.properties(TestInputProperties(build_api_version='1.0.0')))

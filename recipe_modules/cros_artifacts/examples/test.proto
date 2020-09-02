@@ -15,6 +15,9 @@ message TestInputProperties {
   // Override Build API version.
   string build_api_version = 2;
 
-  // test_data for Build API call.
+  // Test_data for Build API call.
   string api_response = 3;
+
+  // Whether to disable publishing.
+  bool disable_publish = 4;
 }

@@ -368,11 +368,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 
-  def upload_artifacts(self, config=None):
+  def upload_artifacts(self, config=None, disable_publish=False):
     """Upload artifacts from the build.
 
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
+      disable_publish (bool): Whether to disable publishing artifacts.
     """
     config = config or self.config_or_default
 
@@ -381,7 +382,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.cros_artifacts.upload_artifacts(
           config.id.name, self.build_target, config.id.type,
           config.artifacts.artifacts_gs_bucket, sysroot=self.sysroot,
-          chroot=self.chroot, artifacts_info=config.artifacts.artifacts_info)
+          chroot=self.chroot, artifacts_info=config.artifacts.artifacts_info,
+          disable_publish=disable_publish)
 
   def upload_prebuilts(self, config=None):
     """Upload prebuilts from the build.
