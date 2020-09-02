@@ -112,13 +112,6 @@
   },
   {
     "cmd": [],
-    "name": "override manifest url",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@overriding manifest_url https://chromium.googlesource.com/chromiumos/manifest because of cache_path [CACHE]/chromiumos@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "ensure synced checkout"
   },
   {
@@ -131,7 +124,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos"
+      "[CLEANUP]/temp_cache_tmp_1"
     ],
     "infra_step": true,
     "name": "ensure synced checkout.ensure root path",
@@ -147,9 +140,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests"
+      "[CLEANUP]/temp_cache_tmp_1/.repo/manifests"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests",
     "~followup_annotations": [
@@ -164,9 +157,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests.git"
+      "[CLEANUP]/temp_cache_tmp_1/.repo/manifests.git"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests.git",
     "~followup_annotations": [
@@ -178,13 +171,13 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "--groups",
       "all",
       "--groups",
       "group1,group2"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
     "timeout": 900,
@@ -203,7 +196,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -227,7 +220,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.clear git locks",
     "~followup_annotations": [
@@ -244,9 +237,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos/.repo/local_manifests"
+      "[CLEANUP]/temp_cache_tmp_1/.repo/local_manifests"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.ensure local manifest dir",
     "~followup_annotations": [
@@ -265,7 +258,7 @@
       "--format",
       "text"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.fetch master:manifest_path",
     "~followup_annotations": [
@@ -281,9 +274,9 @@
       "/path/to/tmp/json",
       "copy",
       "\n<manifest>\n  <remote name=\"cros-internal\"\n          fetch=\"https://chrome-internal.googlesource.com\"\n          review=\"https://chrome-internal-review.googlesource.com\" />\n  <project name=\"chromeos/private-repo1\"\n     path=\"src/private-repo1\"\n     remote=\"cros-internal\" />\n</manifest>\n    ",
-      "[CACHE]/chromiumos/.repo/local_manifests/local_manifest.xml"
+      "[CLEANUP]/temp_cache_tmp_1/.repo/local_manifests/local_manifest.xml"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.write local manifest",
     "~followup_annotations": [
@@ -321,7 +314,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
@@ -341,7 +334,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version",
     "~followup_annotations": [
@@ -353,7 +346,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
@@ -365,7 +358,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
@@ -386,7 +379,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "ensure synced checkout.repo sync",
     "timeout": 3600,
@@ -406,7 +399,7 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "name": "cherry-pick gerrit changes.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -432,7 +425,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "name": "cherry-pick gerrit changes.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -453,7 +446,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_files\": true}",
@@ -518,7 +511,7 @@
       "gc.packRefs",
       "false"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git config",
     "~followup_annotations": [
@@ -630,7 +623,7 @@
       "/path/to/tmp/json",
       "copy",
       "{}",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
     "name": "detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.write input file",
@@ -644,9 +637,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.DependencyService/GetToolchainPaths"
@@ -669,7 +662,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -760,7 +753,7 @@
       "/path/to/tmp/json",
       "copy",
       "2(2d72510e447ab60a9728aeea2362d8be2cbd7789:\u0005\n\u0003\u0018\ufffd\tBd\nb\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/masterJ\u0010\n\u000esome/other/dir",
-      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto"
     ],
     "infra_step": true,
     "name": "detect toolchain change.path relevancy check.write input binaryproto",
@@ -779,9 +772,9 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_3/output.binaryproto"
     ],
     "infra_step": true,
     "name": "detect toolchain change.path relevancy check.run check",
@@ -797,7 +790,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_3/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,

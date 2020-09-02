@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/file',
     'recipe_engine/properties',
+    'cros_cache',
     'cros_infra_config',
     'repo',
     'workspace_util',
@@ -32,10 +33,12 @@ def RunSteps(api, properties):
   # builders that have configs.
   config = api.cros_infra_config.configure_builder(commit=commit,
                                                    changes=changes)
+  cache_dir = api.cros_cache.create_cache_dir('temp_cache')
   with api.workspace_util.sync_to_manifest_groups(['group1', 'group2'],
                                                   api.repo.LocalManifest(
                                                       repo='http://repo.url',
-                                                      path='manifest_path')):
+                                                      path='manifest_path'),
+                                                  cache_dir):
     api.workspace_util.apply_changes()
 
   api.workspace_util.detect_toolchain_cls(None)

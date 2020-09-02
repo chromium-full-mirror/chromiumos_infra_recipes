@@ -43,27 +43,16 @@ def GenTests(api):
   yield api.cros_source.test(
       'internal',
       api.properties(
-          SyncCacheProperties(manifest_url=api.src_state.internal_manifest.url,
-                              cache_path_override='chromiumos')),
+          SyncCacheProperties(
+              manifest_url=api.src_state.internal_manifest.url)),
       api.post_check(verify_manifest_url, internal_url),
       api.post_check(post_process.DoesNotRun, 'override manifest url'),
       api.post_check(post_process.StatusSuccess))
 
   yield api.cros_source.test(
-      'external',
+      'custom',
       api.properties(
           SyncCacheProperties(manifest_url=api.src_state.external_manifest.url,
                               cache_path_override='chromiumos-external')),
       api.post_check(verify_manifest_url, external_url),
-      api.post_check(post_process.DoesNotRun, 'override manifest url'),
-      api.post_check(post_process.StatusSuccess))
-
-  # Example of doing it wrong, and being overridden.
-  yield api.cros_source.test(
-      'mismatch',
-      api.properties(
-          SyncCacheProperties(
-              manifest_url=api.src_state.external_manifest.url)),
-      api.post_check(verify_manifest_url, internal_url),
-      api.post_check(post_process.MustRun, 'override manifest url'),
       api.post_check(post_process.StatusSuccess))

@@ -1,0 +1,15 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_source.tests;
+
+message MismatchArgsProperties {
+  // The manifest URL to pass
+  string manifest_url = 1;
+
+  // The cache_path_override to pass.
+  string cache_path_override = 2;
+}

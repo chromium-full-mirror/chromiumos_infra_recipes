@@ -72,6 +72,34 @@ class CrosSourceApi(recipe_api.RecipeApi):
     return (self._snapshot_isolate.isolated_hash
             if self._snapshot_isolate else None)
 
+  def _validate_args(self, manifest_url, local_manifest, groups, cache_path):
+    """Ensure the args to ensure_synced_cache are to a supported configuration.
+
+    Supported configurations include:
+      - INTERNAL: Sync the internal manifest to self.cache_path.
+      - CUSTOM: Sync any manifest to any path other than
+        self.cache_path.
+
+    Args:
+      manifest_url (str): Manifest URL for 'repo.init`.
+      local_manifest (repo.LocalManifest): Local manifest to add or None if not
+        syncing a local manifest.
+      groups (list[str]): List of manifest groups to checkout.
+      cache_path (Path): Path to sync into. If None, the cache_path
+        property is used.
+
+    Returns:
+      If the configuration is supported, the type of configuration.
+    """
+    if cache_path == self.cache_path:
+      if (manifest_url != self.m.src_state.internal_manifest.url or
+          local_manifest or groups):
+        raise ValueError(
+            "Only the internal manifest can be synced to the chromiumos cache path."
+        )
+      return "INTERNAL"
+    return "CUSTOM"
+
   def ensure_synced_cache(self, manifest_url=None, init_opts=None,
                           sync_opts=None, cache_path_override=None,
                           is_staging=False, projects=None, gitiles_commit=None):
@@ -98,13 +126,6 @@ class CrosSourceApi(recipe_api.RecipeApi):
 
     cache_path = cache_path_override or self.cache_path
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
-    if (cache_path == self.cache_path and
-        manifest_url != self.m.src_state.internal_manifest.url):
-      with self.m.step.nest('override manifest url') as presentation:
-        presentation.step_text = (
-            'overriding manifest_url {} because of cache_path {}'.format(
-                manifest_url, str(cache_path)))
-      manifest_url = self.m.src_state.internal_manifest.url
 
     gitiles_commit = gitiles_commit or self.m.src_state.gitiles_commit
     gitiles_commit = (
@@ -114,9 +135,20 @@ class CrosSourceApi(recipe_api.RecipeApi):
     if is_staging:
       init_opts.update(STAGING_INIT_OPTS)
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
-    self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
-                                       init_opts=init_opts, sync_opts=sync_opts,
-                                       projects=projects)
+    local_manifest = init_opts.get('local_manifest')
+    groups = init_opts.get('groups')
+    verbose = init_opts.get('verbose')
+    retry_fetches = sync_opts.get('retry_fetches')
+
+    configuration = self._validate_args(manifest_url, local_manifest, groups,
+                                        cache_path)
+    if configuration == 'INTERNAL':
+      self._sync_cached_dir(retry_fetches, projects, verbose, external=False,
+                            is_staging=is_staging)
+    else:
+      self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
+                                         init_opts=init_opts,
+                                         sync_opts=sync_opts, projects=projects)
 
   def checkout_branch(self, manifest_url, manifest_branch, init_opts=None,
                       sync_opts=None, step_name=None):
@@ -164,6 +196,31 @@ class CrosSourceApi(recipe_api.RecipeApi):
       return self.m.git.fetch_refs(
           'https://{}/{}'.format(snapshot.host, snapshot.project), snapshot.id,
           count=count)
+
+  def _sync_cached_dir(self, retry_fetches=None, projects=None, verbose=False,
+                       external=False, is_staging=False):
+    """Sync to the chromiumos overlay.
+
+    Args:
+      retry_fetches (int): The number of times to retry retriable fetches.
+      projects (List[str]): Projects to limit the sync to, or None to sync
+        all projects.
+      verbose (bool): Whether to produce verbose output.
+      external (bool): Flag to indiciate syncing to the external manifest.
+      is_staging (bool): Flag to indicate staging environment
+    """
+    sync_path = self.cache_path
+    manifest_url = self.m.src_state.internal_manifest.url
+
+    init_opts = dict(verbose=verbose)
+    if is_staging:
+      init_opts.update(STAGING_INIT_OPTS)
+    sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, verbose=verbose,
+                     retry_fetches=retry_fetches)
+
+    self.m.repo.ensure_synced_checkout(sync_path, manifest_url,
+                                       init_opts=init_opts, sync_opts=sync_opts,
+                                       projects=projects)
 
   @contextlib.contextmanager
   def checkout_overlays_context(self):
