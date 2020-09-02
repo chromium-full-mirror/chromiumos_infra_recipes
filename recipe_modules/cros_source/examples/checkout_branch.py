@@ -1,0 +1,36 @@
+# -*- coding: utf-8 -*-
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/context',
+    'recipe_engine/properties',
+    'cros_source',
+    'src_state',
+]
+
+from recipe_engine import post_process
+
+from PB.recipe_modules.chromeos.cros_source.examples.checkout_branch import (
+    CheckoutBranchProperties)
+
+PROPERTIES = CheckoutBranchProperties
+
+
+def RunSteps(api, properties):
+
+  with api.cros_source.checkout_overlays_context():
+    with api.context(cwd=api.cros_source.workspace_path):
+      api.cros_source.ensure_synced_cache()
+      api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
+                                      properties.branch_name)
+
+
+def GenTests(api):
+
+  branch = 'release-R86-13421.B'
+  yield api.cros_source.test(
+      'basic', api.properties(CheckoutBranchProperties(branch_name=branch)),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'checkout branch %s' % branch))

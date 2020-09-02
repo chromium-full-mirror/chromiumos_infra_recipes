@@ -15,18 +15,17 @@ from recipe_engine.util import exponential_retry
 
 ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id'])
 
-DEFAULT_CACHE_SYNC_OPTS = dict(
-    current_branch=True,
-    detach=True,
-    force_sync=True,
-    no_tags=True,
-    jobs=8,
-    optimized_fetch=True,
-    timeout=3600,
-    retry_fetches=8,
-)
+# Default sync options for syncing the named cache.
+DEFAULT_CACHE_SYNC_OPTS = dict(current_branch=True, detach=True,
+                               force_sync=True, jobs=8, no_tags=True,
+                               optimized_fetch=True, retry_fetches=8,
+                               timeout=3600)
 
 STAGING_INIT_OPTS = dict(repo_branch='master')
+
+# Default options for checking out a branch.
+DEFAULT_CHECKOUT_SYNC_OPTS = dict(jobs=8, optimized_fetch=True, timeout=3600,
+                                  retry_fetches=8)
 
 
 class CrosSourceApi(recipe_api.RecipeApi):
@@ -118,6 +117,32 @@ class CrosSourceApi(recipe_api.RecipeApi):
     self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
                                        init_opts=init_opts, sync_opts=sync_opts,
                                        projects=projects)
+
+  def checkout_branch(self, manifest_url, manifest_branch, init_opts=None,
+                      sync_opts=None, step_name=None):
+    """Check out a branch of the current manifest.
+
+    Note: If there are changes applied when this is called, repo will try to
+    rebase them to the new branch.
+
+    Args:
+      * manifest_branch (str): The branch to check out, such as
+          'release-R86-13421.B'
+      * manifest_url (str): The manifest url.
+      * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
+      * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+      * step_name (str): Name for the step, or None for default.
+    """
+    with self.m.context(cwd=self.workspace_path), \
+        self.m.step.nest(step_name or 'checkout branch %s' % manifest_branch):
+      my_init_opts = {}
+      my_init_opts.update(init_opts or {})
+      my_init_opts['manifest_branch'] = manifest_branch
+      self.m.repo.init(manifest_url, **my_init_opts)
+
+      my_sync_opts = dict(**DEFAULT_CHECKOUT_SYNC_OPTS)
+      my_sync_opts.update(sync_opts or {})
+      self.m.repo.sync(**my_sync_opts)
 
   def fetch_snapshot_shas(self, count=7 * 24 * 2):
     """Return snapshot SHAs for the manifest.
