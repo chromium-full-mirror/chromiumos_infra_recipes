@@ -35,6 +35,7 @@ DEPS = [
     'recipe_engine/time',
     'recipe_engine/uuid',
     'autotest_status_parser',
+    'cros_tags',
     'phosphorus',
     'result_flow',
     'skylab_local_state',
@@ -411,7 +412,7 @@ def execution_steps(api, properties, envvars):
     build = api.buildbucket.build
     # Providing link to parent if parent tag exists.
     parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
-    if parent:  #pragma: no cover
+    if parent:
       presentation.links['parent link'] = (
           api.buildbucket.build_url(build_id=parent[0]))
     publish_to_result_flow(api, properties.config, properties.request)
@@ -632,8 +633,10 @@ def GenTests(api):
   _gs_root = "gs://bucket/foo/bar"
   _sync_subdir = "synchronous_subdir"
 
-  def _set_build_id(id):
-    return api.buildbucket.build(build_pb2.Build(id=id))
+  def _set_build_id(id, tags=None):
+    # tags is a dict, convert that into [StringPair].
+    bb_tags = api.cros_tags.tags(**tags) if tags else []
+    return api.buildbucket.build(build_pb2.Build(id=id, tags=bb_tags))
 
   def _build_with_execution_timeout(timeout_s):
     # NB: The input Build does not have start_time set, because buildbucket has
@@ -751,7 +754,7 @@ def GenTests(api):
 
   yield api.test(
       'success',
-      _set_build_id(id=42),
+      _set_build_id(id=42, tags={'parent_buildbucket_id': '1234'}),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
