@@ -95,26 +95,6 @@ def RunSteps(api, properties):
   with api.step.nest('cloning destination repo'):
     api.git.clone(properties.dest_repo, target_path=dest_repo_path)
 
-  def _generate_config():
-    """Generate the config.jsonproto from the project starlark (if any).
-
-    Expects to be run from within the project repo (ie ${CWD}/config/bin/gen_config
-    is the path to the gen_config script)"""
-    cwd = api.context.cwd
-    gen_config_path = cwd.join('config', 'bin', 'gen_config')
-    config_path = cwd.join('config.star')
-
-    api.path.mock_add_paths(gen_config_path)
-    api.path.mock_add_paths(config_path)
-
-    with api.step.nest('generate config.jsonproto') as presentation:
-      if not api.path.exists(gen_config_path):  # pragma: nocover
-        presentation.step_text = 'gen_config not found'
-      elif not api.path.exists(config_path):  # pragma: nocover
-        presentation.step_text = 'no config.star'
-      else:
-        api.step('running gen_config', [gen_config_path, config_path])
-
   def _merge_configs():
     """Copy files and merge with existing config to generate output.  This
     is intended to be called from git_txn.update_ref"""
@@ -185,20 +165,15 @@ def RunSteps(api, properties):
 
       # Add and commit
       commit_msg = \
-        '''Generating config payload and merging legacy configs.
+        '''Merging legacy configs.
 
-        This action was performed automatically by config_backfill.py'''
+This action was performed automatically by config_backfill.py'''
       api.git.commit(commit_msg)
-
-  # Both steps
-  def do_run():
-    _generate_config()
-    return _merge_configs()
 
   # Update the repo atomically
   with api.context(cwd=dest_repo_path):
     dest_ref = 'refs/heads/master'
-    api.git_txn.update_ref(properties.dest_repo, dest_ref, do_run)
+    api.git_txn.update_ref(properties.dest_repo, dest_ref, _merge_configs)
 
 
 def GenTests(api):

@@ -134,24 +134,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "git transaction.generate config.jsonproto",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/dest/config/bin/gen_config",
-      "[START_DIR]/dest/config.star"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "name": "git transaction.generate config.jsonproto.running gen_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython",
       "-u",
@@ -349,7 +331,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Generating config payload and merging legacy configs.\n\n        This action was performed automatically by config_backfill.py",
+      "Merging legacy configs.\n\nThis action was performed automatically by config_backfill.py",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/dest",
@@ -357,9 +339,9 @@
     "name": "git transaction.diffing repo to find changes.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generating config payload and merging legacy configs.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Merging legacy configs.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@        This action was performed automatically by config_backfill.py@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@This action was performed automatically by config_backfill.py@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },

@@ -137,24 +137,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "git transaction.generate config.jsonproto",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/dest/config/bin/gen_config",
-      "[START_DIR]/dest/config.star"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "name": "git transaction.generate config.jsonproto.running gen_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython",
       "-u",
