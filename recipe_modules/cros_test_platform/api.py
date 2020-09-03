@@ -188,3 +188,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
         self._cipd_dir = cipd_dir
         self._cmd = cipd_dir.join('cros_test_platform')
+
+  def cipd_package_version(self):
+    """Return the CTP CIPD package version (e.g. prod/staging/latest)."""
+    return self._version

@@ -29,6 +29,9 @@ def RunSteps(api):
   with api.assertions.assertRaises(ValueError):
     api.cros_test_platform.execute_luciexe(None)
 
+  api.assertions.assertEqual(api.cros_test_platform.cipd_package_version(),
+                             'some-cipd-label')
+
   with api.step.nest('callsite-enumerate'):
     api.assertions.assertEqual(
         EnumerationResponses(),

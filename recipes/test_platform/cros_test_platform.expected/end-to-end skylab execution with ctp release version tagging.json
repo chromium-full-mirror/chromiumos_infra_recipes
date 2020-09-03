@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "get ctp release version tag",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@ctp_release_version@\"\"@@@"
+      "@@@SET_BUILD_PROPERTY@ctp_release_version@\"ctp_release_version:ctp_2020-08-31T16:53:00.807944\"@@@"
     ]
   },
   {
@@ -39,17 +39,22 @@
       "@@@STEP_LOG_LINE@json.output@      {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"buildbot_build:some.waterfall/builder/1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"ctp_release_version:ctp_2020-08-31T15:50:00.807944\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_repository:https://chromium.googlesource.com/some/repo\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"ctp_release_version:ctp_2020-08-31T16:53:00.807944\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_revision:397a2597cdc237f3026e6143b683be4b9ab60540\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"ctp_release_version:ctp_2020-08-31T16:42:54.412755\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"random-key:random-value\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
@@ -97,29 +102,6 @@
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        }, @@@",
-      "@@@STEP_LOG_LINE@response@        \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@response@            {@@@",
-      "@@@STEP_LOG_LINE@response@              \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@response@            }@@@",
-      "@@@STEP_LOG_LINE@response@          ]@@@",
-      "@@@STEP_LOG_LINE@response@        }@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
-      "@@@STEP_LOG_LINE@response@    \"one_too_many\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
       "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
@@ -239,14 +221,30 @@
   },
   {
     "cmd": [],
-    "name": "enumerate tests"
+    "name": "enumerate tests",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
+      "@@@STEP_LOG_END@autotest tests for default@@@"
+    ]
   },
   {
     "cmd": [],
     "name": "enumerate tests.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"autotestInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"test\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"name\": \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -260,19 +258,6 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"one_too_many\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
@@ -301,36 +286,173 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }, \n    \"one_too_many\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
+    "name": "execute"
+  },
+  {
+    "cmd": [],
+    "name": "execute.call binary",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
-      "    raw_result = recipe_obj.run_steps(api, engine)",
-      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
-      "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 304, in RunSteps",
-      "    api, _execute_requests(api, requests, enumerations, properties.config))",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 273, in _execute_requests",
-      "    _ensure_all_requests_enumerated(requests, enumerations)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 288, in _ensure_all_requests_enumerated",
-      "    raise ValueError('No enumerations for requests tagged %s' % missing)",
-      "ValueError: No enumerations for requests tagged set([u'default', u'one_too_many'])"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@responses@{@@@",
+      "@@@STEP_LOG_LINE@responses@  \"taggedResponses\": {@@@",
+      "@@@STEP_LOG_LINE@responses@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@responses@      \"state\": {@@@",
+      "@@@STEP_LOG_LINE@responses@        \"verdict\": \"VERDICT_PASSED\", @@@",
+      "@@@STEP_LOG_LINE@responses@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
+      "@@@STEP_LOG_LINE@responses@      }@@@",
+      "@@@STEP_LOG_LINE@responses@    }@@@",
+      "@@@STEP_LOG_LINE@responses@  }@@@",
+      "@@@STEP_LOG_LINE@responses@}@@@",
+      "@@@STEP_LOG_END@responses@@@"
     ]
   },
   {
-    "failure": {
-      "humanReason": "Uncaught Exception: ValueError(\"No enumerations for requests tagged set([u'default', u'one_too_many'])\",)"
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"build\": {\n\"create_time\": \"1970-01-01T00:00:00Z\"\n}, \n\"tagged_requests\": {\n\"default\": {\n\"config\": {\n\"skylab_worker\": {\n\"luci_project\": \"foo luci project\"\n}\n}, \n\"enumeration\": {\n\"autotest_invocations\": [\n{\n\"test\": {\n\"name\": \"foo-test\"\n}\n}\n]\n}, \n\"request_params\": {\n\"hardware_attributes\": {\n\"model\": \"foo-model\"\n}, \n\"metadata\": {\n\"debug_symbols_archive_url\": \"foo-metadata-url\", \n\"test_metadata_url\": \"foo-metadata-url\"\n}, \n\"scheduling\": {\n\"qs_account\": \"foo-qs-account\"\n}\n}\n}\n}\n}",
+      "[START_DIR]/input.json"
+    ],
+    "infra_step": true,
+    "name": "execute.call binary.write input",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input.json@tagged_requests {@@@",
+      "@@@STEP_LOG_LINE@input.json@  key: \"default\"@@@",
+      "@@@STEP_LOG_LINE@input.json@  value {@@@",
+      "@@@STEP_LOG_LINE@input.json@    request_params {@@@",
+      "@@@STEP_LOG_LINE@input.json@      hardware_attributes {@@@",
+      "@@@STEP_LOG_LINE@input.json@        model: \"foo-model\"@@@",
+      "@@@STEP_LOG_LINE@input.json@      }@@@",
+      "@@@STEP_LOG_LINE@input.json@      scheduling {@@@",
+      "@@@STEP_LOG_LINE@input.json@        qs_account: \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@input.json@      }@@@",
+      "@@@STEP_LOG_LINE@input.json@      metadata {@@@",
+      "@@@STEP_LOG_LINE@input.json@        test_metadata_url: \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@input.json@        debug_symbols_archive_url: \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@input.json@      }@@@",
+      "@@@STEP_LOG_LINE@input.json@    }@@@",
+      "@@@STEP_LOG_LINE@input.json@    enumeration {@@@",
+      "@@@STEP_LOG_LINE@input.json@      autotest_invocations {@@@",
+      "@@@STEP_LOG_LINE@input.json@        test {@@@",
+      "@@@STEP_LOG_LINE@input.json@          name: \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@input.json@        }@@@",
+      "@@@STEP_LOG_LINE@input.json@      }@@@",
+      "@@@STEP_LOG_LINE@input.json@    }@@@",
+      "@@@STEP_LOG_LINE@input.json@    config {@@@",
+      "@@@STEP_LOG_LINE@input.json@      skylab_worker {@@@",
+      "@@@STEP_LOG_LINE@input.json@        luci_project: \"foo luci project\"@@@",
+      "@@@STEP_LOG_LINE@input.json@      }@@@",
+      "@@@STEP_LOG_LINE@input.json@    }@@@",
+      "@@@STEP_LOG_LINE@input.json@  }@@@",
+      "@@@STEP_LOG_LINE@input.json@}@@@",
+      "@@@STEP_LOG_LINE@input.json@build {@@@",
+      "@@@STEP_LOG_LINE@input.json@  create_time {@@@",
+      "@@@STEP_LOG_LINE@input.json@  }@@@",
+      "@@@STEP_LOG_LINE@input.json@}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/luciexe",
+      "--output",
+      "[CLEANUP]/tmp_tmp_1/sub_build.pb",
+      "--",
+      "-input_json",
+      "[START_DIR]/input.json",
+      "-output_json",
+      "[START_DIR]/output.json"
+    ],
+    "env": {
+      "MAC_CHROMIUM_TMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TEMP": "[CLEANUP]/tmp_tmp_2",
+      "TEMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TMP": "[CLEANUP]/tmp_tmp_2",
+      "TMPDIR": "[CLEANUP]/tmp_tmp_2"
     },
+    "infra_step": true,
+    "name": "execute.call binary.launch luciexe",
+    "stdin": "\u0012\u00002\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@{@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@  \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@}@@@",
+      "@@@STEP_LOG_END@step.sub_build@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/output.json",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "execute.call binary.read output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"tagged_responses\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"state\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"life_cycle\": \"LIFE_CYCLE_COMPLETED\", @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8QGOwcGuLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKi2thYACwQb1w==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgBAAo7wPR\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish build ID (2)",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "postprocess"
+  },
+  {
+    "cmd": [],
+    "name": "summarize"
+  },
+  {
+    "cmd": [],
+    "name": "summarize.default task results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

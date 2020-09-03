@@ -45,6 +45,7 @@ from recipe_engine.post_process import GetBuildProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/random',
@@ -54,7 +55,29 @@ DEPS = [
     'cros_test_platform',
 ]
 
+# Each CIPD package instance of cros_test_platform that has been promoted to
+# staging or prod is tagged with a timestamped release version.
+CTP_RELEASE_VERSION_TAG = 'ctp_release_version'
 PROPERTIES = CrosTestPlatformProperties
+
+
+def output_ctp_release_timestamp_tag(api, properties):
+  """Get the timestamped release tag of the cros_test_platform CIPD packages in use.
+  """
+  with api.step.nest('get ctp release version tag') as step:
+    package_version = api.cros_test_platform.cipd_package_version()
+    package_description = api.cipd.describe(
+        'chromiumos/infra/cros_test_platform/${platform}', package_version)
+    # CIPD allows multiple version tags.
+    version_tags = [
+        tag_data.tag
+        for tag_data in package_description.tags
+        if CTP_RELEASE_VERSION_TAG in tag_data.tag
+    ]
+    # Sort the list to get the most recent tag (version tags are in ISO
+    # format, which sorts alphabetically).
+    latest_tag = sorted(version_tags)[-1] if version_tags else ''
+    step.properties[CTP_RELEASE_VERSION_TAG] = latest_tag
 
 
 def validate_requests(api, requests):
@@ -266,6 +289,8 @@ def _ensure_all_requests_enumerated(requests, enumerations):
 
 
 def RunSteps(api, properties):
+  # Log which cros_test_platform release version the tests will run on.
+  output_ctp_release_timestamp_tag(api, properties)
   requests = _get_requests_from_properties(properties)
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.
@@ -661,6 +686,85 @@ def GenTests(api):
                  config=Config(pubsub=Config.PubSub(topic='foo-topic')))) +  #
          api.cros_test_platform.set_execute_luciexe_response(
              'execute', ExecuteResponses()))
+
+  # An end-to-end run with ctp release version tagging.
+  yield (
+      api.test('end-to-end skylab execution with ctp release version tagging')
+      +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.cros_test_platform.set_scheduler_traffic_split_response(
+          'traffic split',
+          SchedulerTrafficSplitResponses(
+              tagged_responses={
+                  'default':
+                      SchedulerTrafficSplitResponse(
+                          skylab_request=_test_request('foo'))
+              }),
+      ) +  #
+      api.cros_test_platform.set_enumerate_response_json(
+          'enumerate tests',
+          _test_single_enumeration('foo'),
+      ) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_PASSED'),
+                          task_results=[],
+                      )
+              })) +  #
+      api.override_step_data(
+          'get ctp release version tag.cipd describe chromiumos/infra/cros_test_platform/${platform}',
+          api.cipd.example_describe(
+              'chromiumos/infra/cros_test_platform/${platform}',
+              version='latest', test_data_tags=[
+                  'ctp_release_version:ctp_2020-08-31T15:50:00.807944',
+                  'ctp_release_version:ctp_2020-08-31T16:53:00.807944',
+                  'ctp_release_version:ctp_2020-08-31T16:42:54.412755',
+                  'random-key:random-value',
+              ])))
+
+  # An end-to-end run without ctp release version tagging.
+  yield (
+      api.test('end-to-end skylab execution with no ctp release version found')
+      +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              request=_test_request('foo'), config=_test_config('foo'))) +  #
+      api.cros_test_platform.set_scheduler_traffic_split_response(
+          'traffic split',
+          SchedulerTrafficSplitResponses(
+              tagged_responses={
+                  'default':
+                      SchedulerTrafficSplitResponse(
+                          skylab_request=_test_request('foo'))
+              }),
+      ) +  #
+      api.cros_test_platform.set_enumerate_response_json(
+          'enumerate tests',
+          _test_single_enumeration('foo'),
+      ) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_PASSED'),
+                          task_results=[],
+                      )
+              })) +  #
+      api.override_step_data(
+          'get ctp release version tag.cipd describe chromiumos/infra/cros_test_platform/${platform}',
+          api.cipd.example_describe(
+              'chromiumos/infra/cros_test_platform/${platform}',
+              version='latest', test_data_tags=['random-key:random-value'])))
 
   # An end-to-end run with traffic splitting to skylab.
   yield (api.test('end-to-end skylab execution with passed tasks') +  #
