@@ -52,6 +52,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'result_flow',
+    'cros_tags',
     'cros_test_platform',
 ]
 
@@ -292,6 +293,7 @@ def RunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
   output_ctp_release_timestamp_tag(api, properties)
   requests = _get_requests_from_properties(properties)
+  link_to_parent(api)
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.
   publish_to_result_flow(api, properties.config)
@@ -310,6 +312,15 @@ def RunSteps(api, properties):
                            should_poll_for_completion=True)
     postprocess(api, requests, tagged_responses)
   summarize(api, enumerations, tagged_responses)
+
+
+def link_to_parent(api):
+  build = api.buildbucket.build
+  parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
+  if parent:
+    with api.step.nest('link to parent') as presentation:
+      presentation.links['parent link'] = api.buildbucket.build_url(
+          build_id=parent[0])
 
 
 def postprocess(api, requests, responses):
@@ -583,6 +594,12 @@ def _test_single_enumeration(tag):
 
 
 def GenTests(api):
+
+  def _set_build_id(id, tags=None):
+    # tags is a dict, convert that into [StringPair].
+    bb_tags = api.cros_tags.tags(**tags) if tags else []
+    return api.buildbucket.build(build_pb2.Build(id=id, tags=bb_tags))
+
   # Missing request and requests should cause a recipe crash
   yield (api.test('no request or requests') +  #
          api.expect_exception("ValueError"))
@@ -640,7 +657,7 @@ def GenTests(api):
   # Config set the result flow pubsub project and topic should push build ID.
   yield (
       api.test('Config has pubsub topic to publish CTP build ID') +  #
-      api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
+      _set_build_id(id=42, tags={'parent_buildbucket_id': '1234'}) +  #
       api.properties(
           CrosTestPlatformProperties(
               request=Request(), config=Config(

@@ -59,6 +59,13 @@
   },
   {
     "cmd": [],
+    "name": "link to parent",
+    "~followup_annotations": [
+      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/1234@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "publish build ID"
   },
   {
@@ -67,7 +74,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"8874582904031090640\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\", @@@",
       "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
@@ -127,7 +134,7 @@
       "/dev/stdout"
     ],
     "name": "publish build ID.call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"8874582904031090640\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
+    "stdin": "{\n  \"buildId\": \"42\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -297,7 +304,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"build\": {\n\"create_time\": \"1970-01-01T00:00:00Z\", \n\"id\": \"8874582904031090640\"\n}\n}",
+      "{\n\"build\": {\n\"create_time\": \"1970-01-01T00:00:00Z\", \n\"id\": \"42\"\n}\n}",
       "[START_DIR]/input.json"
     ],
     "infra_step": true,
@@ -307,7 +314,7 @@
       "@@@STEP_LOG_LINE@input.json@build {@@@",
       "@@@STEP_LOG_LINE@input.json@  create_time {@@@",
       "@@@STEP_LOG_LINE@input.json@  }@@@",
-      "@@@STEP_LOG_LINE@input.json@  id: 8874582904031090640@@@",
+      "@@@STEP_LOG_LINE@input.json@  id: 42@@@",
       "@@@STEP_LOG_LINE@input.json@}@@@",
       "@@@STEP_LOG_END@input.json@@@"
     ]
@@ -332,7 +339,7 @@
     },
     "infra_step": true,
     "name": "execute.call binary.launch luciexe",
-    "stdin": "\b\u042f\ufffd\ufffd\ufffd\u0136\ufffd{2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
+    "stdin": "\b*2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",
@@ -378,7 +385,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"8874582904031090640\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\", @@@",
       "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
@@ -401,7 +408,7 @@
     ],
     "infra_step": true,
     "name": "publish build ID (2).call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"8874582904031090640\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true\n}",
+    "stdin": "{\n  \"buildId\": \"42\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
