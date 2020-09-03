@@ -22,9 +22,7 @@
     "name": "find matching builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"input\": {\"gerritChanges\": [{\"change\": \"1234\"}]}, \"builder\": {\"builder\": \"atlas-cq\"}, \"id\": \"123\", \"output\": {\"properties\": {\"test_failures\": {\"hw_test_failures\": [], \"needs_bisection\": false}}}}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/123@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

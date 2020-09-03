@@ -1576,7 +1576,7 @@ Args:
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#176)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#177)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -1599,14 +1599,14 @@ Args:
 Returns:
   list([build_pb2.Build]): Passed builds with at most one build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#100)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#101)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#137)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#138)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -1624,12 +1624,12 @@ Returns:
 
 &mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#75)(self):**
 
-Find all builders with the given patches that failed HW tests.
+Get builders with the given patches that failed HW tests in the last run.
 
 Returns:
   set[str]: Names of builders with HW testing failures, if any.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#123)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#124)(self, tests):**
 
 Record the tests that passed in the current run.
 

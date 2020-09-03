@@ -27,10 +27,24 @@ def RunSteps(api, expected_builder_names):
 
 def GenTests(api):
   yield api.test(
-      'has-failed-tests',
+      'latest-has-no-failed-tests',
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_failed_tests(
-              ['my-little-builder', 'your-little-builder'])
+              ['my-little-builder', 'your-little-builder'], build_id=2,
+              start_time=12345),
+          api.cros_history.build_with_failed_tests([], build_id=1,
+                                                   start_time=12346)
+      ], 'find matching builds.buildbucket.search'),
+      api.properties(**{'expected_builder_names': []}))
+
+  yield api.test(
+      'latest-has-failed-tests',
+      api.buildbucket.simulated_search_results([
+          api.cros_history.build_with_failed_tests(
+              ['my-little-builder', 'your-little-builder'], build_id=1,
+              start_time=12346),
+          api.cros_history.build_with_failed_tests(['previous-little-builder'],
+                                                   build_id=2, start_time=12345)
       ], 'find matching builds.buildbucket.search'),
       api.properties(**{
           'expected_builder_names':
@@ -38,16 +52,15 @@ def GenTests(api):
       }))
 
   yield api.test(
-      'no-failed-tests',
-      api.buildbucket.simulated_search_results(
-          [api.cros_history.build_with_failed_tests([])],
-          'find matching builds.buildbucket.search'),
-      api.properties(**{'expected_builder_names': []}))
-
-  yield api.test(
       'no-test-failure-value',
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_passed_tests(
               ['my-little-builder', 'your-little-builder'])
       ], 'find matching builds.buildbucket.search'),
+      api.properties(**{'expected_builder_names': []}))
+
+  yield api.test(
+      'no-past-builds',
+      api.buildbucket.simulated_search_results(
+          [], 'find matching builds.buildbucket.search'),
       api.properties(**{'expected_builder_names': []}))
