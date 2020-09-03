@@ -1,10 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "get ctp release version tag",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@ctp_release_version@\"\"@@@"
-    ]
+    "name": "get ctp release version tag"
   },
   {
     "cmd": [

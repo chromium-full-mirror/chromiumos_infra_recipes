@@ -77,8 +77,8 @@ def output_ctp_release_timestamp_tag(api, properties):
     ]
     # Sort the list to get the most recent tag (version tags are in ISO
     # format, which sorts alphabetically).
-    latest_tag = sorted(version_tags)[-1] if version_tags else ''
-    step.properties[CTP_RELEASE_VERSION_TAG] = latest_tag
+    if version_tags:
+      step.properties[CTP_RELEASE_VERSION_TAG] = sorted(version_tags)[-1]
 
 
 def validate_requests(api, requests):
