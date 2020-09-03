@@ -79,13 +79,13 @@ def get_current_instance(api, instruction):
                                      id=instance_id)
 
 
-def uprev_package(api, instruction, tag_release_version):
+def uprev_package(api, instruction, package_tags={}):
   """Change CIPD ref of a package according to the instructions.
 
   Args:
     * instruction (ctp_uprev.Instruction): A complete set of args for
       `cipd set-ref`.
-    * tag_release_version: whether to tag the package with the release version or not.
+    * package_tags: Tags to add to the package.
   Returns:
     ctp_uprev.Instance
   Raises:
@@ -94,9 +94,9 @@ def uprev_package(api, instruction, tag_release_version):
   release_version = 'ctp_' + api.time.utcnow().isoformat()
   with api.step.nest('uprev the "%s" ref of the "%s" package to "%s"' %
       (instruction.ref, instruction.package_name, instruction.version)):
-    if tag_release_version:
+    for tag_key, tag_value in package_tags.items():
       api.cipd.set_tag(instruction.package_name, instruction.version,
-                       {_RELEASE_VERSION_TAG: release_version})
+                       {tag_key: tag_value})
     instance_id = api.cipd.set_ref(
         instruction.package_name,
         instruction.version,
@@ -106,14 +106,16 @@ def uprev_package(api, instruction, tag_release_version):
 
 
 def RunSteps(api, properties):
+  package_tags = {}
+  if properties.config.tag_release_version:
+    package_tags[_RELEASE_VERSION_TAG] = 'ctp_' + api.time.utcnow().isoformat()
   for instruction in properties.config.instructions:
     with api.step.nest('package %s' % instruction.package_name):
       validate(api, instruction)
       properties.response.old_versions.extend([
           get_current_instance(api, instruction)])
-      properties.response.new_versions.extend([
-          uprev_package(api, instruction, properties.config.tag_release_version)
-      ])
+      properties.response.new_versions.extend(
+          [uprev_package(api, instruction, package_tags)])
 
 
 def GenTests(api):

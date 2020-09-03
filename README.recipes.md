@@ -6250,14 +6250,14 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#82)(api, instruction, tag_release_version):**
+&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#82)(api, instruction, package_tags={}):**
 
 Change CIPD ref of a package according to the instructions.
 
 Args:
   * instruction (ctp_uprev.Instruction): A complete set of args for
     `cipd set-ref`.
-  * tag_release_version: whether to tag the package with the release version or not.
+  * package_tags: Tags to add to the package.
 Returns:
   ctp_uprev.Instance
 Raises:

@@ -219,7 +219,7 @@
       "-version",
       "foo-recipe-version",
       "-tag",
-      "ctp_release_version:ctp_1970-01-01T00:02:06",
+      "ctp_release_version:ctp_1970-01-01T00:02:04.500000",
       "-json-output",
       "/path/to/tmp/json"
     ],
