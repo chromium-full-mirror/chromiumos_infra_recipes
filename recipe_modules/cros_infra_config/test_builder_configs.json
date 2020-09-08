@@ -1,29 +1,29 @@
 {
   "builderConfigs": [
     {
-			"id": {
-				"name": "amd64-generic-asan",
-				"branch": "master"
+      "id": {
+        "name": "amd64-generic-asan",
+        "branch": "master"
       },
       "general": {
         "manifest": "PUBLIC"
       },
       "build": {
-				"portageProfile": {
-					"profile": "asan"
-				},
-				"installPackages": {
-					"runSpec": "RUN"
-				},
-				"buildImages": {
-					"imageTypes": [
-						"TEST",
-						"TEST_VM",
-						"BASE"
-					]
-				}
-			}
-		},
+        "portageProfile": {
+          "profile": "asan"
+        },
+        "installPackages": {
+          "runSpec": "RUN"
+        },
+        "buildImages": {
+          "imageTypes": [
+            "TEST",
+            "TEST_VM",
+            "BASE"
+          ]
+        }
+      }
+    },
     {
       "id": {
         "name": "amd64-generic-postsubmit",
@@ -1270,10 +1270,12 @@
             "name": "amd64-generic-postsubmit"
           },
           {
-            "name": "arm-generic-postsubmit"
+            "name": "arm-generic-postsubmit",
+            "collectHandling": "COLLECT"
           },
           {
-            "name": "grunt-postsubmit"
+            "name": "grunt-postsubmit",
+            "collectHandling": "COLLECT"
           }
         ]
       }
@@ -1291,13 +1293,16 @@
       "orchestrator": {
         "child_specs": [
           {
-            "name": "amd64-generic-cq"
+            "name": "amd64-generic-cq",
+            "collectHandling": "COLLECT"
           },
           {
-            "name": "arm-generic-cq"
+            "name": "arm-generic-cq",
+            "collectHandling": "COLLECT"
           },
           {
-            "name": "arm-generic-pointless-cq"
+            "name": "arm-generic-pointless-cq",
+            "collectHandling": "COLLECT"
           },
           {
             "name": "atlas-cq"
