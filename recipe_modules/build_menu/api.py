@@ -223,8 +223,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # This requires a sysroot for at least the package versions.
       target_versions = json_format.MessageToDict(
           self.m.cros_build_api.PackageService.GetTargetVersions(
-              GetTargetVersionsRequest(chroot=self.m.cros_sdk.chroot,
-                                       build_target=self.build_target)),
+              GetTargetVersionsRequest(
+                  chroot=self.m.cros_sdk.chroot, build_target=self.build_target,
+                  packages=config.build.install_packages.packages)),
           including_default_value_fields=True)
       self.m.easy.set_properties_step(target_versions=target_versions)
       if self.m.cros_artifacts.has_output_artifacts(artifacts.artifacts_info):
