@@ -182,6 +182,46 @@ def upload_sync_results(api, config=None, output_config=None):
       return api.phosphorus.upload_to_gs(req)
 
 
+# TODO(crbug.com/1126528): Make this configurable via a
+# skylab_test_runner.Config.Output field so that dev/staging/prod can use
+# different top-level directories: 'gs://.../prod' vs 'gs://.../staging' etc.
+_GS_ARCHIVE_ROOT = 'gs://chromeos-test-logs/common-env'
+
+
+def archive_all_logs(api, config):
+  """Archive all test logs to Google Storage.
+
+  Args:
+    * config: phosphorus.Config instance
+  Returns:
+    UploadToGSResponse proto
+  Raises:
+    * InfraFailure if binary call fails.
+  """
+  try:
+    with api.context(infra_steps=True):
+      with api.step.nest('Archive all test logs to Google Storage'):
+        # Create a reasonable directory tree to avoid directories with a huge
+        # number of entries.
+        # - b/167219452 - Large number of entries at top-level can cause Google
+        #   Storage meltdown.
+        # - Being able to easily crawl the logs chronologically is very useful.
+        # - Inject a random element to
+        #   - keep logs across tasks on a single day separate
+        #   - make it harder to hard-code paths to the target directory
+        #     downstream.
+        now = api.time.utcnow()
+        gs_directory = '%s/%s/%s' % (_GS_ARCHIVE_ROOT, now.date().isoformat(),
+                                     api.uuid.random())
+        req = phosphorus.upload_to_gs.UploadToGSRequest(
+            local_directory=config.task.results_dir, gs_directory=gs_directory)
+        return api.phosphorus.upload_to_gs(req)
+  except api.step.InfraFailure:
+    # TODO(crbug.com/1126528): Make these failures significant once we've
+    # stabilized the new archival step.
+    pass
+
+
 def upload_to_tko(api, config=None):
   """Upload test results to TKO via `tko/parse`.
 
@@ -468,6 +508,7 @@ def execution_steps(api, properties, envvars):
     finally:
       with api.step.nest('save local DUT state'):
         state_store.save_and_seal(api, dut_state)
+      archive_all_logs(api, phosphorus_config)
       publish_to_result_flow(api, properties.config, properties.request,
                              should_poll_for_completion=True)
     set_output_properties(api, result=result)
@@ -864,6 +905,26 @@ def GenTests(api):
               json_format.MessageToJson(
                   phosphorus.upload_to_gs.UploadToGSResponse(
                       gs_url=os.path.join(_gs_root, "UUID", _sync_subdir))))),
+  )
+
+  yield api.test(
+      'ignore errors in logs archival',
+      _set_build_id(id=42),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      api.step_data(
+          'execution steps.get test results.'
+          'call `autotest_status_parser`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(test_cases=[]),
+                  )))),
+      api.step_data(
+          'execution steps.Archive all test logs to Google Storage.'
+          'call `phosphorus`.upload-to-gs', retcode=1),
   )
 
   yield api.test(
