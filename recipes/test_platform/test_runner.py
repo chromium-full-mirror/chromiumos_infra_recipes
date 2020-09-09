@@ -188,13 +188,14 @@ def upload_sync_results(api, config=None, output_config=None):
 _GS_ARCHIVE_ROOT = 'gs://chromeos-test-logs/common-env'
 
 
-def archive_all_logs(api, config):
+def archive_all_logs(api, config, result):
   """Archive all test logs to Google Storage.
 
   Args:
     * config: phosphorus.Config instance
+    * result: test_runner.Result.
   Returns:
-    UploadToGSResponse proto
+    Updated test_runner.Result
   Raises:
     * InfraFailure if binary call fails.
   """
@@ -213,13 +214,19 @@ def archive_all_logs(api, config):
         now = api.time.utcnow()
         gs_directory = '%s/%s/%s' % (_GS_ARCHIVE_ROOT, now.date().isoformat(),
                                      api.uuid.random())
-        req = phosphorus.upload_to_gs.UploadToGSRequest(
-            local_directory=config.task.results_dir, gs_directory=gs_directory)
-        return api.phosphorus.upload_to_gs(req)
+        gs_res = api.phosphorus.upload_to_gs(
+            phosphorus.upload_to_gs.UploadToGSRequest(
+                local_directory=config.task.results_dir,
+                gs_directory=gs_directory))
+        # Logs are archived even in the case of catastrophic failures.
+        # Thus, it is possible that we do not have a sane result message.
+        if result is not None:
+          result.log_data.gs_url = gs_res.gs_url
   except api.step.InfraFailure:
     # TODO(crbug.com/1126528): Make these failures significant once we've
     # stabilized the new archival step.
     pass
+  return result
 
 
 def upload_to_tko(api, config=None):
@@ -262,8 +269,11 @@ def summarize_results(api, prejob_response, run_test_response, result):
     * result: skylab_test_runner.Result instance.
   """
   with api.step.nest('test results') as step:
+    if result.log_data.gs_url:
+      step.links['Autotest logs'] = _stainless_logs_from_gs_path(
+          result.log_data.gs_url)
     if result.async_results.logs_url:
-      step.links['Autotest logs'] = result.async_results.logs_url
+      step.links['Autotest logs (async)'] = result.async_results.logs_url
     step.presentation.logs['JSON output'] = json_format.MessageToJson(result)
     for prejob in result.prejob.step:
       with api.step.nest(prejob.name) as step:
@@ -298,6 +308,12 @@ def summarize_results(api, prejob_response, run_test_response, result):
             "ended with unsuccessful state %s" %
             phosphorus.runtest.RunTestResponse.State.Name(
                 run_test_response.state))
+
+
+def _stainless_logs_from_gs_path(path):
+  """Convert a GS path to a stainless logs browser URL."""
+  assert path.startswith('gs://'), "{} should start with gs://".format(path)
+  return 'https://stainless.corp.google.com/browse/%s' % path[len('gs://'):]
 
 
 def _result_contains_no_failures(result):
@@ -484,6 +500,7 @@ def execution_steps(api, properties, envvars):
     upload_to_gs_response = None
     max_duration_sec = (
         properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
+    result = None
     try:
       # prejob and test failures are detected when parsing results.
       # An exception from the steps here indicates an infrastructure
@@ -508,7 +525,7 @@ def execution_steps(api, properties, envvars):
     finally:
       with api.step.nest('save local DUT state'):
         state_store.save_and_seal(api, dut_state)
-      archive_all_logs(api, phosphorus_config)
+      result = archive_all_logs(api, phosphorus_config, result)
       publish_to_result_flow(api, properties.config, properties.request,
                              should_poll_for_completion=True)
     set_output_properties(api, result=result)
@@ -907,6 +924,28 @@ def GenTests(api):
                       gs_url=os.path.join(_gs_root, "UUID", _sync_subdir))))),
   )
 
+  yield api.test(
+      'link to all archived logs',
+      _set_build_id(id=42),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      api.step_data(
+          'execution steps.get test results.'
+          'call `autotest_status_parser`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(test_cases=[]),
+                  )))),
+      api.step_data(
+          'execution steps.Archive all test logs to Google Storage.'
+          'call `phosphorus`.upload-to-gs', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  phosphorus.upload_to_gs.UploadToGSResponse(
+                      gs_url=os.path.join(_gs_root, "UUID", _sync_subdir))))),
+  )
   yield api.test(
       'ignore errors in logs archival',
       _set_build_id(id=42),

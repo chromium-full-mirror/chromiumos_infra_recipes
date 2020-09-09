@@ -622,7 +622,7 @@
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",
-      "@@@STEP_LINK@Autotest logs@http://foo-logs-url@@@"
+      "@@@STEP_LINK@Autotest logs (async)@http://foo-logs-url@@@"
     ]
   },
   {

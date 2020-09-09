@@ -621,7 +621,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzj0uHS4BJMS8zMycxLjy9JLS6JT04sThVgkoIJKoAEFcCCjEIaXGpcwjDVBUWpWflJ8cUlqQVA\\n9bwg4dQUBYioFlBdRklJgZW+flp+vm5OfnqxbmlRjhB/ejFUCCIAAPbGKKI=\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJw1yjkKgDAQAEC1XBCvziqViCj2fiZ4rFEJJmTX/3u3w0ANJSRzv+p1V5KRWI49YRzkP4obxYN+\\nWkIB2b+tw80Mkhjt9cObcRKv5l51zYXZdm07G9Noo6g5nE4jRR+9cAIyyyi8\\n\"@@@"
     ]
   },
   {
@@ -639,6 +639,7 @@
       "@@@STEP_LOG_LINE@JSON output@    ], @@@",
       "@@@STEP_LOG_LINE@JSON output@    \"incomplete\": true@@@",
       "@@@STEP_LOG_LINE@JSON output@  }, @@@",
+      "@@@STEP_LOG_LINE@JSON output@  \"logData\": {}, @@@",
       "@@@STEP_LOG_LINE@JSON output@  \"asyncResults\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"logsUrl\": \"http://foo-logs-url\", @@@",
       "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://foo-gs-url\"@@@",
@@ -654,7 +655,7 @@
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",
-      "@@@STEP_LINK@Autotest logs@http://foo-logs-url@@@",
+      "@@@STEP_LINK@Autotest logs (async)@http://foo-logs-url@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
