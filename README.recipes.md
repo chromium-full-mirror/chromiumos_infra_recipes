@@ -6204,9 +6204,9 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#292)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#300)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#147)(api, requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#155)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -6216,23 +6216,23 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#254)(api, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#262)(api, requests):**
 
 Execute request in the correct backend.
 
 Args:
   requests: ExecutionRequests payload.
 
-&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#317)(api):**
+&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#324)(api):**
 
 &mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#65)(api, properties):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#326)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#333)(api, requests, responses):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#231)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#239)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -6241,13 +6241,13 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#423)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#432)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#491)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#500)(task_results):**
 
-&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#189)(api, requests, config):**
+&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#197)(api, requests, config):**
 
 Run the almost no-op traffic splitter step.
 
@@ -6265,9 +6265,13 @@ Returns: bool, [test_platform.Request]
   * Second item in the pair is {tag: test_platform.Request} dict of extracted
         requests.
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#366)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#373)(api, enumerations, responses):**
 
-&mdash; **def [validate\_requests](/recipes/test_platform/cros_test_platform.py#84)(api, requests):**
+&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#84)(api, properties):**
+
+Get and validate requests from input properties.
+
+Returns: Struct containing requests.
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
 [DEPS](/recipes/test_platform/cros_test_postprocess.py#13): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

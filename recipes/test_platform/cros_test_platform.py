@@ -81,13 +81,21 @@ def output_ctp_release_timestamp_tag(api, properties):
       step.properties[CTP_RELEASE_VERSION_TAG] = sorted(version_tags)[-1]
 
 
-def validate_requests(api, requests):
+def validated_requests(api, properties):
+  """Get and validate requests from input properties.
+
+  Returns: Struct containing requests.
+  """
   validation_errors = []
   with api.step.nest('validate request') as step:
+    requests = _get_requests_from_properties(api, properties)
+
     validation_errors.append(_validate_timeouts(api, requests))
     validation_errors.append(_validate_scheduling_params(api, requests))
   if any(validation_errors):
     raise api.step.StepFailure('request validation failed')
+
+  return requests
 
 
 def _validate_timeouts(api, requests):
@@ -292,12 +300,11 @@ def _ensure_all_requests_enumerated(requests, enumerations):
 def RunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
   output_ctp_release_timestamp_tag(api, properties)
-  requests = _get_requests_from_properties(properties)
   link_to_parent(api)
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.
   publish_to_result_flow(api, properties.config)
-  validate_requests(api, requests)
+  requests = validated_requests(api, properties)
   # Traffic split failures can be due to malformed requests.
   requests = split(api, requests, properties.config)
   with api.context(infra_steps=True):
@@ -386,16 +393,18 @@ def _contains_failed_verdict(responses):
   ])
 
 
-def _get_requests_from_properties(properties):
-  if len(properties.requests) > 0:
-    if properties.HasField('request'):
-      raise ValueError('Must set only one of request and requests')
-    return properties.requests
+def _get_requests_from_properties(api, properties):
+  requests_found_in_props = {}
+  if properties.requests:
+    requests_found_in_props['requests'] = properties.requests
   if properties.HasField('request'):
-    return {
-        'default': properties.request,
-    }
-  raise ValueError('Must set at least one of request and requests')
+    requests_found_in_props['request'] = {'default': properties.request}
+
+  if not requests_found_in_props or len(requests_found_in_props) > 1:
+    raise api.step.StepFailure(
+        'Must set exactly one of "request" and "requests" in input properties (found %s)'
+        % requests_found_in_props.keys())
+  return requests_found_in_props.values()[0]
 
 
 #######################
@@ -601,8 +610,7 @@ def GenTests(api):
     return api.buildbucket.build(build_pb2.Build(id=id, tags=bb_tags))
 
   # Missing request and requests should cause a recipe crash
-  yield (api.test('no request or requests') +  #
-         api.expect_exception("ValueError"))
+  yield (api.test('no request or requests'))
 
   # Setting both request and requests should cause a recipe crash
   yield (api.test('both request and requests') +  #
@@ -610,8 +618,7 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=Request(),
                  requests={'first': Request()},
-             )) +  #
-         api.expect_exception("ValueError"))
+             )))
 
   # Traffic split with no traffic to skylab should cause recipe crash.
   yield (api.test('no traffic') +  #
