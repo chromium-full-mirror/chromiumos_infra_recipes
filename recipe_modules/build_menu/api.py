@@ -356,7 +356,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
                 packages=relevant_testable_packages,
                 flags=BuildTargetUnitTestRequest.Flags(
                     code_coverage=self._test_with_code_coverage,
-                    empty_sysroot=unit_tests.empty_sysroot)),
+                    empty_sysroot=unit_tests.empty_sysroot,
+                    testable_packages_optional=self._is_slim)),
             # Allow 2.5 hours for this step because the change associated with
             # https://bugs.chromium.org/p/chromium/issues/detail?id=1095661#c76
             # dumps additional debug at 2 hours.
