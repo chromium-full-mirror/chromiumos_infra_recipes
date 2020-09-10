@@ -12,31 +12,30 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 See go/pupr and go/pupr-generator for rationale and design decisions.
 """
 
-from google.protobuf import json_format
+from google.protobuf.json_format import MessageToDict, MessageToJson
 
-import collections
-import itertools
+from collections import defaultdict, namedtuple
 import urlparse
 
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.packages import UprevVersionedPackageRequest
-from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
-from PB.recipes.chromeos.generator import ABANDON
-from PB.recipes.chromeos.generator import DO_NOTHING
-from PB.recipes.chromeos.generator import DRY_RUN
-from PB.recipes.chromeos.generator import FULL_RUN
-from PB.recipes.chromeos.generator import OUTDATED_DO_NOTHING
-from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
-from PB.recipes.chromeos.generator import OUTDATED_ABANDON
-from PB.recipes.chromeos.generator import OutdatedClsPolicy
-from PB.recipes.chromeos.generator import GeneratorProperties
-from PB.recipes.chromeos.generator import Reviewer
-from PB.recipes.chromeos.generator import SendToCqPolicy
-from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
-                                                                triggers_pb2)
-
-from google.protobuf import json_format
+from PB.recipes.chromeos.generator import (
+    SendToCqPolicy,
+    DO_NOTHING,
+    DRY_RUN,
+    FULL_RUN,
+    ABANDON,
+    OutdatedClsPolicy,
+    OUTDATED_DO_NOTHING,
+    OUTDATED_LEAVE_COMMENT,
+    OUTDATED_ABANDON,
+    BranchPolicy,
+    Reviewer,
+    GeneratorProperties,
+)
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
+    GitilesTrigger, Trigger, WebUITrigger)
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -50,9 +49,9 @@ DEPS = [
     'cros_cq_depends',
     'cros_sdk',
     'cros_source',
+    'easy',
     'gerrit',
     'git',
-    'git_cl',
     'naming',
     'repo',
 ]
@@ -61,26 +60,30 @@ PROPERTIES = GeneratorProperties
 
 
 def RunSteps(api, properties):
-  with api.step.nest('validate properties') as presentation:
-    existing_cls_policy = properties.existing_cls_policy or DO_NOTHING
-    no_existing_cls_policy = properties.no_existing_cls_policy or DO_NOTHING
-    outdated_cls_policy = properties.outdated_cls_policy or OUTDATED_DO_NOTHING
-    outdated_cls_policy_str = OutdatedClsPolicy.Name(outdated_cls_policy)
+  workspace_path = api.cros_source.workspace_path
 
+  global_policy = BranchPolicy(
+      reviewers=properties.reviewers,
+      topic=properties.topic,
+      no_existing_cls_policy=properties.no_existing_cls_policy or DO_NOTHING,
+      existing_cls_policy=properties.existing_cls_policy or DO_NOTHING,
+      outdated_cls_policy=properties.outdated_cls_policy or OUTDATED_DO_NOTHING,
+  )
+  policies = list(properties.branch_policies) + [global_policy]
+
+  with api.step.nest('validate properties') as presentation:
     if not properties.HasField('package_info'):
       raise ValueError('must set package_info')
 
-    if not properties.reviewers:
-      raise ValueError('need at least one reviewer')
+    for policy in policies:
+      if not policy.reviewers:
+        raise ValueError('need at least one reviewer')
 
-    for reviewer in properties.reviewers:
-      if not reviewer.email:
-        raise ValueError('must set reviewer email')
+      for reviewer in policy.reviewers:
+        if not reviewer.email:
+          raise ValueError('must set reviewer email')
 
     presentation.step_text = 'all properties good'
-
-  package = properties.package_info
-  cpv = api.naming.get_package_title(package)
 
   triggers = properties.triggers or api.scheduler.triggers
   with api.step.nest('validate triggers') as presentation:
@@ -92,17 +95,22 @@ def RunSteps(api, properties):
         raise ValueError('found non-gitiles trigger: %r', trigger)
 
     presentation.step_text = 'found {} good triggers'.format(len(triggers))
-    presentation.logs['list of triggers'] = map(json_format.MessageToJson,
-                                                triggers)
+    presentation.logs['list of triggers'] = map(MessageToJson, triggers)
+
+  package = properties.package_info
+  cpv = api.naming.get_package_title(package)
 
   with api.cros_source.checkout_overlays_context(), \
-    api.cros_sdk.cleanup_context(
-          checkout_path=api.cros_source.workspace_path):
+    api.cros_sdk.cleanup_context(checkout_path=workspace_path):
     api.cros_source.ensure_synced_cache()
+    # TODO(b/167619469): Determine the correct branch (and policy) for the
+    # trigger.  For now, use the BranchPolicy we generated above from the
+    # unbranched properties.
+    policy = global_policy
+    api.easy.set_properties_step(policy=MessageToDict(policy))
     if properties.init_sdk:
-      with api.context(cwd=api.cros_source.workspace_path):
-        api.cros_sdk.create_chroot(version=None, use_image=False,
-                                   timeout_sec=None)
+      with api.context(cwd=workspace_path):
+        api.cros_sdk.create_chroot(use_image=False)
 
     with api.step.nest('try uprev {}'.format(cpv)) as presentation:
       request = UprevVersionedPackageRequest(
@@ -118,24 +126,17 @@ def RunSteps(api, properties):
       )
       response = api.cros_build_api.PackageService.UprevVersionedPackage(
           request, name='uprev versioned package')
-      modified_ebuilds = []
-      versions = []
-      for uprev_response in response.responses:
-        if uprev_response.version:
-          versions.append(uprev_response.version)
-        for modified_ebuild in uprev_response.modified_ebuilds:
-          modified_ebuilds.append(modified_ebuild)
 
-      if not modified_ebuilds or not versions:
+      if not response.responses:
         presentation.step_text = 'no new versions for {}'.format(cpv)
         return
 
       valid_responses = []
       with api.step.nest('verify updates'):
         # only act on files that are actually modified
-        for uprev_response in response.responses:
-          if response_has_changes(api, uprev_response):
-            valid_responses.append(uprev_response)
+        for uprev_resp in response.responses:
+          if response_has_changes(api, uprev_resp):
+            valid_responses.append(uprev_resp)
 
       if not valid_responses:
         presentation.step_text = (
@@ -146,27 +147,30 @@ def RunSteps(api, properties):
           response.version for response in valid_responses
       ]
 
-    topic = properties.topic or cpv
+    Ebuilds = namedtuple('Ebuilds', 'path version')
 
-    Ebuilds = collections.namedtuple('Ebuilds', 'path version')
+    topic = policy.topic or cpv
+    existing_cls_policy = policy.existing_cls_policy
+    no_existing_cls_policy = policy.no_existing_cls_policy
+    outdated_cls_policy = policy.outdated_cls_policy
 
     with api.step.nest('commit uprev'):
       # Collect the changes by repository, so can do one CL per repository.
-      ebuilds_by_repository = collections.defaultdict(list)
-      for uprev_response in valid_responses:
-        for ebuild in uprev_response.modified_ebuilds:
+      ebuilds_by_repo = defaultdict(list)
+      for uprev_resp in valid_responses:
+        for ebuild in uprev_resp.modified_ebuilds:
           path = ebuild.path
           with api.context(cwd=api.path.abs_to_path(api.path.dirname(path))):
-            ebuilds_by_repository[api.git.repository_root()].append(
-                Ebuilds(path=ebuild.path, version=uprev_response.version))
+            ebuilds_by_repo[api.git.repository_root()].append(
+                Ebuilds(path=path, version=uprev_resp.version))
 
       # Checkout git branches via repo so they track correctly.
-      with api.context(cwd=api.cros_source.workspace_path):
-        projects = api.repo.project_infos(projects=ebuilds_by_repository.keys())
+      with api.context(cwd=workspace_path):
+        projects = api.repo.project_infos(projects=ebuilds_by_repo.keys())
         api.repo.start('pupr', projects=[project.name for project in projects])
 
       # For each repository, make the CL.
-      for repository, ebuilds in ebuilds_by_repository.iteritems():
+      for repository, ebuilds in ebuilds_by_repo.iteritems():
         name = api.path.basename(repository)
         root = api.path.abs_to_path(repository)
         versions = ', '.join(sorted(set([e.version for e in ebuilds])))
@@ -231,7 +235,7 @@ def RunSteps(api, properties):
 
     if outdated_cls:
       with api.step.nest('act on outdated CLs with policy: {}'.format(
-          outdated_cls_policy_str)):
+          OutdatedClsPolicy.Name(outdated_cls_policy))):
         for outdated_cl in outdated_cls:
           if outdated_cls_policy == OUTDATED_LEAVE_COMMENT:
             outdated_comment_message = (
@@ -240,7 +244,7 @@ def RunSteps(api, properties):
                 ' likely should be abandoned.').format(mrm.display_url)
             api.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
                                           outdated_comment_message)
-          if outdated_cls_policy == OUTDATED_ABANDON:
+          elif outdated_cls_policy == OUTDATED_ABANDON:
             outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                         'PUpr has been set to abandon.').format(
                                             mrm.display_url)
@@ -249,11 +253,11 @@ def RunSteps(api, properties):
             abandoned_cls.append(outdated_cl)
 
     with api.step.nest('generate CLs'):
-      repositories = map(api.path.abs_to_path, ebuilds_by_repository.keys())
+      repositories = map(api.path.abs_to_path, ebuilds_by_repo.keys())
       changes = [
           api.gerrit.create_change(
               repository,
-              reviewers=[reviewer.email for reviewer in properties.reviewers],
+              reviewers=[reviewer.email for reviewer in policy.reviewers],
               topic=topic,
           ) for repository in repositories
       ]
@@ -328,7 +332,7 @@ def response_has_changes(api, response):
 
 def GenTests(api):
   package = PackageInfo(category='chromeos-base', package_name='chromite')
-  properties = json_format.MessageToDict(
+  properties = MessageToDict(
       GeneratorProperties(
           package_info=package,
           reviewers=[
@@ -341,9 +345,9 @@ def GenTests(api):
       ),
   )
   gitiles_triggers = [
-      triggers_pb2.Trigger(
+      Trigger(
           id='123',
-          gitiles=triggers_pb2.GitilesTrigger(
+          gitiles=GitilesTrigger(
               repo='chromiumos/chromite',
               ref='refs/heads/master',
               revision='deadbeef',
@@ -436,7 +440,7 @@ def GenTests(api):
       'non-gitiles-triggers',
       api.properties(**properties),
       api.scheduler(triggers=[
-          triggers_pb2.Trigger(id='456', webui=triggers_pb2.WebUITrigger()),
+          Trigger(id='456', webui=WebUITrigger()),
       ]),
       api.expect_exception('ValueError'),
       api.git.diff_check(True),
@@ -461,7 +465,7 @@ def GenTests(api):
   # Set up for testing chromeos-base/chromeos-chrome trigger filtering.
   package = PackageInfo(category='chromeos-base',
                         package_name='chromeos-chrome')
-  properties = json_format.MessageToDict(
+  properties = MessageToDict(
       GeneratorProperties(
           package_info=package,
           reviewers=[
@@ -473,17 +477,17 @@ def GenTests(api):
       ),
   )
   gitiles_triggers = [
-      triggers_pb2.Trigger(
+      Trigger(
           id='123',
-          gitiles=triggers_pb2.GitilesTrigger(
+          gitiles=GitilesTrigger(
               repo='https://chromium.googlesource.com/chromium/src',
               ref='refs/tags/79.0.3945.20',
               revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
           ),
       ),
-      triggers_pb2.Trigger(
+      Trigger(
           id='456',
-          gitiles=triggers_pb2.GitilesTrigger(
+          gitiles=GitilesTrigger(
               repo='https://chromium.googlesource.com/chromium/src',
               ref='refs/tags/78.0.3904.88',
               revision='90f293ef4ac440371bc6ff57933eac24cc9de0e4',
@@ -496,6 +500,5 @@ def GenTests(api):
   yield api.test(
       'invoked-directly',
       api.properties(**properties),
-      api.properties(
-          triggers=[json_format.MessageToDict(t) for t in gitiles_triggers]),
+      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
   )

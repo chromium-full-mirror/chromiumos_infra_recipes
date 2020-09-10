@@ -63,20 +63,69 @@ enum OutdatedClsPolicy {
   OUTDATED_ABANDON = 3;
 }
 
+message BranchPolicy {
+  // TODO(b/167619469): Allow multiple branch_policies.  The code now uses
+  // BranchPolicy internally, but ignores the branch_policies property and uses
+  // the one that it internally creates from GeneratorProperties (below).
+  //
+  // The first BranchPolicy in the list to match the tag will be the one used.
+  //
+  // For this BranchPolicy to match:
+  // - re.match(pattern) must match, and
+  // - re.sub(pattern, repl) must produce ${RESULT} of:
+  //   - such that `git ls-remote ${INTENRAL_MANIFEST} ${RESULT}` returns
+  //   exactly one reference, which will be used.
+  //   - if ${RESULT} returns more than one reference, StepFailure is raised.
+  //   - if ${RESULT} returns no references, the policy is skipped.
+  //
+  // To generically specify a mapping for Chrome version to Chrome OS release
+  // branch, such that 'ref/tags/86.0.4240.33' maps to 'release-R86-13421.B',
+  // use pattern='ref/tags/([0-9]*).*' and repl='release-R\1-*.B'.
+  //
+  // To specify a default of 'snapshot', use pattern='.*', and repl='snapshot'.
+  //
+  // To specify no branch (tip of cache) use repl=''.
+
+  // Regexp pattern for matching and converting a trigger.ref.
+  string pattern = 1;
+
+  // Regexp replacement for converting a trigger.ref to a reference.
+  string repl = 2;
+
+  // The reviewer(s) to tag on generated CLs.
+  repeated Reviewer reviewers = 3;
+
+  // Tag to add to all generated CLs. Defaults to qualified package name.
+  string topic = 4;
+
+  // Policy to follow when no related CLs exist. Defaults to DO_NOTHING.
+  SendToCqPolicy no_existing_cls_policy = 5;
+
+  // Policy to follow when related CLs exist. Defaults to DO_NOTHING.
+  SendToCqPolicy existing_cls_policy = 6;
+
+  // Policy to follow when for CLs that are still open but behind a merge.
+  OutdatedClsPolicy outdated_cls_policy =  7;
+}
+
 message GeneratorProperties {
   // The package to generate CLs for.
   chromiumos.PackageInfo package_info = 1;
 
   // The reviewer(s) to tag on generated CLs.
+  // TODO(b/167619469): Move to using branch_policies.
   repeated Reviewer reviewers = 2;
 
   // Tag to add to all generated CLs. Defaults to qualified package name.
+  // TODO(b/167619469): Move to using branch_policies.
   string topic = 3;
 
   // Policy to follow when no related CLs exist. Defaults to DO_NOTHING.
+  // TODO(b/167619469): Move to using branch_policies.
   SendToCqPolicy no_existing_cls_policy = 4;
 
   // Policy to follow when related CLs exist. Defaults to DO_NOTHING.
+  // TODO(b/167619469): Move to using branch_policies.
   SendToCqPolicy existing_cls_policy = 5;
 
   // The build targets to uprev. Only populate if required by endpoint.
@@ -92,5 +141,11 @@ message GeneratorProperties {
   repeated scheduler.Trigger triggers = 8;
 
   // Policy to follow when for CLs that are still open but behind a merge.
+  // TODO(b/167619469): Move to using branch_policies.
   OutdatedClsPolicy outdated_cls_policy =  9;
+
+  // Policies for branches.  If none of these match, then the properties above
+  // are used, on the default (usually 'snapshot') branch.
+  // The lack of branch_policies disables checking out a branch.
+  repeated BranchPolicy branch_policies = 11;
 }

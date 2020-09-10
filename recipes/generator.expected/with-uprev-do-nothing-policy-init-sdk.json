@@ -406,6 +406,13 @@
   },
   {
     "cmd": [],
+    "name": "set policy",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DO_NOTHING\", \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "init sdk",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
@@ -515,6 +522,7 @@
       ]
     },
     "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

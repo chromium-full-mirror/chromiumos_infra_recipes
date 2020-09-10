@@ -414,6 +414,13 @@
   },
   {
     "cmd": [],
+    "name": "set policy",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DO_NOTHING\", \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "try uprev chromeos-base/chromeos-chrome",
     "~followup_annotations": [
       "@@@STEP_TEXT@skipping uprev for chromeos-base/chromeos-chrome. no modified files@@@"
