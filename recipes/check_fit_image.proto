@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package recipes.chromeos.check_fit_image;
+
+message CheckFitImageProperties {
+    string csme_ref_path = 1; // Path to csme_refs.txt file containing reference
+                              // binary blob hashes
+}

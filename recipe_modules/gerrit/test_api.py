@@ -88,7 +88,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
       resp.append(self.test_response(request, change, values))
 
     resp = dict(changes=resp)
-    return self.step_data('%s.gerrit-fetch-changes' % (step_name),
+    prefix = '%s.' % step_name if step_name else ''
+    return self.step_data(prefix + 'gerrit-fetch-changes',
                           stdout=self.m.json.output(resp))
 
   def test_gerrit_fetch_changes(self, input, gerrit_changes):
