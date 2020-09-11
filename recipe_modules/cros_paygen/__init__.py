@@ -8,6 +8,7 @@ from recipe_engine.recipe_api import Property
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/raw_io',
+    'recipe_engine/step',
 ]
 
 from PB.recipe_modules.chromeos.cros_paygen.cros_paygen import CrosPaygenProperties

@@ -1,0 +1,58 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.paygen_orchestrator;
+
+message PaygenOrchestratorProperties {
+  // Builder name corresponding to paygen.json's convention.
+  // See: gs://chromeos-build-release-console/paygen.json
+  string builder_name = 1;
+
+  // The version the builder\caller wants payloads to update to.
+  // e.g. "13020.54.0".
+  string target_chrome_os_version = 2;
+
+  // The milestone to filter on. 0 (default) implies all milestones.
+  string milestone = 3;
+
+  enum DeltaType {
+    DELTA_UNKNOWN = 0;
+    NO_DELTA = 1;
+    FSI = 2;
+    MILESTONE = 3;
+    OMAHA = 4;
+    STEPPING_STONE = 5;
+  }
+
+  // The delta types to generate for, empty for all.
+  repeated DeltaType delta_types = 4;
+
+  enum Channel {
+    CHANNEL_UNKNOWN = 0;
+    CANARY = 1;
+    DEV = 2;
+    BETA = 3;
+    STABLE = 4;
+  }
+
+  // The payload channels to generate for, empty requires DeltaType == NO_DELTA.
+  repeated Channel channels = 5;
+
+  // Enumeration on whether or not to override the configured defaults.
+  enum PayloadTestsOverride {
+    RESPECT_CONFIG = 0;
+    FORCE_TESTS = 1;
+    FORCE_NO_TESTS = 2;
+  }
+
+  // Should we override the configured delta testing policy?
+  PayloadTestsOverride delta_payload_test_override = 6;
+
+  // Should we override the configured full testing policy?
+  PayloadTestsOverride full_payload_test_override = 7;
+
+  // TODO(engeg@): We might want to support abitrary filters for paygen.json.
+}

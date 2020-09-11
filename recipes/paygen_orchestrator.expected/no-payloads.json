@@ -1,8 +1,39 @@
 [
   {
     "cmd": [],
-    "name": "get paygen json",
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.ensure chroot directory",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "discovering configuration",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@0 payloads@[]@@@",
+      "@@@STEP_LOG_END@0 payloads@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "discovering configuration.get paygen json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@paygen.json@{@@@",
       "@@@STEP_LOG_LINE@paygen.json@    \"delta\": [@@@",
       "@@@STEP_LOG_LINE@paygen.json@        {@@@",
@@ -62,10 +93,14 @@
       "gs://chromeos-build-release-console/paygen.json"
     ],
     "infra_step": true,
-    "name": "get paygen json.gsutil cat",
+    "name": "discovering configuration.get paygen json.gsutil cat",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "no payloads matched in payload.json!"
   },
   {
     "name": "$result"

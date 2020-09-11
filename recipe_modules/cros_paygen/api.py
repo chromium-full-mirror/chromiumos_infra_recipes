@@ -9,6 +9,10 @@ import json
 from copy import deepcopy
 from recipe_engine import recipe_api
 
+DEFAULT_DELTA_TYPES = [
+    'STEPPING_STONE', 'OMAHA', 'NO_DELTA', 'MILESTONE', 'FSI'
+]
+
 
 class BadPaygenConfig(Exception):
   """An exception we use if the received config looks invalid."""
@@ -42,9 +46,12 @@ class CrosPaygenApi(recipe_api.RecipeApi):
 
   def _get_gs_config(self):
     """Pull and load the current paygen configuration."""
-    cat_res = self.m.gsutil.cat(self._paygen_json_gs_path, infra_step=True,
-                                stdout=self.m.raw_io.output())
-    return cat_res.stdout.strip()
+    with self.m.step.nest('get paygen json') as pres:
+      cat_res = self.m.gsutil.cat(self._paygen_json_gs_path, infra_step=True,
+                                  stdout=self.m.raw_io.output())
+      ret = cat_res.stdout.strip()
+      pres.logs['paygen.json'] = ret
+      return ret
 
   def _flatten_config(self, board_config):
     """Flatten a board_config so we can query it more easily."""
@@ -55,8 +62,14 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     new_b['builder_name'] = board_config['board']['builder_name']
     return new_b
 
+  @property
+  def default_delta_types(self):
+    return DEFAULT_DELTA_TYPES
+
   def get_builder_config(self, builder_name, **kwargs):
-    """Return the configs matching the queryor  [].
+    """Return the configs matching the query or [].
+
+    Note that all comparisons are made _in lower case_!
 
     Args:
       builder_name (String): The name of the builders to return configuration for.
@@ -89,7 +102,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     match_boards = []
     for b in self._config['delta']:
       b = self._flatten_config(b)
-      if b['builder_name'] == builder_name:
-        if all([k in b and b[k] == v for k, v in kwargs.items()]):
+      if b['builder_name'].lower() == builder_name.lower():
+        if all(
+            [k in b and b[k].lower() == v.lower() for k, v in kwargs.items()]):
           match_boards.append(b)
     return match_boards

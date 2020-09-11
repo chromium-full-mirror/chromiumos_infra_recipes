@@ -1,5 +1,13 @@
 [
   {
+    "cmd": [],
+    "name": "get paygen json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@paygen.json@{}@@@",
+      "@@@STEP_LOG_END@paygen.json@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -11,7 +19,10 @@
       "gs://chromeos-build-release-console/paygen.json"
     ],
     "infra_step": true,
-    "name": "gsutil cat"
+    "name": "get paygen json.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
@@ -25,15 +36,15 @@
       "    raw_result = recipe_obj.run_steps(api, engine)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/examples/full.py\", line 53, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/examples/full.py\", line 23, in RunSteps",
       "    len(api.cros_paygen.get_builder_config(builder_name='arkham')), 1)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
       "    return func(*a, **kw)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 90, in get_builder_config",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 103, in get_builder_config",
       "    for b in self._config['delta']:",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
       "    return func(*a, **kw)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 39, in _config",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 43, in _config",
       "    raise BadPaygenConfig()",
       "BadPaygenConfig"
     ]

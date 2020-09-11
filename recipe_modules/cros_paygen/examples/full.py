@@ -16,36 +16,6 @@ from PB.chromiumos import common
 from PB.recipe_modules.chromeos.cros_paygen.examples.config import ConfigProperties
 
 PROPERTIES = ConfigProperties
-EXAMPLE_PAYGEN_JSON = """
-{
-  "delta": [
-      {
-        "board": {
-          "public_codename": "amenia",
-          "is_active": false,
-          "builder_name": "amenia"
-        },
-        "delta_type": "NO_DELTA",
-        "generate_delta": false,
-        "delta_payload_tests": false,
-        "full_payload_tests": false
-      },
-      {
-        "board": {
-          "public_codename": "arkham",
-          "is_active": true,
-          "builder_name": "arkham"
-        },
-        "delta_type": "NO_DELTA",
-        "generate_delta": false,
-        "delta_payload_tests": false,
-        "full_payload_tests": false
-      }
-  ]
-}
-"""
-EXAMPLE_EMPTY_JSON = "{}"
-EXAMPLE_NOT_EVEN_JSON = "dawiojdoiawjdioawjdow"
 
 
 def RunSteps(api, properties):
@@ -60,18 +30,17 @@ def RunSteps(api, properties):
       len(
           api.cros_paygen.get_builder_config(builder_name='amenia',
                                              delta_type='NO_DELTA')), 1)
+  api.assertions.assertEqual(
+      api.cros_paygen.default_delta_types,
+      ['STEPPING_STONE', 'OMAHA', 'NO_DELTA', 'MILESTONE', 'FSI'])
 
 
 def GenTests(api):
+  good_json, bad_json, not_json = map(api.cros_paygen.mock_paygen,
+                                      ['get paygen json.gsutil cat'] *
+                                      len(api.cros_paygen.ALL_EXAMPLE_JSONS),
+                                      api.cros_paygen.ALL_EXAMPLE_JSONS)
 
-  def mock_paygen_json(in_json):
-    """Mock up step results for the GS cat."""
-    mock_response = api.step_data('gsutil cat',
-                                  stdout=api.raw_io.output(in_json))
-    return mock_response
-
-  yield api.test('basic', mock_paygen_json(EXAMPLE_PAYGEN_JSON))
-  yield api.test('bad-json', mock_paygen_json(EXAMPLE_EMPTY_JSON),
-                 api.expect_exception('BadPaygenConfig'))
-  yield api.test('not-json', mock_paygen_json(EXAMPLE_NOT_EVEN_JSON),
-                 api.expect_exception('ValueError'))
+  yield api.test('basic', good_json)
+  yield api.test('bad-json', bad_json, api.expect_exception('BadPaygenConfig'))
+  yield api.test('not-json', not_json, api.expect_exception('ValueError'))
