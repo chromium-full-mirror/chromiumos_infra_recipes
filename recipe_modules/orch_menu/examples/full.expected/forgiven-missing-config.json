@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "set up orchestrator",
     "~followup_annotations": [
-      "@@@STEP_LINK@manifest snapshot revision@https://chromium.googlesource.com/project-a/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml@@@"
+      "@@@STEP_LINK@manifest snapshot revision@https://chromium.googlesource.com/chromiumos/manifest/+/snapshot-HEAD-SHA/snapshot.xml@@@"
     ]
   },
   {
@@ -49,6 +49,72 @@
     ]
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "name": "set up orchestrator.configure builder.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "set up orchestrator.configure builder.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
+    ],
+    "infra_step": true,
+    "name": "set up orchestrator.configure builder.gitiles-fetch-ref",
+    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "set up orchestrator.configure builder.update src_state.gitiles_commit",
     "~followup_annotations": [
@@ -60,7 +126,7 @@
     "name": "set up orchestrator.configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/master\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -104,7 +170,7 @@
     "cmd": [
       "git",
       "clone",
-      "https://chromium.googlesource.com/project-a",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "."
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -119,8 +185,8 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chromium.googlesource.com/project-a",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "snapshot-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
@@ -148,7 +214,7 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "snapshot-HEAD-SHA",
       "--key",
       "Cr-External-Snapshot"
     ],

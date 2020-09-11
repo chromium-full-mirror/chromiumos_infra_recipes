@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_infra_config',
+    'src_state',
     'test_util',
 ]
 
@@ -15,6 +16,7 @@ from google.protobuf import json_format
 from recipe_engine import post_process
 
 from PB.chromiumos import common
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.recipe_modules.chromeos.cros_infra_config.examples.builder import (
@@ -44,16 +46,24 @@ def RunSteps(api, properties):
     api.assertions.assertIsNotNone(api.cros_infra_config.config_or_default)
     return
 
-  if not commit.project:
-    commit = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
-                                      project='chromeos/manifest-internal',
-                                      id='snapshot-HEAD-SHA',
-                                      ref='refs/heads/snapshot')
-  api.assertions.assertEqual(commit, api.cros_infra_config.gitiles_commit)
+  expected_is_staging = properties.expected_is_staging
+  expected_commit = common_pb2.GitilesCommit(
+      host=api.src_state.external_manifest.host,
+      project=api.src_state.external_manifest.project,
+      id='{}snapshot-HEAD-SHA'.format(
+          'staging-' if expected_is_staging else ''),
+      ref='refs/heads/{}snapshot'.format(
+          'staging-' if expected_is_staging else ''))
+  if config.general.manifest == BuilderConfig.General.PRIVATE:
+    expected_commit.host = api.src_state.internal_manifest.host
+    expected_commit.project = api.src_state.internal_manifest.project
+
+  api.assertions.assertEqual(expected_commit,
+                             api.cros_infra_config.gitiles_commit)
   want = [] if not (changes and config.build.apply_gerrit_changes) else changes
   api.assertions.assertEqual(want, api.cros_infra_config.gerrit_changes)
   api.assertions.assertEqual(api.cros_infra_config.is_staging,
-                             properties.expected_is_staging)
+                             expected_is_staging)
 
   # Force a reload of the config.
   api.assertions.assertEqual(config, api.cros_infra_config.fresh_config)
@@ -106,6 +116,9 @@ def GenTests(api):
               extra_changes=[common_pb2.GerritChange(change=1234)]))
 
   yield api.test('has_no_commit_and_no_changes', builder(revision=None))
+
+  yield api.test('private_has_no_commit_and_no_changes',
+                 builder(build_target='grunt', revision=None))
 
   yield api.test(
       'apply_gerrit_changes_false',

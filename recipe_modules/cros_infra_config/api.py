@@ -305,6 +305,31 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         self._download_binproto('testingconfig/generated/dut_tracking',
                                 self.test_api.dut_tracking_test_data))
 
+  def _has_valid_commit(self, config=None, commit=None):
+    """Determine if the builder has a valid commit.
+
+    Public builders should sync to a commit for the public manifest and private
+    builders should sync to a commit for the internal manifest.
+
+    Args:
+      config (BuilderConfig): The builder config, or None.
+      commit (GitilesCommit): The gitiles commit to use, or None.
+
+    Returns:
+      Bool whether the builder has a valid commit.
+    """
+    if not commit or not commit.project:
+      return False
+    commit_url = 'https://{}/{}'.format(commit.host, commit.project)
+    # Private builders should use the internal gitiles commit.
+    if config:
+      manifest = config.general.manifest
+      commit_url = 'https://{}/{}'.format(commit.host, commit.project)
+      if manifest == BuilderConfig.General.PRIVATE:
+        return commit_url == self.m.src_state.internal_manifest.url
+    # Otherwise, use the external gitiles commit.
+    return commit_url == self.m.src_state.external_manifest.url
+
   def _determine_repo_state(self, config, commit, changes):
     """Set _gitiles_commit and _gerrit_changes.
 
@@ -320,29 +345,39 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     changes = self.m.src_state.gerrit_changes if changes is None else changes
     changed = False
-    if not commit or not commit.project:
+    if not self._has_valid_commit(config, commit):
       # No gitiles_commit: we were (likely) launched directly by either
       # luci-scheduler (no changes), luci-cq (changes), or a user.
 
-      # Use the default gitiles_commit from the config.
-      commit = None if not config else ConvertPB(
-          config.orchestrator.gitiles_commit, common_pb2.GitilesCommit)
-      # Which may not be there.  In that case, use refs/heads/snapshot.
-      if not commit or not commit.project:
-        commit = common_pb2.GitilesCommit(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/manifest-internal',
-            ref='refs/heads/{}snapshot'.format(
-                'staging-' if self._is_staging else ''))
-      # We will need commit.id later.  Add it if necessary.
-      if not commit.id:
+      # If the board is private, use the default gitiles_commit from the config
+      # or refs/heads/snapshot for the private manifest if it doesn't exist.
+      if config and config.general.manifest == BuilderConfig.General.PRIVATE:
+        commit = ConvertPB(config.orchestrator.gitiles_commit,
+                           common_pb2.GitilesCommit)
+        if not commit.id:
+          host = commit.host or self.m.src_state.internal_manifest.host
+          project = commit.project or self.m.src_state.internal_manifest.project
+          ref = commit.ref or 'refs/heads/{}snapshot'.format(
+              'staging-' if self._is_staging else '')
+          test_data = dict(
+              branch=dict(revision='%s-HEAD-SHA' % ref.split('/')[-1]))
+          gitiles_id = self.m.gitiles.fetch_revision(host, project, ref,
+                                                     test_output_data=test_data)
+          commit = common_pb2.GitilesCommit(host=host, project=project, ref=ref,
+                                            id=gitiles_id)
+
+      # Otherwise, use use refs/heads/snapshot for the public manifest.
+      else:
+        host = self.m.src_state.external_manifest.host
+        project = self.m.src_state.external_manifest.project
+        ref = 'refs/heads/{}snapshot'.format(
+            'staging-' if self._is_staging else '')
         test_data = dict(
-            branch=dict(revision='%s-HEAD-SHA' % commit.ref.split('/')[-1]))
-        commit = common_pb2.GitilesCommit(
-            host=commit.host, project=commit.project, ref=commit.ref,
-            id=self.m.gitiles.fetch_revision(commit.host, commit.project,
-                                             commit.ref,
-                                             test_output_data=test_data))
+            branch=dict(revision='%s-HEAD-SHA' % ref.split('/')[-1]))
+        gitiles_id = self.m.gitiles.fetch_revision(host, project, ref,
+                                                   test_output_data=test_data)
+        commit = common_pb2.GitilesCommit(host=host, project=project, ref=ref,
+                                          id=gitiles_id)
       if commit:
         changed = True
 

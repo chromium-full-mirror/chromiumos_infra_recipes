@@ -83,6 +83,72 @@
     ]
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "name": "configure builder.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "configure builder.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
+    ],
+    "infra_step": true,
+    "name": "configure builder.gitiles-fetch-ref",
+    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "configure builder.update src_state.gitiles_commit",
     "~followup_annotations": [
@@ -94,7 +160,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/master\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -565,12 +631,12 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chromium.googlesource.com/project-a/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
       "--format",
       "text"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "sync to snapshot.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",
+    "name": "sync to snapshot.fetch snapshot-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -881,69 +947,6 @@
     "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
-      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.read deploy_cipd.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cros-recipes-support",
-      "-ensure-file",
-      "pkg inst",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -1902,9 +1905,9 @@
     "name": "validate SDK reuse.depgraph relevance check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\tproject-a\\032(2d72510e447ab60a9728aeea2362d8be2cbd7789\\\"\\021refs/heads/master\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chrome-internal.googlesource.com\\022\\032chromeos/manifest-internal\\032\\021snapshot-HEAD-SHA\\\"\\023refs/heads/snapshot\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
@@ -1959,7 +1962,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2(2d72510e447ab60a9728aeea2362d8be2cbd7789Be\nc\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master",
+      "2\u0011snapshot-HEAD-SHABh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/pointless-build-_tmp_7/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1967,9 +1970,9 @@
     "name": "validate SDK reuse.depgraph relevance check.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@2(2d72510e447ab60a9728aeea2362d8be2cbd7789Be@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@c@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@2\u0011snapshot-HEAD-SHABh@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@f@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },

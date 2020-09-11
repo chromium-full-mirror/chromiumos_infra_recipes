@@ -117,7 +117,7 @@
     ],
     "infra_step": true,
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -140,7 +140,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -563,7 +563,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
+      "https://chromium.googlesource.com/chromiumos/manifest/+/snapshot-HEAD-SHA/snapshot.xml",
       "--format",
       "text"
     ],
@@ -1452,7 +1452,7 @@
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\tproject-a\\030\\300\\304\\007 \\007\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chrome-internal.googlesource.com\\022\\032chromeos/manifest-internal\\032\\021snapshot-HEAD-SHA\\\"\\023refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\023chromiumos/manifest\\032\\021snapshot-HEAD-SHA\\\"\\023refs/heads/snapshot\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"some/other/dir\"@@@",
@@ -1510,7 +1510,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0011snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0010\n\u000esome/other/dir",
+      "2\u0011snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007BZ\nX\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0010\n\u000esome/other/dir",
       "[CLEANUP]/pointless-build-_tmp_4/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1520,9 +1520,9 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@2\u0011snapshot-HEAD-SHA:5@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@f@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0010@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007BZ@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@X@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0010@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dir@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
@@ -1984,7 +1984,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
+      "https://chromium.googlesource.com/chromiumos/manifest/+/snapshot-HEAD-SHA/snapshot.xml",
       "--format",
       "text"
     ],
@@ -3234,7 +3234,7 @@
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\tproject-a\\030\\300\\304\\007 \\007\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chrome-internal.googlesource.com\\022\\032chromeos/manifest-internal\\032\\021snapshot-HEAD-SHA\\\"\\023refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\023chromiumos/manifest\\032\\021snapshot-HEAD-SHA\\\"\\023refs/heads/snapshot\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
@@ -3251,7 +3251,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0011snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "2\u0011snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007BZ\nX\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/pointless-build-_tmp_12/input.binaryproto"
     ],
     "infra_step": true,
@@ -3260,9 +3260,9 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@2\u0011snapshot-HEAD-SHA:5@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@f@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007BZ@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@X@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },

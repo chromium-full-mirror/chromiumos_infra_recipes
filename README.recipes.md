@@ -1658,7 +1658,7 @@ Generate start time in seconds.
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#488)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#523)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -1689,7 +1689,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#387)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#422)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1742,7 +1742,7 @@ Get BotPolicies as defined in infra/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#448)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#483)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -1753,7 +1753,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#474)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#509)(self, build=None):**
 
 Return the build target name from input properties.
 
@@ -5619,9 +5619,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_history/examples/set_passed_tests.py#17)(api):**
 ### *recipes* / [cros\_infra\_config:examples/builder](/recipe_modules/cros_infra_config/examples/builder.py)
 
-[DEPS](/recipe_modules/cros_infra_config/examples/builder.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_infra_config/examples/builder.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/builder.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/builder.py#28)(api, properties):**
 ### *recipes* / [cros\_infra\_config:examples/builder\_group](/recipe_modules/cros_infra_config/examples/builder_group.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/builder_group.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
