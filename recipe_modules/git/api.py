@@ -21,6 +21,7 @@ class GitApi(recipe_api.RecipeApi):
   """A module for interacting with git."""
 
   Commit = namedtuple('Commit', ['rev', 'message'])
+  Reference = namedtuple('Reference', ['hash', 'ref'])
 
   def _step(self, args, name=None, test_stdout=None, **kwargs):
     """Executes 'git' with the supplied arguments.
@@ -343,6 +344,27 @@ class GitApi(recipe_api.RecipeApi):
       yield
     finally:
       self.checkout(head)
+
+  def ls_remote(self, refs, repo_url=None):
+    """Return ls-remote output for a repository.
+
+    Args:
+      refs (list[str]): The refs to list.
+      repo_url (str): The url of the remote, or None to use CWD.
+
+    Returns:
+      List(Reference) A list of Refs.
+    """
+    cmd = ['ls-remote', repo_url or '.'] + refs
+    test_stdout = '\n'.join(
+        '%s\t%s' % (self.test_api.test_commit_id, x) for x in refs)
+    stdout = self._step(cmd, stdout=self.m.raw_io.output(),
+                        test_stdout=test_stdout).stdout.strip()
+    refs = []
+    for line in stdout.splitlines():
+      commit, ref = line.split()
+      refs.append(self.Reference(commit, ref))
+    return refs
 
   def log(self, from_rev, to_rev, limit=None, paths=None):
     """Returns all the `Commit` between `from_rev` and `to_rev`.

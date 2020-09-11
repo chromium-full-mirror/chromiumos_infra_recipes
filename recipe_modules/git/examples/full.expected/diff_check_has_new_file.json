@@ -284,6 +284,17 @@
   {
     "cmd": [
       "git",
+      "ls-remote",
+      ".",
+      "snapshot",
+      "foo"
+    ],
+    "infra_step": true,
+    "name": "git ls-remote"
+  },
+  {
+    "cmd": [
+      "git",
       "rev-parse",
       "--show-toplevel"
     ],

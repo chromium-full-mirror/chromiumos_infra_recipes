@@ -57,6 +57,7 @@ def RunSteps(api):
   with api.git.head_context():
     pass
 
+  api.assertions.assertEqual(len(api.git.ls_remote(['snapshot', 'foo'])), 2)
   api.git.repository_root()
   api.git.rebase(force=True)
   api.git.set_global_config(['upstream.hammer-branch', '1'])
