@@ -605,7 +605,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjYpDS5dJOL7bS108qTc5OLdFPy8/XT0os0g8N9XTRL67MS84oys/LLy2OLy5NSsks0lLjEs4o\\nKSkAagCq1M3JTy/WLS3KEeIHmwESgggAAPbjHV8=\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjYpCq49JOL7bS108qTc5OLdFPy8/XT0os0g8N9XTRL67MS84oys/LLy2OLy5NSsksEvLPKCkp\\nAKkvLknMzMtJLS7WS84vKtBLz89Pz0kFsnP1k4ryy4tTiTRQS41LGGQk0ESgSt2c/PRi3dKiHCF+\\nsKNAQhABAPttPDk=\\n\"@@@"
     ]
   },
   {
@@ -615,7 +615,8 @@
       "@@@STEP_LOG_LINE@JSON output@{@@@",
       "@@@STEP_LOG_LINE@JSON output@  \"autotestResult\": {}, @@@",
       "@@@STEP_LOG_LINE@JSON output@  \"logData\": {@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://bucket/foo/bar/UUID/synchronous_subdir\"@@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://bucket/foo/bar/UUID/synchronous_subdir\", @@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/bucket/foo/bar/UUID/synchronous_subdir\"@@@",
       "@@@STEP_LOG_LINE@JSON output@  }, @@@",
       "@@@STEP_LOG_LINE@JSON output@  \"asyncResults\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"logsUrl\": \"http://foo-logs-url\", @@@",

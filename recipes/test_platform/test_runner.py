@@ -222,11 +222,19 @@ def archive_all_logs(api, config, result):
         # Thus, it is possible that we do not have a sane result message.
         if result is not None:
           result.log_data.gs_url = gs_res.gs_url
+          result.log_data.stainless_url = _stainless_logs_from_gs_path(
+              gs_res.gs_url)
   except api.step.InfraFailure:
     # TODO(crbug.com/1126528): Make these failures significant once we've
     # stabilized the new archival step.
     pass
   return result
+
+
+def _stainless_logs_from_gs_path(path):
+  """Convert a GS path to a stainless logs browser URL."""
+  assert path.startswith('gs://'), "{} should start with gs://".format(path)
+  return 'https://stainless.corp.google.com/browse/%s' % path[len('gs://'):]
 
 
 def upload_to_tko(api, config=None):
@@ -269,9 +277,8 @@ def summarize_results(api, prejob_response, run_test_response, result):
     * result: skylab_test_runner.Result instance.
   """
   with api.step.nest('test results') as step:
-    if result.log_data.gs_url:
-      step.links['Autotest logs'] = _stainless_logs_from_gs_path(
-          result.log_data.gs_url)
+    if result.log_data.stainless_url:
+      step.links['Autotest logs'] = result.log_data.stainless_url
     if result.async_results.logs_url:
       step.links['Autotest logs (async)'] = result.async_results.logs_url
     step.presentation.logs['JSON output'] = json_format.MessageToJson(result)
@@ -308,12 +315,6 @@ def summarize_results(api, prejob_response, run_test_response, result):
             "ended with unsuccessful state %s" %
             phosphorus.runtest.RunTestResponse.State.Name(
                 run_test_response.state))
-
-
-def _stainless_logs_from_gs_path(path):
-  """Convert a GS path to a stainless logs browser URL."""
-  assert path.startswith('gs://'), "{} should start with gs://".format(path)
-  return 'https://stainless.corp.google.com/browse/%s' % path[len('gs://'):]
 
 
 def _result_contains_no_failures(result):
@@ -804,6 +805,14 @@ def GenTests(api):
                 phosphorus.runtest.RunTestResponse(
                     results_dir='dummy-results-dir/subdir', state=state)))))
 
+  def _successful_logs_archive_step():
+    return api.step_data(
+        'execution steps.Archive all test logs to Google Storage.'
+        'call `phosphorus`.upload-to-gs', stdout=api.raw_io.output(
+            json_format.MessageToJson(
+                phosphorus.upload_to_gs.UploadToGSResponse(
+                    gs_url=os.path.join(_gs_root, "UUID", _sync_subdir)))))
+
   yield api.test(
       'test_name_missing',
       _misc_properties(),
@@ -818,6 +827,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_logs_archive_step(),
   )
 
   r_with_deadline = _canned_test_runner_request()
@@ -825,19 +835,27 @@ def GenTests(api):
   r_with_deadline['deadline'] = timestamp_pb2.Timestamp(
       seconds=current_time_sec + 55)
 
-  yield api.test('success with build deadline',
-                 api.buildbucket.build(_build_with_execution_timeout(30)),
-                 _misc_properties(),
-                 api.properties(TestRunnerProperties(request=r_with_deadline)),
-                 _mock_load_step(), _successful_prejob_step(),
-                 _successful_run_test_step()) + api.time.seed(current_time_sec)
+  yield api.test(
+      'success with build deadline',
+      api.buildbucket.build(_build_with_execution_timeout(30)),
+      _misc_properties(),
+      api.properties(TestRunnerProperties(request=r_with_deadline)),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_logs_archive_step(),
+  ) + api.time.seed(current_time_sec)
 
-  yield api.test('success with request deadline',
-                 api.buildbucket.build(_build_with_execution_timeout(66)),
-                 _misc_properties(),
-                 api.properties(TestRunnerProperties(request=r_with_deadline)),
-                 _mock_load_step(), _successful_prejob_step(),
-                 _successful_run_test_step()) + api.time.seed(current_time_sec)
+  yield api.test(
+      'success with request deadline',
+      api.buildbucket.build(_build_with_execution_timeout(66)),
+      _misc_properties(),
+      api.properties(TestRunnerProperties(request=r_with_deadline)),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_logs_archive_step(),
+  ) + api.time.seed(current_time_sec)
 
   yield api.test(
       'prejob_crash',
@@ -922,6 +940,7 @@ def GenTests(api):
               json_format.MessageToJson(
                   phosphorus.upload_to_gs.UploadToGSResponse(
                       gs_url=os.path.join(_gs_root, "UUID", _sync_subdir))))),
+      _successful_logs_archive_step(),
   )
 
   yield api.test(
@@ -939,12 +958,7 @@ def GenTests(api):
                   Result(
                       autotest_result=Result.Autotest(test_cases=[]),
                   )))),
-      api.step_data(
-          'execution steps.Archive all test logs to Google Storage.'
-          'call `phosphorus`.upload-to-gs', stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  phosphorus.upload_to_gs.UploadToGSResponse(
-                      gs_url=os.path.join(_gs_root, "UUID", _sync_subdir))))),
+      _successful_logs_archive_step(),
   )
   yield api.test(
       'ignore errors in logs archival',
@@ -987,6 +1001,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_logs_archive_step(),
       api.step_data(
           'execution steps.get test results.call `autotest_status_parser`.'
           'parse', stdout=api.raw_io.output(
@@ -1013,6 +1028,7 @@ def GenTests(api):
       _request_properties(),
       _mock_load_step(),
       _prejob_step_with_state(phosphorus.prejob.PrejobResponse.FAILED),
+      _successful_logs_archive_step(),
   )
 
   yield api.test(
@@ -1023,18 +1039,15 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _run_test_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
+      _successful_logs_archive_step(),
   )
 
-  yield api.test(
-      'skip result_flow pubsub due to missing build ID',
-      _misc_properties(),
-      _request_properties(),
-      _mock_load_step(),
-  )
+  yield api.test('skip result_flow pubsub due to missing build ID',
+                 _misc_properties(), _request_properties(), _mock_load_step(),
+                 _successful_logs_archive_step())
 
   yield api.test(
-      'skip result_flow pubsub due to missing topic',
-      _set_build_id(id=42),
+      'skip result_flow pubsub due to missing topic', _set_build_id(id=42),
       _misc_properties(),
       api.properties(
           TestRunnerProperties(config={
@@ -1042,14 +1055,11 @@ def GenTests(api):
                   'topic': '',
                   'project': 'foo-proj',
               },
-          })),
-      _request_properties(),
-      _mock_load_step(),
-  )
+          })), _request_properties(), _mock_load_step(),
+      _successful_logs_archive_step())
 
   yield api.test(
-      'skip result_flow pubsub due to missing project',
-      _set_build_id(id=42),
+      'skip result_flow pubsub due to missing project', _set_build_id(id=42),
       _misc_properties(),
       api.properties(
           TestRunnerProperties(config={
@@ -1057,7 +1067,5 @@ def GenTests(api):
                   'topic': 'foo-topic',
                   'project': '',
               },
-          })),
-      _request_properties(),
-      _mock_load_step(),
-  )
+          })), _request_properties(), _mock_load_step(),
+      _successful_logs_archive_step())
