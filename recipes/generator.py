@@ -15,6 +15,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 from google.protobuf.json_format import MessageToDict, MessageToJson
 
 from collections import defaultdict, namedtuple
+import re
 import urlparse
 
 from PB.chromiumos.common import PackageInfo
@@ -36,6 +37,8 @@ from PB.recipes.chromeos.generator import (
 )
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
     GitilesTrigger, Trigger, WebUITrigger)
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -43,6 +46,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/scheduler',
     'recipe_engine/step',
     'cros_build_api',
@@ -54,6 +58,7 @@ DEPS = [
     'git',
     'naming',
     'repo',
+    'src_state',
 ]
 
 PROPERTIES = GeneratorProperties
@@ -63,6 +68,8 @@ def RunSteps(api, properties):
   workspace_path = api.cros_source.workspace_path
 
   global_policy = BranchPolicy(
+      pattern='.*',
+      repl='',
       reviewers=properties.reviewers,
       topic=properties.topic,
       no_existing_cls_policy=properties.no_existing_cls_policy or DO_NOTHING,
@@ -73,26 +80,28 @@ def RunSteps(api, properties):
 
   with api.step.nest('validate properties') as presentation:
     if not properties.HasField('package_info'):
-      raise ValueError('must set package_info')
+      raise StepFailure('must set package_info')
 
     for policy in policies:
+      if not policy.pattern:
+        raise StepFailure('must specify pattern')
       if not policy.reviewers:
-        raise ValueError('need at least one reviewer')
+        raise StepFailure('need at least one reviewer')
 
       for reviewer in policy.reviewers:
         if not reviewer.email:
-          raise ValueError('must set reviewer email')
+          raise StepFailure('must set reviewer email')
 
     presentation.step_text = 'all properties good'
 
   triggers = properties.triggers or api.scheduler.triggers
   with api.step.nest('validate triggers') as presentation:
     if not triggers:
-      raise ValueError('found no scheduler triggers')
+      raise StepFailure('found no scheduler triggers')
 
     for trigger in triggers:
       if not trigger.HasField('gitiles'):
-        raise ValueError('found non-gitiles trigger: %r', trigger)
+        raise StepFailure('found non-gitiles trigger: %r', trigger)
 
     presentation.step_text = 'found {} good triggers'.format(len(triggers))
     presentation.logs['list of triggers'] = map(MessageToJson, triggers)
@@ -103,11 +112,27 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context(), \
     api.cros_sdk.cleanup_context(checkout_path=workspace_path):
     api.cros_source.ensure_synced_cache()
-    # TODO(b/167619469): Determine the correct branch (and policy) for the
-    # trigger.  For now, use the BranchPolicy we generated above from the
-    # unbranched properties.
+
+    # Check out the appropriate branch, and use the appropriate policy.
     policy = global_policy
+    if properties.branch_policies:
+      with api.step.nest('determine branch') as pres:
+        # TODO(b/167619469): handle the case where we get multiple triggers.
+        # For Chrome, we are launched with properties.triggers, for exactly one
+        # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
+        if len(triggers) > 1:
+          raise StepFailure('too many triggers')
+        policy_info = _get_policy(api, triggers[0], policies)
+        policy = policy_info.policy
+        if policy_info.branch:
+          pres.step_text = 'using {} {}'.format(policy_info.branch,
+                                                policy_info.reference.hash)
+          api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
+                                          policy_info.branch)
+        else:
+          pres.step_text = 'using default branch'
     api.easy.set_properties_step(policy=MessageToDict(policy))
+
     if properties.init_sdk:
       with api.context(cwd=workspace_path):
         api.cros_sdk.create_chroot(use_image=False)
@@ -318,6 +343,45 @@ def RunSteps(api, properties):
           api.gerrit.set_change_labels(change, labels)
 
 
+def _get_policy(api, trigger, policies):
+  """Find the applicable policy for the trigger.
+
+  The policy used is the first policy where policy.pattern matches the tag, and
+  either:
+  - the substitution result is the empty string (default branch, aka legacy), or
+  - a remote reference is in manifest-internal for the substitution result.
+
+  Returns:
+    (PolicyInfo) namedtuple with:
+    - policy (BranchPolicy): The selected policy
+    - branch (str): the branch to checkout.  Empty if there is no branch to
+      checkout.
+    - reference (git.Reference): the reference that matched, or None.
+  """
+  PolicyInfo = namedtuple('PolicyInfo', ['policy', 'branch', 'reference'])
+  manifest = api.src_state.internal_manifest
+  tag = trigger.gitiles.ref
+  with api.context(cwd=manifest.path):
+    for policy in policies:
+      if re.match(policy.pattern, tag):
+        query = re.sub(policy.pattern, policy.repl, tag)
+        if not query:
+          return PolicyInfo(policy, '', None)
+        refs = api.git.ls_remote([query])
+        if len(refs) == 1:
+          ref = refs[0]
+          return PolicyInfo(policy, ref.ref.split('/')[-1], ref)
+        elif refs:
+          raise StepFailure('multiple branches matched {}: {}'.format(
+              query, ' '.join(x.ref for x in refs)))
+        # If we found no references, this policy does not apply.
+
+    # TODO(b/167619469): Once the global policy properties are gone this will
+    # become reachable, and needs to be tested.  We will know, because we will
+    # return None here and not have a valid PolicyInfo.
+    # raise StepFailure('No matching policy found for tag {}'.format(tag))
+
+
 # TODO(dburger): deleted files should be at the end of the modified_ebuilds list
 # to work correctly with api.git.diff_check.
 def response_has_changes(api, response):
@@ -411,20 +475,20 @@ def GenTests(api):
 
   yield api.test(
       'no-package-info',
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusAnyFailure),
   )
 
   yield api.test(
       'no-reviewers',
       api.properties(package_info=package),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'blank-reviewer',
       api.properties(package_info=package, reviewers=[{}]),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
   )
 
@@ -432,7 +496,7 @@ def GenTests(api):
       'no-triggers',
       api.properties(**properties),
       api.scheduler(triggers=[]),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
   )
 
@@ -442,7 +506,7 @@ def GenTests(api):
       api.scheduler(triggers=[
           Trigger(id='456', webui=WebUITrigger()),
       ]),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
   )
 
@@ -485,14 +549,6 @@ def GenTests(api):
               revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
           ),
       ),
-      Trigger(
-          id='456',
-          gitiles=GitilesTrigger(
-              repo='https://chromium.googlesource.com/chromium/src',
-              ref='refs/tags/78.0.3904.88',
-              revision='90f293ef4ac440371bc6ff57933eac24cc9de0e4',
-          ),
-      ),
   ]
 
   # Testing direct invocation, that is, not invoked with properties from
@@ -501,4 +557,79 @@ def GenTests(api):
       'invoked-directly',
       api.properties(**properties),
       api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
+  )
+
+  branch_policy = BranchPolicy(
+      pattern='refs/tags/([0-9]*).*',
+      repl=r'release-R\1-*.B',
+      reviewers=[Reviewer(email='dburger@chromium.org')],
+      no_existing_cls_policy=DRY_RUN,
+      existing_cls_policy=DRY_RUN,
+      outdated_cls_policy=ABANDON,
+  )
+  no_pattern_policy = BranchPolicy(
+      pattern='',
+      repl=r'release-R\1-*.B',
+      reviewers=[Reviewer(email='dburger@chromium.org')],
+      no_existing_cls_policy=DRY_RUN,
+      existing_cls_policy=DRY_RUN,
+      outdated_cls_policy=ABANDON,
+  )
+
+  yield api.test(
+      'branch-policies',
+      api.properties(**properties),
+      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
+      api.properties(branch_policies=[MessageToDict(branch_policy)]),
+      api.post_check(post_process.MustRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.MustRun,
+                     'determine branch.checkout branch release-R79-*.B'),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'branch-policies-multiple-triggers',
+      api.properties(**properties),
+      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers * 2]),
+      api.properties(branch_policies=[MessageToDict(branch_policy)]),
+      api.post_check(post_process.DoesNotRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.StatusAnyFailure),
+  )
+
+  yield api.test(
+      'branch-policies-no-pattern',
+      api.properties(**properties),
+      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers * 2]),
+      api.properties(branch_policies=[MessageToDict(no_pattern_policy)]),
+      api.post_check(post_process.DoesNotRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.StatusAnyFailure),
+  )
+
+  yield api.test(
+      'branch-policies-default-branch',
+      api.properties(**properties),
+      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
+      api.properties(branch_policies=[
+          MessageToDict(
+              BranchPolicy(pattern='.*', repl='',
+                           reviewers=[Reviewer(email='a@example.com')]))
+      ]),
+      api.post_check(post_process.DoesNotRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'branch-policies-multi-ref',
+      api.properties(**properties),
+      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
+      api.properties(branch_policies=[MessageToDict(branch_policy)]),
+      api.step_data(
+          'determine branch.git ls-remote',
+          stdout=api.raw_io.output_text('\n'.join([
+              '9ed37bc6f515ef0ef42949d9f23e1180432649f5\t'
+              'refs/remotes/cros-internal/release-R79-5555.B',
+              'f3ecd792bc4822dd6686313478099b8eb3df7e55\t'
+              'refs/remotes/cros-internal/release-R79-9999.B',
+          ]) + '\n')),
+      api.post_check(post_process.StatusAnyFailure),
   )

@@ -79,8 +79,8 @@ message BranchPolicy {
   //   - if ${RESULT} returns no references, the policy is skipped.
   //
   // To generically specify a mapping for Chrome version to Chrome OS release
-  // branch, such that 'ref/tags/86.0.4240.33' maps to 'release-R86-13421.B',
-  // use pattern='ref/tags/([0-9]*).*' and repl='release-R\1-*.B'.
+  // branch, such that 'refs/tags/86.0.4240.33' maps to 'release-R86-13421.B',
+  // use pattern='refs/tags/([0-9]*).*' and repl='release-R\1-*.B'.
   //
   // To specify a default of 'snapshot', use pattern='.*', and repl='snapshot'.
   //

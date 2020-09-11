@@ -35,9 +35,9 @@
       "@@@STEP_TEXT@found 1 good triggers@@@",
       "@@@STEP_LOG_LINE@list of triggers@{@@@",
       "@@@STEP_LOG_LINE@list of triggers@  \"gitiles\": {@@@",
-      "@@@STEP_LOG_LINE@list of triggers@    \"repo\": \"chromiumos/chromite\", @@@",
-      "@@@STEP_LOG_LINE@list of triggers@    \"ref\": \"refs/heads/master\", @@@",
-      "@@@STEP_LOG_LINE@list of triggers@    \"revision\": \"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@list of triggers@    \"repo\": \"https://chromium.googlesource.com/chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@list of triggers@    \"ref\": \"refs/tags/79.0.3945.20\", @@@",
+      "@@@STEP_LOG_LINE@list of triggers@    \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
       "@@@STEP_LOG_LINE@list of triggers@  }, @@@",
       "@@@STEP_LOG_LINE@list of triggers@  \"id\": \"123\"@@@",
       "@@@STEP_LOG_LINE@list of triggers@}@@@",
@@ -406,29 +406,36 @@
   },
   {
     "cmd": [],
+    "name": "determine branch",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@using default branch@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set policy",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DO_NOTHING\", \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@policy@{\"pattern\": \".*\", \"reviewers\": [{\"email\": \"a@example.com\"}]}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "try uprev chromeos-base/chromite",
+    "name": "try uprev chromeos-base/chromeos-chrome",
     "~followup_annotations": [
-      "@@@STEP_TEXT@skipping uprev for chromeos-base/chromite. no modified files@@@"
+      "@@@STEP_TEXT@skipping uprev for chromeos-base/chromeos-chrome. no modified files@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "try uprev chromeos-base/chromite.uprev versioned package",
+    "name": "try uprev chromeos-base/chromeos-chrome.uprev versioned package",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"versions\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"ref\": \"refs/heads/master\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"repository\": \"chromiumos/chromite\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"revision\": \"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"ref\": \"refs/tags/79.0.3945.20\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"repository\": \"/chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -441,7 +448,7 @@
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"packageInfo\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"category\": \"chromeos-base\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"packageName\": \"chromite\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"packageName\": \"chromeos-chrome\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -457,19 +464,19 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"versions\": [\n    {\n      \"ref\": \"refs/heads/master\", \n      \"repository\": \"chromiumos/chromite\", \n      \"revision\": \"deadbeef\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ], \n  \"packageInfo\": {\n    \"category\": \"chromeos-base\", \n    \"packageName\": \"chromite\"\n  }\n}",
+      "{\n  \"versions\": [\n    {\n      \"ref\": \"refs/tags/79.0.3945.20\", \n      \"repository\": \"/chromium/src\", \n      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ], \n  \"packageInfo\": {\n    \"category\": \"chromeos-base\", \n    \"packageName\": \"chromeos-chrome\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
-    "name": "try uprev chromeos-base/chromite.uprev versioned package.write input file",
+    "name": "try uprev chromeos-base/chromeos-chrome.uprev versioned package.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"versions\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"ref\": \"refs/heads/master\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"repository\": \"chromiumos/chromite\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"revision\": \"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"ref\": \"refs/tags/79.0.3945.20\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"repository\": \"/chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
@@ -482,7 +489,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"packageInfo\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"category\": \"chromeos-base\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"packageName\": \"chromite\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"packageName\": \"chromeos-chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -504,7 +511,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "try uprev chromeos-base/chromite.uprev versioned package.call build API script",
+    "name": "try uprev chromeos-base/chromeos-chrome.uprev versioned package.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -526,14 +533,14 @@
       ]
     },
     "infra_step": true,
-    "name": "try uprev chromeos-base/chromite.uprev versioned package.read output file",
+    "name": "try uprev chromeos-base/chromeos-chrome.uprev versioned package.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "try uprev chromeos-base/chromite.uprev versioned package.call response",
+    "name": "try uprev chromeos-base/chromeos-chrome.uprev versioned package.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -542,23 +549,81 @@
   },
   {
     "cmd": [],
-    "name": "try uprev chromeos-base/chromite.verify updates",
+    "name": "try uprev chromeos-base/chromeos-chrome.verify updates",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "try uprev chromeos-base/chromite.verify updates.diff check",
+    "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "infra_step": true,
+    "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check.git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "infra_step": true,
+    "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [],
-    "name": "try uprev chromeos-base/chromite.verify updates.diff check (2)",
+    "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "infra_step": true,
+    "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check (2).git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild"
+    ],
+    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "infra_step": true,
+    "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check (2).git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
