@@ -33,7 +33,7 @@ class FailuresApi(recipe_api.RecipeApi):
   Failure = collections.namedtuple('Failure',
                                    ['kind', 'title', 'link_map', 'fatal', 'id'])
 
-  def __init__(self, properties, *args, **kwargs):
+  def __init__(self, *args, **kwargs):
     super(FailuresApi, self).__init__(*args, **kwargs)
 
   def _proto_to_step_status(self, proto_status):

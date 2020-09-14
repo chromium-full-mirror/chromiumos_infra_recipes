@@ -13,7 +13,3 @@ DEPS = [
     'skylab',
     'urls',
 ]
-
-from PB.recipe_modules.chromeos.failures.failures import FailuresProperties
-
-PROPERTIES = FailuresProperties
