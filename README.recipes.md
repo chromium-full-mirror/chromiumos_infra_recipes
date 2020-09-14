@@ -235,6 +235,7 @@
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
   * [git_txn:examples/full](#recipes-git_txn_examples_full)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
+  * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
   * [goma:examples/full](#recipes-goma_examples_full)
   * [goma:examples/with_goma_artifacts](#recipes-goma_examples_with_goma_artifacts)
@@ -5845,6 +5846,13 @@ Test git_footers calls.
 [DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#14)(api):**
+### *recipes* / [gitiles\_triggerer](/recipes/gitiles_triggerer.py)
+
+[DEPS](/recipes/gitiles_triggerer.py#8): [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler]
+
+Recipe that schedules jobs based on its triggers.
+
+&mdash; **def [RunSteps](/recipes/gitiles_triggerer.py#42)(api, properties):**
 ### *recipes* / [goma:examples/disable\_upload](/recipe_modules/goma/examples/disable_upload.py)
 
 [DEPS](/recipe_modules/goma/examples/disable_upload.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

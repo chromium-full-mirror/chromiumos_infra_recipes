@@ -1,0 +1,23 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.gitiles_triggerer;
+
+message GitilesTriggererProperties {
+  // Expansions allowed:
+  // - {branch}: The branch from the trigger (such as: refs/heads/{branch})
+  // - {ref}: The ref from the trigger. (such as: refs/tags/TAG)
+  // - {repo}: URL of the repo in the trigger.
+
+  // The project. Will be expanded.
+  string project = 1;
+
+  message Job {
+    // The jobs to trigger in |project|. Will be expanded.
+    string name = 1;
+  }
+  repeated Job jobs = 2;
+}
