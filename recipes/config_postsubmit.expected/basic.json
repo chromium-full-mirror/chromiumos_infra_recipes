@@ -433,35 +433,6 @@
   },
   {
     "cmd": [
-      "git",
-      "ls-files",
-      "--error-unmatch",
-      "[START_DIR]/chromiumos_workspace/src/project_public"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
-    "infra_step": true,
-    "name": "Do replicate_public_config and create CL.diff check.git ls-files",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--quiet",
-      "HEAD",
-      "[START_DIR]/chromiumos_workspace/src/project_public"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
-    "infra_step": true,
-    "name": "Do replicate_public_config and create CL.diff check.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "replicate_public_config",

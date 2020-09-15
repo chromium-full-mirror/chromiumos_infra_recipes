@@ -76,6 +76,26 @@ def _get_config_projects(api):
       regexes=['chromeos/program', 'chromeos/project'])
 
 
+def _create_cl(api, commit_info, branch_name):
+  """Creates a CL based on commit_info.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    commit_info (CommitInfo): A CommitInfo object describing how to create the
+      commit.
+    branch_name (str): Name of the branch to create the commit on.
+  """
+  with api.context(cwd=commit_info.project_path):
+    if api.git.diff_check(commit_info.project_path):
+      api.repo.start(branch_name, projects=[commit_info.project_path])
+      api.git.add([commit_info.project_path])
+      api.git.commit(commit_info.message)
+
+      # TODO(crbug.com/1092530): Add reviewers and / or automatically
+      # submit changes once this is tested.
+      api.gerrit.create_change(project=commit_info.project_path)
+
+
 def RunSteps(api):
   with api.cros_source.checkout_overlays_context(), \
     api.context(cwd=api.cros_source.workspace_path):
@@ -85,25 +105,29 @@ def RunSteps(api):
     with api.step.nest('find config repos'):
       config_projects = _get_config_projects(api)
 
-    # Defer results so that a failure on one action doesn't block later actions.
-    with api.step.defer_results():
-      for action in _ACTIONS:
-
-        # Use the name of the fn. to create step names, branch names, etc.
-        action_name = action.__name__.strip('_')
-        with api.step.nest('Do {} and create CL'.format(action_name)):
+    # One action failing should not block all later actions from running. Thus,
+    # catch StepFailures from each action and raise them later.
+    #
+    # Note that an action failing should stop the CL from being created (i.e. a
+    # failed action might create an invalid CL), and thus api.step.defer_results
+    # cannot be used.
+    step_failures = []
+    for action in _ACTIONS:
+      # Use the name of the fn. to create step names, branch names, etc.
+      action_name = action.__name__.strip('_')
+      with api.step.nest('Do {} and create CL'.format(action_name)):
+        try:
           commit_infos = action(api, config_projects)
-
           for commit_info in commit_infos:
-            with api.context(cwd=commit_info.project_path):
-              if api.git.diff_check(commit_info.project_path):
-                api.repo.start(action_name, projects=[commit_info.project_path])
-                api.git.add([commit_info.project_path])
-                api.git.commit(commit_info.message)
+            _create_cl(api, commit_info, action_name)
+        except api.step.StepFailure as e:
+          step_failures.append(e)
 
-                # TODO(crbug.com/1092530): Add reviewers and / or automatically
-                # submit changes once this is tested.
-                api.gerrit.create_change(project=commit_info.project_path)
+    # If there were any step failures, raise now.
+    if step_failures:
+      msg = '{} steps failed:'.format(len(step_failures))
+      msg += ', '.join((f.reason or f.name) for f in step_failures)
+      raise api.step.StepFailure(msg)
 
 
 def GenTests(api):
@@ -124,6 +148,7 @@ def GenTests(api):
   yield api.test(
       'basic',
       config_repos_step_data(api),
+      api.git.diff_check(True),
       api.post_process(
           post_process.StepCommandContains,
           'Do replicate_public_config and create CL.copy public config',
@@ -133,4 +158,19 @@ def GenTests(api):
               '[START_DIR]/chromiumos_workspace/src/project_public/galaxy/milkyway/sw_build_config',
           ],
       ),
+  )
+
+  yield api.test(
+      'failed_actions',
+      config_repos_step_data(api),
+      api.step_data(
+          'Do replicate_public_config and create CL.copy public config',
+          retcode=1),
+      api.post_process(post_process.DoesNotRunRE, 'git commit'),
+      api.post_process(post_process.StatusFailure),
+      api.post_process(
+          post_process.ResultReason,
+          "1 steps failed:Infra Failure: Step('Do replicate_public_config and create CL.copy public config') (retcode: 1)"
+      ),
+      api.post_process(post_process.DropExpectation),
   )
