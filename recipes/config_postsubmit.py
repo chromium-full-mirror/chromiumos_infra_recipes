@@ -88,19 +88,22 @@ def RunSteps(api):
     # Defer results so that a failure on one action doesn't block later actions.
     with api.step.defer_results():
       for action in _ACTIONS:
-        commit_infos = action(api, config_projects)
 
-        for commit_info in commit_infos:
-          with api.context(cwd=commit_info.project_path):
-            if api.git.diff_check(commit_info.project_path):
-              api.repo.start(action.__name__,
-                             projects=[commit_info.project_path])
-              api.git.add([commit_info.project_path])
-              api.git.commit(commit_info.message)
+        # Use the name of the fn. to create step names, branch names, etc.
+        action_name = action.__name__.strip('_')
+        with api.step.nest('Do {} and create CL'.format(action_name)):
+          commit_infos = action(api, config_projects)
 
-              # TODO(crbug.com/1092530): Add reviewers and / or automatically
-              # submit changes once this is tested.
-              api.gerrit.create_change(project=commit_info.project_path)
+          for commit_info in commit_infos:
+            with api.context(cwd=commit_info.project_path):
+              if api.git.diff_check(commit_info.project_path):
+                api.repo.start(action_name, projects=[commit_info.project_path])
+                api.git.add([commit_info.project_path])
+                api.git.commit(commit_info.message)
+
+                # TODO(crbug.com/1092530): Add reviewers and / or automatically
+                # submit changes once this is tested.
+                api.gerrit.create_change(project=commit_info.project_path)
 
 
 def GenTests(api):
@@ -123,7 +126,7 @@ def GenTests(api):
       config_repos_step_data(api),
       api.post_process(
           post_process.StepCommandContains,
-          'copy public config',
+          'Do replicate_public_config and create CL.copy public config',
           [
               'copytree',
               '[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway/public_sw_build_config',

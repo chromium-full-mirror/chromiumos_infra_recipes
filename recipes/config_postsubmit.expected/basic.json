@@ -385,6 +385,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Do replicate_public_config and create CL"
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -397,7 +401,10 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "copy public config"
+    "name": "Do replicate_public_config and create CL.copy public config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -412,11 +419,17 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "copy public config (2)"
+    "name": "Do replicate_public_config and create CL.copy public config (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "diff check"
+    "name": "Do replicate_public_config and create CL.diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -427,9 +440,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "diff check.git ls-files",
+    "name": "Do replicate_public_config and create CL.diff check.git ls-files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -442,21 +455,24 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "diff check.git diff",
+    "name": "Do replicate_public_config and create CL.diff check.git diff",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
-      "_replicate_public_config",
+      "replicate_public_config",
       "[START_DIR]/chromiumos_workspace/src/project_public"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "repo start"
+    "name": "Do replicate_public_config and create CL.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -466,7 +482,10 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "git add"
+    "name": "Do replicate_public_config and create CL.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -481,8 +500,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "write commit message",
+    "name": "Do replicate_public_config and create CL.write commit message",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update with filtered configs.@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
@@ -496,12 +516,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
     "infra_step": true,
-    "name": "git commit"
+    "name": "Do replicate_public_config and create CL.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public",
+    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
@@ -515,9 +539,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.repo forall",
+    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project_public|src/[START_DIR]/chromiumos_workspace/src/project_public|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -541,9 +565,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.git_cl upload",
+    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -565,9 +589,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.git_cl status",
+    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.git_cl status",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
