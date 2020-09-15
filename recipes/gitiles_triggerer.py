@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/scheduler',
+    'recipe_engine/step',
     'test_util',
 ]
 
@@ -24,22 +25,22 @@ PROPERTIES = GitilesTriggererProperties
 
 
 def _make_key(trigger):
-  """Create a key from the trigger.
-
-  This is also the expansion dictionary for the triggered jobs.
-  """
+  """Create a key from the trigger."""
   _Key = namedtuple('_Key', [u'repo', u'ref', u'branch'])
   return _Key(trigger.repo, trigger.ref, trigger.ref.replace('refs/heads/', ''))
 
 
 def _expand(item, key):
   """Expand item based on the trigger."""
-  #with open('/dev/tty', 'w') as f:
-  #  f.write('key=%s\n' % str(key._asdict()))
   return item.encode('utf-8').format(**key._asdict())
 
 
 def RunSteps(api, properties):
+  # Recipe_engine does a poor job of gathering errors if they occur before a
+  # step is created.  We do this step first thing, so that any errors can be
+  # reported as more than a contentless INFRA-FAIL.
+  api.step.nest('set up')
+
   default_project = api.buildbucket.build.builder.project
   triggers = {}
 
