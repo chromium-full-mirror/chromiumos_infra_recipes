@@ -5133,17 +5133,17 @@ Recipe for generating ChromeOS cache payloads.
 &mdash; **def [RunSteps](/recipes/cache_generate.py#21)(api):**
 ### *recipes* / [check\_fit\_image](/recipes/check_fit_image.py)
 
-[DEPS](/recipes/check_fit_image.py#43): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/check_fit_image.py#43): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Check that any binary blobs in a commit come from a valid FIT version
 
-&mdash; **def [RunSteps](/recipes/check_fit_image.py#105)(api, properties):**
+&mdash; **def [RunSteps](/recipes/check_fit_image.py#106)(api, properties):**
 
-&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#184)(version):**
+&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#198)(version):**
 
 Mock the header from the FIT tool with given version
 
-&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#202)(version='14.0.40.1206', hashes={}):**
+&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#216)(version='14.0.40.1206', hashes={}):**
 
 Mock version file contents
 
@@ -5154,7 +5154,7 @@ Args:
 Return:
   version file contents as string
 
-&mdash; **def [parse\_versions\_file](/recipes/check_fit_image.py#56)(step_name, api, path):**
+&mdash; **def [parse\_versions\_file](/recipes/check_fit_image.py#57)(step_name, api, path):**
 
 Parse a versions file containing SHA-256 hashes and binary names into a map
 

@@ -1,28 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "configure chroot path"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.ensure chroot directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_TEXT@config not found, assuming deleted@@@"
@@ -159,12 +137,165 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "mount overlay chromiumos"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/upperdir/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "mount overlay chromiumos.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/workdir/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "mount overlay chromiumos.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "mount overlay chromiumos.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
+      "overlay",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "mount overlay chromiumos.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay workspace"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/upperdir/workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/workdir/workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "overlay",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": true}",
     "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -212,10 +343,10 @@
   },
   {
     "cmd": [],
-    "name": "set CL 123456 description",
+    "name": "comment on CL 123456",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@description text@Change to 'blobs/fitimage-test-versions.txt' does not have a matching change to .bin@@@",
-      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LOG_LINE@comment text@Change to 'blobs/fitimage-test-versions.txt' does not have a matching change to .bin@@@",
+      "@@@STEP_LOG_END@comment text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/project-a/+/123456/7@@@"
     ]
   },
@@ -229,7 +360,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "set CL 123456 description.repo forall",
+    "name": "comment on CL 123456.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
@@ -241,10 +372,11 @@
       "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
-      "description",
-      "-n",
-      "-",
-      "https://chromium-review.googlesource.com/c/project-a/+/123456/7"
+      "comment",
+      "-i",
+      "123456",
+      "-a",
+      "Change to 'blobs/fitimage-test-versions.txt' does not have a matching change to .bin"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
     "env_suffixes": {
@@ -255,8 +387,33 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "set CL 123456 description.git_cl set description",
-    "stdin": "Change to 'blobs/fitimage-test-versions.txt' does not have a matching change to .bin",
+    "name": "comment on CL 123456.git_cl comment",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up overlayfs mounts"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

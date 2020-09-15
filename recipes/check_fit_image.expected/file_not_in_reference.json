@@ -1,28 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "configure chroot path"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.ensure chroot directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_TEXT@config not found, assuming deleted@@@"
@@ -156,99 +134,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@changes@\"[{\\\"project\\\": \\\"project-a\\\", \\\"host\\\": \\\"chromium-review.googlesource.com\\\", \\\"patchset\\\": \\\"7\\\", \\\"change\\\": \\\"123456\\\"}]\"@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
-    ],
-    "infra_step": true,
-    "name": "gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": false}",
-    "timeout": 600,
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-test-versions.txt\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-test.bin\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "some/path/to/ref.txt",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "reading reference file",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@ref.txt@@@@",
-      "@@@STEP_LOG_LINE@ref.txt@===============================================================================@@@",
-      "@@@STEP_LOG_LINE@ref.txt@Intel (R) Flash Image Tool. Version: 14.0.40.1206@@@",
-      "@@@STEP_LOG_LINE@ref.txt@Copyright (c) 2013 - 2020, Intel Corporation. All rights reserved.@@@",
-      "@@@STEP_LOG_LINE@ref.txt@7/29/2020 - 4:31:58 pm@@@",
-      "@@@STEP_LOG_LINE@ref.txt@===============================================================================@@@",
-      "@@@STEP_LOG_LINE@ref.txt@@@@",
-      "@@@STEP_LOG_LINE@ref.txt@@@@",
-      "@@@STEP_LOG_LINE@ref.txt@@@@",
-      "@@@STEP_LOG_LINE@ref.txt@@@@",
-      "@@@STEP_LOG_LINE@ref.txt@Program terminated.@@@",
-      "@@@STEP_LOG_LINE@ref.txt@-------------------@@@",
-      "@@@STEP_LOG_LINE@ref.txt@aea20cd7543c5be16bd85d2922b83ab0596f89e3649827bf98a56ac5dc3abace  pchc.bin@@@",
-      "@@@STEP_LOG_LINE@ref.txt@b729d22e7107f13a043f23bded067027438d02abbc084705a73158e3eba9a1d9  fit@@@",
-      "@@@STEP_LOG_LINE@ref.txt@09dfa9ee3f4ab4fcc8b86f71d5a10b1ac7118127a2f4f55695add1d631a80315  vsccommn.bin@@@",
-      "@@@STEP_LOG_LINE@ref.txt@83bf2329475611ae67016f17a3970434f416a4c5e512df0040616718ba982c41  meu@@@",
-      "@@@STEP_LOG_LINE@ref.txt@fe8a9636055dc5b6eba9bcac99092d6bacc8e38e4338ff64635ec07630711014  oem_km.bin@@@",
-      "@@@STEP_LOG_LINE@ref.txt@266a4a9b993cc503ceccf959b2061a5603ab7131fb3509f363e5d22e83e4aa87  pmc.bin@@@",
-      "@@@STEP_LOG_LINE@ref.txt@2a8c638dcda84fb63fa25e50014dc904d1d4a9a3687c39aefc9fcc9628db67b1  me.bin@@@",
-      "@@@STEP_LOG_END@ref.txt@@@"
     ]
   },
   {
@@ -404,6 +289,80 @@
     ]
   },
   {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": true}",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-test-versions.txt\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }, @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-test.bin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "project-a",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "repo forall",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "ensure synced checkout"
   },
@@ -417,8 +376,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos"
+      "[START_DIR]/chromiumos_workspace"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.ensure root path",
     "~followup_annotations": [
@@ -433,9 +393,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests"
+      "[START_DIR]/chromiumos_workspace/.repo/manifests"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests",
     "~followup_annotations": [
@@ -450,9 +410,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests.git"
+      "[START_DIR]/chromiumos_workspace/.repo/manifests.git"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests.git",
     "~followup_annotations": [
@@ -466,9 +426,10 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
-      "all"
+      "all",
+      "--verbose"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
     "timeout": 900,
@@ -487,7 +448,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -498,6 +459,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "project-a",
       "--ignore-missing",
       "-j",
       "32",
@@ -511,7 +473,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.clear git locks",
     "~followup_annotations": [
@@ -529,6 +491,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "project-a",
       "--ignore-missing",
       "-j",
       "32",
@@ -538,7 +501,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
@@ -558,7 +521,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version",
     "~followup_annotations": [
@@ -570,7 +533,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
@@ -582,7 +545,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
@@ -601,9 +564,11 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose",
+      "project-a"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.repo sync",
     "timeout": 3600,
@@ -613,23 +578,90 @@
   },
   {
     "cmd": [],
-    "name": "sync to snapshot"
+    "name": "apply gerrit patch sets"
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
-      "--format",
-      "text"
+      "git",
+      "config",
+      "--global",
+      "gc.packRefs",
+      "false"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "sync to snapshot.fetch snapshot-HEAD-SHA:snapshot.xml",
-    "timeout": 180,
+    "infra_step": true,
+    "name": "apply gerrit patch sets.git config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "apply gerrit patch sets.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project|src/project|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/project",
+      "refs/changes/56/123456/7:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "infra_step": true,
+    "name": "apply gerrit patch sets.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "infra_step": true,
+    "name": "apply gerrit patch sets.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "-m",
+      "merge gerrit changes"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "name": "apply gerrit patch sets.git merge",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "infra_step": true,
+    "name": "apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -642,244 +674,33 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
+      "some/path/to/ref.txt",
+      "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync to snapshot.write manifest",
+    "name": "reading reference file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@tmp_manifest@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
-      "--manifest-name",
-      "../tmp_manifest"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.repo init",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.clear repo locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".",
-      "-type",
-      "f",
-      "-path",
-      "./.git/*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.clear git locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--detach",
-      "--optimized-fetch",
-      "--retry-fetches",
-      "8"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.repo sync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "cherry-pick gerrit changes"
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": true}",
-    "timeout": 600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project-a\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project-a\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "config",
-      "--global",
-      "gc.packRefs",
-      "false"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "project-a",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/project-a",
-      "refs/changes/56/123456/7:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "merge",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-      "-m",
-      "merge gerrit changes"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_LOG_LINE@ref.txt@@@@",
+      "@@@STEP_LOG_LINE@ref.txt@===============================================================================@@@",
+      "@@@STEP_LOG_LINE@ref.txt@Intel (R) Flash Image Tool. Version: 14.0.40.1206@@@",
+      "@@@STEP_LOG_LINE@ref.txt@Copyright (c) 2013 - 2020, Intel Corporation. All rights reserved.@@@",
+      "@@@STEP_LOG_LINE@ref.txt@7/29/2020 - 4:31:58 pm@@@",
+      "@@@STEP_LOG_LINE@ref.txt@===============================================================================@@@",
+      "@@@STEP_LOG_LINE@ref.txt@@@@",
+      "@@@STEP_LOG_LINE@ref.txt@@@@",
+      "@@@STEP_LOG_LINE@ref.txt@@@@",
+      "@@@STEP_LOG_LINE@ref.txt@@@@",
+      "@@@STEP_LOG_LINE@ref.txt@Program terminated.@@@",
+      "@@@STEP_LOG_LINE@ref.txt@-------------------@@@",
+      "@@@STEP_LOG_LINE@ref.txt@aea20cd7543c5be16bd85d2922b83ab0596f89e3649827bf98a56ac5dc3abace  pchc.bin@@@",
+      "@@@STEP_LOG_LINE@ref.txt@b729d22e7107f13a043f23bded067027438d02abbc084705a73158e3eba9a1d9  fit@@@",
+      "@@@STEP_LOG_LINE@ref.txt@09dfa9ee3f4ab4fcc8b86f71d5a10b1ac7118127a2f4f55695add1d631a80315  vsccommn.bin@@@",
+      "@@@STEP_LOG_LINE@ref.txt@83bf2329475611ae67016f17a3970434f416a4c5e512df0040616718ba982c41  meu@@@",
+      "@@@STEP_LOG_LINE@ref.txt@fe8a9636055dc5b6eba9bcac99092d6bacc8e38e4338ff64635ec07630711014  oem_km.bin@@@",
+      "@@@STEP_LOG_LINE@ref.txt@266a4a9b993cc503ceccf959b2061a5603ab7131fb3509f363e5d22e83e4aa87  pmc.bin@@@",
+      "@@@STEP_LOG_LINE@ref.txt@2a8c638dcda84fb63fa25e50014dc904d1d4a9a3687c39aefc9fcc9628db67b1  me.bin@@@",
+      "@@@STEP_LOG_END@ref.txt@@@"
     ]
   },
   {
@@ -922,11 +743,11 @@
   },
   {
     "cmd": [],
-    "name": "set CL 123456 description",
+    "name": "comment on CL 123456",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@description text@Error(s) occurred when checking FIT image versions:@@@",
-      "@@@STEP_LOG_LINE@description text@  blobs/fitimage-test-versions.txt:    file 'some_file' not in reference versions file@@@",
-      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LOG_LINE@comment text@Error(s) occurred when checking FIT image versions:@@@",
+      "@@@STEP_LOG_LINE@comment text@  blobs/fitimage-test-versions.txt:    file 'some_file' not in reference versions file@@@",
+      "@@@STEP_LOG_END@comment text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/project-a/+/123456/7@@@"
     ]
   },
@@ -940,7 +761,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "set CL 123456 description.repo forall",
+    "name": "comment on CL 123456.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
@@ -952,10 +773,11 @@
       "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
-      "description",
-      "-n",
-      "-",
-      "https://chromium-review.googlesource.com/c/project-a/+/123456/7"
+      "comment",
+      "-i",
+      "123456",
+      "-a",
+      "Error(s) occurred when checking FIT image versions:\n  blobs/fitimage-test-versions.txt:    file 'some_file' not in reference versions file\n"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
     "env_suffixes": {
@@ -966,324 +788,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "set CL 123456 description.git_cl set description",
-    "stdin": "Error(s) occurred when checking FIT image versions:\n  blobs/fitimage-test-versions.txt:    file 'some_file' not in reference versions file\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot"
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.removing sysroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.SdkService/Clean"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.unmounting chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.SdkService/Unmount"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.SdkService/Delete"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "chmod",
-      "a+rwX,-t",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot",
+    "name": "comment on CL 123456.git_cl comment",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

@@ -41,15 +41,16 @@ from PB.recipes.chromeos.check_fit_image import CheckFitImageProperties
 PROPERTIES = CheckFitImageProperties
 
 DEPS = [
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_infra_config',
-    'cros_sdk',
+    'cros_source',
     'gerrit',
     'src_state',
+    'repo',
     'test_util',
-    'workspace_util',
 ]
 
 
@@ -107,44 +108,57 @@ def RunSteps(api, properties):
   def comment_and_quit(comment):
     """Post a comment back to all the changes we're operating on"""
     for change in api.src_state.gerrit_changes:
-      api.gerrit.set_change_description(change, comment)
+      api.gerrit.add_change_comment(change, comment)
     raise api.step.StepFailure(comment)
 
   # Setup builder with default settings (snapshot + gerrit changes applied)
   api.cros_infra_config.configure_builder()
 
-  version_files = set()
-  bin_files = set()
-  changes = api.gerrit.fetch_patch_sets(api.src_state.gerrit_changes)
-  for change in changes:
-    for fname in change.file_infos:
-      if fnmatch.fnmatch(os.path.basename(fname), "fitimage-*-versions.txt"):
-        version_files.add(fname)
+  with api.cros_source.checkout_overlays_context(), \
+       api.context(cwd=api.cros_source.workspace_path):
 
-      if fnmatch.fnmatch(os.path.basename(fname), "fitimage-*.bin"):
-        bin_files.add(fname)
+    gerrit_changes = api.src_state.gerrit_changes
 
-  # Make sure that changed files are consistent, if we change a -versions.txt,
-  # we better have made a change to the associated binary
-  for fname in version_files:
-    if not fname.replace("-versions.txt", ".bin") in bin_files:
-      comment_and_quit(
-          "Change to '%s' does not have a matching change to .bin" % fname)
+    version_files = set()
+    bin_files = set()
+    changes = api.gerrit.fetch_patch_sets(gerrit_changes, include_files=True)
+    for change in changes:
+      for fname in change.file_infos:
+        if fnmatch.fnmatch(os.path.basename(fname), "fitimage-*-versions.txt"):
+          version_files.add(fname)
 
-  for fname in bin_files:
-    if not fname.replace(".bin", "-versions.txt") in version_files:
-      comment_and_quit(
-          "Change to '%s' does not have a matching change to -versions.txt" %
-          fname)
+        if fnmatch.fnmatch(os.path.basename(fname), "fitimage-*.bin"):
+          bin_files.add(fname)
 
-  # Read reference file
-  ref_version, ref_hashes = parse_versions_file("reading reference file", api,
-                                                properties.csme_ref_path)
+    # Make sure that changed files are consistent, if we change a -versions.txt,
+    # we better have made a change to the associated binary
+    for fname in version_files:
+      if not fname.replace("-versions.txt", ".bin") in bin_files:
+        comment_and_quit(
+            "Change to '%s' does not have a matching change to .bin" % fname)
 
-  with api.workspace_util.setup_workspace(), \
-       api.cros_sdk.cleanup_context(),       \
-       api.workspace_util.sync_to_commit():
-    api.workspace_util.apply_changes()
+    for fname in bin_files:
+      if not fname.replace(".bin", "-versions.txt") in version_files:
+        comment_and_quit(
+            "Change to '%s' does not have a matching change to -versions.txt" %
+            fname)
+
+    # Figure out what projects to sync
+    project_infos = api.repo.project_infos(
+        [gc.project for gc in gerrit_changes])
+    projects = list(set([p.name for p in project_infos]))
+
+    verbose = dict(verbose=True)
+    api.cros_source.ensure_synced_cache(
+        init_opts=verbose, sync_opts=verbose,
+        cache_path_override=api.cros_source.workspace_path, projects=projects)
+
+    # And patch projects
+    api.cros_source.apply_gerrit_patch_sets(changes)
+
+    # Read reference file
+    ref_version, ref_hashes = parse_versions_file("reading reference file", api,
+                                                  properties.csme_ref_path)
 
     # Check that hashes in modified versions file match reference file
     errors = defaultdict(list)
