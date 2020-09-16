@@ -5139,11 +5139,11 @@ Check that any binary blobs in a commit come from a valid FIT version
 
 &mdash; **def [RunSteps](/recipes/check_fit_image.py#106)(api, properties):**
 
-&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#198)(version):**
+&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#199)(version):**
 
 Mock the header from the FIT tool with given version
 
-&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#216)(version='14.0.40.1206', hashes={}):**
+&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#217)(version='14.0.40.1206', hashes={}):**
 
 Mock version file contents
 

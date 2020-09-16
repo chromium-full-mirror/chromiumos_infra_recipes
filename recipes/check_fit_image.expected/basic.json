@@ -674,7 +674,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "some/path/to/ref.txt",
+      "[START_DIR]/chromiumos_workspace/some/path/to/ref.txt",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -711,7 +711,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "blobs/fitimage-test-versions.txt",
+      "[START_DIR]/chromiumos_workspace/blobs/fitimage-test-versions.txt",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

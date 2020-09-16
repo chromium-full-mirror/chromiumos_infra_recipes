@@ -157,14 +157,15 @@ def RunSteps(api, properties):
     api.cros_source.apply_gerrit_patch_sets(changes)
 
     # Read reference file
-    ref_version, ref_hashes = parse_versions_file("reading reference file", api,
-                                                  properties.csme_ref_path)
+    ref_version, ref_hashes = parse_versions_file(
+        "reading reference file", api,
+        api.context.cwd.join(properties.csme_ref_path))
 
     # Check that hashes in modified versions file match reference file
     errors = defaultdict(list)
     for verfile in version_files:
       version, hashes = parse_versions_file("reading modified versions file",
-                                            api, verfile)
+                                            api, api.context.cwd.join(verfile))
 
       if version != ref_version:
         errors[verfile].append(
