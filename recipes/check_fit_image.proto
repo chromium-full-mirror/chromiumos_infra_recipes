@@ -2,7 +2,13 @@ syntax = "proto3";
 
 package recipes.chromeos.check_fit_image;
 
+// To configure a project for FIT image checks, we just need to know the
+// project name and where to find the reference file for it.
+message FitImageConfig {
+    string repo = 1;
+    string ref_path = 2;
+}
+
 message CheckFitImageProperties {
-    string csme_ref_path = 1; // Path to csme_refs.txt file containing reference
-                              // binary blob hashes
+    repeated FitImageConfig configs = 1;
 }

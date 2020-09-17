@@ -331,6 +331,11 @@
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }, @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-test.bin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\"@@@",
@@ -353,7 +358,7 @@
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/overlays/baseboard-foo-private|src/chromeos/overlays/baseboard-foo-private|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@some/project|project|project|refs/heads/main|@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -454,7 +459,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromeos/overlays/baseboard-foo-private",
+      "some/project",
       "--ignore-missing",
       "-j",
       "32",
@@ -486,7 +491,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromeos/overlays/baseboard-foo-private",
+      "some/project",
       "--ignore-missing",
       "-j",
       "32",
@@ -561,7 +566,7 @@
       "--retry-fetches",
       "8",
       "--verbose",
-      "chromeos/overlays/baseboard-foo-private"
+      "some/project"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -663,13 +668,6 @@
   },
   {
     "cmd": [],
-    "name": "checking change 1",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {
@@ -697,7 +695,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Changed 'blobs/fitimage-test-versions.txt' but no change in binary blob"
+      "humanReason": "project '%s' not found in project info!"
     },
     "name": "$result"
   }
