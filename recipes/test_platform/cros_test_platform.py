@@ -266,7 +266,7 @@ def execute(api, requests):
     requests: ExecutionRequests payload.
   """
   with api.step.nest('execute'):
-    return api.cros_test_platform.execute_luciexe(requests)
+    return api.cros_test_platform.skylab_execute(requests)
 
 
 def _execute_requests(api, requests, enumerations, config):
@@ -675,9 +675,7 @@ def GenTests(api):
           stdout=api.raw_io.output(
               json_format.MessageToJson(
                   result_flow_pb2.publish.PublishResponse(
-                      state=result_flow_pb2.common.SUCCEEDED)))) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
-          'execute', ExecuteResponses()))
+                      state=result_flow_pb2.common.SUCCEEDED)))))
 
   # Recipe running outside Buildbucket should skip publishing build ID.
   yield (
@@ -687,9 +685,7 @@ def GenTests(api):
           CrosTestPlatformProperties(
               request=Request(), config=Config(
                   pubsub=Config.PubSub(project='foo-proj', topic='foo-topic'))))
-      +  #
-      api.cros_test_platform.set_execute_luciexe_response(
-          'execute', ExecuteResponses()))
+  )
 
   # Config missing result flow topic name should skip publishing build ID.
   yield (api.test('Recipe runs without result flow pubsub topic') +  #
@@ -697,9 +693,7 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=Request(),
-                 config=Config(pubsub=Config.PubSub(project='foo-proj')))) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute', ExecuteResponses()))
+                 config=Config(pubsub=Config.PubSub(project='foo-proj')))))
 
   # Config missing result flow project name should skip publishing build ID.
   yield (api.test('Recipe runs without result flow pubsub project') +  #
@@ -707,9 +701,7 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=Request(),
-                 config=Config(pubsub=Config.PubSub(topic='foo-topic')))) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute', ExecuteResponses()))
+                 config=Config(pubsub=Config.PubSub(topic='foo-topic')))))
 
   # An end-to-end run with ctp release version tagging.
   yield (
@@ -731,7 +723,7 @@ def GenTests(api):
           'enumerate tests',
           _test_single_enumeration('foo'),
       ) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
@@ -773,7 +765,7 @@ def GenTests(api):
           'enumerate tests',
           _test_single_enumeration('foo'),
       ) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
@@ -808,7 +800,7 @@ def GenTests(api):
              'enumerate tests',
              _test_single_enumeration('foo'),
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -847,7 +839,7 @@ def GenTests(api):
           'enumerate tests',
           _test_single_enumeration('foo'),
       ) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
@@ -894,7 +886,7 @@ def GenTests(api):
              'enumerate tests',
              _test_single_enumeration('foo'),
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -923,7 +915,7 @@ def GenTests(api):
              'enumerate tests',
              _test_single_enumeration('foo'),
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -972,7 +964,7 @@ def GenTests(api):
           'enumerate tests',
           _test_single_enumeration('foo'),
       ) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
@@ -1020,7 +1012,7 @@ def GenTests(api):
              'enumerate tests',
              _test_single_enumeration('foo'),
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1069,7 +1061,7 @@ def GenTests(api):
           'enumerate tests',
           _test_single_enumeration('foo'),
       ) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
@@ -1116,7 +1108,7 @@ def GenTests(api):
              'enumerate tests',
              _test_single_enumeration('foo'),
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1154,7 +1146,7 @@ def GenTests(api):
              'enumerate tests',
              _test_single_enumeration('foo'),
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1191,7 +1183,7 @@ def GenTests(api):
              'enumerate tests',
              _test_single_enumeration('foo'),
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1255,7 +1247,7 @@ def GenTests(api):
     }
   }''',
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1300,7 +1292,7 @@ def GenTests(api):
     }
   }''',
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1364,7 +1356,7 @@ def GenTests(api):
     }
   }''',
       ) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
