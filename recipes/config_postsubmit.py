@@ -3,7 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Runs actions on config repos after CLs are submitted.
+"""Run miscellaneous actions on project repos.
+
+Runs on a schedule rather than as a triggered/CQ action, so there is some
+latency between commits landing and this script executing its tasks.
 
 For example, if a src/project repo has filtered public configs, there can be an
 action to copy these public configs to a public repo.
@@ -12,10 +15,13 @@ Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 """
 
+import os
+
 from collections import namedtuple
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
@@ -24,6 +30,7 @@ DEPS = [
     'cros_source',
     'gerrit',
     'git',
+    'git_txn',
     'repo',
 ]
 """Represents a commit that should be made as the result of an action.
@@ -63,10 +70,63 @@ def _replicate_public_config(api, project_infos):
   return [CommitInfo(public_repo_path, 'Update with filtered configs.')]
 
 
+def _flatten_configs(api, project_infos):
+  flatten_script = api.context.cwd.join(
+      'src/config/payload_utils/flatten_config_payloads.py')
+
+  joined_config = 'generated/joined.jsonproto'
+  config_bundle = 'generated/config.jsonproto'
+  flat_config = 'generated/flattened.jsonproto'
+
+  def _flatten_config():
+    # figure out which input to use
+    input_config = joined_config
+    if not api.path.exists(joined_config):
+      api.path.mock_add_paths(config_bundle)
+      input_config = config_bundle
+
+    if api.path.exists(input_config):
+      cmd = [
+          flatten_script,
+          "--input",
+          input_config,
+          "--output",
+          flat_config,
+      ]
+
+      api.step('generate flat payload', ['vpython'] + cmd)
+      api.git.add([flat_config])
+
+    with api.step.nest("diffing to find changes"):
+      changed_files = api.git.get_diff_files('HEAD')
+      if not changed_files:
+        return False  # abort transaction
+
+    # commit files
+    message = \
+      '''Autogenerating flattened config payloads.
+
+Cr-Build-Url: %s
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatten')
+    api.git.commit(message)
+
+  for project_info in project_infos:
+    with api.context(api.context.cwd.join(project_info.path)):
+      api.git_txn.update_ref(
+          project_info.remote,
+          project_info.branch,
+          _flatten_config,
+      )
+
+  # No CLs to apply, we've already committed
+  return []
+
+
 # A list of functions to run on config repos. Each action should take a
 # RecipesApi and list of ProjectInfos as args and return a list of CommitInfos.
 _ACTIONS = [
     _replicate_public_config,
+    _flatten_configs,
 ]
 
 
@@ -173,4 +233,13 @@ def GenTests(api):
           "1 steps failed:Infra Failure: Step('Do replicate_public_config and create CL.copy public config') (retcode: 1)"
       ),
       api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'no_flattening_changes',
+      config_repos_step_data(api),
+      api.git.diff_check(True),
+      api.step_data(
+          'Do flatten_configs and create CL.git transaction.diffing to find changes.git diff',
+          stdout=api.raw_io.output('')),
   )
