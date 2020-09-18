@@ -375,7 +375,7 @@ def _load_files_coverage_data(coverage_files, build_target, diff_mapping):
   Returns:
     file_coverage_data: the loaded converge data in the coverage metadata format.
   """
-  files_coverage_data = []
+  file_coverage_data = {}
   path_to_coverage_file = {}
   for coverage_file in coverage_files:
     data = {}
@@ -389,15 +389,35 @@ def _load_files_coverage_data(coverage_files, build_target, diff_mapping):
           path = record['path']
           if path in path_to_coverage_file:
             # In the future, it may be necessary to merge files when they have coverage data from multiple packages.
-            # For now, the duplicate files are ignored.
+            # For now, the duplicate with more line coverage is selected.
             logging.warning('File %s found in %s is already covered by %s\n',
                             path, coverage_file, path_to_coverage_file[path])
-            logging.warning(
-                'Please correct the packaging mapping to remove this duplicate')
+            lc_new = None
+            for summary in record['summaries']:
+              if summary['name'] == 'line':
+                lc_new = summary
+                break
+            if lc_new is None:
+              continue
+            lc_old = None
+            for summary in file_coverage_data[path]['summaries']:
+              if summary['name'] == 'line':
+                lc_old = summary
+                break
+            if lc_old is None or lc_new['covered'] > lc_old['covered']:
+              logging.info('Updating to new version to increase line coverage')
+              path_to_coverage_file[path] = coverage_file
+              file_coverage_data[path] = record
             continue
           path_to_coverage_file[path] = coverage_file
-          files_coverage_data.append(record)
-  return files_coverage_data
+          file_coverage_data[path] = record
+  folder_counts = collections.Counter(
+      [fn[2:].split('/')[0] for fn in file_coverage_data.keys()])
+  logging.info('Files covered per folder: %s', folder_counts.most_common())
+  ext_counts = collections.Counter(
+      [os.path.splitext(fn)[1] for fn in file_coverage_data.keys()])
+  logging.info('File extension counts: %s', ext_counts.most_common())
+  return file_coverage_data.values()
 
 
 def _convert_metadata(chroot_dir, checkout_dir, project_dir, output_dir,

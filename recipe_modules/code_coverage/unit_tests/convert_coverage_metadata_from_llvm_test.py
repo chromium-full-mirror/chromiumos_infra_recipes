@@ -327,6 +327,19 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
   def test_load_files_coverage_data(self):
     expected_files_coverage_data = [
         {
+            'path': '//base/base2.cc',
+            'lines': [{
+                'count': 1,
+                'last': 1,
+                'first': 1,
+            }],
+            'summaries': [{
+                'covered': 1,
+                'name': 'line',
+                'total': 1,
+            }],
+        },
+        {
             'path':
                 '//base/base1.cc',
             'lines': [{
@@ -355,19 +368,6 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
                     'first': 4,
                 }],
                 'line': 4,
-            }],
-        },
-        {
-            'path': '//base/base2.cc',
-            'lines': [{
-                'count': 1,
-                'last': 1,
-                'first': 1,
-            }],
-            'summaries': [{
-                'covered': 1,
-                'name': 'line',
-                'total': 1,
             }],
         },
     ]
