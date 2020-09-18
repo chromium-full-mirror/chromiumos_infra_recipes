@@ -88,6 +88,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     count_skip_since_already_passed = 0
     count_skip_wait_on_other_run = 0
     count_skip_noncritical_on_rerun = 0
+    count_scheduled_slim_builds = 0
 
     with self.m.step.nest('filter builds') as presentation:
       for child_spec in child_specs:
@@ -155,6 +156,23 @@ class BuildPlanApi(recipe_api.RecipeApi):
         properties = self.m.cq.props_for_child_build
         properties.update(self.m.cros_infra_config.props_for_child_build)
 
+        # TODO(crbug.com/1123776): Remove scheduling of a full builder in
+        # addition to a slim builder after go/cros-slim-rollout parallel
+        # adoption phase.
+        if child_builder_name.endswith('-slim-cq'):
+          count_scheduled_slim_builds += 1
+          full_builder_name = self.get_full_builder_name(child_builder_name)
+          full_builder_config = self.m.cros_infra_config.get_builder_config(
+              full_builder_name)
+          full_builder_critical = full_builder_config.general.critical.value
+
+          new_build_requests.append(
+              self.m.buildbucket.schedule_request(
+                  gitiles_commit=snapshot, builder=full_builder_name,
+                  bucket=bucket, gerrit_changes=gerrit_changes,
+                  critical=full_builder_critical, tags=tags,
+                  properties=properties, swarming_parent_run_id=parent_run_id))
+
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
                 gitiles_commit=snapshot, builder=child_builder_name,
@@ -164,9 +182,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
       presentation.logs['filter log'] = filter_log
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.
+      count_total_filtered_builds = (
+          count_skip_for_source_rules + count_skip_since_already_passed +
+          count_skip_wait_on_other_run + count_skip_noncritical_on_rerun)
       presentation.step_text = ('need {} new build{} (filtered {})'.format(
           len(new_build_requests), '' if len(new_build_requests) == 1 else 's',
-          len(child_specs) - len(new_build_requests)))
+          count_total_filtered_builds))
 
       self.m.easy.set_properties_step(
           build_plan_skip_for_source_rules=count_skip_for_source_rules)
@@ -179,6 +200,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
       )
       self.m.easy.set_properties_step(
           build_plan_new_build_requests=len(new_build_requests))
+      self.m.easy.set_properties_step(
+          count_scheduled_slim_builds=count_scheduled_slim_builds)
 
     return completed_builds, filtered_snapshot_builds, new_build_requests
 
@@ -323,3 +346,19 @@ class BuildPlanApi(recipe_api.RecipeApi):
     """
     builder_spec, env_suffix = builder_name.rsplit('-', 1)
     return builder_spec + '-slim-' + env_suffix
+
+
+  # TODO(crbug.com/1123776): Remove after go/cros-slim-rollout parallel
+  # adoption phase.
+  def get_full_builder_name(self, builder_name):
+    """Returns to the name of the full variant of the builder.
+
+    Args:
+      slim_builder_name (str): The name of the slim builder for which to get the
+        full builder variant name.
+
+    Returns:
+       A string of the full builder name.
+    """
+    builder_spec, env_suffix = builder_name.split('-slim-', 1)
+    return builder_spec + '-' + env_suffix

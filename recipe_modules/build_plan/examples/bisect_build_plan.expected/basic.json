@@ -309,6 +309,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "filter builds.set count_scheduled_slim_builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@count_scheduled_slim_builds@0@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

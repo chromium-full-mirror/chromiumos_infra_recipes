@@ -34,8 +34,12 @@ def RunSteps(api):
   api.assertions.assertEqual(len(completed_builds), 1)
   api.assertions.assertEqual(completed_builds[0].builder.builder,
                              'amd64-generic-cq')
-  api.assertions.assertEqual(len(new_requests), 1)
-  api.assertions.assertEqual(new_requests[0].builder.builder, 'atlas-slim-cq')
+  # TODO(crbug.com/1123776): Restore assertions to only expect the slim builder
+  # after go/cros-slim-rollout parallel adoption.
+  api.assertions.assertEqual(len(new_requests), 2)
+  api.assertions.assertItemsEqual(
+      [new_requests[0].builder.builder, new_requests[1].builder.builder],
+      ['atlas-slim-cq', 'atlas-cq'])
 
 
 def GenTests(api):

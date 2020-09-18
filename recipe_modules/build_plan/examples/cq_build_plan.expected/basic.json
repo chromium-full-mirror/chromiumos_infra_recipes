@@ -589,7 +589,7 @@
     "cmd": [],
     "name": "filter builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@need 1 new build (filtered 4)@@@",
+      "@@@STEP_TEXT@need 2 new builds (filtered 4)@@@",
       "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_LINE@filter log@amd64-generic already passed@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-cq is non-critical and this is a CQ rerun@@@",
@@ -635,7 +635,15 @@
     "name": "filter builds.set build_plan_new_build_requests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@1@@@"
+      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.set count_scheduled_slim_builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@count_scheduled_slim_builds@1@@@"
     ]
   },
   {
