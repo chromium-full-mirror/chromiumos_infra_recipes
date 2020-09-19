@@ -4450,7 +4450,7 @@
       "--depth",
       "2",
       "--dir",
-      "/b/s/w/ir/cache"
+      "[CACHE]"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "upload artifacts.track disk usage",

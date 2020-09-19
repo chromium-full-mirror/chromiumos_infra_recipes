@@ -214,7 +214,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           req, infra_step=True, test_output_data=test_data)
     except Exception as e:  # pragma: nocover
       self.m.disk_usage.track(step_name='track disk usage', depth=2,
-                              dir='/b/s/w/ir/cache')
+                              dir=self.m.path['cache'])
       raise e
 
     # Create files_by_artifact.
@@ -260,8 +260,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             func(chroot, sysroot, outpath, types, artifacts_info.profile_info))
     except Exception as e:  # pragma: nocover
       self.m.disk_usage.track(step_name='track disk usage', depth=0)
-      self.m.disk_usage.track(step_name='track disk usage', depth=1,
-                              dir='/b/s/w/')
+      self.m.disk_usage.track(
+          step_name='track disk usage', depth=1,
+          dir='/'.join(str(self.m.path['cache']).split('/')[:-2]))
       raise e
 
     return {
