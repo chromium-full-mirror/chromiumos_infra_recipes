@@ -13,13 +13,15 @@ See https://crbug.com/1068743.
 
 DEPS = [
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
+    'depot_tools/depot_tools',
     'git',
     'git_cl',
 ]
 
-import glob
+from recipe_engine import post_process
 
 
 def RunSteps(api):
@@ -27,8 +29,8 @@ def RunSteps(api):
          'chrome/tools/build/internal.DEPS')
   path = api.path.mkdtemp()
   try:
-    with api.step.nest(
-        'attempt forge commit to %s' % url), api.context(cwd=path):
+    with api.step.nest('attempt forge commit to %s' %
+                       url), api.context(cwd=path):
       api.git.set_global_config(['--list'])
       api.git.clone(url, timeout_sec=5 * 60)
       api.step('add trailing whitespace to DEPS',
@@ -39,10 +41,20 @@ def RunSteps(api):
       api.git_cl.upload(name='git cl upload')
       api.git.push(url, 'master')
   finally:
-    zips = glob.glob('/b/s/w/ir/kitchen-checkout/depot_tools/traces/*.zip')
+    zips = api.file.glob_paths('glob traces', api.depot_tools.root,
+                               'traces/*.zip')
     zips = (['zcat'] + zips) if zips else None
     not zips or api.step('dump git-cl trace logs', zips)
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic', api.post_check(post_process.DoesNotRun,
+                              'dump git-cl trace logs'))
+
+  yield api.test(
+      'with-traces',
+      api.step_data(
+          'glob traces',
+          api.file.glob_paths(['traces/20200918T145509.172161-traces.zip'])),
+      api.post_check(post_process.MustRun, 'dump git-cl trace logs'))

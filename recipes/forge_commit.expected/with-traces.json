@@ -146,8 +146,16 @@
     "infra_step": true,
     "name": "glob traces",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@glob@RECIPE_REPO[depot_tools]/traces/20200918T145509.172161-traces.zip@@@",
       "@@@STEP_LOG_END@glob@@@"
     ]
+  },
+  {
+    "cmd": [
+      "zcat",
+      "RECIPE_REPO[depot_tools]/traces/20200918T145509.172161-traces.zip"
+    ],
+    "name": "dump git-cl trace logs"
   },
   {
     "name": "$result"
