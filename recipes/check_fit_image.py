@@ -82,7 +82,7 @@ def parse_versions_file(step_name, api, path):
     line = contents[offset]
 
     # Check for version string
-    match = re.search("Version:\s*([^\s]*)$", line)
+    match = re.search("Version:\s*([^\s]*)", line)
     if match:
       version = match.group(1)
 
