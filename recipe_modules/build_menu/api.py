@@ -37,8 +37,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
     super(BuildMenuApi, self).__init__(*args, **kwargs)
     self._chroot_created = False
     self._dep_graph = None
-    self._is_slim = False
-
     # Our properties: BuildMenuProperties ($chromeos/build_menu).
     # TODO(crbug/1099259): Inherit missing properties from the recipe.
     if not props.build_target.name:
@@ -110,7 +108,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
     with self.m.bot_cost.build_cost_context():
       build = self.m.buildbucket.build
       changes = build.input.gerrit_changes
-      self._is_slim = build.builder.builder.endswith('-slim-cq')
       config = self.m.cros_infra_config.configure_builder(
           self.m.buildbucket.gitiles_commit, changes, is_staging=is_staging)
       if (changes and config and not config.build.apply_gerrit_changes):
@@ -302,7 +299,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     install_packages = config.build.install_packages
     relevant_packages = packages
-    if self._is_slim:
+    if (config.build.install_packages.dependencies ==
+        BuilderConfig.CL_AFFECTED_DEPENDENCIES):
       relevant_packages = self.m.cros_relevance.get_package_dependencies(
           sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
           patch_sets=self.m.workspace_util.patch_sets, packages=packages)
@@ -343,11 +341,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if self.m.cros_infra_config.should_run(unit_tests.ebuilds_run_spec):
       with self.m.step.nest('run ebuild tests') as presentation:
         relevant_testable_packages = unit_tests.packages
-        if self._is_slim:
+        testable_packages_optional = False
+        if (config.unit_tests.dependencies ==
+            BuilderConfig.CL_AFFECTED_DEPENDENCIES):
           relevant_testable_packages = self.m.cros_relevance.get_package_dependencies(
               sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
               patch_sets=self.m.workspace_util.patch_sets,
               packages=unit_tests.packages)
+          testable_packages_optional = True
         response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
             BuildTargetUnitTestRequest(
                 build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
@@ -357,7 +358,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
                 flags=BuildTargetUnitTestRequest.Flags(
                     code_coverage=self._test_with_code_coverage,
                     empty_sysroot=unit_tests.empty_sysroot,
-                    testable_packages_optional=self._is_slim)),
+                    testable_packages_optional=testable_packages_optional)),
             # Allow 2.5 hours for this step because the change associated with
             # https://bugs.chromium.org/p/chromium/issues/detail?id=1095661#c76
             # dumps additional debug at 2 hours.
