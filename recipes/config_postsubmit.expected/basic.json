@@ -605,9 +605,16 @@
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.git transaction",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -619,9 +626,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction.git fetch",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -632,9 +639,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction.git rev-parse",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -646,24 +653,32 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction.git checkout",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.find input config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@generated/config.jsonproto@@@"
     ]
   },
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/flatten_config_payloads.py",
+      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/flatten_config_payload.py",
       "--input",
       "generated/config.jsonproto",
       "--output",
       "generated/flattened.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
-    "name": "Do flatten_configs and create CL.git transaction.generate flat payload",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.generate flat payload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -674,16 +689,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction.git add",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.git transaction.diffing to find changes",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.diffing to find changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -695,9 +710,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction.diffing to find changes.git diff",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.diffing to find changes.git diff",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -713,9 +728,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction.write commit message",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Autogenerating flattened config payloads.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
@@ -732,9 +747,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction.git commit",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -747,17 +762,24 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction.git push",
+    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.git transaction (2)",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -769,9 +791,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction (2).git fetch",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -782,9 +804,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction (2).git rev-parse",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -796,24 +818,32 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction (2).git checkout",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.find input config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@generated/config.jsonproto@@@"
     ]
   },
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/flatten_config_payloads.py",
+      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/flatten_config_payload.py",
       "--input",
       "generated/config.jsonproto",
       "--output",
       "generated/flattened.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
-    "name": "Do flatten_configs and create CL.git transaction (2).generate flat payload",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.generate flat payload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -824,16 +854,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction (2).git add",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.git transaction (2).diffing to find changes",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.diffing to find changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -845,9 +875,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction (2).diffing to find changes.git diff",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.diffing to find changes.git diff",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -863,9 +893,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction (2).write commit message",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@Autogenerating flattened config payloads.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
@@ -882,9 +912,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction (2).git commit",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -897,9 +927,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.git transaction (2).git push",
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

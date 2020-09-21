@@ -76,20 +76,23 @@ def _replicate_public_config(api, project_infos):
 
 def _flatten_configs(api, project_infos):
   flatten_script = api.context.cwd.join(
-      'src/config/payload_utils/flatten_config_payloads.py')
+      'src/config/payload_utils/flatten_config_payload.py')
 
   joined_config = 'generated/joined.jsonproto'
   config_bundle = 'generated/config.jsonproto'
   flat_config = 'generated/flattened.jsonproto'
 
   def _flatten_config():
-    # figure out which input to use
-    input_config = joined_config
-    if not api.path.exists(joined_config):
-      api.path.mock_add_paths(config_bundle)
-      input_config = config_bundle
+    with api.step.nest('find input config') as presentation:
+      # figure out which input to use
+      input_config = joined_config
+      if not api.path.exists(api.context.cwd.join(input_config)):
+        input_config = config_bundle
+      presentation.step_text = input_config
 
-    if api.path.exists(input_config):
+    full_input = api.context.cwd.join(input_config)
+    api.path.mock_add_paths(full_input)
+    if api.path.exists(full_input):
       cmd = [
           flatten_script,
           "--input",
@@ -101,28 +104,31 @@ def _flatten_configs(api, project_infos):
       api.step('generate flat payload', ['vpython'] + cmd)
       api.git.add([flat_config])
 
-    with api.step.nest("diffing to find changes"):
-      changed_files = api.git.get_diff_files('HEAD')
-      if not changed_files:
-        return False  # abort transaction
+      with api.step.nest("diffing to find changes"):
+        changed_files = api.git.get_diff_files('HEAD')
+        if not changed_files:
+          return False  # abort transaction
 
-    # commit files
-    message = \
-      '''Autogenerating flattened config payloads.
+      # commit files
+      message = \
+        '''Autogenerating flattened config payloads.
 
 Cr-Build-Url: %s
 Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatten')
-    api.git.commit(message)
+      api.git.commit(message)
 
   for project_info in project_infos:
-    with api.context(api.context.cwd.join(project_info.path)):
-      api.git_txn.update_ref(
-          project_info.remote,
-          project_info.branch,
-          _flatten_config,
-      )
+    with api.step.nest('processing %s' % project_info.name) as presentation,\
+         api.context(api.context.cwd.join(project_info.path)):
+      try:
+        api.git_txn.update_ref(
+            project_info.remote,
+            project_info.branch,
+            _flatten_config,
+        )
+      except api.step.StepFailure:
+        presentation.status = 'WARNING'
 
-  # No CLs to apply, we've already committed
   return []
 
 
@@ -244,6 +250,18 @@ def GenTests(api):
       config_repos_step_data(api),
       api.git.diff_check(True),
       api.step_data(
-          'Do flatten_configs and create CL.git transaction.diffing to find changes.git diff',
+          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.diffing to find changes.git diff',
           stdout=api.raw_io.output('')),
+      api.step_data(
+          'Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.diffing to find changes.git diff',
+          stdout=api.raw_io.output('')),
+  )
+
+  yield api.test(
+      'flattening_error',
+      config_repos_step_data(api),
+      api.git.diff_check(True),
+      api.step_data(
+          'Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.generate flat payload',
+          retcode=1),
   )
