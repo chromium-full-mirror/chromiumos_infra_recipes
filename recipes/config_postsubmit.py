@@ -65,6 +65,10 @@ def _replicate_public_config(api, project_infos):
       _, program_name = api.path.split(dirname)
       dest_path = public_repo_path.join(program_name, project_name,
                                         'sw_build_config')
+
+      # file.copytree will fail if the destination exists. Thus, remove
+      # dest_path before doing the copy.
+      api.file.rmtree('remove dest dir', dest_path)
       api.file.copytree('copy public config', public_config_path, dest_path)
 
   return [CommitInfo(public_repo_path, 'Update with filtered configs.')]
