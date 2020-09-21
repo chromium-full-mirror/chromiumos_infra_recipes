@@ -90,32 +90,35 @@ def _flatten_configs(api, project_infos):
         input_config = config_bundle
       presentation.step_text = input_config
 
-    full_input = api.context.cwd.join(input_config)
-    api.path.mock_add_paths(full_input)
-    if api.path.exists(full_input):
-      cmd = [
-          flatten_script,
-          "--input",
-          input_config,
-          "--output",
-          flat_config,
-      ]
+      full_input = api.context.cwd.join(input_config)
+      if not api.path.exists(full_input):
+        presentation.step_summary_text = "(does not exist)"
+        return False  # abort transaction
 
-      api.step('generate flat payload', ['vpython'] + cmd)
-      api.git.add([flat_config])
+    # have input selected and we know it exists
+    cmd = [
+        flatten_script,
+        "--input",
+        input_config,
+        "--output",
+        flat_config,
+    ]
 
-      with api.step.nest("diffing to find changes"):
-        changed_files = api.git.get_diff_files('HEAD')
-        if not changed_files:
-          return False  # abort transaction
+    api.step('generate flat payload', ['vpython'] + cmd)
+    api.git.add([flat_config])
 
-      # commit files
-      message = \
-        '''Autogenerating flattened config payloads.
+    with api.step.nest("diffing to find changes"):
+      changed_files = api.git.get_diff_files('HEAD')
+      if not changed_files:
+        return False  # abort transaction
+
+    # commit files
+    message = \
+      '''Autogenerating flattened config payloads.
 
 Cr-Build-Url: %s
 Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatten')
-      api.git.commit(message)
+    api.git.commit(message)
 
   for project_info in project_infos:
     with api.step.nest('processing %s' % project_info.name) as presentation,\
@@ -245,23 +248,75 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
+  # flattening stage tests
+  def StepSummaryEquals(check, step_odict, step, expected):
+    """Check that the step's step_summary_text equals given value.
+
+    Args:
+      step (str) - The step to check the step_text of
+      expected (str) - The expected value of the step_text
+
+    Usage:
+      yield TEST + api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
+    """
+    check(step_odict[step].step_summary_text == expected)
+
+  def mock_payloads(fname):
+    return api.path.exists(api.path['start_dir'].join(
+        'chromiumos_workspace/src/project/galaxy/milkyway/generated/%s' %
+        fname))
+
+  yield api.test(
+      'flattening_basic',
+      config_repos_step_data(api),
+      mock_payloads("config.jsonproto"),
+      api.git.diff_check(True),
+      api.post_process(
+          post_process.MustRun,
+          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git push'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git push'
+      ),
+  )
+
   yield api.test(
       'no_flattening_changes',
       config_repos_step_data(api),
+      mock_payloads("config.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
           'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.diffing to find changes.git diff',
           stdout=api.raw_io.output('')),
-      api.step_data(
-          'Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.diffing to find changes.git diff',
-          stdout=api.raw_io.output('')),
+      api.post_process(
+          post_process.DoesNotRun,
+          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git push'
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git push'
+      ),
   )
 
   yield api.test(
       'flattening_error',
       config_repos_step_data(api),
-      api.git.diff_check(True),
+      mock_payloads("config.jsonproto"),
       api.step_data(
-          'Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.generate flat payload',
+          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.generate flat payload',
           retcode=1),
+      api.post_process(
+          post_process.DoesNotRun,
+          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git push'
+      ),
+  )
+
+  yield api.test(
+      'no_input_files',
+      config_repos_step_data(api),
+      api.post_process(
+          StepSummaryEquals,
+          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.find input config',
+          "(does not exist)"),
   )
