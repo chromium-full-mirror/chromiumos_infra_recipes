@@ -327,12 +327,12 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-foo-versions.txt\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"fitimage-foo-versions.txt\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-foo.bin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"fitimage-foo.bin\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
@@ -368,12 +368,12 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-bar-versions.txt\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"fitimage-bar-versions.txt\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-bar.bin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"fitimage-bar.bin\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
@@ -409,7 +409,7 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-baz.bin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"fitimage-baz.bin\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
@@ -938,6 +938,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "checking change 1.checking fitimage-foo-versions.txt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -945,14 +952,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/blobs/fitimage-foo-versions.txt",
+      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/fitimage-foo-versions.txt",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
     "infra_step": true,
-    "name": "checking change 1.read modified file",
+    "name": "checking change 1.checking fitimage-foo-versions.txt.read modified file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@fitimage-foo-versions.txt@@@@",
       "@@@STEP_LOG_LINE@fitimage-foo-versions.txt@===============================================================================@@@",
       "@@@STEP_LOG_LINE@fitimage-foo-versions.txt@Intel (R) Flash Image Tool. Version: 14.0.40.1206@@@",
@@ -973,6 +980,20 @@
       "@@@STEP_LOG_LINE@fitimage-foo-versions.txt@266a4a9b993cc503ceccf959b2061a5603ab7131fb3509f363e5d22e83e4aa87  pmc.bin@@@",
       "@@@STEP_LOG_LINE@fitimage-foo-versions.txt@2a8c638dcda84fb63fa25e50014dc904d1d4a9a3687c39aefc9fcc9628db67b1  me.bin@@@",
       "@@@STEP_LOG_END@fitimage-foo-versions.txt@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checking change 1.checking fitimage-foo-versions.txt.check that FIT versions match",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checking change 1.checking fitimage-foo-versions.txt.check that hashes match reference file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1018,6 +1039,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "checking change 2.checking fitimage-bar-versions.txt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -1025,14 +1053,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private/blobs/fitimage-bar-versions.txt",
+      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private/fitimage-bar-versions.txt",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
     "infra_step": true,
-    "name": "checking change 2.read modified file",
+    "name": "checking change 2.checking fitimage-bar-versions.txt.read modified file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@fitimage-bar-versions.txt@@@@",
       "@@@STEP_LOG_LINE@fitimage-bar-versions.txt@===============================================================================@@@",
       "@@@STEP_LOG_LINE@fitimage-bar-versions.txt@Intel (R) Flash Image Tool. Version: 14.0.40.1206@@@",
@@ -1053,6 +1081,20 @@
       "@@@STEP_LOG_LINE@fitimage-bar-versions.txt@266a4a9b993cc503ceccf959b2061a5603ab7131fb3509f363e5d22e83e4aa87  pmc.bin@@@",
       "@@@STEP_LOG_LINE@fitimage-bar-versions.txt@2a8c638dcda84fb63fa25e50014dc904d1d4a9a3687c39aefc9fcc9628db67b1  me.bin@@@",
       "@@@STEP_LOG_END@fitimage-bar-versions.txt@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checking change 2.checking fitimage-bar-versions.txt.check that FIT versions match",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checking change 2.checking fitimage-bar-versions.txt.check that hashes match reference file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

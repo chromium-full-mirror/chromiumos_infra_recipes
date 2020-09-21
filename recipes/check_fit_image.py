@@ -169,7 +169,7 @@ def RunSteps(api, properties):
         if not project in project_paths:
           _quit("project '%s' not found in project info!")
 
-        with api.step.nest("checking change %d" % (cnt+1)),\
+        with api.step.nest("checking change %d" % (cnt+1)) as presentation,\
              api.context(cwd=api.context.cwd.join(project_paths[project])):
 
           # Make sure that changed files are consistent, if we change a
@@ -196,6 +196,10 @@ def RunSteps(api, properties):
                   "Changed '%s' but no change in versions file" % fname,
               )
 
+          if not txt_files:
+            presentation.step_summary_text = "No FIT image changes found, quitting"
+            continue
+
           # Read reference file
           ref_version, ref_hashes = parse_versions_file(
               "read reference file",
@@ -206,25 +210,28 @@ def RunSteps(api, properties):
           # Check that hashes in modified versions file match reference file
           errors = defaultdict(list)
           for verfile in txt_files:
-            version, hashes = parse_versions_file(
-                "read modified file",
-                api,
-                api.context.cwd.join(verfile),
-            )
+            with api.step.nest("checking %s" % verfile):
+              version, hashes = parse_versions_file(
+                  "read modified file",
+                  api,
+                  api.context.cwd.join(verfile),
+              )
 
-            if version != ref_version:
-              errors[verfile].append(
-                  "FIT tool versions don't match (ref: %s  ours: %s)" %
-                  (version, ref_version))
+              with api.step.nest("check that FIT versions match"):
+                if version != ref_version:
+                  errors[verfile].append(
+                      "FIT tool versions don't match (ref: %s  ours: %s)" %
+                      (version, ref_version))
 
-            for blobname, sha256 in hashes.items():
-              if blobname not in ref_hashes:
-                errors[verfile].append(
-                    "file '%s' not in reference versions file" % blobname)
-              elif ref_hashes[blobname] != sha256:
-                errors[verfile].append(
-                    "hash for '%s' doesn't match ('%s... != '%s...')" %
-                    (blobname, sha256[:8], ref_hashes[blobname][:8]))
+              with api.step.nest("check that hashes match reference file"):
+                for blobname, sha256 in hashes.items():
+                  if blobname not in ref_hashes:
+                    errors[verfile].append(
+                        "file '%s' not in reference versions file" % blobname)
+                  elif ref_hashes[blobname] != sha256:
+                    errors[verfile].append(
+                        "hash for '%s' doesn't match ('%s... != '%s...')" %
+                        (blobname, sha256[:8], ref_hashes[blobname][:8]))
 
           # Format error message if needed
           if errors:
@@ -296,6 +303,18 @@ def mock_version_file(version="14.0.40.1206", hashes={}):
 
 def GenTests(api):
 
+  def StepSummaryEquals(check, step_odict, step, expected):
+    """Check that the step's step_summary_text equals given value.
+
+    Args:
+      step (str) - The step to check the step_text of
+      expected (str) - The expected value of the step_text
+
+    Usage:
+      yield TEST + api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
+    """
+    check(step_odict[step].step_summary_text == expected)
+
   def properties_dict(extra_props={}):
     """Returns a dict of basic valid properties, updated with extra_props."""
     props = {
@@ -351,22 +370,33 @@ def GenTests(api):
     """Mock text file contents for given step name"""
     return api.step_data(step_name, api.file.read_text(text))
 
+  def mock_modified_file(change, filename, text):
+    return mock_file(
+        'checking change %d.checking %s.read modified file' %
+        (change, filename), text)
+
   # Putting this in a test will break it and make it print the step names for us
   bad_step_data = api.step_data("__bad_step_name__",
                                 stdout=api.raw_io.output(""))
 
   # Define a basic set of changes to input to the builder
-  basic_config = [
-      ("foo", ["blobs/fitimage-test.bin", "blobs/fitimage-test-versions.txt"])
-  ]
+  basic_config = [("foo", ["fitimage-test.bin", "fitimage-test-versions.txt"])]
 
   # Standard run through that should succeed, changes match reference.
   yield api.test(
       "basic",
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
-      mock_file("checking change 1.read modified file", mock_version_file()),
+      mock_modified_file(1, "fitimage-test-versions.txt", mock_version_file()),
       api.post_process(post_process.StatusSuccess),
+  )
+
+  # No changes, should do nothing
+  yield api.test(
+      "nothing_to_do",
+      setup_build([("foo", [])]),
+      api.post_process(StepSummaryEquals, "checking change 1",
+                       "No FIT image changes found, quitting"),
   )
 
   # Not getting project info from `repo forall` should be an error.
@@ -385,8 +415,8 @@ def GenTests(api):
       "non_match_hashes",
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
-      mock_file(
-          "checking change 1.read modified file",
+      mock_modified_file(
+          1, "fitimage-test-versions.txt",
           mock_version_file(
               hashes={
                   "pchc.bin":
@@ -410,8 +440,8 @@ def GenTests(api):
       "no_version_information_in_input",
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
-      mock_file(
-          "checking change 1.read modified file",
+      mock_modified_file(
+          1, "fitimage-test-versions.txt",
           mock_version_file(
               version="", hashes={
                   "pchc.bin":
@@ -424,14 +454,14 @@ def GenTests(api):
   # Fail if we modified a -versions.txt but not the corresponding .bin file
   yield api.test(
       "no_matching_bin_change",
-      setup_build([("foo", ["blobs/fitimage-test-versions.txt"])]),
+      setup_build([("foo", ["fitimage-test-versions.txt"])]),
       api.post_process(post_process.ResultReasonRE, "no change in binary blob"),
   )
 
   # Fail if we modified a .bin file but not the corresponding -versions.txt
   yield api.test(
       "no_matching_version_change",
-      setup_build([("foo", ["blobs/fitimage-test.bin"])]),
+      setup_build([("foo", ["fitimage-test.bin"])]),
       api.post_process(post_process.ResultReasonRE,
                        "no change in versions file"),
   )
@@ -442,8 +472,8 @@ def GenTests(api):
       setup_build(basic_config),
       mock_file("checking change 1.read reference file",
                 mock_version_file("14.1.2.2")),
-      mock_file(
-          "checking change 1.read modified file",
+      mock_modified_file(
+          1, "fitimage-test-versions.txt",
           mock_version_file(
               version="14.1.2.3", hashes={
                   "pchc.bin":
@@ -458,8 +488,8 @@ def GenTests(api):
       "file_not_in_reference",
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
-      mock_file(
-          "checking change 1.read modified file",
+      mock_modified_file(
+          1, "fitimage-test-versions.txt",
           mock_version_file(
               hashes={
                   "some_file":
@@ -470,19 +500,17 @@ def GenTests(api):
   )
 
   # Define set of changes to simulate stacked CLs
-  stacked_config = [
-      ("foo", ["blobs/fitimage-foo.bin", "blobs/fitimage-foo-versions.txt"]),
-      ("bar", ["blobs/fitimage-bar.bin", "blobs/fitimage-bar-versions.txt"]),
-      ("baz", ["blobs/fitimage-baz.bin"])
-  ]
+  stacked_config = [("foo", ["fitimage-foo.bin", "fitimage-foo-versions.txt"]),
+                    ("bar", ["fitimage-bar.bin", "fitimage-bar-versions.txt"]),
+                    ("baz", ["fitimage-baz.bin"])]
 
   # Standard run through that should succeed, changes match reference.
   yield api.test(
       "stacked_basic",
       setup_build(stacked_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
-      mock_file("checking change 1.read modified file", mock_version_file()),
+      mock_modified_file(1, "fitimage-foo-versions.txt", mock_version_file()),
       mock_file("checking change 2.read reference file", mock_version_file()),
-      mock_file("checking change 2.read modified file", mock_version_file()),
+      mock_modified_file(2, "fitimage-bar-versions.txt", mock_version_file()),
       api.post_process(post_process.StatusSuccess),
   )

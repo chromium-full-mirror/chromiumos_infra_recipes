@@ -327,12 +327,12 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-test-versions.txt\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"fitimage-test-versions.txt\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-test.bin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"fitimage-test.bin\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
@@ -712,6 +712,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "checking change 1.checking fitimage-test-versions.txt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -719,14 +726,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/blobs/fitimage-test-versions.txt",
+      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/fitimage-test-versions.txt",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
     "infra_step": true,
-    "name": "checking change 1.read modified file",
+    "name": "checking change 1.checking fitimage-test-versions.txt.read modified file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@fitimage-test-versions.txt@@@@",
       "@@@STEP_LOG_LINE@fitimage-test-versions.txt@===============================================================================@@@",
       "@@@STEP_LOG_LINE@fitimage-test-versions.txt@Intel (R) Flash Image Tool. Version: 14.0.40.1206@@@",
@@ -748,6 +755,20 @@
       "@@@STEP_LOG_LINE@fitimage-test-versions.txt@99081120082572661c06113483d122c80ae0aed8c05e304ad4141a7a84a4b0df  some_file@@@",
       "@@@STEP_LOG_LINE@fitimage-test-versions.txt@2a8c638dcda84fb63fa25e50014dc904d1d4a9a3687c39aefc9fcc9628db67b1  me.bin@@@",
       "@@@STEP_LOG_END@fitimage-test-versions.txt@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checking change 1.checking fitimage-test-versions.txt.check that FIT versions match",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checking change 1.checking fitimage-test-versions.txt.check that hashes match reference file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -779,7 +800,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Error(s) occurred when checking FIT image versions:\n  blobs/fitimage-test-versions.txt:    file 'some_file' not in reference versions file\n"
+      "humanReason": "Error(s) occurred when checking FIT image versions:\n  fitimage-test-versions.txt:    file 'some_file' not in reference versions file\n"
     },
     "name": "$result"
   }

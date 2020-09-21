@@ -327,12 +327,12 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-test-versions.txt\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"fitimage-test-versions.txt\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"blobs/fitimage-test.bin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"fitimage-test.bin\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"M\"@@@",
@@ -712,6 +712,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "checking change 1.checking fitimage-test-versions.txt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -719,14 +727,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/blobs/fitimage-test-versions.txt",
+      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/fitimage-test-versions.txt",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
     "infra_step": true,
-    "name": "checking change 1.read modified file",
+    "name": "checking change 1.checking fitimage-test-versions.txt.read modified file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@fitimage-test-versions.txt@@@@",
       "@@@STEP_LOG_LINE@fitimage-test-versions.txt@===============================================================================@@@",
       "@@@STEP_LOG_LINE@fitimage-test-versions.txt@Intel (R) Flash Image Tool. Version: @@@",
@@ -778,7 +786,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "FIT version information not found in '[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/blobs/fitimage-test-versions.txt'"
+      "humanReason": "FIT version information not found in '[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/fitimage-test-versions.txt'"
     },
     "name": "$result"
   }
