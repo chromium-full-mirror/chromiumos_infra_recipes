@@ -36,6 +36,7 @@ class SrcStateApi(recipe_api.RecipeApi):
   def initialize(self):
     self._gitiles_commit = None
     self._gerrit_changes = None
+    self._build_manifest = None
 
   @property
   def workspace_path(self):
@@ -68,6 +69,32 @@ class SrcStateApi(recipe_api.RecipeApi):
       (ManifestProject): information about the external manifest.
     """
     return common.ManifestProject.by_name('external', self.workspace_path)
+
+  @property
+  def build_manifest(self):
+    """Information about the manifest for this build.
+
+    Provides information about the manifest for this build. The default is the
+    external manifest.
+
+    Returns:
+      (ManifestProject): information about the manifest for this build.
+    """
+    return (self._build_manifest or
+            common.ManifestProject.by_name('external', self.workspace_path))
+
+  @build_manifest.setter
+  def build_manifest(self, build_manifest):
+    """Set the manifest that will be used for the build.
+
+    Sets the manifest used by this builder.
+
+    Args:
+      (ManifestProject): information about the manifest for this build.
+    """
+    if build_manifest != self._build_manifest:
+      with self.m.step.nest('update src_state.build_manifest'):
+        self._build_manifest = build_manifest
 
   @property
   def gitiles_commit(self):

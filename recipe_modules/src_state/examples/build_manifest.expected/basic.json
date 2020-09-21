@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "update src_state.build_manifest"
+  },
+  {
+    "cmd": [],
+    "name": "update src_state.build_manifest (2)"
+  },
+  {
+    "name": "$result"
+  }
+]

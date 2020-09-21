@@ -326,9 +326,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       changes = extra_changes + [x for x in changes if x not in extra_changes]
       changed = True
 
+    manifest_url = 'https://{}/{}'.format(commit.host, commit.project)
+    manifest = (
+        self.m.src_state.internal_manifest
+        if manifest_url == self.m.src_state.internal_manifest.url else
+        self.m.src_state.external_manifest)
+
     # Record the decision for later.  Saving the values in src_state will log
     # what we chose to use (rather than what we were given.)
     self.m.src_state.gitiles_commit = commit
+    self.m.src_state.build_manifest = manifest
     self.m.src_state.gerrit_changes = changes or []
 
   def _get_package_git_revision(self):

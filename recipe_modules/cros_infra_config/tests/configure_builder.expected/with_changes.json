@@ -81,6 +81,13 @@
   },
   {
     "cmd": [],
+    "name": "configure builder.update src_state.build_manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "configure builder.update src_state.gerrit_changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
