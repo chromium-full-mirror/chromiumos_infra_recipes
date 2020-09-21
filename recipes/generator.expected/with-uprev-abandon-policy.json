@@ -780,6 +780,8 @@
       "-p",
       "topic=chromeos-base/chromite",
       "-p",
+      "branch=master",
+      "-p",
       "status=open"
     ],
     "env": {
@@ -840,6 +842,8 @@
       "/path/to/tmp/json",
       "-p",
       "topic=chromeos-base/chromite",
+      "-p",
+      "branch=master",
       "-p",
       "status=open"
     ],
@@ -909,6 +913,8 @@
       "/path/to/tmp/json",
       "-p",
       "topic=chromeos-base/chromite",
+      "-p",
+      "branch=master",
       "-p",
       "status=merged",
       "-p",
@@ -1078,6 +1084,8 @@
       "/path/to/tmp/json",
       "-p",
       "topic=chromeos-base/chromite",
+      "-p",
+      "branch=master",
       "-p",
       "status=merged",
       "-p",

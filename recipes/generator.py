@@ -115,6 +115,7 @@ def RunSteps(api, properties):
 
     # Check out the appropriate branch, and use the appropriate policy.
     policy = global_policy
+    branch = 'master'
     if properties.branch_policies:
       with api.step.nest('determine branch') as pres:
         # TODO(b/167619469): handle the case where we get multiple triggers.
@@ -125,6 +126,7 @@ def RunSteps(api, properties):
         policy_info = _get_policy(api, triggers[0], policies)
         policy = policy_info.policy
         if policy_info.branch:
+          branch = policy_info.branch
           pres.step_text = 'using {} {}'.format(policy_info.branch,
                                                 policy_info.reference.hash)
           api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
@@ -222,6 +224,7 @@ def RunSteps(api, properties):
           host_url = 'https://{}-review.googlesource.com'.format(host)
           open_changes.extend(
               api.gerrit.query_changes(host_url, [('topic', topic),
+                                                  ('branch', branch),
                                                   ('status', 'open')]))
 
     mrm = None  # Most recently merged uprev.
@@ -233,6 +236,7 @@ def RunSteps(api, properties):
             host_url = 'https://{}-review.googlesource.com'.format(host)
             merged_changes = api.gerrit.query_changes(host_url,
                                                       [('topic', topic),
+                                                       ('branch', branch),
                                                        ('status', 'merged'),
                                                        ('-age', '30d')])
             if merged_changes:
@@ -565,7 +569,7 @@ def GenTests(api):
       reviewers=[Reviewer(email='dburger@chromium.org')],
       no_existing_cls_policy=DRY_RUN,
       existing_cls_policy=DRY_RUN,
-      outdated_cls_policy=ABANDON,
+      outdated_cls_policy=OUTDATED_ABANDON,
   )
   no_pattern_policy = BranchPolicy(
       pattern='',
@@ -573,7 +577,7 @@ def GenTests(api):
       reviewers=[Reviewer(email='dburger@chromium.org')],
       no_existing_cls_policy=DRY_RUN,
       existing_cls_policy=DRY_RUN,
-      outdated_cls_policy=ABANDON,
+      outdated_cls_policy=OUTDATED_ABANDON,
   )
 
   yield api.test(
@@ -581,6 +585,7 @@ def GenTests(api):
       api.properties(**properties),
       api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
       api.properties(branch_policies=[MessageToDict(branch_policy)]),
+      api.git.diff_check(True),
       api.post_check(post_process.MustRun, 'determine branch.git ls-remote'),
       api.post_check(post_process.MustRun,
                      'determine branch.checkout branch release-R79-*.B'),
