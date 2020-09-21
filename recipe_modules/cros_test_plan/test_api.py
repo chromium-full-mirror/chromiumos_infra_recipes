@@ -8,14 +8,12 @@ from recipe_engine import recipe_test_api
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.testplans.target_test_requirements_config import HwTestCfg
-from PB.testplans.target_test_requirements_config import MoblabVmTestCfg
 from PB.testplans.target_test_requirements_config import TastVmTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.target_test_requirements_config import VmTestCfg
 from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.testplans.generate_test_plan import HwTestUnit
-from PB.testplans.generate_test_plan import MoblabVmTestUnit
 from PB.testplans.generate_test_plan import TastVmTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.generate_test_plan import VmTestUnit
@@ -75,33 +73,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
     )
 
   @property
-  def moblab_vm_test_unit(self):
-    return MoblabVmTestUnit(
-        common=self.test_unit_common(),
-        moblab_vm_test_cfg=MoblabVmTestCfg(
-            moblab_test=[
-                MoblabVmTestCfg.MoblabTest(
-                    common=TestSuiteCommon(display_name='mtarget.moblab.vm'),
-                    test_type='moblab-vm',
-                ),
-            ],),)
-
-  @property
-  def tast_vm_test_unit(self):
-    return TastVmTestUnit(
-        common=self.test_unit_common(),
-        tast_vm_test_cfg=TastVmTestCfg(
-            tast_vm_test=[
-                TastVmTestCfg.TastVmTest(
-                    common=TestSuiteCommon(display_name='ttarget.tast.sweet'),
-                    suite_name='tast-suite',
-                    tast_test_expr=[
-                        TastVmTestCfg.TastTestExpr(test_expr='exampe.Pass'),
-                    ],
-                ),
-            ],),)
-
-  @property
   def direct_tast_vm_test_unit(self):
     return TastVmTestUnit(
         common=self.test_unit_common(),
@@ -132,8 +103,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   def generate_test_plan_response(self):
     return GenerateTestPlanResponse(
         hw_test_units=[self.hw_test_unit, self.another_hw_test_unit],
-        moblab_vm_test_units=[self.moblab_vm_test_unit],
-        tast_vm_test_units=[self.tast_vm_test_unit],
         direct_tast_vm_test_units=[self.direct_tast_vm_test_unit],
         vm_test_units=[self.vm_test_unit],
     )

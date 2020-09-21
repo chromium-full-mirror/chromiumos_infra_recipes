@@ -310,7 +310,6 @@
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_config](#recipes-test_config) &mdash; Compares Parallel CQ and Legacy cbuildbot configs.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
-  * [test_moblab_vm](#recipes-test_moblab_vm) &mdash; Recipe for running Moblab VM tests.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) &mdash; Recipe that triggers cros_test_platform runs.
@@ -2435,9 +2434,9 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#275)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#261)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -2448,7 +2447,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
       by baseline failures.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#43)(self, need_tests_builds, snapshot, gerrit_changes, enable_history):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#42)(self, need_tests_builds, snapshot, gerrit_changes, enable_history):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -3680,11 +3679,11 @@ Returns:
 
 API featuring shared helpers for naming things.
 
-#### **class [NamingApi](/recipe_modules/naming/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [NamingApi](/recipe_modules/naming/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with helpers for naming things.
 
-&mdash; **def [get\_all\_vm\_test\_title](/recipe_modules/naming/api.py#80)(self, vm_test):**
+&mdash; **def [get\_all\_vm\_test\_title](/recipe_modules/naming/api.py#79)(self, vm_test):**
 
 Get a string to describe the VM test.
 
@@ -3696,7 +3695,7 @@ Returns:
 Raises:
   ValueError if name not in vm_test.input.properties.
 
-&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#20)(self, build):**
+&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#19)(self, build):**
 
 Get a string to describe the build.
 
@@ -3706,7 +3705,7 @@ Args:
 Returns:
   str: A string describing the build.
 
-&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#128)(self, commit):**
+&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#110)(self, commit):**
 
 Get a string to describe the commit.
 
@@ -3718,7 +3717,7 @@ Args:
 Returns:
   str: The commit title.
 
-&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#47)(self, hw_test):**
+&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#46)(self, hw_test):**
 
 Get a string to describe the HW test.
 
@@ -3728,17 +3727,7 @@ Args:
 Returns:
   str: The HW test title.
 
-&mdash; **def [get\_moblab\_vm\_test\_title](/recipe_modules/naming/api.py#111)(self, moblab_vm_test):**
-
-Get a string to describe the VM test.
-
-Args:
-  moblab_vm_test (Build): The buildbucket build for the Moblab VM test.
-
-Returns:
-  str: A string describing the VM test.
-
-&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#143)(self, package):**
+&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#125)(self, package):**
 
 Get a string to describe the package.
 
@@ -3748,7 +3737,7 @@ Args:
 Returns:
   str: The package title.
 
-&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#69)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#68)(self, skylab_result):**
 
 Get a string to describe the HW test.
 
@@ -3758,7 +3747,7 @@ Args:
 Returns:
   str: The HW test title.
 
-&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#58)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#57)(self, skylab_task):**
 
 Get a string to describe the Skylab task.
 
@@ -3768,7 +3757,7 @@ Args:
 Returns:
   str: The Skylab task title.
 
-&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#31)(self, test):**
+&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#30)(self, test):**
 
 Get a string to describe the test.
 
@@ -3778,7 +3767,7 @@ Args:
 Returns:
   A str describing the test.
 
-&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#95)(self, vm_test):**
+&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#94)(self, vm_test):**
 
 Get a string to describe the VM test.
 
@@ -6302,15 +6291,6 @@ Compares Parallel CQ and Legacy cbuildbot configs.
 Verifies a repo manifest.
 
 &mdash; **def [RunSteps](/recipes/test_manifest.py#26)(api, properties):**
-### *recipes* / [test\_moblab\_vm](/recipes/test_moblab_vm.py)
-
-[DEPS](/recipes/test_moblab_vm.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [test\_util](#recipe_modules-test_util), [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-Recipe for running Moblab VM tests.
-
-&mdash; **def [DoRunSteps](/recipes/test_moblab_vm.py#48)(api, properties):**
-
-&mdash; **def [RunSteps](/recipes/test_moblab_vm.py#41)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
 [DEPS](/recipes/test_platform/cros_test_platform.py#46): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

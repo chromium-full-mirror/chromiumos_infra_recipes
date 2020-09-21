@@ -6,7 +6,6 @@
 """API featuring shared helpers for naming things."""
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.recipes.chromeos.test_moblab_vm import TestMoblabVmProperties
 from PB.recipes.chromeos.test_vm import TestVmProperties
 
 from recipe_engine import recipe_api
@@ -105,23 +104,6 @@ class NamingApi(recipe_api.RecipeApi):
     input_properties = json_format.Parse(
         json_format.MessageToJson(all_properties),
         TestVmProperties(), ignore_unknown_fields=True)
-    assert input_properties.name, 'missing name: %r' % input_properties
-    return input_properties.name
-
-  def get_moblab_vm_test_title(self, moblab_vm_test):
-    """Get a string to describe the VM test.
-
-    Args:
-      moblab_vm_test (Build): The buildbucket build for the Moblab VM test.
-
-    Returns:
-      str: A string describing the VM test.
-    """
-    all_properties = (moblab_vm_test.input.properties
-                      or moblab_vm_test.output.properties)
-    input_properties = json_format.Parse(
-        json_format.MessageToJson(all_properties),
-        TestMoblabVmProperties(), ignore_unknown_fields=True)
     assert input_properties.name, 'missing name: %r' % input_properties
     return input_properties.name
 

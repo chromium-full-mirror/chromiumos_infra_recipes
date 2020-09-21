@@ -14,4 +14,4 @@ from collections import namedtuple
 #   tast_vm: A list of tast_vm build_pb2.Build objects.
 #   moblab_vm: A list of moblab_vm build_pb2.Build objects.
 MetaTestTuple = namedtuple('MetaTestTuple',
-                           ['skylab', 'autotest_vm', 'tast_vm', 'moblab_vm'])
+                           ['skylab', 'autotest_vm', 'tast_vm'])
