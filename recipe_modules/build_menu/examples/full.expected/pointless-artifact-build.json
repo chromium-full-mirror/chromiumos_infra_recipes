@@ -96,6 +96,7 @@
       "@@@STEP_LOG_LINE@builder config@      package_name: \"chromeos-chrome\"@@@",
       "@@@STEP_LOG_LINE@builder config@      category: \"chromeos-base\"@@@",
       "@@@STEP_LOG_LINE@builder config@    }@@@",
+      "@@@STEP_LOG_LINE@builder config@    dependencies: ALL_DEPENDENCIES@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  prepare_for_build {@@@",
       "@@@STEP_LOG_LINE@builder config@    additional_args {@@@",
@@ -105,6 +106,7 @@
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@unit_tests {@@@",
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: NO_RUN@@@",
+      "@@@STEP_LOG_LINE@builder config@  dependencies: ALL_DEPENDENCIES@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
     ]

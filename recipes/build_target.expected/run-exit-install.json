@@ -77,10 +77,12 @@
       "@@@STEP_LOG_LINE@builder config@      package_name: \"linux-sources\"@@@",
       "@@@STEP_LOG_LINE@builder config@      category: \"virtual\"@@@",
       "@@@STEP_LOG_LINE@builder config@    }@@@",
+      "@@@STEP_LOG_LINE@builder config@    dependencies: ALL_DEPENDENCIES@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@unit_tests {@@@",
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
+      "@@@STEP_LOG_LINE@builder config@  dependencies: ALL_DEPENDENCIES@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
     ]

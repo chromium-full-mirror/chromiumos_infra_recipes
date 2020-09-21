@@ -13,7 +13,8 @@
           "profile": "asan"
         },
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "buildImages": {
           "imageTypes": [
@@ -61,7 +62,8 @@
           ]
         },
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "useFlags": [
           {
@@ -71,7 +73,8 @@
       },
       "unitTests": {
         "packageBlacklist": [],
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -104,7 +107,8 @@
       "build": {
         "applyGerritChanges": true,
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"          
         },
         "useFlags": [
           {
@@ -120,7 +124,8 @@
             "version": ""
           }
         ],
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -145,7 +150,7 @@
               }
             ]
           }
-        }        
+        }
       },
       "chrome": {
         "internal": true
@@ -153,7 +158,8 @@
       "build": {
         "applyGerritChanges": true,
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "CL_AFFECTED_DEPENDENCIES"
         },
         "useFlags": [
           {
@@ -162,7 +168,8 @@
         ]
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN_EXIT"
+        "ebuildsRunSpec": "RUN_EXIT",
+        "dependencies": "CL_AFFECTED_DEPENDENCIES"
       }
     },
     {
@@ -202,7 +209,8 @@
           }
         ],
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         }
       },
       "unitTests": {
@@ -213,7 +221,8 @@
             "version": ""
           }
         ],
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -252,7 +261,8 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "installToolchain": {
           "compileSource": false
@@ -262,6 +272,7 @@
       "unitTests": {
         "packageBlacklist": [],
         "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES",
         "emptySysroot": false
       }
     },
@@ -305,7 +316,8 @@
           ]
         },
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "useFlags": [
           {
@@ -315,7 +327,8 @@
       },
       "unitTests": {
         "packageBlacklist": [],
-        "ebuildsRunSpec": "RUN_EXIT"
+        "ebuildsRunSpec": "RUN_EXIT",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -336,7 +349,8 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         }
       },
       "unitTests": {
@@ -347,7 +361,8 @@
             "version": ""
           }
         ],
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -372,18 +387,20 @@
               }
             ]
           }
-        }      
-      },      
+        }
+      },
       "chrome": {
         "internal": true
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "CL_AFFECTED_DEPENDENCIES"
         }
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN_EXIT"
+        "ebuildsRunSpec": "RUN_EXIT",
+        "dependencies": "CL_AFFECTED_DEPENDENCIES"
       }
     },
     {
@@ -404,7 +421,8 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         }
       },
       "unitTests": {
@@ -415,7 +433,8 @@
             "version": ""
           }
         ],
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -437,7 +456,8 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         }
       },
       "unitTests": {
@@ -448,7 +468,8 @@
             "version": ""
           }
         ],
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -484,11 +505,13 @@
           ]
         },
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         }
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -506,7 +529,8 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN_EXIT"
+          "runSpec": "RUN_EXIT",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "applyGerritChanges": false
       }
@@ -523,7 +547,8 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         }
       }
     },
@@ -540,6 +565,7 @@
       "build": {
         "installPackages": {
           "runSpec": "RUN_EXIT",
+          "dependencies": "ALL_DEPENDENCIES",
           "packages": [
             {
               "packageName": "chromeos-kernel",
@@ -580,7 +606,8 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "applyGerritChanges": true
       },
@@ -592,7 +619,8 @@
             "version": ""
           }
         ],
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -618,19 +646,21 @@
               }
             ]
           }
-        }        
+        }
       },
       "chrome": {
         "internal": true
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "CL_AFFECTED_DEPENDENCIES"
         },
         "applyGerritChanges": true
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN_EXIT"
+        "ebuildsRunSpec": "RUN_EXIT",
+        "dependencies": "CL_AFFECTED_DEPENDENCIES"
       }
     },
     {
@@ -669,7 +699,8 @@
           ]
         },
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "useFlags": [
           {
@@ -685,7 +716,8 @@
             "version": ""
           }
         ],
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -700,12 +732,14 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "applyGerritChanges": false
       },
       "unitTests": {
-        "ebuildsRunSpec": "NO_RUN"
+        "ebuildsRunSpec": "NO_RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -720,12 +754,14 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "applyGerritChanges": false
       },
       "unitTests": {
-        "ebuildsRunSpec": "NO_RUN"
+        "ebuildsRunSpec": "NO_RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -740,12 +776,14 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "applyGerritChanges": false
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN_EXIT"
+        "ebuildsRunSpec": "RUN_EXIT",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -853,6 +891,7 @@
         ],
         "installPackages": {
           "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
           "compileSource": true,
           "packages": [
             {
@@ -864,7 +903,8 @@
         }
       },
       "unitTests": {
-        "ebuildsRunSpec": "NO_RUN"
+        "ebuildsRunSpec": "NO_RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -973,11 +1013,13 @@
         ],
         "installPackages": {
           "compileSource": true,
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         }
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -1028,6 +1070,7 @@
         },
         "installPackages": {
           "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
           "compileSource": true
         },
         "buildImages": {
@@ -1038,7 +1081,8 @@
         }
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -1130,6 +1174,7 @@
         "installPackages": {
           "compileSource": true,
           "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
           "packages": [
             {
               "packageName": "chromeos-chrome",
@@ -1139,7 +1184,8 @@
         }
       },
       "unitTests": {
-        "ebuildsRunSpec": "NO_RUN"
+        "ebuildsRunSpec": "NO_RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -1238,6 +1284,7 @@
         "installPackages": {
           "compileSource": true,
           "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
           "packages": [
             {
               "packageName": "bash",
@@ -1251,7 +1298,8 @@
         }
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -1377,6 +1425,7 @@
         },
         "installPackages": {
           "runSpec": "RUN_EXIT",
+          "dependencies": "ALL_DEPENDENCIES",
           "packages": [
             {
               "packageName": "linux-sources",
@@ -1392,7 +1441,8 @@
         }
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     },
     {
@@ -1409,7 +1459,8 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "applyGerritChanges": true,
         "useFlags": [
@@ -1443,7 +1494,8 @@
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "applyGerritChanges": false,
         "useFlags": [
@@ -1454,6 +1506,7 @@
       },
       "unitTests": {
         "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES",
         "packages": [
           {
             "packageName": "diagnostics",
@@ -1480,7 +1533,8 @@
         ],
         "applyGerritChanges": true,
         "installPackages": {
-          "runSpec": "RUN"
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "buildImages": {
           "imageTypes": [
@@ -1490,7 +1544,8 @@
         }
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN"
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
       }
     }
   ]

@@ -64,10 +64,12 @@
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  install_packages {@@@",
       "@@@STEP_LOG_LINE@builder config@    run_spec: RUN@@@",
+      "@@@STEP_LOG_LINE@builder config@    dependencies: ALL_DEPENDENCIES@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@unit_tests {@@@",
       "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN_EXIT@@@",
+      "@@@STEP_LOG_LINE@builder config@  dependencies: ALL_DEPENDENCIES@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
     ]
