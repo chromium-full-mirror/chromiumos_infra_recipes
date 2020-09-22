@@ -337,6 +337,9 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       resp = self.m.cros_build_api.DependencyService.List(
           ListRequest(sysroot=sysroot, chroot=chroot, src_paths=affected_paths,
                       packages=packages))
+      #TODO(crbug.com/1130818): Temporarily remove version from PackageInfo.
+      for package in resp.package_deps:
+        package.version = ''
       return resp.package_deps
 
   def _ensure_binaries(self):
