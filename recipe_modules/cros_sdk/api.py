@@ -26,10 +26,20 @@ from PB.chromite.api.sdk import RestoreSnapshotRequest
 class CrosSdkApi(recipe_api.RecipeApi):
   """A module for interacting with cros_sdk."""
 
+  def __init__(self, props, *args, **kwargs):
+    super(CrosSdkApi, self).__init__(*args, **kwargs)
+    # TODO(b/169266654): Make this a git footer configurable value.
+    self._force_off_toolchain_changed = props.force_off_toolchain_changed
+
   def initialize(self):
     """Cache the chroot path."""
     self._long_timeouts = False
     self.configure(self.m.path['cache'])
+
+  @property
+  def force_off_toolchain_changed(self):
+    """Return whether we are forcing toolchain_cls off for testing."""
+    return self._force_off_toolchain_changed
 
   def configure(self, chroot_parent_path):
     """Configure CrosSdkApi.
@@ -318,13 +328,16 @@ class CrosSdkApi(recipe_api.RecipeApi):
       test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
       name (string): Step name.  Default: "update sdk".
     """
-    with self.m.step.nest(name or 'update sdk'):
+    with self.m.step.nest(name or 'update sdk') as pres:
       # See if any of the changes affect the toolchain.
       toolchain_cls = self.m.workspace_util.detect_toolchain_cls(
           self.chroot, commit, changes, test_value=test_toolchain_cls)
       if build_source or toolchain_cls:
         self.mark_sdk_as_dirty()
         self._long_timeouts = True
+      if self.force_off_toolchain_changed:
+        pres.step_text = 'Forcing toolchain_changed=False'
+        toolchain_cls = False
       if timeout_sec == 'DEFAULT':
         timeout_sec = 24 * 60 * 60 if self._long_timeouts else 90 * 60
 

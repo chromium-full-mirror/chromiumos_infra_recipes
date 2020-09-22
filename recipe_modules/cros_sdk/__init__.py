@@ -15,3 +15,7 @@ DEPS = [
     'goma',
     'workspace_util',
 ]
+
+from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
+
+PROPERTIES = CrosSdkProperties

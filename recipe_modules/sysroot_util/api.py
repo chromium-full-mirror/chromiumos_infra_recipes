@@ -95,7 +95,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       timeout_sec = None if self.m.cros_sdk.long_timeouts else 10 * 60
 
     toolchain_cls = self.m.workspace_util.toolchain_cls_applied
-    with self.m.step.nest(name or 'create sysroot'):
+    with self.m.step.nest(name or 'create sysroot') as pres:
+      if self.m.cros_sdk.force_off_toolchain_changed:
+        pres.step_text = 'Forcing toolchain_changed=False'
+        toolchain_cls = False
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = (
           OldProfile(name=profile.name) if profile and profile.name else None)
@@ -131,11 +134,14 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       timeout_sec = None if self.m.cros_sdk.long_timeouts else 30 * 60
     response_lambda = response_lambda or self.m.cros_build_api.failed_pkg_names
 
-    flags = InstallToolchainRequest.Flags(
-        compile_source=compile_source,
-        toolchain_changed=self.m.workspace_util.toolchain_cls_applied)
-
     with self.m.step.nest(name or 'install toolchain') as pres:
+      toolchain_cls = self.m.workspace_util.toolchain_cls_applied
+      if self.m.cros_sdk.force_off_toolchain_changed:
+        pres.step_text = 'Forcing toolchain_changed=False'
+        toolchain_cls = False
+
+      flags = InstallToolchainRequest.Flags(compile_source=compile_source,
+                                            toolchain_changed=toolchain_cls)
       response = self.m.cros_build_api.SysrootService.InstallToolchain(
           InstallToolchainRequest(sysroot=self.sysroot,
                                   chroot=self.m.cros_sdk.chroot, flags=flags),
@@ -166,6 +172,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     if timeout_sec == 'DEFAULT':
       timeout_sec = None if self.m.cros_sdk.long_timeouts else 8 * 60 * 60
       with self.m.step.nest(name) as presentation:
+        toolchain_cls = self.m.workspace_util.toolchain_cls_applied
+        if self.m.cros_sdk.force_off_toolchain_changed:
+          presentation.step_text = 'Forcing toolchain_changed=False'
+          toolchain_cls = False
 
         def _InstallPackagesRequest():
           """Helper to make InstallPackagesRequest."""
@@ -175,8 +185,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
               flags=InstallPackagesRequest.Flags(
                   compile_source=install_packages.compile_source,
                   use_goma=self.m.cros_sdk.has_goma_config(),
-                  toolchain_changed=self.m.workspace_util.toolchain_cls_applied
-              ), use_flags=config.build.use_flags,
+                  toolchain_changed=toolchain_cls),
+              use_flags=config.build.use_flags,
               goma_config=self.m.cros_sdk.goma_config())
 
         # Final round of preparation to build artifacts.  Some artifacts need

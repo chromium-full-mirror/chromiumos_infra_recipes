@@ -99,6 +99,19 @@ def GenTests(api):
               gerrit_changes=[common_pb2.GerritChange(change=1234)])))
 
   yield api.test(
+      'with-toolchain-changes-and-force-no-toolchain-cls',
+      api.step_data(
+          'init sdk.detect toolchain change.path relevancy check.'
+          'read output file',
+          api.file.read_raw(
+              content=PointlessBuildCheckResponse().SerializeToString())),
+      api.properties(
+          **{'$chromeos/cros_sdk': dict(force_off_toolchain_changed=True)}),
+      api.properties(
+          TestInputProperties(
+              gerrit_changes=[common_pb2.GerritChange(change=1234)])))
+
+  yield api.test(
       'failed-step-init-sdk',
       api.step_data(
           'init sdk.call chromite.api.SdkService/'

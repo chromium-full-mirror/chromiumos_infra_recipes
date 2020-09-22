@@ -1,0 +1,16 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_sdk;
+
+import "chromiumos/common.proto";
+
+message CrosSdkProperties {
+  // Whether to force toolchain_cls=False in build_api calls.
+  // This is used to verify that the SDK is compatible with the toolchain CL
+  // being landed.  See crbug.com/1130707.
+  bool force_off_toolchain_changed = 1;
+}

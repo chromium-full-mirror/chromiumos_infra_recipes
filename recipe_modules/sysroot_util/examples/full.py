@@ -72,6 +72,13 @@ def GenTests(api):
 
   yield api.test('cq-build', test_build(cq=True))
 
+  yield api.test(
+      'sdk-test-build',
+      test_build(
+          cq=True, input_properties={
+              '$chromeos/cros_sdk': dict(force_off_toolchain_changed=True)
+          }))
+
   yield api.test('artifact-build', test_build(),
                  api.properties(FullTestProperties(artifact_build=True)))
 
