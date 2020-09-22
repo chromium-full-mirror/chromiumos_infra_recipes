@@ -36,6 +36,7 @@ _LEGACY_ENDPOINTS_BY_ARTIFACT = {
     BuilderConfig.Artifacts.CHROMEOS_CONFIG: 'BundleChromeOSConfig',
     BuilderConfig.Artifacts.CPE_REPORT: 'ExportCpeReport',
     BuilderConfig.Artifacts.IMAGE_ARCHIVES: 'BundleImageArchives',
+    BuilderConfig.Artifacts.FPMCU_UNITTESTS: 'BundleFpmcuUnittests',
 }
 
 
