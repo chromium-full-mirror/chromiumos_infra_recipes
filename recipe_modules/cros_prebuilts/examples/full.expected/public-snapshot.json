@@ -918,49 +918,7 @@
     "cmd": [],
     "name": "upload prebuilts.update binhost conf file.git transaction",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "cros",
-      "refs/heads/master:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
-    "infra_step": true,
-    "name": "upload prebuilts.update binhost conf file.git transaction.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
-    "infra_step": true,
-    "name": "upload prebuilts.update binhost conf file.git transaction.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
-    "infra_step": true,
-    "name": "upload prebuilts.update binhost conf file.git transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1033,6 +991,71 @@
     "name": "upload prebuilts.update binhost conf file.git transaction.diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/BINHOST.conf"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.git transaction.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.",
+      "[CLEANUP]/commit_msg_tmp_6"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.git transaction.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_6@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_6",
+      "--",
+      "[START_DIR]/BINHOST.conf"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.git transaction.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "cros",
+      "HEAD:refs/for/refs/heads/master%notify=NONE,submit"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.git transaction.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -1125,7 +1148,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"location\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", \n  \"profile\": {\n    \"name\": \"base\"\n  }, \n  \"snapshotNumber\": 101, \n  \"snapshotSha\": \"snapshot-HEAD-SHA\"\n}\n",
-      "[CLEANUP]/metadata_tmp_6/PackageIndexInfo.json"
+      "[CLEANUP]/metadata_tmp_7/PackageIndexInfo.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.write metadata",
@@ -1154,7 +1177,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/metadata_tmp_6/PackageIndexInfo.json",
+      "[CLEANUP]/metadata_tmp_7/PackageIndexInfo.json",
       "gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
     ],
     "infra_step": true,

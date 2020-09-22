@@ -6,44 +6,6 @@
   {
     "cmd": [
       "git",
-      "fetch",
-      "remote",
-      "refs/heads/ref:"
-    ],
-    "infra_step": true,
-    "name": "git transaction.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "infra_step": true,
-    "name": "git transaction.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "infra_step": true,
-    "name": "git transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "push",
       "--porcelain",
       "remote",
@@ -64,86 +26,10 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "fetch",
-      "remote",
-      "refs/heads/ref:"
-    ],
-    "infra_step": true,
-    "name": "git transaction (2).git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "infra_step": true,
-    "name": "git transaction (2).git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "infra_step": true,
-    "name": "git transaction (2).git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "git transaction (3)",
     "~followup_annotations": [
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "remote",
-      "refs/heads/ref:"
-    ],
-    "infra_step": true,
-    "name": "git transaction (3).git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "infra_step": true,
-    "name": "git transaction (3).git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "infra_step": true,
-    "name": "git transaction (3).git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

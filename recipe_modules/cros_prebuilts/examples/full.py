@@ -94,14 +94,21 @@ def GenTests(api):
     check = MustRun if expect_commit else DoesNotRun
     ret += api.post_check(check, 'upload prebuilts.update binhost conf file')
     if expect_commit:
+      ret += api.step_data(
+          'upload prebuilts.update binhost conf file.git transaction.diff check.git diff',
+          retcode=1)
       ret += api.post_check(verify_branch,
                             'staging' if use_staging else 'master')
     return ret
 
   def verify_branch(check, steps, branch):
-    expected = ['git', 'fetch', 'cros', 'refs/heads/{}:'.format(branch)]
-    return check(steps['upload prebuilts.update binhost conf file.'
-                       'git transaction.git fetch'].cmd == expected)
+    expected = [
+        'git', 'push', '--porcelain', 'cros',
+        'HEAD:refs/for/refs/heads/{}%notify=NONE,submit'.format(branch)
+    ]
+    return check(steps[
+        'upload prebuilts.update binhost conf file.git transaction.git push']
+                 .cmd == expected)
 
   for private in False, True:
     for use_staging in False, True:

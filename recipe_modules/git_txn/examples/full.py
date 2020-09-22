@@ -37,7 +37,7 @@ def GenTests(api):
   ) + attempt_git_step(
       api,
       2,
-      'rev-parse',
+      'push',
       stdout='deadbeef2',
   )
 

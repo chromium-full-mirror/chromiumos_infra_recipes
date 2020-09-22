@@ -619,47 +619,6 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "fetch",
-      "cros",
-      "refs/heads/main:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway",
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.find input config",
     "~followup_annotations": [
@@ -729,47 +688,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "cros",
-      "refs/heads/main:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/program/galaxy",
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

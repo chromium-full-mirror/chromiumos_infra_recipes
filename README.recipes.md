@@ -1782,7 +1782,7 @@ Args:
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#389)(self, target, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#392)(self, target, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -3410,11 +3410,16 @@ A module for executing git transactions.
 
 Transactionally update a remote git repository ref.
 
-The |ref| will be fetched from |remote| and checked out. Then
 |update_callback| will be called and should update the checked out HEAD by
 e.g. committing a new change. Then this new HEAD will be pushed back to the
 |remote| |ref|. If this push fails because the remote ref was modified in
-the meantime, the process will repeat up to |retries| times.
+the meantime, the new ref is fetched and checked out, and the process will
+repeat up to |retries| times.
+
+The common case is that there's no issue updating the ref, so we don't do
+a fetch and checkout before attempting to update.  This means that
+the function assumes that the repo is already checked out to the target
+ref.
 
 This step expects to be run with `cwd` inside a git repo.
 
@@ -3434,7 +3439,7 @@ Returns:
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#86)(self, remote, ref, message, dest, data, \*\*kwargs):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#90)(self, remote, ref, message, dest, data, \*\*kwargs):**
 
 Transactionally update a file in a remote git repository ref.
 

@@ -97,47 +97,6 @@
   },
   {
     "cmd": [
-      "git",
-      "fetch",
-      "https://example.com/some/project/repo",
-      "refs/heads/master:"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "infra_step": true,
-    "name": "git transaction.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "infra_step": true,
-    "name": "git transaction.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "infra_step": true,
-    "name": "git transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
       "vpython",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",

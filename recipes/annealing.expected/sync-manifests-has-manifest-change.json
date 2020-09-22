@@ -398,47 +398,6 @@
   },
   {
     "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/chromiumos/manifest",
-      "refs/heads/master:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "sync manifests.git transaction.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "sync manifests.git transaction.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "sync manifests.git transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "vpython",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
@@ -626,47 +585,6 @@
     "name": "publish external snapshot.git transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/chromiumos/manifest",
-      "refs/heads/master:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "publish external snapshot.git transaction.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "publish external snapshot.git transaction.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "publish external snapshot.git transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

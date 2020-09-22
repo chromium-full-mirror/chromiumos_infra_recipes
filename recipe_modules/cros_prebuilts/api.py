@@ -328,17 +328,20 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       assert len(projects) == 1, '%s must belong to 1 project' % binhost_path
       project = projects[0]
 
-      # Staging doesn't have ACLs to push conf files to the real branch.
-      # Instead, use a branch with the last component named 'staging'
-      branch = project.branch
-      if branch:
-        if self._use_staging_branch:
-          branch_parts = branch.split('/')
-          branch_parts[-1] = 'staging'
-          branch = '/'.join(branch_parts)
+      with self.m.context(
+          cwd=self.m.cros_source.workspace_path.join(project.path)):
+        # Staging doesn't have ACLs to push conf files to the real branch.
+        # Instead, use a branch with the last component named 'staging'
+        branch = project.branch
+        if branch:
+          if self._use_staging_branch:
+            branch_parts = branch.split('/')
+            branch_parts[-1] = 'staging'
+            branch = '/'.join(branch_parts)
 
-        with self.m.context(
-            cwd=self.m.cros_source.workspace_path.join(project.path)):
+            self.m.git.fetch_ref(project.remote, branch)
+            self.m.git.checkout('FETCH_HEAD', force=True)
+
           self.m.git_txn.update_ref_write_file(
               project.remote, branch,
               'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),

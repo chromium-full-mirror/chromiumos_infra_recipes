@@ -27,11 +27,16 @@ class GitTxnApi(recipe_api.RecipeApi):
                  automerge=False):
     """Transactionally update a remote git repository ref.
 
-    The |ref| will be fetched from |remote| and checked out. Then
     |update_callback| will be called and should update the checked out HEAD by
     e.g. committing a new change. Then this new HEAD will be pushed back to the
     |remote| |ref|. If this push fails because the remote ref was modified in
-    the meantime, the process will repeat up to |retries| times.
+    the meantime, the new ref is fetched and checked out, and the process will
+    repeat up to |retries| times.
+
+    The common case is that there's no issue updating the ref, so we don't do
+    a fetch and checkout before attempting to update.  This means that
+    the function assumes that the repo is already checked out to the target
+    ref.
 
     This step expects to be run with `cwd` inside a git repo.
 
@@ -58,10 +63,6 @@ class GitTxnApi(recipe_api.RecipeApi):
       if i > 0:
         message += ' retry %d of %d' % (i, retries - 1)
       with self.m.step.nest(message) as presentation:
-        self.m.git.fetch_ref(remote, ref)
-
-        self.m.git.checkout('FETCH_HEAD', force=True)
-
         if update_callback() is False:
           presentation.step_text = 'Transaction aborted without failure.'
           return False
@@ -78,6 +79,9 @@ class GitTxnApi(recipe_api.RecipeApi):
           # Only retry on remote 'rejected' errors.
           if ex.retcode == 1 and 'rejected' in ex.result.stdout:
             ex.result.presentation.status = 'SUCCESS'
+
+            self.m.git.fetch_ref(remote, ref)
+            self.m.git.checkout('FETCH_HEAD', force=True)
           else:
             raise
 

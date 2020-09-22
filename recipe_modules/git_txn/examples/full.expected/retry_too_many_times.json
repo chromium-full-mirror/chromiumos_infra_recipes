@@ -6,6 +6,22 @@
   {
     "cmd": [
       "git",
+      "push",
+      "--porcelain",
+      "remote",
+      "HEAD:refs/for/refs/heads/ref%notify=NONE,submit"
+    ],
+    "infra_step": true,
+    "name": "git transaction.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "fetch",
       "remote",
       "refs/heads/ref:"
@@ -42,6 +58,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "git transaction retry 1 of 1"
+  },
+  {
     "cmd": [
       "git",
       "push",
@@ -50,16 +70,12 @@
       "HEAD:refs/for/refs/heads/ref%notify=NONE,submit"
     ],
     "infra_step": true,
-    "name": "git transaction.git push",
+    "name": "git transaction retry 1 of 1.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "git transaction retry 1 of 1"
   },
   {
     "cmd": [
@@ -97,22 +113,6 @@
     "name": "git transaction retry 1 of 1.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "--porcelain",
-      "remote",
-      "HEAD:refs/for/refs/heads/ref%notify=NONE,submit"
-    ],
-    "infra_step": true,
-    "name": "git transaction retry 1 of 1.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
