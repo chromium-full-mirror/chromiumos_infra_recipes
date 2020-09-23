@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/file',
     'cros_version',
@@ -35,6 +36,14 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'basic',
+      api.step_data('read chromeos version (2).read chromeos_version.sh',
+                    api.file.read_raw('')),
+      api.properties(TestInputProperties(expected_version_snapshot='101')),
+  )
+
+  yield api.test(
+      'internal-builder',
+      api.buildbucket.ci_build(builder='atlas-cq'),
       api.step_data('read chromeos version (2).read chromeos_version.sh',
                     api.file.read_raw('')),
       api.properties(TestInputProperties(expected_version_snapshot='101')),

@@ -818,7 +818,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+      "snapshot-HEAD-SHA:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -845,7 +845,7 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "snapshot-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
@@ -2250,7 +2250,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+      "snapshot-HEAD-SHA:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -2277,7 +2277,7 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "snapshot-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
@@ -2363,7 +2363,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+      "snapshot-HEAD-SHA:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -2390,7 +2390,7 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "snapshot-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
@@ -2596,7 +2596,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+      "snapshot-HEAD-SHA:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -2623,7 +2623,7 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "snapshot-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",

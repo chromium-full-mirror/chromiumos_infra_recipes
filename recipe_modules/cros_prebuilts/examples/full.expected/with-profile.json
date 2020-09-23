@@ -634,10 +634,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -650,7 +650,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -662,10 +662,10 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -1178,10 +1178,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -1194,7 +1194,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -1206,10 +1206,10 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [

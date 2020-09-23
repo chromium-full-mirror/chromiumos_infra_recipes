@@ -80,10 +80,11 @@ class CrosVersionApi(recipe_api.RecipeApi):
         if version_snapshot:
           read_snapshot_step.step_text = 'using snapshot isolate'
         else:
-          with self.m.context(cwd=self.m.src_state.internal_manifest.path):
-            snapshot = self.m.buildbucket.gitiles_commit.id
-            self.m.git.fetch_ref(self.m.src_state.internal_manifest.url,
-                                 snapshot)
+          manifest_path = self.m.src_state.build_manifest.path
+          manifest_url = self.m.src_state.build_manifest.url
+          with self.m.context(cwd=manifest_path):
+            snapshot = self.m.src_state.gitiles_commit.id
+            self.m.git.fetch_ref(manifest_url, snapshot)
             version_snapshot = self.m.git_footers.position_num(snapshot)
         version_args['snapshot'] = version_snapshot
 

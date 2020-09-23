@@ -35,7 +35,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      ":"
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -62,7 +62,7 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
       "--position-num"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
