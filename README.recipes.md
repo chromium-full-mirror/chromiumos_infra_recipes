@@ -738,7 +738,7 @@ Args:
 
 A module to plan the builds to be launched.
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#22)(self, child_specs, enable_history, gerrit_changes, snapshot):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#22)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -750,7 +750,10 @@ Args:
   enable_history (bool): Enables history lookup in the orchestrator.
   gerrit_changes list(GerritChange): List of patches in the order that they
     can be cherry-picked.
-  snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+  internal_snapshot (GitilesCommit): gitiles_commit of the internal manifest
+    to be supplied to child builds syncing to the internal manifest.
+  external_snapshot (GitilesCommit): gitiles_commit of the public manifest
+  to be supplied to child builds syncing to the external manifest.
 
 Returns:
   A tuple of three lists:
@@ -758,7 +761,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#205)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#213)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -772,7 +775,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#306)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#314)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -788,7 +791,7 @@ Returns:
   builders (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#349)(self, builder_name):**
+&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#357)(self, builder_name):**
 
 Returns to the name of the full variant of the builder.
 
@@ -799,7 +802,7 @@ Args:
 Returns:
    A string of the full builder name.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#334)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#342)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -810,7 +813,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#267)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#275)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3957,26 +3960,28 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#125)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#129)(self):**
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#109)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#204)(self):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#208)(self):**
 
 Create the correct return value for RunSteps.
 
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#117)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#117)(self):**
+
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#121)(self):**
 
 &emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#113)(self):**
 
 &mdash; **def [initialize](/recipe_modules/orch_menu/api.py#105)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#121)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#125)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#366)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#372)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None):**
 
 Plan, schedule, and run child builders.
 
@@ -3989,7 +3994,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#587)(self, testable_builds=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#595)(self, testable_builds=None):**
 
 Plan, schedule, and run tests.
 
@@ -4002,11 +4007,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#518)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#526)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#524)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#532)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -4023,7 +4028,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#151)(self, missing_ok=False, test_footers=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#155)(self, missing_ok=False, test_footers=None):**
 
 Initial setup steps for the orchestrator.
 

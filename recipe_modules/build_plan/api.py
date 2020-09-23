@@ -20,7 +20,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
   """A module to plan the builds to be launched."""
 
   def get_build_plan(self, child_specs, enable_history, gerrit_changes,
-                     snapshot):
+                     internal_snapshot, external_snapshot):
     """Return a three-tuple of builds, completed, existing, and needed.
 
     This will be split into specialized functions for cq, release, others.
@@ -31,7 +31,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
       enable_history (bool): Enables history lookup in the orchestrator.
       gerrit_changes list(GerritChange): List of patches in the order that they
         can be cherry-picked.
-      snapshot (GitilesCommit): Start ref to be supplied to the child builds.
+      internal_snapshot (GitilesCommit): gitiles_commit of the internal manifest
+        to be supplied to child builds syncing to the internal manifest.
+      external_snapshot (GitilesCommit): gitiles_commit of the public manifest
+      to be supplied to child builds syncing to the external manifest.
 
     Returns:
       A tuple of three lists:
@@ -47,7 +50,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         self.m.cros_infra_config.get_builder_config(b.name) for b in child_specs
     ]
     necessary_builders = self.m.cros_relevance.get_necessary_builders(
-        builder_configs, gerrit_changes, snapshot, test_builder_ids=[
+        builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
             b.id for b in builder_configs if 'pointless' not in b.id.name
         ])
 
@@ -67,7 +70,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       # the *-snapshot builders will be ignored. See https://crbug.com/1040593
       # for details on why we want the actual *-postsubmit builders to run.
       snapshot_builds = self.m.cros_history.get_snapshot_builds(
-          snapshot, [cs.name for cs in child_specs],
+          internal_snapshot, [cs.name for cs in child_specs],
           [common_pb2.SUCCESS, common_pb2.SCHEDULED, common_pb2.STARTED],
           patches=gerrit_changes)
 
@@ -136,7 +139,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
           count_skip_noncritical_on_rerun += 1
           continue
 
-        tags = self.m.cros_tags.make_schedule_tags(snapshot)
+        child_build_snapshot = external_snapshot
+        if child_builder_config.general.manifest == BuilderConfig.General.PRIVATE:
+          child_build_snapshot = internal_snapshot
+
+        tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
 
         # Technically per current approaches a bisecting orchestrator doing hw
         # test bisection should find all builds already completed or in flight
@@ -170,14 +177,15 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
           new_build_requests.append(
               self.m.buildbucket.schedule_request(
-                  gitiles_commit=snapshot, builder=full_builder_name,
-                  bucket=bucket, gerrit_changes=gerrit_changes, tags=tags,
-                  critical=full_builder_critical, experiments=child_exps,
-                  properties=properties, swarming_parent_run_id=parent_run_id))
+                  gitiles_commit=child_build_snapshot,
+                  builder=full_builder_name, bucket=bucket,
+                  gerrit_changes=gerrit_changes, critical=full_builder_critical,
+                  tags=tags, properties=properties,
+                  swarming_parent_run_id=parent_run_id))
 
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
-                gitiles_commit=snapshot, builder=child_builder_name,
+                gitiles_commit=child_build_snapshot, builder=child_builder_name,
                 bucket=bucket, gerrit_changes=gerrit_changes, critical=critical,
                 tags=tags, properties=properties, experiments=child_exps,
                 swarming_parent_run_id=parent_run_id))

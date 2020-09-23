@@ -29,7 +29,7 @@ def RunSteps(api):
       child_specs, True, [
           common_pb2.GerritChange(host='chromium-review.googlesource.com',
                                   change=1234)
-      ], common_pb2.GitilesCommit())
+      ], common_pb2.GitilesCommit(), common_pb2.GitilesCommit())
   api.assertions.assertEqual(existing_builds, [])
   api.assertions.assertEqual(len(completed_builds), 1)
   api.assertions.assertEqual(completed_builds[0].builder.builder,

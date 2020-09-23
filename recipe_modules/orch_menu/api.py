@@ -115,6 +115,10 @@ class OrchMenuApi(RecipeApi):
     return self.m.cros_infra_config.gitiles_commit
 
   @property
+  def external_gitiles_commit(self):
+    return self._external_gitiles_commit
+
+  @property
   def gerrit_changes(self):
     return self.m.cros_infra_config.gerrit_changes
 
@@ -234,14 +238,14 @@ class OrchMenuApi(RecipeApi):
   def _sync_manifest_repos(self, test_footers):
     """Sync the manifest repos.
 
+    Sync the needed manifest repos. Always sync the internal manifest repo in
+    order to set the external_gitiles_commit property. Only sync the external
+    manifest if updating manifest refs.
+
     Args:
       test_footers (str): test Cr-External-Snapshot footer data(values separated
           by newlines), or None.
     """
-    # If updating manifests, clone the internal manifest repo.
-    if not self._has_manifest_refs:
-      return
-
     self._internal_repo_path = self._clone_repo('internal manifest',
                                                 self.gitiles_commit)
 
@@ -264,7 +268,9 @@ class OrchMenuApi(RecipeApi):
         host=external_manifest.host, project=external_manifest.project,
         ref=self.gitiles_commit.ref, id=extern_snapshot_id)
 
-    # clone the external manifest repo
+    if not self._has_manifest_refs:
+      return
+    # If updating manifests, also clone the external manifest repo.
     self._external_repo_path = self._clone_repo('external manifest',
                                                 self._external_gitiles_commit)
 
@@ -445,7 +451,9 @@ class OrchMenuApi(RecipeApi):
         self.m.build_plan.get_build_plan(
             child_specs=child_specs,
             enable_history=self._properties.enable_history,
-            gerrit_changes=self.gerrit_changes, snapshot=self.gitiles_commit))
+            gerrit_changes=self.gerrit_changes,
+            internal_snapshot=self.gitiles_commit,
+            external_snapshot=self.external_gitiles_commit))
     parent_step.presentation.step_text = ('{} new, {} recycled'.format(
         len(new_build_requests),
         len(completed_builds) + len(existing_builds)))
