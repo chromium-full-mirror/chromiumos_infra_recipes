@@ -60,6 +60,18 @@ PACKAGE_MAPPING = [
     },
     {
         'src_path':
+            'buffet',
+        'prefix':
+            'tmp/portage/chromeos-base/buffet-[^/]*/work/buffet-[^/]*/buffet',
+    },
+    {
+        'src_path':
+            'cfm-dfu-notification',
+        'prefix':
+            'tmp/portage/chromeos-base/cfm-dfu-notification-[^/]*/work/cfm-dfu-notification-[^/]*/platform2/cfm-dfu-notification',
+    },
+    {
+        'src_path':
             'chaps',
         'prefix':
             'tmp/portage/chromeos-base/chaps-[^/]*/work/chaps-[^/]*/chaps',
@@ -150,15 +162,45 @@ PACKAGE_MAPPING = [
     },
     {
         'src_path':
+            'feedback',
+        'prefix':
+            'tmp/portage/chromeos-base/feedback-[^/]*/work/feedback-[^/]*/platform2/feedback',
+    },
+    {
+        'src_path':
             'foomatic_shell',
         'prefix':
             'tmp/portage/chromeos-base/foomatic_shell-[^/]*/work/foomatic_shell-[^/]*/foomatic_shell',
     },
     {
         'src_path':
+            'glib-bridge',
+        'prefix':
+            'tmp/portage/chromeos-base/glib-bridge-[^/]*/work/glib-bridge-[^/]*/glib-bridge',
+    },
+    {
+        'src_path':
+            'goldfishd',
+        'prefix':
+            'tmp/portage/chromeos-base/goldfishd-[^/]*/work/goldfishd-[^/]*/goldfishd',
+    },
+    {
+        'src_path':
+            'hammerd',
+        'prefix':
+            'tmp/portage/chromeos-base/hammerd-[^/]*/work/hammerd-[^/]*/platform2/hammerd',
+    },
+    {
+        'src_path':
             'hardware_verifier',
         'prefix':
             'tmp/portage/chromeos-base/hardware_verifier-[^/]*/work/hardware_verifier-[^/]*/hardware_verifier',
+    },
+    {
+        'src_path':
+            'hwsec-test-utils',
+        'prefix':
+            'tmp/portage/chromeos-base/hwsec-test-utils-[^/]*/work/hwsec-test-utils-[^/]*/hwsec-test-utils',
     },
     {
         'src_path':
@@ -188,7 +230,7 @@ PACKAGE_MAPPING = [
         'src_path':
             'libchromeos-ui',
         'prefix':
-            'tmp/portage/chromeos-base/libchromeos-ui-[^/]*/work/libchromeos-ui-[^/]*/libchromeos-ui',
+            'tmp/portage/chromeos-base/libchromeos-ui-[^/]*/work/libchromeos-ui-[^/]*/platform2/libchromeos-ui',
     },
     {
         'src_path':
@@ -201,6 +243,12 @@ PACKAGE_MAPPING = [
             'libhwsec',
         'prefix':
             'tmp/portage/chromeos-base/libhwsec-[^/]*/work/libhwsec-[^/]*/libhwsec',
+    },
+    {
+        'src_path':
+            'libipp',
+        'prefix':
+            'tmp/portage/chromeos-base/libipp-[^/]*/work/libipp-[^/]*/libipp',
     },
     {
         'src_path':
@@ -272,6 +320,12 @@ PACKAGE_MAPPING = [
     },
     {
         'src_path':
+            'nnapi',
+        'prefix':
+            'tmp/portage/chromeos-base/nnapi-[^/]*/work/nnapi-[^/]*/platform2/nnapi',
+    },
+    {
+        'src_path':
             'oobe_config',
         'prefix':
             'tmp/portage/chromeos-base/oobe_config-[^/]*/work/oobe_config-[^/]*/oobe_config',
@@ -324,6 +378,12 @@ PACKAGE_MAPPING = [
     },
     {
         'src_path':
+            'sealed_storage',
+        'prefix':
+            'tmp/portage/chromeos-base/sealed_storage-[^/]*/work/sealed_storage-[^/]*/sealed_storage',
+    },
+    {
+        'src_path':
             'shill',
         'prefix':
             'tmp/portage/chromeos-base/shill-[^/]*/work/shill-[^/]*/shill',
@@ -371,6 +431,12 @@ PACKAGE_MAPPING = [
             'tmp/portage/chromeos-base/trunks-[^/]*/work/trunks-[^/]*/trunks',
     },
     {
+        'src_path':
+            'typecd',
+        'prefix':
+            'tmp/portage/chromeos-base/typecd-[^/]*/work/typecd-[^/]*/platform2/typecd',
+    },
+    {
         'src_path': 'u2fd',
         'prefix': 'tmp/portage/chromeos-base/u2fd-[^/]*/work/u2fd-[^/]*/u2fd',
     },
@@ -379,6 +445,12 @@ PACKAGE_MAPPING = [
             'usb_bouncer',
         'prefix':
             'tmp/portage/chromeos-base/usb_bouncer-[^/]*/work/usb_bouncer-[^/]*/usb_bouncer',
+    },
+    {
+        'src_path':
+            'verity',
+        'prefix':
+            'tmp/portage/chromeos-base/verity-[^/]*/work/verity-[^/]*/verity',
     },
     {
         'src_path':
