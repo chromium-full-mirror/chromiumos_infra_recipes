@@ -182,17 +182,12 @@ def upload_sync_results(api, config=None, output_config=None):
       return api.phosphorus.upload_to_gs(req)
 
 
-# TODO(crbug.com/1126528): Make this configurable via a
-# skylab_test_runner.Config.Output field so that dev/staging/prod can use
-# different top-level directories: 'gs://.../prod' vs 'gs://.../staging' etc.
-_GS_ARCHIVE_ROOT = 'gs://chromeos-test-logs/common-env'
-
-
-def archive_all_logs(api, config, result):
+def archive_all_logs(api, phosphorus_config, gs_root, result):
   """Archive all test logs to Google Storage.
 
   Args:
-    * config: phosphorus.Config instance
+    * phosphorus_config: phosphorus.Config instance
+    * gs_root: str, path to Google Storage directory to archive to.
     * result: test_runner.Result.
   Returns:
     Updated test_runner.Result
@@ -212,11 +207,11 @@ def archive_all_logs(api, config, result):
         #   - make it harder to hard-code paths to the target directory
         #     downstream.
         now = api.time.utcnow()
-        gs_directory = '%s/%s/%s' % (_GS_ARCHIVE_ROOT, now.date().isoformat(),
+        gs_directory = '%s/%s/%s' % (gs_root, now.date().isoformat(),
                                      api.uuid.random())
         gs_res = api.phosphorus.upload_to_gs(
             phosphorus.upload_to_gs.UploadToGSRequest(
-                local_directory=config.task.results_dir,
+                local_directory=phosphorus_config.task.results_dir,
                 gs_directory=gs_directory))
         # Logs are archived even in the case of catastrophic failures.
         # Thus, it is possible that we do not have a sane result message.
@@ -526,7 +521,12 @@ def execution_steps(api, properties, envvars):
     finally:
       with api.step.nest('save local DUT state'):
         state_store.save_and_seal(api, dut_state)
-      result = archive_all_logs(api, phosphorus_config, result)
+      result = archive_all_logs(
+          api,
+          phosphorus_config=phosphorus_config,
+          gs_root=properties.config.output.log_data_gs_root,
+          result=result,
+      )
       publish_to_result_flow(api, properties.config, properties.request,
                              should_poll_for_completion=True)
     set_output_properties(api, result=result)
@@ -721,7 +721,8 @@ def GenTests(api):
                     'prejob_deadline_seconds': 60 * 60,
                 },
                 'output': {
-                    'gs_root_dir': _gs_root
+                    'gs_root_dir': _gs_root,
+                    'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
                 },
                 'result_flow_pubsub': {
                     'project': 'foo-proj',
@@ -811,7 +812,7 @@ def GenTests(api):
         'call `phosphorus`.upload-to-gs', stdout=api.raw_io.output(
             json_format.MessageToJson(
                 phosphorus.upload_to_gs.UploadToGSResponse(
-                    gs_url=os.path.join(_gs_root, "UUID", _sync_subdir)))))
+                    gs_url='gs://chromeos-test-logs/common-env/UUID/logs'))))
 
   yield api.test(
       'test_name_missing',
@@ -1042,12 +1043,17 @@ def GenTests(api):
       _successful_logs_archive_step(),
   )
 
-  yield api.test('skip result_flow pubsub due to missing build ID',
-                 _misc_properties(), _request_properties(), _mock_load_step(),
-                 _successful_logs_archive_step())
+  yield api.test(
+      'skip result_flow pubsub due to missing build ID',
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_logs_archive_step(),
+  )
 
   yield api.test(
-      'skip result_flow pubsub due to missing topic', _set_build_id(id=42),
+      'skip result_flow pubsub due to missing topic',
+      _set_build_id(id=42),
       _misc_properties(),
       api.properties(
           TestRunnerProperties(config={
@@ -1055,11 +1061,15 @@ def GenTests(api):
                   'topic': '',
                   'project': 'foo-proj',
               },
-          })), _request_properties(), _mock_load_step(),
-      _successful_logs_archive_step())
+          })),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_logs_archive_step(),
+  )
 
   yield api.test(
-      'skip result_flow pubsub due to missing project', _set_build_id(id=42),
+      'skip result_flow pubsub due to missing project',
+      _set_build_id(id=42),
       _misc_properties(),
       api.properties(
           TestRunnerProperties(config={
@@ -1067,5 +1077,8 @@ def GenTests(api):
                   'topic': 'foo-topic',
                   'project': '',
               },
-          })), _request_properties(), _mock_load_step(),
-      _successful_logs_archive_step())
+          })),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_logs_archive_step(),
+  )

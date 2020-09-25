@@ -6470,19 +6470,20 @@ Recipe for the ChromeOS Skylab Test Runner.
 
 &mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#585)(api, properties, envvars):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#191)(api, config, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#185)(api, phosphorus_config, gs_root, result):**
 
 Archive all test logs to Google Storage.
 
 Args:
-  * config: phosphorus.Config instance
+  * phosphorus_config: phosphorus.Config instance
+  * gs_root: str, path to Google Storage directory to archive to.
   * result: test_runner.Result.
 Returns:
   Updated test_runner.Result
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#452)(api, properties, envvars):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#447)(api, properties, envvars):**
 
 Runs all the non-UI-related steps.
 
@@ -6499,7 +6500,7 @@ Returns:
 Raises:
 * InfraFailure.
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#255)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#250)(api, results_dir=''):**
 
 Parse test results.
 
@@ -6528,7 +6529,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#421)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#416)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -6569,14 +6570,14 @@ Returns: phosphorus.RunTestResponse.
 Raises:
 * InfraFailure.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#335)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#330)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#271)(api, prejob_response, run_test_response, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#266)(api, prejob_response, run_test_response, result):**
 
 Display test cases as recipe substeps.
 
@@ -6597,7 +6598,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#240)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#235)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 

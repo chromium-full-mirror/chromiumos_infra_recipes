@@ -538,7 +538,7 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"gsUrl\": \"gs://bucket/foo/bar/UUID/synchronous_subdir\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"gsUrl\": \"gs://chromeos-test-logs/common-env/UUID/logs\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -605,7 +605,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjYpCq49JOL7bS108qTc5OLdFPy8/XT0os0g8N9XTRL67MS84oys/LLy2OLy5NSsksEvLPKCkp\\nAKkvLknMzMtJLS7WS84vKtBLz89Pz0kFsnP1k4ryy4tTiTRQS41LGGQk0ESgSt2c/PRi3dKiHCF+\\nsKNAQhABAPttPDk=\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjYpBqYOTSSS+20tdPzijKz03NL9YtSS0u0c3JTy/WT87Pzc3P003NK9MPDfV00QcJCgVklJQU\\ngDQUlyRm5uWkFhfrJecXFeil5+en56QC2bn6SUX55cWpxJqopcYlDDITaGRafj5YnW5pUY4QP9hZ\\nICGIAABa+TxS\\n\"@@@"
     ]
   },
   {
@@ -615,8 +615,8 @@
       "@@@STEP_LOG_LINE@JSON output@{@@@",
       "@@@STEP_LOG_LINE@JSON output@  \"autotestResult\": {}, @@@",
       "@@@STEP_LOG_LINE@JSON output@  \"logData\": {@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://bucket/foo/bar/UUID/synchronous_subdir\", @@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/bucket/foo/bar/UUID/synchronous_subdir\"@@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/UUID/logs\", @@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/UUID/logs\"@@@",
       "@@@STEP_LOG_LINE@JSON output@  }, @@@",
       "@@@STEP_LOG_LINE@JSON output@  \"asyncResults\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"logsUrl\": \"http://foo-logs-url\", @@@",
@@ -624,7 +624,7 @@
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",
-      "@@@STEP_LINK@Autotest logs@https://stainless.corp.google.com/browse/bucket/foo/bar/UUID/synchronous_subdir@@@",
+      "@@@STEP_LINK@Autotest logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/UUID/logs@@@",
       "@@@STEP_LINK@Autotest logs (async)@http://foo-logs-url@@@"
     ]
   },
