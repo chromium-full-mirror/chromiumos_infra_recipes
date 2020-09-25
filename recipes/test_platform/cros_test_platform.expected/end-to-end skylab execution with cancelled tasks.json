@@ -423,7 +423,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Some requests were unsuccessful"
+      "humanReason": "1 out of 1 requests were unsuccessful"
     },
     "name": "$result"
   }

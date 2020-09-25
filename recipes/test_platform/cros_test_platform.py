@@ -372,25 +372,24 @@ _SUCCESSFUL_VERDICTS = (TaskState.VERDICT_PASSED,
 
 def summarize(api, enumerations, responses):
   # Failures in summarization are non-infra related.
+  failures = 0
   with api.step.nest('summarize') as step:
     for tag, response in sorted(responses.iteritems()):
       with api.step.nest('%s task results' % tag):
         _log_enumeration_errors(api, enumerations[tag])
         _log_task_results(api, response.task_results)
         if response.state.verdict not in _SUCCESSFUL_VERDICTS:
+          failures += 1
           step.logs['overall verdict'] = [
               TaskState.Verdict.Name(response.state.verdict)
           ]
           step.presentation.status = api.step.FAILURE
-    if not responses or _contains_failed_verdict(responses):
-      raise api.step.StepFailure('Some requests were unsuccessful')
 
-
-def _contains_failed_verdict(responses):
-  return any([
-      r.state.verdict not in _SUCCESSFUL_VERDICTS
-      for r in responses.itervalues()
-  ])
+    if failures:
+      raise api.step.StepFailure('%s out of %s requests were unsuccessful' %
+                                 (failures, len(responses)))
+    if not responses:
+      raise api.step.StepFailure('No requests ran')
 
 
 def _get_requests_from_properties(api, properties):
