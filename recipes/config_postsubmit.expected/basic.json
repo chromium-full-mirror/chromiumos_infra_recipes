@@ -389,6 +389,13 @@
     "name": "Do replicate_public_config and create CL"
   },
   {
+    "cmd": [],
+    "name": "Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -400,9 +407,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.remove dest dir",
+    "name": "Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.remove dest dir",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -418,7 +425,14 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.copy public config",
+    "name": "Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do replicate_public_config and create CL.chromeos/program/galaxy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -435,9 +449,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.remove dest dir (2)",
+    "name": "Do replicate_public_config and create CL.chromeos/program/galaxy.remove dest dir",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -453,9 +467,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.copy public config (2)",
+    "name": "Do replicate_public_config and create CL.chromeos/program/galaxy.copy public config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

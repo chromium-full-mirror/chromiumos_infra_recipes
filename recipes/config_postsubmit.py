@@ -51,25 +51,26 @@ def _replicate_public_config(api, project_infos):
   public_repo_path = api.context.cwd.join('src', 'project_public')
 
   for project_info in project_infos:
-    public_config_path = api.context.cwd.join(project_info.path,
-                                              'public_sw_build_config')
-    api.path.mock_add_paths(public_config_path)
-    if api.path.exists(public_config_path):
-      # Parse the program and project name out of the project repo path. It is
-      # expected that the project repo path has a format like
-      # "src/project/<program>/<project>".
-      #
-      # The program and project names are then used to form the destination path
-      # in the public repo.
-      dirname, project_name = api.path.split(project_info.path)
-      _, program_name = api.path.split(dirname)
-      dest_path = public_repo_path.join(program_name, project_name,
-                                        'sw_build_config')
+    with api.step.nest(project_info.name):
+      public_config_path = api.context.cwd.join(project_info.path,
+                                                'public_sw_build_config')
+      api.path.mock_add_paths(public_config_path)
+      if api.path.exists(public_config_path):
+        # Parse the program and project name out of the project repo path. It is
+        # expected that the project repo path has a format like
+        # "src/project/<program>/<project>".
+        #
+        # The program and project names are then used to form the destination
+        # path in the public repo.
+        dirname, project_name = api.path.split(project_info.path)
+        _, program_name = api.path.split(dirname)
+        dest_path = public_repo_path.join(program_name, project_name,
+                                          'sw_build_config')
 
-      # file.copytree will fail if the destination exists. Thus, remove
-      # dest_path before doing the copy.
-      api.file.rmtree('remove dest dir', dest_path)
-      api.file.copytree('copy public config', public_config_path, dest_path)
+        # file.copytree will fail if the destination exists. Thus, remove
+        # dest_path before doing the copy.
+        api.file.rmtree('remove dest dir', dest_path)
+        api.file.copytree('copy public config', public_config_path, dest_path)
 
   return [CommitInfo(public_repo_path, 'Update with filtered configs.')]
 
@@ -224,7 +225,7 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_process(
           post_process.StepCommandContains,
-          'Do replicate_public_config and create CL.copy public config',
+          'Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config',
           [
               'copytree',
               '[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway/public_sw_build_config',
@@ -237,13 +238,13 @@ def GenTests(api):
       'failed_actions',
       config_repos_step_data(api),
       api.step_data(
-          'Do replicate_public_config and create CL.copy public config',
+          'Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config',
           retcode=1),
       api.post_process(post_process.DoesNotRunRE, 'git commit'),
       api.post_process(post_process.StatusFailure),
       api.post_process(
           post_process.ResultReason,
-          "1 steps failed:Infra Failure: Step('Do replicate_public_config and create CL.copy public config') (retcode: 1)"
+          "1 steps failed:Infra Failure: Step('Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config') (retcode: 1)"
       ),
       api.post_process(post_process.DropExpectation),
   )
