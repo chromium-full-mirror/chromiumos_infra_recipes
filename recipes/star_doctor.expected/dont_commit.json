@@ -18,6 +18,34 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/infra/suite_scheduler",
+      "[CLEANUP]/tmp_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "set up.git clone (2)",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal",
+      "[CLEANUP]/tmp_tmp_3"
+    ],
+    "infra_step": true,
+    "name": "set up.git clone (3)",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "generate binary config"
   },
@@ -51,7 +79,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[CLEANUP]/tmp_tmp_2",
+      "[CLEANUP]/tmp_tmp_4",
       "-ensure-file",
       "infra/tools/protoc/linux-amd64 protobuf_version:v3.11.4",
       "-max-threads",
@@ -96,7 +124,7 @@
       ],
       "PATH": [
         "RECIPE_REPO[depot_tools]",
-        "[CLEANUP]/tmp_tmp_2"
+        "[CLEANUP]/tmp_tmp_4"
       ]
     },
     "name": "generate binary config.regenerate configs",
@@ -107,22 +135,50 @@
   },
   {
     "cmd": [],
-    "name": "commit changes",
+    "name": "generate binary config.copy INI configs",
     "~followup_annotations": [
-      "@@@STEP_TEXT@not configured to commit changes@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
-      "git",
-      "status",
-      "--porcelain"
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/lab_config.ini",
+      "[CLEANUP]/tmp_tmp_2/generated_configs"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "commit changes.git status",
+    "name": "generate binary config.copy INI configs.lab_config.ini",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/suite_scheduler.ini",
+      "[CLEANUP]/tmp_tmp_2/generated_configs"
+    ],
+    "infra_step": true,
+    "name": "generate binary config.copy INI configs.suite_scheduler.ini",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "commit changes",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@not configured to commit changes@@@"
     ]
   },
   {
