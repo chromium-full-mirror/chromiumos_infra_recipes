@@ -179,9 +179,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
             no_chroot_timeout else 'DEFAULT')
         self._chroot_created = True
 
+        # Avoid passing empty BuildTarget message when we don't have one,
+        # e.g. chromite-cq.
+        tc_targets = [self.build_target] if self.build_target.name else None
         self.m.cros_sdk.update_chroot(
             self.gitiles_commit, self.gerrit_changes,
-            toolchain_targets=[self.build_target],
+            toolchain_targets=tc_targets,
             build_source=config.build.sdk_update.compile_source)
 
       yield relevance != Relevance.POINTLESS

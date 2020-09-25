@@ -608,7 +608,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#277)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#280)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -625,7 +625,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#318)(self, config=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#321)(self, config=None):**
 
 Build the image and run ebuild tests.
 
@@ -663,7 +663,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#88)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#420)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#423)(self, config=None):**
 
 Generate release payloads for the build.
 
@@ -676,7 +676,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#76)(self):**
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#189)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#192)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -700,7 +700,7 @@ This context manager sets up the workspace path.
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#410)(self, config=None):**
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#413)(self, config=None):**
 
 Sign the uploaded images.
 
@@ -709,7 +709,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#80)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#374)(self, config=None, disable_publish=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#377)(self, config=None, disable_publish=False):**
 
 Upload artifacts from the build.
 
@@ -717,7 +717,7 @@ Args:
   config (BuilderConfig): The Builder Config for the build, or None.
   disable_publish (bool): Whether to disable publishing artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#391)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#394)(self, config=None):**
 
 Upload prebuilts from the build.
 
