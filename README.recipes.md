@@ -4777,7 +4777,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#121)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#122)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -4787,7 +4787,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#146)(self, task_result, exclude_tests=None):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#147)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Failure objects and dicts.
 
@@ -4815,7 +4815,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#231)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#232)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -4826,7 +4826,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [missing\_test\_cases](/recipe_modules/tast_results/api.py#103)(self, tests, test_cases):**
+&mdash; **def [missing\_test\_cases](/recipe_modules/tast_results/api.py#104)(self, tests, test_cases):**
 
 Create missing tests cases.
 
@@ -4836,7 +4836,7 @@ Args:
 
 Returns: list(TestCaseResult) the missing tests cases.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#180)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#181)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -4844,7 +4844,7 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#205)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#206)(self, sys_log_dir):**
 
 Print system logs to MILO.
 

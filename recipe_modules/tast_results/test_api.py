@@ -45,7 +45,8 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
     "start": "2020-01-27T15:16:15.146771555-08:00",
     "end": "2020-01-27T15:16:33.420622341-08:00",
     "outDir": "/tmp/vm-test-results.JxZdcJ/tests/arc.Boot",
-    "skipReason": ""
+    "skipReason": "",
+    "unknownField": 123
   },
   {
     "name": "arc.BuildProperties",
@@ -74,7 +75,8 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
     "start": "2020-01-27T15:16:33.421007899-08:00",
     "end": "2020-01-27T15:16:36.833644627-08:00",
     "outDir": "/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties",
-    "skipReason": ""
+    "skipReason": "",
+    "unknownField": 123
   },
   {
     "name": "arc.MiniContainerState",
@@ -103,7 +105,8 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
     "start": "2020-01-27T15:16:36.833776957-08:00",
     "end": "2020-01-27T15:16:40.090886944-08:00",
     "outDir": "/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState",
-    "skipReason": ""
+    "skipReason": "",
+    "unknownField": 123
   }
 ]
 """)

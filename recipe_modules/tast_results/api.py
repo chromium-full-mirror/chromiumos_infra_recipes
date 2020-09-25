@@ -97,7 +97,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       # If results.json is an empty file, list_of_results will be None.
       list_of_results = list_of_results or []
     return [
-        jsonpb.ParseDict(result, TestResult()) for result in list_of_results
+        jsonpb.ParseDict(result, TestResult(), ignore_unknown_fields=True)
+        for result in list_of_results
     ]
 
   def missing_test_cases(self, tests, test_cases):
