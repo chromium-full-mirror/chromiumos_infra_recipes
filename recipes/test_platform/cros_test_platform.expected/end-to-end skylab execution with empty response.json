@@ -292,16 +292,7 @@
     "name": "execute.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@response@      \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_FAILED\", @@@",
-      "@@@STEP_LOG_LINE@response@        \"lifeCycle\": \"LIFE_CYCLE_ABORTED\"@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  }@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -370,9 +361,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8W6Onj6uLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPq7xjk7+QSFAJbW1tQDPdRsg\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhCBBgAgAokAOy\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_ABORTED\", \"verdict\": \"VERDICT_FAILED\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\\n\"@@@"
     ]
   },
   {
@@ -390,16 +380,7 @@
     "cmd": [],
     "name": "summarize",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@overall verdict@VERDICT_FAILED@@@",
-      "@@@STEP_LOG_END@overall verdict@@@",
       "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "summarize.default task results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

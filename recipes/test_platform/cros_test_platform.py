@@ -382,7 +382,7 @@ def summarize(api, enumerations, responses):
               TaskState.Verdict.Name(response.state.verdict)
           ]
           step.presentation.status = api.step.FAILURE
-    if _contains_failed_verdict(responses):
+    if not responses or _contains_failed_verdict(responses):
       raise api.step.StepFailure('Some requests were unsuccessful')
 
 
@@ -591,15 +591,53 @@ def _test_config(tag):
   )
 
 
-def _test_single_enumeration(tag):
-  return '''
-  {
-    "tagged_responses": {
-      "default": {
-        "autotest_invocations": [{"test": {"name": "%s-test"}}]
-      }
+def _generic_scheduler_traffic_split_response(api):
+  return api.cros_test_platform.set_scheduler_traffic_split_response(
+      'traffic split',
+      SchedulerTrafficSplitResponses(
+          tagged_responses={
+              'default':
+                  SchedulerTrafficSplitResponse(
+                      skylab_request=_test_request('foo'))
+          }),
+  )
+
+
+def _generic_enumerate_response(api):
+  return api.cros_test_platform.set_enumerate_response_json(
+      'enumerate tests',
+      '''
+{
+  "tagged_responses": {
+    "default": {
+      "autotest_invocations": [{"test": {"name": "foo-test"}}]
     }
-  }''' % tag
+  }
+}''',
+  )
+
+
+def _generic_passing_execute_response(api):
+  return api.cros_test_platform.set_skylab_execute_response(
+      'execute',
+      ExecuteResponses(
+          tagged_responses={
+              'default':
+                  ExecuteResponse(
+                      state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                      verdict='VERDICT_PASSED'),
+                      task_results=[
+                          ExecuteResponse.TaskResult(
+                              task_url='foo://bar/baz',
+                              log_url='logs://bar/baz',
+                              name='foo-passed',
+                              state=TaskState(
+                                  verdict="VERDICT_PASSED",
+                                  life_cycle='LIFE_CYCLE_COMPLETED'),
+                          ),
+                      ],
+                  )
+          }))
 
 
 def GenTests(api):
@@ -675,7 +713,10 @@ def GenTests(api):
           stdout=api.raw_io.output(
               json_format.MessageToJson(
                   result_flow_pb2.publish.PublishResponse(
-                      state=result_flow_pb2.common.SUCCEEDED)))))
+                      state=result_flow_pb2.common.SUCCEEDED)))) +  #
+      _generic_scheduler_traffic_split_response(api) +  #
+      _generic_enumerate_response(api) +  #
+      _generic_passing_execute_response(api))
 
   # Recipe running outside Buildbucket should skip publishing build ID.
   yield (
@@ -685,7 +726,10 @@ def GenTests(api):
           CrosTestPlatformProperties(
               request=Request(), config=Config(
                   pubsub=Config.PubSub(project='foo-proj', topic='foo-topic'))))
-  )
+      +  #
+      _generic_scheduler_traffic_split_response(api) +  #
+      _generic_enumerate_response(api) +  #
+      _generic_passing_execute_response(api))
 
   # Config missing result flow topic name should skip publishing build ID.
   yield (api.test('Recipe runs without result flow pubsub topic') +  #
@@ -693,7 +737,10 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=Request(),
-                 config=Config(pubsub=Config.PubSub(project='foo-proj')))))
+                 config=Config(pubsub=Config.PubSub(project='foo-proj')))) +  #
+         _generic_scheduler_traffic_split_response(api) +  #
+         _generic_enumerate_response(api) +  #
+         _generic_passing_execute_response(api))
 
   # Config missing result flow project name should skip publishing build ID.
   yield (api.test('Recipe runs without result flow pubsub project') +  #
@@ -701,7 +748,10 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=Request(),
-                 config=Config(pubsub=Config.PubSub(topic='foo-topic')))))
+                 config=Config(pubsub=Config.PubSub(topic='foo-topic')))) +  #
+         _generic_scheduler_traffic_split_response(api) +  #
+         _generic_enumerate_response(api) +  #
+         _generic_passing_execute_response(api))
 
   # An end-to-end run with ctp release version tagging.
   yield (
@@ -710,19 +760,8 @@ def GenTests(api):
       api.properties(
           CrosTestPlatformProperties(
               request=_test_request('foo'), config=_test_config('foo'))) +  #
-      api.cros_test_platform.set_scheduler_traffic_split_response(
-          'traffic split',
-          SchedulerTrafficSplitResponses(
-              tagged_responses={
-                  'default':
-                      SchedulerTrafficSplitResponse(
-                          skylab_request=_test_request('foo'))
-              }),
-      ) +  #
-      api.cros_test_platform.set_enumerate_response_json(
-          'enumerate tests',
-          _test_single_enumeration('foo'),
-      ) +  #
+      _generic_scheduler_traffic_split_response(api) +  #
+      _generic_enumerate_response(api) +  #
       api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
@@ -752,19 +791,8 @@ def GenTests(api):
       api.properties(
           CrosTestPlatformProperties(
               request=_test_request('foo'), config=_test_config('foo'))) +  #
-      api.cros_test_platform.set_scheduler_traffic_split_response(
-          'traffic split',
-          SchedulerTrafficSplitResponses(
-              tagged_responses={
-                  'default':
-                      SchedulerTrafficSplitResponse(
-                          skylab_request=_test_request('foo'))
-              }),
-      ) +  #
-      api.cros_test_platform.set_enumerate_response_json(
-          'enumerate tests',
-          _test_single_enumeration('foo'),
-      ) +  #
+      _generic_scheduler_traffic_split_response(api) +  #
+      _generic_enumerate_response(api) +  #
       api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
@@ -787,58 +815,17 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.cros_test_platform.set_scheduler_traffic_split_response(
-             'traffic split',
-             SchedulerTrafficSplitResponses(
-                 tagged_responses={
-                     'default':
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                 }),
-         ) +  #
-         api.cros_test_platform.set_enumerate_response_json(
-             'enumerate tests',
-             _test_single_enumeration('foo'),
-         ) +  #
-         api.cros_test_platform.set_skylab_execute_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_PASSED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-passed',
-                                     state=TaskState(
-                                         verdict="VERDICT_PASSED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                 })))
+         _generic_scheduler_traffic_split_response(api) +  #
+         _generic_enumerate_response(api) +  #
+         _generic_passing_execute_response(api))
 
   yield (
       api.test('end-to-end skylab execution with passed and skipped tasks') +  #
       api.properties(
           CrosTestPlatformProperties(
               request=_test_request('foo'), config=_test_config('foo'))) +  #
-      api.cros_test_platform.set_scheduler_traffic_split_response(
-          'traffic split',
-          SchedulerTrafficSplitResponses(
-              tagged_responses={
-                  'default':
-                      SchedulerTrafficSplitResponse(
-                          skylab_request=_test_request('foo'))
-              }),
-      ) +  #
-      api.cros_test_platform.set_enumerate_response_json(
-          'enumerate tests',
-          _test_single_enumeration('foo'),
-      ) +  #
+      _generic_scheduler_traffic_split_response(api) +  #
+      _generic_enumerate_response(api) +  #
       api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
@@ -873,48 +860,19 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.cros_test_platform.set_scheduler_traffic_split_response(
-             'traffic split',
-             SchedulerTrafficSplitResponses(
-                 tagged_responses={
-                     'default':
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                 }),
-         ) +  #
-         api.cros_test_platform.set_enumerate_response_json(
-             'enumerate tests',
-             _test_single_enumeration('foo'),
-         ) +  #
+         _generic_scheduler_traffic_split_response(api) +  #
+         _generic_enumerate_response(api) +  #
          api.cros_test_platform.set_skylab_execute_response(
              'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_ABORTED',
-                                             verdict='VERDICT_FAILED'),
-                         )
-                 }),
+             ExecuteResponses(tagged_responses={}),
          ))
 
   yield (api.test('end-to-end skylab execution with failed tasks') +  #
          api.properties(
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.cros_test_platform.set_scheduler_traffic_split_response(
-             'traffic split',
-             SchedulerTrafficSplitResponses(
-                 tagged_responses={
-                     'default':
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                 }),
-         ) +  #
-         api.cros_test_platform.set_enumerate_response_json(
-             'enumerate tests',
-             _test_single_enumeration('foo'),
-         ) +  #
+         _generic_scheduler_traffic_split_response(api) +  #
+         _generic_enumerate_response(api) +  #
          api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
@@ -951,19 +909,8 @@ def GenTests(api):
       api.properties(
           CrosTestPlatformProperties(
               request=_test_request('foo'), config=_test_config('foo'))) +  #
-      api.cros_test_platform.set_scheduler_traffic_split_response(
-          'traffic split',
-          SchedulerTrafficSplitResponses(
-              tagged_responses={
-                  'default':
-                      SchedulerTrafficSplitResponse(
-                          skylab_request=_test_request('foo'))
-              }),
-      ) +  #
-      api.cros_test_platform.set_enumerate_response_json(
-          'enumerate tests',
-          _test_single_enumeration('foo'),
-      ) +  #
+      _generic_scheduler_traffic_split_response(api) +  #
+      _generic_enumerate_response(api) +  #
       api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
@@ -999,19 +946,8 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.cros_test_platform.set_scheduler_traffic_split_response(
-             'traffic split',
-             SchedulerTrafficSplitResponses(
-                 tagged_responses={
-                     'default':
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                 }),
-         ) +  #
-         api.cros_test_platform.set_enumerate_response_json(
-             'enumerate tests',
-             _test_single_enumeration('foo'),
-         ) +  #
+         _generic_scheduler_traffic_split_response(api) +  #
+         _generic_enumerate_response(api) +  #
          api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
@@ -1048,19 +984,8 @@ def GenTests(api):
       api.properties(
           CrosTestPlatformProperties(
               request=_test_request('foo'), config=_test_config('foo'))) +  #
-      api.cros_test_platform.set_scheduler_traffic_split_response(
-          'traffic split',
-          SchedulerTrafficSplitResponses(
-              tagged_responses={
-                  'default':
-                      SchedulerTrafficSplitResponse(
-                          skylab_request=_test_request('foo'))
-              }),
-      ) +  #
-      api.cros_test_platform.set_enumerate_response_json(
-          'enumerate tests',
-          _test_single_enumeration('foo'),
-      ) +  #
+      _generic_scheduler_traffic_split_response(api) +  #
+      _generic_enumerate_response(api) +  #
       api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
@@ -1095,19 +1020,8 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.cros_test_platform.set_scheduler_traffic_split_response(
-             'traffic split',
-             SchedulerTrafficSplitResponses(
-                 tagged_responses={
-                     'default':
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                 }),
-         ) +  #
-         api.cros_test_platform.set_enumerate_response_json(
-             'enumerate tests',
-             _test_single_enumeration('foo'),
-         ) +  #
+         _generic_scheduler_traffic_split_response(api) +  #
+         _generic_enumerate_response(api) +  #
          api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
@@ -1133,19 +1047,8 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.cros_test_platform.set_scheduler_traffic_split_response(
-             'traffic split',
-             SchedulerTrafficSplitResponses(
-                 tagged_responses={
-                     'default':
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                 }),
-         ) +  #
-         api.cros_test_platform.set_enumerate_response_json(
-             'enumerate tests',
-             _test_single_enumeration('foo'),
-         ) +  #
+         _generic_scheduler_traffic_split_response(api) +  #
+         _generic_enumerate_response(api) +  #
          api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
@@ -1170,19 +1073,8 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.cros_test_platform.set_scheduler_traffic_split_response(
-             'traffic split',
-             SchedulerTrafficSplitResponses(
-                 tagged_responses={
-                     'default':
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                 }),
-         ) +  #
-         api.cros_test_platform.set_enumerate_response_json(
-             'enumerate tests',
-             _test_single_enumeration('foo'),
-         ) +  #
+         _generic_scheduler_traffic_split_response(api) +  #
+         _generic_enumerate_response(api) +  #
          api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
@@ -1226,15 +1118,7 @@ def GenTests(api):
          api.properties(
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.cros_test_platform.set_scheduler_traffic_split_response(
-             'traffic split',
-             SchedulerTrafficSplitResponses(
-                 tagged_responses={
-                     'default':
-                         SchedulerTrafficSplitResponse(
-                             skylab_request=_test_request('foo'))
-                 }),
-         ) +  #
+         _generic_scheduler_traffic_split_response(api) +  #
          api.cros_test_platform.set_enumerate_response_json(
              'enumerate tests',
              '''
