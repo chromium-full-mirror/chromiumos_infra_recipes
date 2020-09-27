@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/isolated',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/gitiles',
     'cros_infra_config',

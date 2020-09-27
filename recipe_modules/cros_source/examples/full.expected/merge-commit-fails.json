@@ -1,5 +1,9 @@
 [
   {
+    "cmd": [],
+    "name": "update src_state.build_manifest"
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
@@ -734,7 +738,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef failed, aborting, this commit is a merge so we can not cherry-pick"
+      "humanReason": "merge deadbeefdeadbeefdeadbeefdeadbeefdeadbeef failed. Aborting: cannot cherry-pick merge commits"
     },
     "name": "$result"
   }

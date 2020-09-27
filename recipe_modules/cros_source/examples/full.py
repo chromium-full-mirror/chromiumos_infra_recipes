@@ -21,6 +21,7 @@ DEPS = [
 
 from recipe_engine import post_process
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties)
 from PB.recipe_modules.chromeos.cros_source.examples.full import FullProperties
@@ -29,6 +30,9 @@ PROPERTIES = FullProperties
 
 
 def RunSteps(api, properties):
+  if (api.buildbucket.build.input.gitiles_commit.host ==
+      api.src_state.internal_manifest.host):
+    api.src_state.build_manifest = api.src_state.internal_manifest
   _ = api.cros_source.workspace_path
 
   try:
@@ -97,3 +101,71 @@ def GenTests(api):
       cros_source_properties=CrosSourceProperties(
           enable_custom_overlays=True,
       ))
+
+  def _manifest_change(man, change=555, patchset=3):
+    return GerritChange(
+        host=man.host.replace('.', '-review.', 1), project=man.project,
+        change=change, patchset=patchset)
+
+  changes = [
+      _manifest_change(api.src_state.internal_manifest),
+      _manifest_change(api.src_state.external_manifest, change=556)
+  ]
+
+  def _gerrit_return(changes, name='', values_dict=None):
+    values_dict = values_dict or {
+        555: dict(files={'full.xml': dict(status='M', size_delta=0, size=0)})
+    }
+    return api.gerrit.set_gerrit_fetch_changes_response(name, changes,
+                                                        values_dict)
+
+  yield api.cros_source.test(
+      'manifest-no-changes', api.post_check(post_process.StatusSuccess),
+      cq=True, git_repo=api.src_state.internal_manifest.url, gerrit_changes=[
+          GerritChange(host='host', project='project', change=555, patchset=3)
+      ], cros_source_properties=CrosSourceProperties(
+          make_manifest_changes_active=True))
+
+  yield api.cros_source.test(
+      'manifest-changes-active-internal',
+      api.post_check(post_process.StatusSuccess), _gerrit_return(changes),
+      cq=True, git_repo=api.src_state.internal_manifest.url,
+      cros_source_properties=CrosSourceProperties(
+          make_manifest_changes_active=True), gerrit_changes=changes)
+
+  yield api.cros_source.test(
+      'manifest-changes-active-external',
+      api.post_check(post_process.StatusSuccess), _gerrit_return(changes),
+      cq=True, cros_source_properties=CrosSourceProperties(
+          make_manifest_changes_active=True),
+      git_repo=api.src_state.external_manifest.url, gerrit_changes=changes)
+
+  yield api.cros_source.test(
+      'manifest-changes-multi-branch',
+      _gerrit_return(changes, values_dict={556: dict(branch='other')}),
+      api.post_check(post_process.StatusAnyFailure), cq=True,
+      cros_source_properties=CrosSourceProperties(
+          make_manifest_changes_active=True),
+      git_repo=api.src_state.external_manifest.url, gerrit_changes=changes)
+
+  yield api.cros_source.test(
+      'manifest-changes-external-full-changed',
+      _gerrit_return(
+          changes, values_dict={
+              556:
+                  dict(files={
+                      'full.xml': dict(status='M', size_delta=0, size=0)
+                  })
+          }), api.post_check(post_process.StatusAnyFailure), cq=True,
+      cros_source_properties=CrosSourceProperties(
+          make_manifest_changes_active=True),
+      git_repo=api.src_state.external_manifest.url, gerrit_changes=changes)
+
+  yield api.cros_source.test(
+      'manifest-changes-external-not-changed',
+      _gerrit_return(changes, values_dict={555: dict(branch='main')}),
+      api.post_check(post_process.StatusAnyFailure), cq=True,
+      cros_source_properties=CrosSourceProperties(
+          make_manifest_changes_active=True),
+      git_repo=api.src_state.external_manifest.url,
+      gerrit_changes=[_manifest_change(api.src_state.internal_manifest)])

@@ -10,6 +10,7 @@ import json
 
 from collections import namedtuple
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from recipe_engine.util import exponential_retry
 
@@ -38,7 +39,9 @@ class CrosSourceApi(RecipeApi):
         if properties.HasField('snapshot_isolate') else None)
     self._is_source_dirty = bool(self._snapshot_isolate)
     self._enable_custom_overlays = properties.enable_custom_overlays
+    self._make_manifest_changes_active = properties.make_manifest_changes_active
     self._manifest_branch = ''
+    self._applied_patches = {}
 
   @property
   def manifest_branch(self):
@@ -111,9 +114,8 @@ class CrosSourceApi(RecipeApi):
     if cache_path == self.cache_path:
       if (manifest_url != self.m.src_state.internal_manifest.url or
           local_manifest or groups):
-        raise ValueError(
-            "Only the internal manifest can be synced to the chromiumos cache path."
-        )
+        raise ValueError('Only the internal manifest can be synced '
+                         'to the chromiumos cache path.')
       return "INTERNAL"
     return "CUSTOM"
 
@@ -291,48 +293,291 @@ class CrosSourceApi(RecipeApi):
     Args:
       gerrit_changes (list[GerritChange]): list of gerrit changes to apply.
       include_files (bool): whether to include information about changed files.
-      incude_commit_info (bool): whether to include info about the commit.
+      include_commit_info (bool): whether to include info about the commit.
       test_output_data (dict): Test output for gerrit-fetch-changes.
 
     Returns:
       List[ProjectCommit]: A list of commits from cherry-picked patch sets.
     """
+    # If make_manifest_changes_active is set, we need files_info for the
+    # changes.
+    include_files |= self._make_manifest_changes_active
+    self._is_source_dirty = True
+
     patch_sets = self.m.gerrit.fetch_patch_sets(
-        gerrit_changes, include_files=include_files,
-        include_commit_info=include_commit_info,
-        test_output_data=test_output_data)
-    with self.m.step.nest('apply gerrit patch sets'):
+        gerrit_changes, include_commit_info=include_commit_info,
+        include_files=include_files, test_output_data=test_output_data)
+
+    if self._make_manifest_changes_active:
+      self._apply_manifest_patch_sets(patch_sets)
+
+    return self._apply_gerrit_patch_sets(patch_sets)
+
+  def _apply_manifest_patch_sets(self, patch_sets):
+    """Apply any manifest patch sets, and make them active.
+
+    If there are any manifest patch sets, then apply them to the manifest, and
+    make that the active manifest.  If we are on a pinned manifest, then switch
+    to the unpinned version before applying patches.
+
+    Args:
+      patch_sets (list[PatchSet]): patch sets to consider.
+    """
+
+    manifests, patches = self._partition_patches(patch_sets)
+    if not patches.manifest:
+      # There are no manifest changes. We are done.
+      return
+
+    with self.m.step.nest('patch manifest') as pres:
       # Disable packRefs before doing merges. See https://crbug.com/1057878.
       self.m.git.set_global_config(['gc.packRefs', 'false'])
+
+      branches = set(x.branch for x in patches.manifest)
+      if len(branches) > 1:
+        raise StepFailure('Cannot patch multiple branches: {}'.format(' '.join(
+            sorted(branches))))
+      branch = branches.pop()
+      self.m.easy.set_properties_step(manifest_branch=branch)
+
+      # Now we know what branch we need to be on, and we need the manifest
+      # repo(s) to be on that branch so that the CLs will apply.
+      self.checkout_branch(manifests.build.url, branch)
+
+      _changes_full_xml = lambda p: any('full.xml' in x.file_infos for x in p)
+
+      # If there are changes to the external copy of full.xml, that is an error.
+      if _changes_full_xml(patches.build if manifests.build ==
+                           manifests.extern else patches.extern):
+        raise StepFailure('Full.xml changes must be made in manifest-internal')
+
+      # If patches.intern changes full.xml, then:
+      # 1. We do not have the internal manifest checked out, and
+      # 2. We will need it so taht we can copy full.xml over to the external
+      #    manifest.
+      if _changes_full_xml(patches.intern):
+        with self.m.step.nest('sync internal manifest for patching'):
+          # Fetch the internal manifest into its path.  Use the (synced) cache
+          # as a reference, so that we do not use the network for this.
+          self.m.git.clone(
+              manifests.intern.url, target_path=manifests.intern.path,
+              reference=self.cache_path.join(manifests.intern.relpath),
+              dissociate=True, timeout_sec=60 * 60)
+
+      manifest_changed = self._apply_partitioned_manifest_patches(
+          manifests, patches)
+
+      # Copy over any change to the internal manifest full.xml.
+      if _changes_full_xml(patches.intern + patches.build):
+        # Copy full.xml from internal to external manifest and commit
+        i_full = manifests.intern.path.join('full.xml')
+        e_full = manifests.extern.path.join('full.xml')
+        self.m.file.copy('copy full.xml', i_full, e_full)
+        with self.m.context(cwd=manifests.extern.path):
+          self.m.git.add([e_full])
+          self.m.git.commit('Syncing with internal manifest.')
+        manifest_changed = True
+
+      if not manifest_changed:
+        return
+
+      # The manifest for this build has been patched.  We need to switch repo
+      # to the newly patched tree.
+
+      # The sequence of steps:
+      # 1. Update the gitiles_commit for the build.  (Note that this will
+      #    probably never be fetchable from the repo.)
+      # 2. Create a clone of the build manifest's repo outside of the workspace,
+      #    with the refs changed so that it looks like the git repo found at
+      #    build_manifest.url.
+      # 3. Have repo sync the checkout in the workspace to the newly created
+      #    manifest.
+      # 4. Log a pinned version of the patched manifest.
+
+      # The manifest file for repo init is 'default.xml' in the manifest
+      # directory we are using for the build.
+      default_file = manifests.build.path.join('default.xml')
+
+      with self.m.context(
+          cwd=manifests.build.path), self.m.step.nest('push manifest'):
+        # 1. Update the gitiles commit.
+        head = self.m.git.head_commit()
+        self.m.src_state.gitiles_commit = GitilesCommit(
+            host=manifests.build.host, project=manifests.build.project,
+            ref='refs/heads/{}'.format(branch), id=head)
+
+        # 2. Create a clone of the manifest.
+        # Force the the branch reference to point to HEAD.  We are likely
+        # detached prior to this point.
+        self.m.step('branch {}'.format(branch), ['git', 'checkout', branch])
+        self.m.step('reset {}'.format(branch), ['git', 'reset', '--hard', head])
+
+        # Create the clone.
+        new_manifest = self.m.path.mkdtemp('repo-overwrite-')
+        self.m.step('clone', ['git', 'clone', '--bare', '.', new_manifest])
+
+        # Determine the correct name for the remote.
+        step_test_data = lambda: self.m.raw_io.test_api.output(
+            'cros-internal' if manifests.build == manifests.intern else 'cros')
+        remote = self.m.step('remote', ['git', 'remote'],
+                             stdout=self.m.raw_io.output(),
+                             step_test_data=step_test_data).stdout.strip()
+
+        # Now push the manifest repo, and make the branches look as they
+        # should for this to be build_manifest.url.
+        self.m.step('push', [
+            'git', 'push', new_manifest,
+            '+refs/remotes/{}/*:refs/heads/*'.format(remote),
+            '+refs/heads/{}:refs/heads/{}'.format(branch, branch)
+        ])
+
+      # 3. Switch to the newly cloned mirror.  Tip-of-tree for for the original
+      #    branch is the patched version of the |gitiles_commit| manifest.
+      init_opts = dict(manifest_branch=branch)
+      sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, manifest_name=default_file,
+                       current_branch=False, no_tags=False, retry_fetches=2,
+                       detach=False, force_sync=False, no_manifest_update=True)
+      # This sync finally uses the patched manifest to fetch the tree.
+      # Do a full sync here.
+      self.m.repo.ensure_synced_checkout(self.workspace_path,
+                                         'file://%s' % new_manifest,
+                                         init_opts=init_opts,
+                                         sync_opts=sync_opts)
+
+      # 4. Log a pinned version of the patched manifest.
+      xml_data = self.m.repo.manifest_snapshot(manifest_file=default_file)
+      pres.logs['patched-manifest.xml'] = xml_data.splitlines()
+
+  def _partition_patches(self, patch_sets):
+    """Partition the manifest patches.
+
+    Determine which patch sets apply to which manifests, and return namedtuples
+    with the manifests and the different patch_sets to apply to them.
+
+    A patch_set is only listed in the first manifest where we find it (build,
+    external, internal), as well as in patches.manifest (which is the union of
+    the other 3 fields.)
+
+    Args:
+      patch_sets (list[PatchSet]): The PatchSets for the build.
+
+    Returns:
+      (tuple):
+      - manifests (namedtuple with 'build', 'extern', 'intern')
+      - patches (namedtuple with 'build', 'extern', 'intern', and 'manifest')
+    """
+
+    _Manifests = namedtuple('_Manifests', ['build', 'extern', 'intern'])
+    _Patches = namedtuple('_Patches', ['build', 'extern', 'intern', 'manifest'])
+    b_man = self.m.src_state.build_manifest
+    e_man = self.m.src_state.external_manifest
+    i_man = self.m.src_state.internal_manifest
+
+    b_patches, e_patches, i_patches = [], [], []
+    for patch in patch_sets:
+      if patch in b_man:
+        b_patches.append(patch)
+      elif patch in e_man:
+        e_patches.append(patch)
+      elif patch in i_man:
+        i_patches.append(patch)
+    man_patches = b_patches + e_patches + i_patches
+
+    return (_Manifests(b_man, e_man, i_man),
+            _Patches(b_patches, e_patches, i_patches, man_patches))
+
+  def _apply_partitioned_manifest_patches(self, manifests, patches):
+    """Apply manifest patchsets.
+
+    Args:
+      manifests (_Manifests): manifests tuple from _partition_patches.
+      patches (_Patches): patches tuple from _partition_patches.
+
+    Returns:
+      (bool): whether the build manifest was changed.
+    """
+
+    _Commits = namedtuple('_Commits', ['build', 'extern', 'intern', 'all'])
+
+    def _apply(patch_sets, project_path=None):
+      """Helper to apply patch_sets.
+
+      Args:
+        patch_sets (list[PatchSets]): The list fo patches to apply to this
+          manifest.
+        project_path (str): The repo path, relative to the workspace_path.  Only
+          use this if patching a repo that is not found in the manifest.
+      """
+      if not patch_sets:
+        return []
+      name = '%s: apply gerrit patch sets' % patch_sets[0].project
+      if project_path:
+        with self.m.step.nest(name):
+          for patch in patch_sets:
+            self._apply_patch_set(patch, project_path)
+      else:
+        self._apply_gerrit_patch_sets(patch_sets, name=name)
+
+    _apply(patches.build)
+    _apply(patches.extern)
+    _apply(patches.intern, project_path=manifests.intern.relpath)
+
+    return bool(patches.build)
+
+  def _apply_gerrit_patch_sets(self, patch_sets, name=None):
+    """Apply PatchSets to the workspace.
+
+    Args:
+      patch_sets (list[PatchSet]): The PatchSets to apply.
+      name (str): The name for the step, or None.
+
+    Returns:
+      List[ProjectCommit]: A list of commits from cherry-picked patch sets.
+    """
+    with self.m.step.nest(name or 'apply gerrit patch sets'):
+      # Disable packRefs before doing merges. See https://crbug.com/1057878.
+      self.m.git.set_global_config(['gc.packRefs', 'false'])
+
       new_commits = []
-      for patch_set in patch_sets:
-        project_paths = self.find_project_paths(patch_set.project,
-                                                patch_set.branch)
-        for project_path in project_paths:
-          with self.m.context(cwd=self.workspace_path.join(project_path)):
-            commit_id = self.m.git.fetch_ref(patch_set.git_fetch_url,
-                                             patch_set.git_fetch_ref)
-            merged = self.m.git.merge_silent_fail(commit_id,
-                                                  'merge gerrit changes',
-                                                  infra_step=False)
-            if not merged:
-              self.m.git.merge_abort()
-              if self.m.git.is_merge_commit(commit_id):
-                raise StepFailure('%s failed, aborting, this '
-                                  'commit is a merge so we can '
-                                  'not cherry-pick' % commit_id)
-              presentation = self.m.step.active_result.presentation
-              presentation.status = self.m.step.SUCCESS
-              presentation.step_text = (
-                  'merge failed. will try cherry-pick instead')
-              self.m.git.cherry_pick(commit_id, infra_step=False)
-
-            new_commit_id = self.m.git.head_commit()
-            new_commits.append(
-                ProjectCommit(project_path, new_commit_id, patch_set))
-
-      self._is_source_dirty = True
+      for patch in patch_sets:
+        if patch.display_id in self._applied_patches:
+          new_commits.extend(self._applied_patches[patch.display_id])
+        else:
+          patch_commits = []
+          project_paths = self.find_project_paths(patch.project, patch.branch)
+          for project_path in project_paths:
+            patch_commits.append(self._apply_patch_set(patch, project_path))
+          self._applied_patches[patch.display_id] = patch_commits
+          new_commits.extend(patch_commits)
       return new_commits
+
+  def _apply_patch_set(self, patch, project_path):
+    """Apply a PatchSet to the git repo in ${CWD}.
+
+    Args:
+      patch (PatchSet): The PatchSet to apply.
+      project_path (str): The path (relative to the workspace) in which to apply
+        the change.
+
+    Returns:
+      (ProjectCommit) commit for the applied patch.
+    """
+    with self.m.context(cwd=self.workspace_path.join(project_path)):
+      commit = self.m.git.fetch_ref(patch.git_fetch_url, patch.git_fetch_ref)
+      merged = self.m.git.merge_silent_fail(commit, 'merge gerrit changes',
+                                            infra_step=False)
+      if not merged:
+        self.m.git.merge_abort()
+        if self.m.git.is_merge_commit(commit):
+          raise StepFailure(
+              'merge %s failed. Aborting: cannot cherry-pick merge commits' %
+              commit)
+        presentation = self.m.step.active_result.presentation
+        presentation.status = self.m.step.SUCCESS
+        presentation.step_text = 'merge failed. will try cherry-pick instead'
+        self.m.git.cherry_pick(commit, infra_step=False)
+
+      return ProjectCommit(project_path, self.m.git.head_commit(), patch)
 
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
 

@@ -1,5 +1,9 @@
 [
   {
+    "cmd": [],
+    "name": "update src_state.build_manifest"
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",

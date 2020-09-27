@@ -2280,28 +2280,28 @@ Args:
 Returns: A str
 ### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
 
-[DEPS](/recipe_modules/cros_source/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS source.
 
-#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#287)(self, gerrit_changes, include_files=False, include_commit_info=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#289)(self, gerrit_changes, include_files=False, include_commit_info=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
 Args:
   gerrit_changes (list[GerritChange]): list of gerrit changes to apply.
   include_files (bool): whether to include information about changed files.
-  incude_commit_info (bool): whether to include info about the commit.
+  include_commit_info (bool): whether to include info about the commit.
   test_output_data (dict): Test output for gerrit-fetch-changes.
 
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
-&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#67)(self):**
+&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#70)(self):**
 
 The cached checkout path.
 
@@ -2309,7 +2309,7 @@ This is the cached version of source (the internal manifest checkout),
 usually updated once at the beginning of a build and then mounted into the
 master and/or workspace paths.
 
-&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#170)(self, manifest_url, manifest_branch, init_opts=None, sync_opts=None, step_name=None):**
+&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#172)(self, manifest_url, manifest_branch, init_opts=None, sync_opts=None, step_name=None):**
 
 Check out a branch of the current manifest.
 
@@ -2324,11 +2324,11 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
   * step_name (str): Name for the step, or None for default.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#248)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#250)(self):**
 
 Returns a context where overlays can be mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#433)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#678)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2341,7 +2341,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#390)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#635)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -2355,7 +2355,7 @@ Args:
   project_commits (List[ProjectCommit]): Commits to add to archive. Must be
     in patch application order.
 
-&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#120)(self, manifest_url=None, init_opts=None, sync_opts=None, cache_path_override=None, is_staging=False, projects=None, gitiles_commit=None):**
+&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#122)(self, manifest_url=None, init_opts=None, sync_opts=None, cache_path_override=None, is_staging=False, projects=None, gitiles_commit=None):**
 
 Ensure the configured repo cache exists and is synced.
 
@@ -2371,7 +2371,7 @@ Args:
   * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
   current value.
 
-&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#202)(self, count=((7 \* 24) \* 2)):**
+&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#204)(self, count=((7 \* 24) \* 2)):**
 
 Return snapshot SHAs for the manifest.
 
@@ -2385,7 +2385,7 @@ Args:
 Returns:
   (list[str]) The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#261)(self, project, branch):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#263)(self, project, branch):**
 
 Find the source paths for a given project in the workspace.
 
@@ -2399,7 +2399,7 @@ Args:
 Returns:
   list(str), The path values for the found project.
 
-&emsp; **@property**<br>&mdash; **def [is\_source\_dirty](/recipe_modules/cros_source/api.py#48)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_source\_dirty](/recipe_modules/cros_source/api.py#51)(self):**
 
 Returns whether the source is dirty.
 
@@ -2407,22 +2407,22 @@ Returns whether the source is dirty. The source is dirty if it was checked
 out to a custom snapshot from isolate or has had patches applied or has
 been moved to a branch.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_branch](/recipe_modules/cros_source/api.py#43)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_branch](/recipe_modules/cros_source/api.py#46)(self):**
 
 Returns the branch of the manifest that is checked out.
 
-&emsp; **@property**<br>&mdash; **def [preload\_path](/recipe_modules/cros_source/api.py#58)(self):**
+&emsp; **@property**<br>&mdash; **def [preload\_path](/recipe_modules/cros_source/api.py#61)(self):**
 
 The cached image checkout path.
 
 This is the cached version of source that is included in the base image of
 the bot, used as an initial reference path.
 
-&emsp; **@property**<br>&mdash; **def [snapshot\_isolated\_hash](/recipe_modules/cros_source/api.py#86)(self):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_isolated\_hash](/recipe_modules/cros_source/api.py#89)(self):**
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#339)(self, gitiles_commit, manifest_url=None):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#584)(self, gitiles_commit, manifest_url=None):**
 
 Sync a checkout to the snapshot.
 
@@ -2430,7 +2430,7 @@ Args:
   gitiles_commit (GitilesCommit): commit to sync to
   manifest_url: URL of manifest repo.  Default: internal manifest
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#77)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#80)(self):**
 
 The "workspace" checkout path.
 
@@ -5746,7 +5746,7 @@ returns a list of repos to make commits to.
 
 [DEPS](/recipe_modules/cros_source/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#31)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_source/examples/full.py#32)(api, properties):**
 ### *recipes* / [cros\_source:examples/sync\_cache](/recipe_modules/cros_source/examples/sync_cache.py)
 
 [DEPS](/recipe_modules/cros_source/examples/sync_cache.py#6): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
