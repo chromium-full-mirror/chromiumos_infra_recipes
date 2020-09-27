@@ -526,6 +526,105 @@
     ]
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "name": "read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
+    ],
+    "infra_step": true,
+    "name": "gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": false}",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chrome-internal-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromeos/manifest-internal\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "apply gerrit patch sets"
   },
@@ -547,7 +646,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromium/src",
+      "chromeos/manifest-internal",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -556,7 +655,7 @@
     "name": "apply gerrit patch sets.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/manifest-internal|src/chromeos/manifest-internal|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -564,10 +663,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chromium/chromium/src",
-      "refs/changes/45/12345/1:"
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "refs/changes/56/123456/7:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal",
     "infra_step": true,
     "name": "apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -580,7 +679,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -595,7 +694,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal",
     "name": "apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -607,7 +706,7 @@
       "merge",
       "--abort"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal",
     "infra_step": true,
     "name": "apply gerrit patch sets.git merge --abort",
     "~followup_annotations": [
@@ -622,7 +721,7 @@
       "-n 1",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal",
     "infra_step": true,
     "name": "apply gerrit patch sets.git log",
     "~followup_annotations": [
@@ -636,7 +735,7 @@
       "cherry-pick",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal",
     "name": "apply gerrit patch sets.git cherry-pick",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -648,7 +747,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -669,7 +768,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/manifest-internal"
     ],
     "infra_step": true,
     "name": "create project commits archive.project path",
@@ -682,10 +781,10 @@
       "git",
       "bundle",
       "create",
-      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle",
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/manifest-internal/bundle",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal",
     "infra_step": true,
     "name": "create project commits archive.git bundle",
     "~followup_annotations": [
@@ -700,14 +799,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\"project_paths\": [\"src/chromium/src\"]}",
+      "{\"project_paths\": [\"src/chromeos/manifest-internal\"]}",
       "[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json"
     ],
     "infra_step": true,
     "name": "create project commits archive.metadata.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@metadata.json@{\"project_paths\": [\"src/chromium/src\"]}@@@",
+      "@@@STEP_LOG_LINE@metadata.json@{\"project_paths\": [\"src/chromeos/manifest-internal\"]}@@@",
       "@@@STEP_LOG_END@metadata.json@@@"
     ]
   },
@@ -718,7 +817,7 @@
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
     "name": "create project commits archive.create archive",
-    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromium/src/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
+    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/manifest-internal/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

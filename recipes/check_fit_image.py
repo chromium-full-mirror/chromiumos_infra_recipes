@@ -145,13 +145,13 @@ def RunSteps(api, properties):
 
     # Get input gerrit info and fetch actual patch sets
     gerrit_changes = api.src_state.gerrit_changes
+
+    # Sync and patch projects
+    project_paths = _sync_projects(gerrit_changes)
     patch_sets = api.gerrit.fetch_patch_sets(
         gerrit_changes,
         include_files=True,
     )
-
-    # Sync and patch projects
-    project_paths = _sync_projects(gerrit_changes)
     api.cros_source.apply_gerrit_patch_sets(patch_sets)
 
     # Pair up gerrit changes with its associated patch set
