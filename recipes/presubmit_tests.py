@@ -71,13 +71,13 @@ def _FullCheckout(api, properties):
     with api.step.nest('run presubmit checks'):
       # Set up some variables that are used repeatedly in the for loop.
       path_info = {
-          x.path: x for x in api.repo.project_infos(
-              projects=[x.project for x in api.workspace_util.patch_sets])
+          x.path: x for x in api.repo.project_infos(projects=[
+              x.patch_set.project for x in api.workspace_util.commits
+          ])
       }
       checked_paths = set()
 
-      for patch, commit in zip(api.workspace_util.patch_sets,
-                               api.workspace_util.commits):
+      for commit in api.workspace_util.commits:
         if commit.path in checked_paths:
           continue
         checked_paths.add(commit.path)
@@ -85,7 +85,7 @@ def _FullCheckout(api, properties):
         with api.step.nest('checking %s' % commit.path) as presentation:
           # If we have a list of included projects, then exclude any projects
           # not on the list.
-          if project_names and patch.project not in project_names:
+          if project_names and commit.patch_set.project not in project_names:
             presentation.step_text = 'Excluded by properties.project_names.'
             continue
 

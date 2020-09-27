@@ -41,10 +41,9 @@ def RunSteps(api, properties):
     api.workspace_util.apply_changes()
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
+    api.assertions.assertEqual(len(want), len(api.workspace_util.commits))
     api.assertions.assertEqual(api.context.cwd,
                                api.workspace_util.workspace_path)
-    api.assertions.assertEqual(
-        len(api.workspace_util.patch_sets), len(api.workspace_util.commits))
 
   api.workspace_util.detect_toolchain_cls(None)
   api.assertions.assertEqual(properties.toolchain_cls_applied,

@@ -2154,7 +2154,7 @@ Args:
 Returns: A str
 ### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
 
-[DEPS](/recipe_modules/cros_source/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/isolated][recipe_engine/recipe_modules/isolated], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS source.
 
@@ -2162,12 +2162,15 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_patch\_sets](/recipe_modules/cros_source/api.py#264)(self, patch_sets):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#264)(self, gerrit_changes, include_files=False, include_commit_info=False, test_output_data=None):**
 
-Apply Gerrit patch sets to the workspace.
+Apply GerritChanges to the workspace.
 
 Args:
-  patch_sets (List[gerrit.PatchSet]): A list of patch sets to cherry-pick.
+  gerrit_changes (list[GerritChange]): list of gerrit changes to apply.
+  include_files (bool): whether to include information about changed files.
+  incude_commit_info (bool): whether to include info about the commit.
+  test_output_data (dict): Test output for gerrit-fetch-changes.
 
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
@@ -2199,7 +2202,7 @@ Args:
 
 Returns a context where overlays can be mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#400)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#409)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2212,7 +2215,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#357)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#366)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -2281,7 +2284,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#306)(self, gitiles_commit, manifest_url=None):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#315)(self, gitiles_commit, manifest_url=None):**
 
 Sync a checkout to the snapshot.
 
@@ -4790,7 +4793,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#78)(self, changes=None, name='cherry-pick gerrit changes', fail_not_applicable=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#77)(self, changes=None, name='cherry-pick gerrit changes', fail_not_applicable=False):**
 
 Apply gerrit changes.
 
@@ -4805,9 +4808,9 @@ Args:
       (e.g. because of Cq-Depend grouping); the changes will be discarded
       instead of failing during application.
 
-&emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#33)(self):**
+&emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#32)(self):**
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#124)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#121)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -4829,9 +4832,9 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/workspace_util/api.py#21)(self):**
 
-&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#29)(self):**
+&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#28)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#46)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#45)(self):**
 
 Prepare the source checkout for building.
 
@@ -4840,7 +4843,7 @@ Returns:
   workspace path.  Note that api.cros_source.cleanup_context() is generally
   going to be needed.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#58)(self, commit=None, staging=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#57)(self, commit=None, staging=False):**
 
 Sync the source tree.
 
@@ -4851,7 +4854,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#161)(self, manifest_groups, local_manifest=None, cache_path_override=None, gitiles_commit=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#158)(self, manifest_groups, local_manifest=None, cache_path_override=None, gitiles_commit=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -4885,11 +4888,11 @@ Args:
   gitiles_commit (GitilesCommit): The gitiles_commit to sync to.  Default:
       commit saved in cros_infra_config.configure_builder().
 
-&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/workspace_util/api.py#37)(self):**
+&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/workspace_util/api.py#36)(self):**
 
 Whether there are toolchain CLs applied to the source tree.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/workspace_util/api.py#42)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/workspace_util/api.py#41)(self):**
 ## Recipes
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
@@ -5158,11 +5161,11 @@ Check that any binary blobs in a commit come from a valid FIT version
 
 &mdash; **def [RunSteps](/recipes/check_fit_image.py#107)(api, properties):**
 
-&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#251)(version):**
+&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#247)(version):**
 
 Mock the header from the FIT tool with given version
 
-&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#269)(version='14.0.40.1206', hashes={}):**
+&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#265)(version='14.0.40.1206', hashes={}):**
 
 Mock version file contents
 

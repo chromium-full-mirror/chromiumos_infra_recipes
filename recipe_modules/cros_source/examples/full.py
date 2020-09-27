@@ -41,8 +41,7 @@ def RunSteps(api, properties):
       api.cros_source.ensure_synced_cache(is_staging=True)
       api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
 
-  commits = api.cros_source.apply_gerrit_patch_sets(
-      api.gerrit.fetch_patch_sets(api.src_state.gerrit_changes))
+  commits = api.cros_source.apply_gerrit_changes(api.src_state.gerrit_changes)
 
   archive_path = api.path['start_dir'].join('commits.tar')
   api.cros_source.create_project_commits_archive(archive_path, commits)

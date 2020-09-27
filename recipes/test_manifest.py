@@ -25,19 +25,18 @@ PROPERTIES = TestManifestProperties
 
 def RunSteps(api, properties):
   build = api.buildbucket.build
-  gerrit_changes = build.input.gerrit_changes
 
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path):
     api.cros_source.ensure_synced_cache()
-    if gerrit_changes:
-      gerrit_changes = api.cq.ordered_gerrit_changes
+    commits = []
+    if build.input.gerrit_changes:
       with api.step.nest('cherry-pick gerrit changes'):
-        patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
-        api.cros_source.apply_gerrit_patch_sets(patch_sets)
+        commits = api.cros_source.apply_gerrit_changes(
+            api.cq.ordered_gerrit_changes)
 
     # Try to sync to the new manifest.
-    projects = sorted(set(gc.project for gc in gerrit_changes))
+    projects = sorted(set(x.patch_set.project for x in commits))
     project_infos = api.repo.project_infos(projects=projects)
     for project_info in project_infos:
       manifest_path = api.cros_source.workspace_path.join(
@@ -51,8 +50,8 @@ def RunSteps(api, properties):
           with api.depot_tools.on_path():
             api.step('test cros branch for %s' % project_info.name, [
                 'chromite/bin/cros', 'branch', '--ack-deprecation', '--root',
-                api.cros_source.workspace_path, 'create',
-                '--release', '--file', manifest_path, '--yes'
+                api.cros_source.workspace_path, 'create', '--release', '--file',
+                manifest_path, '--yes'
             ])
 
 

@@ -94,8 +94,7 @@ def RunSteps(api, properties):
 
     with api.step.nest('cherry-pick gerrit changes') as pres:
       if gerrit_changes:
-        patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
-        api.cros_source.apply_gerrit_patch_sets(patch_sets)
+        api.cros_source.apply_gerrit_changes(gerrit_changes)
       else:
         pres.step_text = 'no input gerrit changes to apply'
 

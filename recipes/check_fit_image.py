@@ -148,22 +148,18 @@ def RunSteps(api, properties):
 
     # Sync and patch projects
     project_paths = _sync_projects(gerrit_changes)
-    patch_sets = api.gerrit.fetch_patch_sets(
+    commits = api.cros_source.apply_gerrit_changes(
         gerrit_changes,
         include_files=True,
     )
-    api.cros_source.apply_gerrit_patch_sets(patch_sets)
-
-    # Pair up gerrit changes with its associated patch set
-    merged_changes = zip(gerrit_changes, patch_sets)
 
     # Iterate changes, if the change is one of the repos we're watching, check it
     configured_repos = {
         config.repo: config.ref_path for config in properties.configs
     }
 
-    for cnt, (change, patch) in enumerate(merged_changes):
-      project = change.project
+    for cnt, commit in enumerate(commits):
+      project = commit.patch_set.project
 
       if project in configured_repos:
         if not project in project_paths:
@@ -176,7 +172,7 @@ def RunSteps(api, properties):
           # -versions.txt, we better have made a change to the associated binary
           txt_files = set()
           bin_files = set()
-          for fname in patch.file_infos:
+          for fname in commit.patch_set.file_infos:
             if fnmatch.fnmatch(
                 os.path.basename(fname), "fitimage-*-versions.txt"):
               txt_files.add(fname)

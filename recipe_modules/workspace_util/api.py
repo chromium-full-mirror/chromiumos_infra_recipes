@@ -19,7 +19,6 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
   """A module workspace setup and manipulation."""
 
   def initialize(self):
-    self._patch_sets = []
     self._commits = []
     # Changes applied in apply_changes().
     self._applied_changes = []
@@ -28,7 +27,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
   @property
   def patch_sets(self):
-    return self._patch_sets
+    return [x.patch_set for x in self._commits]
 
   @property
   def commits(self):
@@ -114,12 +113,10 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
         presentation.step_text = 'Discarded changes: {}'.format(
             ', '.join(discarded_change_numbers))
 
-      patch_sets = self.m.gerrit.fetch_patch_sets(changes, include_files=True)
-      self._commits.extend(
-          self.m.cros_source.apply_gerrit_patch_sets(patch_sets))
-
+      commits = self.m.cros_source.apply_gerrit_changes(changes,
+                                                        include_files=True)
+      self._commits.extend(commits)
       self._applied_changes.extend(changes)
-      self._patch_sets.extend(patch_sets)
 
   def detect_toolchain_cls(self, chroot, gitiles_commit=None,
                            gerrit_changes=None, test_value=None, name=None):

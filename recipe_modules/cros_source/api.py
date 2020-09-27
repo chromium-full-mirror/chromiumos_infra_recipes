@@ -13,7 +13,7 @@ from collections import namedtuple
 from recipe_engine import recipe_api
 from recipe_engine.util import exponential_retry
 
-ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id'])
+ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id', 'patch_set'])
 
 # Default sync options for syncing the named cache.
 DEFAULT_CACHE_SYNC_OPTS = dict(current_branch=True, detach=True,
@@ -261,15 +261,23 @@ class CrosSourceApi(recipe_api.RecipeApi):
                                       (project, branch))
       return paths
 
-  def apply_gerrit_patch_sets(self, patch_sets):
-    """Apply Gerrit patch sets to the workspace.
+  def apply_gerrit_changes(self, gerrit_changes, include_files=False,
+                           include_commit_info=False, test_output_data=None):
+    """Apply GerritChanges to the workspace.
 
     Args:
-      patch_sets (List[gerrit.PatchSet]): A list of patch sets to cherry-pick.
+      gerrit_changes (list[GerritChange]): list of gerrit changes to apply.
+      include_files (bool): whether to include information about changed files.
+      incude_commit_info (bool): whether to include info about the commit.
+      test_output_data (dict): Test output for gerrit-fetch-changes.
 
     Returns:
       List[ProjectCommit]: A list of commits from cherry-picked patch sets.
     """
+    patch_sets = self.m.gerrit.fetch_patch_sets(
+        gerrit_changes, include_files=include_files,
+        include_commit_info=include_commit_info,
+        test_output_data=test_output_data)
     with self.m.step.nest('apply gerrit patch sets'):
       # Disable packRefs before doing merges. See https://crbug.com/1057878.
       self.m.git.set_global_config(['gc.packRefs', 'false'])
@@ -297,7 +305,8 @@ class CrosSourceApi(recipe_api.RecipeApi):
               self.m.git.cherry_pick(commit_id, infra_step=False)
 
             new_commit_id = self.m.git.head_commit()
-            new_commits.append(ProjectCommit(project_path, new_commit_id))
+            new_commits.append(
+                ProjectCommit(project_path, new_commit_id, patch_set))
 
       return new_commits
 

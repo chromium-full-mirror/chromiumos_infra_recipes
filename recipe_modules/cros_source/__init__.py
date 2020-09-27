@@ -13,6 +13,7 @@ DEPS = [
     'depot_tools/gitiles',
     'cros_infra_config',
     'easy',
+    'gerrit',
     'git',
     'overlayfs',
     'repo',
