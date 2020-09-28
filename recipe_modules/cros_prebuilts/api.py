@@ -153,14 +153,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     if not self._send_snapshot_prebuilts:
       return []
 
-    # TODO(https://crbug.com/1131734): misconfiguration, will add config
-    # validation to make this impossible and then remove this hack.
-    if not gs_bucket:  #pragma: no cover
-      if self.m.buildbucket.build.builder.bucket == "staging":
-        gs_bucket = "staging-chromeos-prebuilt"
-      else:
-        gs_bucket = "chromeos-prebuilt"
-
     # Assume 2 snapshot per hour, we want 7 days worth of them.  We will walk
     # back in time until we find $chromeos_prebuilts.send_snapshot_prebuilts
     # snapshots that have any prebuilts.  (To account for the possibility of
