@@ -349,7 +349,8 @@
     "cmd": [],
     "name": "analyze and launch builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@launched 0 / 1 builders@@@"
+      "@@@STEP_TEXT@launched 1 / 2 builders@@@",
+      "@@@STEP_LINK@staging-release-triggerer@https://chromium-swarm.appspot.com/task?id=fake-task-id@@@"
     ]
   },
   {
@@ -487,6 +488,313 @@
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@input.json@{\"files\": [\"a/b/text.txt\", \"other_test.txt\"], \"recipes\": [\"test_chromite\"]}@@@",
       "@@@STEP_LOG_END@input.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-release-triggerer\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-release-triggerer\"}, \"id\": \"2\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@staging-release-triggerer@https://cr-buildbucket.appspot.com/build/2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/led/led",
+      "get-build",
+      "2"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led get-build",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\", @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/led/led",
+      "edit-recipe-bundle"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-recipe-bundle",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"release-triggerer\"\n}\n}\n}\n}\n}\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\", @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"user_payload\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/led/led",
+      "edit-system",
+      "-p",
+      "20"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-system",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"release-triggerer\"\n}\n}\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\", @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"user_payload\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/led/led",
+      "edit",
+      "-name",
+      "staging-release-triggerer 2"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"release-triggerer\"\n}\n}\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\", @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"staging-release-triggerer 2\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"user_payload\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/led/led",
+      "launch"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led launch",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"release-triggerer\"\n}\n}\n}\n}, \n\"name\": \"staging-release-triggerer 2\"\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"host_name\": \"chromium-swarm.appspot.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"task_id\": \"fake-task-id\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LINK@Swarming task@https://chromium-swarm.appspot.com/task?id=fake-task-id@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect results"
+  },
+  {
+    "cmd": [],
+    "name": "collect results.extract host name",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect results.install infra/tools/luci/swarming",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cipd/infra/tools/luci/swarming/swarming_module_pin"
+    ],
+    "infra_step": true,
+    "name": "collect results.install infra/tools/luci/swarming.ensure package directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[CACHE]/cipd/infra/tools/luci/swarming/swarming_module_pin",
+      "-ensure-file",
+      "infra/tools/luci/swarming/${platform} swarming_module_pin",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "collect results.install infra/tools/luci/swarming.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-swarming_module_\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/swarming/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/cipd/infra/tools/luci/swarming/swarming_module_pin/swarming",
+      "collect",
+      "-server",
+      "chromium-swarm.appspot.com",
+      "-task-summary-json",
+      "/path/to/tmp/json",
+      "-task-output-stdout",
+      "json",
+      "fake-task-id"
+    ],
+    "infra_step": true,
+    "name": "collect results.collect swarming tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"fake-task-id\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"bot_id\": \"vm-123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"outputs_ref\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolated\": \"abc123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"isolatedserver\": \"https://isolateserver.appspot.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"fake-task-id\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@task stdout+stderr: my_task_0@hello world!@@@",
+      "@@@STEP_LOG_END@task stdout+stderr: my_task_0@@@",
+      "@@@STEP_LINK@task isolated outputs: my_task_0@https://isolateserver.appspot.com/browse?namespace=default-gzip&hash=abc123@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyze swarming results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all tasks succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyze swarming results.extract host name",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

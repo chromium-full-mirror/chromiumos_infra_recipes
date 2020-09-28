@@ -8,6 +8,10 @@ package recipes.chromeos.test_recipes;
 
 message TestRecipesProperties {
   // A list of builders to test the CL on. Only builders in the
-  // staging environment should be used.
+  // staging environment should be used.  These builders will only be launched
+  // if the CL modifies the recipe, or one of its dependencies.
   repeated string builders = 1;
+
+  // A list of builders to always test the CL with.
+  repeated string always_launch_builders = 2;
 }

@@ -47,6 +47,9 @@ DEFAULT_BUILDERS = [
     'staging-chromite-postsubmit', 'staging-test-manifest'
 ]
 
+# Default builders to *ALWAYS* launch.
+ALWAYS_DEFAULT = ['staging-release-triggerer']
+
 # URL for the ChromeOS CI recipes repo.
 RECIPE_REPO_HOST = 'chromium.googlesource.com'
 RECIPE_REPO_PROJECT = 'chromiumos/infra/recipes'
@@ -136,7 +139,7 @@ def _get_last_successful_build(api, builder):
   return successful_builds[0]
 
 
-def _launch_builders(api, builders):
+def _launch_builders(api, test_builders, always_launch_builders):
   """Launch builders with recipe changes patched in.
 
   Builders are only launched if the files in the patched changes affect the
@@ -146,7 +149,9 @@ def _launch_builders(api, builders):
 
   Args:
     * api (object): See RunSteps documentation.
-    * builders (list[str]): Builders to launch.
+    * test_builders (list[str]): Builders to CONDITIONALLY launch.
+    * always_launch_builders (list[str]): Builders to ALWAYS launch.
+
   Returns:
     A list of led.LedLaunchData.
   """
@@ -160,6 +165,9 @@ def _launch_builders(api, builders):
                                               to_rev='HEAD')
       affected_files_pres.logs['affected files'] = affected_files
 
+    builders = list(test_builders)
+    builders += [x for x in always_launch_builders if x not in test_builders]
+
     for builder in builders:
       with api.step.nest(
           'analyze and launch {}'.format(builder)) as builder_pres:
@@ -171,7 +179,8 @@ def _launch_builders(api, builders):
         buildbucket = intermediate_result.result.buildbucket
         recipe = buildbucket.bbagent_args.build.input.properties['recipe']
 
-        if api.recipe_analyze.is_recipe_affected(affected_files, recipe):
+        if (builder in always_launch_builders or
+            api.recipe_analyze.is_recipe_affected(affected_files, recipe)):
           # Run the child task with priority=20, to put it ahead of actual
           # staging jobs.  We could run it with the dimension 'role=infra',
           # but there are no large role=infra bots.
@@ -306,6 +315,7 @@ def _analyze_swarming_results(api, swarming_results, led_results):
 def RunSteps(api, properties):
   api.step.nest('set up')
   builders = properties.builders or DEFAULT_BUILDERS
+  always_launch_builders = properties.always_launch_builders or ALWAYS_DEFAULT
 
   for builder in builders:
     if 'staging' not in builder:
@@ -320,7 +330,8 @@ def RunSteps(api, properties):
 
   with _checkout_recipes_repo(api):
     _apply_gerrit_changes(api)
-    led_results = _launch_builders(api, non_skipped_builders)
+    led_results = _launch_builders(api, non_skipped_builders,
+                                   always_launch_builders)
 
   if led_results:
     swarming_results = _collect_results(api, led_results)
@@ -475,6 +486,8 @@ def GenTests(api):
       buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
       buildbucket_search_and_get_build('staging-chromite-postsubmit',
                                        'test_chromite', 2),
+      buildbucket_search_and_get_build('staging-release-triggerer',
+                                       'release-triggerer', 3),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
@@ -494,6 +507,8 @@ def GenTests(api):
       buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
       buildbucket_search_and_get_build('staging-chromite-postsubmit',
                                        'test_chromite', 2),
+      buildbucket_search_and_get_build('staging-release-triggerer',
+                                       'release-triggerer', 3),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
@@ -513,6 +528,8 @@ def GenTests(api):
       buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
       buildbucket_search_and_get_build('staging-chromite-postsubmit',
                                        'test_chromite', 2),
+      buildbucket_search_and_get_build('staging-release-triggerer',
+                                       'release-triggerer', 3),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
@@ -533,6 +550,8 @@ def GenTests(api):
       # Buildbucket search and led get-build results.
       buildbucket_search_and_get_build('staging-chromite-postsubmit',
                                        'test_chromite', 1),
+      buildbucket_search_and_get_build('staging-release-triggerer',
+                                       'release-triggerer', 2),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-chromite-postsubmit',
@@ -547,6 +566,8 @@ def GenTests(api):
       get_non_skipped_builders_test_data(),
       # Buildbucket search and led get-build results.
       buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
+      buildbucket_search_and_get_build('staging-release-triggerer',
+                                       'release-triggerer', 2),
       # recipe analyze results. Note that the annealing recipe is affected
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
