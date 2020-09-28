@@ -3901,15 +3901,15 @@ See: https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt
 
 A module for interacting with OverlayFS mounts.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/overlayfs/api.py#22)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/overlayfs/api.py#22)(self, props, \*args, \*\*kwargs):**
 
 Initialize OverlayfsApi.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#90)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#94)(self):**
 
 Returns a context that cleans up any overlayfs mounts created in it.
 
-&mdash; **def [mount](/recipe_modules/overlayfs/api.py#37)(self, name, lowerdir_path, mount_path, persist=False):**
+&mdash; **def [mount](/recipe_modules/overlayfs/api.py#41)(self, name, lowerdir_path, mount_path, persist=False):**
 
 Mount an OverlayFS.
 
@@ -3922,7 +3922,7 @@ Args:
       it doesn't exist.
   * persist (bool): Whether to persist the mount beyond one execution.
 
-&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#76)(self, name, mount_path):**
+&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#80)(self, name, mount_path):**
 
 Unmount an OverlayFS.
 
@@ -6019,9 +6019,9 @@ All builders run against the same source tree.
 &mdash; **def [RunSteps](/recipes/orchestrator.py#21)(api):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
-[DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#14)(api):**
 ### *recipes* / [paygen](/recipes/paygen.py)
 
 [DEPS](/recipes/paygen.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]

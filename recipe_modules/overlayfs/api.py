@@ -19,15 +19,19 @@ from recipe_engine import recipe_api
 class OverlayfsApi(recipe_api.RecipeApi):
   """A module for interacting with OverlayFS mounts."""
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, props, *args, **kwargs):
     """Initialize OverlayfsApi."""
     super(OverlayfsApi, self).__init__(*args, **kwargs)
     self._cleanup_stack = [[]]
+    self.random_work_path = props.random_work_path
 
   @property
   def _base_work_path(self):
     """Returns a Path to the base work directory for this module."""
-    return self.m.path['cleanup'].join('overlayfs')
+    if self.random_work_path:
+      return self.m.path.mkdtemp()
+    else:
+      return self.m.path['cleanup'].join('overlayfs')
 
   @property
   def _persist_work_path(self):

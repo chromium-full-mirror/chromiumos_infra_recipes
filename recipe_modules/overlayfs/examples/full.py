@@ -6,6 +6,7 @@
 DEPS = [
     'overlayfs',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
 ]
 
@@ -40,3 +41,8 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic')
+  yield api.test(
+      'random-work-path',
+      api.properties(**{'$chromeos/overlayfs': {
+          'random_work_path': True
+      }}))
