@@ -347,10 +347,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
         testable_packages_optional = False
         if (config.unit_tests.dependencies ==
             BuilderConfig.CL_AFFECTED_DEPENDENCIES):
-          relevant_testable_packages = self.m.cros_relevance.get_package_dependencies(
-              sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
-              patch_sets=self.m.workspace_util.patch_sets,
-              packages=unit_tests.packages)
           testable_packages_optional = True
         response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
             BuildTargetUnitTestRequest(

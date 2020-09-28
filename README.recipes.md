@@ -663,7 +663,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#88)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#423)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#419)(self, config=None):**
 
 Generate release payloads for the build.
 
@@ -700,7 +700,7 @@ This context manager sets up the workspace path.
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#413)(self, config=None):**
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#409)(self, config=None):**
 
 Sign the uploaded images.
 
@@ -709,7 +709,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#80)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#377)(self, config=None, disable_publish=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#373)(self, config=None, disable_publish=False):**
 
 Upload artifacts from the build.
 
@@ -717,7 +717,7 @@ Args:
   config (BuilderConfig): The Builder Config for the build, or None.
   disable_publish (bool): Whether to disable publishing artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#394)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#390)(self, config=None):**
 
 Upload prebuilts from the build.
 
