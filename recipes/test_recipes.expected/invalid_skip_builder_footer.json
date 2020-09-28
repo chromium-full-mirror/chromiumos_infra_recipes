@@ -75,7 +75,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 318, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 319, in RunSteps",
       "    non_skipped_builders = _get_non_skipped_builders(api, builders)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 263, in _get_non_skipped_builders",
       "    builders))",

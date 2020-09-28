@@ -304,6 +304,7 @@ def _analyze_swarming_results(api, swarming_results, led_results):
 
 
 def RunSteps(api, properties):
+  api.step.nest('set up')
   builders = properties.builders or DEFAULT_BUILDERS
 
   for builder in builders:
