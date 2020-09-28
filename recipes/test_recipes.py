@@ -382,14 +382,7 @@ def GenTests(api):
                         if skipped_builders else {}))
     return ret
 
-
-  # incremented by 1 for each call to buildbucket_search_and_get_build_data
-  fake_build_id = [1]
-
-  def buildbucket_search_and_get_build_data(builder, recipe_name):
-    fake_id = fake_build_id[0]
-    fake_build_id[0] += 1
-
+  def buildbucket_search_and_get_build(builder, recipe_name, fake_id):
     fake_build = job_pb2.Definition()
     build_proto = fake_build.buildbucket.bbagent_args.build
     build_proto.input.properties['recipe'] = recipe_name
@@ -479,9 +472,9 @@ def GenTests(api):
       # No builders are skipped
       get_non_skipped_builders_test_data(),
       # Buildbucket search and led get-build results.
-      buildbucket_search_and_get_build_data('staging-Annealing', 'annealing'),
-      buildbucket_search_and_get_build_data('staging-chromite-postsubmit',
-                                            'test_chromite'),
+      buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
+      buildbucket_search_and_get_build('staging-chromite-postsubmit',
+                                       'test_chromite', 2),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
@@ -498,9 +491,9 @@ def GenTests(api):
       two_cl_try_build(project='chromeos', bucket='infra',
                        builder='test-recipes'),
       # Buildbucket search and led get-build results.
-      buildbucket_search_and_get_build_data('staging-Annealing', 'annealing'),
-      buildbucket_search_and_get_build_data('staging-chromite-postsubmit',
-                                            'test_chromite'),
+      buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
+      buildbucket_search_and_get_build('staging-chromite-postsubmit',
+                                       'test_chromite', 2),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
@@ -517,9 +510,9 @@ def GenTests(api):
       two_cl_try_build_with_other_repo(project='chromeos', bucket='infra',
                                        builder='test-recipes'),
       # Buildbucket search and led get-build results.
-      buildbucket_search_and_get_build_data('staging-Annealing', 'annealing'),
-      buildbucket_search_and_get_build_data('staging-chromite-postsubmit',
-                                            'test_chromite'),
+      buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
+      buildbucket_search_and_get_build('staging-chromite-postsubmit',
+                                       'test_chromite', 2),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
@@ -538,8 +531,8 @@ def GenTests(api):
       get_non_skipped_builders_test_data(skipped_builders=['staging-Annealing']
                                         ),
       # Buildbucket search and led get-build results.
-      buildbucket_search_and_get_build_data('staging-chromite-postsubmit',
-                                            'test_chromite'),
+      buildbucket_search_and_get_build('staging-chromite-postsubmit',
+                                       'test_chromite', 1),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-chromite-postsubmit',
@@ -553,7 +546,7 @@ def GenTests(api):
       # No builders are skipped
       get_non_skipped_builders_test_data(),
       # Buildbucket search and led get-build results.
-      buildbucket_search_and_get_build_data('staging-Annealing', 'annealing'),
+      buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
       # recipe analyze results. Note that the annealing recipe is affected
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
