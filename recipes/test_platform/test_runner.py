@@ -196,7 +196,7 @@ def archive_all_logs(api, phosphorus_config, gs_root, result):
   """
   try:
     with api.context(infra_steps=True):
-      with api.step.nest('Archive all test logs to Google Storage'):
+      with api.step.nest('archive all test logs to Google Storage'):
         # Create a reasonable directory tree to avoid directories with a huge
         # number of entries.
         # - b/167219452 - Large number of entries at top-level can cause Google
@@ -519,14 +519,17 @@ def execution_steps(api, properties, envvars):
         _set_offload_dir(result, upload_to_gs_response)
       dut_state = result.state_update.dut_state
     finally:
-      with api.step.nest('save local DUT state'):
-        state_store.save_and_seal(api, dut_state)
+      # Must complete synchronous logs upload before sealing the results
+      # directory. Once the results directory is sealed, gs_offloader may delete
+      # the result files.
       result = archive_all_logs(
           api,
           phosphorus_config=phosphorus_config,
           gs_root=properties.config.output.log_data_gs_root,
           result=result,
       )
+      with api.step.nest('save local DUT state'):
+        state_store.save_and_seal(api, dut_state)
       publish_to_result_flow(api, properties.config, properties.request,
                              should_poll_for_completion=True)
     set_output_properties(api, result=result)
@@ -808,7 +811,7 @@ def GenTests(api):
 
   def _successful_logs_archive_step():
     return api.step_data(
-        'execution steps.Archive all test logs to Google Storage.'
+        'execution steps.archive all test logs to Google Storage.'
         'call `phosphorus`.upload-to-gs', stdout=api.raw_io.output(
             json_format.MessageToJson(
                 phosphorus.upload_to_gs.UploadToGSResponse(
@@ -977,7 +980,7 @@ def GenTests(api):
                       autotest_result=Result.Autotest(test_cases=[]),
                   )))),
       api.step_data(
-          'execution steps.Archive all test logs to Google Storage.'
+          'execution steps.archive all test logs to Google Storage.'
           'call `phosphorus`.upload-to-gs', retcode=1),
   )
 

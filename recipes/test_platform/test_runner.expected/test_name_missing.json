@@ -30,7 +30,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 587, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 590, in RunSteps",
       "    api, properties, envvars)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 473, in execution_steps",
       "    validate_request(api, properties)",
