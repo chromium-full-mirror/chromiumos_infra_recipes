@@ -14,6 +14,10 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 
 def RunSteps(api):
+
+  def _change(manifest):
+    return GerritChange(host=manifest.host, project=manifest.project)
+
   # Using api.src_state.build_manifest
   # Initial values:
   api.assertions.assertEqual(api.src_state.external_manifest,
@@ -24,10 +28,20 @@ def RunSteps(api):
   api.assertions.assertEqual(api.src_state.internal_manifest,
                              api.src_state.build_manifest)
 
+  api.assertions.assertTrue(
+      _change(api.src_state.internal_manifest) in api.src_state.build_manifest)
+  api.assertions.assertFalse(
+      _change(api.src_state.external_manifest) in api.src_state.build_manifest)
+
   # Setting it to None reverts to the original value.
   api.src_state.build_manifest = None
   api.assertions.assertEqual(api.src_state.external_manifest,
                              api.src_state.build_manifest)
+
+  api.assertions.assertTrue(
+      _change(api.src_state.external_manifest) in api.src_state.build_manifest)
+  api.assertions.assertFalse(
+      _change(api.src_state.internal_manifest) in api.src_state.build_manifest)
 
 
 def GenTests(api):

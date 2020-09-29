@@ -22,10 +22,11 @@ There are two classes of properties in this module.
     the changes completely.
 """
 
+import json
+
 from google.protobuf.json_format import MessageToDict
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
-import json
 from recipe_engine import recipe_api
 from . import common
 
@@ -142,7 +143,7 @@ class SrcStateApi(recipe_api.RecipeApi):
     """Set the gerrit_changes that will be used for the build.
 
     Args:
-      gerrit_changes (list[GerritChanges]): The gitiles host.
+      gerrit_changes (list[GerritChanges]): The gerrit_changes.
     """
     if ((self._gerrit_changes is None and gerrit_changes is not None) or
         list(self.gerrit_changes) != gerrit_changes):

@@ -60,6 +60,18 @@ class ManifestProject(object):
     return (self.url == other.url and self.path == other.path and
             self.ref == other.ref and self.gerrit_host == other.gerrit_host)
 
+  def __contains__(self, change):
+    """Return whether |change| applies to this manifest.
+
+    Args:
+      change (GerritChange or PatchSet): the GerritChange or PatchSet to check.
+
+    Returns:
+      (bool) whether the change is to this manifest.
+    """
+    change_host = change.host.replace('-review', '')
+    return (change_host, change.project) == (self.host, self.project)
+
   @property
   def as_gitiles_commit_proto(self):
     """Return a GitilesCommit protobuf.
