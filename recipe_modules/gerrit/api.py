@@ -14,7 +14,7 @@ import urllib
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 from google.protobuf import json_format as jsonpb
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 # Strip these suffixes from hosts for "short" host display.
 SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
@@ -176,7 +176,7 @@ class Label(enum.Enum):
     ])
 
 
-class GerritApi(recipe_api.RecipeApi):
+class GerritApi(RecipeApi):
   """A module for Gerrit helpers."""
 
   PatchSet = PatchSet
@@ -251,7 +251,7 @@ class GerritApi(recipe_api.RecipeApi):
           'no Gerrit patch set found for input %r' % r
           for r in missing_responses
       ]
-      raise self.m.step.StepFailure('missing gerrit patch(es)')
+      raise StepFailure('missing gerrit patch(es)')
     return patch_sets
 
   def parse_gerrit_change(self, gerrit_change_url):
@@ -357,7 +357,7 @@ class GerritApi(recipe_api.RecipeApi):
             '    {}'.format(s) for s in result['errors'][0].splitlines()
         ]
         error_msg = '\n'.join(error_markdown_lines)
-        raise self.m.step.StepFailure(
+        raise StepFailure(
             'Merge conflict detected! Please rebase and retry.\n\n{}'.format(
                 error_msg))
       presentation.step_text = 'confirmed no merge conflicts'

@@ -5,7 +5,7 @@
 
 import contextlib
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
@@ -16,7 +16,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 BOT_COST = {'small': 0.342, 'smedium': .0402, 'medium': 1.93, 'large': 8.08}
 
 
-class BotCostApi(recipe_api.RecipeApi):
+class BotCostApi(RecipeApi):
   """A module to calculate the cost of running bots."""
 
   def initialize(self):
@@ -79,7 +79,7 @@ class BotCostApi(recipe_api.RecipeApi):
       for dimension in swarming.bot_dimensions or swarming.task_dimensions:
         if dimension.key == 'bot_size':
           if dimension.value not in BOT_COST:
-            raise self.m.step.StepFailure('bot_size:{} not supported'.format(
+            raise StepFailure('bot_size:{} not supported'.format(
                 dimension.value))
           self._bot_size = dimension.value
           break

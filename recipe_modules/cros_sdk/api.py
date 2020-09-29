@@ -9,7 +9,7 @@ import contextlib
 import json
 import os
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.chromiumos import common
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
@@ -23,7 +23,7 @@ from PB.chromite.api.sdk import CreateSnapshotRequest
 from PB.chromite.api.sdk import RestoreSnapshotRequest
 
 
-class CrosSdkApi(recipe_api.RecipeApi):
+class CrosSdkApi(RecipeApi):
   """A module for interacting with cros_sdk."""
 
   def __init__(self, props, *args, **kwargs):
@@ -280,7 +280,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
             self.chroot, test_value=test_toolchain_cls):
           self.mark_sdk_as_dirty()
 
-      except self.m.step.StepFailure:
+      except StepFailure:
         # Invalidate the cache if the InitSDK call fails.
         self._remove_chroot(name='InitSDK failure')
         raise
@@ -348,7 +348,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
                 flags=UpdateSdkRequest.Flags(build_source=build_source,
                                              toolchain_changed=toolchain_cls)),
             timeout=timeout_sec)
-      except self.m.step.StepFailure:
+      except StepFailure:
         # If the update fails, also delete the SDK.
         self._remove_chroot(name='UpdateSDK failure')
         raise
@@ -363,7 +363,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
     """
     try:
       yield
-    except self.m.step.StepFailure:
+    except StepFailure:
       self.mark_sdk_as_dirty()
       raise
     finally:
@@ -441,7 +441,7 @@ class CrosSdkApi(recipe_api.RecipeApi):
       if self.m.path.exists(chroot_link):
         try:
           self.m.file.remove('remove original chroot link', chroot_link)
-        except self.m.step.StepFailure:
+        except StepFailure:
           # If we failed to remove the link, it's almost certainly a directory
           # because the recipe didn't create a chroot, and some Build API step
           # did it for us.  Unmount and remove the directory that should have

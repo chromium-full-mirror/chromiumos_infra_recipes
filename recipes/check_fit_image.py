@@ -34,6 +34,7 @@ import os
 from collections import defaultdict
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.check_fit_image import CheckFitImageProperties
@@ -91,8 +92,7 @@ def parse_versions_file(step_name, api, path):
       break
 
   if not version:
-    raise api.step.StepFailure('FIT version information not found in \'%s\'' %
-                               path)
+    raise StepFailure('FIT version information not found in \'%s\'' % path)
 
   # Build file => hash map
   hashes = {}
@@ -108,7 +108,7 @@ def RunSteps(api, properties):
 
   def _quit(comment):
     """Quit the step with StepFailure"""
-    raise api.step.StepFailure(comment)
+    raise StepFailure(comment)
 
   def _comment_and_quit(comment):
     """Post a comment back to all the changes we're operating on"""

@@ -9,14 +9,14 @@ import datetime
 import json
 import os
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 from recipe_engine.util import exponential_retry
 
 # Number of seconds to wait on gsutil rsync.
 gsutil_timeout_seconds = 30 * 60
 
 
-class CrosCacheApi(recipe_api.RecipeApi):
+class CrosCacheApi(RecipeApi):
   """A module for CrOS-specific cache steps."""
 
   def __init__(self, *args, **kwargs):
@@ -54,7 +54,7 @@ class CrosCacheApi(recipe_api.RecipeApi):
         self.m.step('packaging via %s for cache' % archive_cmd, archive_cmd,
                     infra_step=True)
       else:
-        raise self.m.step.StepFailure('source directory does not exist')
+        raise StepFailure('source directory does not exist')
       return archive_file, version_file
 
   def upload_artifact(self, gs_bucket, upload_file):
@@ -72,7 +72,7 @@ class CrosCacheApi(recipe_api.RecipeApi):
         self.m.gsutil(['cp', upload_file, upload_uri],
                       timeout=gsutil_timeout_seconds)
         break
-      except recipe_api.StepFailure as ex:
+      except StepFailure as ex:
         if ex.had_timeout and retries < 2:
           continue
         else:

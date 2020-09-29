@@ -5,7 +5,7 @@
 
 """API for calling 'recipes.py analyze'"""
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from google.protobuf import json_format as jsonpb
 from PB.recipe_engine import analyze as analyze_pb
@@ -13,7 +13,7 @@ from PB.recipe_engine import analyze as analyze_pb
 import json
 
 
-class RecipeAnalyzeApi(recipe_api.RecipeApi):
+class RecipeAnalyzeApi(RecipeApi):
   """A module for calling 'recipes.py analyze'"""
 
   def is_recipe_affected(self, affected_files, recipe):
@@ -56,12 +56,12 @@ class RecipeAnalyzeApi(recipe_api.RecipeApi):
     )
 
     if output_pb.invalid_recipes:
-      raise self.m.step.StepFailure(
+      raise StepFailure(
           'recipes analyze failed with invalid recipes: {}'.format(
               output_pb.invalid_recipes))
 
     if output_pb.error:
-      raise self.m.step.StepFailure(
-          'recipes analyze failed with error: {}'.format(output_pb.error))
+      raise StepFailure('recipes analyze failed with error: {}'.format(
+          output_pb.error))
 
     return recipe in output_pb.recipes

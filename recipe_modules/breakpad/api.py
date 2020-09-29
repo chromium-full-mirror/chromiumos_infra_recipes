@@ -5,14 +5,14 @@
 
 import os
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 # The file in an image archive containing debug symbols.
 # TODO(crbug.com/973172): Pass as an argument instead of hardcoding.
 SYMBOLS_FILE_NAME = 'debug_breakpad.tar.xz'
 
 
-class BreakpadApi(recipe_api.RecipeApi):
+class BreakpadApi(RecipeApi):
 
   def initialize(self):
     self._breakpad_ensured = False
@@ -150,7 +150,7 @@ class BreakpadApi(recipe_api.RecipeApi):
                   stackwalk_output_path = self._write_stackwalk_output(
                       dmp_file, stackwalk_output)
                   stackwalk_output_paths.append(stackwalk_output_path)
-                except self.m.step.StepFailure as step_failure:
+                except StepFailure as step_failure:
                   pres2.logs['caught StepFailure'] = [repr(step_failure)]
 
             # `test_result_local_path` will not contain the final path component

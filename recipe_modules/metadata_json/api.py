@@ -8,7 +8,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import step as step_pb2
 from google.protobuf import timestamp_pb2
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 from recipe_engine.util import exponential_retry
 
 import contextlib
@@ -17,7 +17,7 @@ import email.utils
 import time
 
 
-class MetadataJsonApi(recipe_api.RecipeApi):
+class MetadataJsonApi(RecipeApi):
   """A module to write metadata.json into GS for GoldenEye consumption."""
 
   def __init__(self, *args, **kwargs):
@@ -242,7 +242,7 @@ class MetadataJsonApi(recipe_api.RecipeApi):
             config.artifacts.artifacts_info):
           self.add_stage_results()
           self.finalize_build(config, target, success=True)
-    except self.m.step.StepFailure:
+    except StepFailure:
       with self.m.step.nest('finalize metadata'):
         if self.m.cros_artifacts.has_output_artifacts(
             config.artifacts.artifacts_info):

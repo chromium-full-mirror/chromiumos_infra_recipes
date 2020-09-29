@@ -13,6 +13,7 @@ import os
 
 from google.protobuf import json_format
 from google.protobuf import struct_pb2
+from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.common import PackageInfo
 
@@ -129,7 +130,7 @@ def RunSteps(api, properties):
                 ), status=bb_common.SUCCESS), limit=4)
 
       if not board_builds[board]:
-        raise api.step.StepFailure(
+        raise StepFailure(
             'unable to find latest build for {}'.format(builder_name))
 
       # For each successful build, use the version number as a key and
@@ -153,8 +154,7 @@ def RunSteps(api, properties):
 
     # If no common version can be found, raise an error.
     if sanitized_common_version == '0':
-      raise api.step.StepFailure(
-          'unable to find common build to uprev for all boards')
+      raise StepFailure('unable to find common build to uprev for all boards')
 
   with api.cros_source.checkout_overlays_context():
     api.cros_source.ensure_synced_cache()

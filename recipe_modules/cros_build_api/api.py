@@ -14,7 +14,7 @@ from google.protobuf import json_format
 from google.protobuf import reflection
 from google.protobuf import timestamp_pb2
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.chromite.api import api as meta_api
 
@@ -133,7 +133,7 @@ class VersionService(Stub):
   """Stub for VersionService."""
 
 
-class CrosBuildApiApi(recipe_api.RecipeApi):
+class CrosBuildApiApi(RecipeApi):
   """This recipe module exposes client stubs for all build API services.
 
   To add a service endpoint, create a class INSIDE THIS MODULE extending Stub.
@@ -367,7 +367,7 @@ class CrosBuildApiApi(recipe_api.RecipeApi):
             if call_step.exc_result.retcode != 0:
               resp_pres.status = self.m.step.FAILURE
 
-        except self.m.step.StepFailure as e:
+        except StepFailure as e:
           call_step = e.result
           raise e
 

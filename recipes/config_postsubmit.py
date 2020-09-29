@@ -19,6 +19,7 @@ import os
 
 from collections import namedtuple
 from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -130,7 +131,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatt
             project_info.branch,
             _flatten_config,
         )
-      except api.step.StepFailure:
+      except StepFailure:
         presentation.status = 'WARNING'
 
   return []
@@ -194,14 +195,14 @@ def RunSteps(api):
           commit_infos = action(api, config_projects)
           for commit_info in commit_infos:
             _create_cl(api, commit_info, action_name)
-        except api.step.StepFailure as e:
+        except StepFailure as e:
           step_failures.append(e)
 
     # If there were any step failures, raise now.
     if step_failures:
       msg = '{} steps failed:'.format(len(step_failures))
       msg += ', '.join((f.reason or f.name) for f in step_failures)
-      raise api.step.StepFailure(msg)
+      raise StepFailure(msg)
 
 
 def GenTests(api):

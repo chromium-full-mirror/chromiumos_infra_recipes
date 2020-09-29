@@ -5,14 +5,6 @@
 
 """Tests a recipe CL by running ChromeOS builders."""
 
-import contextlib
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
-                                                       builds_service_pb2)
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.led.job import job as job_pb2
-
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -31,6 +23,15 @@ DEPS = [
     'naming',
     'recipe_analyze',
 ]
+
+import contextlib
+from recipe_engine.recipe_api import StepFailure
+
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.led.job import job as job_pb2
 
 from PB.recipes.chromeos.test_recipes import TestRecipesProperties
 
@@ -133,7 +134,7 @@ def _get_last_successful_build(api, builder):
       url_title_fn=api.naming.get_build_title)
 
   if not successful_builds:
-    raise api.step.StepFailure(
+    raise StepFailure(
         'No successful builds found for builder {}'.format(builder))
 
   return successful_builds[0]
@@ -307,7 +308,7 @@ def _analyze_swarming_results(api, swarming_results, led_results):
           len(swarming_results) - fail_count)
       presentation.status = api.step.FAILURE
 
-      raise api.step.StepFailure('{} tasks failed'.format(fail_count))
+      raise StepFailure('{} tasks failed'.format(fail_count))
     else:
       presentation.step_text = 'all tasks succeeded'
 

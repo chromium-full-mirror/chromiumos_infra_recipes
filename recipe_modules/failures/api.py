@@ -14,10 +14,10 @@ import collections
 import contextlib
 import operator
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 
-class FailuresApi(recipe_api.RecipeApi):
+class FailuresApi(RecipeApi):
   """A module for presenting errors and raising StepFailures."""
 
   # A failure in recipe execution.
@@ -177,7 +177,7 @@ class FailuresApi(recipe_api.RecipeApi):
     enclosing_step.presentation.status = self.m.step.FAILURE
     enclosing_step.presentation.logs['list of failed packages'] = map(
         self.m.naming.get_package_title, packages)
-    raise self.m.step.StepFailure(long_message)
+    raise StepFailure(long_message)
 
   def raise_failed_image_tests(self, failed_images):
     """Display failed image tests and raise a failure.
@@ -204,7 +204,7 @@ class FailuresApi(recipe_api.RecipeApi):
       failed_types = map(lambda image: ImageType.Name(image.type),
                          failed_images)
       presentation.logs['list of failed images'] = failed_types
-      raise self.m.step.StepFailure(message)
+      raise StepFailure(message)
 
   def aggregate_failures(self, failures):
     """Returns a recipe result based on the given failures.

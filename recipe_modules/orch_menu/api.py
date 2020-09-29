@@ -11,7 +11,7 @@ import contextlib
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import ParseDict
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -85,7 +85,7 @@ class BuildsStatus(object):
             self._configs.get(build.builder.builder))
 
 
-class OrchMenuApi(recipe_api.RecipeApi):
+class OrchMenuApi(RecipeApi):
   """A module with steps used by orchestrators.
 
   Orchestrators do not call other recipe modules directly: they always get there
@@ -184,7 +184,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         self._sync_manifest_repos(test_footers)
 
         if not config and not missing_ok:
-          raise self.m.step.StepFailure('Missing configuration for {}'.format(
+          raise StepFailure('Missing configuration for {}'.format(
               self.m.buildbucket.builder_name))
 
       if config:
@@ -227,8 +227,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
     # to validate all of them.
     for ref, value in self._properties.update_manifest_refs.ListFields():
       if not value.startswith('refs/heads/'):
-        raise self.m.step.StepFailure('%s ref %s is missing refs/heads/' %
-                                      (ref.name, value))
+        raise StepFailure('%s ref %s is missing refs/heads/' %
+                          (ref.name, value))
       self._has_manifest_refs = True
 
   def _sync_manifest_repos(self, test_footers):
@@ -256,8 +256,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
       # Make sure we got exactly one snapshot ref.
       if not footer_values or len(footer_values) != 1:
-        raise self.m.step.StepFailure(
-            'expected exactly one Cr-External-Snapshot footer')
+        raise StepFailure('expected exactly one Cr-External-Snapshot footer')
       extern_snapshot_id = footer_values[0]
 
     external_manifest = self.m.src_state.external_manifest
@@ -484,7 +483,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       return self.m.buildbucket.collect_builds(
           build_ids, timeout=60 * 60 * 36, step_name='collect',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()
-    except self.m.step.StepFailure:
+    except StepFailure:
       return self.m.buildbucket.get_multi(
           build_ids, step_name='get',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()
@@ -573,7 +572,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
                                                      step_name='collect',
                                                      url_title_fn=title_fn,
                                                      fields=fields).values()
-        except self.m.step.StepFailure:
+        except StepFailure:
           builds = self.m.buildbucket.get_multi([build.id], step_name='get',
                                                 url_title_fn=title_fn,
                                                 fields=fields).values()

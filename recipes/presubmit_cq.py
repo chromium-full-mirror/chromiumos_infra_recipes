@@ -5,8 +5,6 @@
 
 """Launches presubmit tests for CQ."""
 
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
@@ -20,6 +18,8 @@ DEPS = [
     'test_util',
 ]
 
+from recipe_engine.recipe_api import StepFailure
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.presubmit_cq import PresubmitCqProperties
 
 PROPERTIES = PresubmitCqProperties
@@ -49,7 +49,7 @@ def RunSteps(api, properties):
       exe_cipd_version = api.buildbucket.INHERIT
     else:
       presentation.step_text = 'No build'
-      raise api.step.StepFailure('No changes present')
+      raise StepFailure('No changes present')
 
   with api.step.nest('run {}'.format(builder)) as presentation:
     child_props = api.cq.props_for_child_build
@@ -69,7 +69,7 @@ def RunSteps(api, properties):
       output = api.buildbucket.collect_builds(
           [child.id], step_name='collect', timeout=60 * 60 * 2,
           url_title_fn=api.naming.get_build_title)[child.id]
-    except api.step.StepFailure:
+    except StepFailure:
       # If the child builder takes more than the given timeout, collect_builds
       # will raise StepFailure. If the failure is due to other reasons, then
       # get_multi will raise the same StepFailure.

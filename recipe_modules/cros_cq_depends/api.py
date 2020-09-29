@@ -7,7 +7,7 @@
 import re
 from collections import namedtuple
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 PRIVATE_HOST = 'chrome-internal'
 PUBLIC_HOST = 'chromium'
@@ -15,7 +15,7 @@ PUBLIC_HOST = 'chromium'
 Dep = namedtuple('Dep', ['host', 'cl_number'])
 
 
-class CrosCqDependsApi(recipe_api.RecipeApi):
+class CrosCqDependsApi(RecipeApi):
   """A module for checking that Cq-Depend has been fulfilled."""
 
   def _gather_deps(self, manifest_diffs, dep_log):
@@ -157,7 +157,7 @@ class CrosCqDependsApi(recipe_api.RecipeApi):
         # TODO(crbug.com/980288): Find a better way to handle the error where path isn't found.
         try:
           paths = self.m.cros_source.find_project_paths(project, branch)
-        except self.m.step.StepFailure as step_failure:
+        except StepFailure as step_failure:
           dep_local_log.append(
               'Failed to find project paths, with failure: %s' % step_failure)
           continue

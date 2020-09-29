@@ -4,14 +4,14 @@
 # found in the LICENSE file.
 
 from google.protobuf import json_format as jsonpb
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 from recipe_engine.util import exponential_retry
 from PB.test_platform.taskstate import TaskState
 
 SYS_LOG_DIR = '/var/log'
 
 
-class TastExecApi(recipe_api.RecipeApi):
+class TastExecApi(RecipeApi):
   """A module to execute tast commands."""
 
   def run(self, suite_name, expressions, qcow_image_path, test_artifacts_dir,
@@ -139,7 +139,7 @@ class TastExecApi(recipe_api.RecipeApi):
     ], infra_step=True)
     try:
       self._test_ssh_conn(private_key_path)
-    except self.m.step.StepFailure:  # pragma: nocover
+    except StepFailure:  # pragma: nocover
       self._kill_vm(kvm_pid_file)
       raise
 

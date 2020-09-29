@@ -10,7 +10,7 @@ import json
 
 from collections import namedtuple
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 from recipe_engine.util import exponential_retry
 
 ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id', 'patch_set'])
@@ -28,7 +28,7 @@ DEFAULT_CHECKOUT_SYNC_OPTS = dict(jobs=8, optimized_fetch=True, timeout=3600,
                                   retry_fetches=8)
 
 
-class CrosSourceApi(recipe_api.RecipeApi):
+class CrosSourceApi(RecipeApi):
   """A module for CrOS-specific source steps."""
 
   def __init__(self, properties, *args, **kwargs):
@@ -257,8 +257,8 @@ class CrosSourceApi(recipe_api.RecipeApi):
           paths.append(project_info.path)
 
       if not paths:
-        raise self.m.step.StepFailure('No path found for project %r branch %r' %
-                                      (project, branch))
+        raise StepFailure('No path found for project %r branch %r' %
+                          (project, branch))
       return paths
 
   def apply_gerrit_changes(self, gerrit_changes, include_files=False,
@@ -295,9 +295,9 @@ class CrosSourceApi(recipe_api.RecipeApi):
             if not merged:
               self.m.git.merge_abort()
               if self.m.git.is_merge_commit(commit_id):
-                raise self.m.step.StepFailure('%s failed, aborting, this '
-                                              'commit is a merge so we can '
-                                              'not cherry-pick' % commit_id)
+                raise StepFailure('%s failed, aborting, this '
+                                  'commit is a merge so we can '
+                                  'not cherry-pick' % commit_id)
               presentation = self.m.step.active_result.presentation
               presentation.status = self.m.step.SUCCESS
               presentation.step_text = (
