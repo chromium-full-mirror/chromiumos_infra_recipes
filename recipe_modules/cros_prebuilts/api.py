@@ -404,7 +404,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       private (bool): Whether or not the target prebuilts are private.
     """
     binhost_key = self._binhost_key(kind)
-    with self.m.step.nest('upload prebuilts'):
+    with self.m.step.nest('upload prebuilts') as pres:
       if private:
         acls = self.m.cros_build_api.BinhostService.GetPrivatePrebuiltAclArgs(
             binhost_pb.AclArgsRequest(build_target=target), infra_step=True,
@@ -422,6 +422,10 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       step = self.m.step('set properties', cmd=None)
       step.presentation.properties['prebuilts_private'] = private
       step.presentation.properties['prebuilts_uri'] = upload_uri
+
+      if self.m.cros_source.is_source_dirty:  # pragma: no cover
+        pres.step_text = 'source dirty, skipping upload commit and metadata'
+        return
 
       # Only buildbucket launched builds with the default profile should commit
       # BINHOST.conf updates.  Which can be explicitly disabled with the feature

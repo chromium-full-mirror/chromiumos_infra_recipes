@@ -53,6 +53,7 @@ def RunSteps(api, properties):
   expected_hash = properties.expected_snapshot_isolated_hash or None
   api.assertions.assertEqual(api.cros_source.snapshot_isolated_hash,
                              expected_hash)
+  api.assertions.assertTrue(api.cros_source.is_source_dirty)
 
 
 def GenTests(api):

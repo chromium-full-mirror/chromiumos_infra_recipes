@@ -36,7 +36,18 @@ class CrosSourceApi(RecipeApi):
     self._snapshot_isolate = (
         properties.snapshot_isolate
         if properties.HasField('snapshot_isolate') else None)
+    self._is_source_dirty = bool(self._snapshot_isolate)
     self._enable_custom_overlays = properties.enable_custom_overlays
+
+  @property
+  def is_source_dirty(self):
+    """Returns whether the source is dirty.
+
+    Returns whether the source is dirty. The source is dirty if it was checked
+    out to a custom snapshot from isolate or has had patches applied or has
+    been moved to a branch.
+    """
+    return self._is_source_dirty
 
   @property
   def preload_path(self):
@@ -175,6 +186,7 @@ class CrosSourceApi(RecipeApi):
       my_sync_opts = dict(**DEFAULT_CHECKOUT_SYNC_OPTS)
       my_sync_opts.update(sync_opts or {})
       self.m.repo.sync(**my_sync_opts)
+      self._is_source_dirty = True
 
   def fetch_snapshot_shas(self, count=7 * 24 * 2):
     """Return snapshot SHAs for the manifest.
@@ -308,6 +320,7 @@ class CrosSourceApi(RecipeApi):
             new_commits.append(
                 ProjectCommit(project_path, new_commit_id, patch_set))
 
+      self._is_source_dirty = True
       return new_commits
 
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
