@@ -12,6 +12,7 @@
   * [build_plan](#recipe_modules-build_plan)
   * [buildbucket_stats](#recipe_modules-buildbucket_stats)
   * [chrome](#recipe_modules-chrome)
+  * [chromite](#recipe_modules-chromite)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
   * [code_coverage](#recipe_modules-code_coverage)
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
@@ -119,6 +120,10 @@
   * [chrome:examples/full](#recipes-chrome_examples_full)
   * [chrome:examples/gclient_retry](#recipes-chrome_examples_gclient_retry)
   * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt)
+  * [chrome_cbuildbot](#recipes-chrome_cbuildbot)
+  * [chrome_cbuildbot_tryjob](#recipes-chrome_cbuildbot_tryjob)
+  * [chromeos_cbuildbot](#recipes-chromeos_cbuildbot)
+  * [chromite:examples/full](#recipes-chromite_examples_full)
   * [cl_factory](#recipes-cl_factory) &mdash; Used to create sweeping changes by creating CLs in many repos.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full)
@@ -158,6 +163,7 @@
   * [cros_history:examples/get_test_failure_builders](#recipes-cros_history_examples_get_test_failure_builders)
   * [cros_history:examples/set_passed_tests](#recipes-cros_history_examples_set_passed_tests)
   * [cros_infra_config:examples/builder](#recipes-cros_infra_config_examples_builder)
+  * [cros_infra_config:examples/builder_group](#recipes-cros_infra_config_examples_builder_group)
   * [cros_infra_config:examples/config_ref](#recipes-cros_infra_config_examples_config_ref)
   * [cros_infra_config:examples/full](#recipes-cros_infra_config_examples_full)
   * [cros_infra_config:examples/get_bot_policy_config](#recipes-cros_infra_config_examples_get_bot_policy_config)
@@ -946,6 +952,133 @@ Args:
   chroot (chromiumos.Chroot): Information on the chroot for the build.
   build_target (chromiumos.BuildTarget): Build target of the build.
   internal (bool): True for internal checkout.
+### *recipe_modules* / [chromite](/recipe_modules/chromite)
+
+[DEPS](/recipe_modules/chromite/__init__.py#1): [cros\_infra\_config](#recipe_modules-cros_infra_config), [goma](#recipe_modules-goma), [repo](#recipe_modules-repo), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/git][depot_tools/recipe_modules/git], [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [ChromiteApi](/recipe_modules/chromite/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [build\_packages](/recipe_modules/chromite/api.py#189)(self, board, args=None, \*\*kwargs):**
+
+Run the build_packages script inside the chroot.
+
+Used by the internal goma recipe.
+
+&mdash; **def [cbuildbot](/recipe_modules/chromite/api.py#134)(self, name, config, args=None, \*\*kwargs):**
+
+Runs the cbuildbot command defined by the arguments.
+
+Args:
+  name: (str) The name of the command step.
+  config: (str) The name of the 'cbuildbot' configuration to invoke.
+  args: (list) If not None, addition arguments to pass to 'cbuildbot'.
+
+Returns: (Step) The step that was run.
+
+&mdash; **def [check\_repository](/recipe_modules/chromite/api.py#53)(self, repo_type_key, value):**
+
+Scans through registered repositories for a specified value.
+
+Args:
+  repo_type_key (str): The key in the 'repositories' config to scan through.
+  value (str): The value to scan for.
+Returns (bool): True if the value was found.
+
+&mdash; **def [checkout](/recipe_modules/chromite/api.py#151)(self, manifest_url=None, repo_url=None, branch=None):**
+
+&mdash; **def [checkout\_chromite](/recipe_modules/chromite/api.py#243)(self):**
+
+Checks out the configured Chromite branch.
+    
+
+&emsp; **@property**<br>&mdash; **def [chromite\_path](/recipe_modules/chromite/api.py#28)(self):**
+
+&mdash; **def [configure](/recipe_modules/chromite/api.py#197)(self, properties, config_map, \*\*KWARGS):**
+
+Loads configuration from build properties into this recipe config.
+
+Args:
+  properties (Properties): The build properties object.
+  config_map (dict): The configuration map to use.
+  KWARGS: Additional keyword arguments to forward to the configuration.
+
+&mdash; **def [cros\_sdk](/recipe_modules/chromite/api.py#162)(self, name, cmd, args=None, environ=None, chroot_cmd=None, \*\*kwargs):**
+
+Return a step to run a command inside the cros_sdk.
+
+Used by the internal goma recipe.
+
+&emsp; **@property**<br>&mdash; **def [depot\_tools\_path](/recipe_modules/chromite/api.py#32)(self):**
+
+&mdash; **def [gclient\_config](/recipe_modules/chromite/api.py#116)(self):**
+
+Generate a 'gclient' configuration to check out Chromite.
+
+Return: (config) A 'gclient' recipe module configuration.
+
+&mdash; **def [get\_config\_defaults](/recipe_modules/chromite/api.py#36)(self):**
+
+&mdash; **def [load\_manifest\_config](/recipe_modules/chromite/api.py#66)(self, repository, revision):**
+
+Loads manifest-specified parameters from the manifest commit.
+
+This method parses the commit log for the following information:
+- The branch to build (From the "Automatic": tag).
+- The build ID (from the CrOS-Build-Id: tag).
+
+Args:
+  repository (str): The URL of the repository hosting the change.
+  revision (str): The revision hash to load the build ID from.
+
+&mdash; **def [run](/recipe_modules/chromite/api.py#279)(self, args=None, goma_dir=None):**
+
+Runs the configured 'cbuildbot' build.
+
+This workflow uses the registered configuration dictionary to make group-
+and builder-specific changes to the standard workflow.
+
+The specific workflow paths that are taken are also influenced by several
+build properties.
+
+TODO(dnj): When CrOS migrates away from BuildBot, replace property
+    inferences with command-line parameters.
+
+This workflow:
+- Checks out the specified 'cbuildbot' repository.
+- Pulls information based on the configured change's repository/revision
+  to pass to 'cbuildbot'.
+- Executes the 'cbuildbot' command.
+
+Args:
+  args (list): Initial argument list, expanded based on other values.
+  goma_dir: Goma client path used for simplechrome.
+            Goma client for ChromeOS chroot should be located in sibling
+            directory so that cbuildbot can find it automatically.
+Returns: (Step) the 'cbuildbot' execution step.
+
+&mdash; **def [run\_cbuildbot](/recipe_modules/chromite/api.py#224)(self, args=None, goma_canary=False):**
+
+Performs a Chromite repository checkout, then runs cbuildbot.
+
+Args:
+  args (list): Initial argument list, see run() for details.
+  goma_canary (bool): Use canary version of goma if True.
+
+&mdash; **def [setup\_board](/recipe_modules/chromite/api.py#180)(self, board, args=None, \*\*kwargs):**
+
+Run the setup_board script inside the chroot.
+
+Used by the internal goma recipe.
+
+&mdash; **def [with\_system\_python](/recipe_modules/chromite/api.py#252)(self):**
+
+Prepare a directory with the system python binary available.
+
+This is designed to make it possible to mask "bundled python" out of the
+standard path without hiding any other binaries.
+
+Returns: (context manager) A context manager that inserts system python
+    into the front of PATH.
 ### *recipe_modules* / [cloud\_pubsub](/recipe_modules/cloud_pubsub)
 
 [DEPS](/recipe_modules/cloud_pubsub/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1540,13 +1673,13 @@ Args:
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
 
-[DEPS](/recipe_modules/cros_infra_config/__init__.py#6): [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
+[DEPS](/recipe_modules/cros_infra_config/__init__.py#6): [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
 
 #### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for accessing data in the chromeos/infra/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#453)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#474)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -1577,7 +1710,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#354)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#375)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1598,7 +1731,11 @@ Args:
 Returns:
   BuilderConfig or None
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#235)(self):**
+&emsp; **@property**<br>&mdash; **def [current\_builder\_group](/recipe_modules/cros_infra_config/api.py#144)(self):**
+
+Get the builder group for the currently running builder.
+
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#256)(self):**
 
 Force a reload of the config map from ToT.
 
@@ -1611,14 +1748,14 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#79)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#245)(self):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#266)(self):**
 
 Get BotPolicies as defined in infra/config.
 
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#413)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#434)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -1629,7 +1766,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#439)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#460)(self, build=None):**
 
 Return the build target name from input properties.
 
@@ -1640,7 +1777,7 @@ Args:
 Returns:
   (str) The name of the build target, or None.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#185)(self, builder_name, missing_ok=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#206)(self, builder_name, missing_ok=False):**
 
 Gets the BuilderConfig for the specified builder from the master branch.
 
@@ -1663,14 +1800,14 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#265)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#286)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#255)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#276)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
@@ -1687,13 +1824,17 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#71)(self):**
 
+&emsp; **@property**<br>&mdash; **def [parent\_builder\_group](/recipe_modules/cros_infra_config/api.py#151)(self):**
+
+Get the builder group for the parent builder.
+
 &emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#129)(self):**
 
 Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#213)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#234)(self, builder_names):**
 
 Gets the BuilderConfigs for the specified builder names from master.
 
@@ -1707,9 +1848,16 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#242)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#263)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#239)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#260)(self, run_spec):**
+
+&emsp; **@property**<br>&mdash; **def [target\_builder\_group](/recipe_modules/cros_infra_config/api.py#156)(self):**
+
+Get the builder group for the target builder.
+
+This is used by findit, which has a single builder that performs
+bisection using the configuration of another builder.
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
 
 [DEPS](/recipe_modules/cros_paygen/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5215,6 +5363,30 @@ Return the kwargs as a json string.
 [DEPS](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
 &mdash; **def [RunSteps](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#19)(api):**
+### *recipes* / [chrome\_cbuildbot](/recipes/chrome_cbuildbot.py)
+
+[DEPS](/recipes/chrome_cbuildbot.py#5): [chromite](#recipe_modules-chromite), [cros\_infra\_config](#recipe_modules-cros_infra_config), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipes/chrome_cbuildbot.py#34)(api):**
+### *recipes* / [chrome\_cbuildbot\_tryjob](/recipes/chrome_cbuildbot_tryjob.py)
+
+[DEPS](/recipes/chrome_cbuildbot_tryjob.py#9): [chromite](#recipe_modules-chromite), [cros\_infra\_config](#recipe_modules-cros_infra_config), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipes/chrome_cbuildbot_tryjob.py#62)(api):**
+### *recipes* / [chromeos\_cbuildbot](/recipes/chromeos_cbuildbot.py)
+
+[DEPS](/recipes/chromeos_cbuildbot.py#12): [chromite](#recipe_modules-chromite), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [DoRunSteps](/recipes/chromeos_cbuildbot.py#45)(api):**
+
+&mdash; **def [MakeSummaryMarkdown](/recipes/chromeos_cbuildbot.py#70)(api, failure):**
+
+&mdash; **def [RunSteps](/recipes/chromeos_cbuildbot.py#21)(api):**
+### *recipes* / [chromite:examples/full](/recipe_modules/chromite/examples/full.py)
+
+[DEPS](/recipe_modules/chromite/examples/full.py#7): [chromite](#recipe_modules-chromite), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/chromite/examples/full.py#15)(api):**
 ### *recipes* / [cl\_factory](/recipes/cl_factory.py)
 
 [DEPS](/recipes/cl_factory.py#38): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5453,6 +5625,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_infra_config/examples/builder.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/builder.py#25)(api, properties):**
+### *recipes* / [cros\_infra\_config:examples/builder\_group](/recipe_modules/cros_infra_config/examples/builder_group.py)
+
+[DEPS](/recipe_modules/cros_infra_config/examples/builder_group.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/builder_group.py#14)(api):**
 ### *recipes* / [cros\_infra\_config:examples/config\_ref](/recipe_modules/cros_infra_config/examples/config_ref.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/config_ref.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6698,6 +6875,7 @@ Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#18)(api):**
 
+[depot_tools/recipe_modules/bot_update]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e42a28c81c4b52a5f0e2a43dba85a5e234714820/recipes/README.recipes.md#recipe_modules-bot_update
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e42a28c81c4b52a5f0e2a43dba85a5e234714820/recipes/README.recipes.md#recipe_modules-depot_tools
 [depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e42a28c81c4b52a5f0e2a43dba85a5e234714820/recipes/README.recipes.md#recipe_modules-gclient
 [depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e42a28c81c4b52a5f0e2a43dba85a5e234714820/recipes/README.recipes.md#recipe_modules-gerrit
@@ -6716,6 +6894,7 @@ Basic tests for the urls recipe module.
 [recipe_engine/recipe_modules/isolated]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce7e40b60f5d1034f8393c9b42bd0314c2b51c0e/README.recipes.md#recipe_modules-isolated
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce7e40b60f5d1034f8393c9b42bd0314c2b51c0e/README.recipes.md#recipe_modules-json
 [recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce7e40b60f5d1034f8393c9b42bd0314c2b51c0e/README.recipes.md#recipe_modules-led
+[recipe_engine/recipe_modules/legacy_annotation]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce7e40b60f5d1034f8393c9b42bd0314c2b51c0e/README.recipes.md#recipe_modules-legacy_annotation
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce7e40b60f5d1034f8393c9b42bd0314c2b51c0e/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce7e40b60f5d1034f8393c9b42bd0314c2b51c0e/README.recipes.md#recipe_modules-properties
 [recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/ce7e40b60f5d1034f8393c9b42bd0314c2b51c0e/README.recipes.md#recipe_modules-python

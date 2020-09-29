@@ -7,6 +7,7 @@ DEPS = {
     'buildbucket': 'recipe_engine/buildbucket',
     'cipd': 'recipe_engine/cipd',
     'context': 'recipe_engine/context',
+    'properties': 'recipe_engine/properties',
     'step': 'recipe_engine/step',
     'url': 'recipe_engine/url',
     'depot_gitiles': 'depot_tools/gitiles',

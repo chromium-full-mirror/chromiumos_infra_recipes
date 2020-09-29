@@ -52,4 +52,5 @@ def GenTests(api):
       'forced-config',
       api.test_util.test_orchestrator().build,
       api.cros_infra_config.override_builder_configs_test_data(configs),
-      api.properties(FullProperties(children_names=['builder1'])))
+      api.properties(FullProperties(children_names=['builder1'])),
+  )
