@@ -12,6 +12,19 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "--reference",
+      "[CLEANUP]/tmp_tmp_1",
+      "--dissociate",
+      "https://mygithost.google.com/somerepo",
+      "."
+    ],
+    "infra_step": true,
+    "name": "git clone (2)"
+  },
+  {
+    "cmd": [
+      "git",
       "fetch",
       "remote"
     ],
@@ -96,15 +109,15 @@
       "/path/to/tmp/json",
       "copy",
       "Updated README\n\nMuch better now.",
-      "[CLEANUP]/commit_msg_tmp_1"
+      "[CLEANUP]/commit_msg_tmp_2"
     ],
     "infra_step": true,
     "name": "write commit message",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Updated README@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Much better now.@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Updated README@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Much better now.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
   },
   {
@@ -112,7 +125,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_1",
+      "[CLEANUP]/commit_msg_tmp_2",
       "--author",
       "John Doe <john.doe@example.com>",
       "--",

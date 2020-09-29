@@ -442,19 +442,28 @@ class GitApi(recipe_api.RecipeApi):
     revs = '%s..%s' % (from_commit, to_ref)
     self._step(['bundle', 'create', output_path, revs])
 
-  def clone(self, repo_url, target_path=None, timeout_sec=None):
+  def clone(self, repo_url, target_path=None, reference=None, dissociate=False,
+            timeout_sec=None):
     """Clones a Git repo into the current directory.
 
     Args:
       * repo_url (str): The URL of the repo to clone.
       * target_path (Path): Path in which to clone the repo, or None to specify
           current directory.
+      * reference (Path): Path to the reference repo.
+      * dissociate (bool): Whether to dissociate from reference.
       * timeout_sec (int): Timeout in seconds.
     """
     if target_path is None:
       # Clone into current directory (no extra subdirectory) by default.
       target_path = '.'
-    self._step(['clone', repo_url, target_path], timeout=timeout_sec)
+    args = ['clone']
+    if reference:
+      args += ['--reference', reference]
+    if dissociate:
+      args += ['--dissociate']
+    args += [repo_url, target_path]
+    self._step(args, timeout=timeout_sec)
 
   def rebase(self, force=False):
     """Run `git rebase` with the given arguments.

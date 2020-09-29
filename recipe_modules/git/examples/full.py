@@ -18,6 +18,8 @@ DEPS = [
 def RunSteps(api):
   commit_id = 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
   api.git.clone('https://mygithost.google.com/somerepo')
+  api.git.clone('https://mygithost.google.com/somerepo',
+                reference=api.path.mkdtemp(), dissociate=True)
   api.git.fetch('remote')
   api.assertions.assertEqual(
       api.git.fetch_ref('remote', 'refs/heads/branch'), commit_id)
