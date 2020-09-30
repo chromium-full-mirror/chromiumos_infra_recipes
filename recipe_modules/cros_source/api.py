@@ -38,6 +38,12 @@ class CrosSourceApi(RecipeApi):
         if properties.HasField('snapshot_isolate') else None)
     self._is_source_dirty = bool(self._snapshot_isolate)
     self._enable_custom_overlays = properties.enable_custom_overlays
+    self._manifest_branch = ''
+
+  @property
+  def manifest_branch(self):
+    """Returns the branch of the manifest that is checked out."""
+    return self._manifest_branch or self.m.src_state.build_manifest.branch
 
   @property
   def is_source_dirty(self):
@@ -177,7 +183,8 @@ class CrosSourceApi(RecipeApi):
       * step_name (str): Name for the step, or None for default.
     """
     with self.m.context(cwd=self.workspace_path), \
-        self.m.step.nest(step_name or 'checkout branch %s' % manifest_branch):
+        self.m.step.nest(step_name or
+                         'checkout branch %s' % manifest_branch) as pres:
       my_init_opts = {}
       my_init_opts.update(init_opts or {})
       my_init_opts['manifest_branch'] = manifest_branch
@@ -186,7 +193,11 @@ class CrosSourceApi(RecipeApi):
       my_sync_opts = dict(**DEFAULT_CHECKOUT_SYNC_OPTS)
       my_sync_opts.update(sync_opts or {})
       self.m.repo.sync(**my_sync_opts)
+      self._manifest_branch = manifest_branch
       self._is_source_dirty = True
+      # Record the pinned version of the snapshot.
+      manifest_xml = self.m.repo.manifest_snapshot()
+      pres.logs['pinned-manifest.xml'] = manifest_xml.splitlines()
 
   def fetch_snapshot_shas(self, count=7 * 24 * 2):
     """Return snapshot SHAs for the manifest.
