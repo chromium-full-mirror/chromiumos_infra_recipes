@@ -18,6 +18,8 @@ def RunSteps(api):
   def _change(manifest):
     return GerritChange(host=manifest.host, project=manifest.project)
 
+  api.assertions.assertEqual(api.src_state.build_manifest.branch, 'master')
+
   # Using api.src_state.build_manifest
   # Initial values:
   api.assertions.assertEqual(api.src_state.external_manifest,

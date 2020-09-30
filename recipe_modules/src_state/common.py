@@ -73,6 +73,12 @@ class ManifestProject(object):
     return (change_host, change.project) == (self.host, self.project)
 
   @property
+  def branch(self):
+    """Return the branch name from the ref."""
+    return (self.ref[len('refs/heads/'):]
+            if self.ref.startswith('refs/heads/') else self.ref)
+
+  @property
   def as_gitiles_commit_proto(self):
     """Return a GitilesCommit protobuf.
 
