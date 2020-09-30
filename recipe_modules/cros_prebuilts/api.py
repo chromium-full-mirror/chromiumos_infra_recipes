@@ -423,7 +423,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       step.presentation.properties['prebuilts_private'] = private
       step.presentation.properties['prebuilts_uri'] = upload_uri
 
-      if self.m.cros_source.is_source_dirty:  # pragma: no cover
+      if self.m.cros_source.is_source_dirty:
         pres.step_text = 'source dirty, skipping upload commit and metadata'
         return
 

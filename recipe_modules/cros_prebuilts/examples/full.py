@@ -17,6 +17,8 @@ from PB.chromiumos.common import BuildTarget, Profile
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
     CrosPrebuiltsProperties)
+from PB.recipe_modules.chromeos.cros_source.cros_source import (
+    CrosSourceProperties)
 from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import (
     FullProperties)
 
@@ -56,12 +58,13 @@ def GenTests(api):
   def test_data(private=False, use_staging=False,
                 enable_snapshot_prebuilts=True, send_snapshot_prebuilts=4,
                 disable_overlay_commits=False, profile=None,
-                expected_package_indexes=None):
+                expected_package_indexes=None, dirty_source=False):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     target = 'amd64-generic'
 
     non_base_profile = (profile and profile.name and profile.name != 'base')
-    expect_commit = not (disable_overlay_commits or non_base_profile)
+    expect_commit = not (disable_overlay_commits or non_base_profile or
+                         dirty_source)
 
     if expected_package_indexes is None:
       expected_package_indexes = make_package_indexes(
@@ -70,25 +73,35 @@ def GenTests(api):
     ret = api.test_util.test_child_build(target, cq=False).build
     test_props = FullProperties(
         build_target=BuildTarget(name=target), private=private,
-        gs_bucket=gs_bucket, profile=profile)
+        gs_bucket=gs_bucket, profile=profile, dirty_source=dirty_source)
     for x in expected_package_indexes:
       test_props.expected_package_indexes.add().CopyFrom(x)
 
     ret += api.properties(test_props)
 
-    ret += api.properties(
-        **{
-            "$chromeos/cros_prebuilts":
-                CrosPrebuiltsProperties(
-                    use_staging_branch=use_staging,
-                    enable_snapshot_prebuilts=enable_snapshot_prebuilts,
-                    send_snapshot_prebuilts=send_snapshot_prebuilts,
-                    disable_overlay_commits=disable_overlay_commits)
-        })
+    props = {
+        '$chromeos/cros_prebuilts':
+            CrosPrebuiltsProperties(
+                use_staging_branch=use_staging,
+                enable_snapshot_prebuilts=enable_snapshot_prebuilts,
+                send_snapshot_prebuilts=send_snapshot_prebuilts,
+                disable_overlay_commits=disable_overlay_commits)
+    }
 
-    ret += api.post_check(MustRun if private else DoesNotRun,
-                          'upload prebuilts.read gs acls')
-    check = MustRun if enable_snapshot_prebuilts else DoesNotRun
+    # Forcing cros_source to claim dirty source.
+    if dirty_source:
+      props['$chromeos/cros_source'] = CrosSourceProperties(
+          snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+              isolated_hash='xxx',
+              isolate_server='http://server.com',
+          ))
+
+    ret += api.properties(**props)
+
+    ret += api.post_check(
+        MustRun if private and not dirty_source else DoesNotRun,
+        'upload prebuilts.read gs acls')
+    check = MustRun if enable_snapshot_prebuilts and not dirty_source else DoesNotRun
     ret += api.post_check(check, 'upload prebuilts.upload metadata')
     ret += api.post_check(check, 'upload prebuilts.upload metadata.gsutil acl')
     check = MustRun if expect_commit else DoesNotRun
@@ -130,3 +143,8 @@ def GenTests(api):
 
   yield api.test('with-profile',
                  test_data(profile=Profile(name='generic_build')))
+
+  # This test forces dirty source and thus tests the code path of
+  # upload_target_prebuilts skipping binhost commit and metadata
+  # upload.
+  yield api.test('dirty-source', test_data(dirty_source=True))

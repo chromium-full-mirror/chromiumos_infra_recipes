@@ -41,6 +41,12 @@ def RunSteps(api, properties):
       api.cros_source.ensure_synced_cache(is_staging=True)
       api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
 
+  # At this point should be dirty only for custom manifest cases.
+  if properties.expected_snapshot_isolated_hash:
+    api.assertions.assertTrue(api.cros_source.is_source_dirty)
+  else:
+    api.assertions.assertFalse(api.cros_source.is_source_dirty)
+
   commits = api.cros_source.apply_gerrit_changes(api.src_state.gerrit_changes)
 
   archive_path = api.path['start_dir'].join('commits.tar')

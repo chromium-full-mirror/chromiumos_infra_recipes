@@ -24,4 +24,7 @@ message FullProperties {
 
   // Expected PackageIndexInfo data
   repeated chromiumos.PackageIndexInfo expected_package_indexes = 5;
+
+  // Whether to make the source appear dirty.
+  bool dirty_source = 6;
 }
