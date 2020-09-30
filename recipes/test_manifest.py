@@ -5,8 +5,6 @@
 
 """Verifies a repo manifest."""
 
-from PB.recipes.chromeos.test_manifest import TestManifestProperties
-
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -15,11 +13,15 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'depot_tools/depot_tools',
+    'cros_branch',
     'cros_infra_config',
     'cros_source',
     'repo',
     'src_state',
 ]
+
+from PB.recipes.chromeos.test_manifest import TestManifestProperties
+from PB.chromiumos.branch import Branch
 
 PROPERTIES = TestManifestProperties
 
@@ -70,8 +72,16 @@ def RunSteps(api, properties):
       # branch.
       if (branch == api.cros_source.manifest_branch and
           api.path.exists(manifest_path)):
-        # Test `cros branch` tool for projects specified in config.
         if project_info.name in test_branch_projects:
+          # Test branching with cros_branch.  See go/cros-branch.
+          api.cros_branch.create_from_file(
+              manifest_path, Branch(type=Branch.CUSTOM, name='test-manifest'),
+              step_name='test branch_util for %s' % project_info.name,
+              push=False)
+
+          # Test `cros branch` tool for projects specified in config.
+          # TODO(crbug/1128071): Remove the test with cros branch when deleting
+          # it.
           with api.depot_tools.on_path():
             api.step('test cros branch for %s' % project_info.name, [
                 'chromite/bin/cros', 'branch', '--ack-deprecation', '--root',
