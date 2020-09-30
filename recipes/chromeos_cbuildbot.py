@@ -11,6 +11,7 @@ import re
 
 DEPS = [
     'chromite',
+    'cros_infra_config',
     'depot_tools/gitiles',
     'recipe_engine/legacy_annotation',
     'recipe_engine/properties',

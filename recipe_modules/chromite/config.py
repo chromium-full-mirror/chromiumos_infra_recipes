@@ -92,25 +92,9 @@ def base(c):
   # Determine if we're manually specifying the tryjob branch in the extra
   # args. If we are, use that as the branch version.
   chromite_branch = c.chromite_branch
-  for idx, arg in enumerate(c.cbb.extra_args):
-    if arg == '--branch':
-      # Two-argument form: "--branch master"
-      idx += 1
-      if idx < len(c.cbb.extra_args):
-        chromite_branch = c.cbb.extra_args[idx]
-        break
-
-    # One-argument form: "--branch=master"
-    branch_flag = '--branch'
-    if arg.startswith(branch_flag):
-      chromite_branch = arg[len(branch_flag):]
-      break
 
   # Resolve branch version, if available.
   assert c.chromite_branch, "A Chromite branch must be configured."
-  version = _VERSION_RE.match(chromite_branch)
-  if version:
-    c.branch_version = int(version.group(1))
 
   # If running on a testing slave, enable "--debug" so Chromite doesn't cause
   # actual production effects.
@@ -142,17 +126,7 @@ def master_swarming(_):
 
 
 @config_ctx(group='master', includes=['external'])
-def master_chromiumos_chromium(c):
-  c.use_chrome_version = True
-
-
-@config_ctx(group='master', includes=['external'])
 def master_chromiumos(_):
-  pass
-
-
-@config_ctx(group='master', includes=['external'])
-def master_chromiumos_tryserver(_):
   pass
 
 
@@ -160,8 +134,3 @@ def master_chromiumos_tryserver(_):
 def chromiumos_coverage(c):
   c.use_chrome_version = True
   c.cbb.config_repo = 'https://example.com/repo.git'
-
-
-@config_ctx()
-def use_goma_canary(c):
-  c.use_goma_canary = True

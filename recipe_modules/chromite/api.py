@@ -63,56 +63,6 @@ class ChromiteApi(recipe_api.RecipeApi):
         return True
     return False
 
-  def load_manifest_config(self, repository, revision):
-    """Loads manifest-specified parameters from the manifest commit.
-
-    This method parses the commit log for the following information:
-    - The branch to build (From the "Automatic": tag).
-    - The build ID (from the CrOS-Build-Id: tag).
-
-    Args:
-      repository (str): The URL of the repository hosting the change.
-      revision (str): The revision hash to load the build ID from.
-    """
-    if all((self.c.chromite_branch, self.c.cbb.build_id)):
-      # They have all already been populated, so we're done (BuildBucket).
-      return
-
-    # Load our manifest fields from the formatted Gitiles commit message that
-    # scheduled this build.
-    #
-    # First, check that we are actually in a known manifest Gitiles repository.
-    if not self.check_repository('cros_manifest', repository):
-      return
-
-    commit_log = self.m.gitiles.commit_log(repository, revision,
-                                           step_name='Fetch manifest config',
-                                           attempts=self._GITILES_ATTEMPTS)
-    result = self.m.step.active_result
-
-    # Handle missing/invalid response.
-    if not (commit_log and commit_log.get('message')):
-      self.m.python.failing_step('Fetch manifest config failure',
-                                 'Failed to fetch manifest config.')
-
-    loaded = []
-    for line in reversed(commit_log['message'].splitlines()):
-      # Automatic command?
-      match = self._MANIFEST_CMD_RE.match(line)
-      if match:
-        self.c.chromite_branch = match.group(2)
-        loaded.append('Chromite branch: %s' % (self.c.chromite_branch,))
-        continue
-
-      # Build ID?
-      match = self._BUILD_ID_RE.match(line)
-      if match:
-        self.c.cbb.build_id = match.group(1)
-        continue
-    if loaded:
-      loaded.insert(0, '')
-      result.presentation.step_text += '<br/>'.join(loaded)
-
   def gclient_config(self):
     """Generate a 'gclient' configuration to check out Chromite.
 
@@ -209,37 +159,6 @@ class ChromiteApi(recipe_api.RecipeApi):
       self.set_config('master_swarming', **KWARGS)
       return
 
-    # Set the groups's base configuration.
-    config_map = config_map.get(builder_group, {})
-    group_config = config_map.get('group_config')
-    assert group_config, ("No 'group_config' configuration for '%s'" %
-                          (builder_group,))
-    self.set_config(group_config, **KWARGS)
-
-    # Set per-builder configuration if any.
-    builder_config = config_map.get('builder_config', {}).get(builder, None)
-    if builder_config:
-      self.set_config(builder_config, **KWARGS)
-
-  def run_cbuildbot(self, args=None, goma_canary=False):
-    """Performs a Chromite repository checkout, then runs cbuildbot.
-
-    Args:
-      args (list): Initial argument list, see run() for details.
-      goma_canary (bool): Use canary version of goma if True.
-    """
-    # Fetch chromite and depot_tools.
-    self.checkout_chromite()
-
-    # Update or install goma client via cipd.
-    client_type = None
-    if goma_canary:
-      client_type = 'candidate'
-    self.m.goma.initialize()
-    self.m.goma.client_version = client_type
-
-    self.run(args)
-
   def checkout_chromite(self):
     """Checks out the configured Chromite branch.
     """
@@ -317,23 +236,17 @@ class ChromiteApi(recipe_api.RecipeApi):
         # '--chrome_version' flag.
         self.c.cbb.chrome_version = self.m.buildbucket.gitiles_commit.id
 
-      # This change comes from a manifest repository. Load configuration
-      # parameters from the manifest command.
-      self.load_manifest_config(repository, revision)
-
     cbb_args = [
         '--buildroot',
         self.m.path['cache'].join('cbuild'),
     ]
 
-    if args:
-      cbb_args.extend(args)
     if self.c.chromite_branch:
       cbb_args.extend(['--branch', self.c.chromite_branch])
     if self.c.cbb.build_number is not None:
       cbb_args.extend(['--buildnumber', self.c.cbb.build_number])
     if self.c.cbb.debug:
-      cbb_args.extend(['--debug'])
+      cbb_args.extend(['--debug'])  # pragma: nocover
     if self.c.cbb.clobber:
       cbb_args.extend(['--clobber'])
     if self.c.cbb.chrome_version:

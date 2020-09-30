@@ -26,8 +26,12 @@ def RunSteps(api):
   api.chromite.cbuildbot('cbuildbot', 'amd64-generic-full',
                          args=['--clobber', '--build-dir', '/here/there'])
 
-  # Cover how things are actually launched in Prod
-  api.chromite.run_cbuildbot()
+
+  # Update or install goma client via cipd.
+  api.chromite.m.goma.initialize()
+  api.chromite.m.goma.client_version = api.properties.get(
+      'cbb_goma_client_type')
+  api.chromite.run()
 
 
 def GenTests(api):
