@@ -32,6 +32,8 @@ def RunSteps(api, properties):
   api.assertions.assertEqual([x.name for x in child_specs],
                              properties.children_names)
 
+  _ = api.cros_infra_config.experiments_for_child_build
+
 
 def GenTests(api):
   yield api.test(

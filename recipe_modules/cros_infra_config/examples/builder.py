@@ -12,6 +12,7 @@ DEPS = [
 ]
 
 from google.protobuf import json_format
+from recipe_engine import post_process
 
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -82,7 +83,10 @@ def GenTests(api):
         expected_is_staging=expected_is_staging)
     if is_staging is not None:
       props.is_staging.value = is_staging
-    return build.build + api.properties(props)
+    # None of these example cases should fail, so verify that the build finished
+    # successfully.
+    return (build.build + api.properties(props) +
+            api.post_check(post_process.StatusSuccess))
 
   # This has a commit and no changes.
   yield api.test('basic', builder())
@@ -116,6 +120,8 @@ def GenTests(api):
               'value': 'parent_id'
           },
       ]))
+
+  yield api.test('experiments', builder(experiments=['test-experiment']))
 
   yield api.test('missing_config',
                  builder(build_target='nosuch', builder='nosuch-cq'))

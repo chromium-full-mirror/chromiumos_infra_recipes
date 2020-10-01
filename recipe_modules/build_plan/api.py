@@ -156,6 +156,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
         properties = self.m.cq.props_for_child_build
         properties.update(self.m.cros_infra_config.props_for_child_build)
 
+        child_exps = self.m.cros_infra_config.experiments_for_child_build
+
         # TODO(crbug.com/1123776): Remove scheduling of a full builder in
         # addition to a slim builder after go/cros-slim-rollout parallel
         # adoption phase.
@@ -169,15 +171,15 @@ class BuildPlanApi(recipe_api.RecipeApi):
           new_build_requests.append(
               self.m.buildbucket.schedule_request(
                   gitiles_commit=snapshot, builder=full_builder_name,
-                  bucket=bucket, gerrit_changes=gerrit_changes,
-                  critical=full_builder_critical, tags=tags,
+                  bucket=bucket, gerrit_changes=gerrit_changes, tags=tags,
+                  critical=full_builder_critical, experiments=child_exps,
                   properties=properties, swarming_parent_run_id=parent_run_id))
 
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
                 gitiles_commit=snapshot, builder=child_builder_name,
                 bucket=bucket, gerrit_changes=gerrit_changes, critical=critical,
-                tags=tags, properties=properties,
+                tags=tags, properties=properties, experiments=child_exps,
                 swarming_parent_run_id=parent_run_id))
       presentation.logs['filter log'] = filter_log
       # Don't include irrelevant builder configs or snapshot builds in this
@@ -341,7 +343,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
     """
     builder_spec, env_suffix = builder_name.rsplit('-', 1)
     return builder_spec + '-slim-' + env_suffix
-
 
   # TODO(crbug.com/1123776): Remove after go/cros-slim-rollout parallel
   # adoption phase.

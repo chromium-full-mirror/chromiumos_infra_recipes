@@ -81,6 +81,18 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return self.m.src_state.gerrit_changes
 
   @property
+  def experiments(self):
+    """Return the list of experiments active for this build."""
+    return [
+        x.encode('utf-8') for x in self.m.buildbucket.build.input.experiments
+    ]
+
+  @property
+  def experiments_for_child_build(self):
+    """Return value for bb schedule_request experiments arg ."""
+    return {k: True for k in self.experiments}
+
+  @property
   def config(self):
     """Return the config for this builder.
 
@@ -395,8 +407,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     build = self.m.buildbucket.build
     with self.m.step.nest(name) as presentation:
-      self.m.easy.set_properties_step(
-          recipes_git_revision=self.package_git_revision)
+      easy_props = dict(recipes_git_revision=self.package_git_revision)
+      easy_props.update(
+          {'experiments': self.experiments} if self.experiments else {})
+      self.m.easy.set_properties_step(**easy_props)
 
       config = self.config
       if config:

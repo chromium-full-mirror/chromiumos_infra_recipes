@@ -43,6 +43,15 @@ class CrosSourceApi(RecipeApi):
     self._manifest_branch = ''
     self._applied_patches = {}
 
+  def initialize(self):
+    """Initialization that follows all module loading."""
+    self._enable_custom_overlays |= (
+        'chromeos.cros_source.enable_custom_overlays' in
+        self.m.cros_infra_config.experiments)
+    self._make_manifest_changes_active |= (
+        'chromeos.cros_source.make_manifest_changes_active' in
+        self.m.cros_infra_config.experiments)
+
   @property
   def manifest_branch(self):
     """Returns the branch of the manifest that is checked out."""
