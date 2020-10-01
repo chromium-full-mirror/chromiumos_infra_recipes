@@ -190,17 +190,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
           count_total_filtered_builds))
 
       self.m.easy.set_properties_step(
-          build_plan_skip_for_source_rules=count_skip_for_source_rules)
-      self.m.easy.set_properties_step(
-          build_plan_skip_for_already_passed=count_skip_since_already_passed)
-      self.m.easy.set_properties_step(
-          build_plan_skip_for_wait_on_other_run=count_skip_wait_on_other_run)
-      self.m.easy.set_properties_step(
-          build_plan_skip_for_noncritical_on_rerun=count_skip_noncritical_on_rerun
-      )
-      self.m.easy.set_properties_step(
-          build_plan_new_build_requests=len(new_build_requests))
-      self.m.easy.set_properties_step(
+          build_plan_skip_for_source_rules=count_skip_for_source_rules,
+          build_plan_skip_for_already_passed=count_skip_since_already_passed,
+          build_plan_skip_for_wait_on_other_run=count_skip_wait_on_other_run,
+          build_plan_skip_for_noncritical_on_rerun=(
+              count_skip_noncritical_on_rerun),
+          build_plan_new_build_requests=len(new_build_requests),
           count_scheduled_slim_builds=count_scheduled_slim_builds)
 
     return completed_builds, filtered_snapshot_builds, new_build_requests
