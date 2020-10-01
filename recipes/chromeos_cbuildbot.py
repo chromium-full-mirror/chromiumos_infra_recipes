@@ -58,7 +58,7 @@ def DoRunSteps(api):
   api.chromite.checkout_chromite()
 
   # Update or install goma client via cipd.
-  api.chromite.m.goma.initialize()
+  api.chromite.m.goma.initialize(also_bq_upload=True)
   api.chromite.m.goma.client_version = api.properties.get(
       'cbb_goma_client_type')
 

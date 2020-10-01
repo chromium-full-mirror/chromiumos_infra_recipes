@@ -243,6 +243,7 @@
   * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
   * [goma:examples/full](#recipes-goma_examples_full)
+  * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma)
   * [goma:examples/with_goma_artifacts](#recipes-goma_examples_with_goma_artifacts)
   * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs)
   * [gs_step_logging:examples/full](#recipes-gs_step_logging_examples_full)
@@ -3656,21 +3657,23 @@ Returns:
 
 API for working with goma.
 
-#### **class [GomaApi](/recipe_modules/goma/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GomaApi](/recipe_modules/goma/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for working with goma.
 
-&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#60)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_bqupload\_dir](/recipe_modules/goma/api.py#68)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#47)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#64)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#52)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#51)(self):**
+
+&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#56)(self):**
 
 Lazily fetches the goma client and returns its path.
 
-&mdash; **def [initialize](/recipe_modules/goma/api.py#44)(self):**
+&mdash; **def [initialize](/recipe_modules/goma/api.py#46)(self, also_bq_upload=False):**
 
-&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#75)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
+&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#91)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
 
 Process goma artifacts, uploading to gsutil if they exist.
 
@@ -6053,6 +6056,11 @@ Recipe that schedules jobs based on its triggers.
 [DEPS](/recipe_modules/goma/examples/full.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/goma/examples/full.py#22)(api, properties):**
+### *recipes* / [goma:examples/legacy\_goma](/recipe_modules/goma/examples/legacy_goma.py)
+
+[DEPS](/recipe_modules/goma/examples/legacy_goma.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/legacy_goma.py#16)(api, properties):**
 ### *recipes* / [goma:examples/with\_goma\_artifacts](/recipe_modules/goma/examples/with_goma_artifacts.py)
 
 [DEPS](/recipe_modules/goma/examples/with_goma_artifacts.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

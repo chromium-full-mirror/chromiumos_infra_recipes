@@ -18,6 +18,8 @@ from PB.goma.goma_stats import GomaStats
 from PB.goma.goma_stats import MachineInfo
 from PB.goma.goma_stats import TimeStats
 
+_BQUPLOAD_VERSION = 'git_revision:643892f957c8e106dff793468101f2ecfc31abb7'
+
 # GsDestination stores GS bucket and path.
 GsDestination = namedtuple('GsDestination', ['bucket', 'path'])
 
@@ -41,8 +43,10 @@ class GomaApi(recipe_api.RecipeApi):
         properties.bigquery_table_name or 'compile_events')
     self._bigquery_verbose = properties.bigquery_verbose
 
-  def initialize(self):
+  def initialize(self, also_bq_upload=False):
+    self._also_bq_upload = also_bq_upload
     self._goma_dir = None
+
 
   @property
   def goma_client_json(self):
@@ -61,6 +65,10 @@ class GomaApi(recipe_api.RecipeApi):
   def goma_approach(self):
     return self._goma_approach
 
+  @property
+  def default_bqupload_dir(self):
+    return self.m.path['cache'].join('goma', 'bqupload')
+
   def _ensure_goma(self):
     """Ensure that the goma client is installed."""
     with self.m.step.nest('ensure goma client'), self.m.context(
@@ -71,6 +79,14 @@ class GomaApi(recipe_api.RecipeApi):
                        str(self._client_version))
       self.m.cipd.ensure(goma_dir, pkgs)
       self._goma_dir = goma_dir
+    if self._also_bq_upload:
+      with self.m.step.nest('ensure bqupload client'), self.m.context(
+          infra_steps=True):
+        # Download bqupload.
+        bqupload_pkgs = self.m.cipd.EnsureFile()
+        bqupload_pkgs.add_package('infra/tools/bqupload/${platform}',
+                                  _BQUPLOAD_VERSION)
+        self.m.cipd.ensure(self.default_bqupload_dir, bqupload_pkgs)
 
   def process_artifacts(self, install_pkg_response, goma_log_dir,
                         build_target_name, is_staging=False):
