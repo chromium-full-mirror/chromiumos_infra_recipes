@@ -20,6 +20,7 @@ DEPS = [
     'src_state',
 ]
 
+from recipe_engine import post_process
 from PB.recipes.chromeos.test_manifest import TestManifestProperties
 from PB.chromiumos.branch import Branch
 
@@ -28,7 +29,7 @@ PROPERTIES = TestManifestProperties
 
 def RunSteps(api, properties):
   test_branch_projects = properties.test_branch_projects or [
-      'chromeos/manifest-internal', 'chromiumos/manifest'
+      api.src_state.internal_manifest.project
   ]
 
   # This will set up api.src_state properties for us.
@@ -43,8 +44,9 @@ def RunSteps(api, properties):
 
     # TODO(crbug/1110753): Once  $chromeos/cros_source.manifest_changes_active
     # is the default, applying the changes will switch us to the correct branch
-    # of the manifest.  Until then, we ignore the branch and test against ToT,
-    # which is OK, since the builder is not a verifier on any other branches.
+    # of the manifest.  Until then, we will ignore the branch and test against
+    # ToT, which is OK, since the builder is not a verifier on any other
+    # branches.
     with api.step.nest('cherry-pick gerrit changes'):
       commits = api.cros_source.apply_gerrit_changes(gerrit_changes)
 
@@ -57,8 +59,8 @@ def RunSteps(api, properties):
     # TODO(crbug/1110753): Determine what other testing should happen.  If the
     # CL stack includes non-manifest CLs, then those builders will also be
     # running with the patched manifest.  It may be sufficient to run
-    # chromite-cq, and/or run a recipe (even this one...) where the
-    # configuration specifies the external manifest.
+    # chromite-cq, and/or run a recipe where the configuration specifies the
+    # external manifest.
     projects = sorted(set(x.patch_set.project for x in commits))
     project_infos = api.repo.project_infos(projects=projects)
     for project_info in project_infos:
@@ -79,41 +81,40 @@ def RunSteps(api, properties):
               step_name='test branch_util for %s' % project_info.name,
               push=False)
 
-          # Test `cros branch` tool for projects specified in config.
-          # TODO(crbug/1128071): Remove the test with cros branch when deleting
-          # it.
-          with api.depot_tools.on_path():
-            api.step('test cros branch for %s' % project_info.name, [
-                'chromite/bin/cros', 'branch', '--ack-deprecation', '--root',
-                api.cros_source.workspace_path, 'create', '--release', '--file',
-                manifest_path, '--yes'
-            ])
-
 
 def GenTests(api):
+  internal_exists = api.path.exists(api.path['start_dir'].join(
+      'chromiumos_workspace/src/chromeos/manifest-internal/default.xml'))
+  external_exists = api.path.exists(api.path['start_dir'].join(
+      'chromiumos_workspace/src/chromiumos/manifest/default.xml'))
+  common_args = [
+      api.cq(full_run=True),
+      api.post_check(post_process.DoesNotRun,
+                     'test branch_util for chromiumos/manifest')
+  ]
+  tests_internal = api.post_check(
+      post_process.MustRun, 'test branch_util for chromeos/manifest-internal')
+  no_tests_internal = api.post_check(
+      post_process.DoesNotRun,
+      'test branch_util for chromeos/manifest-internal')
+
   yield api.test('without-gerrit-changes')
 
   yield api.test(
       'with-manifest-changes',
-      api.buildbucket.try_build(project='chromeos/manifest'),
-      api.cq(full_run=True),
+      api.buildbucket.try_build(project='chromiumos/manifest'),
       api.path.exists(api.path['start_dir'].join(
-          'chromiumos_workspace/src/chromeos/manifest/default.xml')),
-  )
+          'chromiumos_workspace/src/chromiumos/manifest/default.xml')),
+      *common_args)
 
   yield api.test(
       'with-manifest-internal-changes',
-      api.buildbucket.try_build(project='manifest-internal'),
-      api.cq(full_run=True),
-      api.path.exists(api.path['start_dir'].join(
-          'chromiumos_workspace/src/manifest-internal/default.xml')),
-      api.properties(test_branch_projects=['manifest-internal']),
-  )
+      api.buildbucket.try_build(project='chromeos/manifest-internal'),
+      api.properties(test_branch_projects=['chromeos/manifest-internal']),
+      internal_exists, tests_internal, *common_args)
 
   yield api.test(
       'with-manifest-internal-changes-no-cros-branch',
-      api.buildbucket.try_build(project='manifest-internal'),
-      api.cq(full_run=True),
-      api.path.exists(api.path['start_dir'].join(
-          'chromiumos_workspace/src/manifest-internal/default.xml')),
-  )
+      api.buildbucket.try_build(project='chromeos/manifest-internal'),
+      api.properties(test_branch_projects=['no-tests']), internal_exists,
+      no_tests_internal, *common_args)
