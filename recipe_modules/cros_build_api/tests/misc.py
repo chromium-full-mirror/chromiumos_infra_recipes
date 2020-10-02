@@ -81,6 +81,7 @@ def RunSteps(api):
           'BundleChromeOSConfig': artifacts.BundleResponse,
           'ExportCpeReport': artifacts.BundleResponse,
           'BundleImageArchives': artifacts.BundleResponse,
+          'BundleFpmcuUnittests': artifacts.BundleResponse,
       },
       'BinhostService': {
           'PrepareBinhostUploads': binhost.PrepareBinhostUploadsResponse,
