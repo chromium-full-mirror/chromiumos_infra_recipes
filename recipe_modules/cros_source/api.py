@@ -394,14 +394,12 @@ class CrosSourceApi(RecipeApi):
       # to the newly patched tree.
 
       # The sequence of steps:
-      # 1. Update the gitiles_commit for the build.  (Note that this will
-      #    probably never be fetchable from the repo.)
-      # 2. Create a clone of the build manifest's repo outside of the workspace,
+      # 1. Create a clone of the build manifest's repo outside of the workspace,
       #    with the refs changed so that it looks like the git repo found at
       #    build_manifest.url.
-      # 3. Have repo sync the checkout in the workspace to the newly created
+      # 2. Have repo sync the checkout in the workspace to the newly created
       #    manifest.
-      # 4. Log a pinned version of the patched manifest.
+      # 3. Log a pinned version of the patched manifest.
 
       # The manifest file for repo init is 'default.xml' in the manifest
       # directory we are using for the build.
@@ -409,11 +407,9 @@ class CrosSourceApi(RecipeApi):
 
       with self.m.context(
           cwd=manifests.build.path), self.m.step.nest('push manifest'):
-        # 1. Update the gitiles commit.
+        # 1. Do not update the gitiles commit, as path relevancy will try to
+        # fetch this over the network.
         head = self.m.git.head_commit()
-        self.m.src_state.gitiles_commit = GitilesCommit(
-            host=manifests.build.host, project=manifests.build.project,
-            ref='refs/heads/{}'.format(branch), id=head)
 
         # 2. Create a clone of the manifest.
         # Force the the branch reference to point to HEAD.  We are likely
