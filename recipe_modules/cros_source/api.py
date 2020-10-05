@@ -244,7 +244,7 @@ class CrosSourceApi(RecipeApi):
       is_staging (bool): Flag to indicate staging environment
     """
     sync_path = self.cache_path
-    manifest_url = self.m.src_state.internal_manifest.url
+    manifest = self.m.src_state.internal_manifest
 
     init_opts = dict(verbose=verbose)
     if is_staging:
@@ -252,9 +252,14 @@ class CrosSourceApi(RecipeApi):
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, verbose=verbose,
                      retry_fetches=retry_fetches)
 
-    self.m.repo.ensure_synced_checkout(sync_path, manifest_url,
+    self.m.repo.ensure_synced_checkout(sync_path, manifest.url,
                                        init_opts=init_opts, sync_opts=sync_opts,
                                        projects=projects)
+    # Sync all branches of the internal manifest, so that we can find branches.
+    with self.m.step.nest('sync cache_path'):
+      sync_opts.update(current_branch=False, projects=[manifest.project])
+      with self.m.context(cwd=self.cache_path):
+        self.m.repo.sync(**sync_opts)
 
   @contextlib.contextmanager
   def checkout_overlays_context(self):
