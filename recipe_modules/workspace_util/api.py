@@ -120,6 +120,10 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
         presentation.step_text = 'Discarded changes: {}'.format(
             ', '.join(discarded_change_numbers))
 
+      # No input changes are in a checked out project.
+      if not changes and fail_not_applicable:
+        return
+
       commits = self.m.cros_source.apply_gerrit_changes(changes,
                                                         include_files=True)
       self._commits.extend(commits)

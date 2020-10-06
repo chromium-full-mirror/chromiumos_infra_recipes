@@ -4970,7 +4970,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#32)(self):**
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#128)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#132)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -5014,7 +5014,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   staging (bool): Whether this is a staging build.  Default: False.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#165)(self, manifest_groups, local_manifest=None, cache_path_override=None, gitiles_commit=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#169)(self, manifest_groups, local_manifest=None, cache_path_override=None, gitiles_commit=None):**
 
 Returns a context with manifest groups checked out to cwd.
 

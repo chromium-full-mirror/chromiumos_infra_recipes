@@ -64,3 +64,27 @@ def GenTests(api):
           ['"change_number": 123', '"change_number": 456'],
       ),
   )
+
+  yield api.test(
+      'all-changes-discarded',
+      api.step_data(
+          'failing apply changes.apply gerrit patch sets.repo forall',
+          retcode=1,
+          stdout=api.raw_io.output(
+              'error: project chromiumos/config not found'),
+      ),
+      api.step_data(
+          'successful apply changes.repo forall',
+          stdout=api.raw_io.output(
+              '\n'.join([
+                  'privateproject3|src/privateproject3|cros|refs/heads/master|refs/heads/master'
+              ]),
+          ),
+      ),
+      # All changes were discarded.
+      api.post_process(
+          post_process.StepTextEquals,
+          'successful apply changes',
+          'Discarded changes: 123, 456, 789',
+      ),
+  )
