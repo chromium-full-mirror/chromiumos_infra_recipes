@@ -604,32 +604,6 @@
   },
   {
     "cmd": [],
-    "name": "sync cache_path"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--force-sync",
-      "--detach",
-      "--jobs",
-      "8",
-      "--no-tags",
-      "--optimized-fetch",
-      "--retry-fetches",
-      "8",
-      "chromeos/manifest-internal"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "sync cache_path.repo sync",
-    "timeout": 3600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "sync to snapshot"
   },
   {
