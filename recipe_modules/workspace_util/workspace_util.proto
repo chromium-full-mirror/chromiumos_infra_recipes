@@ -1,0 +1,14 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.workspace_util;
+
+// import "chromiumos/common.proto";
+
+message WorkspaceUtilProperties {
+  // Whether to keep all input gerrit changes even if they were not applied.
+  bool keep_all_changes = 1;
+}

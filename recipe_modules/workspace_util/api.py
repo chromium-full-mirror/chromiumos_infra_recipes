@@ -18,6 +18,10 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 class WorkspaceUtilApi(recipe_api.RecipeApi):
   """A module workspace setup and manipulation."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super(WorkspaceUtilApi, self).__init__(*args, **kwargs)
+    self._keep_all_changes = properties.keep_all_changes
+
   def initialize(self):
     self._commits = []
     # Changes applied in apply_changes().
@@ -120,14 +124,13 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
         presentation.step_text = 'Discarded changes: {}'.format(
             ', '.join(discarded_change_numbers))
 
-      # No input changes are in a checked out project.
-      if not changes and fail_not_applicable:
-        return
-
-      commits = self.m.cros_source.apply_gerrit_changes(changes,
-                                                        include_files=True)
-      self._commits.extend(commits)
-      self._applied_changes.extend(changes)
+      if changes:
+        commits = self.m.cros_source.apply_gerrit_changes(
+            changes, include_files=True)
+        self._commits.extend(commits)
+        self._applied_changes.extend(changes)
+      if not self._keep_all_changes:
+        self.m.src_state.gerrit_changes = self._applied_changes
 
   def detect_toolchain_cls(self, chroot, gitiles_commit=None,
                            gerrit_changes=None, test_value=None, name=None):

@@ -15,3 +15,8 @@ DEPS = [
     'repo',
     'src_state',
 ]
+
+from PB.recipe_modules.chromeos.workspace_util.workspace_util import (
+    WorkspaceUtilProperties)
+
+PROPERTIES = WorkspaceUtilProperties
