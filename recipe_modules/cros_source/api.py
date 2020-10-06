@@ -125,8 +125,8 @@ class CrosSourceApi(RecipeApi):
           local_manifest or groups):
         raise ValueError('Only the internal manifest can be synced '
                          'to the chromiumos cache path.')
-      return "INTERNAL"
-    return "CUSTOM"
+      return 'INTERNAL'
+    return 'CUSTOM'
 
   def ensure_synced_cache(self, manifest_url=None, init_opts=None,
                           sync_opts=None, cache_path_override=None,
@@ -177,6 +177,15 @@ class CrosSourceApi(RecipeApi):
       self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
                                          init_opts=init_opts,
                                          sync_opts=sync_opts, projects=projects)
+      # Sync all branches of the build manifest, so that we can find branches.
+      # If groups were specified, then the manifest project is probably not
+      # present, so don't bother.
+      if not groups:
+        with self.m.step.nest('sync manifest branches'):
+          sync_opts.update(current_branch=False,
+                           projects=[self.m.src_state.build_manifest.project])
+          with self.m.context(cwd=cache_path):
+            self.m.repo.sync(**sync_opts)
 
   def checkout_branch(self, manifest_url, manifest_branch, init_opts=None,
                       sync_opts=None, step_name=None):
@@ -256,7 +265,7 @@ class CrosSourceApi(RecipeApi):
                                        init_opts=init_opts, sync_opts=sync_opts,
                                        projects=projects)
     # Sync all branches of the internal manifest, so that we can find branches.
-    with self.m.step.nest('sync cache_path'):
+    with self.m.step.nest('sync manifest branches'):
       sync_opts.update(current_branch=False, projects=[manifest.project])
       with self.m.context(cwd=self.cache_path):
         self.m.repo.sync(**sync_opts)

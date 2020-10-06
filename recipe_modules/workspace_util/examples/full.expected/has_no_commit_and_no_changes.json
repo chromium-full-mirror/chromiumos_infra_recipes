@@ -547,7 +547,7 @@
   },
   {
     "cmd": [],
-    "name": "sync cache_path"
+    "name": "sync manifest branches"
   },
   {
     "cmd": [
@@ -565,7 +565,7 @@
     ],
     "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "sync cache_path.repo sync",
+    "name": "sync manifest branches.repo sync",
     "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
