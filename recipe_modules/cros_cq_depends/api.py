@@ -18,6 +18,10 @@ Dep = namedtuple('Dep', ['host', 'cl_number'])
 class CrosCqDependsApi(RecipeApi):
   """A module for checking that Cq-Depend has been fulfilled."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super(CrosCqDependsApi, self).__init__(*args, **kwargs)
+    self._allow_missing_depends = properties.allow_missing_depends
+
   def _gather_deps(self, manifest_diffs, dep_log):
     """Gathers all deps from all CLs between the given manifest diffs.
 
@@ -38,12 +42,13 @@ class CrosCqDependsApi(RecipeApi):
                                      manifest_diff.to_rev)
         for commit in git_commits:
           # Accumulate Cq-Depend CLs from commits
-          dep_lines = re.findall(r'\s*Cq-Depend:(.*)', commit.message,
+          dep_lines = re.findall(r'\s*Cq-Depend:\s*(.*)', commit.message,
                                  re.IGNORECASE)
           if len(dep_lines) == 0:
             continue
           # Split on white space or commas and add the dep
           for dep_line in dep_lines:
+            dep_line = dep_line.strip()
             deps += re.split(r'[\s,]+', dep_line)
             dep_log.append('{} has dep_line {}'.format(commit.rev, dep_line))
     # Turn the deps into (host, cl) tuples
@@ -98,6 +103,7 @@ class CrosCqDependsApi(RecipeApi):
       if len(deps) == 0:
         return
 
+      # TODO(b/170388096): Refactor this to call self.m.gerrit.fetch_patch_sets.
       # Query Gerrit for each one of those deps to turn the CL number into a git
       # change ref.
       json_data = {
@@ -142,8 +148,8 @@ class CrosCqDependsApi(RecipeApi):
       # Ensure each change is in the local checkout.
       for change in gerrit_results['changes']:
         if change.get('info') is None:
-          dep_local_log.append(
-              'gerrit query failure for cl %s' % change.get('change_number'))
+          dep_local_log.append('gerrit query failure for cl %s' %
+                               change.get('change_number'))
           pres.status = self.m.step.WARNING
           continue
         project = change['info']['project']
@@ -154,30 +160,31 @@ class CrosCqDependsApi(RecipeApi):
                                (change.get('change_number'), project))
           continue
 
-        # TODO(crbug.com/980288): Find a better way to handle the error where path isn't found.
-        try:
-          paths = self.m.cros_source.find_project_paths(project, branch)
-        except StepFailure as step_failure:
-          dep_local_log.append(
-              'Failed to find project paths, with failure: %s' % step_failure)
-          continue
-
+        paths = self.m.cros_source.find_project_paths(project, branch,
+                                                      empty_ok=True)
         for path in paths:
           # Ensure that rev exists in the git repo at that path. Fail otherwise.
           with self.m.context(cwd=self.m.cros_source.workspace_path.join(path)):
 
-            # Check whether the dep is reachable locally
-            # If it's not, we'll carry along anyway, because there's little else
+            # Check whether the dep is reachable locally.
+            # If it's not, report an error, so that we
             # we can do about it.
             if not self.m.git.is_reachable(rev):
-              dep_local_log.append(
-                  'Unsatisfied dep :(. %s does not exist at %s on branch %s' %
+              message = (
+                  'Unsatisfied dep: %s does not exist at %s on branch %s' %
                   (rev, path, branch))
-              continue
+              dep_local_log.append(message)
+              if self._allow_missing_depends:
+                continue
+              else:
+                raise StepFailure(message)
 
             # Dep is satisfied locally
             dep_local_log.append('%s found at %s on branch %s' %
                                  (rev, path, branch))
+        else:
+          dep_local_log.append('Failed to find project paths')
+          continue
 
       # All deps satisfied
       pres.step_text = 'cq-depend checked'
@@ -218,6 +225,8 @@ class CrosCqDependsApi(RecipeApi):
       list[str]: Cq-Depend strings in same order as changes.
     """
     return [
-        self.get_cq_depend([gc for gc in gerrit_changes if gc != target])
+        self.get_cq_depend([gc
+                            for gc in gerrit_changes
+                            if gc != target])
         for target in gerrit_changes
     ]

@@ -405,6 +405,7 @@
       "@@@STEP_LOG_LINE@gather cq-depend@invalid dep: chromium:IAmNotAnInteger@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@chrome-internal:67890@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
+      "@@@STEP_LOG_LINE@dep local@Unsatisfied dep: deadbeef does not exist at src/project-c on branch master@@@",
       "@@@STEP_LOG_LINE@dep local@Failed to find project paths@@@",
       "@@@STEP_LOG_LINE@dep local@change None in non-Chrome OS repo not-a-project@@@",
       "@@@STEP_LOG_LINE@dep local@gerrit query failure for cl 1234@@@",
@@ -543,8 +544,23 @@
     "name": "ensure manifest cq-depend fulfilled (2).repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@c|src/c|cros|refs/heads/other-branch|refs/heads/another-branch@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "deadbeef",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project-c",
+    "infra_step": true,
+    "name": "ensure manifest cq-depend fulfilled (2).git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

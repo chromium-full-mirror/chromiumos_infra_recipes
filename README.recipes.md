@@ -1502,7 +1502,7 @@ Args:
   upload_file (Path):  Location of cache artifact file to upload.
 ### *recipe_modules* / [cros\_cq\_depends](/recipe_modules/cros_cq_depends)
 
-[DEPS](/recipe_modules/cros_cq_depends/__init__.py#1): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_cq_depends/__init__.py#5): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for interacting with Cq-Depends.
 
@@ -1510,7 +1510,7 @@ APIs for interacting with Cq-Depends.
 
 A module for checking that Cq-Depend has been fulfilled.
 
-&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/api.py#71)(self, manifest_diffs):**
+&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/api.py#76)(self, manifest_diffs):**
 
 Checks that Cq-Depend deps between manifests are met.
 
@@ -1520,7 +1520,7 @@ Args:
   manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
       namedtuples.
 
-&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#199)(self, gerrit_changes):**
+&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#206)(self, gerrit_changes):**
 
 Get Cq-Depend string for the given list of Gerrit changes.
 
@@ -1530,7 +1530,7 @@ Args:
 Return:
   str: The full Cq-Depend string.
 
-&mdash; **def [get\_cq\_depend\_reference](/recipe_modules/cros_cq_depends/api.py#185)(self, gerrit_change):**
+&mdash; **def [get\_cq\_depend\_reference](/recipe_modules/cros_cq_depends/api.py#192)(self, gerrit_change):**
 
 Return the Cq-Depend reference string for the given change.
 
@@ -1540,7 +1540,7 @@ Args:
 Returns:
   str: The reference string for the change, e.g. chromium:12345
 
-&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#211)(self, gerrit_changes):**
+&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#218)(self, gerrit_changes):**
 
 Mutually Cq-Depend all given Gerrit changes.
 
@@ -2300,7 +2300,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#312)(self, gerrit_changes, include_files=False, include_commit_info=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#314)(self, gerrit_changes, include_files=False, include_commit_info=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
@@ -2340,7 +2340,7 @@ Args:
 
 Returns a context where overlays can be mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#697)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#699)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2353,7 +2353,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#654)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#656)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -2397,7 +2397,7 @@ Args:
 Returns:
   (list[str]) The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#286)(self, project, branch):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#286)(self, project, branch, empty_ok=False):**
 
 Find the source paths for a given project in the workspace.
 
@@ -2407,6 +2407,8 @@ more than once in the manifest.
 Args:
   project (str): The project name to find a source path for.
   branch (str): The branch name to find a source path for.
+  empty_ok (bool): If no paths are found, return an empty list rather than
+    raising StepFailure
 
 Returns:
   list(str), The path values for the found project.
@@ -2438,7 +2440,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#603)(self, gitiles_commit, manifest_url=None):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#605)(self, gitiles_commit, manifest_url=None):**
 
 Sync a checkout to the snapshot.
 
@@ -5584,9 +5586,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/cq_depend_strings.py#14)(api):**
 ### *recipes* / [cros\_cq\_depends:examples/ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py)
 
-[DEPS](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#6): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#6): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#20)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

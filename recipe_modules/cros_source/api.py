@@ -283,7 +283,7 @@ class CrosSourceApi(RecipeApi):
         self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
       yield
 
-  def find_project_paths(self, project, branch):
+  def find_project_paths(self, project, branch, empty_ok=False):
     """Find the source paths for a given project in the workspace.
 
     Will only include multiple results if the same project,branch is mapped
@@ -292,6 +292,8 @@ class CrosSourceApi(RecipeApi):
     Args:
       project (str): The project name to find a source path for.
       branch (str): The branch name to find a source path for.
+      empty_ok (bool): If no paths are found, return an empty list rather than
+        raising StepFailure
 
     Returns:
       list(str), The path values for the found project.
@@ -304,7 +306,7 @@ class CrosSourceApi(RecipeApi):
         if project_info.branch == branch:
           paths.append(project_info.path)
 
-      if not paths:
+      if not paths and not empty_ok:
         raise StepFailure('No path found for project %r branch %r' %
                           (project, branch))
       return paths
