@@ -76,13 +76,13 @@ class SrcStateApi(recipe_api.RecipeApi):
     """Information about the manifest for this build.
 
     Provides information about the manifest for this build. The default is the
-    external manifest.
+    internal manifest.
 
     Returns:
       (ManifestProject): information about the manifest for this build.
     """
-    return (self._build_manifest or
-            common.ManifestProject.by_name('external', self.workspace_path))
+    return (self._build_manifest or common.ManifestProject.by_gitiles_commit(
+        self.gitiles_commit, self.workspace_path))
 
   @build_manifest.setter
   def build_manifest(self, build_manifest):

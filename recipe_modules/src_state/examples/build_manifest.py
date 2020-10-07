@@ -15,6 +15,9 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 def RunSteps(api):
 
+  external_manifest = api.src_state.external_manifest
+  internal_manifest = api.src_state.internal_manifest
+
   def _change(manifest):
     return GerritChange(host=manifest.host, project=manifest.project)
 
@@ -22,29 +25,50 @@ def RunSteps(api):
 
   # Using api.src_state.build_manifest
   # Initial values:
-  api.assertions.assertEqual(api.src_state.external_manifest,
-                             api.src_state.build_manifest)
+  if api.buildbucket.gitiles_commit.host == external_manifest.host:
+    want_manifest = external_manifest
+    other_manifest = internal_manifest
+  else:
+    want_manifest = internal_manifest
+    other_manifest = external_manifest
+  api.assertions.assertEqual(want_manifest, api.src_state.build_manifest)
+  api.assertions.assertTrue(
+      _change(want_manifest) in api.src_state.build_manifest)
+  api.assertions.assertFalse(
+      _change(other_manifest) in api.src_state.build_manifest)
 
-  # Setting it works.
-  api.src_state.build_manifest = api.src_state.internal_manifest
-  api.assertions.assertEqual(api.src_state.internal_manifest,
-                             api.src_state.build_manifest)
+  # Setting it to internal works.
+  api.src_state.build_manifest = internal_manifest
+  api.assertions.assertEqual(internal_manifest, api.src_state.build_manifest)
 
   api.assertions.assertTrue(
-      _change(api.src_state.internal_manifest) in api.src_state.build_manifest)
+      _change(internal_manifest) in api.src_state.build_manifest)
   api.assertions.assertFalse(
-      _change(api.src_state.external_manifest) in api.src_state.build_manifest)
+      _change(external_manifest) in api.src_state.build_manifest)
+
+  # Setting it to external works.
+  api.src_state.build_manifest = external_manifest
+  api.assertions.assertEqual(external_manifest, api.src_state.build_manifest)
+
+  api.assertions.assertFalse(
+      _change(internal_manifest) in api.src_state.build_manifest)
+  api.assertions.assertTrue(
+      _change(external_manifest) in api.src_state.build_manifest)
 
   # Setting it to None reverts to the original value.
   api.src_state.build_manifest = None
-  api.assertions.assertEqual(api.src_state.external_manifest,
-                             api.src_state.build_manifest)
-
-  api.assertions.assertTrue(
-      _change(api.src_state.external_manifest) in api.src_state.build_manifest)
-  api.assertions.assertFalse(
-      _change(api.src_state.internal_manifest) in api.src_state.build_manifest)
+  api.assertions.assertEqual(want_manifest, api.src_state.build_manifest)
 
 
 def GenTests(api):
-  yield api.test('basic', api.test_util.test_build().build)
+  yield api.test('basic', api.test_util.test_build(revision=None).build)
+
+  yield api.test(
+      'internal',
+      api.test_util.test_build(
+          git_repo=api.src_state.internal_manifest.url).build)
+
+  yield api.test(
+      'external',
+      api.test_util.test_build(
+          git_repo=api.src_state.external_manifest.url).build)

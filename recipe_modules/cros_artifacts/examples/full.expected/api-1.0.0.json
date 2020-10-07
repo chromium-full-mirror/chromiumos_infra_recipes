@@ -483,10 +483,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chromium.googlesource.com/chromiumos/manifest",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       ":"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -499,7 +499,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -514,7 +514,7 @@
       "",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -595,10 +595,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chromium.googlesource.com/chromiumos/manifest",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       ":"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -611,7 +611,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -626,7 +626,7 @@
       "",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [

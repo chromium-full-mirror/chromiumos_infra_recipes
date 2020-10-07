@@ -89,6 +89,24 @@ class ManifestProject(object):
     return ret
 
   @classmethod
+  def by_gitiles_commit(cls, commit, workspace_path):
+    """Return a ManifestProject for the gitiles commit.
+
+    Args:
+      commit (GitilesCommit): The gitiles_commit to use.
+      workspace_path (Path): The workspace path (api.src_state.workspace_path).
+
+    Returns:
+      (ManifestProject) information about the manifest.
+    """
+    external = _manifests['external']
+    if commit.host == external.host and commit.project == external.project:
+      info = external
+    else:
+      info = _manifests['internal']
+    return cls(info.host, info.project, info.relpath, workspace_path)
+
+  @classmethod
   def by_name(cls, name, workspace_path):
     """Return a ManifestProject for the named manifest.
 
