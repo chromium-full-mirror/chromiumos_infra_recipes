@@ -318,17 +318,20 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       Bool whether the builder has a valid commit.
     """
-    if not commit or not commit.project:
+    if not (commit and commit.host and commit.project and commit.ref):
       return False
     commit_url = 'https://{}/{}'.format(commit.host, commit.project)
     # Private builders should use the internal gitiles commit.
     if config:
       manifest = config.general.manifest
-      commit_url = 'https://{}/{}'.format(commit.host, commit.project)
       if manifest == BuilderConfig.General.PRIVATE:
         return commit_url == self.m.src_state.internal_manifest.url
-    # Otherwise, use the external gitiles commit.
-    return commit_url == self.m.src_state.external_manifest.url
+      # Otherwise, use the external gitiles commit.
+      return commit_url == self.m.src_state.external_manifest.url
+    # If there is no config (either no image is built, or the builder has been
+    # deleted), then either manifest is fine.
+    return (commit_url == self.m.src_state.internal_manifest.url or
+            commit_url == self.m.src_state.external_manifest.url)
 
   def _determine_repo_state(self, config, commit, changes):
     """Set _gitiles_commit and _gerrit_changes.
@@ -344,42 +347,47 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           currently stored list (initially the list from buildbucket.)
     """
     changes = self.m.src_state.gerrit_changes if changes is None else changes
-    changed = False
+    original_commit = commit
+
+    # If we have no gitiles_commit, then we were (likely) launched directly by
+    # either luci-scheduler (no changes), luci-cq (changes), or a user.
+    # The builder is private unless the config says otherwise.  Builders with no
+    # builder config can pass a commit, or default to the internal.
+    private = (not config or
+               config.general.manifest == BuilderConfig.General.PRIVATE)
+
+    # If we have a config, and the given commit is invalid, try the one from the
+    # builder config.
+    if config and not self._has_valid_commit(config, commit):
+      commit = ConvertPB(config.orchestrator.gitiles_commit,
+                         common_pb2.GitilesCommit)
+
+    # If we still do not have a valid commit, then we need to figure one out.
+    # Use the appropriate snapshot from the appropriate manifest.
     if not self._has_valid_commit(config, commit):
-      # No gitiles_commit: we were (likely) launched directly by either
-      # luci-scheduler (no changes), luci-cq (changes), or a user.
-
-      # If the board is private, use the default gitiles_commit from the config
-      # or refs/heads/snapshot for the private manifest if it doesn't exist.
-      if config and config.general.manifest == BuilderConfig.General.PRIVATE:
-        commit = ConvertPB(config.orchestrator.gitiles_commit,
-                           common_pb2.GitilesCommit)
-        if not commit.id:
-          host = commit.host or self.m.src_state.internal_manifest.host
-          project = commit.project or self.m.src_state.internal_manifest.project
-          ref = commit.ref or 'refs/heads/{}snapshot'.format(
-              'staging-' if self._is_staging else '')
-          test_data = dict(
-              branch=dict(revision='%s-HEAD-SHA' % ref.split('/')[-1]))
-          gitiles_id = self.m.gitiles.fetch_revision(host, project, ref,
-                                                     test_output_data=test_data)
-          commit = common_pb2.GitilesCommit(host=host, project=project, ref=ref,
-                                            id=gitiles_id)
-
-      # Otherwise, use use refs/heads/snapshot for the public manifest.
+      if private:
+        manifest = self.m.src_state.internal_manifest
       else:
-        host = self.m.src_state.external_manifest.host
-        project = self.m.src_state.external_manifest.project
-        ref = 'refs/heads/{}snapshot'.format(
-            'staging-' if self._is_staging else '')
-        test_data = dict(
-            branch=dict(revision='%s-HEAD-SHA' % ref.split('/')[-1]))
-        gitiles_id = self.m.gitiles.fetch_revision(host, project, ref,
-                                                   test_output_data=test_data)
-        commit = common_pb2.GitilesCommit(host=host, project=project, ref=ref,
-                                          id=gitiles_id)
-      if commit:
-        changed = True
+        manifest = self.m.src_state.external_manifest
+
+      ref = 'refs/heads/{}snapshot'.format(
+          'staging-' if self._is_staging else '')
+      commit = common_pb2.GitilesCommit(host=manifest.host,
+                                        project=manifest.project, ref=ref)
+
+    # If there is no commit id, fetch the current commit id for the reference.
+    if not commit.id:
+      test_data = dict(
+          branch=dict(revision='%s-HEAD-SHA' % commit.ref.split('/')[-1]))
+      gitiles_id = self.m.gitiles.fetch_revision(commit.host, commit.project,
+                                                 commit.ref,
+                                                 test_output_data=test_data)
+      commit = common_pb2.GitilesCommit(host=commit.host,
+                                        project=commit.project, ref=commit.ref,
+                                        id=gitiles_id)
+
+    # Remember if we changed the commit from the passed value.
+    changed = commit != original_commit
 
     # If we are not ignoring the changelist in the config then insert any such
     # to the changelist.

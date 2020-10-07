@@ -129,28 +129,26 @@ def GenTests(api):
   def test_builder(**kwargs):
     """Generate a test build."""
     kwargs.setdefault('builder', 'infra-presubmit')
+    kwargs.setdefault('cq', True)
     kwargs.setdefault('bucket', 'cq')
     kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
     return api.test_util.test_build(**kwargs).build
 
-  yield api.test('basic', test_builder(extra_changes=mock_CLs))
+  yield api.test('basic', test_builder(gerrit_changes=mock_CLs))
 
   yield api.test('missing',
-                 test_builder(builder='missing', extra_changes=mock_CLs))
+                 test_builder(builder='missing', gerrit_changes=mock_CLs))
 
   yield api.test('no-gitiles-given',
-                 test_builder(revision=None, extra_changes=mock_CLs))
+                 test_builder(revision=None, gerrit_changes=mock_CLs))
 
-  yield api.test('no-changes-given', test_builder(revision=None))
+  yield api.test('no-changes-given', test_builder(revision=None, cq=False))
 
-  yield api.test('excluded-change', test_builder(extra_changes=mock_CLs),
+  yield api.test('excluded-change', test_builder(gerrit_changes=mock_CLs),
                  api.properties(project_names=['p1']))
 
-  yield api.test('no-config-gitiles',
-                 test_builder(builder='amd64-generic-cq', revision=None))
-
-  yield api.test('has-PRESUBMIT.py', test_builder(extra_changes=mock_CLs),
+  yield api.test('has-PRESUBMIT.py', test_builder(gerrit_changes=mock_CLs),
                  api.properties(test_filename='PRESUBMIT.py'))
 
-  yield api.test('has-PRESUBMIT.cfg', test_builder(extra_changes=mock_CLs),
+  yield api.test('has-PRESUBMIT.cfg', test_builder(gerrit_changes=mock_CLs),
                  api.properties(test_filename='PRESUBMIT.cfg'))
