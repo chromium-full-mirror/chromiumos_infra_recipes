@@ -247,6 +247,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # 3. output_properties.artifact_prep is True.
     pointless = self.m.cros_relevance.is_build_pointless(
         self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
+        config=self.m.cros_infra_config.config_or_default,
         force_relevant=self._force_relevant_build)
     if pointless:
       self.m.buildbucket.hide_current_build_in_gerrit()

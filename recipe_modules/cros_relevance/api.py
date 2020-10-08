@@ -10,6 +10,7 @@ from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.chromite.api.depgraph import GetToolchainPathsRequest
 from PB.chromite.api.depgraph import ListRequest
 from PB.chromite.api.depgraph import SourcePath
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ProtoBytes as common_proto_bytes
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanRequest
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanResponse
@@ -105,7 +106,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       return [b.name for b in result.builds_to_run]
 
   def is_build_pointless(self, gerrit_changes, gitiles_commit, dep_graph,
-                         force_relevant=False, test_value=None):
+                         config, force_relevant=False, test_value=None):
     """Determines if build(s) can be terminated early.
 
     If build_target is set, then the chromiumos workspace must have been
@@ -119,6 +120,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           snapshot Gitiles commit.
       dep_graph (chromite.api.DepGraph): The dependency graph to compare the
           Gerrit changes against to test for build relevancy.
+      config (chromiumos.BuilderConfig): config for the builder.
       force_relevant (bool): Whether to always declare the build relevant.
       test_value (bool): The answer to use for testing.  Default: build is not
           pointless.
@@ -126,9 +128,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Returns:
       bool: Whether the build can be terminated early.
     """
-    if not gerrit_changes or force_relevant or self.toolchain_cls_applied:
-      # If there are no CLs, then this is not a CQ run and should never be
-      # treated as pointless.  Likewise if force_relevant is set.
+    is_cq_run = config.id.type == BuilderConfig.Id.CQ
+    if not is_cq_run or force_relevant or self.toolchain_cls_applied:
+      # If it is not a CQ run it should never be treated as pointless. Likewise
+      # if force_relevant is set or toolchain changes are applied.
       return False
 
     with self.m.step.nest('pointless build check'):
@@ -136,8 +139,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       # build was pointless, and we're calling a function that returns True if
       # the build is relevant.  We want to pass True in the case where the
       # argument is None.
-      relevant = self.is_depgraph_affected(gerrit_changes, gitiles_commit,
-                                           dep_graph, test_value=not test_value)
+      if gerrit_changes:
+        relevant = self.is_depgraph_affected(gerrit_changes, gitiles_commit,
+                                             dep_graph,
+                                             test_value=not test_value)
+      else:
+        # CQ runs with no changes applied are pointless.
+        relevant = False
       # Do this in a step instead of a presentaion to avoid multiple lines in
       # the output properties (in led jobs).
       # TODO(seanabraham): stop writing 'pointless_build' property once Plx

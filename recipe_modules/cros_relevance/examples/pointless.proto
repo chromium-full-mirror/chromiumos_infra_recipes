@@ -14,4 +14,10 @@ message PointlessTest {
 
   // The expected return from is_build_pointless.
   bool expected = 2;
+
+  // Whether to force_relevant.
+  bool force_relevant = 3;
+
+  // Whether this is a CQ build.
+  bool is_cq = 4;
 }

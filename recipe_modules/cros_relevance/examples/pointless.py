@@ -12,6 +12,7 @@ DEPS = [
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.chromite.api import depgraph
 from PB.chromite.api.sysroot import Sysroot
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
 from PB.recipe_modules.chromeos.cros_relevance.examples.pointless import (
@@ -21,7 +22,12 @@ PROPERTIES = PointlessTest
 
 
 def RunSteps(api, properties):
-  builder = 'builder'
+  is_cq = (properties.is_cq if properties.is_cq else False)
+  config = BuilderConfig()
+  if is_cq:
+    config.id.type = BuilderConfig.Id.CQ
+  force_relevant = (
+      properties.force_relevant if properties.force_relevant else False)
   bt = BuildTarget(name='my_build_target')
   sysroot = Sysroot(path='/build/target', build_target=bt)
   dep_graph = depgraph.DepGraph(
@@ -33,7 +39,8 @@ def RunSteps(api, properties):
 
   pointless = api.cros_relevance.is_build_pointless(
       properties.gerrit_changes, bbcommon_pb2.GitilesCommit(id='my hash'),
-      dep_graph=dep_graph, test_value=properties.expected)
+      dep_graph=dep_graph, config=config, force_relevant=force_relevant,
+      test_value=properties.expected)
   api.assertions.assertEqual(properties.expected, pointless)
   api.cros_relevance.get_dependency_graph(sysroot, Chroot())
 
@@ -47,7 +54,12 @@ def GenTests(api):
               gerrit_changes=[
                   bbcommon_pb2.GerritChange(change=123),
                   bbcommon_pb2.GerritChange(change=456),
-              ], expected=False)))
+              ], is_cq=True, expected=False)))
+
+  yield api.test(
+      'relevant-force-relevant',
+      api.properties(
+          PointlessTest(force_relevant=True, is_cq=True, expected=False)))
 
   yield api.test(
       'pointless',
@@ -56,6 +68,12 @@ def GenTests(api):
               gerrit_changes=[
                   bbcommon_pb2.GerritChange(change=123),
                   bbcommon_pb2.GerritChange(change=456),
-              ], expected=True)))
+              ], is_cq=True, expected=True)))
 
-  yield api.test('no-changes', api.properties(PointlessTest(expected=False)))
+  yield api.test(
+      'pointless-cq-no-changes',
+      api.properties(
+          PointlessTest(gerrit_changes=[], is_cq=True, expected=True)))
+
+  yield api.test('relevant-non-cq',
+                 api.properties(PointlessTest(is_cq=False, expected=False)))
