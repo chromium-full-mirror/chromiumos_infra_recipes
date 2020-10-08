@@ -56,7 +56,18 @@ def GenTests(api):
       if target_value:
         properties.child_target.name = build_target
         properties.child_target.collect_handling = target_value
-      yield api.test(
+      # TODO(crbug/1108925): Drop the experiment and make it the default, after
+      # final verification. (Remove this if statement.)
+      if expected_collect == ChildSpec.COLLECT_AFTER_HW_TEST:
+        yield api.test(
+            '%s-%s-after' % (spec_name, target_name),
+            api.test_util.test_child_build(
+                build_target, builder=builder,
+                experiments=['chromeos.orch_menu.collect_after_hw_test']).build,
+            api.properties(properties))
+        properties.expected_collect = ChildSpec.COLLECT
+
+      yield api.orch_menu.test(
           '%s-%s' % (spec_name, target_name),
           api.test_util.test_child_build(build_target, builder=builder).build,
           api.properties(properties))

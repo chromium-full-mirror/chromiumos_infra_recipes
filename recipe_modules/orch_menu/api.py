@@ -101,10 +101,17 @@ class OrchMenuApi(RecipeApi):
     # Our properties: OrchMenuProperties ($chromeos/orch_menu).
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
+    # TODO(crbug/1108925): Drop the experiment and make it the default, after
+    # final verification.
+    self._collect_after = properties.collect_after_hw_test
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
     self.m.buildbucket.host = self.m.buildbucket.HOST_PROD_BEEFY
+    # TODO(crbug/1108925): Drop the experiment and make it the default, after
+    # final verification.
+    self._collect_after |= ('chromeos.orch_menu.collect_after_hw_test' in
+                            self.m.cros_infra_config.experiments)
 
   @property
   def config(self):
@@ -441,7 +448,7 @@ class OrchMenuApi(RecipeApi):
     Most of the heavy lifting is done in get_build_plan.
 
     Args:
-      parent_step (Step): the calling step, to be used for presentation purposes.
+      parent_step (Step): the calling step, used for presentation purposes.
       child_specs (list(ChildSpec)): A list of child specs.
 
     Returns:
@@ -460,7 +467,7 @@ class OrchMenuApi(RecipeApi):
 
     if new_build_requests:
       # Implement sleepy builds for GoB smoothing: crbug.com/1063143
-      with self.m.step.nest('schedule new builds') as pres:
+      with self.m.step.nest('schedule new builds'):
         with self.m.buildbucket.with_host(self.m.buildbucket.HOST_PROD):
           for new_build_request in new_build_requests:
             # Request new builds and add to total existing.
@@ -510,7 +517,8 @@ class OrchMenuApi(RecipeApi):
       (BuilderConfig.Orchestrator.ChildSpec) Whether to collect the build, and
       when.
     """
-    ret = BuilderConfig.Orchestrator.ChildSpec.COLLECT
+    values = BuilderConfig.Orchestrator.ChildSpec
+    ret = values.COLLECT
     child_spec = child_specs_dict.get(builder_name)
     if not child_spec:
       # Missed lookup, the existing build name was not a name in child_specs.
@@ -519,7 +527,12 @@ class OrchMenuApi(RecipeApi):
       # TODO(crbug/991996): Refactor: use something other than string manip.
       child_spec = child_targets_dict.get(builder_name.rsplit('-', 1)[0])
     if child_spec:
-      return child_spec.collect_handling or ret
+      ret = child_spec.collect_handling or ret
+      # TODO(crbug/1108925): Drop the experiment and make it the default, after
+      # final verification.  (The if statement that follows gets removed.)
+      if (not self._collect_after and ret == values.COLLECT_AFTER_HW_TEST):
+        ret = values.COLLECT
+      return ret
     # Missed lookup even after fallback for *-snapshot.
     return ret
 
@@ -631,7 +644,7 @@ class OrchMenuApi(RecipeApi):
       (BuildsStatus): The current status of the builds.
     """
     if self._builds_status.running_builds:
-      with self.m.step.nest('final build collect'):
+      with self.m.step.nest(step_name):
         completed_builds = self._collect_builds(
             [b.id for b in self._builds_status.running_builds])
         check_result = self._collect_and_check_build_results(completed_builds)

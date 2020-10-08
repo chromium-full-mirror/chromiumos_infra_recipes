@@ -32,4 +32,8 @@ message OrchMenuProperties {
 
   // Specifies whether to enable exiting redundant builds.
   bool assert_singleton = 4;
+
+  // Feature flag: Whether to defer COLLECT_AFTER_HW_TEST builders to after HW
+  // testing.
+  bool collect_after_hw_test = 5;
 }
