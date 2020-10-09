@@ -17,4 +17,7 @@ message CrosInfraConfigProperties {
 
   // Whether to ignore the changelist in the builder config.
   bool ignore_config_changelist = 2;
+
+  // Whether public builders should sync to the public manifest.
+  bool switch_to_external_manifest = 3;  
 }

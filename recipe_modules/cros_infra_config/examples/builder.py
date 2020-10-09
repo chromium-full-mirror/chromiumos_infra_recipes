@@ -19,6 +19,8 @@ from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.build_target import BuildTargetProperties
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
+    CrosInfraConfigProperties)
 from PB.recipe_modules.chromeos.cros_infra_config.examples.builder import (
     BuilderProperties)
 
@@ -48,15 +50,16 @@ def RunSteps(api, properties):
 
   expected_is_staging = properties.expected_is_staging
   expected_commit = common_pb2.GitilesCommit(
-      host=api.src_state.external_manifest.host,
-      project=api.src_state.external_manifest.project,
+      host=api.src_state.internal_manifest.host,
+      project=api.src_state.internal_manifest.project,
       id='{}snapshot-HEAD-SHA'.format(
           'staging-' if expected_is_staging else ''),
       ref='refs/heads/{}snapshot'.format(
           'staging-' if expected_is_staging else ''))
-  if config.general.manifest == BuilderConfig.General.PRIVATE:
-    expected_commit.host = api.src_state.internal_manifest.host
-    expected_commit.project = api.src_state.internal_manifest.project
+  if (config.general.manifest == BuilderConfig.General.PUBLIC and
+      api.cros_infra_config.switch_to_external_manifest):
+    expected_commit.host = api.src_state.external_manifest.host
+    expected_commit.project = api.src_state.external_manifest.project
 
   api.assertions.assertEqual(expected_commit,
                              api.cros_infra_config.gitiles_commit)
@@ -117,8 +120,13 @@ def GenTests(api):
 
   yield api.test('has_no_commit_and_no_changes', builder(revision=None))
 
-  yield api.test('private_has_no_commit_and_no_changes',
-                 builder(build_target='grunt', revision=None))
+  yield api.test(
+      'public_has_no_commit_and_no_changes',
+      api.properties(
+          **{
+              '$chromeos/cros_infra_config':
+                  CrosInfraConfigProperties(switch_to_external_manifest=True)
+          }), builder(build_target='amd64-generic', revision=None))
 
   yield api.test(
       'apply_gerrit_changes_false',

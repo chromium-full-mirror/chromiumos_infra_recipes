@@ -54,12 +54,19 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Is the builder configured?
     self._is_configured = False
 
+    # Should public builders switch to the external manifest?
+    self._switch_to_external_manifest = properties.switch_to_external_manifest
+
   def initialize(self):
     # If the builder is in the staging bucket, or has a name that begins
     # 'staging-', then assume we are in staging.
     builder = self.m.buildbucket.build.builder
     self._is_staging = (
         builder.bucket == 'staging' or builder.builder.startswith('staging-'))
+
+    self._switch_to_external_manifest |= (
+        'chromeos.cros_infra_config.switch_to_external_manifest' in
+        self.experiments)
 
     # Hold off on the other fields until they are used, to avoid unnecessary
     # clutter in the expectations files.
@@ -89,8 +96,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @property
   def experiments_for_child_build(self):
-    """Return value for bb schedule_request experiments arg ."""
+    """Return value for bb schedule_request experiments arg."""
     return {k: True for k in self.experiments}
+
+  @property
+  def switch_to_external_manifest(self):
+    """Returns whether public builders should use the public manifest."""
+    return self._switch_to_external_manifest
 
   @property
   def config(self):
@@ -355,6 +367,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # builder config can pass a commit, or default to the internal.
     private = (not config or
                config.general.manifest == BuilderConfig.General.PRIVATE)
+    if not self._switch_to_external_manifest:
+      private = True
 
     # If we have a config, and the given commit is invalid, try the one from the
     # builder config.

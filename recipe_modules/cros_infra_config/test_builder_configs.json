@@ -474,6 +474,34 @@
     },
     {
       "id": {
+        "name": "arm64-generic-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true,
+        "brokenBefore": "2019-11-01T00:00:00Z",
+        "manifest": "PUBLIC"
+      },
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },    
+    {
+      "id": {
         "name": "bisecting-orchestrator",
         "branch": "master",
         "type": "POSTSUBMIT"
@@ -1348,6 +1376,10 @@
             "name": "arm-generic-cq",
             "collectHandling": "COLLECT"
           },
+          {
+            "name": "arm64-generic-cq",
+            "collectHandling": "COLLECT"
+          },          
           {
             "name": "arm-generic-pointless-cq",
             "collectHandling": "COLLECT"

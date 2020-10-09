@@ -139,9 +139,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
           count_skip_noncritical_on_rerun += 1
           continue
 
-        child_build_snapshot = external_snapshot
-        if child_builder_config.general.manifest == BuilderConfig.General.PRIVATE:
-          child_build_snapshot = internal_snapshot
+        child_build_snapshot = internal_snapshot
+        if (child_builder_config.general.manifest ==
+            BuilderConfig.General.PUBLIC and
+            self.m.cros_infra_config.switch_to_external_manifest):
+          child_build_snapshot = external_snapshot
 
         tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
 
