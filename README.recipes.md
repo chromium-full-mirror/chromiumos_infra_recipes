@@ -763,7 +763,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#215)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#216)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -777,7 +777,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#316)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#317)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -793,7 +793,7 @@ Returns:
   builders (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#359)(self, builder_name):**
+&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#360)(self, builder_name):**
 
 Returns to the name of the full variant of the builder.
 
@@ -804,7 +804,7 @@ Args:
 Returns:
    A string of the full builder name.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#344)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#345)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -815,7 +815,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#277)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#278)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
