@@ -194,35 +194,30 @@ def archive_all_logs(api, phosphorus_config, gs_root, result):
   Raises:
     * InfraFailure if binary call fails.
   """
-  try:
-    with api.context(infra_steps=True):
-      with api.step.nest('archive all test logs to Google Storage'):
-        # Create a reasonable directory tree to avoid directories with a huge
-        # number of entries.
-        # - b/167219452 - Large number of entries at top-level can cause Google
-        #   Storage meltdown.
-        # - Being able to easily crawl the logs chronologically is very useful.
-        # - Inject a random element to
-        #   - keep logs across tasks on a single day separate
-        #   - make it harder to hard-code paths to the target directory
-        #     downstream.
-        now = api.time.utcnow()
-        gs_directory = '%s/%s/%s' % (gs_root, now.date().isoformat(),
-                                     api.uuid.random())
-        gs_res = api.phosphorus.upload_to_gs(
-            phosphorus.upload_to_gs.UploadToGSRequest(
-                local_directory=phosphorus_config.task.results_dir,
-                gs_directory=gs_directory))
-        # Logs are archived even in the case of catastrophic failures.
-        # Thus, it is possible that we do not have a sane result message.
-        if result is not None:
-          result.log_data.gs_url = gs_res.gs_url
-          result.log_data.stainless_url = _stainless_logs_from_gs_path(
-              gs_res.gs_url)
-  except api.step.InfraFailure:
-    # TODO(crbug.com/1126528): Make these failures significant once we've
-    # stabilized the new archival step.
-    pass
+  with api.context(infra_steps=True):
+    with api.step.nest('archive all test logs to Google Storage'):
+      # Create a reasonable directory tree to avoid directories with a huge
+      # number of entries.
+      # - b/167219452 - Large number of entries at top-level can cause Google
+      #   Storage meltdown.
+      # - Being able to easily crawl the logs chronologically is very useful.
+      # - Inject a random element to
+      #   - keep logs across tasks on a single day separate
+      #   - make it harder to hard-code paths to the target directory
+      #     downstream.
+      now = api.time.utcnow()
+      gs_directory = '%s/%s/%s' % (gs_root, now.date().isoformat(),
+                                   api.uuid.random())
+      gs_res = api.phosphorus.upload_to_gs(
+          phosphorus.upload_to_gs.UploadToGSRequest(
+              local_directory=phosphorus_config.task.results_dir,
+              gs_directory=gs_directory))
+      # Logs are archived even in the case of catastrophic failures.
+      # Thus, it is possible that we do not have a sane result message.
+      if result is not None:
+        result.log_data.gs_url = gs_res.gs_url
+        result.log_data.stainless_url = _stainless_logs_from_gs_path(
+            gs_res.gs_url)
   return result
 
 
@@ -963,25 +958,6 @@ def GenTests(api):
                       autotest_result=Result.Autotest(test_cases=[]),
                   )))),
       _successful_logs_archive_step(),
-  )
-  yield api.test(
-      'ignore errors in logs archival',
-      _set_build_id(id=42),
-      _misc_properties(),
-      _request_properties(),
-      _mock_load_step(),
-      _successful_prejob_step(),
-      _successful_run_test_step(),
-      api.step_data(
-          'execution steps.get test results.'
-          'call `autotest_status_parser`.parse', stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  Result(
-                      autotest_result=Result.Autotest(test_cases=[]),
-                  )))),
-      api.step_data(
-          'execution steps.archive all test logs to Google Storage.'
-          'call `phosphorus`.upload-to-gs', retcode=1),
   )
 
   yield api.test(
