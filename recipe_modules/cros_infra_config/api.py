@@ -5,7 +5,7 @@
 
 import json
 
-from google.protobuf import json_format
+from google.protobuf.json_format import MessageToDict, ParseDict
 from recipe_engine import recipe_api
 from recipe_engine.util import exponential_retry
 
@@ -156,13 +156,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     Preserve $chromeos/cros_infra_config when launching a child build.
     """
-    if not self._properties.config_ref:
+    if not MessageToDict(self._properties):
       return {}
     msg = CrosInfraConfigProperties()
     msg.CopyFrom(self._properties)
     return {
         '$chromeos/cros_infra_config':
-            json_format.MessageToDict(msg, preserving_proto_field_name=True)
+            MessageToDict(msg, preserving_proto_field_name=True)
     }
 
   @property
@@ -515,17 +515,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     build = build or self.m.buildbucket.build
     target = None
     if '$chromeos/build_menu' in build.input.properties:
-      target = json_format.ParseDict(
-          build.input.properties['$chromeos/build_menu'], BuildMenuProperties(),
-          ignore_unknown_fields=True).build_target
+      target = ParseDict(build.input.properties['$chromeos/build_menu'],
+                         BuildMenuProperties(),
+                         ignore_unknown_fields=True).build_target
       if target.name:
         return target
 
     # TODO(crbug/1099259): Once everyone is looking at (and setting) the
     # build_menu properties, stop looking at the global ones.
-    target = json_format.ParseDict(build.input.properties,
-                                   BuildTargetProperties(),
-                                   ignore_unknown_fields=True).build_target
+    target = ParseDict(build.input.properties, BuildTargetProperties(),
+                       ignore_unknown_fields=True).build_target
     return target if target and target.name else None
 
   def get_build_target_name(self, build=None):
