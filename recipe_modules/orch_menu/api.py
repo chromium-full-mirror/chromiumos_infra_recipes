@@ -408,14 +408,19 @@ class OrchMenuApi(RecipeApi):
 
   def _collect_and_check_build_results(self, builds, results_step_name=None,
                                        check_critical_step_name=None):
+    # Assume relevant if the child doesn't have the relevant_build prop.
+    relevant = lambda build: ('relevant_build' not in build.output.properties or
+                              build.output.properties['relevant_build'])
     with self.m.step.nest(results_step_name or 'check build results') as pres:
-      relevant_builds = []
+      relevant_builds = [
+          x.builder.builder
+          for x in self._builds_status.completed_builds
+          if relevant(x)
+      ]
       for build in builds:
         if build.status in (common_pb2.STARTED, common_pb2.SCHEDULED):
           pres.text = 'some builds are running/pending'
-        # Assume relevant if the child doesn't have the relevant_build prop.
-        if ('relevant_build' not in build.output.properties or
-            build.output.properties['relevant_build']):
+        if relevant(build):
           relevant_builds.append(build.builder.builder)
       pres.logs['relevant_builds'] = sorted(relevant_builds or
                                             ['no relevant builds'])

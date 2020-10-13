@@ -5141,6 +5141,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@relevant_builds@@@@",
+      "@@@STEP_LOG_LINE@relevant_builds@amd64-generic-cq@@@",
+      "@@@STEP_LOG_LINE@relevant_builds@arm-generic-cq@@@",
+      "@@@STEP_LOG_LINE@relevant_builds@atlas-cq@@@",
       "@@@STEP_LOG_END@relevant_builds@@@"
     ]
   },
@@ -5149,7 +5152,7 @@
     "name": "final build collect.check build results.set child_builds_relevant",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@child_builds_relevant@1@@@"
+      "@@@SET_BUILD_PROPERTY@child_builds_relevant@4@@@"
     ]
   },
   {
