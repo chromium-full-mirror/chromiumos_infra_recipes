@@ -693,6 +693,139 @@
   },
   {
     "cmd": [],
+    "name": "Do copy_to_internal and create CL"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromeos/config-internal",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/config-internal|src/chromeos/config-internal|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do copy_to_internal and create CL.importing flattened configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace/src/config-internal/generated"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.create generated directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/merge_flat_configs.py",
+      "-o",
+      "generated/flattened.jsonproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.merge flattened configs to config-internal",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "generated/flattened.jsonproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Automerging and importing flattened config changes.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_postsubmit/flatten",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Automerging and importing flattened config changes.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: config_postsubmit/flatten@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "cros",
+      "HEAD:refs/heads/master"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {

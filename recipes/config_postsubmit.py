@@ -137,11 +137,66 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatt
   return []
 
 
+def _copy_to_internal(api, project_infos):
+  """Merge any flattened messages into a single list and write to config-internal.
+
+  This provides a single centralized location from which services can read all
+  device configurations.
+  """
+
+  # get project info for internal config repo
+  config_project_info = api.repo.project_info("chromeos/config-internal")
+
+  cwd = api.context.cwd
+  merge_script = cwd.join('src/config/payload_utils/merge_flat_configs.py')
+  config_internal = cwd.join('src/config-internal')
+  output = 'generated/flattened.jsonproto'
+
+  # find all the flattened configs
+  files = []
+  for project_info in project_infos:
+    path = cwd.join(project_info.path, "generated/flattened.jsonproto")
+
+    if api.path.exists(path):
+      files.append(path)
+
+  def _merge_configs():
+    api.file.ensure_directory("create generated directory",
+                              config_internal.join('generated'))
+
+    # merge and import
+    api.step('merge flattened configs to config-internal',
+             ['vpython', merge_script, "-o", output] + files)
+    api.git.add([output])
+
+    # commit files
+    message = \
+      '''Automerging and importing flattened config changes.
+
+Cr-Build-Url: %s
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatten')
+    api.git.commit(message)
+
+  with api.context(config_internal),\
+       api.step.nest("importing flattened configs") as presentation:
+    try:
+      api.git_txn.update_ref(
+          config_project_info.remote,
+          config_project_info.branch,
+          _merge_configs,
+      )
+    except StepFailure:
+      presentation.status = 'WARNING'
+
+  return []
+
+
 # A list of functions to run on config repos. Each action should take a
 # RecipesApi and list of ProjectInfos as args and return a list of CommitInfos.
 _ACTIONS = [
     _replicate_public_config,
     _flatten_configs,
+    _copy_to_internal,
 ]
 
 
@@ -321,4 +376,28 @@ def GenTests(api):
           StepSummaryEquals,
           'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.find input config',
           "(does not exist)"),
+  )
+
+  # import to internal config stage tests
+  yield api.test(
+      'copy_internal_basic',
+      config_repos_step_data(api),
+      mock_payloads("config.jsonproto"),
+      mock_payloads("flattened.jsonproto"),
+      api.git.diff_check(True),
+      api.post_process(
+          post_process.MustRun,
+          'Do copy_to_internal and create CL.importing flattened configs.git transaction.merge flattened configs to config-internal',
+      ),
+  )
+
+  yield api.test(
+      'copy_internal_error',
+      config_repos_step_data(api),
+      mock_payloads("config.jsonproto"),
+      mock_payloads("flattened.jsonproto"),
+      api.git.diff_check(True),
+      api.step_data(
+          'Do copy_to_internal and create CL.importing flattened configs.git transaction.merge flattened configs to config-internal',
+          retcode=1),
   )
