@@ -6662,9 +6662,9 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#583)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#584)(api, properties, envvars):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#185)(api, phosphorus_config, gs_root, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#186)(api, phosphorus_config, gs_root, result):**
 
 Archive all test logs to Google Storage.
 
@@ -6677,7 +6677,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#442)(api, properties, envvars):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#443)(api, properties, envvars):**
 
 Runs all the non-UI-related steps.
 
@@ -6694,7 +6694,7 @@ Returns:
 Raises:
 * InfraFailure.
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#245)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#246)(api, results_dir=''):**
 
 Parse test results.
 
@@ -6723,7 +6723,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#411)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#412)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -6733,7 +6733,7 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#97)(api, config=None, request=None, output_config=None, dut_hostname=''):**
+&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#98)(api, config=None, request=None, output_config=None, dut_hostname=''):**
 
 Run a test against the DUT via `autoserv`.
 
@@ -6750,7 +6750,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#534)(api, phosphorus_config, properties, dut_hostname):**
+&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#535)(api, phosphorus_config, properties, dut_hostname):**
 
 Run the test execution and all steps that explicitly depend on it.
 
@@ -6764,14 +6764,14 @@ Returns: phosphorus.RunTestResponse.
 Raises:
 * InfraFailure.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#325)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#326)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#261)(api, prejob_response, run_test_response, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#262)(api, prejob_response, run_test_response, result):**
 
 Display test cases as recipe substeps.
 
@@ -6780,7 +6780,7 @@ Args:
   * run_test_response: phosphorus.runtest.RunTestResponse instance.
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [upload\_sync\_results](/recipes/test_platform/test_runner.py#165)(api, config=None, output_config=None):**
+&mdash; **def [upload\_sync\_results](/recipes/test_platform/test_runner.py#166)(api, config=None, output_config=None):**
 
 Upload synchronously-needed test results to Google Storage.
 
@@ -6792,7 +6792,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#230)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#231)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 

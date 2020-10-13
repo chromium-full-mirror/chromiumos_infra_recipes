@@ -83,6 +83,7 @@ def prejob(api, config=None, request=None, dut_hostname='', load_response=None,
           dut_hostname=dut_hostname,
           desired_provisionable_labels=request.prejob.provisionable_labels,
           existing_provisionable_labels=load_response.provisionable_labels,
+          use_tls=request.prejob.use_tls,
       )
       # Use the earlier of the two deadlines: the globally configured max
       # duration or the request's deadline (if provided).
