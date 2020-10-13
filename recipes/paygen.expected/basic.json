@@ -178,6 +178,34 @@
     "name": "initialization"
   },
   {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.auto",
+      "0"
+    ],
+    "infra_step": true,
+    "name": "initialization.git config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.packRefs",
+      "false"
+    ],
+    "infra_step": true,
+    "name": "initialization.git config (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "initialization.ensure synced checkout",
     "~followup_annotations": [

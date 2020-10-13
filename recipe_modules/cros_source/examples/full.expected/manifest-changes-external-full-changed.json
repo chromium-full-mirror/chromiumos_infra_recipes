@@ -172,6 +172,30 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.auto",
+      "0"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "git config"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.packRefs",
+      "false"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "git config (2)"
+  },
+  {
     "cmd": [],
     "name": "ensure synced checkout"
   },
@@ -695,20 +719,6 @@
     "name": "patch manifest",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "config",
-      "--global",
-      "gc.packRefs",
-      "false"
-    ],
-    "infra_step": true,
-    "name": "patch manifest.git config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

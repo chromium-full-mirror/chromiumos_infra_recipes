@@ -296,6 +296,30 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.auto",
+      "0"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "git config"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.packRefs",
+      "false"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "git config (2)"
+  },
+  {
     "cmd": [],
     "name": "ensure synced checkout"
   },
@@ -593,21 +617,6 @@
     "name": "cherry-pick gerrit changes.apply gerrit patch sets",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "config",
-      "--global",
-      "gc.packRefs",
-      "false"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

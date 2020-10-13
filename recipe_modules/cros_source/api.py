@@ -145,6 +145,14 @@ class CrosSourceApi(RecipeApi):
       * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
       current value.
     """
+    # There are a few things we want to make sure are set globally for git.
+    # Do them here to help protect the named cache from corruption due to
+    # off-branch objects being removed.
+    # Disable automatic garbage collection.  See https://crbug.com/1137935.
+    self.m.git.set_global_config(['gc.auto', '0'])
+    # Disable packRefs before doing merges. See https://crbug.com/1057878.
+    self.m.git.set_global_config(['gc.packRefs', 'false'])
+
     if self._enable_custom_overlays:
       self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
                              persist=True)
@@ -355,9 +363,6 @@ class CrosSourceApi(RecipeApi):
       return
 
     with self.m.step.nest('patch manifest') as pres:
-      # Disable packRefs before doing merges. See https://crbug.com/1057878.
-      self.m.git.set_global_config(['gc.packRefs', 'false'])
-
       branches = set(x.branch for x in patches.manifest)
       if len(branches) > 1:
         raise StepFailure('Cannot patch multiple branches: {}'.format(' '.join(
@@ -556,9 +561,6 @@ class CrosSourceApi(RecipeApi):
       List[ProjectCommit]: A list of commits from cherry-picked patch sets.
     """
     with self.m.step.nest(name or 'apply gerrit patch sets'):
-      # Disable packRefs before doing merges. See https://crbug.com/1057878.
-      self.m.git.set_global_config(['gc.packRefs', 'false'])
-
       new_commits = []
       for patch in patch_sets:
         if patch.display_id in self._applied_patches:

@@ -382,6 +382,28 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.auto",
+      "0"
+    ],
+    "infra_step": true,
+    "name": "git config"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.packRefs",
+      "false"
+    ],
+    "infra_step": true,
+    "name": "git config (2)"
+  },
+  {
     "cmd": [],
     "name": "ensure synced checkout"
   },
