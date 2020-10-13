@@ -20,4 +20,9 @@ message BuildMenuProperties {
 
   // Whether to run unit tests with code coverage or not.
   bool test_with_code_coverage = 4;
+
+  // Whether to force an empty toolchain_targets to update_chroot.
+  // Also set by the chromeos.build_menu.force_empty_toolchain_targets
+  // experiment.
+  bool force_empty_toolchain_targets = 5;
 }

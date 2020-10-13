@@ -52,6 +52,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # Prebuilt information for the builder.  Created in setup_sysroot, used
     # there and install_packages.
     self._package_indexes = None
+    self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
+
+  def initialize(self):
+    self._force_empty_toolchain_targets |= (
+        'chromeos.build_menu.force_empty_toolchain_targets' in
+        self.m.cros_infra_config.experiments)
 
   @property
   def build_target(self):
@@ -182,6 +188,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         # Avoid passing empty BuildTarget message when we don't have one,
         # e.g. chromite-cq.
         tc_targets = [self.build_target] if self.build_target.name else None
+        tc_targets = None if self._force_empty_toolchain_targets else tc_targets
         self.m.cros_sdk.update_chroot(
             self.gitiles_commit, self.gerrit_changes,
             toolchain_targets=tc_targets,
