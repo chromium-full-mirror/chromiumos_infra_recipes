@@ -161,9 +161,20 @@ class RepoApi(recipe_api.RecipeApi):
       self.m.file.ensure_directory(name='ensure local manifest dir',
                                    dest=local_manifest_dir)
 
-      manifest_data = self.m.gitiles.download_file(
-          local_manifest.repo, local_manifest.path,
-          step_test_data=self.test_api.local_manifest_step_test_data)
+      # Repos are being transitioned to use 'main' as the default branch.
+      # During the transition period, fallback to 'main' if the initial download
+      # of the local_manifest fails.
+      #
+      # TODO(crbug.com/1138630): Remove this fallback once 'main' is used for
+      # all repos.
+      try:
+        manifest_data = self.m.gitiles.download_file(
+            local_manifest.repo, local_manifest.path, branch='master',
+            step_test_data=self.test_api.local_manifest_step_test_data)
+      except self.m.step.StepFailure as ex:
+        manifest_data = self.m.gitiles.download_file(
+            local_manifest.repo, local_manifest.path, branch='main',
+            step_test_data=self.test_api.local_manifest_step_test_data)
       self.m.file.write_raw(name='write local manifest',
                             dest=local_manifest_dir.join('local_manifest.xml'),
                             data=manifest_data)
