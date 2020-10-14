@@ -102,6 +102,57 @@
     "timeout": 2700
   },
   {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_1",
+      "root@localhost",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/var/log",
+      "/var/spool/crash"
+    ],
+    "infra_step": true,
+    "name": "gather artifacts on VM for first",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_1",
+      "root@localhost:/tmp/artifacts.tar",
+      "[CLEANUP]/test-results_tmp_6/artifacts.tar"
+    ],
+    "infra_step": true,
+    "name": "download artifacts from VM for first",
+    "timeout": 300
+  },
+  {
     "cmd": [],
     "name": "process tast output"
   },
@@ -369,6 +420,57 @@
     ],
     "name": "tast run second",
     "timeout": 2700
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_1",
+      "root@localhost",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/var/log",
+      "/var/spool/crash"
+    ],
+    "infra_step": true,
+    "name": "gather artifacts on VM for second",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_1",
+      "root@localhost:/tmp/artifacts.tar",
+      "[CLEANUP]/test-results_tmp_10/artifacts.tar"
+    ],
+    "infra_step": true,
+    "name": "download artifacts from VM for second",
+    "timeout": 300
   },
   {
     "cmd": [],

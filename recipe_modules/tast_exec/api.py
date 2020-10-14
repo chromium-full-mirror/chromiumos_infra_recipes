@@ -9,6 +9,9 @@ from recipe_engine.util import exponential_retry
 from PB.test_platform.taskstate import TaskState
 
 SYS_LOG_DIR = '/var/log'
+VM_ARTIFACT_TARBALL = '/tmp/artifacts.tar'
+ARTIFACT_TARBALL_NAME = 'artifacts.tar'
+VM_ARTIFACT_LIST = ['/var/log', '/var/spool/crash']
 
 
 class TastExecApi(RecipeApi):
@@ -72,6 +75,39 @@ class TastExecApi(RecipeApi):
     self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
     return task_result
 
+  @exponential_retry(retries=2)
+  def _archive_vm_artifacts(self, private_key_path, tag, output_dir):
+    self.m.step('gather artifacts on VM for %s' % tag, [
+        'ssh', \
+        '-p', '9222', \
+        '-oConnectionAttempts=4', \
+        '-oUserKnownHostsFile=/dev/null', \
+        '-oProtocol=2', \
+        '-oConnectTimeout=30', \
+        '-oServerAliveCountMax=8', \
+        '-oStrictHostKeyChecking=no', \
+        '-oServerAliveInterval=15', \
+        '-oNumberOfPasswordPrompts=0', \
+        '-oIdentitiesOnly=yes', \
+        '-i', private_key_path, \
+        'root@localhost', '--', 'tar', 'cf', VM_ARTIFACT_TARBALL] +
+        VM_ARTIFACT_LIST, infra_step=True, timeout=5*60)
+    self.m.step('download artifacts from VM for %s' % tag, [
+        'scp', \
+        '-P', '9222', \
+        '-oConnectionAttempts=4', \
+        '-oUserKnownHostsFile=/dev/null', \
+        '-oProtocol=2', \
+        '-oConnectTimeout=30', \
+        '-oServerAliveCountMax=8', \
+        '-oStrictHostKeyChecking=no', \
+        '-oServerAliveInterval=15', \
+        '-oNumberOfPasswordPrompts=0', \
+        '-oIdentitiesOnly=yes', \
+        '-i', private_key_path, \
+        'root@localhost:%s'%VM_ARTIFACT_TARBALL, str(output_dir.join(ARTIFACT_TARBALL_NAME))],
+        infra_step=True, timeout=5*60)
+
   def _run_tast(self, expressions, tast_dir, private_key_path, name, tag):
     test_results_dir = self.m.path.mkdtemp(prefix='test-results')
     list_stdout = self.m.easy.stdout_step('tast list', [
@@ -108,6 +144,9 @@ class TastExecApi(RecipeApi):
             str(tast_dir.join('remote_test_runner'))), \
         'localhost:9222'] + \
         list(expressions), ok_ret='any', timeout=45 * 60)
+
+    # Add logs and other artifacts from DUT into the test results directory.
+    self._archive_vm_artifacts(private_key_path, tag, test_results_dir)
     return self.m.tast_results.get_results(test_results_dir, name, tag, tests)
 
   @exponential_retry(retries=2)

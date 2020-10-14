@@ -4761,11 +4761,11 @@ Returns:
 
 [DEPS](/recipe_modules/tast_exec/__init__.py#6): [easy](#recipe_modules-easy), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to execute tast commands.
 
-&mdash; **def [run](/recipe_modules/tast_exec/api.py#17)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path):**
+&mdash; **def [run](/recipe_modules/tast_exec/api.py#20)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path):**
 
 Run tast tests.
 
