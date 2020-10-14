@@ -22,7 +22,7 @@ def RunSteps(api, expected_builders):
       host='chromium-review.googlesource.com', change=1234)
   gerrit_change_2 = common_pb2.GerritChange(
       host='chromium-review.googlesource.com', change=5678)
-  result = api.build_plan.get_forced_rebuilds(
+  result = api.build_plan._get_forced_rebuilds(
       [gerrit_change_1, gerrit_change_2])
   api.assertions.assertEqual(result, set(expected_builders))
 

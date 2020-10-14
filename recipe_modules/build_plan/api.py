@@ -11,13 +11,18 @@ from recipe_engine import recipe_api
 from collections import defaultdict
 from datetime import datetime
 
-# A Git footer than can be included in commit messages to tell the cq run to not
-# recycled builds for that builder.
-DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
-
 
 class BuildPlanApi(recipe_api.RecipeApi):
   """A module to plan the builds to be launched."""
+
+  # A Git footer than can be included in commit messages to tell the cq run to not
+  # recycled builds for that builder.
+  DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
+
+  # A Git footer that can be included in commit messages to tell the CQ run to
+  # enable an experiment.  This name was chosen to avoid conflicting with a
+  # similar feature being added to LUCI CQ.
+  CROS_EXPERIMENTS_FOOTER = 'Cros-Experiments'
 
   def get_build_plan(self, child_specs, enable_history, gerrit_changes,
                      internal_snapshot, external_snapshot):
@@ -61,7 +66,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           is_retry = orch_config.id.type == BuilderConfig.Id.CQ and len(
               self.m.cros_history.get_matching_builds(
                   self.m.buildbucket.build)) > 1
-          forced_rebuilds = self.get_forced_rebuilds(gerrit_changes)
+          forced_rebuilds = self._get_forced_rebuilds(gerrit_changes)
           completed_builds = self.get_completed_builds(child_specs,
                                                        forced_rebuilds)
           presentation.step_text = ('found {} build{} to recycle'.format(
@@ -95,6 +100,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
     count_scheduled_slim_builds = 0
 
     with self.m.step.nest('filter builds') as presentation:
+      child_exps = self.m.cros_infra_config.experiments_for_child_build
+      footer_exps = self._get_footer_values(
+          gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
+          step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
+      child_exps.update({x: True for x in footer_exps})
+
       for child_spec in child_specs:
         # Get the builder variant in the build plan.
         if child_spec.name in necessary_builders:
@@ -165,8 +176,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # Build the properties for the child.
         properties = self.m.cq.props_for_child_build
         properties.update(self.m.cros_infra_config.props_for_child_build)
-
-        child_exps = self.m.cros_infra_config.experiments_for_child_build
 
         # TODO(crbug.com/1123776): Remove scheduling of a full builder in
         # addition to a slim builder after go/cros-slim-rollout parallel
@@ -314,7 +323,30 @@ class BuildPlanApi(recipe_api.RecipeApi):
     # return reduced list
     return best_builds_list
 
-  def get_forced_rebuilds(self, gerrit_changes):
+  def _get_footer_values(self, gerrit_changes, key, **kwargs):
+    """Gets a list of values from a footer.
+
+    Fetches the named footer from the gerrit changes, and returns a set of all
+    of the (comma-separated) values found.
+
+    Args:
+      gerrit_changes ([common_pb2.GerritChange]): Gerrit changes applied to this
+        run.
+      key (str): The footer name (key) to fetch.
+      kwargs (dict): Other keyword arguements, passed to
+        git_footers.from_gerrit_change.
+
+    Returns:
+      values (set(str)): A set of values.  May be empty.
+    """
+    ret = set()
+    for gerrit_change in gerrit_changes:
+      values = self.m.git_footers.from_gerrit_change(gerrit_change, key=key,
+                                                     **kwargs)
+      ret.update(x.strip() for v in values for x in v.split(','))
+    return ret
+
+  def _get_forced_rebuilds(self, gerrit_changes):
     """Gets a list of builders whose builds should not be reused.
 
     Compiles a list of all builders whose builds should not be reused as
@@ -329,18 +361,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
       builders (set(str)): A set of builder names or 'all' if no builds can be
         reused.
     """
-    builders = set()
-    for gerrit_change in gerrit_changes:
-      footer_value = self.m.git_footers.from_gerrit_change(
-          gerrit_change, key=DISALLOW_RECYCLED_BUILDS_FOOTER)
-      assert len(footer_value) <= 1, 'Multiple footers found'
-      if len(footer_value) == 0:
-        continue
-      new_builders = [x.strip() for x in footer_value[0].split(',')]
-      if 'all' in new_builders:
-        return {'all'}
-      builders.update(new_builders)
-    return builders
+    builders = self._get_footer_values(gerrit_changes,
+                                       self.DISALLOW_RECYCLED_BUILDS_FOOTER)
+    return {'all'} if 'all' in builders else builders
 
   def get_slim_builder_name(self, builder_name):
     """Returns to the name of the slim variant of the builder.

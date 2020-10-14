@@ -47,7 +47,7 @@ class GitFootersApi(recipe_api.RecipeApi):
       list[str]: The footer value(s) found in the commit message.
     """
     message_text = self.m.gerrit.get_change_description(gerrit_change)
-    return self.from_message(message_text, key=key)
+    return self.from_message(message_text, key=key, **kwargs)
 
   def from_message(self, message, key=None, **kwargs):
     """Return the footer value(s) in the commit message for the given key.

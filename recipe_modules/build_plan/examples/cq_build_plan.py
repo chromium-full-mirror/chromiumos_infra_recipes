@@ -8,6 +8,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
+from PB.recipe_modules.chromeos.build_plan.examples.cq_build_plan import (
+    CqBuildPlanProperties)
 
 from google.protobuf import timestamp_pb2
 
@@ -21,8 +23,10 @@ DEPS = [
     'git_footers',
 ]
 
+PROPERTIES = CqBuildPlanProperties
 
-def RunSteps(api):
+
+def RunSteps(api, properties):
   child_specs = api.cros_infra_config.get_builder_config(
       'cq-orchestrator').orchestrator.child_specs
   completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
@@ -41,6 +45,8 @@ def RunSteps(api):
       new_requests[0].builder.builder, new_requests[1].builder.builder,
       new_requests[2].builder.builder
   ], ['atlas-slim-cq', 'atlas-cq', 'arm64-generic-cq'])
+  api.assertions.assertEqual({x: True for x in properties.expected_experiments},
+                             new_requests[0].experiments)
 
 
 def GenTests(api):
@@ -70,10 +76,11 @@ def GenTests(api):
                       input=input_proto(None, 'arm64-generic'))
   ]
 
-  def cq_orchestrator_build_with_gerrit_change():
+  def cq_orchestrator_build_with_gerrit_change(**kwargs):
     """Generate a test build proto with no gitiles commit project."""
     build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                             builder='cq-orchestrator')
+                                             builder='cq-orchestrator',
+                                             **kwargs)
     build.input.gerrit_changes.extend([
         common_pb2.GerritChange(host='chromium-review.googlesource.com',
                                 change=1234)
@@ -84,6 +91,28 @@ def GenTests(api):
       'basic',
       cq_orchestrator_build_with_gerrit_change(),
       api.git_footers.simulated_get_footers([], 'get build history'),
+      api.cros_relevance.simulated_get_necessary_builders([
+          'amd64-generic-cq', 'arm-generic-cq', 'arm64-generic-cq',
+          'atlas-slim-cq'
+      ]),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+  )
+
+  yield api.test(
+      'experiments',
+      cq_orchestrator_build_with_gerrit_change(
+          experiments=['named-experiment-from-cq']),
+      api.properties(expected_experiments=[
+          'named-experiment-from-cq', 'named-exp-from-cl'
+      ]),
+      api.git_footers.simulated_get_footers([], 'get build history'),
+      api.git_footers.simulated_get_footers(['named-exp-from-cl'],
+                                            'filter builds'),
       api.cros_relevance.simulated_get_necessary_builders([
           'amd64-generic-cq', 'arm-generic-cq', 'arm64-generic-cq',
           'atlas-slim-cq'
