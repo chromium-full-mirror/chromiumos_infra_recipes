@@ -11,10 +11,23 @@ DEPS = [
 
 
 def RunSteps(api):
-  fake_file = api.path.mkstemp(prefix='temp')
-  fake_dir = api.path.mkdtemp(prefix='temp')
-  api.tast_exec.run('tast_vm', ['!informational'], fake_file, fake_dir,
-                    fake_file)
+  test_artifacts = api.path.mkdtemp(prefix='temp')
+  api.tast_exec.download_tast('bucket', 'path', test_artifacts)
+  vm_dir = api.path.mkdtemp(prefix='temp')
+  qcow_image, private_key_path = api.tast_exec.download_vm(
+      'bucket', 'path', vm_dir)
+
+  # Run with retry
+  api.tast_exec.run('tast_vm', ['!informational'], qcow_image, test_artifacts,
+                    private_key_path)
+
+  # Run without retry
+  results_dir = api.path.mkdtemp(prefix='temp')
+  api.tast_exec.run_direct(['!informational'], qcow_image, test_artifacts,
+                           private_key_path, results_dir)
+  api.tast_exec.run_direct(['example.Pass'], qcow_image, test_artifacts,
+                           private_key_path, results_dir,
+                           run_args=['-var=myVar=myVal'])
 
 
 def GenTests(api):

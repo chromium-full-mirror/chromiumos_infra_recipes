@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import os
 from google.protobuf import json_format as jsonpb
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from recipe_engine.util import exponential_retry
@@ -12,14 +13,81 @@ SYS_LOG_DIR = '/var/log'
 VM_ARTIFACT_TARBALL = '/tmp/artifacts.tar'
 ARTIFACT_TARBALL_NAME = 'artifacts.tar'
 VM_ARTIFACT_LIST = ['/var/log', '/var/spool/crash']
+PRIVATE_KEY_NAME = 'id_rsa'
+VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
+QCOW_IMG_NAME = 'qcow2.img'
 
 
 class TastExecApi(RecipeApi):
   """A module to execute tast commands."""
 
+  def download_tast(self, artifacts_gs_bucket, artifacts_gs_path,
+                    test_artifacts_dir):
+    """Downloads the tast executable from specified build artifacts.
+
+    Args:
+        artifacts_gs_bucket(str): The bucket containing build artifacts.
+        artifacts_gs_path(str): The bucket path containing the build output,
+          for example, "eve-paladin/R78-11588.0.0".
+        test_artifacts_dir(str): The directory to which files should be
+          downloaded. The tast executable will be found at tast/tast relative
+          to this directory.
+    """
+    with self.m.step.nest('setup tast') as presentation:
+      presentation.text = 'download tast executable'
+      sp_tar_file = test_artifacts_dir.join('autotest_server_package.tar.bz2')
+      archive_path = os.path.join(artifacts_gs_path,
+                                  'autotest_server_package.tar.bz2')
+      self.m.gsutil.download(artifacts_gs_bucket, archive_path, sp_tar_file,
+                             name='download tast bundle from GS')
+      self.m.step(
+          'untar tast',
+          ['tar', 'xjf', sp_tar_file, '--directory', test_artifacts_dir])
+
+  def download_vm(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):
+    """Downloads the VM image from specified build artifacts.
+
+    Args:
+        artifacts_gs_bucket(str): The bucket containing build artifacts.
+        artifacts_gs_path(str): The bucket path containing the build output,
+          for example, "eve-paladin/R78-11588.0.0".
+        vm_dir(Path): The directory to which files should be
+          downloaded.
+
+    Returns:
+        qcow_image_path (Path): The location of the qcow image. This will be
+          a location inside image_archive_dir.
+        private_key_path (Path): The location of the SSH key. This will be
+          a location inside image_archive_dir.
+    """
+    with self.m.step.nest('setup vm image'):
+      test_image_zip = vm_dir.join('image.zip')
+      test_image_dir = vm_dir.join('image')
+      vm_image_path = test_image_dir.join(VM_IMAGE_NAME)
+      qcow_image_path = test_image_dir.join(QCOW_IMG_NAME)
+      private_key_path = test_image_dir.join(PRIVATE_KEY_NAME)
+      self.m.gsutil.download(artifacts_gs_bucket,
+                             os.path.join(artifacts_gs_path,
+                                          'image.zip'), test_image_zip,
+                             name='download image bundle from GS')
+      self.m.archive.extract('unzip image bundle', test_image_zip,
+                             test_image_dir,
+                             include_files=[VM_IMAGE_NAME, PRIVATE_KEY_NAME])
+
+      self.m.step('convert image to qcow format', [
+          'qemu-img', \
+          'create', \
+          '-f', 'qcow2', \
+          '-b', str(vm_image_path), \
+          str(qcow_image_path) \
+      ])
+      self.m.step('calibrate ssh key permissions',
+                  ['chmod', '400', str(private_key_path)])
+    return qcow_image_path, private_key_path
+
   def run(self, suite_name, expressions, qcow_image_path, test_artifacts_dir,
           private_key_path):
-    """Run tast tests.
+    """Run tast tests with one retry and upload logs to Google storage.
 
     Args:
         suite_name(str): Name of the suite to run.
@@ -33,8 +101,9 @@ class TastExecApi(RecipeApi):
         the results were empty.
     """
     # Setup qemu debug.
-    task_result = self._tast_iter(suite_name, expressions, qcow_image_path,
-                                  test_artifacts_dir, private_key_path, 'first')
+    task_result = self._retry_iter(suite_name, expressions, qcow_image_path,
+                                   test_artifacts_dir, private_key_path,
+                                   'first')
     tests_to_retry, _ = self.m.tast_results.get_tests_to_retry(task_result)
     all_test_cases = []
     if task_result.test_cases:
@@ -43,9 +112,9 @@ class TastExecApi(RecipeApi):
         task_result, tests_to_retry)
     empty_result = task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
     if tests_to_retry:
-      retry_task_result = self._tast_iter(suite_name, tests_to_retry,
-                                          qcow_image_path, test_artifacts_dir,
-                                          private_key_path, 'second')
+      retry_task_result = self._retry_iter(suite_name, tests_to_retry,
+                                           qcow_image_path, test_artifacts_dir,
+                                           private_key_path, 'second')
       all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
       retry_failures, retry_tcs = self.m.tast_results.get_failures(
           retry_task_result)
@@ -59,8 +128,32 @@ class TastExecApi(RecipeApi):
 
     return failures, empty_result
 
-  def _tast_iter(self, suite_name, expressions, qcow_image_path,
-                 test_artifacts_dir, private_key_path, tag):
+  def _retry_iter(self, suite_name, expressions, qcow_image_path,
+                  test_artifacts_dir, private_key_path, tag):
+    with self.m.step.nest('%s tast iteration' % tag):
+      test_results_dir = self.m.path.mkdtemp(prefix='test-results')
+      tests = self.run_direct(expressions, expressions, qcow_image_path,
+                              test_artifacts_dir, private_key_path)
+      return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
+                                             tests)
+
+  def run_direct(self, expressions, qcow_image_path, test_artifacts_dir,
+                 private_key_path, test_results_dir, run_args=None):
+    """Run tast tests without retries or results processing.
+
+    Args:
+        expressions(list(str)): Expressions describing tests to run.
+        qcow_image_path(Path): Path to image in qcow format.
+        test_artifacts_dir(Path): Dir containing test artifacts.
+        private_key_path(Path): Path to private key.
+        test_results_dir(Path): Path to store tast results.
+        run_args(list(str)): Additional arguments to pass to tast.
+
+    Returns:
+        list(str): The list of tests that met the specified expression(s)."""
+    if run_args is None:
+      run_args = []
+
     kvm_pid_file = self.m.path.mkstemp(prefix='kvm-pid')
     kvm_monitor_file = self.m.path.mkstemp(prefix='kvm-monitor')
     kvm_monitor_serial_file = self.m.path.mkstemp(prefix='kvm-monitor-serial')
@@ -68,16 +161,17 @@ class TastExecApi(RecipeApi):
     self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
                     kvm_monitor_serial_file, private_key_path)
     tast_dir = test_artifacts_dir.join('tast')
-    task_result = self._run_tast(expressions, tast_dir, private_key_path,
-                                 suite_name, tag)
+    tests = self._list_tests(expressions, tast_dir, private_key_path)
+    self._run_tests(expressions, tast_dir, private_key_path, test_results_dir,
+                    run_args)
 
     self._kill_vm(kvm_pid_file)
     self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
-    return task_result
+    return tests
 
   @exponential_retry(retries=2)
-  def _archive_vm_artifacts(self, private_key_path, tag, output_dir):
-    self.m.step('gather artifacts on VM for %s' % tag, [
+  def _archive_vm_artifacts(self, private_key_path, output_dir):
+    self.m.step('gather artifacts on VM', [
         'ssh', \
         '-p', '9222', \
         '-oConnectionAttempts=4', \
@@ -92,7 +186,7 @@ class TastExecApi(RecipeApi):
         '-i', private_key_path, \
         'root@localhost', '--', 'tar', 'cf', VM_ARTIFACT_TARBALL] +
         VM_ARTIFACT_LIST, infra_step=True, timeout=5*60)
-    self.m.step('download artifacts from VM for %s' % tag, [
+    self.m.step('download artifacts from VM', [
         'scp', \
         '-P', '9222', \
         '-oConnectionAttempts=4', \
@@ -108,24 +202,27 @@ class TastExecApi(RecipeApi):
         'root@localhost:%s'%VM_ARTIFACT_TARBALL, str(output_dir.join(ARTIFACT_TARBALL_NAME))],
         infra_step=True, timeout=5*60)
 
-  def _run_tast(self, expressions, tast_dir, private_key_path, name, tag):
-    test_results_dir = self.m.path.mkdtemp(prefix='test-results')
+  def _list_tests(self, expressions, tast_dir, private_key_path):
     list_stdout = self.m.easy.stdout_step('tast list', [
-        str(tast_dir.join('tast')), \
-        'list', \
-        '-build=false', \
-        '-keyfile={}'.format(private_key_path), \
-        '-remotebundledir={}'.format(
-            str(tast_dir.join('bundles').join('remote'))), \
-        '-remotedatadir={}'.format(str(
-            tast_dir.join('data'))), \
-        '-remoterunner={}'.format(
-            str(tast_dir.join('remote_test_runner'))), \
-        'localhost:9222'] + \
-        list(expressions), ok_ret='any', timeout=2 * 60)
+    str(tast_dir.join('tast')), \
+    'list', \
+    '-build=false', \
+    '-keyfile={}'.format(private_key_path), \
+    '-remotebundledir={}'.format(
+        str(tast_dir.join('bundles').join('remote'))), \
+    '-remotedatadir={}'.format(str(
+        tast_dir.join('data'))), \
+    '-remoterunner={}'.format(
+        str(tast_dir.join('remote_test_runner'))), \
+    'localhost:9222'] + \
+    list(expressions), ok_ret='any', timeout=2 * 60)
 
     tests = [t.strip() for t in list_stdout.splitlines()]
-    self.m.step('tast run %s' % tag, [
+    return tests
+
+  def _run_tests(self, expressions, tast_dir, private_key_path,
+                 test_results_dir, extra_args):
+    self.m.step('tast run', [
         str(tast_dir.join('tast')), \
         '-verbose', \
         'run', \
@@ -141,13 +238,12 @@ class TastExecApi(RecipeApi):
         '-remotedatadir={}'.format(str(
             tast_dir.join('data'))), \
         '-remoterunner={}'.format(
-            str(tast_dir.join('remote_test_runner'))), \
-        'localhost:9222'] + \
+            str(tast_dir.join('remote_test_runner')))] + \
+        extra_args + \
+        ['localhost:9222'] + \
         list(expressions), ok_ret='any', timeout=45 * 60)
-
     # Add logs and other artifacts from DUT into the test results directory.
-    self._archive_vm_artifacts(private_key_path, tag, test_results_dir)
-    return self.m.tast_results.get_results(test_results_dir, name, tag, tests)
+    self._archive_vm_artifacts(private_key_path, test_results_dir)
 
   @exponential_retry(retries=2)
   def _launch_vm(self, qcow_image_path, kvm_pid_file, kvm_monitor_file,

@@ -1,5 +1,115 @@
 [
   {
+    "cmd": [],
+    "name": "setup tast"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://bucket/path/autotest_server_package.tar.bz2",
+      "[CLEANUP]/temp_tmp_1/autotest_server_package.tar.bz2"
+    ],
+    "infra_step": true,
+    "name": "setup tast.gsutil download tast bundle from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "xjf",
+      "[CLEANUP]/temp_tmp_1/autotest_server_package.tar.bz2",
+      "--directory",
+      "[CLEANUP]/temp_tmp_1"
+    ],
+    "name": "setup tast.untar tast",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup vm image"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://bucket/path/image.zip",
+      "[CLEANUP]/temp_tmp_2/image.zip"
+    ],
+    "infra_step": true,
+    "name": "setup vm image.gsutil download image bundle from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
+      "--json-input",
+      "{\"archive_file\": \"[CLEANUP]/temp_tmp_2/image.zip\", \"include_files\": [\"chromiumos_qemu_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/temp_tmp_2/image\", \"safe_mode\": true}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "setup vm image.unzip image bundle",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/chromiumos_qemu_image.bin",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img"
+    ],
+    "name": "setup vm image.convert image to qcow format",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "chmod",
+      "400",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa"
+    ],
+    "name": "setup vm image.calibrate ssh key permissions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration"
+  },
+  {
     "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
@@ -12,11 +122,11 @@
       "-usbdevice",
       "tablet",
       "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_3",
+      "[CLEANUP]/kvm-pid_tmp_4",
       "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_4",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_5",
       "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_5",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_6",
       "-mon",
       "chardev=control_pipe",
       "-cpu",
@@ -30,7 +140,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/temp_tmp_1,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=['!informational'],cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -38,7 +148,10 @@
       "none"
     ],
     "infra_step": true,
-    "name": "launch image as vm"
+    "name": "first tast iteration.launch image as vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -61,45 +174,54 @@
       "true"
     ],
     "infra_step": true,
-    "name": "connect via ssh",
-    "timeout": 300
+    "name": "first tast iteration.connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
-      "[CLEANUP]/temp_tmp_2/tast/tast",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/tast",
       "list",
       "-build=false",
       "-keyfile=[CLEANUP]/temp_tmp_1",
-      "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
-      "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
-      "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
+      "-remotebundledir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/remote_test_runner",
       "localhost:9222",
       "!informational"
     ],
-    "name": "tast list",
-    "timeout": 120
+    "name": "first tast iteration.tast list",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
-      "[CLEANUP]/temp_tmp_2/tast/tast",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/tast",
       "-verbose",
       "run",
       "-build=false",
       "-waituntilready",
       "-continueafterfailure",
       "-extrauseflags=tast_vm",
-      "-defaultvarsdir=[CLEANUP]/temp_tmp_2/tast/vars",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/vars",
       "-resultsdir",
-      "[CLEANUP]/test-results_tmp_6",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-keyfile=[CLEANUP]/temp_tmp_1",
-      "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
-      "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
-      "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
+      "-remotebundledir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/remote_test_runner",
       "localhost:9222",
       "!informational"
     ],
-    "name": "tast run first",
-    "timeout": 2700
+    "name": "first tast iteration.tast run",
+    "timeout": 2700,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -126,8 +248,11 @@
       "/var/spool/crash"
     ],
     "infra_step": true,
-    "name": "gather artifacts on VM for first",
-    "timeout": 300
+    "name": "first tast iteration.gather artifacts on VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -146,15 +271,36 @@
       "-i",
       "[CLEANUP]/temp_tmp_1",
       "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/test-results_tmp_6/artifacts.tar"
+      "[CLEANUP]/temp_tmp_2/image/id_rsa/artifacts.tar"
     ],
     "infra_step": true,
-    "name": "download artifacts from VM for first",
-    "timeout": 300
+    "name": "first tast iteration.download artifacts from VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_4"
+    ],
+    "name": "first tast iteration.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "process tast output"
+    "name": "first tast iteration.qemu logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
   },
   {
     "cmd": [
@@ -164,22 +310,65 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-results_tmp_6/results.json",
+      "[CLEANUP]/kvm-monitor_tmp_5",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "process tast output.read results.json",
+    "name": "first tast iteration.qemu logs.reading file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_6",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "first tast iteration.qemu logs.reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_6@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration.process tast output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_3/results.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "first tast iteration.process tast output.read results.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@results.json@[{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}, {\"additionalTime\": 30000000000, \"attr\": [\"name:arc.BuildProperties\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"niwa@chromium.org\", \"risan@chromium.org\", \"arc-eng@google.com\"], \"data\": null, \"desc\": \"Checks important Android properties such as first_api_level\", \"end\": \"2020-01-27T15:16:36.833644627-08:00\", \"errors\": null, \"name\": \"arc.BuildProperties\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:33.421007899-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}, {\"additionalTime\": 30000000000, \"attr\": [\"name:arc.MiniContainerState\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"yusukes@chromium.org\", \"arc-core@google.com\", \"hidehiko@chromium.org\"], \"data\": null, \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\", \"end\": \"2020-01-27T15:16:40.090886944-08:00\", \"errors\": null, \"name\": \"arc.MiniContainerState\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:36.833776957-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}]@@@",
       "@@@STEP_LOG_END@results.json@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "process tast output.GS upload first_results",
+    "name": "first tast iteration.process tast output.GS upload first_results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/first_results@@@"
     ]
   },
@@ -196,68 +385,14 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/test-results_tmp_6",
+      "[CLEANUP]/test-results_tmp_3",
       "gs://chromeos-vmtest-archive//0/first_results"
     ],
     "infra_step": true,
-    "name": "process tast output.GS upload first_results.gsutil rsync",
+    "name": "first tast iteration.process tast output.GS upload first_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "pkill",
-      "-F",
-      "[CLEANUP]/kvm-pid_tmp_3"
-    ],
-    "name": "kill vm"
-  },
-  {
-    "cmd": [],
-    "name": "qemu logs",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
-      "@@@STEP_LOG_END@kvm.monitor@@@",
-      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
-      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor_tmp_4",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "qemu logs.reading file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_5",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "qemu logs.reading file (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_5@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -320,6 +455,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "second tast iteration"
+  },
+  {
     "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
@@ -332,11 +471,11 @@
       "-usbdevice",
       "tablet",
       "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_7",
+      "[CLEANUP]/kvm-pid_tmp_8",
       "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_8",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_9",
       "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_9",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_10",
       "-mon",
       "chardev=control_pipe",
       "-cpu",
@@ -350,7 +489,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/temp_tmp_1,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[u'arc.Boot'],cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -358,7 +497,10 @@
       "none"
     ],
     "infra_step": true,
-    "name": "launch image as vm (2)"
+    "name": "second tast iteration.launch image as vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -381,45 +523,54 @@
       "true"
     ],
     "infra_step": true,
-    "name": "connect via ssh (2)",
-    "timeout": 300
+    "name": "second tast iteration.connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
-      "[CLEANUP]/temp_tmp_2/tast/tast",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/tast",
       "list",
       "-build=false",
       "-keyfile=[CLEANUP]/temp_tmp_1",
-      "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
-      "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
-      "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
+      "-remotebundledir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/remote_test_runner",
       "localhost:9222",
       "arc.Boot"
     ],
-    "name": "tast list (2)",
-    "timeout": 120
+    "name": "second tast iteration.tast list",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
-      "[CLEANUP]/temp_tmp_2/tast/tast",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/tast",
       "-verbose",
       "run",
       "-build=false",
       "-waituntilready",
       "-continueafterfailure",
       "-extrauseflags=tast_vm",
-      "-defaultvarsdir=[CLEANUP]/temp_tmp_2/tast/vars",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/vars",
       "-resultsdir",
-      "[CLEANUP]/test-results_tmp_10",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-keyfile=[CLEANUP]/temp_tmp_1",
-      "-remotebundledir=[CLEANUP]/temp_tmp_2/tast/bundles/remote",
-      "-remotedatadir=[CLEANUP]/temp_tmp_2/tast/data",
-      "-remoterunner=[CLEANUP]/temp_tmp_2/tast/remote_test_runner",
+      "-remotebundledir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_2/image/qcow2.img/tast/remote_test_runner",
       "localhost:9222",
       "arc.Boot"
     ],
-    "name": "tast run second",
-    "timeout": 2700
+    "name": "second tast iteration.tast run",
+    "timeout": 2700,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -446,8 +597,11 @@
       "/var/spool/crash"
     ],
     "infra_step": true,
-    "name": "gather artifacts on VM for second",
-    "timeout": 300
+    "name": "second tast iteration.gather artifacts on VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -466,15 +620,36 @@
       "-i",
       "[CLEANUP]/temp_tmp_1",
       "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/test-results_tmp_10/artifacts.tar"
+      "[CLEANUP]/temp_tmp_2/image/id_rsa/artifacts.tar"
     ],
     "infra_step": true,
-    "name": "download artifacts from VM for second",
-    "timeout": 300
+    "name": "second tast iteration.download artifacts from VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_8"
+    ],
+    "name": "second tast iteration.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "process tast output (2)"
+    "name": "second tast iteration.qemu logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
   },
   {
     "cmd": [
@@ -484,22 +659,65 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-results_tmp_10/results.json",
+      "[CLEANUP]/kvm-monitor_tmp_9",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "process tast output (2).read results.json",
+    "name": "second tast iteration.qemu logs.reading file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_9@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_10",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "second tast iteration.qemu logs.reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_10@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration.process tast output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_7/results.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "second tast iteration.process tast output.read results.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@results.json@[{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}, {\"additionalTime\": 30000000000, \"attr\": [\"name:arc.BuildProperties\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"niwa@chromium.org\", \"risan@chromium.org\", \"arc-eng@google.com\"], \"data\": null, \"desc\": \"Checks important Android properties such as first_api_level\", \"end\": \"2020-01-27T15:16:36.833644627-08:00\", \"errors\": null, \"name\": \"arc.BuildProperties\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:33.421007899-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}, {\"additionalTime\": 30000000000, \"attr\": [\"name:arc.MiniContainerState\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"yusukes@chromium.org\", \"arc-core@google.com\", \"hidehiko@chromium.org\"], \"data\": null, \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\", \"end\": \"2020-01-27T15:16:40.090886944-08:00\", \"errors\": null, \"name\": \"arc.MiniContainerState\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:36.833776957-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}]@@@",
       "@@@STEP_LOG_END@results.json@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "process tast output (2).GS upload second_results",
+    "name": "second tast iteration.process tast output.GS upload second_results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/second_results@@@"
     ]
   },
@@ -516,68 +734,14 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/test-results_tmp_10",
+      "[CLEANUP]/test-results_tmp_7",
       "gs://chromeos-vmtest-archive//0/second_results"
     ],
     "infra_step": true,
-    "name": "process tast output (2).GS upload second_results.gsutil rsync",
+    "name": "second tast iteration.process tast output.GS upload second_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "pkill",
-      "-F",
-      "[CLEANUP]/kvm-pid_tmp_7"
-    ],
-    "name": "kill vm (2)"
-  },
-  {
-    "cmd": [],
-    "name": "qemu logs (2)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
-      "@@@STEP_LOG_END@kvm.monitor@@@",
-      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
-      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor_tmp_8",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "qemu logs (2).reading file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_8@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_9",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "qemu logs (2).reading file (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_9@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -652,6 +816,421 @@
     "timeout": 120,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_13",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_14",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_15",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/temp_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none"
+    ],
+    "infra_step": true,
+    "name": "launch image as vm"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "infra_step": true,
+    "name": "connect via ssh",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "localhost:9222",
+      "!informational"
+    ],
+    "name": "tast list",
+    "timeout": 120
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/temp_tmp_12",
+      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "localhost:9222",
+      "!informational"
+    ],
+    "name": "tast run",
+    "timeout": 2700
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/var/log",
+      "/var/spool/crash"
+    ],
+    "infra_step": true,
+    "name": "gather artifacts on VM",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost:/tmp/artifacts.tar",
+      "[CLEANUP]/temp_tmp_12/artifacts.tar"
+    ],
+    "infra_step": true,
+    "name": "download artifacts from VM",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_13"
+    ],
+    "name": "kill vm"
+  },
+  {
+    "cmd": [],
+    "name": "qemu logs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_14",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "qemu logs.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_14@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_15",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "qemu logs.reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_15@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_16",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_17",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_18",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/temp_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none"
+    ],
+    "infra_step": true,
+    "name": "launch image as vm (2)"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "infra_step": true,
+    "name": "connect via ssh (2)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "localhost:9222",
+      "example.Pass"
+    ],
+    "name": "tast list (2)",
+    "timeout": 120
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/temp_tmp_12",
+      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-var=myVar=myVal",
+      "localhost:9222",
+      "example.Pass"
+    ],
+    "name": "tast run (2)",
+    "timeout": 2700
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/var/log",
+      "/var/spool/crash"
+    ],
+    "infra_step": true,
+    "name": "gather artifacts on VM (2)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost:/tmp/artifacts.tar",
+      "[CLEANUP]/temp_tmp_12/artifacts.tar"
+    ],
+    "infra_step": true,
+    "name": "download artifacts from VM (2)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_16"
+    ],
+    "name": "kill vm (2)"
+  },
+  {
+    "cmd": [],
+    "name": "qemu logs (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_17",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "qemu logs (2).reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_17@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_18",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "qemu logs (2).reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_18@@@"
     ]
   },
   {

@@ -4748,15 +4748,44 @@ Returns:
   (PrepareForBuildResponse): Whether the build is relevant.
 ### *recipe_modules* / [tast\_exec](/recipe_modules/tast_exec)
 
-[DEPS](/recipe_modules/tast_exec/__init__.py#6): [easy](#recipe_modules-easy), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/tast_exec/__init__.py#6): [easy](#recipe_modules-easy), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to execute tast commands.
 
-&mdash; **def [run](/recipe_modules/tast_exec/api.py#20)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path):**
+&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#24)(self, artifacts_gs_bucket, artifacts_gs_path, test_artifacts_dir):**
 
-Run tast tests.
+Downloads the tast executable from specified build artifacts.
+
+Args:
+    artifacts_gs_bucket(str): The bucket containing build artifacts.
+    artifacts_gs_path(str): The bucket path containing the build output,
+      for example, "eve-paladin/R78-11588.0.0".
+    test_artifacts_dir(str): The directory to which files should be
+      downloaded. The tast executable will be found at tast/tast relative
+      to this directory.
+
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#47)(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):**
+
+Downloads the VM image from specified build artifacts.
+
+Args:
+    artifacts_gs_bucket(str): The bucket containing build artifacts.
+    artifacts_gs_path(str): The bucket path containing the build output,
+      for example, "eve-paladin/R78-11588.0.0".
+    vm_dir(Path): The directory to which files should be
+      downloaded.
+
+Returns:
+    qcow_image_path (Path): The location of the qcow image. This will be
+      a location inside image_archive_dir.
+    private_key_path (Path): The location of the SSH key. This will be
+      a location inside image_archive_dir.
+
+&mdash; **def [run](/recipe_modules/tast_exec/api.py#88)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path):**
+
+Run tast tests with one retry and upload logs to Google storage.
 
 Args:
     suite_name(str): Name of the suite to run.
@@ -4768,6 +4797,21 @@ Args:
 Returns:
     A tuple of list(Failures) and a bool indicating whether
     the results were empty.
+
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#140)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, test_results_dir, run_args=None):**
+
+Run tast tests without retries or results processing.
+
+Args:
+    expressions(list(str)): Expressions describing tests to run.
+    qcow_image_path(Path): Path to image in qcow format.
+    test_artifacts_dir(Path): Dir containing test artifacts.
+    private_key_path(Path): Path to private key.
+    test_results_dir(Path): Path to store tast results.
+    run_args(list(str)): Additional arguments to pass to tast.
+
+Returns:
+    list(str): The list of tests that met the specified expression(s).
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
 [DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6475,13 +6519,13 @@ json files.
 &mdash; **def [RunSteps](/recipe_modules/tast_results/examples/record_logs.py#12)(api):**
 ### *recipes* / [tast\_vm](/recipes/tast_vm.py)
 
-[DEPS](/recipes/tast_vm.py#15): [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/tast_vm.py#15): [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 An experimental recipe for running Tast VM tests without Chroot and
 ChromeOS checkout, resulting in much faster tests. The tests will
 use tast executable from build_artifacts.
 
-&mdash; **def [RunSteps](/recipes/tast_vm.py#36)(api, properties):**
+&mdash; **def [RunSteps](/recipes/tast_vm.py#27)(api, properties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)
