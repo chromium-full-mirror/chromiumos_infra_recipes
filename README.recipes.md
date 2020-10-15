@@ -332,6 +332,7 @@
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties)
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
+  * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
@@ -6921,6 +6922,119 @@ This recipe copies a VM image artifact from the chromeos-image-archive to the
 localmirror and then modifies the Guest VM's version pin to match this version.
 
 &mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#105)(api, properties):**
+### *recipes* / [uprev\_parallels\_pin](/recipes/uprev_parallels_pin.py)
+
+[DEPS](/recipes/uprev_parallels_pin.py#25): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [skylab](#recipe_modules-skylab), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+Recipe for generating Parallels uprev CLs.
+
+This recipe generates CLs to uprev Parallels binaries. As part of these
+CLs, a new Parallels VM image is produced for testing.
+
+This recipe involves booting up Windows in a virtual machine. The
+caller is responsible for ensuring this is only invoked in contexts
+where the necessary license(s) have been obtained.
+
+&mdash; **def [RunSteps](/recipes/uprev_parallels_pin.py#69)(api, properties):**
+
+&mdash; **def [build\_os\_with\_uprev](/recipes/uprev_parallels_pin.py#102)(api, properties, package, upstream_version):**
+
+Builds a version of Chrome OS with given version of the Parallels
+package.
+
+The build will still contain an old VM image for testing.
+
+Args:
+  package (chromiumos.PackageInfo): the identify of the Parallels package.
+  upstream_version (str): the version of Parallels to include in the build.
+
+Returns:
+  BuildPath: where the build artifacts were uploaded.
+
+&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#186)(api, properties, artifacts_path, parallels_version):**
+
+Builds a new VM image for testing.
+
+Args:
+  artifacts_path(BuildPath): The location of build output artifacts.
+  parallels_version(str): The Parallels version included in the given build.
+
+Returns:
+  dict: The details of the new test image.
+
+&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#324)(api, properties, package, new_version_pin):**
+
+Commits and uploads the uprev of the version-pin file.
+
+Args:
+  package (chromiumos.PackageInfo): the package to include in the
+      commit message.
+  new_version_pin (VersionPin): the new version pin data.
+
+&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#364)(api, properties):**
+
+Gets the latest version of Parallels from the upstream bucket.
+
+Returns:
+  string: the latest upstream version of Parallels.
+
+&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#444)(api, properties):**
+
+Gets the path of the VERSION-PIN file.
+
+&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#405)(api, properties):**
+
+Reads and returns the content of the VERSION-PIN file.
+
+Before calling this function, ensure a synced version of the source must
+have been checked out.
+
+Returns:
+  VersionPin: the pinned version data.
+
+&mdash; **def [invoke\_tast](/recipes/uprev_parallels_pin.py#266)(api, test_artifacts_dir, qcow_image_path, private_key_path, dest_path):**
+
+Runs tast to build the new VM image.
+
+Args:
+  test_artifacts_dir(Path): The location of test artifacts produced by the
+    build.
+  qcow_image_path(Path): The location of the qcow-format VM image.
+  private_key_path(Path): The location of the private key that can be used
+    to authenticate to the VM.
+  dest_path(Path): The location that the produced VM image should be copied
+    to (on the local disk).
+
+&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#449)(version, previous_version):**
+
+Returns if version occurs logically after pervious_version.
+
+For example, is_version_after('1.0.3.1', '1.0.2.2') returns true.
+
+Args:
+  version(str): The version to compare.
+  previous_version(str): The previous version to compare with.
+
+&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#427)(api, properties, new_version):**
+
+Sets the content of the VERSION-PIN file.
+
+Before calling this function, ensure a synced version of the source must
+have been checked out.
+
+Args:
+  new_version(VersionPin): the new version pin data.
+
+&mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#149)(api, properties, package, to_version):**
+
+Uprevs the Parallels package to the given version.
+
+The Parallels package will be upreved on the local checkout to the given
+version.
+
+Args:
+  package (chromiumos.PackageInfo): the package to uprev.
+  to_version (str): the version to uprev to.
 ### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
 
 [DEPS](/recipe_modules/urls/examples/full.py#17): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

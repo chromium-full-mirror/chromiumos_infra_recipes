@@ -1,0 +1,57 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.uprev_parallels_pin;
+
+import "chromiumos/common.proto";
+import "go.chromium.org/luci/scheduler/api/scheduler/v1/triggers.proto";
+
+// A reviewer must be some user known by Gerrit. Could be an email
+// alias that is processed by GWS.
+message Reviewer {
+  string email = 1;
+}
+
+message UprevParallelsPinProperties {
+  // Path to the version file to update.
+  // Required
+  string version_file = 1;
+
+  // The package to generate CLs for.
+  // Required
+  chromiumos.PackageInfo package_info = 2;
+
+  // The bucket containing upstream versions of Parallels.
+  // Required
+  string upstream_gs_bucket = 3;
+
+  // The bucket path containing upstream versions of Parallels.
+  // Required
+  string upstream_gs_path = 4;
+
+  // The bucket to which testing images should be uploaded.
+  // Required
+  string test_image_gs_bucket = 5;
+
+  // The bucket path to which testing images should be uploaded.
+  // Required
+  string test_image_gs_path = 6;
+
+  // List of user acls to set for the uploaded image on the localmirror. ACLs
+  // are in the format expected by `gsutil acl`. e.g
+  // username@google.com:OWNER
+  repeated string user_acls = 7;
+
+  // List of group acls to set for the uploaded image on the localmirror. ACLs
+  // are in the format expected by `gsutil acl`. e.g
+  // username@google.com:OWNER
+  repeated string group_acls = 8;
+
+  // Tag to add to all generated CLs. Defaults to qualified package name.
+  // Optional
+  string topic = 9;
+}
+
