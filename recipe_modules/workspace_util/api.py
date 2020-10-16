@@ -113,7 +113,9 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     with self.m.step.nest(name) as presentation:
       if fail_not_applicable:
-        synced_projects = [p.name for p in self.m.repo.project_infos()]
+        synced_projects = set(p.name for p in self.m.repo.project_infos())
+        if self.m.cros_source.make_manifest_changes_active:
+          synced_projects.add(self.m.src_state.internal_manifest.project)
 
         discarded_change_numbers.extend([
             str(c.change) for c in changes if c.project not in synced_projects

@@ -58,6 +58,11 @@ class CrosSourceApi(RecipeApi):
     return self._manifest_branch or self.m.src_state.build_manifest.branch
 
   @property
+  def make_manifest_changes_active(self):
+    """Returns if manifest chages are being made active."""
+    return self._make_manifest_changes_active
+
+  @property
   def is_source_dirty(self):
     """Returns whether the source is dirty.
 

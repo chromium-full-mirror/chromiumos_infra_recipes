@@ -17,5 +17,8 @@ message TestInputProperties {
 
   // Expected value for toolchain_cls_applied.
   bool expected_toolchain_cls_applied = 3;
+
+  // Whether to pass fail_not_applicable to apply_changes.
+  bool fail_not_applicable = 4;
 }
 

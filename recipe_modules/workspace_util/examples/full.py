@@ -10,13 +10,16 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/properties',
     'cros_infra_config',
+    'src_state',
     'test_util',
     'workspace_util',
 ]
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.workspace_util.examples.test import (
     TestInputProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
+from recipe_engine import post_process
 
 PROPERTIES = TestInputProperties
 
@@ -34,7 +37,8 @@ def RunSteps(api, properties):
   #   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
   with api.workspace_util.setup_workspace(), \
       api.workspace_util.sync_to_commit():
-    api.workspace_util.apply_changes()
+    api.workspace_util.apply_changes(
+        fail_not_applicable=properties.fail_not_applicable)
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
     api.assertions.assertEqual(len(want), len(api.workspace_util.commits))
@@ -56,6 +60,7 @@ def GenTests(api):
 
     The following arguments are consumed by this method:
       toolchain_cls_applied (bool): Whether there are toolchain_cls.
+      fail_not_applicable (bool): Value to pass to apply_changes.
 
     Args:
       *args (list):  Arguments to pass to test_api.test.
@@ -67,6 +72,7 @@ def GenTests(api):
     # The combination of *args and **kwargs above makes this the least messy way
     # to have our own parameters, with defaults.
     toolchain_cls_applied = kwargs.pop('toolchain_cls_applied', False)
+    fail_not_applicable = kwargs.pop('fail_not_applicable', False)
 
     cq = kwargs.get('cq', False)
     build_target = 'atlas' if cq else 'amd64-generic'
@@ -78,7 +84,8 @@ def GenTests(api):
     resp.build_is_pointless.value = not toolchain_cls_applied
     ret += api.properties(
         TestInputProperties(
-            expected_toolchain_cls_applied=toolchain_cls_applied))
+            expected_toolchain_cls_applied=toolchain_cls_applied,
+            fail_not_applicable=fail_not_applicable))
 
     if has_cls:
       ret += api.step_data(
@@ -91,6 +98,24 @@ def GenTests(api):
 
   # The default CQ build.
   yield test('has_changes_and_no_commit', cq=True)
+
+  yield test('fail_not_applicable', cq=True, fail_not_applicable=True)
+
+  manifest = api.src_state.internal_manifest
+  yield test(
+      'make_manifest_changes_active',
+      api.post_check(
+          post_process.MustRun,
+          'cherry-pick gerrit changes.patch manifest.set manifest_branch'),
+      api.post_check(
+          post_process.MustRun,
+          'cherry-pick gerrit changes.apply gerrit patch sets.repo forall'),
+      input_properties={
+          '$chromeos/cros_source': dict(make_manifest_changes_active=True)
+      }, cq=True, fail_not_applicable=True, extra_changes=[
+          GerritChange(host=manifest.host, project=manifest.project,
+                       change=1234)
+      ])
 
   yield test('has_no_commit_and_no_changes', revision=None)
 

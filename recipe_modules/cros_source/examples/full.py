@@ -55,6 +55,7 @@ def RunSteps(api, properties):
   else:
     api.assertions.assertFalse(api.cros_source.is_source_dirty)
 
+  _ = api.cros_source.make_manifest_changes_active
   commits = api.cros_source.apply_gerrit_changes(api.src_state.gerrit_changes)
 
   archive_path = api.path['start_dir'].join('commits.tar')
