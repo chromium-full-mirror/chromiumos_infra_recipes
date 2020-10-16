@@ -192,7 +192,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
                   gitiles_commit=child_build_snapshot,
                   builder=full_builder_name, bucket=bucket,
                   gerrit_changes=gerrit_changes, critical=full_builder_critical,
-                  tags=tags, properties=properties,
+                  tags=tags, properties=properties, experiments=child_exps,
                   swarming_parent_run_id=parent_run_id))
 
         new_build_requests.append(
