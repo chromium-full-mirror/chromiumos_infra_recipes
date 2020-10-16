@@ -11,6 +11,7 @@ DEPS = [
     'cros_cache',
     'cros_infra_config',
     'repo',
+    'test_util',
     'workspace_util',
 ]
 
@@ -24,7 +25,6 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
-  target = properties.build_target
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
@@ -42,50 +42,56 @@ def RunSteps(api, properties):
     api.workspace_util.apply_changes()
 
   api.workspace_util.detect_toolchain_cls(None)
-  api.assertions.assertEqual(properties.toolchain_cls_applied,
+  api.assertions.assertEqual(properties.expected_toolchain_cls_applied,
                              api.workspace_util.toolchain_cls_applied)
 
 
 def GenTests(api):
 
-  def buildbucket_build(project='chromeos', bucket='cq', builder='atlas-cq',
-                        build_target='atlas', tags=None,
-                        revision='2d72510e447ab60a9728aeea2362d8be2cbd7789',
-                        cls=None, toolchain_cls_applied=False):
-    build = api.buildbucket.ci_build_message(project=project, bucket=bucket,
-                                             builder=builder, tags=tags,
-                                             revision=revision)
-    if not revision:
-      build.input.gitiles_commit.Clear()
-    if cls:
-      build.input.gerrit_changes.extend(cls)
-    ret = api.buildbucket.build(build)
+  def test(name, *args, **kwargs):
+    """A test, with properties
+
+    This function creates a test child_build from kwargs, and then calls
+    api.test() to create the TestData for a test.
+
+    The following arguments are consumed by this method:
+      toolchain_cls_applied (bool): Whether there are toolchain_cls.
+
+    Args:
+      *args (list):  Arguments to pass to test_api.test.
+      kwargs (dict): Arguments to pass to test_util.test_build.
+
+    Returns:
+      (recipe_test_api.TestData) TestData for the test.
+    """
+    # The combination of *args and **kwargs above makes this the least messy way
+    # to have our own parameters, with defaults.
+    toolchain_cls_applied = kwargs.pop('toolchain_cls_applied', False)
+
+    cq = kwargs.get('cq', False)
+    build_target = 'atlas' if cq else 'amd64-generic'
+    has_cls = cq or kwargs.get('extra_changes')
+
+    ret = api.test_util.test_child_build(build_target, **kwargs).build
+
+    resp = PointlessBuildCheckResponse()
+    resp.build_is_pointless.value = not toolchain_cls_applied
     ret += api.properties(
         TestInputProperties(
-            build_target=common.BuildTarget(name=build_target), builder=builder,
-            toolchain_cls_applied=toolchain_cls_applied))
-    if cls:
-      resp = PointlessBuildCheckResponse()
-      resp.build_is_pointless.value = not toolchain_cls_applied
+            expected_toolchain_cls_applied=toolchain_cls_applied))
+
+    if has_cls:
       ret += api.step_data(
           'detect toolchain change.path relevancy check.read output file',
           api.file.read_raw(content=resp.SerializeToString()))
-    return ret
+    return api.test(name, ret, *args)
 
-  yield api.test('basic', buildbucket_build())
+  # The default Postsubmit build.
+  yield test('has_commit_and_no_changes')
 
-  yield api.test('has_changes',
-                 buildbucket_build(cls=[common_pb2.GerritChange(change=1234)]))
+  # The default CQ build.
+  yield test('has_changes_and_no_commit', cq=True)
 
-  yield api.test(
-      'has_changes_and_no_commit',
-      buildbucket_build(revision=None,
-                        cls=[common_pb2.GerritChange(change=1234)]))
+  yield test('has_no_commit_and_no_changes', revision=None)
 
-  yield api.test('has_no_commit_and_no_changes',
-                 buildbucket_build(revision=None))
-
-  yield api.test(
-      'has_toolchain_changes',
-      buildbucket_build(cls=[common_pb2.GerritChange(change=1234)],
-                        toolchain_cls_applied=True))
+  yield test('has_toolchain_changes', cq=True, toolchain_cls_applied=True)

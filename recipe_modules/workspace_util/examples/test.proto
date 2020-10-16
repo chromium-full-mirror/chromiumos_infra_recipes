@@ -16,6 +16,6 @@ message TestInputProperties {
   string builder = 2;
 
   // Expected value for toolchain_cls_applied.
-  bool toolchain_cls_applied = 3;
+  bool expected_toolchain_cls_applied = 3;
 }
 
