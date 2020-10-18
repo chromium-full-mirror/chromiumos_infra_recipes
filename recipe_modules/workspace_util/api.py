@@ -105,32 +105,13 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     if not changes:
       return
 
-    # Only try to apply changes once.
-    discarded_change_numbers = [
-        str(c.change) for c in changes if c in self._applied_changes
-    ]
-    changes = [c for c in changes if c not in self._applied_changes]
-
-    with self.m.step.nest(name) as presentation:
-      if fail_not_applicable:
-        synced_projects = set(p.name for p in self.m.repo.project_infos())
-        if self.m.cros_source.make_manifest_changes_active:
-          synced_projects.add(self.m.src_state.internal_manifest.project)
-
-        discarded_change_numbers.extend([
-            str(c.change) for c in changes if c.project not in synced_projects
-        ])
-        changes = [c for c in changes if c.project in synced_projects]
-
-      if discarded_change_numbers:
-        presentation.step_text = 'Discarded changes: {}'.format(
-            ', '.join(discarded_change_numbers))
-
-      if changes:
-        commits = self.m.cros_source.apply_gerrit_changes(
-            changes, include_files=True)
-        self._commits.extend(commits)
-        self._applied_changes.extend(changes)
+    with self.m.step.nest(name):
+      commits = self.m.cros_source.apply_gerrit_changes(
+          changes, include_files=True,
+          ignore_missing_projects=fail_not_applicable)
+      self._commits.extend(commits)
+      self._applied_changes.extend(
+          c.patch_set.to_gerrit_change_proto() for c in commits)
       if not self._keep_all_changes:
         self.m.src_state.gerrit_changes = self._applied_changes
 

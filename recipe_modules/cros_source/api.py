@@ -8,7 +8,7 @@
 import contextlib
 import json
 
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine.recipe_api import RecipeApi, StepFailure
@@ -41,7 +41,7 @@ class CrosSourceApi(RecipeApi):
     self._enable_custom_overlays = properties.enable_custom_overlays
     self._make_manifest_changes_active = properties.make_manifest_changes_active
     self._manifest_branch = ''
-    self._applied_patches = {}
+    self._applied_patches = defaultdict(list)
 
   def initialize(self):
     """Initialization that follows all module loading."""
@@ -56,11 +56,6 @@ class CrosSourceApi(RecipeApi):
   def manifest_branch(self):
     """Returns the branch of the manifest that is checked out."""
     return self._manifest_branch or self.m.src_state.build_manifest.branch
-
-  @property
-  def make_manifest_changes_active(self):
-    """Returns if manifest chages are being made active."""
-    return self._make_manifest_changes_active
 
   @property
   def is_source_dirty(self):
@@ -325,13 +320,18 @@ class CrosSourceApi(RecipeApi):
       return paths
 
   def apply_gerrit_changes(self, gerrit_changes, include_files=False,
-                           include_commit_info=False, test_output_data=None):
+                           include_commit_info=False,
+                           ignore_missing_projects=False,
+                           test_output_data=None):
     """Apply GerritChanges to the workspace.
 
     Args:
       gerrit_changes (list[GerritChange]): list of gerrit changes to apply.
       include_files (bool): whether to include information about changed files.
       include_commit_info (bool): whether to include info about the commit.
+      ignore_missing_projects (bool): Whether to ignore projects that are not
+        in the source tree.  (For example, the builder uses the external
+        manifest, but the CQ run includes private changes.)
       test_output_data (dict): Test output for gerrit-fetch-changes.
 
     Returns:
@@ -349,7 +349,8 @@ class CrosSourceApi(RecipeApi):
     if self._make_manifest_changes_active:
       self._apply_manifest_patch_sets(patch_sets)
 
-    return self._apply_gerrit_patch_sets(patch_sets)
+    return self._apply_gerrit_patch_sets(
+        patch_sets, ignore_missing_projects=ignore_missing_projects)
 
   def _apply_manifest_patch_sets(self, patch_sets):
     """Apply any manifest patch sets, and make them active.
@@ -542,12 +543,8 @@ class CrosSourceApi(RecipeApi):
       if not patch_sets:
         return []
       name = '%s: apply gerrit patch sets' % patch_sets[0].project
-      if project_path:
-        with self.m.step.nest(name):
-          for patch in patch_sets:
-            self._apply_patch_set(patch, project_path)
-      else:
-        self._apply_gerrit_patch_sets(patch_sets, name=name)
+      self._apply_gerrit_patch_sets(patch_sets, name=name,
+                                    project_path=project_path)
 
     _apply(patches.build)
     _apply(patches.extern)
@@ -555,28 +552,45 @@ class CrosSourceApi(RecipeApi):
 
     return bool(patches.build)
 
-  def _apply_gerrit_patch_sets(self, patch_sets, name=None):
+  def _apply_gerrit_patch_sets(self, patch_sets, ignore_missing_projects=False,
+                               project_path=None, name=None):
     """Apply PatchSets to the workspace.
 
     Args:
       patch_sets (list[PatchSet]): The PatchSets to apply.
+      ignore_missing_projects (bool): Whether to ignore projects that are not
+        in the source tree.  (For example, the builder uses the external
+        manifest, but the CQ run includes private changes.)
+      project_path (str): The path to use when applying the patch, or none to
+        use find_project_paths.
       name (str): The name for the step, or None.
 
     Returns:
       List[ProjectCommit]: A list of commits from cherry-picked patch sets.
     """
-    with self.m.step.nest(name or 'apply gerrit patch sets'):
+    with self.m.step.nest(name or 'apply gerrit patch sets') as pres:
+      if ignore_missing_projects:
+        synced_projects = set(p.name for p in self.m.repo.project_infos())
+        # Only retain patches to synced projects.  Mark as discarded any patches
+        # to other projects, unless they have already been applied (manifest
+        # patches).
+        discard = [
+            p for p in patch_sets if p.project not in synced_projects and
+            p.display_id not in self._applied_patches
+        ]
+        patch_sets = [p for p in patch_sets if p.project in synced_projects]
+        if discard:
+          pres.step_text = 'Discarded changes: {}'.format(', '.join(
+              p.display_id for p in discard))
+
       new_commits = []
       for patch in patch_sets:
-        if patch.display_id in self._applied_patches:
-          new_commits.extend(self._applied_patches[patch.display_id])
-        else:
-          patch_commits = []
-          project_paths = self.find_project_paths(patch.project, patch.branch)
-          for project_path in project_paths:
-            patch_commits.append(self._apply_patch_set(patch, project_path))
-          self._applied_patches[patch.display_id] = patch_commits
-          new_commits.extend(patch_commits)
+        if patch.display_id not in self._applied_patches:
+          project_paths = ([project_path] if project_path else
+                           self.find_project_paths(patch.project, patch.branch))
+          for path in project_paths:
+            self._apply_patch_set(patch, path)
+        new_commits.extend(self._applied_patches[patch.display_id])
       return new_commits
 
   def _apply_patch_set(self, patch, project_path):
@@ -605,7 +619,9 @@ class CrosSourceApi(RecipeApi):
         presentation.step_text = 'merge failed. will try cherry-pick instead'
         self.m.git.cherry_pick(commit, infra_step=False)
 
-      return ProjectCommit(project_path, self.m.git.head_commit(), patch)
+      new_commit = ProjectCommit(project_path, self.m.git.head_commit(), patch)
+      self._applied_patches[patch.display_id].append(new_commit)
+      return new_commit
 
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
 

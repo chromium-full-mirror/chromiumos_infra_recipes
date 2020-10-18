@@ -17,9 +17,12 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 def RunSteps(api):
   changes = [
-      common_pb2.GerritChange(project='chromiumos/config', change=123),
-      common_pb2.GerritChange(project='privateproject1', change=456),
-      common_pb2.GerritChange(project='privateproject2', change=789),
+      common_pb2.GerritChange(host='chrome-internal-review.googlesource.com',
+                              project='chromiumos/config', change=123),
+      common_pb2.GerritChange(host='chrome-internal-review.googlesource.com',
+                              project='privateproject1', change=456),
+      common_pb2.GerritChange(host='chrome-internal-review.googlesource.com',
+                              project='privateproject2', change=789),
   ]
 
   with api.assertions.assertRaises(api.step.StepFailure):
@@ -41,7 +44,7 @@ def GenTests(api):
       # When fail_not_applicable is True, do a repo forall to find out
       # what repos are checked out.
       api.step_data(
-          'successful apply changes.repo forall',
+          'successful apply changes.apply gerrit patch sets.repo forall',
           stdout=api.raw_io.output(
               '\n'.join([
                   'chromiumos/config|src/config|cros|refs/heads/master|refs/heads/master',
@@ -52,8 +55,8 @@ def GenTests(api):
       # privateproject2 was not checked out, so it's change is discarded
       api.post_process(
           post_process.StepTextEquals,
-          'successful apply changes',
-          'Discarded changes: 789',
+          'successful apply changes.apply gerrit patch sets',
+          'Discarded changes: chrome-internal:789',
       ),
       # gerrit-fetch-changes is called with changes for chromiumos/config and
       # privateproject1
@@ -74,7 +77,7 @@ def GenTests(api):
               'error: project chromiumos/config not found'),
       ),
       api.step_data(
-          'successful apply changes.repo forall',
+          'successful apply changes.apply gerrit patch sets.repo forall',
           stdout=api.raw_io.output(
               '\n'.join([
                   'privateproject3|src/privateproject3|cros|refs/heads/master|refs/heads/master'
@@ -84,7 +87,7 @@ def GenTests(api):
       # All changes were discarded.
       api.post_process(
           post_process.StepTextEquals,
-          'successful apply changes',
-          'Discarded changes: 123, 456, 789',
+          'successful apply changes.apply gerrit patch sets',
+          'Discarded changes: chrome-internal:123, chrome-internal:456, chrome-internal:789',
       ),
   )

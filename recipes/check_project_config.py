@@ -189,7 +189,8 @@ def GenTests(api):
     project_config_cq_build.
     """
     return api.step_data(
-        'cherry-pick gerrit changes.repo forall', stdout=api.raw_io.output(
+        'cherry-pick gerrit changes.apply gerrit patch sets.repo forall',
+        stdout=api.raw_io.output(
             'project1|src/project1|cros|refs/heads/master|refs/heads/branch'))
 
   def check_constraints_with_output():
@@ -285,8 +286,8 @@ def GenTests(api):
       # changes are logged and the build succeeds.
       api.post_process(
           post_process.StepTextEquals,
-          'cherry-pick gerrit changes',
-          'Discarded changes: 123456',
+          'cherry-pick gerrit changes.apply gerrit patch sets',
+          'Discarded changes: chrome-internal:123456',
       ),
       api.post_process(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),

@@ -55,8 +55,9 @@ def RunSteps(api, properties):
   else:
     api.assertions.assertFalse(api.cros_source.is_source_dirty)
 
-  _ = api.cros_source.make_manifest_changes_active
-  commits = api.cros_source.apply_gerrit_changes(api.src_state.gerrit_changes)
+  commits = api.cros_source.apply_gerrit_changes(
+      api.src_state.gerrit_changes,
+      ignore_missing_projects=properties.ignore_missing_projects)
 
   archive_path = api.path['start_dir'].join('commits.tar')
   api.cros_source.create_project_commits_archive(archive_path, commits)
@@ -114,7 +115,10 @@ def GenTests(api):
 
   changes = [
       _manifest_change(api.src_state.internal_manifest),
-      _manifest_change(api.src_state.external_manifest, change=556)
+      _manifest_change(api.src_state.external_manifest, change=556),
+      GerritChange(
+          host=api.src_state.internal_manifest.host.replace('.', '-review.', 1),
+          project='chromeos/project', change=557, patchset=7),
   ]
 
   def _gerrit_return(changes, name='', values_dict=None):
@@ -140,6 +144,7 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'manifest-changes-active-external',
+      api.properties(FullProperties(ignore_missing_projects=True)),
       api.post_check(post_process.StatusSuccess), _gerrit_return(changes),
       cq=True, cros_source_properties=CrosSourceProperties(
           make_manifest_changes_active=True),
@@ -169,7 +174,7 @@ def GenTests(api):
   yield api.cros_source.test(
       'manifest-changes-external-not-changed',
       _gerrit_return(changes, values_dict={555: dict(branch='main')}),
-      api.post_check(post_process.StatusAnyFailure), cq=True,
+      api.post_check(post_process.StatusSuccess), cq=True,
       cros_source_properties=CrosSourceProperties(
           make_manifest_changes_active=True),
       git_repo=api.src_state.external_manifest.url,

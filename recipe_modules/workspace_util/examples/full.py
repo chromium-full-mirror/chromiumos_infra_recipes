@@ -101,22 +101,6 @@ def GenTests(api):
 
   yield test('fail_not_applicable', cq=True, fail_not_applicable=True)
 
-  manifest = api.src_state.internal_manifest
-  yield test(
-      'make_manifest_changes_active',
-      api.post_check(
-          post_process.MustRun,
-          'cherry-pick gerrit changes.patch manifest.set manifest_branch'),
-      api.post_check(
-          post_process.MustRun,
-          'cherry-pick gerrit changes.apply gerrit patch sets.repo forall'),
-      input_properties={
-          '$chromeos/cros_source': dict(make_manifest_changes_active=True)
-      }, cq=True, fail_not_applicable=True, extra_changes=[
-          GerritChange(host=manifest.host, project=manifest.project,
-                       change=1234)
-      ])
-
   yield test('has_no_commit_and_no_changes', revision=None)
 
   yield test('has_toolchain_changes', cq=True, toolchain_cls_applied=True)
