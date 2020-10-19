@@ -50,6 +50,12 @@ class SrcStateApi(recipe_api.RecipeApi):
     return self.m.path['start_dir'].join(common.WORKSPACE)
 
   @property
+  def manifest_name(self):
+    """Return the name of the manifest."""
+    return ('external'
+            if self.build_manifest == self.external_manifest else 'internal')
+
+  @property
   def internal_manifest(self):
     """Information about internal manifest.
 

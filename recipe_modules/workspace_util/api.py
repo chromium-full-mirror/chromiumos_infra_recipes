@@ -75,8 +75,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     manifest_url = self.m.src_state.build_manifest.url
     cache_path_override = (
         self.m.cros_source.cache_path
-        if self.m.src_state.build_manifest == self.m.src_state.internal_manifest
-        else self.m.cros_source.workspace_path)
+        if self.m.src_state.manifest_name == 'internal' else
+        self.m.cros_source.workspace_path)
     self.m.cros_source.ensure_synced_cache(
         manifest_url=manifest_url, is_staging=staging, gitiles_commit=commit,
         cache_path_override=cache_path_override)

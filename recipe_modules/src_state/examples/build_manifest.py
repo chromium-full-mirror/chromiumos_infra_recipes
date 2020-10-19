@@ -28,9 +28,11 @@ def RunSteps(api):
   if api.buildbucket.gitiles_commit.host == external_manifest.host:
     want_manifest = external_manifest
     other_manifest = internal_manifest
+    api.assertions.assertEqual(api.src_state.manifest_name, 'external')
   else:
     want_manifest = internal_manifest
     other_manifest = external_manifest
+    api.assertions.assertEqual(api.src_state.manifest_name, 'internal')
   api.assertions.assertEqual(want_manifest, api.src_state.build_manifest)
   api.assertions.assertTrue(
       _change(want_manifest) in api.src_state.build_manifest)
@@ -40,6 +42,7 @@ def RunSteps(api):
   # Setting it to internal works.
   api.src_state.build_manifest = internal_manifest
   api.assertions.assertEqual(internal_manifest, api.src_state.build_manifest)
+  api.assertions.assertEqual(api.src_state.manifest_name, 'internal')
 
   api.assertions.assertTrue(
       _change(internal_manifest) in api.src_state.build_manifest)
@@ -49,6 +52,7 @@ def RunSteps(api):
   # Setting it to external works.
   api.src_state.build_manifest = external_manifest
   api.assertions.assertEqual(external_manifest, api.src_state.build_manifest)
+  api.assertions.assertEqual(api.src_state.manifest_name, 'external')
 
   api.assertions.assertFalse(
       _change(internal_manifest) in api.src_state.build_manifest)
