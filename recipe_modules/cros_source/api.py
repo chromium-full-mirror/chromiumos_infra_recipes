@@ -400,21 +400,28 @@ class CrosSourceApi(RecipeApi):
               reference=self.cache_path.join(manifests.intern.relpath),
               dissociate=True, timeout_sec=60 * 60)
 
-      manifest_changed = self._apply_partitioned_manifest_patches(
-          manifests, patches)
-
-      # Copy over any change to the internal manifest full.xml.
-      if _changes_full_xml(patches.intern + patches.build):
+      def _copy_full_xml():
         # Copy full.xml from internal to external manifest and commit
         i_full = manifests.intern.path.join('full.xml')
         e_full = manifests.extern.path.join('full.xml')
         self.m.file.copy('copy full.xml', i_full, e_full)
         with self.m.context(cwd=manifests.extern.path):
           self.m.git.add([e_full])
-          self.m.git.commit('Syncing with internal manifest.')
-        manifest_changed = True
+          res = self.m.git.commit(
+              'Syncing with internal manifest.',
+              stdout=self.m.raw_io.output(add_output_log=True),
+              test_stdout='HEAD detached at 99caf97f', ok_ret=(0, 1))
+          clean_msg = 'nothing to commit, working tree clean'
+          if clean_msg in res.stdout.splitlines():
+            return False
+          elif res.retcode:
+            raise StepFailure('git commit', result=res)
+          return True
 
-      if not manifest_changed:
+      changed = self._apply_partitioned_manifest_patches(manifests, patches)
+      if _changes_full_xml(patches.intern + patches.build):
+        changed |= _copy_full_xml()
+      if not changed:
         return
 
       # The manifest for this build has been patched.  We need to switch repo

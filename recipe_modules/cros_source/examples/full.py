@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -127,6 +128,26 @@ def GenTests(api):
     }
     return api.gerrit.set_gerrit_fetch_changes_response(name, changes,
                                                         values_dict)
+
+  yield api.cros_source.test(
+      'empty-change-to-full.xml', api.post_check(post_process.StatusSuccess),
+      _gerrit_return(changes),
+      api.step_data(
+          'patch manifest.git commit',
+          api.raw_io.stream_output('HEAD detached at 99caf97f\n'
+                                   'nothing to commit, working tree clean\n'),
+          retcode=1), cq=True, git_repo=api.src_state.internal_manifest.url,
+      cros_source_properties=CrosSourceProperties(
+          make_manifest_changes_active=True), gerrit_changes=changes)
+
+  yield api.cros_source.test(
+      'commit-failure-full.xml', api.post_check(post_process.StatusAnyFailure),
+      _gerrit_return(changes),
+      api.step_data('patch manifest.git commit',
+                    api.raw_io.stream_output('Commit failed\n'), retcode=1),
+      cq=True, git_repo=api.src_state.internal_manifest.url,
+      cros_source_properties=CrosSourceProperties(
+          make_manifest_changes_active=True), gerrit_changes=changes)
 
   yield api.cros_source.test(
       'manifest-no-changes', api.post_check(post_process.StatusSuccess),

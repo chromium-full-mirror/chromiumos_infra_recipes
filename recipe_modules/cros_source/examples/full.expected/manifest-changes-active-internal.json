@@ -1086,7 +1086,9 @@
     "infra_step": true,
     "name": "patch manifest.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@HEAD detached at 99caf97f@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

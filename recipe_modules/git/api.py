@@ -270,7 +270,7 @@ class GitApi(recipe_api.RecipeApi):
     """Runs 'git merge --abort'."""
     self._step(['merge', '--abort'], name='git merge --abort')
 
-  def commit(self, message, files=None, author=None):
+  def commit(self, message, files=None, author=None, **kwargs):
     """Runs 'git commit' with the given files.
 
     Args:
@@ -278,6 +278,7 @@ class GitApi(recipe_api.RecipeApi):
       * files (list[str|Path]): A list of file paths to commit.
       * author (str): The author to use in the commit. Ordinarily not used,
           added to test permission oddities by forcing forged commit failure.
+      * kwargs (dict): Passed to recipe_engine/step.
     """
     # Single argument can't exceed 128kiB (crbug/987630), write to temp
     # and pass the argument as a file
@@ -291,7 +292,7 @@ class GitApi(recipe_api.RecipeApi):
     if files:
       cmd.append('--')
       cmd.extend(files)
-    self._step(cmd)
+    return self._step(cmd, **kwargs)
 
   def push(self, remote, refspec, dry_run=False, capture_stdout=False):
     """Runs 'git push'.
