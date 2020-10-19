@@ -67,16 +67,7 @@ PROPERTIES = GeneratorProperties
 def RunSteps(api, properties):
   workspace_path = api.cros_source.workspace_path
 
-  global_policy = BranchPolicy(
-      pattern='.*',
-      repl='',
-      reviewers=properties.reviewers,
-      topic=properties.topic,
-      no_existing_cls_policy=properties.no_existing_cls_policy or DO_NOTHING,
-      existing_cls_policy=properties.existing_cls_policy or DO_NOTHING,
-      outdated_cls_policy=properties.outdated_cls_policy or OUTDATED_DO_NOTHING,
-  )
-  policies = list(properties.branch_policies) + [global_policy]
+  policies = list(properties.branch_policies)
 
   with api.step.nest('validate properties') as presentation:
     if not properties.HasField('package_info'):
@@ -114,15 +105,19 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache()
 
     # Check out the appropriate branch, and use the appropriate policy.
-    policy = global_policy
     branch = 'master'
     with api.step.nest('determine branch') as pres:
-      # TODO(b/167619469): handle the case where we get multiple triggers.
+      trigger_policies = []
+      for trigger in triggers:
+        policy_info = _get_policy(api, trigger, policies)
+        if policy_info not in trigger_policies:
+          trigger_policies.append(policy_info)
+      # If we match more than one policy with the triggers, that is an error.
       # For Chrome, we are launched with properties.triggers, for exactly one
       # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
-      if len(triggers) > 1:
+      if len(trigger_policies) > 1:
         raise StepFailure('too many triggers')
-      policy_info = _get_policy(api, triggers[0], policies)
+      policy_info = trigger_policies.pop()
       policy = policy_info.policy
       if policy_info.branch:
         branch = policy_info.branch
@@ -398,82 +393,94 @@ def response_has_changes(api, response):
 
 
 def GenTests(api):
-  package = PackageInfo(category='chromeos-base', package_name='chromite')
-  properties = MessageToDict(
-      GeneratorProperties(
-          package_info=package,
-          reviewers=[
-              Reviewer(email='evanhernandez@chromium.org'),
-              Reviewer(email='chromeos-continuous-integration-team@google.com'),
-          ],
-          build_targets=[
-              BuildTarget(name='build_target'),
-          ],
+
+  def _policy(**kwargs):
+    """Create a BranchPolicy, with defaults."""
+    kwargs.setdefault('pattern', '.*')
+    kwargs.setdefault('reviewers', [
+        Reviewer(email='evanhernandez@chromium.org'),
+        Reviewer(email='chromeos-continuous-integration-team@google.com')
+    ])
+    kwargs.setdefault('existing_cls_policy', DO_NOTHING)
+    kwargs.setdefault('no_existing_cls_policy', DO_NOTHING)
+    kwargs.setdefault('outdated_cls_policy', OUTDATED_DO_NOTHING)
+    return BranchPolicy(**kwargs)
+
+  def _props(**kwargs):
+    """Create GeneratorProperties, with defaults."""
+    kwargs.setdefault(
+        'package_info',
+        PackageInfo(category='chromeos-base', package_name='chromite'))
+    kwargs.setdefault('build_targets', [BuildTarget(name='build_target')])
+    kwargs.setdefault('branch_policies', [_policy()])
+    return api.properties(GeneratorProperties(**kwargs))
+
+  chromite_gitiles_trigger = Trigger(
+      id='123',
+      gitiles=GitilesTrigger(
+          repo='chromiumos/chromite',
+          ref='refs/heads/master',
+          revision='deadbeef',
       ),
   )
-  gitiles_triggers = [
-      Trigger(
-          id='123',
-          gitiles=GitilesTrigger(
-              repo='chromiumos/chromite',
-              ref='refs/heads/master',
-              revision='deadbeef',
-          ),
-      ),
-  ]
 
   yield api.test(
       'with-uprev-do-nothing-policy',
-      api.properties(existing_cls_policy=DO_NOTHING, **properties),
-      api.scheduler(triggers=gitiles_triggers),
+      _props(),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'with-uprev-do-nothing-policy-init-sdk',
-      api.properties(existing_cls_policy=DO_NOTHING, init_sdk=True,
-                     **properties),
-      api.scheduler(triggers=gitiles_triggers),
+      _props(init_sdk=True),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'with-uprev-dry-run-policy',
-      api.properties(existing_cls_policy=DRY_RUN, **properties),
-      api.scheduler(triggers=gitiles_triggers),
+      _props(branch_policies=[_policy(existing_cls_policy=DRY_RUN)]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'with-uprev-full-run-policy',
-      api.properties(existing_cls_policy=FULL_RUN, **properties),
-      api.scheduler(triggers=gitiles_triggers),
+      _props(branch_policies=[_policy(existing_cls_policy=FULL_RUN)]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'with-uprev-abandon-policy',
-      api.properties(existing_cls_policy=ABANDON, **properties),
-      api.scheduler(triggers=gitiles_triggers),
+      _props(branch_policies=[_policy(existing_cls_policy=ABANDON)]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'with-uprev-abandon-outdated-policy',
-      api.properties(outdated_cls_policy=OUTDATED_ABANDON, **properties),
-      api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True),
+      _props(branch_policies=[_policy(outdated_cls_policy=OUTDATED_ABANDON)]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
   )
 
   yield api.test(
       'with-uprev-abandon-no-nothing-policy',
-      api.properties(outdated_cls_policy=OUTDATED_DO_NOTHING, **properties),
-      api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True),
+      _props(branch_policies=[_policy(
+          outdated_cls_policy=OUTDATED_DO_NOTHING)]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
   )
 
   yield api.test(
       'with-uprev-comment-outdated-policy',
-      api.properties(outdated_cls_policy=OUTDATED_LEAVE_COMMENT, **properties),
-      api.scheduler(triggers=gitiles_triggers) + api.git.diff_check(True),
+      _props(
+          branch_policies=[_policy(
+              outdated_cls_policy=OUTDATED_LEAVE_COMMENT)]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
   )
 
   yield api.test(
@@ -483,21 +490,21 @@ def GenTests(api):
 
   yield api.test(
       'no-reviewers',
-      api.properties(package_info=package),
+      _props(branch_policies=[_policy(reviewers=None)]),
       api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'blank-reviewer',
-      api.properties(package_info=package, reviewers=[{}]),
+      _props(branch_policies=[_policy(reviewers=[{}])]),
       api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'no-triggers',
-      api.properties(**properties),
+      _props(),
       api.scheduler(triggers=[]),
       api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
@@ -505,7 +512,7 @@ def GenTests(api):
 
   yield api.test(
       'non-gitiles-triggers',
-      api.properties(**properties),
+      _props(),
       api.scheduler(triggers=[
           Trigger(id='456', webui=WebUITrigger()),
       ]),
@@ -515,8 +522,8 @@ def GenTests(api):
 
   yield api.test(
       'without-uprev',
-      api.properties(**properties),
-      api.scheduler(triggers=gitiles_triggers),
+      _props(),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.step_data(
           'try uprev chromeos-base/chromite.uprev versioned package'
           '.read output file', api.file.read_raw(content='{}')),
@@ -524,26 +531,15 @@ def GenTests(api):
 
   yield api.test(
       'no-changes',
-      api.properties(**properties),
-      api.scheduler(triggers=gitiles_triggers),
+      _props(),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(False),
   )
 
   # Set up for testing chromeos-base/chromeos-chrome trigger filtering.
-  package = PackageInfo(category='chromeos-base',
-                        package_name='chromeos-chrome')
-  properties = MessageToDict(
-      GeneratorProperties(
-          package_info=package,
-          reviewers=[
-              Reviewer(email='dburger@chromium.org'),
-          ],
-          build_targets=[
-              BuildTarget(name='build_target'),
-          ],
-      ),
-  )
-  gitiles_triggers = [
+  package_chrome = PackageInfo(category='chromeos-base',
+                               package_name='chromeos-chrome')
+  trigger_prop = MessageToDict(
       Trigger(
           id='123',
           gitiles=GitilesTrigger(
@@ -551,18 +547,30 @@ def GenTests(api):
               ref='refs/tags/79.0.3945.20',
               revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
           ),
-      ),
-  ]
+      ))
+
+  trigger_prop2 = MessageToDict(
+      Trigger(
+          id='456',
+          gitiles=GitilesTrigger(
+              repo='https://chromium.googlesource.com/chromium/src',
+              ref='refs/heads/master',
+              revision='0572e38c2b2073613ee5b861a9165335621bf54a',
+          ),
+      ))
 
   # Testing direct invocation, that is, not invoked with properties from
   # a gitiles poller through api.scheduler.
   yield api.test(
       'invoked-directly',
-      api.properties(**properties),
-      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
+      _props(
+          package_info=package_chrome, branch_policies=[
+              _policy(reviewers=[Reviewer(email='dburger@chromium.org')])
+          ]),
+      api.properties(triggers=[trigger_prop]),
   )
 
-  branch_policy = BranchPolicy(
+  branch_policy = _policy(
       pattern='refs/tags/([0-9]*).*',
       repl=r'release-R\1-*.B',
       reviewers=[Reviewer(email='dburger@chromium.org')],
@@ -570,7 +578,7 @@ def GenTests(api):
       existing_cls_policy=DRY_RUN,
       outdated_cls_policy=OUTDATED_ABANDON,
   )
-  no_pattern_policy = BranchPolicy(
+  no_pattern_policy = _policy(
       pattern='',
       repl=r'release-R\1-*.B',
       reviewers=[Reviewer(email='dburger@chromium.org')],
@@ -581,9 +589,8 @@ def GenTests(api):
 
   yield api.test(
       'branch-policies',
-      api.properties(**properties),
-      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
-      api.properties(branch_policies=[MessageToDict(branch_policy)]),
+      api.properties(triggers=[trigger_prop]),
+      _props(package_info=package_chrome, branch_policies=[branch_policy]),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun, 'determine branch.git ls-remote'),
       api.post_check(post_process.MustRun,
@@ -593,40 +600,48 @@ def GenTests(api):
 
   yield api.test(
       'branch-policies-multiple-triggers',
-      api.properties(**properties),
-      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers * 2]),
-      api.properties(branch_policies=[MessageToDict(branch_policy)]),
-      api.post_check(post_process.DoesNotRun, 'determine branch.git ls-remote'),
+      api.properties(triggers=[trigger_prop] * 2),
+      _props(package_info=package_chrome, branch_policies=[branch_policy]),
+      api.git.diff_check(True),
+      api.post_check(post_process.MustRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.MustRun,
+                     'determine branch.checkout branch release-R79-*.B'),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'branch-policies-multiple-trigger-policies',
+      api.properties(triggers=[trigger_prop, trigger_prop2]),
+      _props(package_info=package_chrome,
+             branch_policies=[branch_policy, _policy()]),
+      api.post_check(post_process.MustRun, 'determine branch.git ls-remote'),
       api.post_check(post_process.StatusAnyFailure),
   )
 
   yield api.test(
       'branch-policies-no-pattern',
-      api.properties(**properties),
-      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers * 2]),
-      api.properties(branch_policies=[MessageToDict(no_pattern_policy)]),
+      api.properties(triggers=[trigger_prop]),
+      _props(package_info=package_chrome, branch_policies=[no_pattern_policy]),
       api.post_check(post_process.DoesNotRun, 'determine branch.git ls-remote'),
       api.post_check(post_process.StatusAnyFailure),
   )
 
   yield api.test(
       'branch-policies-default-branch',
-      api.properties(**properties),
-      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
-      api.properties(branch_policies=[
-          MessageToDict(
+      api.properties(triggers=[trigger_prop]),
+      _props(
+          package_info=package_chrome, branch_policies=[
               BranchPolicy(pattern='.*', repl='',
-                           reviewers=[Reviewer(email='a@example.com')]))
-      ]),
+                           reviewers=[Reviewer(email='a@example.com')])
+          ]),
       api.post_check(post_process.DoesNotRun, 'determine branch.git ls-remote'),
       api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
       'branch-policies-multi-ref',
-      api.properties(**properties),
-      api.properties(triggers=[MessageToDict(t) for t in gitiles_triggers]),
-      api.properties(branch_policies=[MessageToDict(branch_policy)]),
+      api.properties(triggers=[trigger_prop]),
+      _props(package_info=package_chrome, branch_policies=[branch_policy]),
       api.step_data(
           'determine branch.git ls-remote',
           stdout=api.raw_io.output_text('\n'.join([
@@ -634,6 +649,7 @@ def GenTests(api):
               'refs/remotes/cros-internal/release-R79-5555.B',
               'f3ecd792bc4822dd6686313478099b8eb3df7e55\t'
               'refs/remotes/cros-internal/release-R79-9999.B',
-          ]) + '\n')),
+              '',
+          ]))),
       api.post_check(post_process.StatusAnyFailure),
   )

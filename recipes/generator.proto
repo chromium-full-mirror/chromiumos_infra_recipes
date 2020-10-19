@@ -64,10 +64,6 @@ enum OutdatedClsPolicy {
 }
 
 message BranchPolicy {
-  // TODO(b/167619469): Allow multiple branch_policies.  The code now uses
-  // BranchPolicy internally, but ignores the branch_policies property and uses
-  // the one that it internally creates from GeneratorProperties (below).
-  //
   // The first BranchPolicy in the list to match the tag will be the one used.
   //
   // For this BranchPolicy to match:
@@ -112,21 +108,7 @@ message GeneratorProperties {
   // The package to generate CLs for.
   chromiumos.PackageInfo package_info = 1;
 
-  // The reviewer(s) to tag on generated CLs.
-  // TODO(b/167619469): Move to using branch_policies.
-  repeated Reviewer reviewers = 2;
-
-  // Tag to add to all generated CLs. Defaults to qualified package name.
-  // TODO(b/167619469): Move to using branch_policies.
-  string topic = 3;
-
-  // Policy to follow when no related CLs exist. Defaults to DO_NOTHING.
-  // TODO(b/167619469): Move to using branch_policies.
-  SendToCqPolicy no_existing_cls_policy = 4;
-
-  // Policy to follow when related CLs exist. Defaults to DO_NOTHING.
-  // TODO(b/167619469): Move to using branch_policies.
-  SendToCqPolicy existing_cls_policy = 5;
+  reserved 2 to 5, 9, 10;
 
   // The build targets to uprev. Only populate if required by endpoint.
   repeated chromiumos.BuildTarget build_targets = 6;
@@ -139,10 +121,6 @@ message GeneratorProperties {
   // Triggers if invoked directly rather than through a gitiles poller.
   // Note that the recipe only processes the Trigger.GitilesTrigger fields.
   repeated scheduler.Trigger triggers = 8;
-
-  // Policy to follow when for CLs that are still open but behind a merge.
-  // TODO(b/167619469): Move to using branch_policies.
-  OutdatedClsPolicy outdated_cls_policy =  9;
 
   // Policies for branches.  If none of these match, then the properties above
   // are used, on the default (usually 'snapshot') branch.
