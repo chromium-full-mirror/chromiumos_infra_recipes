@@ -22,6 +22,7 @@ DEPS = [
     'git',
     'git_txn',
     'repo',
+    'src_state',
 ]
 
 PROPERTIES = CrosPrebuiltsProperties

@@ -1333,6 +1333,44 @@
     ]
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/metadata_tmp_8/PackageIndexInfo.json",
+      "gs://prebuilt-bucket/snapshot/internal-101/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.gsutil cp (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "acl",
+      "ch",
+      "-u",
+      "AllUsers:R",
+      "gs://prebuilt-bucket/snapshot/internal-101/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.gsutil acl (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

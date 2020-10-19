@@ -190,15 +190,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       target = build_target.name if build_target else 'Unknown'
       profile = self._profile_or_default(profile)
 
-      uri = os.path.join(METADATA_GS_DIR_TMPL, METADATA_GS_FILE_TMPL).format(
-          build_id=self._build_id,
-          builder=self.m.buildbucket.build.builder.builder,
-          gs_bucket=gs_bucket,
-          kind=BuilderConfig.Id.Type.Name(kind).lower(),
-          profile=profile.name,
-          snapshot=commit.id,
-          target=target,
-      )
       metadata = PackageIndexInfo(snapshot_sha=commit.id, profile=profile,
                                   snapshot_number=version.snapshot,
                                   build_target=build_target, location=location)
@@ -209,11 +200,24 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           'write metadata', metadata_file, '%s\n' % json_format.MessageToJson(
               metadata, sort_keys=True, use_integers_for_enums=True))
 
-      self.m.gsutil(['cp', metadata_file, uri])
-      cmd = ['acl', 'ch']
-      self._add_acls(acls, cmd)
-      cmd.append(uri)
-      self.m.gsutil(cmd)
+      commit_str = '{}-{}'.format(self.m.src_state.manifest_name,
+                                  version.snapshot)
+      for snapshot_str in commit.id, commit_str:
+        tmpl = os.path.join(METADATA_GS_DIR_TMPL, METADATA_GS_FILE_TMPL)
+        uri = tmpl.format(
+            build_id=self._build_id,
+            builder=self.m.buildbucket.build.builder.builder,
+            gs_bucket=gs_bucket,
+            kind=BuilderConfig.Id.Type.Name(kind).lower(),
+            profile=profile.name,
+            snapshot=snapshot_str,
+            target=target,
+        )
+        self.m.gsutil(['cp', metadata_file, uri])
+        cmd = ['acl', 'ch']
+        self._add_acls(acls, cmd)
+        cmd.append(uri)
+        self.m.gsutil(cmd)
 
   def _binhost_key(self, kind):
     """Return the binhost key for the given builder type.
