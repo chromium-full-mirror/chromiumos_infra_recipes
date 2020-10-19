@@ -116,23 +116,22 @@ def RunSteps(api, properties):
     # Check out the appropriate branch, and use the appropriate policy.
     policy = global_policy
     branch = 'master'
-    if properties.branch_policies:
-      with api.step.nest('determine branch') as pres:
-        # TODO(b/167619469): handle the case where we get multiple triggers.
-        # For Chrome, we are launched with properties.triggers, for exactly one
-        # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
-        if len(triggers) > 1:
-          raise StepFailure('too many triggers')
-        policy_info = _get_policy(api, triggers[0], policies)
-        policy = policy_info.policy
-        if policy_info.branch:
-          branch = policy_info.branch
-          pres.step_text = 'using {} {}'.format(policy_info.branch,
-                                                policy_info.reference.hash)
-          api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
-                                          policy_info.branch)
-        else:
-          pres.step_text = 'using default branch'
+    with api.step.nest('determine branch') as pres:
+      # TODO(b/167619469): handle the case where we get multiple triggers.
+      # For Chrome, we are launched with properties.triggers, for exactly one
+      # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
+      if len(triggers) > 1:
+        raise StepFailure('too many triggers')
+      policy_info = _get_policy(api, triggers[0], policies)
+      policy = policy_info.policy
+      if policy_info.branch:
+        branch = policy_info.branch
+        pres.step_text = 'using {} {}'.format(policy_info.branch,
+                                              policy_info.reference.hash)
+        api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
+                                        policy_info.branch)
+      else:
+        pres.step_text = 'using default branch'
     api.easy.set_properties_step(policy=MessageToDict(policy))
 
     if properties.init_sdk:
