@@ -30,6 +30,7 @@
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_som](#recipe_modules-cros_som)
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
+  * [cros_storage](#recipe_modules-cros_storage) &mdash; API featuring shared helpers for locating and naming stored artifacts.
   * [cros_tags](#recipe_modules-cros_tags) &mdash; API for generating tags.
   * [cros_test_plan](#recipe_modules-cros_test_plan)
   * [cros_test_platform](#recipe_modules-cros_test_platform)
@@ -191,6 +192,7 @@
   * [cros_source:examples/full](#recipes-cros_source_examples_full)
   * [cros_source:examples/sync_cache](#recipes-cros_source_examples_sync_cache)
   * [cros_source:tests/mismatch_args](#recipes-cros_source_tests_mismatch_args)
+  * [cros_storage:examples/full](#recipes-cros_storage_examples_full)
   * [cros_tags:examples/full](#recipes-cros_tags_examples_full)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_test_plan:tests/ensure_test_planner](#recipes-cros_test_plan_tests_ensure_test_planner)
@@ -2449,6 +2451,17 @@ The "workspace" checkout path.
 
 This is where the build is processed. It will contain the target base
 checkout and any modifications made by the build.
+### *recipe_modules* / [cros\_storage](/recipe_modules/cros_storage)
+
+API featuring shared helpers for locating and naming stored artifacts.
+
+Much of the inspiration for this module came from:
+    chromite/lib/paygen/gspaths.py
+
+As long as there are two versions of the the path construction any changes
+to one of these needs to be reflected in the other.
+
+#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#156)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 ### *recipe_modules* / [cros\_tags](/recipe_modules/cros_tags)
 
 [DEPS](/recipe_modules/cros_tags/__init__.py#5): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq]
@@ -5823,6 +5836,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_source/tests/mismatch_args.py#6): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_source/tests/mismatch_args.py#22)(api, properties):**
+### *recipes* / [cros\_storage:examples/full](/recipe_modules/cros_storage/examples/full.py)
+
+[DEPS](/recipe_modules/cros_storage/examples/full.py#6): [cros\_storage](#recipe_modules-cros_storage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_storage/examples/full.py#11)(api):**
 ### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
 
 [DEPS](/recipe_modules/cros_tags/examples/full.py#11): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
