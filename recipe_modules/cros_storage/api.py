@@ -12,9 +12,10 @@
    to one of these needs to be reflected in the other.
 """
 
-from recipe_engine import recipe_api
 from os import path
+import re
 
+from recipe_engine import recipe_api
 from PB.chromiumos.common import ImageType
 
 
@@ -27,6 +28,13 @@ class ArtifactRoot():
   """The directory root of the build."""
 
   _URI_TEMPLATE = 'gs://%(bucket)s/%(channel)s/%(build_target_name)s/%(version)s'
+
+  _VERSION_EXP = r'[0-9][0-9.]+[0-9]'
+  _CHANNEL_EXP = r'(canary|dev|beta|stable)'
+
+  _ARTIFACTROOT_URI_EXP = (r'gs://(?P<bucket>[^/]+)/(?P<channel>%s)/'
+                           r'(?P<build_target>[^/]+)/(?P<version>%s)' %
+                           (_CHANNEL_EXP, _VERSION_EXP))
 
   @property
   def build_target_name(self):
@@ -48,8 +56,18 @@ class ArtifactRoot():
     "The string bucket (e.g. 'chromeos-releases')." ""
     return self._bucket
 
+  @classmethod
+  def ParseUri(cls, uri):
+    """Construct a ArtifactRoot from the passed uri string."""
+    m = re.match(cls._ARTIFACTROOT_URI_EXP, uri)
+    if not m:
+      return None
+    values = m.groupdict()
+    return ArtifactRoot(values['bucket'], values['channel'],
+                        values['build_target'], values['version'])
+
   def __init__(self, bucket, channel, build_target_name, version):
-    """A build's root location.
+    """A build's artifact root location.
 
     Args:
       bucket (str): A root path portion (e.g. chromeos-releases).
@@ -83,6 +101,10 @@ class Image(object):
       ImageType.Value('BASE')
   ]
 
+  # Construct regex for image types (e.g. '(base|recovery|dev|test)').
+  _IMAGE_TYPES_REGEXP = ('(' + '|'.join(
+      [ImageType.Name(x).lower() for x in _SUPPORTED_IMAGE_TYPES]) + ')')
+
   @property
   def uri(self):
     """An Image's full uri."""
@@ -102,6 +124,12 @@ class SignedImage(Image):
       'chromeos_%(version)s_%(build_target_name)s_%(image_type)s' +
       '_%(channel)s_%(key)s.bin')
 
+  _SIGNED_IMAGE_REGEXP = (r'.+chromeos_(?P<image_version>[^_]+)_'
+                          r'(?P<build_target>[^/]+)_'
+                          r'(?P<image_type>%s)_'
+                          r'(?P<image_channel>[^_]+)_'
+                          r'(?P<key>[^_]+).bin$' % Image._IMAGE_TYPES_REGEXP)
+
   @property
   def basename(self):
     """This is the basename portion of the path of this image type."""
@@ -112,6 +140,19 @@ class SignedImage(Image):
         'key': self._key,
         'image_type': ImageType.Name(self._image_type).lower(),
     }
+
+  @classmethod
+  def ParseUri(cls, uri):
+    """Construct a SignedImage from a provided Uri, or return None."""
+    ar = ArtifactRoot.ParseUri(uri)
+    if not ar:
+      return None
+    m = re.search(cls._SIGNED_IMAGE_REGEXP, uri)
+    if not m:
+      return None
+    values = m.groupdict()
+    return SignedImage(ar, ImageType.Value(values['image_type'].upper()),
+                       values['key'])
 
   def __init__(self, artifact_root, image_type, key):
     """Construct a signed image instance.
@@ -131,6 +172,12 @@ class UnsignedImage(Image):
       'ChromeOS-%(image_type)s-%(milestone)s-%(version)s-%(build_target_name)s.tar.xz'
   )
 
+  _UNSIGNED_IMAGE_REGEXP = (r'ChromeOS-(?P<image_type>%s)-'
+                            r'(?P<milestone>R[0-9]+)-'
+                            r'(?P<version>[^/]+)-'
+                            r'(?P<build_target>[^/]+).tar.xz$' %
+                            Image._IMAGE_TYPES_REGEXP)
+
   @property
   def basename(self):
     """This is the basename portion of the path of this image type."""
@@ -140,6 +187,19 @@ class UnsignedImage(Image):
         'milestone': self._milestone,
         'image_type': ImageType.Name(self._image_type).lower(),
     }
+
+  @classmethod
+  def ParseUri(cls, uri):
+    """Construct an UnsignedImage from a provided Uri, or return None."""
+    ar = ArtifactRoot.ParseUri(uri)
+    if not ar:
+      return None
+    m = re.search(cls._UNSIGNED_IMAGE_REGEXP, uri)
+    if not m:
+      return None
+    values = m.groupdict()
+    return UnsignedImage(ar, ImageType.Value(values['image_type'].upper()),
+                         values['milestone'])
 
   def __init__(self, artifact_root, image_type, milestone):
     """Construct an unsigned image instance.
@@ -158,3 +218,9 @@ class CrosStorageApi(recipe_api.RecipeApi):
   ArtifactRoot = ArtifactRoot
   SignedImage = SignedImage
   UnsignedImage = UnsignedImage
+
+  # This is the list of available URL parsers, used for discovery.
+  ParserOptions = [
+      UnsignedImage.ParseUri,
+      SignedImage.ParseUri,
+  ]
