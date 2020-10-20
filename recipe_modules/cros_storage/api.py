@@ -18,6 +18,9 @@ import re
 from recipe_engine import recipe_api
 from PB.chromiumos.common import ImageType
 
+# Number of seconds to wait on gsutil ops.
+GSUTIL_TIMEOUT_SECONDS = 30 * 60
+
 
 class UnsupportedImageTypeException(Exception):
   """Throw this if trying to create image with unsuported ImageType."""
@@ -30,7 +33,7 @@ class ArtifactRoot():
   _URI_TEMPLATE = 'gs://%(bucket)s/%(channel)s/%(build_target_name)s/%(version)s'
 
   _VERSION_EXP = r'[0-9][0-9.]+[0-9]'
-  _CHANNEL_EXP = r'(canary|dev|beta|stable)'
+  _CHANNEL_EXP = r'(canary-channel|dev-channel|beta-channel|stable-channel)'
 
   _ARTIFACTROOT_URI_EXP = (r'gs://(?P<bucket>[^/]+)/(?P<channel>%s)/'
                            r'(?P<build_target>[^/]+)/(?P<version>%s)' %
@@ -38,22 +41,22 @@ class ArtifactRoot():
 
   @property
   def build_target_name(self):
-    "The string build target (e.g. 'coral')." ""
+    """The string build target (e.g. 'coral')."""
     return self._build_target_name
 
   @property
   def version(self):
-    "The string version (e.g. '13373.1.0')." ""
+    """The string version (e.g. '13373.1.0')."""
     return self._version
 
   @property
   def channel(self):
-    "The string channel (e.g. 'canary')." ""
+    """The string channel, with '-channel' (e.g. 'canary-channel')."""
     return self._channel
 
   @property
   def bucket(self):
-    "The string bucket (e.g. 'chromeos-releases')." ""
+    """The string bucket (e.g. 'chromeos-releases')."""
     return self._bucket
 
   @classmethod
@@ -134,7 +137,8 @@ class SignedImage(Image):
   def basename(self):
     """This is the basename portion of the path of this image type."""
     return self._SIGNED_IMAGE_TEMPLATE % {
-        'channel': self._artifact_root.channel,
+        # We strip the '-channel' here.
+        'channel': self._artifact_root.channel.replace('-channel', ''),
         'build_target_name': self._artifact_root.build_target_name,
         'version': self._artifact_root.version,
         'key': self._key,
@@ -214,6 +218,7 @@ class UnsignedImage(Image):
 
 
 class CrosStorageApi(recipe_api.RecipeApi):
+
   UnsupportedImageTypeException = UnsupportedImageTypeException
   ArtifactRoot = ArtifactRoot
   SignedImage = SignedImage
@@ -224,3 +229,32 @@ class CrosStorageApi(recipe_api.RecipeApi):
       UnsignedImage.ParseUri,
       SignedImage.ParseUri,
   ]
+
+  def DiscoverGSArtifacts(self, prefix_uri):
+    """Discover and return all the GS artifacts found in a given ArtifactRoot.
+
+    We assume that each uri will match at most a single ParserOption
+    and we greedily take the first one.
+
+    Args:
+      prefix_uri (str): The gs path prefix recursively crawled.
+
+    Returns:
+      list(Image): A list of images found in the prefix.
+    """
+    with self.m.step.nest('discover gs artifacts') as presentation:
+      recursive_uri = path.join(prefix_uri, '**')
+      gsutil_ls_stdout = self.m.raw_io.output_text(name='ls results',
+                                                   add_output_log=True)
+      listing = self.m.gsutil.list(recursive_uri,
+                                   timeout=GSUTIL_TIMEOUT_SECONDS,
+                                   stdout=gsutil_ls_stdout)
+
+      images = []
+      for uri in listing.stdout.split():
+        for po in self.ParserOptions:
+          img = po(uri)
+          if img:
+            images.append(img)
+            break
+      return images

@@ -9,11 +9,14 @@ from PB.chromiumos.common import ImageType
 
 
 def RunSteps(api):
-  good_unsigned_uri = 'gs://test-bucket/canary/zork/13337.0.1/ChromeOS-recovery-R82-13337.0.1-zork.tar.xz'
-  good_signed_uri = 'gs://test-bucket/canary/zork/13337.0.1/chromeos_13337.0.1_zork_recovery_canary_mp-v5.bin'
+  good_unsigned_uri = ('gs://test-bucket/canary-channel/zork/13337.0.1/'
+                       'ChromeOS-recovery-R82-13337.0.1-zork.tar.xz')
+  good_signed_uri = ('gs://test-bucket/canary-channel/zork/13337.0.1/'
+                     'chromeos_13337.0.1_zork_recovery_canary_mp-v5.bin')
 
-  test_artifact_root = api.cros_storage.ArtifactRoot('test-bucket', 'canary',
-                                                     'zork', '13337.0.1')
+  test_artifact_root = api.cros_storage.ArtifactRoot('test-bucket',
+                                                     'canary-channel', 'zork',
+                                                     '13337.0.1')
   test_unsigned_image = (
       api.cros_storage.UnsignedImage(test_artifact_root,
                                      ImageType.Value('RECOVERY'), 'R82'))

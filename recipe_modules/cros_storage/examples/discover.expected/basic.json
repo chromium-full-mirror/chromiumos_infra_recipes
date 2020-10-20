@@ -1,0 +1,51 @@
+[
+  {
+    "cmd": [],
+    "name": "discover gs artifacts"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://fake-releases/canary-channel/coral/13337.1.0/**"
+    ],
+    "infra_step": true,
+    "name": "discover gs artifacts.gsutil list",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-factory-R85-13310.53.0-arkham.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.instructions@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.instructions.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-test-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos-hwqual-arkham-R85-13310.53.0.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.br.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/debug-arkham.tgz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/full_dev_part_KERN.bin.gz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/full_dev_part_ROOT.bin.gz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/stateful.tgz@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
