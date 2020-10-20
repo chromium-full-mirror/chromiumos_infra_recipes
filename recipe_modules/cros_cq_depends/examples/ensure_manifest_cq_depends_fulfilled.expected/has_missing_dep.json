@@ -429,6 +429,9 @@
       "@@@STEP_LOG_LINE@gather cq-depend@chrome-internal:67890@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
       "@@@STEP_LOG_LINE@dep local@Unsatisfied dep: deadbeef does not exist at src/project-c on branch master@@@",
+      "@@@STEP_LOG_LINE@dep local@Failed to find project paths@@@",
+      "@@@STEP_LOG_LINE@dep local@change None in non-Chrome OS repo not-a-project@@@",
+      "@@@STEP_LOG_LINE@dep local@gerrit query failure for cl 1234@@@",
       "@@@STEP_LOG_END@dep local@@@",
       "@@@STEP_FAILURE@@@"
     ]
@@ -581,6 +584,14 @@
     "name": "ensure manifest cq-depend fulfilled (2).git merge-base",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure manifest cq-depend fulfilled (2).set missing_depends",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@missing_depends@[\"Unsatisfied dep: deadbeef does not exist at src/project-c on branch master\"]@@@"
     ]
   },
   {

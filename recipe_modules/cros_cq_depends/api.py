@@ -34,6 +34,7 @@ class CrosCqDependsApi(RecipeApi):
     """
     # Gather all Cq-Depend entries in all change messages.
     deps = []
+    found_commits = 0
     for manifest_diff in manifest_diffs:
       # For each manifest diff, get a log of commits at that path
       with self.m.context(
@@ -42,6 +43,7 @@ class CrosCqDependsApi(RecipeApi):
                                      manifest_diff.to_rev)
         for commit in git_commits:
           # Accumulate Cq-Depend CLs from commits
+          found_commits += 1
           dep_lines = re.findall(r'\s*Cq-Depend:\s*(.*)', commit.message,
                                  re.IGNORECASE)
           if len(dep_lines) == 0:
@@ -51,6 +53,12 @@ class CrosCqDependsApi(RecipeApi):
             dep_line = dep_line.strip()
             deps += re.split(r'[\s,]+', dep_line)
             dep_log.append('{} has dep_line {}'.format(commit.rev, dep_line))
+
+    # If there are more than 50 CLs pending, automatically allow missing depends
+    # so that we can get past the problem that chumped CLs cause.
+    # See crbug.com/995360.
+    self._allow_missing_depends |= found_commits > 50
+
     # Turn the deps into (host, cl) tuples
     valid_deps = []
     private_prefix = PRIVATE_HOST + ':'
@@ -146,11 +154,13 @@ class CrosCqDependsApi(RecipeApi):
       project_names = {p.name for p in self.m.repo.project_infos()}
 
       # Ensure each change is in the local checkout.
+      missing_depends = []
+      missing_gerrit_info = False
       for change in gerrit_results['changes']:
         if change.get('info') is None:
           dep_local_log.append('gerrit query failure for cl %s' %
                                change.get('change_number'))
-          pres.status = self.m.step.WARNING
+          missing_gerrit_info = True
           continue
         project = change['info']['project']
         branch = change['info']['branch']
@@ -174,17 +184,23 @@ class CrosCqDependsApi(RecipeApi):
                   'Unsatisfied dep: %s does not exist at %s on branch %s' %
                   (rev, path, branch))
               dep_local_log.append(message)
-              if self._allow_missing_depends:
-                continue
-              else:
-                raise StepFailure(message)
+              missing_depends.append(message)
 
-            # Dep is satisfied locally
-            dep_local_log.append('%s found at %s on branch %s' %
-                                 (rev, path, branch))
+            else:
+              # Dep is satisfied locally
+              dep_local_log.append('%s found at %s on branch %s' %
+                                   (rev, path, branch))
         else:
           dep_local_log.append('Failed to find project paths')
           continue
+
+      if missing_depends:
+        self.m.easy.set_properties_step(missing_depends=missing_depends)
+        if not self._allow_missing_depends:
+          raise StepFailure('\n'.join(missing_depends))
+
+      if missing_gerrit_info:
+        pres.status = self.m.step.WARNING
 
       # All deps satisfied
       pres.step_text = 'cq-depend checked'

@@ -1489,7 +1489,7 @@ Args:
   upload_file (Path):  Location of cache artifact file to upload.
 ### *recipe_modules* / [cros\_cq\_depends](/recipe_modules/cros_cq_depends)
 
-[DEPS](/recipe_modules/cros_cq_depends/__init__.py#5): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_cq_depends/__init__.py#5): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for interacting with Cq-Depends.
 
@@ -1497,7 +1497,7 @@ APIs for interacting with Cq-Depends.
 
 A module for checking that Cq-Depend has been fulfilled.
 
-&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/api.py#76)(self, manifest_diffs):**
+&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/api.py#84)(self, manifest_diffs):**
 
 Checks that Cq-Depend deps between manifests are met.
 
@@ -1507,7 +1507,7 @@ Args:
   manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
       namedtuples.
 
-&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#206)(self, gerrit_changes):**
+&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#222)(self, gerrit_changes):**
 
 Get Cq-Depend string for the given list of Gerrit changes.
 
@@ -1517,7 +1517,7 @@ Args:
 Return:
   str: The full Cq-Depend string.
 
-&mdash; **def [get\_cq\_depend\_reference](/recipe_modules/cros_cq_depends/api.py#192)(self, gerrit_change):**
+&mdash; **def [get\_cq\_depend\_reference](/recipe_modules/cros_cq_depends/api.py#208)(self, gerrit_change):**
 
 Return the Cq-Depend reference string for the given change.
 
@@ -1527,7 +1527,7 @@ Args:
 Returns:
   str: The reference string for the change, e.g. chromium:12345
 
-&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#218)(self, gerrit_changes):**
+&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#234)(self, gerrit_changes):**
 
 Mutually Cq-Depend all given Gerrit changes.
 
