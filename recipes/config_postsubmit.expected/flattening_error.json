@@ -562,7 +562,7 @@
     "cmd": [],
     "name": "Do flatten_configs and create CL",
     "~followup_annotations": [
-      "@@@STEP_WARNINGS@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -570,7 +570,7 @@
     "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_WARNINGS@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

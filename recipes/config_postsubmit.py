@@ -132,7 +132,8 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatt
             _flatten_config,
         )
       except StepFailure:
-        presentation.status = 'WARNING'
+        # Mark step as failed, but continue processing
+        presentation.status = 'FAILURE'
 
   return []
 
