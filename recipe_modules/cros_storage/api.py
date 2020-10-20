@@ -12,11 +12,13 @@
    to one of these needs to be reflected in the other.
 """
 
+import json
 from os import path
 import re
 
 from recipe_engine import recipe_api
-from PB.chromiumos.common import ImageType
+from PB.chromite.api.payload import Build as Build_pb2, SignedImage as SignedImage_pb2, UnsignedImage as UnsignedImage_pb2
+from PB.chromiumos.common import BuildTarget, ImageType
 
 # Number of seconds to wait on gsutil ops.
 GSUTIL_TIMEOUT_SECONDS = 30 * 60
@@ -101,7 +103,8 @@ class Image(object):
   # The following image types are currently supported in this module.
   _SUPPORTED_IMAGE_TYPES = [
       ImageType.Value('RECOVERY'),
-      ImageType.Value('BASE')
+      ImageType.Value('BASE'),
+      ImageType.Value('TEST'),
   ]
 
   # Construct regex for image types (e.g. '(base|recovery|dev|test)').
@@ -144,6 +147,21 @@ class SignedImage(Image):
         'key': self._key,
         'image_type': ImageType.Name(self._image_type).lower(),
     }
+
+  def to_proto(self):
+    """Convert self into a chromite api SignedImage proto."""
+    return SignedImage_pb2(
+        build=Build_pb2(
+            build_target=BuildTarget(
+                name=self._artifact_root.build_target_name,
+            ),
+            version=self._artifact_root.version,
+            bucket=self._artifact_root.bucket,
+            channel=self._artifact_root.channel,
+        ),
+        image_type=self._image_type,
+        key=self._key,
+    )
 
   @classmethod
   def ParseUri(cls, uri):
@@ -192,6 +210,21 @@ class UnsignedImage(Image):
         'image_type': ImageType.Name(self._image_type).lower(),
     }
 
+  def to_proto(self):
+    """Convert self into a chromite api UnsignedImage proto."""
+    return UnsignedImage_pb2(
+        build=Build_pb2(
+            build_target=BuildTarget(
+                name=self._artifact_root.build_target_name,
+            ),
+            version=self._artifact_root.version,
+            bucket=self._artifact_root.bucket,
+            channel=self._artifact_root.channel,
+        ),
+        image_type=self._image_type,
+        milestone=self._milestone,
+    )
+
   @classmethod
   def ParseUri(cls, uri):
     """Construct an UnsignedImage from a provided Uri, or return None."""
@@ -233,8 +266,9 @@ class CrosStorageApi(recipe_api.RecipeApi):
   def DiscoverGSArtifacts(self, prefix_uri):
     """Discover and return all the GS artifacts found in a given ArtifactRoot.
 
-    We assume that each uri will match at most a single ParserOption
-    and we greedily take the first one.
+    We assume that each uri will match at most a single ParserOption and we
+    greedily take the first one. GS exceptions are represented as an empty
+    return list.
 
     Args:
       prefix_uri (str): The gs path prefix recursively crawled.
@@ -246,15 +280,20 @@ class CrosStorageApi(recipe_api.RecipeApi):
       recursive_uri = path.join(prefix_uri, '**')
       gsutil_ls_stdout = self.m.raw_io.output_text(name='ls results',
                                                    add_output_log=True)
-      listing = self.m.gsutil.list(recursive_uri,
-                                   timeout=GSUTIL_TIMEOUT_SECONDS,
-                                   stdout=gsutil_ls_stdout)
-
       images = []
+      try:
+        listing = self.m.gsutil.list(recursive_uri,
+                                     timeout=GSUTIL_TIMEOUT_SECONDS,
+                                     stdout=gsutil_ls_stdout)
+      except self.m.step.StepFailure:
+        return []
       for uri in listing.stdout.split():
         for po in self.ParserOptions:
           img = po(uri)
           if img:
             images.append(img)
             break
+
+      # Logs the results for inspection & return.
+      presentation.logs['images found'] = '\n'.join([i.uri for i in images])
       return images

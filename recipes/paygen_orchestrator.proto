@@ -48,11 +48,19 @@ message PaygenOrchestratorProperties {
     FORCE_NO_TESTS = 2;
   }
 
+  // The bucket to look for artifacts in and place results (e.g.
+  // chromeos-releases).
+  string bucket = 6;
+
+  // The keyset to sign with (e.g. "coral-mp-v16"), if empty do not sign.
+  string keyset = 7;
+
+  // Should we not upload any generated artifacts or make other mutations.
+  bool dryrun = 8;
+
   // Should we override the configured delta testing policy?
-  PayloadTestsOverride delta_payload_test_override = 6;
+  PayloadTestsOverride delta_payload_test_override = 9;
 
   // Should we override the configured full testing policy?
-  PayloadTestsOverride full_payload_test_override = 7;
-
-  // TODO(engeg@): We might want to support abitrary filters for paygen.json.
+  PayloadTestsOverride full_payload_test_override = 10;
 }

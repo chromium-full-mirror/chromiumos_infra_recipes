@@ -23,32 +23,32 @@
   },
   {
     "cmd": [],
-    "name": "discovering configuration",
+    "name": "discovering payload configuration",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@1 payloads@[@@@",
-      "@@@STEP_LOG_LINE@1 payloads@  {@@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"public_codename\": \"octopus\", @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"chrome_version\": \"85.0.4183.34\", @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"full_payload_tests\": true, @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"delta_type\": \"OMAHA\", @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"is_active\": true, @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"builder_name\": \"octopus\", @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"milestone\": 85, @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"delta_payload_tests\": true, @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"applicable_models\": [@@@",
-      "@@@STEP_LOG_LINE@1 payloads@      \"garfour\"@@@",
-      "@@@STEP_LOG_LINE@1 payloads@    ], @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"chrome_os_version\": \"13310.24.0\", @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"generate_delta\": true, @@@",
-      "@@@STEP_LOG_LINE@1 payloads@    \"channel\": \"dev\"@@@",
-      "@@@STEP_LOG_LINE@1 payloads@  }@@@",
-      "@@@STEP_LOG_LINE@1 payloads@]@@@",
-      "@@@STEP_LOG_END@1 payloads@@@"
+      "@@@STEP_LOG_LINE@1 configured sources@[@@@",
+      "@@@STEP_LOG_LINE@1 configured sources@  {@@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"public_codename\": \"octopus\", @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"chrome_version\": \"85.0.4183.34\", @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"full_payload_tests\": true, @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"delta_type\": \"OMAHA\", @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"is_active\": true, @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"builder_name\": \"octopus\", @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"milestone\": 85, @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"delta_payload_tests\": true, @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"applicable_models\": [@@@",
+      "@@@STEP_LOG_LINE@1 configured sources@      \"garfour\"@@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    ], @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"chrome_os_version\": \"13310.24.0\", @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"generate_delta\": true, @@@",
+      "@@@STEP_LOG_LINE@1 configured sources@    \"channel\": \"dev\"@@@",
+      "@@@STEP_LOG_LINE@1 configured sources@  }@@@",
+      "@@@STEP_LOG_LINE@1 configured sources@]@@@",
+      "@@@STEP_LOG_END@1 configured sources@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "discovering configuration.get paygen json",
+    "name": "discovering payload configuration.get paygen json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@paygen.json@{@@@",
@@ -110,666 +110,236 @@
       "gs://chromeos-build-release-console/paygen.json"
     ],
     "infra_step": true,
-    "name": "discovering configuration.get paygen json.gsutil cat",
+    "name": "discovering payload configuration.get paygen json.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "mount overlay chromiumos"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos/upperdir/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "mount overlay chromiumos.create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos/workdir/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "mount overlay chromiumos.create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "mount overlay chromiumos.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
-      "overlay",
-      "[CACHE]/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "mount overlay chromiumos.mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "examining dev-channel"
   },
   {
     "cmd": [],
-    "name": "mount overlay workspace"
+    "name": "examining dev-channel.discover gs artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-test-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable_mp.bin@@@",
+      "@@@STEP_LOG_END@images found@@@"
+    ]
   },
   {
     "cmd": [
-      "vpython",
+      "python",
       "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/upperdir/workspace"
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://dev-channel/octopus/13310.24.0/**"
     ],
     "infra_step": true,
-    "name": "mount overlay workspace.create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/workdir/workspace"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace.create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
-      "overlay",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace.mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "config",
-      "--global",
-      "gc.auto",
-      "0"
-    ],
-    "infra_step": true,
-    "name": "git config"
-  },
-  {
-    "cmd": [
-      "git",
-      "config",
-      "--global",
-      "gc.packRefs",
-      "false"
-    ],
-    "infra_step": true,
-    "name": "git config (2)"
-  },
-  {
-    "cmd": [],
-    "name": "ensure synced checkout"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "ensure synced checkout.ensure root path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.remove .repo/manifests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests.git"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.remove .repo/manifests.git",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.repo init",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.clear repo locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromiumos/chromite",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".",
-      "-type",
-      "f",
-      "-path",
-      "./.git/*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.clear git locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "ensure synced checkout.ensure clean checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromiumos/chromite",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "git",
-      "clean",
-      "-d",
-      "-f"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.ensure clean checkout.repo forall",
+    "name": "examining dev-channel.discover gs artifacts.gsutil list",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-factory-R85-13310.53.0-arkham.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.instructions@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.instructions.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-test-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos-hwqual-arkham-R85-13310.53.0.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.br.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/debug-arkham.tgz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/full_dev_part_KERN.bin.gz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/full_dev_part_ROOT.bin.gz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/stateful.tgz@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "ensure synced checkout.repo binary update",
+    "name": "examining dev-channel.discover gs artifacts (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@images found@@@@",
+      "@@@STEP_LOG_END@images found@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://dev-channel/octopus/12345.0.0/**"
     ],
-    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
-    "name": "ensure synced checkout.repo binary update.repo version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "selfupdate"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.repo binary update.repo selfupdate",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.repo binary update.repo version (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--force-sync",
-      "--detach",
-      "--current-branch",
-      "--jobs",
-      "8",
-      "--no-tags",
-      "--optimized-fetch",
-      "--retry-fetches",
-      "8",
-      "chromiumos/chromite"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "ensure synced checkout.repo sync",
-    "timeout": 3600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync manifest branches"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--force-sync",
-      "--detach",
-      "--jobs",
-      "8",
-      "--no-tags",
-      "--optimized-fetch",
-      "--retry-fetches",
-      "8",
-      "chromeos/manifest-internal"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "sync manifest branches.repo sync",
-    "timeout": 3600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot"
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.removing sysroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean",
+    "name": "examining dev-channel.discover gs artifacts (2).gsutil list",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examining beta-channel"
+  },
+  {
+    "cmd": [],
+    "name": "examining beta-channel.discover gs artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-test-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable_mp.bin@@@",
+      "@@@STEP_LOG_END@images found@@@"
     ]
   },
   {
     "cmd": [
-      "vpython",
+      "python",
       "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://beta-channel/octopus/12345.0.0/**"
     ],
     "infra_step": true,
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.SdkService/Clean"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.unmounting chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount",
+    "name": "examining beta-channel.discover gs artifacts.gsutil list",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.SdkService/Unmount"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-factory-R85-13310.53.0-arkham.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.instructions@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.instructions.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-test-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos-hwqual-arkham-R85-13310.53.0.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.br.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/debug-arkham.tgz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/full_dev_part_KERN.bin.gz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/full_dev_part_ROOT.bin.gz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/stable-channel/arkham/13310.53.0/stateful.tgz@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call response",
+    "name": "discovered artifacts",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
+      "@@@STEP_LOG_LINE@target_artifacts@{@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@      \"name\": \"arkham\"@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    }, @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"version\": \"13310.53.0\", @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"bucket\": \"chromeos-releases\", @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"channel\": \"stable-channel\"@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  }, @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  \"imageType\": \"RECOVERY\", @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  \"milestone\": \"R85\"@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@}@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@{@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@      \"name\": \"arkham\"@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    }, @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"version\": \"13310.53.0\", @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"bucket\": \"chromeos-releases\", @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"channel\": \"stable-channel\"@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  }, @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  \"imageType\": \"TEST\", @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  \"milestone\": \"R85\"@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@}@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@{@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  \"key\": \"mp\", @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@      \"name\": \"arkham\"@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    }, @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"version\": \"13310.53.0\", @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"bucket\": \"chromeos-releases\", @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@    \"channel\": \"stable-channel\"@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  }, @@@",
+      "@@@STEP_LOG_LINE@target_artifacts@  \"imageType\": \"RECOVERY\"@@@",
+      "@@@STEP_LOG_LINE@target_artifacts@}@@@",
+      "@@@STEP_LOG_END@target_artifacts@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@{@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@      \"name\": \"arkham\"@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    }, @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"version\": \"13310.53.0\", @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"bucket\": \"chromeos-releases\", @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"channel\": \"stable-channel\"@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  }, @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  \"imageType\": \"RECOVERY\", @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  \"milestone\": \"R85\"@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@}@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@{@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@      \"name\": \"arkham\"@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    }, @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"version\": \"13310.53.0\", @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"bucket\": \"chromeos-releases\", @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"channel\": \"stable-channel\"@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  }, @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  \"imageType\": \"TEST\", @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  \"milestone\": \"R85\"@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@}@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@{@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  \"key\": \"mp\", @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@      \"name\": \"arkham\"@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    }, @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"version\": \"13310.53.0\", @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"bucket\": \"chromeos-releases\", @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@    \"channel\": \"stable-channel\"@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  }, @@@",
+      "@@@STEP_LOG_LINE@source_artifacts@  \"imageType\": \"RECOVERY\"@@@",
+      "@@@STEP_LOG_LINE@source_artifacts@}@@@",
+      "@@@STEP_LOG_END@source_artifacts@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "chmod",
-      "a+rwX,-t",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up overlayfs mounts"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CACHE]/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay chromiumos",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "pairing artifacts"
   },
   {
     "name": "$result"

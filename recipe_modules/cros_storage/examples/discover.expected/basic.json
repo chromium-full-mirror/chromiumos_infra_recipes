@@ -1,7 +1,13 @@
 [
   {
     "cmd": [],
-    "name": "discover gs artifacts"
+    "name": "discover gs artifacts",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-test-R85-13310.53.0-arkham.tar.xz@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable_mp.bin@@@",
+      "@@@STEP_LOG_END@images found@@@"
+    ]
   },
   {
     "cmd": [

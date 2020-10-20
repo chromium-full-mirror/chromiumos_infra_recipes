@@ -2465,14 +2465,15 @@ Much of the inspiration for this module came from:
 As long as there are two versions of the the path construction any changes
 to one of these needs to be reflected in the other.
 
-#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#220)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#253)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [DiscoverGSArtifacts](/recipe_modules/cros_storage/api.py#233)(self, prefix_uri):**
+&mdash; **def [DiscoverGSArtifacts](/recipe_modules/cros_storage/api.py#266)(self, prefix_uri):**
 
 Discover and return all the GS artifacts found in a given ArtifactRoot.
 
-We assume that each uri will match at most a single ParserOption
-and we greedily take the first one.
+We assume that each uri will match at most a single ParserOption and we
+greedily take the first one. GS exceptions are represented as an empty
+return list.
 
 Args:
   prefix_uri (str): The gs path prefix recursively crawled.
@@ -5855,7 +5856,7 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_source/tests/mismatch_args.py#22)(api, properties):**
 ### *recipes* / [cros\_storage:examples/discover](/recipe_modules/cros_storage/examples/discover.py)
 
-[DEPS](/recipe_modules/cros_storage/examples/discover.py#6): [cros\_storage](#recipe_modules-cros_storage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_storage/examples/discover.py#6): [cros\_storage](#recipe_modules-cros_storage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_storage/examples/discover.py#11)(api):**
 ### *recipes* / [cros\_storage:examples/full](/recipe_modules/cros_storage/examples/full.py)
@@ -6301,11 +6302,19 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 &mdash; **def [RunSteps](/recipes/paygen.py#21)(api, properties):**
 ### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
 
-[DEPS](/recipes/paygen_orchestrator.py#17): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen_orchestrator.py#20): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#31)(api, properties):**
+&mdash; **def [LongChannelName](/recipes/paygen_orchestrator.py#38)(channel_enum_val):**
+
+Takes the integer enum value and outputs suffix'd string form.
+
+&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#49)(api, properties):**
+
+&mdash; **def [ShortChannelName](/recipes/paygen_orchestrator.py#44)(channel_enum_val):**
+
+Takes the integer enum value and outputs non-suffix'd string form.
 ### *recipes* / [phosphorus:examples/full](/recipe_modules/phosphorus/examples/full.py)
 
 [DEPS](/recipe_modules/phosphorus/examples/full.py#6): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

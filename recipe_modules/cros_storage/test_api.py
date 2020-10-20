@@ -33,7 +33,6 @@ gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.
 gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z.log
 gs://chromeos-releases/stable-channel/arkham/13310.53.0/stateful.tgz"""
 
-  def normal_test_data(self):
+  def normal_test_data(self, step_name='discover gs artifacts.gsutil list'):
     return self.step_data(
-        'discover gs artifacts.gsutil list',
-        stdout=self.m.raw_io.output_text(self.TEST_GS_OUTPUT_TEXT))
+        step_name, stdout=self.m.raw_io.output_text(self.TEST_GS_OUTPUT_TEXT))

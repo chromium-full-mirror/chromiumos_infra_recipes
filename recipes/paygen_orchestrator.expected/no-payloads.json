@@ -23,15 +23,15 @@
   },
   {
     "cmd": [],
-    "name": "discovering configuration",
+    "name": "discovering payload configuration",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@0 payloads@[]@@@",
-      "@@@STEP_LOG_END@0 payloads@@@"
+      "@@@STEP_LOG_LINE@0 configured sources@[]@@@",
+      "@@@STEP_LOG_END@0 configured sources@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "discovering configuration.get paygen json",
+    "name": "discovering payload configuration.get paygen json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@paygen.json@{@@@",
@@ -93,14 +93,14 @@
       "gs://chromeos-build-release-console/paygen.json"
     ],
     "infra_step": true,
-    "name": "discovering configuration.get paygen json.gsutil cat",
+    "name": "discovering payload configuration.get paygen json.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "no payloads matched in payload.json!"
+    "name": "no configurations matched in payload.json!"
   },
   {
     "name": "$result"

@@ -5,8 +5,8 @@
 
 DEPS = ['recipe_engine/assertions', 'cros_storage']
 
+from PB.chromite.api.payload import Build as Build_pb2, SignedImage as SignedImage_pb2, UnsignedImage as UnsignedImage_pb2
 from PB.chromiumos.common import ImageType
-
 
 def RunSteps(api):
   good_unsigned_uri = ('gs://test-bucket/canary-channel/zork/13337.0.1/'
@@ -53,6 +53,10 @@ def RunSteps(api):
       api.cros_storage.UnsupportedImageTypeException):
     api.cros_storage.SignedImage(test_artifact_root, ImageType.Value('DEV'),
                                  'mp-v2')
+
+  # Make protos out of them.
+  test_unsigned_image.to_proto()
+  test_signed_image.to_proto()
 
 
 def GenTests(api):
