@@ -783,6 +783,20 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.diffing to find changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.diffing to find changes.diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "add",

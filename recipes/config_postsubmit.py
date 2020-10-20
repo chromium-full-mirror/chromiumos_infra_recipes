@@ -168,9 +168,14 @@ def _copy_to_internal(api, project_infos):
     # merge and import
     api.step('merge flattened configs to config-internal',
              ['vpython', merge_script, "-o", output] + files)
-    api.git.add([output])
+
+    with api.step.nest("diffing to find changes") as presentation:
+      if not api.git.diff_check(output):
+        presentation.step_summary_text = "No changes to commit"
+        return False  # abort transaction
 
     # commit files
+    api.git.add([output])
     message = \
       '''Automerging and importing flattened config changes.
 
@@ -187,7 +192,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatt
           _merge_configs,
       )
     except StepFailure:
-      presentation.status = 'WARNING'
+      presentation.status = 'FAILURE'  # swallow StepFailure and keep going
 
   return []
 
@@ -390,6 +395,18 @@ def GenTests(api):
           post_process.MustRun,
           'Do copy_to_internal and create CL.importing flattened configs.git transaction.merge flattened configs to config-internal',
       ),
+  )
+
+  yield api.test(
+      'copy_internal_no_diff',
+      config_repos_step_data(api),
+      mock_payloads("config.jsonproto"),
+      mock_payloads("flattened.jsonproto"),
+      api.git.diff_check(False),
+      api.post_process(
+          StepSummaryEquals,
+          'Do copy_to_internal and create CL.importing flattened configs.git transaction.diffing to find changes',
+          "No changes to commit"),
   )
 
   yield api.test(
