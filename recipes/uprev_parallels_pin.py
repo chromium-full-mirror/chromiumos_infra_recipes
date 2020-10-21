@@ -36,7 +36,6 @@ DEPS = [
     'build_menu',
     'cros_artifacts',
     'cros_build_api',
-    'cros_infra_config',
     'cros_sdk',
     'cros_source',
     'easy',
@@ -258,7 +257,7 @@ def build_vm_image(api, properties, artifacts_path, parallels_version):
     }
     presentation.links['uploaded image'] = '{}/{}/{}'.format(
         _PANTHEON_PREFIX, properties.test_image_gs_bucket, upload_path)
-    presentation.logs['metadata'] = json.dumps(image_details)
+    presentation.logs['metadata'] = json.dumps(image_details, indent=2)
     # This blob is defined by tast. See go/tast-writing#external-data-files.
     return image_details
 
@@ -348,17 +347,19 @@ def commit_pin_uprev(api, properties, package, new_version_pin):
         api.git.add([version_path])
         api.git.commit(message)
 
-      with api.step.nest('upload CL to gerrit'):
-        change = api.gerrit.create_change(project=project.name,
-                                          topic=properties.topic)
-        labels = {
-            api.gerrit.Label.BOT_COMMIT: 1,
-            api.gerrit.Label.COMMIT_QUEUE: 2,
-        }
-        api.gerrit.set_change_labels(change, labels)
+      # In staging, do not upload the CL to gerrit.
+      if not api.build_menu.is_staging:
+        with api.step.nest('upload CL to gerrit'):
+          change = api.gerrit.create_change(project=project.name,
+                                            topic=properties.topic)
+          labels = {
+              api.gerrit.Label.BOT_COMMIT: 1,
+              api.gerrit.Label.COMMIT_QUEUE: 2,
+          }
+          api.gerrit.set_change_labels(change, labels)
 
-        presentation.links['uploaded CL'] = api.gerrit.parse_gerrit_change_url(
-            change)
+          presentation.links[
+              'uploaded CL'] = api.gerrit.parse_gerrit_change_url(change)
 
 
 def get_upstream_version(api, properties):
@@ -463,6 +464,12 @@ def is_version_after(version, previous_version):
 
 def GenTests(api):
   good_props = {
+      '$chromeos/overlayfs': {
+          'random_work_path': True
+      },
+      '$chromeos/tast_results': {
+          'archive_gs_bucket': 'chromeos-parallels-uprev-archive',
+      },
       'package_info': {
           'category': 'app-emulation',
           'package_name': 'parallels-desktop'
