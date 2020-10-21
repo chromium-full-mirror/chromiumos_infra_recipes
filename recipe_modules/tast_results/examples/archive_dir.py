@@ -6,8 +6,12 @@
 
 DEPS = [
     'recipe_engine/path',
+    'recipe_engine/properties',
     'tast_results',
 ]
+
+from PB.recipe_modules.chromeos.tast_results.tast_results import (
+    TastResultsProperties)
 
 
 def RunSteps(api):
@@ -16,4 +20,10 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.properties(
+          **{
+              '$chromeos/tast_results':
+                  TastResultsProperties(archive_gs_bucket='archive-bucket')
+          }))

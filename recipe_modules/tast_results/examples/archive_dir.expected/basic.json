@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "GS upload 1",
     "~followup_annotations": [
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/1@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/archive-bucket//0/1@@@"
     ]
   },
   {
@@ -20,7 +20,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_1",
-      "gs://chromeos-vmtest-archive//0/1"
+      "gs://archive-bucket//0/1"
     ],
     "infra_step": true,
     "name": "GS upload 1.gsutil rsync",

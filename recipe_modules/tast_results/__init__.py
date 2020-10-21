@@ -13,3 +13,8 @@ DEPS = [
     'easy',
     'failures',
 ]
+
+from PB.recipe_modules.chromeos.tast_results.tast_results import (
+    TastResultsProperties)
+
+PROPERTIES = TastResultsProperties

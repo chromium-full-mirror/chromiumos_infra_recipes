@@ -13,14 +13,19 @@ from PB.test_platform.taskstate import TaskState
 from PB.tast.test_result import TestResult
 
 PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
-GS_BUCKET = 'chromeos-vmtest-archive'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 
 
 class TastResultsApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
 
-  @exponential_retry(retries=3, condition=lambda e: getattr(e, 'had_timeout', False))
+  def __init__(self, props, *args, **kwargs):
+    """Initialize TastResultsApi."""
+    super(TastResultsApi, self).__init__(*args, **kwargs)
+    self._archive_gs_bucket = props.archive_gs_bucket or 'chromeos-vmtest-archive'
+
+  @exponential_retry(retries=3,
+                     condition=lambda e: getattr(e, 'had_timeout', False))
   def archive_dir(self, dir_path, tag):
     """Archive dir to Google Storage.
 
@@ -33,12 +38,13 @@ class TastResultsApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('GS upload ' + tag) as presentation:
       build = self.m.buildbucket.build
-      upload_uri = 'gs://%s/%s/%s/%s' % (GS_BUCKET, build.builder.builder,
-                                         build.id, tag)
+      upload_uri = 'gs://%s/%s/%s/%s' % (self._archive_gs_bucket,
+                                         build.builder.builder, build.id, tag)
       self.m.gsutil(['rsync', '-r', dir_path, upload_uri], parallel_upload=True,
                     multithreaded=True,
                     timeout=self.test_api.gsutil_timeout_seconds)
-      pantheon_url = '%s/%s/%s/%s/%s' % (PANTHEON_PREFIX, GS_BUCKET,
+      pantheon_url = '%s/%s/%s/%s/%s' % (PANTHEON_PREFIX,
+                                         self._archive_gs_bucket,
                                          build.builder.builder, build.id, tag)
       presentation.links['archive_link'] = pantheon_url
       return pantheon_url
