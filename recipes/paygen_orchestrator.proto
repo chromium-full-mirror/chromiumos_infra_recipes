@@ -30,6 +30,7 @@ message PaygenOrchestratorProperties {
   // The delta types to generate for, empty for all.
   repeated DeltaType delta_types = 4;
 
+  // TODO(crbug.com/1122854): Replace these with the common definition.
   enum Channel {
     CHANNEL_UNKNOWN = 0;
     CANARY = 1;
@@ -41,13 +42,6 @@ message PaygenOrchestratorProperties {
   // The payload channels to generate for, empty requires DeltaType == NO_DELTA.
   repeated Channel channels = 5;
 
-  // Enumeration on whether or not to override the configured defaults.
-  enum PayloadTestsOverride {
-    RESPECT_CONFIG = 0;
-    FORCE_TESTS = 1;
-    FORCE_NO_TESTS = 2;
-  }
-
   // The bucket to look for artifacts in and place results (e.g.
   // chromeos-releases).
   string bucket = 6;
@@ -57,6 +51,13 @@ message PaygenOrchestratorProperties {
 
   // Should we not upload any generated artifacts or make other mutations.
   bool dryrun = 8;
+
+  // Enumeration on whether or not to override the configured defaults.
+  enum PayloadTestsOverride {
+    RESPECT_CONFIG = 0;
+    FORCE_TESTS = 1;
+    FORCE_NO_TESTS = 2;
+  }
 
   // Should we override the configured delta testing policy?
   PayloadTestsOverride delta_payload_test_override = 9;

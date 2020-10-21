@@ -1,0 +1,68 @@
+[
+  {
+    "cmd": [],
+    "name": "discover gs artifacts",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-recovery-R87-13505.15.0-coral.tar.xz@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-test-R87-13505.15.0-coral.tar.xz@@@",
+      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.15.0/chromeos_13505.15.0_coral_recovery_beta_mp-v19.bin@@@",
+      "@@@STEP_LOG_END@images found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://fake-releases/canary-channel/coral/13337.1.0/**"
+    ],
+    "infra_step": true,
+    "name": "discover gs artifacts.gsutil list",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-R87-13505.15.0-coral.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-accessory_rwsig-R87-13505.15.0-coral.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-accessory_usbpd-R87-13505.15.0-coral.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-cr50_firmware-R87-13505.15.0-coral.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-factory-R87-13505.15.0-coral.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-firmware-R87-13505.15.0-coral.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-recovery-R87-13505.15.0-coral.instructions@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-recovery-R87-13505.15.0-coral.instructions.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-recovery-R87-13505.15.0-coral.tar.xz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-test-R87-13505.15.0-coral.tar.xz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/chromeos-hwqual-coral-R87-13505.15.0.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/chromeos_13505.15.0_coral_recovery_beta-channel_mp-v19.bin@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/chromeos_13505.15.0_coral_recovery_beta-channel_mp-v19.bin.br.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/chromeos_13505.15.0_coral_recovery_beta-channel_mp-v19.bin.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/chromeos_13505.15.0_coral_recovery_beta-channel_mp-v19.bin.zip@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/debug-coral.tgz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/full_dev_part_KERN.bin.gz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/full_dev_part_ROOT.bin.gz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.11.0-13505.15.0_coral_beta-channel_delta_mp-v19.bin-gvtdqyzqgizdkb4wzgq5py6znonu7fre.signed@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.11.0-13505.15.0_coral_beta-channel_delta_mp-v19.bin-gvtdqyzqgizdkb4wzgq5py6znonu7fre.signed.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.11.0-13505.15.0_coral_beta-channel_delta_mp-v19.bin-gvtdqyzqgizdkb4wzgq5py6znonu7fre.signed.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.11.0-13505.15.0_coral_beta-channel_delta_test.bin-gvtdqyzqgizdl6n3hvear5f5zdk5ll4b@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.11.0-13505.15.0_coral_beta-channel_delta_test.bin-gvtdqyzqgizdl6n3hvear5f5zdk5ll4b.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.11.0-13505.15.0_coral_beta-channel_delta_test.bin-gvtdqyzqgizdl6n3hvear5f5zdk5ll4b.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0-13505.15.0_coral_beta-channel_delta_test.bin-gvtdqyzqgizdlfmmh22m2damxfgmgopw@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0-13505.15.0_coral_beta-channel_delta_test.bin-gvtdqyzqgizdlfmmh22m2damxfgmgopw.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0-13505.15.0_coral_beta-channel_delta_test.bin-gvtdqyzqgizdlfmmh22m2damxfgmgopw.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0_coral_beta-channel_full_mp-v19.bin-gvtdqyzqgizdknftm7nmcrsm3cszwabt.signed@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0_coral_beta-channel_full_mp-v19.bin-gvtdqyzqgizdknftm7nmcrsm3cszwabt.signed.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0_coral_beta-channel_full_mp-v19.bin-gvtdqyzqgizdknftm7nmcrsm3cszwabt.signed.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0_coral_beta-channel_full_test.bin-gvtdqyzqgizdlohjw66hzs53bjvfeh7o@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0_coral_beta-channel_full_test.bin-gvtdqyzqgizdlohjw66hzs53bjvfeh7o.json@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0_coral_beta-channel_full_test.bin-gvtdqyzqgizdlohjw66hzs53bjvfeh7o.log@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://chromeos-releases/beta-channel/coral/13505.15.0/stateful.tgz@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

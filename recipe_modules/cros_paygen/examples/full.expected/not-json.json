@@ -25,31 +25,9 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/examples/full.py\", line 23, in RunSteps",
-      "    len(api.cros_paygen.get_builder_config(builder_name='arkham')), 1)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 103, in get_builder_config",
-      "    for b in self._config['delta']:",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 39, in _config",
-      "    self._internal_config = json.loads(raw_config)",
-      "  File \"PYTHON/lib/python2.7/json/__init__.py\", in loads",
-      "    return _default_decoder.decode(s)",
-      "  File \"PYTHON/lib/python2.7/json/decoder.py\", in decode",
-      "    obj, end = self.raw_decode(s, idx=_w(s, 0).end())",
-      "  File \"PYTHON/lib/python2.7/json/decoder.py\", in raw_decode",
-      "    raise ValueError(\"No JSON object could be decoded\")",
-      "ValueError: No JSON object could be decoded"
-    ]
-  },
-  {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('No JSON object could be decoded',)"
+      "failure": {},
+      "humanReason": "config json could not be deserialized"
     },
     "name": "$result"
   }

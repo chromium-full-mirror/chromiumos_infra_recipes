@@ -1,0 +1,51 @@
+{
+  "delta": [
+    {
+      "board": {
+        "public_codename": "amenia",
+        "is_active": false,
+        "builder_name": "amenia"
+      },
+      "delta_type": "NO_DELTA",
+      "generate_delta": false,
+      "delta_payload_tests": false,
+      "full_payload_tests": false
+    },
+    {
+      "board": {
+        "public_codename": "coral",
+        "is_active": true,
+        "builder_name": "coral"
+      },
+      "delta_type": "OMAHA",
+      "channel": "beta",
+      "chrome_os_version": "13505.11.0",
+      "chrome_version": "87.0.4280.20",
+      "milestone": 87,
+      "generate_delta": true,
+      "delta_payload_tests": true,
+      "full_payload_tests": true,
+      "applicable_models": [
+        "astronaut"
+      ]
+    },
+    {
+      "board": {
+        "public_codename": "coral",
+        "is_active": true,
+        "builder_name": "coral"
+      },
+      "delta_type": "OMAHA",
+      "channel": "beta",
+      "chrome_os_version": "13505.15.0",
+      "chrome_version": "87.0.4280.24",
+      "milestone": 87,
+      "generate_delta": true,
+      "delta_payload_tests": true,
+      "full_payload_tests": true,
+      "applicable_models": [
+        "astronaut"
+      ]
+    }
+  ]
+}

@@ -25,25 +25,9 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/examples/full.py\", line 23, in RunSteps",
-      "    len(api.cros_paygen.get_builder_config(builder_name='arkham')), 1)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 103, in get_builder_config",
-      "    for b in self._config['delta']:",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_paygen/api.py\", line 43, in _config",
-      "    raise BadPaygenConfig()",
-      "BadPaygenConfig"
-    ]
-  },
-  {
     "failure": {
-      "humanReason": "Uncaught Exception: BadPaygenConfig()"
+      "failure": {},
+      "humanReason": "config json was not formatted correctly"
     },
     "name": "$result"
   }

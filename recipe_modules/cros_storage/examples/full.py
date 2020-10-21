@@ -3,9 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-DEPS = ['recipe_engine/assertions', 'cros_storage']
+DEPS = [
+    'recipe_engine/assertions',
+    'cros_storage',
+]
 
-from PB.chromite.api.payload import Build as Build_pb2, SignedImage as SignedImage_pb2, UnsignedImage as UnsignedImage_pb2
+from PB.chromite.api.payload import Build as Build_pb2
+from PB.chromite.api.payload import SignedImage as SignedImage_pb2
+from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 from PB.chromiumos.common import ImageType
 
 def RunSteps(api):
@@ -30,24 +35,24 @@ def RunSteps(api):
   # Make a round trip from construction back to the uri.
   api.assertions.assertEqual(
       good_unsigned_uri,
-      api.cros_storage.UnsignedImage.ParseUri(good_unsigned_uri).uri)
+      api.cros_storage.UnsignedImage.parse_uri(good_unsigned_uri).uri)
 
   api.assertions.assertEqual(
       good_signed_uri,
-      api.cros_storage.SignedImage.ParseUri(good_signed_uri).uri)
+      api.cros_storage.SignedImage.parse_uri(good_signed_uri).uri)
 
   # Ensure None returns on unmatched input.
   api.assertions.assertIsNone(
-      api.cros_storage.SignedImage.ParseUri(
+      api.cros_storage.SignedImage.parse_uri(
           'gs://nonsense/somestuff/and/others'))
   api.assertions.assertIsNone(
-      api.cros_storage.UnsignedImage.ParseUri('gs://crumbos/nonsense'))
+      api.cros_storage.UnsignedImage.parse_uri('gs://crumbos/nonsense'))
 
   # Ensure close results even return None.
   api.assertions.assertIsNone(
-      api.cros_storage.SignedImage.ParseUri(good_signed_uri[:-1]))
+      api.cros_storage.SignedImage.parse_uri(good_signed_uri[:-1]))
   api.assertions.assertIsNone(
-      api.cros_storage.UnsignedImage.ParseUri(good_unsigned_uri[:-1]))
+      api.cros_storage.UnsignedImage.parse_uri(good_unsigned_uri[:-1]))
 
   with api.assertions.assertRaises(
       api.cros_storage.UnsupportedImageTypeException):

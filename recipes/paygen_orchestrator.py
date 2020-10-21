@@ -5,16 +5,19 @@
 
 """Recipe for orchestrating ChromeOS payloads (AU deltas etc)."""
 
-from google.protobuf import json_format
+from google.protobuf.json_format import MessageToJson
 import itertools
 import json
 from os import path
 import string
 
+from PB.recipes.chromeos.paygen import PaygenProperties
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
-from PB.chromite.api.payload import Build, SignedImage, UnsignedImage
+from PB.chromite.api.payload import Build
+from PB.chromite.api.payload import GenerationRequest
+from PB.chromite.api.payload import SignedImage
+from PB.chromite.api.payload import UnsignedImage
 
-from google.protobuf.json_format import MessageToJson
 from recipe_engine import post_process
 
 DEPS = [
@@ -34,20 +37,20 @@ PROPERTIES = PaygenOrchestratorProperties
 PAYGEN_CHILDREN_TIMEOUT_SEC = 60 * 60 * 6
 
 
-# TODO(engeg@): These are ugly, we should write a cros_channel module to handle.
-def LongChannelName(channel_enum_val):
+# TODO(crbug.com/1122854): These are ugly, we should write a cros_channel module to handle.
+def _long_channel_name(channel_enum_val):
   """Takes the integer enum value and outputs suffix'd string form."""
   return (PaygenOrchestratorProperties.Channel.Name(channel_enum_val).lower() +
           '-channel')
 
 
-def ShortChannelName(channel_enum_val):
+def _short_channel_name(channel_enum_val):
   """Takes the integer enum value and outputs non-suffix'd string form."""
   return PaygenOrchestratorProperties.Channel.Name(channel_enum_val).lower()
 
 
 def RunSteps(api, properties):
-  # Massage properties w.r.t. empty defaults
+  # Set default values for unspecified properties.
   delta_types = properties.delta_types
   delta_types = delta_types or api.cros_paygen.default_delta_types
 
@@ -68,20 +71,21 @@ def RunSteps(api, properties):
     pres.logs['%s configured sources' % len(configured_payloads)] = (
         json.dumps(configured_payloads, indent=2))
 
-  # If no payloads are configured return (that was easy!).
-  if not configured_payloads:
-    with api.step.nest('no configurations matched in payload.json!'):
+    # If no payloads are configured return (that was easy!).
+    if not configured_payloads:
+      pres.step_text = 'no configurations matched in payload.json'
       return
 
+  # Get all the artifacts in the source(s) and target locations.
   target_artifacts, source_artifacts = [], []
   for channel in properties.channels:
-    long_chan_name = LongChannelName(channel)
-    with api.step.nest('examining %s' % long_chan_name) as pres:
+    long_chan_name = _long_channel_name(channel)
+    with api.step.nest('examining %s' % long_chan_name):
 
       # Create Source Image definitions based upon the configuration alone.
       for payload_def in configured_payloads:
-        if payload_def['channel'] == ShortChannelName(channel):
-          src_artifacts = api.cros_storage.DiscoverGSArtifacts(
+        if payload_def['channel'] == _short_channel_name(channel):
+          src_artifacts = api.cros_storage.discover_gs_artifacts(
               path.join('gs://' + properties.bucket, long_chan_name,
                         payload_def['builder_name'],
                         payload_def['chrome_os_version']))
@@ -89,7 +93,7 @@ def RunSteps(api, properties):
             source_artifacts.append(art.to_proto())
 
       # Discover the Images that exist at the remote path.
-      tgt_artifacts = api.cros_storage.DiscoverGSArtifacts(
+      tgt_artifacts = api.cros_storage.discover_gs_artifacts(
           path.join('gs://' + properties.bucket, long_chan_name,
                     properties.builder_name,
                     properties.target_chrome_os_version))
@@ -99,19 +103,19 @@ def RunSteps(api, properties):
 
   # Match configuration with discovered artifacts.
   with api.step.nest('discovered artifacts') as pres:
-    pres.logs['target_artifacts'] = [
-        json_format.MessageToJson(x) for x in target_artifacts
-    ]
-    pres.logs['source_artifacts'] = [
-        json_format.MessageToJson(x) for x in source_artifacts
-    ]
+    pres.logs['target_artifacts'] = [MessageToJson(x) for x in target_artifacts]
+    pres.logs['source_artifacts'] = [MessageToJson(x) for x in source_artifacts]
 
   # Find the src and tgt artifacts applicable for each configured payload
   # and construct the child request. Report missing artifacts.
+  # TODO(crbug.com/1122854): Deal with reporting missing artifacts.
   child_build_requests = []
   with api.step.nest('pairing artifacts') as pres:
     for cfg in configured_payloads:
-      pass
+      gen_request = api.cros_paygen.get_request(cfg, source_artifacts,
+                                                target_artifacts)
+      if gen_request:
+        child_build_requests.append(PaygenProperties(request=gen_request))
 
   # Schedule child builders.
 
@@ -122,24 +126,31 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def get_props(delta_types=['OMAHA'], builder_name='octopus',
-                target_chrome_os_version='12345.0.0', channels=['DEV', 'BETA']):
+  def get_props(delta_types=None, builder_name='coral',
+                target_chrome_os_version='13505.15.0', channels=None):
+    delta_types = delta_types or ['OMAHA']
+    channels = channels or ['DEV', 'BETA']
     props = api.properties(delta_types=delta_types, builder_name=builder_name,
                            target_chrome_os_version=target_chrome_os_version,
                            channels=channels)
     return props
 
-  good_paygen = api.cros_paygen.mock_paygen(
+  good_paygen = api.cros_paygen.test_paygen(
       'discovering payload configuration.get paygen json.gsutil cat',
       api.cros_paygen.EXAMPLE_PAYGEN_JSON)
 
   yield api.test(
       'basic', get_props(), good_paygen,
-      api.cros_storage.normal_test_data(
+      api.cros_storage.test_listing(
           'examining beta-channel.discover gs artifacts.gsutil list'),
-      api.cros_storage.normal_test_data(
-          'examining dev-channel.discover gs artifacts.gsutil list'),
-      api.post_check(post_process.StatusSuccess))
+      api.cros_storage.test_listing(
+          'examining beta-channel.discover gs artifacts (2).gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.discover gs artifacts (3).gsutil list',
+          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'pairing artifacts'))
+  # TODO(crbug.com/1122854): Add more as we finish the recipe.
 
   yield api.test('no-payloads', get_props(builder_name='goobolywhobbly'),
                  good_paygen, api.post_check(post_process.StatusSuccess))

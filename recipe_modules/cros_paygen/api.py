@@ -8,39 +8,38 @@
 import json
 from copy import deepcopy
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
+
+from PB.chromite.api.payload import GenerationRequest
 
 DEFAULT_DELTA_TYPES = [
     'STEPPING_STONE', 'OMAHA', 'NO_DELTA', 'MILESTONE', 'FSI'
 ]
 
-
-class BadPaygenConfig(Exception):
-  """An exception we use if the received config looks invalid."""
-  pass
+PAYGEN_JSON_GS_PATH = 'gs://chromeos-build-release-console/paygen.json'
 
 
 class CrosPaygenApi(recipe_api.RecipeApi):
   """A module for CrOS-specific paygen steps."""
 
-  def __init__(self, properties, *args, **kwargs):
+  def __init__(self, *args, **kwargs):
     super(CrosPaygenApi, self).__init__(*args, **kwargs)
     self._internal_config = None
-
-  @property
-  def _paygen_json_gs_path(self):
-    """The path to the current release config for payload generation."""
-    return 'gs://chromeos-build-release-console/paygen.json'
+    self._paygen_json_gs_path = PAYGEN_JSON_GS_PATH
 
   @property
   def _config(self):
     """Lazily loaded copy of the entire configuration in paygen.json."""
     if not self._internal_config:
       raw_config = self._get_gs_config()
-      self._internal_config = json.loads(raw_config)
+      try:
+        self._internal_config = json.loads(raw_config)
+      except ValueError:
+        raise StepFailure('config json could not be deserialized')
       # Sanity check the configuration.
       if ('delta' not in self._internal_config or
           len(self._internal_config['delta']) == 0):
-        raise BadPaygenConfig()
+        raise StepFailure('config json was not formatted correctly')
     # Returns immutable copy.
     return deepcopy(self._internal_config)
 
@@ -56,10 +55,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
   def _flatten_config(self, board_config):
     """Flatten a board_config so we can query it more easily."""
     new_b = deepcopy(board_config)
+    new_b.update(board_config['board'])
     del new_b['board']
-    new_b['public_codename'] = board_config['board']['public_codename']
-    new_b['is_active'] = board_config['board']['is_active']
-    new_b['builder_name'] = board_config['board']['builder_name']
     return new_b
 
   @property
@@ -72,12 +69,12 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     Note that all comparisons are made _in lower case_!
 
     Args:
-      builder_name (String): The name of the builders to return configuration for.
+      builder_name (str): The name of the builders to return configuration for.
       **kwargs: Match keyword to top level dictionary contents. For example passing
                 delta_payload_tests=true will match only if matched.
 
     Returns:
-     A list of dictionaries of the matching configurations. For example:
+      A list of dictionaries of the matching configurations. For example:
 
       [
        {
@@ -107,3 +104,19 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             [k in b and b[k].lower() == v.lower() for k, v in kwargs.items()]):
           match_boards.append(b)
     return match_boards
+
+  def get_request(self, cfg, src_artifacts, tgt_artifacts):
+    """Look at source and target artifacts and return a GenerationRequest.
+
+    If there isn't a matching source and target available, thn return None.
+
+    Args:
+      cfg (dict): A singular configuration from pulled config.
+      src_artifacts (list[cros_storage.Image]): Available src images.
+      tgt_artifacts (list[cros_storage.Image]): Available tgt images.
+
+    Returns:
+      A completed GenerationRequest or None.
+    """
+    # TODO(crbug/1122854): Impl
+    return GenerationRequest()

@@ -1,0 +1,18 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_paygen.examples;
+
+message TestPaygenProperties {
+  // Builder name to use.
+  string builder_name = 1;
+
+  // Expected result length.
+  int32 expected_length = 2;
+
+  // Delta type requested.
+  string delta_type = 3;
+}

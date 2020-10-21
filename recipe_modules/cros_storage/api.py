@@ -17,7 +17,9 @@ from os import path
 import re
 
 from recipe_engine import recipe_api
-from PB.chromite.api.payload import Build as Build_pb2, SignedImage as SignedImage_pb2, UnsignedImage as UnsignedImage_pb2
+from PB.chromite.api.payload import Build as Build_pb2
+from PB.chromite.api.payload import SignedImage as SignedImage_pb2
+from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 from PB.chromiumos.common import BuildTarget, ImageType
 
 # Number of seconds to wait on gsutil ops.
@@ -62,7 +64,7 @@ class ArtifactRoot():
     return self._bucket
 
   @classmethod
-  def ParseUri(cls, uri):
+  def parse_uri(cls, uri):
     """Construct a ArtifactRoot from the passed uri string."""
     m = re.match(cls._ARTIFACTROOT_URI_EXP, uri)
     if not m:
@@ -164,9 +166,9 @@ class SignedImage(Image):
     )
 
   @classmethod
-  def ParseUri(cls, uri):
+  def parse_uri(cls, uri):
     """Construct a SignedImage from a provided Uri, or return None."""
-    ar = ArtifactRoot.ParseUri(uri)
+    ar = ArtifactRoot.parse_uri(uri)
     if not ar:
       return None
     m = re.search(cls._SIGNED_IMAGE_REGEXP, uri)
@@ -226,9 +228,9 @@ class UnsignedImage(Image):
     )
 
   @classmethod
-  def ParseUri(cls, uri):
+  def parse_uri(cls, uri):
     """Construct an UnsignedImage from a provided Uri, or return None."""
-    ar = ArtifactRoot.ParseUri(uri)
+    ar = ArtifactRoot.parse_uri(uri)
     if not ar:
       return None
     m = re.search(cls._UNSIGNED_IMAGE_REGEXP, uri)
@@ -259,11 +261,11 @@ class CrosStorageApi(recipe_api.RecipeApi):
 
   # This is the list of available URL parsers, used for discovery.
   ParserOptions = [
-      UnsignedImage.ParseUri,
-      SignedImage.ParseUri,
+      UnsignedImage.parse_uri,
+      SignedImage.parse_uri,
   ]
 
-  def DiscoverGSArtifacts(self, prefix_uri):
+  def discover_gs_artifacts(self, prefix_uri):
     """Discover and return all the GS artifacts found in a given ArtifactRoot.
 
     We assume that each uri will match at most a single ParserOption and we
@@ -274,7 +276,7 @@ class CrosStorageApi(recipe_api.RecipeApi):
       prefix_uri (str): The gs path prefix recursively crawled.
 
     Returns:
-      list(Image): A list of images found in the prefix.
+      (list[Image]): A list of images found in the prefix.
     """
     with self.m.step.nest('discover gs artifacts') as presentation:
       recursive_uri = path.join(prefix_uri, '**')

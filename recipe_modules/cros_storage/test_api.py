@@ -3,36 +3,46 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import os
 from recipe_engine import recipe_test_api
+
+
+def _read_test_file(filename):
+  """Read the content of a file in this directory.
+
+  Args:
+    filename (str): The basename of the file (located in this directory) to
+        read.
+
+  Returns:
+    (str): The contents of the file.
+  """
+  with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                         filename)) as f:
+    return f.read().strip()
+
+
+# Test data for valid paygen source (actually configured at one point).
+TEST_SRC_LS_OUTPUT_TEXT = _read_test_file('test_src_ls_output.txt')
+
+# Test data for valid paygen target (actually configured at one point).
+TEST_TGT_LS_OUTPUT_TEXT = _read_test_file('test_tgt_ls_output.txt')
+
+# Test data for paygen target missing all except an unsigned test image.
+TEST_TGT_LS_OUTPUT_MISSING_TEST = """
+gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-test-R87-13505.15.0-coral.tar.xz
+"""
 
 
 class CrosStorageTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the CrosStorage module."""
 
-  TEST_GS_OUTPUT_TEXT = """gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-factory-R85-13310.53.0-arkham.zip
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.instructions
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.instructions.json
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-recovery-R85-13310.53.0-arkham.tar.xz
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/ChromeOS-test-R85-13310.53.0-arkham.tar.xz
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos-hwqual-arkham-R85-13310.53.0.tar.bz2
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.br.zip
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.json
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/chromeos_13310.53.0_arkham_recovery_stable-channel_mp.bin.zip
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/debug-arkham.tgz
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/full_dev_part_KERN.bin.gz
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/full_dev_part_ROOT.bin.gz
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma.json
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0-13310.53.0_arkham_stable-channel_delta_test.bin-gvtdgytbmvstb6dnye7i7geezqntodma.log
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed.json
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_mp.bin-gvtdgytbmvstbos5tz3xd624cm7nksxj.signed.log
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z.json
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/payloads/chromeos_13310.53.0_arkham_stable-channel_full_test.bin-gvtdgytbmvstbenviyn4ccm4l2zoph5z.log
-gs://chromeos-releases/stable-channel/arkham/13310.53.0/stateful.tgz"""
+  TEST_SRC_LS_OUTPUT_TEXT = TEST_SRC_LS_OUTPUT_TEXT
+  TEST_TGT_LS_OUTPUT_TEXT = TEST_TGT_LS_OUTPUT_TEXT
+  TEST_TGT_LS_OUTPUT_MISSING_TEST = TEST_TGT_LS_OUTPUT_MISSING_TEST
 
-  def normal_test_data(self, step_name='discover gs artifacts.gsutil list'):
-    return self.step_data(
-        step_name, stdout=self.m.raw_io.output_text(self.TEST_GS_OUTPUT_TEXT))
+  def test_listing(self, step_name='discover gs artifacts.gsutil list',
+                   test_data=TEST_SRC_LS_OUTPUT_TEXT):
+    """Returns a string of google storage ls test data."""
+    return self.step_data(step_name,
+                          stdout=self.m.raw_io.output_text(test_data))
