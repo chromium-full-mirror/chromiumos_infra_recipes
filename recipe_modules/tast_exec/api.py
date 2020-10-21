@@ -132,8 +132,8 @@ class TastExecApi(RecipeApi):
                   test_artifacts_dir, private_key_path, tag):
     with self.m.step.nest('%s tast iteration' % tag):
       test_results_dir = self.m.path.mkdtemp(prefix='test-results')
-      tests = self.run_direct(expressions, expressions, qcow_image_path,
-                              test_artifacts_dir, private_key_path)
+      tests = self.run_direct(expressions, qcow_image_path, test_artifacts_dir,
+                              private_key_path, test_results_dir)
       return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
                                              tests)
 
