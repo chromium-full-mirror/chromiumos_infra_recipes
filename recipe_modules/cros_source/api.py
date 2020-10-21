@@ -26,7 +26,7 @@ STAGING_INIT_OPTS = dict(repo_branch='master')
 
 # Default options for checking out a branch.
 DEFAULT_CHECKOUT_SYNC_OPTS = dict(jobs=8, optimized_fetch=True, timeout=3600,
-                                  retry_fetches=8)
+                                  force_sync=True, retry_fetches=8)
 
 
 class CrosSourceApi(RecipeApi):
@@ -475,7 +475,7 @@ class CrosSourceApi(RecipeApi):
       init_opts = dict(manifest_branch=branch)
       sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, manifest_name=default_file,
                        current_branch=False, no_tags=False, retry_fetches=2,
-                       detach=False, force_sync=False, no_manifest_update=True)
+                       detach=False, force_sync=True, no_manifest_update=True)
       # This sync finally uses the patched manifest to fetch the tree.
       # Do a full sync here.
       self.m.repo.ensure_synced_checkout(self.workspace_path,

@@ -840,6 +840,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
+      "--force-sync",
       "--jobs",
       "8",
       "--optimized-fetch",
@@ -1377,6 +1378,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
+      "--force-sync",
       "--jobs",
       "8",
       "--manifest-name",
