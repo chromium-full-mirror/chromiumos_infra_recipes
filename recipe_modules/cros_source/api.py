@@ -222,10 +222,8 @@ class CrosSourceApi(RecipeApi):
       my_sync_opts.update(sync_opts or {})
       self.m.repo.sync(**my_sync_opts)
       self._manifest_branch = manifest_branch
-      self._is_source_dirty = True
-      # Record the pinned version of the snapshot.
-      manifest_xml = self.m.repo.manifest_snapshot()
-      pres.logs['pinned-manifest.xml'] = manifest_xml.splitlines()
+      # The source is not dirty, we're just on a different branch.
+      self.m.repo.ensure_pinned_manifest(projects=my_sync_opts.get('projects'))
 
   def fetch_snapshot_shas(self, count=7 * 24 * 2):
     """Return snapshot SHAs for the manifest.
@@ -646,6 +644,7 @@ class CrosSourceApi(RecipeApi):
       self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
                                 detach=True, optimized_fetch=True,
                                 retry_fetches=8)
+      self.m.repo.ensure_pinned_manifest(test_data='')
 
   def _get_snapshot(self, gitiles_commit):
     """Returns the snapshot to use.

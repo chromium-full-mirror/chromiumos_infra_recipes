@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/context',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'cros_source',
     'src_state',
 ]
@@ -33,8 +34,28 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
+  # Checking out an unpinned branch.
   branch = 'release-R86-13421.B'
   yield api.cros_source.test(
       'basic', api.properties(CheckoutBranchProperties(branch_name=branch)),
       api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.MustRun,
+          'checkout branch %s.ensure manifest is pinned.repo manifest' %
+          branch),
       api.post_check(post_process.MustRun, 'checkout branch %s' % branch))
+
+  # Checking out the pinned branch.
+  staging = 'staging-snapshot'
+  yield api.cros_source.test(
+      'staging-snapshot',
+      api.properties(CheckoutBranchProperties(branch_name=staging)),
+      api.step_data(
+          'checkout branch %s.ensure manifest is pinned.repo forall' % staging,
+          stdout=api.raw_io.output('')),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.DoesNotRun,
+          'checkout branch %s.ensure manifest is pinned.repo manifest' %
+          staging),
+      api.post_check(post_process.MustRun, 'checkout branch %s' % staging))

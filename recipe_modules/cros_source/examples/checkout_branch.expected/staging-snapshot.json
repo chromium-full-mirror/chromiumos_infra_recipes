@@ -412,7 +412,7 @@
   },
   {
     "cmd": [],
-    "name": "checkout branch release-R86-13421.B"
+    "name": "checkout branch staging-snapshot"
   },
   {
     "cmd": [
@@ -423,11 +423,11 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "release-R86-13421.B"
+      "staging-snapshot"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "checkout branch release-R86-13421.B.repo init",
+    "name": "checkout branch staging-snapshot.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -446,7 +446,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "checkout branch release-R86-13421.B.clear repo locks",
+    "name": "checkout branch staging-snapshot.clear repo locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -470,7 +470,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "checkout branch release-R86-13421.B.clear git locks",
+    "name": "checkout branch staging-snapshot.clear git locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -488,7 +488,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "checkout branch release-R86-13421.B.repo sync",
+    "name": "checkout branch staging-snapshot.repo sync",
     "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -496,11 +496,9 @@
   },
   {
     "cmd": [],
-    "name": "checkout branch release-R86-13421.B.ensure manifest is pinned",
+    "name": "checkout branch staging-snapshot.ensure manifest is pinned",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@pinned-manifest.xml@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -512,27 +510,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "checkout branch release-R86-13421.B.ensure manifest is pinned.repo forall",
+    "name": "checkout branch staging-snapshot.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "manifest",
-      "-r"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "checkout branch release-R86-13421.B.ensure manifest is pinned.repo manifest",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

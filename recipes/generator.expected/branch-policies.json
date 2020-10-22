@@ -477,9 +477,7 @@
     "cmd": [],
     "name": "determine branch.checkout branch release-R79-*.B",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@pinned-manifest.xml@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -563,6 +561,33 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "determine branch.checkout branch release-R79-*.B.ensure manifest is pinned",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@pinned-manifest.xml@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "determine branch.checkout branch release-R79-*.B.ensure manifest is pinned.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "manifest",
@@ -570,9 +595,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "determine branch.checkout branch release-R79-*.B.repo manifest",
+    "name": "determine branch.checkout branch release-R79-*.B.ensure manifest is pinned.repo manifest",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
