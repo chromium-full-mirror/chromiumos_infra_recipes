@@ -33,7 +33,7 @@ def RunSteps(api, properties):
   ]
 
   # This will set up api.src_state properties for us.
-  api.cros_infra_config.configure_builder()
+  api.cros_infra_config.configure_builder(api.src_state.gitiles_commit)
 
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path):
@@ -72,14 +72,16 @@ def RunSteps(api, properties):
           if branch.startswith('refs/heads/') else branch)
       # Test cros branch on the listed projects, but only on the checked out
       # branch.
-      if (branch == api.cros_source.manifest_branch and
+      manifest_branch = (
+          api.cros_source.manifest_branch or
+          api.src_state.internal_manifest.branch)
+      if (branch == manifest_branch and
+          project_info.name in test_branch_projects and
           api.path.exists(manifest_path)):
-        if project_info.name in test_branch_projects:
-          # Test branching with cros_branch.  See go/cros-branch.
-          api.cros_branch.create_from_file(
-              manifest_path, Branch(type=Branch.CUSTOM, name='test-manifest'),
-              step_name='test branch_util for %s' % project_info.name,
-              push=False)
+        # Test branching with cros_branch.  See go/cros-branch.
+        api.cros_branch.create_from_file(
+            manifest_path, Branch(type=Branch.CUSTOM, name='test-manifest'),
+            step_name='test branch_util for %s' % project_info.name, push=False)
 
 
 def GenTests(api):

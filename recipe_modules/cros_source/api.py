@@ -40,6 +40,8 @@ class CrosSourceApi(RecipeApi):
     self._is_source_dirty = bool(self._snapshot_isolate)
     self._enable_custom_overlays = properties.enable_custom_overlays
     self._make_manifest_changes_active = properties.make_manifest_changes_active
+    # The currently active branch of the manifest.  Empty unless we switched
+    # branches.
     self._manifest_branch = ''
     self._applied_patches = defaultdict(list)
 
@@ -54,8 +56,8 @@ class CrosSourceApi(RecipeApi):
 
   @property
   def manifest_branch(self):
-    """Returns the branch of the manifest that is checked out."""
-    return self._manifest_branch or self.m.src_state.build_manifest.branch
+    """Returns any non-default manifest branch that is checked out."""
+    return self._manifest_branch
 
   @property
   def is_source_dirty(self):
@@ -376,7 +378,8 @@ class CrosSourceApi(RecipeApi):
 
       # Now we know what branch we need to be on, and we need the manifest
       # repo(s) to be on that branch so that the CLs will apply.
-      self.checkout_branch(manifests.build.url, branch)
+      self.checkout_branch(manifests.build.url, branch,
+                           sync_opts=dict(current_branch=True, detach=True))
 
       _changes_full_xml = lambda p: any('full.xml' in x.file_infos for x in p)
 
@@ -439,9 +442,13 @@ class CrosSourceApi(RecipeApi):
 
       with self.m.context(
           cwd=manifests.build.path), self.m.step.nest('push manifest'):
-        # 1. Do not update the gitiles commit, as path relevancy will try to
+        # 1. Remember head for both the build and external manifests, which may
+        # be the same.
+        # Do not update the gitiles commit, as path relevancy will try to
         # fetch this over the network.
         head = self.m.git.head_commit()
+        with self.m.context(cwd=manifests.extern.path):
+          e_head = self.m.git.head_commit()
 
         # 2. Create a clone of the manifest.
         # Force the the branch reference to point to HEAD.  We are likely
@@ -450,8 +457,8 @@ class CrosSourceApi(RecipeApi):
         self.m.step('reset {}'.format(branch), ['git', 'reset', '--hard', head])
 
         # Create the clone.
-        new_manifest = self.m.path.mkdtemp('repo-overwrite-')
-        self.m.step('clone', ['git', 'clone', '--bare', '.', new_manifest])
+        new_dir = self.m.path.mkdtemp('repo-overwrite-')
+        self.m.step('clone', ['git', 'clone', '--bare', '.', new_dir])
 
         # Determine the correct name for the remote.
         step_test_data = lambda: self.m.raw_io.test_api.output(
@@ -463,27 +470,42 @@ class CrosSourceApi(RecipeApi):
         # Now push the manifest repo, and make the branches look as they
         # should for this to be build_manifest.url.
         self.m.step('push', [
-            'git', 'push', new_manifest,
+            'git', 'push', new_dir,
             '+refs/remotes/{}/*:refs/heads/*'.format(remote),
             '+refs/heads/{}:refs/heads/{}'.format(branch, branch)
         ])
 
       # 3. Switch to the newly cloned mirror.  Tip-of-tree for for the original
       #    branch is the patched version of the |gitiles_commit| manifest.
-      init_opts = dict(manifest_branch=branch)
+      # This will finally use the patched manifest to fetch the tree.  Since
+      # source repos may have changed, etc, we need to use force_sync=True.
+      #
+      # This also means that the build manifest directory will be reset to the
+      # unpatched version, which we will fix momentarily.
+      init_opts = dict(manifest_branch=branch, manifest_name=default_file)
       sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, manifest_name=default_file,
-                       current_branch=False, no_tags=False, retry_fetches=2,
+                       current_branch=True, no_tags=False, retry_fetches=2,
                        detach=False, force_sync=True, no_manifest_update=True)
-      # This sync finally uses the patched manifest to fetch the tree.
-      # Do a full sync here.
       self.m.repo.ensure_synced_checkout(self.workspace_path,
-                                         'file://%s' % new_manifest,
-                                         init_opts=init_opts,
-                                         sync_opts=sync_opts)
+                                         'file://%s' % new_dir,
+                                         init_opts=dict(init_opts),
+                                         sync_opts=dict(sync_opts))
 
-      # 4. Log a pinned version of the patched manifest.
-      xml_data = self.m.repo.manifest_snapshot(manifest_file=default_file)
-      pres.logs['patched-manifest.xml'] = xml_data.splitlines()
+      # 4. Move the manifest directory (or both) back to the correct position.
+      with self.m.step.nest('restore manifest patches'):
+        with self.m.context(cwd=manifests.build.path):
+          self.m.step('branch {}'.format(branch), ['git', 'checkout', branch])
+          self.m.step('reset {}'.format(branch),
+                      ['git', 'reset', '--hard', head])
+        if manifests.build.path != manifests.extern.path:
+          with self.m.context(cwd=manifests.extern.path):
+            self.m.step('branch {}'.format(branch), ['git', 'checkout', branch])
+            self.m.step('reset {}'.format(branch),
+                        ['git', 'reset', '--hard', e_head])
+
+      # 5. Log a pinned version of the patched manifest.
+      final = self.m.repo.manifest_snapshot()
+      pres.logs['patched-manifest.xml'] = [final]
 
   def _partition_patches(self, patch_sets):
     """Partition the manifest patches.

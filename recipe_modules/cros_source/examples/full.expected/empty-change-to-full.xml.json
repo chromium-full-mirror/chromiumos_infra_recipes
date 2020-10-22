@@ -861,6 +861,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--force-sync",
+      "--detach",
+      "--current-branch",
       "--jobs",
       "8",
       "--optimized-fetch",
@@ -1163,6 +1165,19 @@
   {
     "cmd": [
       "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "patch manifest.push manifest.git rev-parse (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
       "master"
     ],
@@ -1292,7 +1307,9 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "master"
+      "master",
+      "--manifest-name",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/default.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1420,6 +1437,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--force-sync",
+      "--current-branch",
       "--jobs",
       "8",
       "--manifest-name",
@@ -1438,12 +1456,67 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "patch manifest.restore manifest patches",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "master"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "name": "patch manifest.restore manifest patches.branch master",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "reset",
+      "--hard",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "name": "patch manifest.restore manifest patches.reset master",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "master"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "patch manifest.restore manifest patches.branch master (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "reset",
+      "--hard",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "patch manifest.restore manifest patches.reset master (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "manifest",
-      "-r",
-      "-m",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/default.xml"
+      "-r"
     ],
     "infra_step": true,
     "name": "patch manifest.repo manifest",

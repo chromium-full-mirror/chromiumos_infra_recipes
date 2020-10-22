@@ -25,7 +25,7 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache()
-      api.assertions.assertEqual(api.cros_source.manifest_branch, 'master')
+      api.assertions.assertEqual(api.cros_source.manifest_branch, '')
       api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
                                       properties.branch_name)
       api.assertions.assertEqual(api.cros_source.manifest_branch,
