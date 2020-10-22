@@ -4587,19 +4587,29 @@ Provides immutable information about the Chrome OS external manifest.
 Returns:
   (ManifestProject): information about the external manifest.
 
-&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#147)(self, gerrit_changes):**
+&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#162)(self, gerrit_changes):**
 
 Set the gerrit_changes that will be used for the build.
 
 Args:
   gerrit_changes (list[GerritChanges]): The gerrit_changes.
 
-&emsp; **@gitiles_commit.setter**<br>&mdash; **def [gitiles\_commit](/recipe_modules/src_state/api.py#119)(self, gitiles_commit):**
+&emsp; **@gitiles_commit.setter**<br>&mdash; **def [gitiles\_commit](/recipe_modules/src_state/api.py#134)(self, gitiles_commit):**
 
 Set the gitiles_commit that will be used for the build.
 
 Args:
   gitiles_commit (GitilesCommit): The value to use.
+
+&mdash; **def [gitiles\_commit\_to\_manifest](/recipe_modules/src_state/api.py#106)(self, gitiles_commit):**
+
+Return the manifest corresponding to the gitiles_commit.
+
+Args:
+  gitiles_commit (GitilesCommit): The gitiles_commit.
+
+Returns:
+  (ManifestProject): Information about the corresponding manifest, or None.
 
 &mdash; **def [initialize](/recipe_modules/src_state/api.py#37)(self):**
 

@@ -28,6 +28,7 @@ class ManifestProject(object):
   Attributes:
     host (str): The gitiles host (e.g., 'chromium.googlesource.com')
     gerrit_host (str): The gerrit host.
+    remote (str): The name of the git remote used by repo for this project.
     project (str): The project name.
     ref (str): The revision, typically 'refs/heads/master', may be a SHA.
     relpath (str): The location of the source tree, relative to the
@@ -41,6 +42,8 @@ class ManifestProject(object):
   def __init__(self, host, project, relpath, workspace_path, ref=None,
                gerrit_host=None):
     self.host = host
+    self.remote = ('cros'
+                   if host == 'chromium.googlesource.com' else 'cros-internal')
     self.project = project
     self.relpath = relpath
     gerrit_host = gerrit_host or host.replace('.', '-review.')
@@ -64,10 +67,10 @@ class ManifestProject(object):
     """Return whether |change| applies to this manifest.
 
     Args:
-      change (GerritChange or PatchSet): the GerritChange or PatchSet to check.
+      change (GerritChange, PatchSet, or GitilesCommit): the object to check.
 
     Returns:
-      (bool) whether the change is to this manifest.
+      (bool) whether the object is for this manifest.
     """
     change_host = change.host.replace('-review', '')
     return (change_host, change.project) == (self.host, self.project)

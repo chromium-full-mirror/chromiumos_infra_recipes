@@ -103,6 +103,21 @@ class SrcStateApi(recipe_api.RecipeApi):
       with self.m.step.nest('update src_state.build_manifest'):
         self._build_manifest = build_manifest
 
+  def gitiles_commit_to_manifest(self, gitiles_commit):
+    """Return the manifest corresponding to the gitiles_commit.
+
+    Args:
+      gitiles_commit (GitilesCommit): The gitiles_commit.
+
+    Returns:
+      (ManifestProject): Information about the corresponding manifest, or None.
+    """
+    for manifest in (self.build_manifest, self.external_manifest,
+                     self.internal_manifest):
+      if gitiles_commit in manifest:
+        return manifest
+    return None
+
   @property
   def gitiles_commit(self):
     """Return the gitiles_commit for this build.
