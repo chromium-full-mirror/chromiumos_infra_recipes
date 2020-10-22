@@ -18,6 +18,9 @@ message ProjectInfo {
 
   // Project branch.
   string branch = 4;
+
+  // Project remote revision.
+  string rrev = 5;
 }
 
 message ProjectInfosProperties {

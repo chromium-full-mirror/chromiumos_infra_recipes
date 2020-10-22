@@ -10,6 +10,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 from collections import namedtuple
 import os
+import re
 import types
 
 from recipe_engine import recipe_api
@@ -24,7 +25,8 @@ MANIFEST_MOCK = """
 ManifestDiff = namedtuple('ManifestDiff',
                           ['name', 'path', 'from_rev', 'to_rev'])
 
-ProjectInfo = namedtuple('ProjectInfo', ['name', 'path', 'remote', 'branch'])
+ProjectInfo = namedtuple('ProjectInfo',
+                         ['name', 'path', 'remote', 'branch', 'rrev'])
 
 LocalManifest = namedtuple('LocalManifest', ['repo', 'path'])
 
@@ -277,7 +279,7 @@ class RepoApi(recipe_api.RecipeApi):
       cmd.append('--all')
     self._step(cmd)
 
-  def project_infos(self, projects=None, regexes=None):
+  def project_infos(self, projects=None, regexes=None, test_data=None):
     """Uses 'repo forall' to gather project information.
 
     Note that if both projects and regexes are specified the resultant
@@ -289,6 +291,8 @@ class RepoApi(recipe_api.RecipeApi):
         to all projects.
       regexes (List[str]): list of regexes for matching projects. The matching
         is the same as in `repo forall --regex regexes...`.
+      test_data (str): Test data for the step: the output from repo forall, or
+          None for the default.
 
     Returns:
       List[ProjectInfo]: Requested project infos.
@@ -296,10 +300,11 @@ class RepoApi(recipe_api.RecipeApi):
     projects = projects or []
     regexes = regexes or []
 
-    def step_test_data():
-      data = '\n'.join('%s|src/%s|cros|refs/heads/master|refs/heads/master' %
-                       (p, p) for p in projects or self.test_api.test_projects)
-      return self.m.raw_io.test_api.stream_output(data)
+    test_data = '\n'.join(
+        '%s|src/%s|cros|refs/heads/master|refs/heads/master' % (p, p)
+        for p in projects or
+        self.test_api.test_projects) if test_data is None else test_data
+    step_test_data = lambda: self.m.raw_io.test_api.stream_output(test_data)
 
     cmd = ['forall'] + projects
     if regexes:
@@ -328,7 +333,7 @@ class RepoApi(recipe_api.RecipeApi):
       elif rrev.startswith('refs/heads/'):
         branch = rrev
 
-      infos.append(ProjectInfo(name, path, remote, branch))
+      infos.append(ProjectInfo(name, path, remote, branch, rrev))
     return infos
 
   def project_info(self, project):
@@ -343,6 +348,33 @@ class RepoApi(recipe_api.RecipeApi):
     project_infos = self.project_infos(projects=[project])
     assert len(set(project_infos)) == 1, 'expected one project'
     return project_infos[0]
+
+  def ensure_pinned_manifest(self, projects=None, regexes=None, test_data=None,
+                             step_name=None):
+    """Ensure that we know the revision info for all projects.
+
+    If the manifest is not pinned, a pinned manifest is created and logged.
+
+    Args:
+      projects (List[str]): Project names or paths to return info for. Defaults
+        to all projects.
+      regexes (List[str]): list of regexes for matching projects. The matching
+        is the same as in `repo forall --regex regexes...`.
+      test_data (str): Test data for the step: the output from repo forall, or
+          None for the default.  This is passed to project_infos().
+
+    Returns:
+      (str): The manifest XML as a string, or None if the manifest is already
+      pinned.
+    """
+    with self.m.step.nest(step_name or 'ensure manifest is pinned') as pres:
+      infos = self.project_infos(projects=projects, regexes=regexes,
+                                 test_data=test_data)
+      if not all(re.match(r'[0-9a-fA-F]{40}$', x.rrev) for x in infos):
+        manifest = self.manifest_snapshot()
+        pres.logs['pinned-manifest.xml'] = [manifest]
+        return manifest
+      return None
 
   def manifest_snapshot(self, manifest_file=None, test_data=None,
                         step_name=None):

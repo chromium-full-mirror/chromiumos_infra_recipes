@@ -15,6 +15,45 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "ensure manifest is pinned",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@pinned-manifest.xml@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "infra_step": true,
+    "name": "ensure manifest is pinned.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "infra_step": true,
+    "name": "ensure manifest is pinned.repo manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

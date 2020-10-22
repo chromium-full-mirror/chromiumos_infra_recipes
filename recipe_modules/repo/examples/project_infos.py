@@ -32,16 +32,21 @@ def RunSteps(api, properties):
   if not properties.expected_infos:
     expected = [
         api.repo.ProjectInfo(name=x, path='src/{}'.format(x), remote='cros',
-                             branch='refs/heads/master')
+                             branch='refs/heads/master',
+                             rrev='refs/heads/master')
         for x in api.repo.test_api.test_projects
     ]
   else:
     expected = [
-        api.repo.ProjectInfo(x.name, x.path, x.remote, x.branch)
+        api.repo.ProjectInfo(x.name, x.path, x.remote, x.branch, x.rrev)
         for x in properties.expected_infos
     ]
 
   api.assertions.assertEqual(expected, infos)
+
+  api.assertions.assertEqual(
+      any(x.branch == x.rrev for x in expected),
+      bool(api.repo.ensure_pinned_manifest()))
 
 
 def GenTests(api):
@@ -53,7 +58,23 @@ def GenTests(api):
           ProjectInfosProperties(
               projects=['galaxy'], expected_infos=[
                   ProjectInfo(name='galaxy', path='src/galaxy', remote='cros',
-                              branch='refs/heads/master')
+                              branch='refs/heads/master',
+                              rrev='refs/heads/master')
+              ])))
+
+  test_hash = '0123456789ABCDEFabcdef555555555555555555'
+  with_hash = 'galaxy|src/galaxy|cros|%s|refs/heads/master' % test_hash
+
+  yield api.test(
+      'snapshot',
+      api.step_data('repo forall', stdout=api.raw_io.output(with_hash)),
+      api.step_data('ensure manifest is pinned.repo forall',
+                    stdout=api.raw_io.output(with_hash)),
+      api.properties(
+          ProjectInfosProperties(
+              projects=['galaxy'], expected_infos=[
+                  ProjectInfo(name='galaxy', path='src/galaxy', remote='cros',
+                              branch='refs/heads/master', rrev=test_hash),
               ])))
 
   yield api.test(
@@ -62,9 +83,11 @@ def GenTests(api):
           ProjectInfosProperties(
               projects=['galaxy', 'other'], expected_infos=[
                   ProjectInfo(name='galaxy', path='src/galaxy', remote='cros',
-                              branch='refs/heads/master'),
+                              branch='refs/heads/master',
+                              rrev='refs/heads/master'),
                   ProjectInfo(name='other', path='src/other', remote='cros',
-                              branch='refs/heads/master')
+                              branch='refs/heads/master',
+                              rrev='refs/heads/master')
               ])))
 
   yield api.test(
@@ -77,5 +100,8 @@ def GenTests(api):
                                  for p in api.repo.test_projects)
   yield api.test(
       'no-upstream-attribute',
+      api.step_data('ensure manifest is pinned.repo forall',
+                    stdout=api.raw_io.output(missing_refs_heads)),
       api.step_data('repo forall',
-                    stdout=api.raw_io.output(missing_refs_heads)))
+                    stdout=api.raw_io.output(missing_refs_heads)),
+  )
