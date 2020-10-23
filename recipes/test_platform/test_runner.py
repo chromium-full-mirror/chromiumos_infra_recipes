@@ -268,7 +268,6 @@ def summarize_results(api, prejob_response, run_test_response, result):
     * run_test_response: phosphorus.runtest.RunTestResponse instance.
     * result: skylab_test_runner.Result instance.
   """
-  # TODO Iterate over each result in result.autotest_results
   with api.step.nest('test results') as step:
     if result.log_data.stainless_url:
       step.links['Autotest logs'] = result.log_data.stainless_url
@@ -281,18 +280,19 @@ def summarize_results(api, prejob_response, run_test_response, result):
           step.presentation.status = api.step.FAILURE
         if prejob.human_readable_summary:
           step.presentation.logs['summary'] = prejob.human_readable_summary
-    for tc in result.autotest_result.test_cases:
-      with api.step.nest(tc.name) as step:
-        if tc.verdict != Result.Autotest.TestCase.VERDICT_PASS:
+    for ar in result.autotest_results.values():
+      for tc in ar.test_cases:
+        with api.step.nest(tc.name) as step:
+          if tc.verdict != Result.Autotest.TestCase.VERDICT_PASS:
+            step.presentation.status = api.step.FAILURE
+          if tc.human_readable_summary:
+            step.presentation.logs['summary'] = tc.human_readable_summary
+      if result.autotest_result.incomplete:
+        with api.step.nest("autoserv") as step:
           step.presentation.status = api.step.FAILURE
-        if tc.human_readable_summary:
-          step.presentation.logs['summary'] = tc.human_readable_summary
-    if result.autotest_result.incomplete:
-      with api.step.nest("autoserv") as step:
-        step.presentation.status = api.step.FAILURE
-        step.presentation.logs['summary'] = (
-            "autoserv crashed. The test list "
-            "is likely incomplete. Consult autoserv.ERROR for more details.")
+          step.presentation.logs['summary'] = (
+              "autoserv crashed. The test list "
+              "is likely incomplete. Consult autoserv.ERROR for more details.")
     if (_result_contains_no_failures(result) and
         _prejob_failed(prejob_response)):
       with api.step.nest('prejob execution') as step:
@@ -318,11 +318,17 @@ def _result_contains_failures(result):
   verdicts = [
       p.verdict != Result.Prejob.Step.VERDICT_PASS for p in result.prejob.step
   ]
-  verdicts += [
-      t.verdict != Result.Autotest.TestCase.VERDICT_PASS
-      for t in result.autotest_result.test_cases
-  ]
-  return any(verdicts) or result.autotest_result.incomplete
+
+  incomplete = []
+
+  for test_result in result.autotest_results.values():
+    if test_result.incomplete:
+      incomplete.append(test_result)
+    for t in test_result.test_cases:
+      if t.verdict != Result.Autotest.TestCase.VERDICT_PASS:
+        verdicts.append(t)
+
+  return any(verdicts) or result.autotest_result.incomplete or any(incomplete)
 
 
 def set_output_properties(api, result=None):
@@ -495,6 +501,7 @@ def execution_steps(api, properties, envvars):
     max_duration_sec = (
         properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
     result = None
+    autotest_results = {}
     test = properties.request.test
     try:
       # prejob and test failures are detected when parsing results.
@@ -511,7 +518,9 @@ def execution_steps(api, properties, envvars):
             dut_hostname=dut_hostname, test=test)
       result = get_results(api, load_response.results_dir)
       result.async_results.CopyFrom(load_response.async_results)
-      if _should_upload_to_gs(properties, result, test):
+      if result.HasField('autotest_result'):
+        autotest_results["single_test_key"] = result.autotest_result
+      if _should_upload_to_gs(result, test):
         upload_to_gs_response = upload_sync_results(
             api, config=phosphorus_config,
             output_config=properties.config.output)
@@ -527,6 +536,8 @@ def execution_steps(api, properties, envvars):
           gs_root=properties.config.output.log_data_gs_root,
           result=result,
       )
+      for test_id, test_result in autotest_results.items():
+        result.autotest_results[test_id].CopyFrom(test_result)
       with api.step.nest('save local DUT state'):
         state_store.save_and_seal(api, dut_state)
       publish_to_result_flow(api, properties.config, properties.request,
@@ -560,19 +571,20 @@ def run_test_specific_steps(api, phosphorus_config, properties, dut_hostname,
   return run_test_response
 
 
-def _should_upload_to_gs(properties, result, test):
+def _should_upload_to_gs(result, test, test_id=''):
   """Decide whether to perform the upload to GS.
 
   Skip offload when it's disabled by policy or the test exited abnormally.
 
   Args:
-  * properties: TestRunnerProperties instance.
   * result: test_runner.Result instance.
-  * skylab_test_runner.Request.Test instance.
+  * test: skylab_test_runner.Request.Test instance.
+  * test_id: UUID for test.
 
   Returns: bool.
   """
   return (test.offload.synchronous_gs_enable and
+          not result.autotest_results[test_id].incomplete and
           not result.autotest_result.incomplete)
 
 

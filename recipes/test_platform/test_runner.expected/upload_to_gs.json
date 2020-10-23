@@ -647,7 +647,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyNjjEOwjAMRcWaBalsPQADkHpnZunG0hk1waQVSVzFCYiNo5OkF2Cznv9/+kK2R8NnAJX0EyM8\\niECNAYahvwB/vJ4CeUp846Tuc2i/G3Gq+fJwSCwjcpSWDIMm58hL9K+1XmBznWJcSoHjOHuLzJ2m\\nsHSGyFjMtwMV6M34r/GwF7vizMo8tuZkCrbZ1lkFreAHyFxM0w==\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyVjzEPgjAQhTFx6kJSN36Ag1qaMDo5uLi5MBOKtRDaHum1GjZ/ui38Ad0u79777h1hxVHhmXMR\\nulF6/gTgonW8rm9XjrPtegcWAjYYxGNwxWdDTos/LYwEZF6iZxoU8g6MAcukfa3xJNJ77/2UAujb\\nwWqJWHbgplIBKC3jbLhw8Eb5K/GwJ7vEjMhYdvGx4DTNl1pJWoVqSzKaVReS42DjqSZhm1HO9L+X\\nv2ClZIw=\\n\"@@@"
     ]
   },
   {
@@ -665,6 +665,12 @@
       "@@@STEP_LOG_LINE@JSON output@  \"asyncResults\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"logsUrl\": \"http://foo-logs-url\", @@@",
       "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://foo-gs-url\"@@@",
+      "@@@STEP_LOG_LINE@JSON output@  }, @@@",
+      "@@@STEP_LOG_LINE@JSON output@  \"autotestResults\": {@@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"\": {}, @@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"single_test_key\": {@@@",
+      "@@@STEP_LOG_LINE@JSON output@      \"synchronousLogDataUrl\": \"gs://bucket/foo/bar/UUID/synchronous_subdir\"@@@",
+      "@@@STEP_LOG_LINE@JSON output@    }@@@",
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",
