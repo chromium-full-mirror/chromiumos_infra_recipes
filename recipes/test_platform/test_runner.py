@@ -45,17 +45,17 @@ PROPERTIES = TestRunnerProperties
 ENV_PROPERTIES = TestRunnerEnvProperties
 
 
-def validate_request(api, properties):
+def validate_request(api, test):
   """Validate the TestRunnerProperties.
 
   Args:
-    * properties: TestRunnerProperties instance.
+    * test: skylab_test_runner.Request.Test instance.
 
   Raises:
     * ValueError if there are invalid properties.
   """
   with api.step.nest('validate request'):
-    if not properties.request.test.autotest.name:
+    if not test.autotest.name:
       raise ValueError("Test name must be specified")
 
 
@@ -96,7 +96,7 @@ def prejob(api, config=None, request=None, dut_hostname='', load_response=None,
 
 
 def run_test(api, config=None, request=None, output_config=None,
-             dut_hostname=''):
+             dut_hostname='', test=None):
   """Run a test against the DUT via `autoserv`.
 
   Args:
@@ -104,6 +104,7 @@ def run_test(api, config=None, request=None, output_config=None,
     * request: skylab_test_runner.Request instance.
     * output_config: skylab_test_runner.Config.Output instance.
     * dut_hostname: DUT hostname string.
+    * test: skylab_test_runner.Request.Test instance.
 
   Returns:
     * phosphorus.runtest.RunTestResponse
@@ -117,11 +118,11 @@ def run_test(api, config=None, request=None, output_config=None,
         config=config,
         dut_hostnames=[dut_hostname],
         autotest=phosphorus.runtest.RunTestRequest.Autotest(
-            name=request.test.autotest.name,
-            test_args=request.test.autotest.test_args,
-            display_name=request.test.autotest.display_name,
-            keyvals=request.test.autotest.keyvals,
-            is_client_test=request.test.autotest.is_client_test,
+            name=test.autotest.name,
+            test_args=test.autotest.test_args,
+            display_name=test.autotest.display_name,
+            keyvals=test.autotest.keyvals,
+            is_client_test=test.autotest.is_client_test,
         ),
         environment=phosphorus.runtest.RunTestRequest.Environment(
             gs_root_dir=output_config.gs_root_dir),
@@ -267,6 +268,7 @@ def summarize_results(api, prejob_response, run_test_response, result):
     * run_test_response: phosphorus.runtest.RunTestResponse instance.
     * result: skylab_test_runner.Result instance.
   """
+  # TODO Iterate over each result in result.autotest_results
   with api.step.nest('test results') as step:
     if result.log_data.stainless_url:
       step.links['Autotest logs'] = result.log_data.stainless_url
@@ -466,7 +468,7 @@ def execution_steps(api, properties, envvars):
     publish_to_result_flow(api, properties.config, properties.request)
 
     upload_response = None
-    validate_request(api, properties)
+    validate_request(api, properties.request.test)
     dut_hostname = _get_dut_hostname(api, envvars)
 
     state_store = SkylabStateStore(
@@ -493,6 +495,7 @@ def execution_steps(api, properties, envvars):
     max_duration_sec = (
         properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
     result = None
+    test = properties.request.test
     try:
       # prejob and test failures are detected when parsing results.
       # An exception from the steps here indicates an infrastructure
@@ -505,10 +508,10 @@ def execution_steps(api, properties, envvars):
       if not _prejob_failed(prejob_response):
         run_test_response = run_test_specific_steps(
             api, phosphorus_config=phosphorus_config, properties=properties,
-            dut_hostname=dut_hostname)
+            dut_hostname=dut_hostname, test=test)
       result = get_results(api, load_response.results_dir)
       result.async_results.CopyFrom(load_response.async_results)
-      if _should_upload_to_gs(properties, result):
+      if _should_upload_to_gs(properties, result, test):
         upload_to_gs_response = upload_sync_results(
             api, config=phosphorus_config,
             output_config=properties.config.output)
@@ -532,13 +535,15 @@ def execution_steps(api, properties, envvars):
     return prejob_response, run_test_response, result
 
 
-def run_test_specific_steps(api, phosphorus_config, properties, dut_hostname):
+def run_test_specific_steps(api, phosphorus_config, properties, dut_hostname,
+                            test):
   """Run the test execution and all steps that explicitly depend on it.
 
   Args:
   * phosphorus_config: phosphorus.Config instance.
   * properties: TestRunnerProperties instance.
   * dut_hostname: string.
+  * test: skylab_test_runner.Request.Test instance.
 
   Returns: phosphorus.RunTestResponse.
 
@@ -548,14 +553,14 @@ def run_test_specific_steps(api, phosphorus_config, properties, dut_hostname):
   run_test_response = run_test(api, config=phosphorus_config,
                                request=properties.request,
                                output_config=properties.config.output,
-                               dut_hostname=dut_hostname)
+                               dut_hostname=dut_hostname, test=test)
   upload_to_tko(
       api, config=_upload_to_tko_config(api, phosphorus_config,
                                         run_test_response))
   return run_test_response
 
 
-def _should_upload_to_gs(properties, result):
+def _should_upload_to_gs(properties, result, test):
   """Decide whether to perform the upload to GS.
 
   Skip offload when it's disabled by policy or the test exited abnormally.
@@ -563,10 +568,11 @@ def _should_upload_to_gs(properties, result):
   Args:
   * properties: TestRunnerProperties instance.
   * result: test_runner.Result instance.
+  * skylab_test_runner.Request.Test instance.
 
   Returns: bool.
   """
-  return (properties.request.test.offload.synchronous_gs_enable and
+  return (test.offload.synchronous_gs_enable and
           not result.autotest_result.incomplete)
 
 
