@@ -36,7 +36,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     if push:
       branch_args.append('--push')
     # These recipes are always run on MEDIUM bots, which have 8 cores.
-    branch_args.extend(['-j', 8])
+    branch_args.extend(['-j', '8'])
 
     self._ensure_branch_util()
     self.m.step(step_name or '%s branch' % cmd[0],
@@ -134,7 +134,10 @@ class CrosBranchApi(recipe_api.RecipeApi):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
 
         pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package('chromiumos/infra/test_planner', 'latest')
+        # TODO(b/171253099): change this back to 'latest'.
+        # We need to hold off moving this label forward until test_manifest.py
+        # does the right thing for 'create'.
+        pkgs.add_package('chromiumos/infra/test_planner', 'test_manifest')
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._branch_util_path = cipd_dir.join('branch_util')
