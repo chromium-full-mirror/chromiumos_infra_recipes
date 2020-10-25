@@ -93,8 +93,8 @@ def RunSteps(api, properties):
         # footer in in the internal snapshot commit.
         external_snapshot_ref = None
         # Generate the manifest from public repo
-        snapshot_xml_extern = api.repo.manifest_snapshot(
-            external_full, step_name='generate external manifest')
+        snapshot_xml_extern = api.repo.manifest(
+            external_full, pinned=True, step_name='generate external manifest')
 
         # And publish
         with api.step.nest('publish external snapshot'):
@@ -105,8 +105,8 @@ def RunSteps(api, properties):
           external_snapshot_ref = external_snapshot_commit.id
 
       # snapshot internal manifest
-      snapshot_xml_intern = api.repo.manifest_snapshot(
-          step_name='generate internal manifest')
+      snapshot_xml_intern = api.repo.manifest(
+          pinned=True, step_name='generate internal manifest')
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
           internal_manifest.url, manifest_ref, snapshot_xml_intern)
 

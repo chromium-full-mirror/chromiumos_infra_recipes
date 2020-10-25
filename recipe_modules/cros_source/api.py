@@ -504,7 +504,7 @@ class CrosSourceApi(RecipeApi):
                         ['git', 'reset', '--hard', e_head])
 
       # 5. Log a pinned version of the patched manifest.
-      final = self.m.repo.manifest_snapshot()
+      final = self.m.repo.manifest(pinned=True)
       pres.logs['patched-manifest.xml'] = [final]
 
   def _partition_patches(self, patch_sets):

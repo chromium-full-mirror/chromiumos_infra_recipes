@@ -4237,7 +4237,7 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#445)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#448)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -4253,7 +4253,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#500)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#503)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -4261,7 +4261,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#407)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#410)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -4297,7 +4297,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#545)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#548)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -4330,25 +4330,26 @@ Args:
   in these projects.
   * verbose (bool): Whether to produce verbose output.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#539)(self):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#379)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
-Return a Gitiles commit for the repo manifest.
-
-&mdash; **def [manifest\_snapshot](/recipe_modules/repo/api.py#379)(self, manifest_file=None, test_data=None, step_name=None):**
-
-Uses repo to create a manifest snapshot and returns it as a string.
+Uses repo to create a manifest and returns it as a string.
 
 By default uses the internal .repo manifest, but can optionally take
 another manifest to use.
 
 Args:
   manifest_file (Path): If given, path to alternate manifest file to use.
+  pinned (bool): Whether to create a pinned (snapshot) manifest.
   test_data (str): Test data for the step: the contents of the manifest, or
       None for the default.
   step_name (str): The name for the step, or None.
 
 Returns:
   str: The manifest XML as a string.
+
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#542)(self):**
+
+Return a Gitiles commit for the repo manifest.
 
 &mdash; **def [project\_info](/recipe_modules/repo/api.py#339)(self, project):**
 

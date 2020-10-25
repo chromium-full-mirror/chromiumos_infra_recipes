@@ -371,20 +371,21 @@ class RepoApi(recipe_api.RecipeApi):
       infos = self.project_infos(projects=projects, regexes=regexes,
                                  test_data=test_data)
       if not all(re.match(r'[0-9a-fA-F]{40}$', x.rrev) for x in infos):
-        manifest = self.manifest_snapshot()
+        manifest = self.manifest(pinned=True)
         pres.logs['pinned-manifest.xml'] = [manifest]
         return manifest
       return None
 
-  def manifest_snapshot(self, manifest_file=None, test_data=None,
-                        step_name=None):
-    """Uses repo to create a manifest snapshot and returns it as a string.
+  def manifest(self, manifest_file=None, test_data=None, pinned=False,
+               step_name=None):
+    """Uses repo to create a manifest and returns it as a string.
 
     By default uses the internal .repo manifest, but can optionally take
     another manifest to use.
 
     Args:
       manifest_file (Path): If given, path to alternate manifest file to use.
+      pinned (bool): Whether to create a pinned (snapshot) manifest.
       test_data (str): Test data for the step: the contents of the manifest, or
           None for the default.
       step_name (str): The name for the step, or None.
@@ -395,7 +396,9 @@ class RepoApi(recipe_api.RecipeApi):
     step_test_data = lambda: self.m.raw_io.test_api.stream_output(
         test_data or '<manifest></manifest>')
 
-    cmd = ['manifest', '-r']
+    cmd = ['manifest']
+    if pinned:
+      cmd += ['-r']
     if manifest_file:
       cmd += ['-m', manifest_file]
 

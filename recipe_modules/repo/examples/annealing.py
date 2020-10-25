@@ -50,8 +50,8 @@ def RunSteps(api, properties):
                      else properties.manifest_data.encode('utf-8'))
 
     with api.step.nest('sync manifests'):
-      snapshot_xml = api.repo.manifest_snapshot(properties.manifest_file,
-                                                test_data=manifest_data)
+      snapshot_xml = api.repo.manifest(properties.manifest_file, pinned=True,
+                                       test_data=manifest_data)
 
     manifest_diffs = api.repo.diff_remote_and_local_manifests(
         manifest_url, properties.manifest_ref, snapshot_xml,
