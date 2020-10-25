@@ -83,7 +83,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
                  extra_changes=None, exe=None, input_properties=None,
                  create_time=None, start_time=None, update_time=None,
                  end_time=None, critical=None, output_properties=None,
-                 tags=None, **kwargs):
+                 tags=None, created_by=None, **kwargs):
     """Return a buildbucket step_data for a typical test build.
 
     In general, test_orchestrator() should be called for orchestrators, and
@@ -154,6 +154,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     if bot_size:
       msg.infra.swarming.bot_dimensions.extend(
           self.m.cros_tags.tags(bot_size=bot_size))
+
+    msg.created_by = created_by if created_by else msg.created_by
 
     if critical:
       msg.critical = (

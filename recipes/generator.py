@@ -39,7 +39,7 @@ from PB.recipes.chromeos.generator import (
     Reviewer,
     GeneratorProperties,
 )
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
     GitilesTrigger, Trigger, WebUITrigger)
 from recipe_engine.recipe_api import StepFailure
@@ -57,6 +57,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_build_api',
     'cros_cq_depends',
+    'cros_infra_config',
     'cros_sdk',
     'cros_source',
     'easy',
@@ -65,6 +66,7 @@ DEPS = [
     'naming',
     'repo',
     'src_state',
+    'test_util',
 ]
 
 PROPERTIES = GeneratorProperties
@@ -74,6 +76,8 @@ HASHTAG_PINNED_RETRY = "pupr-retry-pinned"
 
 FAILED_RE = re.compile("^Patch Set \d+:\n\nFailed builds")
 RUNNING_RE = re.compile("^Patch Set \d+:\n\nCQ is trying the patch")
+
+
 # Determine if the CL in question is in a failed state.
 def is_failed_cl(c):
   # c.messages is sorted in ascending order of date. Reverse to get most recent first.
@@ -81,6 +85,7 @@ def is_failed_cl(c):
     if FAILED_RE.match(m["message"]):
       return True
   return False
+
 
 # Determine if the CL in question is in a running state.
 def is_running_cl(c):
@@ -96,6 +101,8 @@ def is_running_cl(c):
 
 
 def RunSteps(api, properties):
+  api.cros_infra_config.configure_builder(api.src_state.gitiles_commit,
+                                          api.src_state.gerrit_changes)
   workspace_path = api.cros_source.workspace_path
 
   policies = list(properties.branch_policies)
@@ -159,6 +166,31 @@ def RunSteps(api, properties):
       else:
         pres.step_text = 'using default branch'
     api.easy.set_properties_step(policy=MessageToDict(policy))
+
+    if api.src_state.gerrit_changes:
+      # Use case: Developer is working on the versioned uprev code for a
+      # package, such as Chrome, and wants to test the changes prior to landing
+      # them in chromite.  While launching a build with the correct polcies and
+      # triggers is difficult in CQ, it is rather straightforward for the dev to
+      # manually launch the build with "correct" inputs.  On the other hand, we
+      # should not produce production effects with uncommitted changes.
+      #
+      # If there are gerrit_changes to apply, log the chosen policy, and then
+      # override the policy so that we do not submit, abandon, or comment on
+      # anything.
+      with api.step.nest('apply gerrit changes'):
+        api.cros_source.apply_gerrit_changes(api.src_state.gerrit_changes)
+        with api.step.nest('update policy') as pres:
+          user = api.buildbucket.build.created_by.replace('user:', '', 1)
+          api.easy.set_properties_step(original_policy=MessageToDict(policy))
+          del policy.reviewers[:]
+          policy.reviewers.add().email = user
+          policy.existing_cls_policy = ABANDON
+          policy.no_existing_cls_policy = ABANDON
+          policy.outdated_cls_policy = OUTDATED_DO_NOTHING
+          policy.retry_cl_policy = NO_RETRY
+          policy.topic = '{}-{}'.format('testing', policy.topic or cpv)
+          api.easy.set_properties_step(policy=MessageToDict(policy))
 
     if properties.init_sdk:
       with api.context(cwd=workspace_path):
@@ -236,6 +268,11 @@ def RunSteps(api, properties):
             '',
             'Cq-Cl-Tag: pupr:{}'.format(topic),
         ]
+        if api.src_state.gerrit_changes:
+          commit_lines.append('Cq-Depend: {}'.format(','.join(
+              '{}:{}'.format(
+                  x.host.split('.', 1)[0].replace('-review', ''), x.change)
+              for x in api.src_state.gerrit_changes)))
         commit_message = '\n\n'.join(commit_lines)
 
         with api.step.nest('commit in {}'.format(name)), api.context(cwd=root):
@@ -430,6 +467,7 @@ def RunSteps(api, properties):
 
         if labels is not None:
           api.gerrit.set_change_labels(change, labels)
+
 
 def _get_policy(api, trigger, policies):
   """Find the applicable policy for the trigger.
@@ -627,6 +665,15 @@ def GenTests(api):
       api.git.diff_check(False),
   )
 
+  yield api.test(
+      'with-gerrit-changes', _props(),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.test_util.test_build(
+          revision=None, extra_changes=[
+              GerritChange(host='chromium-review.googlesource.com', change=1234)
+          ], created_by='user:lamontjones@chromium.org').build)
+
   # Set up for testing chromeos-base/chromeos-chrome trigger filtering.
   package_chrome = PackageInfo(category='chromeos-base',
                                package_name='chromeos-chrome')
@@ -746,10 +793,8 @@ def GenTests(api):
   )
 
   changes = [
-      common_pb2.GerritChange(change=1,
-                              host='chromium-review.googlesource.com'),
-      common_pb2.GerritChange(change=2,
-                              host='chromium-review.googlesource.com'),
+      GerritChange(change=1, host='chromium-review.googlesource.com'),
+      GerritChange(change=2, host='chromium-review.googlesource.com'),
   ]
 
   value_dict = {
@@ -787,8 +832,7 @@ def GenTests(api):
   )
 
   changes = [
-      common_pb2.GerritChange(change=1,
-                              host='chromium-review.googlesource.com'),
+      GerritChange(change=1, host='chromium-review.googlesource.com'),
   ]
 
   value_dict = {
@@ -822,7 +866,7 @@ def GenTests(api):
   )
 
   changes = [
-      common_pb2.GerritChange(change=1),
+      GerritChange(change=1),
   ]
 
   value_dict = {1: {"change_id": 1, "hashtags": [HASHTAG_FREEZE_RETRIES]}}
