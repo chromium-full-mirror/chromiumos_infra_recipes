@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_infra_config.examples;
 
 import "chromiumos/common.proto";
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
 import "google/protobuf/wrappers.proto";
 
 message BuilderProperties {
@@ -21,4 +22,7 @@ message BuilderProperties {
 
   // Expected value for is_staging.
   bool expected_is_staging = 4;
+
+  // Expected gitiles commit.  If not set, defaults are provided.
+  buildbucket.v2.GitilesCommit expected_gitiles_commit = 5;
 }

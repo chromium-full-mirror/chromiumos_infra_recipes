@@ -49,13 +49,19 @@ def RunSteps(api, properties):
     return
 
   expected_is_staging = properties.expected_is_staging
-  expected_commit = common_pb2.GitilesCommit(
-      host=api.src_state.internal_manifest.host,
-      project=api.src_state.internal_manifest.project,
-      id='{}snapshot-HEAD-SHA'.format(
-          'staging-' if expected_is_staging else ''),
-      ref='refs/heads/{}snapshot'.format(
-          'staging-' if expected_is_staging else ''))
+  p_commit = properties.expected_gitiles_commit
+  i_manifest = api.src_state.internal_manifest
+  expect_host = p_commit.host or i_manifest.host
+  expect_project = p_commit.project or i_manifest.project
+  expect_id = (
+      p_commit.id or
+      '{}snapshot-HEAD-SHA'.format('staging-' if expected_is_staging else ''))
+  expect_ref = (
+      p_commit.ref or
+      'refs/heads/{}snapshot'.format('staging-' if expected_is_staging else ''))
+  expected_commit = common_pb2.GitilesCommit(host=expect_host,
+                                             project=expect_project,
+                                             id=expect_id, ref=expect_ref)
   if (config.general.manifest == BuilderConfig.General.PUBLIC and
       api.cros_infra_config.switch_to_external_manifest):
     expected_commit.host = api.src_state.external_manifest.host
@@ -85,15 +91,19 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
+  i_manifest = api.src_state.internal_manifest
+
   def builder(build_target='amd64-generic', is_staging=None,
-              expected_is_staging=False, **kwargs):
+              expected_is_staging=False, expected_gitiles_commit=None,
+              **kwargs):
     kwargs['exe'] = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
                                           cipd_version='prod')
     build = api.test_util.test_child_build(build_target, **kwargs)
     props = BuilderProperties(
         builder=build.message.builder.builder,
         build_target=common.BuildTarget(name=build_target),
-        expected_is_staging=expected_is_staging)
+        expected_is_staging=expected_is_staging,
+        expected_gitiles_commit=expected_gitiles_commit)
     if is_staging is not None:
       props.is_staging.value = is_staging
     # None of these example cases should fail, so verify that the build finished
@@ -130,8 +140,13 @@ def GenTests(api):
 
   yield api.test(
       'apply_gerrit_changes_false',
-      builder(build_target='grunt', builder='grunt-postsubmit',
-              extra_changes=[common_pb2.GerritChange(change=1234)]))
+      builder(
+          build_target='grunt', builder='grunt-postsubmit',
+          git_repo=i_manifest.url, git_ref='refs/heads/snapshot',
+          revision='5' * 40, expected_gitiles_commit=common_pb2.GitilesCommit(
+              host=i_manifest.host, project=i_manifest.project,
+              ref='refs/heads/snapshot', id='5' * 40),
+          extra_changes=[common_pb2.GerritChange(change=1234)]))
 
   yield api.test(
       'has_parent',
