@@ -57,8 +57,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         'You may need to sync the cros_artifacts recipe endpoint dictionary '
         'with the current build config.' %
         BuilderConfig.Artifacts.ArtifactTypes.Name(artifact))
-    return getattr(self.m.cros_build_api.ArtifactsService,
-                   _LEGACY_ENDPOINTS_BY_ARTIFACT[artifact])
+    name = _LEGACY_ENDPOINTS_BY_ARTIFACT[artifact]
+    return (getattr(self.m.cros_build_api.ArtifactsService, name)
+            if self.m.cros_build_api.has_endpoint(
+                self.m.cros_build_api.ArtifactsService, name) else None)
 
   def _bundle_legacy_artifacts(self, chroot, sysroot, path, artifact_types,
                                _artifact_profile_info):
@@ -81,10 +83,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
       with self.m.step.nest('bundle %s for upload' % name):
         endpoint = self._get_legacy_endpoint(artifact)
-        request = artifacts.BundleRequest(chroot=chroot, sysroot=sysroot,
-                                          build_target=sysroot.build_target,
-                                          output_dir=str(path))
-        response = endpoint(request, infra_step=True)
+        response = artifacts.BundleResponse()
+        if endpoint:
+          request = artifacts.BundleRequest(chroot=chroot, sysroot=sysroot,
+                                            build_target=sysroot.build_target,
+                                            output_dir=str(path))
+          response = endpoint(request, infra_step=True)
 
         files_by_artifact[name] = [art.path for art in response.artifacts]
     return files_by_artifact
