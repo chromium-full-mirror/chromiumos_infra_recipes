@@ -139,6 +139,16 @@ def GenTests(api):
           }), builder(build_target='amd64-generic', revision=None))
 
   yield api.test(
+      'branch_ref',
+      builder(
+          build_target='grunt', builder='grunt-postsubmit',
+          git_repo=i_manifest.url, revision='5' * 40,
+          git_ref='refs/heads/BRANCH',
+          expected_gitiles_commit=common_pb2.GitilesCommit(
+              host=i_manifest.host, project=i_manifest.project,
+              ref='refs/heads/BRANCH', id='5' * 40)))
+
+  yield api.test(
       'apply_gerrit_changes_false',
       builder(
           build_target='grunt', builder='grunt-postsubmit',

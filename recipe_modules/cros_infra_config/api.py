@@ -353,11 +353,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     Args:
       config (BuilderConfig): The builder config, or None.
-      commit (GitilesCommit): The gitiles commit to use.  Default:
-          common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
+      commit (GitilesCommit): The gitiles commit to use.  Default: value from
+        buildbucket, or GitilesCommit(..., ref='refs/heads/snapshot').
       changes: (list[GerritChange]): The gerrit changes to apply.  Default: The
           currently stored list (initially the list from buildbucket.)
     """
+    commit = commit or self.m.src_state.gitiles_commit
     changes = self.m.src_state.gerrit_changes if changes is None else changes
     original_commit = commit
 
@@ -370,6 +371,11 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     if not self._switch_to_external_manifest:
       private = True
 
+    # Determine which manifest this builder should be using.
+    manifest = self.m.src_state.external_manifest
+    if private:
+      manifest = self.m.src_state.internal_manifest
+
     # If we have a config, and the given commit is invalid, try the one from the
     # builder config.
     if config and not self._has_valid_commit(config, commit):
@@ -379,11 +385,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # If we still do not have a valid commit, then we need to figure one out.
     # Use the appropriate snapshot from the appropriate manifest.
     if not self._has_valid_commit(config, commit):
-      if private:
-        manifest = self.m.src_state.internal_manifest
-      else:
-        manifest = self.m.src_state.external_manifest
-
       ref = 'refs/heads/{}snapshot'.format(
           'staging-' if self._is_staging else '')
       commit = common_pb2.GitilesCommit(host=manifest.host,
