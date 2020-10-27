@@ -417,6 +417,47 @@ def _upload_to_tko_config(api, phosphorus_config, run_test_response):
   return ret
 
 
+def _run_all_tests(api, phosphorus_config, properties, dut_hostname,
+                   load_response, dut_state, tests):
+  """Runs all tests
+
+  Args:
+  * phosphorus_config: phosphorus.Config instance.
+  * properties: TestRunnerProperties instance.
+  * dut_hostname: string.
+  * load_response: LoadStateResponse instance.
+  * tests: dictionary of skylab_test_runner.Request.Test instances.
+
+  Returns:
+  * result: skylab_test_runner.Result instance.
+  * run_test_response: phosphorus.runtest.RunTestResponse instance.
+  * dut_state: string.
+  """
+  upload_to_gs_response = None
+  result = None
+  autotest_results = {}
+  run_test_response = None
+
+  for test_id, test in tests.items():
+    run_test_response = run_test_specific_steps(
+        api, phosphorus_config=phosphorus_config, properties=properties,
+        dut_hostname=dut_hostname, test=test)
+    result = get_results(api, load_response.results_dir)
+    result.async_results.CopyFrom(load_response.async_results)
+    if result.HasField('autotest_result'):
+      autotest_results[test_id] = result.autotest_result
+    if _should_upload_to_gs(result, test):
+      upload_to_gs_response = upload_sync_results(
+          api, config=phosphorus_config, output_config=properties.config.output)
+    _set_offload_dir(result, upload_to_gs_response)
+    dut_state = result.state_update.dut_state
+
+  for test_id, test_result in autotest_results.items():
+    result.autotest_results[test_id].CopyFrom(test_result)
+
+  return result, run_test_response, dut_state
+
+
 def publish_to_result_flow(api, config, request,
                            should_poll_for_completion=False):
   """Publish build info to result_flow PubSub
@@ -501,8 +542,8 @@ def execution_steps(api, properties, envvars):
     max_duration_sec = (
         properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
     result = None
-    autotest_results = {}
-    test = properties.request.test
+    tests = {}
+    tests["original_test"] = properties.request.test
     try:
       # prejob and test failures are detected when parsing results.
       # An exception from the steps here indicates an infrastructure
@@ -512,20 +553,14 @@ def execution_steps(api, properties, envvars):
                                dut_hostname=dut_hostname,
                                load_response=load_response,
                                max_duration_seconds=max_duration_sec)
+
       if not _prejob_failed(prejob_response):
-        run_test_response = run_test_specific_steps(
-            api, phosphorus_config=phosphorus_config, properties=properties,
-            dut_hostname=dut_hostname, test=test)
-      result = get_results(api, load_response.results_dir)
-      result.async_results.CopyFrom(load_response.async_results)
-      if result.HasField('autotest_result'):
-        autotest_results["single_test_key"] = result.autotest_result
-      if _should_upload_to_gs(result, test):
-        upload_to_gs_response = upload_sync_results(
-            api, config=phosphorus_config,
-            output_config=properties.config.output)
-        _set_offload_dir(result, upload_to_gs_response)
-      dut_state = result.state_update.dut_state
+        result, run_test_response, dut_state = _run_all_tests(
+            api=api, phosphorus_config=phosphorus_config, properties=properties,
+            dut_hostname=dut_hostname, load_response=load_response,
+            dut_state=dut_state, tests=tests)
+      else:
+        result = get_results(api, load_response.results_dir)
     finally:
       # Must complete synchronous logs upload before sealing the results
       # directory. Once the results directory is sealed, gs_offloader may delete
@@ -536,8 +571,7 @@ def execution_steps(api, properties, envvars):
           gs_root=properties.config.output.log_data_gs_root,
           result=result,
       )
-      for test_id, test_result in autotest_results.items():
-        result.autotest_results[test_id].CopyFrom(test_result)
+
       with api.step.nest('save local DUT state'):
         state_store.save_and_seal(api, dut_state)
       publish_to_result_flow(api, properties.config, properties.request,
@@ -1046,6 +1080,8 @@ def GenTests(api):
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
       _successful_logs_archive_step(),
   )
 
@@ -1062,6 +1098,8 @@ def GenTests(api):
           })),
       _request_properties(),
       _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
       _successful_logs_archive_step(),
   )
 
@@ -1078,5 +1116,7 @@ def GenTests(api):
           })),
       _request_properties(),
       _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
       _successful_logs_archive_step(),
   )

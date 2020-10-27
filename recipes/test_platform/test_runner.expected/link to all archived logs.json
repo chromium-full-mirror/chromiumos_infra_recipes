@@ -605,7 +605,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjYpBqYOTSSS+20tdPzijKz03NL9YtSS0u0c3JTy/WT87Pzc3P003NK9MPDfV00QcJCgVklJQU\\ngDQUlyRm5uWkFhfrJecXFeil5+en56QC2bn6SUX55cWpxJqopcYlDDITaGRafj5YnW5pUY4QP9hZ\\nICGIgJEwF39xZh7QkniQgfHZqZVCDACUQUML\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyNjjEKAjEURNc2IGLsPICFmP1gaW1jZ7O1rOGbDSSZJT9q69HdrBewGx4zj1HN9rNQBycnIjtk\\nRIaYwlJMgBOyiBHJcHpR113OVKG+DqWMdSCl9ymwSGuRx9YBLvCUI90z3sL/Gvc7tanOSfkA5p55\\n5qBX862KfuC4Vktk73zqw60qdfMFDNBCMg==\\n\"@@@"
     ]
   },
   {
@@ -623,7 +623,7 @@
       "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://foo-gs-url\"@@@",
       "@@@STEP_LOG_LINE@JSON output@  }, @@@",
       "@@@STEP_LOG_LINE@JSON output@  \"autotestResults\": {@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"single_test_key\": {}@@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"original_test\": {}@@@",
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",

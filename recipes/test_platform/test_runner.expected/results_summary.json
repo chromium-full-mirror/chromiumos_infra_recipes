@@ -623,7 +623,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyVkDEPgjAQRoNjE4PixsRkiKE0cXRxcXFzYSaAR0ELR3pV4+ZPt4Ww63Z5+e7lu2MJi9m6LlrV\\n9jI3QCavCoLVIpxh5GA0Qi+I2ZZt5vSg4YZlTgYGm186DNdoouHHY4mkgxBVo7EDJO48XKEkUWHX\\nYc+hf4osO5+Eg8GlMWZwC2SKtldAlFaoh1QiSgV27kSp8UXwq3FnqzqnVdaIY44/tAr8sZZDE9gf\\nmU/2HgXT/Xd4B3995QuvC202\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyVkDEPgjAQhYNjE6LixsRkiKE0cTRxc3FzYSaAR6kpPdKruvrTpRB23S5f3n15eSxjKdu2ldLK\\nyNIBubKpCDareIGJh8kEgyhle7Zb0oOFB9YlORjGfOgx3JOZxp+AZZJOQjSdxR6QuPdwjZJEg32P\\nhoN5iaK4XoSH0a1zbvAP5CplNBDlDdohl4hSw3j3orb4JvjVeBireueobBGnHH9aHa2nWh7N4Hhm\\nIVollan0tED01yZfyktsXQ==\\n\"@@@"
     ]
   },
   {
@@ -650,7 +650,7 @@
       "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://foo-gs-url\"@@@",
       "@@@STEP_LOG_LINE@JSON output@  }, @@@",
       "@@@STEP_LOG_LINE@JSON output@  \"autotestResults\": {@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"single_test_key\": {@@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"original_test\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@      \"testCases\": [@@@",
       "@@@STEP_LOG_LINE@JSON output@        {@@@",
       "@@@STEP_LOG_LINE@JSON output@          \"humanReadableSummary\": \"failing test case\", @@@",

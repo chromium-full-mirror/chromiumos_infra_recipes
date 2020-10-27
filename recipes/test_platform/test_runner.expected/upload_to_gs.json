@@ -647,7 +647,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyVjzEPgjAQhTFx6kJSN36Ag1qaMDo5uLi5MBOKtRDaHum1GjZ/ui38Ad0u79777h1hxVHhmXMR\\nulF6/gTgonW8rm9XjrPtegcWAjYYxGNwxWdDTos/LYwEZF6iZxoU8g6MAcukfa3xJNJ77/2UAujb\\nwWqJWHbgplIBKC3jbLhw8Eb5K/GwJ7vEjMhYdvGx4DTNl1pJWoVqSzKaVReS42DjqSZhm1HO9L+X\\nv2ClZIw=\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyVjzEPwiAUhGviRGJMcOsPcFApSUcHJxc3l85NQaRE4DU80Lj50y3tH9Dt5d7dlzvCyr3GI+ci\\nyYeK/A7ARRd401zOHN9e9gE8JGwxiZsJ5WdBDpM/P5wCZFFhZBY0cgnOgWfKP+d4Fum1j3HIAYyd\\n8VYhVhLCUGkAbdV4Oy4CvFD9StxtySYzR+RYdvKxFCxdT7WyNAv1khS0qE9kBcFo4zvbZjD9b/AX\\nkQBjsw==\\n\"@@@"
     ]
   },
   {
@@ -668,7 +668,7 @@
       "@@@STEP_LOG_LINE@JSON output@  }, @@@",
       "@@@STEP_LOG_LINE@JSON output@  \"autotestResults\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"\": {}, @@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"single_test_key\": {@@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"original_test\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@      \"synchronousLogDataUrl\": \"gs://bucket/foo/bar/UUID/synchronous_subdir\"@@@",
       "@@@STEP_LOG_LINE@JSON output@    }@@@",
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
