@@ -16,7 +16,8 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.chromiumos.dut_tracking import TrackingPolicyCfg
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
+                                                              GitilesCommit)
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.testplans.test_retry import SuiteRetryCfg
@@ -317,7 +318,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         self._download_binproto('testingconfig/generated/dut_tracking',
                                 self.test_api.dut_tracking_test_data))
 
-  def _has_valid_commit(self, config=None, commit=None):
+  def _has_valid_commit(self, config, commit, manifest):
     """Determine if the builder has a valid commit.
 
     Public builders should sync to a commit for the public manifest and private
@@ -326,24 +327,19 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Args:
       config (BuilderConfig): The builder config, or None.
       commit (GitilesCommit): The gitiles commit to use, or None.
+      manifest (ManifestProject): The manifest expected.
 
     Returns:
       Bool whether the builder has a valid commit.
     """
-    if not (commit and commit.host and commit.project and commit.ref):
-      return False
-    commit_url = 'https://{}/{}'.format(commit.host, commit.project)
     # Private builders should use the internal gitiles commit.
     if config:
-      manifest = config.general.manifest
-      if manifest == BuilderConfig.General.PRIVATE:
-        return commit_url == self.m.src_state.internal_manifest.url
-      # Otherwise, use the external gitiles commit.
-      return commit_url == self.m.src_state.external_manifest.url
+      return commit in manifest
+
     # If there is no config (either no image is built, or the builder has been
     # deleted), then either manifest is fine.
-    return (commit_url == self.m.src_state.internal_manifest.url or
-            commit_url == self.m.src_state.external_manifest.url)
+    return (commit in self.m.src_state.internal_manifest or
+            commit in self.m.src_state.external_manifest)
 
   def _determine_repo_state(self, config, commit, changes):
     """Set _gitiles_commit and _gerrit_changes.
@@ -366,10 +362,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # either luci-scheduler (no changes), luci-cq (changes), or a user.
     # The builder is private unless the config says otherwise.  Builders with no
     # builder config can pass a commit, or default to the internal.
-    private = (not config or
+    private = (not config or not self._switch_to_external_manifest or
                config.general.manifest == BuilderConfig.General.PRIVATE)
-    if not self._switch_to_external_manifest:
-      private = True
 
     # Determine which manifest this builder should be using.
     manifest = self.m.src_state.external_manifest
@@ -378,17 +372,15 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     # If we have a config, and the given commit is invalid, try the one from the
     # builder config.
-    if config and not self._has_valid_commit(config, commit):
-      commit = ConvertPB(config.orchestrator.gitiles_commit,
-                         common_pb2.GitilesCommit)
+    if config and not self._has_valid_commit(config, commit, manifest):
+      commit = ConvertPB(config.orchestrator.gitiles_commit, GitilesCommit)
 
     # If we still do not have a valid commit, then we need to figure one out.
     # Use the appropriate snapshot from the appropriate manifest.
-    if not self._has_valid_commit(config, commit):
-      ref = 'refs/heads/{}snapshot'.format(
+    if not self._has_valid_commit(config, commit, manifest):
+      commit = manifest.as_gitiles_commit_proto
+      commit.ref = 'refs/heads/{}snapshot'.format(
           'staging-' if self._is_staging else '')
-      commit = common_pb2.GitilesCommit(host=manifest.host,
-                                        project=manifest.project, ref=ref)
 
     # If there is no commit id, fetch the current commit id for the reference.
     if not commit.id:
@@ -397,9 +389,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       gitiles_id = self.m.gitiles.fetch_revision(commit.host, commit.project,
                                                  commit.ref,
                                                  test_output_data=test_data)
-      commit = common_pb2.GitilesCommit(host=commit.host,
-                                        project=commit.project, ref=commit.ref,
-                                        id=gitiles_id)
+      commit.id = gitiles_id
 
     # Remember if we changed the commit from the passed value.
     changed = commit != original_commit
@@ -407,21 +397,21 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # If we are not ignoring the changelist in the config then insert any such
     # to the changelist.
     extra_changes = []
-    if (config and not self._properties.ignore_config_changelist and
-        config.orchestrator.gerrit_changes):
+    if config and not self._properties.ignore_config_changelist:
       extra_changes = [
-          ConvertPB(x, common_pb2.GerritChange)
-          for x in config.orchestrator.gerrit_changes
+          ConvertPB(x, GerritChange) for x in config.orchestrator.gerrit_changes
       ]
     if extra_changes:
       changes = extra_changes + [x for x in changes if x not in extra_changes]
       changed = True
 
-    manifest_url = 'https://{}/{}'.format(commit.host, commit.project)
-    manifest = (
-        self.m.src_state.internal_manifest
-        if manifest_url == self.m.src_state.internal_manifest.url else
-        self.m.src_state.external_manifest)
+    # If there is no config, then either manifest is allowed.  If there is, then
+    # the assignment above is correct.
+    if not config:
+      manifest = (
+          self.m.src_state.internal_manifest
+          if commit in self.m.src_state.internal_manifest else
+          self.m.src_state.external_manifest)
 
     # Record the decision for later.  Saving the values in src_state will log
     # what we chose to use (rather than what we were given.)
@@ -452,7 +442,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     Args:
       commit (GitilesCommit): The gitiles commit to use.  Default:
-          common_pb2.GitilesCommit(.... ref='refs/heads/snapshot').
+          GitilesCommit(.... ref='refs/heads/snapshot').
       changes (list[GerritChange]): The gerrit changes to apply.  Default: the
           gerrit_changes from buildbucket.
       is_staging (bool): Whether the builder is staging, or None to have

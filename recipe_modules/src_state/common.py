@@ -86,7 +86,8 @@ class ManifestProject(object):
     """Return a GitilesCommit protobuf.
 
     Returns:
-      (GitilesCommit) The gitiles commit for the manifest.
+      (GitilesCommit) The gitiles commit for the manifest.  The id field is
+        unspecified.
     """
     ret = GitilesCommit(host=self.host, project=self.project, ref=self.ref)
     return ret
