@@ -51,7 +51,8 @@
           ]
         }
       ],
-      "swarmingInstance": "chromeos-swarming.appspot.com"
+      "swarmingInstance": "chromeos-swarming.appspot.com",
+      "application": "chromeos"
     }
   ]
 }

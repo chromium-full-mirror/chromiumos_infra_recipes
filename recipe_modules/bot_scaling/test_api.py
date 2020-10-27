@@ -87,5 +87,6 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
                     scaling_restriction=scaling_restriction,
                     region_restrictions=region_restrictions,
                     policy_mode=policy_mode, scaling_mode=BotPolicy.STEPPED,
-                    swarming_instance='chromeos-swarming.appspot.com'))
+                    swarming_instance='chromeos-swarming.appspot.com',
+                    application='chromeos'))
     return BotPolicyCfg(bot_policies=bot_policy_cfg)
