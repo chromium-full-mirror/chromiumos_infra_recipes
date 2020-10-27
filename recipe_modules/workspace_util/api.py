@@ -154,7 +154,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
   @contextlib.contextmanager
   def sync_to_manifest_groups(self, manifest_groups, local_manifest=None,
-                              cache_path_override=None, gitiles_commit=None):
+                              cache_path_override=None, gitiles_commit=None,
+                              manifest_branch=None):
     """Returns a context with manifest groups checked out to cwd.
 
     The subset of repos in the external manifest + local_manifest matching
@@ -186,17 +187,32 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
           caching of cros_source.ensure_synced_cache is used.
       gitiles_commit (GitilesCommit): The gitiles_commit to sync to.  Default:
           commit saved in cros_infra_config.configure_builder().
+      manifest_branch (str): Branch to checkout. See the `--manifest-branch`
+          option of `repo init` for details and defaults. Note that if
+          manifest_branch is specified, the internal manifest will be used and
+          local_manifest cannot be specified. This is because local manifests
+          are not branched along with main manifests, so using the  branched
+          public manifest along with a local manifest will mean some repos are
+          on branches, some are not.
     """
     assert self.m.cros_infra_config.is_configured, 'builder not configured'
     init_opts = {
         'groups': manifest_groups,
     }
+
+    manifest_url = self.m.src_state.external_manifest.url
+
     if local_manifest:
+      assert not manifest_branch, 'manifest_branch and local_manifest cannot be specified at the same time'
       init_opts['local_manifest'] = local_manifest
 
+    if manifest_branch:
+      assert not local_manifest, 'manifest_branch and local_manifest cannot be specified at the same time'
+      init_opts['manifest_branch'] = manifest_branch
+      manifest_url = self.m.src_state.internal_manifest.url
+
     self.m.cros_source.ensure_synced_cache(
-        gitiles_commit=gitiles_commit,
-        manifest_url=self.m.src_state.external_manifest.url,
+        gitiles_commit=gitiles_commit, manifest_url=manifest_url,
         init_opts=init_opts, cache_path_override=cache_path_override)
     with self.m.context(
         cwd=cache_path_override or self.m.cros_source.cache_path):

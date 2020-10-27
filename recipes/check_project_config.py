@@ -60,13 +60,21 @@ def RunSteps(api, properties):
   )):
     raise ValueError('All checkout_paths and config_paths must be specified.')
 
-  if not (properties.local_manifest.repo_url and
-          properties.local_manifest.manifest_path):
-    raise ValueError('local_manifest repo and path must be specified')
+  if properties.manifest_branch:
+    if (properties.local_manifest.repo_url or
+        properties.local_manifest.manifest_path):
+      raise ValueError(
+          'local_manifest cannot be specified if manifest_branch is specified')
 
-  local_manifest = api.repo.LocalManifest(
-      repo=properties.local_manifest.repo_url,
-      path=properties.local_manifest.manifest_path)
+    local_manifest = None
+  else:
+    if not (properties.local_manifest.repo_url and
+            properties.local_manifest.manifest_path):
+      raise ValueError('local_manifest repo and path must be specified')
+
+    local_manifest = api.repo.LocalManifest(
+        repo=properties.local_manifest.repo_url,
+        path=properties.local_manifest.manifest_path)
 
   # Do work in a context with manifest groups checked out. Most steps are infra
   # steps, so make this the default. Non-infra steps specify this explicitly.
@@ -78,7 +86,8 @@ def RunSteps(api, properties):
       api.workspace_util.sync_to_manifest_groups(
           properties.manifest_groups,
           local_manifest=local_manifest,
-          cache_path_override=api.src_state.workspace_path):
+          cache_path_override=api.src_state.workspace_path,
+          manifest_branch=properties.manifest_branch,):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
                                      fail_not_applicable=True)
 
@@ -223,6 +232,40 @@ def GenTests(api):
   )
 
   yield api.test(
+      'manifest_branch',
+      api.properties(**properties_dict(
+          extra_props={
+              'manifest_branch': 'release-R123',
+              'local_manifest': LocalManifest(
+                  repo_url='',
+                  manifest_path='',
+              ),
+          })),
+      project_config_cq_build(api),
+      # The input GerritChange is in a checked out project.
+      checked_out_projects(api),
+      check_constraints_with_output(),
+      api.post_process(
+          post_process.StepCommandContains, 'ensure synced checkout.repo init',
+          ['--manifest-branch', 'release-R123', '--groups', 'partner-config']),
+      # If manifest_branch is passed, an internal checkout should be used and no
+      # local manifest should be used.
+      api.post_process(post_process.DoesNotRunRE,
+                       '.*fetch.*:local_manifest.xml'),
+      # The change should be applied.
+      api.post_process(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/project1',
+              'refs/changes/56/123456/7:',
+          ],
+      ),
+  )
+
+  yield api.test(
       'local_manifest_missing',
       api.properties(**properties_dict(
           extra_props={
@@ -235,6 +278,19 @@ def GenTests(api):
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
                        ('.*local_manifest repo and path must be specified.*')),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'local_manifest_and_manifest_branch_specified',
+      api.properties(**properties_dict(extra_props={
+          'manifest_branch': 'release-R123',
+      })),
+      project_config_cq_build(api),
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.ResultReasonRE, (
+          '.*local_manifest cannot be specified if manifest_branch is specified.*'
+      )),
       api.post_process(post_process.DropExpectation),
   )
 

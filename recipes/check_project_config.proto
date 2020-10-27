@@ -38,6 +38,16 @@ message CheckProjectConfigProperties {
     // If empty, all repos are synced.
     repeated string manifest_groups = 1;
 
+    // Branch to init the checkout with. If not specified, the default branch
+    // of the manifest repo will be used.
+    //
+    // Note that if manifest_branch is specified, the internal manifest will be
+    // used and local_manifest cannot be specified. This is because local
+    // manifests are not branched along with main manifests, so using the
+    // branched public manifest along with a local manifest will mean some repos
+    // are on branches, some are not.
+    string manifest_branch = 9;
+
     // Local manifest to add to the checkout.
     project_mgmt.LocalManifest local_manifest = 5;
 

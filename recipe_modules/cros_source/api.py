@@ -103,7 +103,8 @@ class CrosSourceApi(RecipeApi):
     return (self._snapshot_isolate.isolated_hash
             if self._snapshot_isolate else None)
 
-  def _validate_args(self, manifest_url, local_manifest, groups, cache_path):
+  def _validate_args(self, manifest_url, local_manifest, groups, cache_path,
+                     manifest_branch):
     """Ensure the args to ensure_synced_cache are to a supported configuration.
 
     Supported configurations include:
@@ -118,15 +119,16 @@ class CrosSourceApi(RecipeApi):
       groups (list[str]): List of manifest groups to checkout.
       cache_path (Path): Path to sync into. If None, the cache_path
         property is used.
-
+      manifest_branch (str): The branch to check out, such as
+        'release-R86-13421.B'.
     Returns:
       If the configuration is supported, the type of configuration.
     """
     if cache_path == self.cache_path:
       if (manifest_url != self.m.src_state.internal_manifest.url or
-          local_manifest or groups):
-        raise ValueError('Only the internal manifest can be synced '
-                         'to the chromiumos cache path.')
+          local_manifest or groups or manifest_branch):
+        raise ValueError('Only the internal manifest on the default branch can'
+                         'be synced to the chromiumos cache path.')
       return 'INTERNAL'
     return 'CUSTOM'
 
@@ -176,10 +178,11 @@ class CrosSourceApi(RecipeApi):
     local_manifest = init_opts.get('local_manifest')
     groups = init_opts.get('groups')
     verbose = init_opts.get('verbose')
+    manifest_branch = init_opts.get('manifest_branch')
     retry_fetches = sync_opts.get('retry_fetches')
 
     configuration = self._validate_args(manifest_url, local_manifest, groups,
-                                        cache_path)
+                                        cache_path, manifest_branch)
     if configuration == 'INTERNAL':
       self._sync_cached_dir(retry_fetches, projects, verbose, external=False,
                             is_staging=is_staging)
