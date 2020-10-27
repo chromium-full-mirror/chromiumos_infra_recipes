@@ -69,10 +69,6 @@
   },
   {
     "cmd": [],
-    "name": "Checking files to update"
-  },
-  {
-    "cmd": [],
     "name": "cloning destination repo"
   },
   {

@@ -70,26 +70,17 @@ def RunSteps(api, properties):
     api.git.clone(CROS_CONFIG_REPO, target_path=cros_config_path)
 
   # Clone source repos.
-  have_work = False
   if properties.HasField('public_yaml'):
-    have_work = True
     with api.step.nest('cloning public overlay'):
       api.git.clone(properties.public_yaml.repo, target_path=public_repo_path)
 
   if properties.HasField('private_yaml'):
-    have_work = True
     with api.step.nest('cloning private overlay'):
       api.git.clone(properties.private_yaml.repo, target_path=private_repo_path)
 
   if properties.hwid_key:
-    have_work = True
     with api.step.nest('cloning hwid repo'):
       api.git.clone(CROS_HWID_REPO, target_path=hwid_repo_path)
-
-  with api.step.nest('Checking files to update') as presentation:
-    if not have_work:
-      raise ValueError(
-          'Neither model.yaml nor HWID was configured, this is a noop!')
 
   # Clone the destination repo.
   with api.step.nest('cloning destination repo'):
@@ -209,12 +200,6 @@ def GenTests(api):
               'hwid_key': 'some_key',
               'project_name': 'test_project'
           }), api.expect_exception('ValueError'))
-
-  yield api.test(
-      'dest_repo_only',
-      api.properties(**{
-          'dest_repo': 'https://example.com/some/project/repo',
-      }), api.expect_exception('ValueError'))
 
   yield api.test(
       'no_changed_files',
