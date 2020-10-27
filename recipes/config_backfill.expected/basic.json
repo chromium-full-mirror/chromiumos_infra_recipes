@@ -286,7 +286,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Merging legacy configs.\n\nThis action was performed automatically by config_backfill.py",
+      "Merging legacy configs.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_backfill",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/dest",
@@ -296,7 +296,8 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Merging legacy configs.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@This action was performed automatically by config_backfill.py@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: config_backfill@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },

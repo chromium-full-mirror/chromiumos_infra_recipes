@@ -158,7 +158,8 @@ def RunSteps(api, properties):
       commit_msg = \
         '''Merging legacy configs.
 
-This action was performed automatically by config_backfill.py'''
+Cr-Build-Url: %s
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_backfill')
       api.git.commit(commit_msg)
 
   # Update the repo atomically
