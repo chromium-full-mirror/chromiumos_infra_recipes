@@ -11,8 +11,11 @@ DEPS = [
 def RunSteps(api):
   api.gcloud.set_gce_project()
   api.gcloud.auth_list()
-  instance = api.gcloud.create_instance()
-  api.gcloud.delete_instance(instance)
+  api.gcloud.prep_image('chromeos-image-archive', 'image_path', 1234)
+  api.gcloud.create_image('tar/path/1234.tar.gz', 'betty', 1234)
+  api.gcloud.delete_image('image-name')
+  api.gcloud.create_instance('image-name')
+  api.gcloud.delete_instance('image-name')
 
 
 def GenTests(api):

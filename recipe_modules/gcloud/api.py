@@ -4,10 +4,14 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
+import os
 import random
 
 DUMMY_IMAGE = 'cos-rc-85-13310-1015-0'
 GCE_PREFIX = 'gce-tests'
+GCE_TEST_BUCKET = 'images-in-test'
+RAW_IMAGE_NAME = 'disk.raw'
+TEST_IMAGE_NAME = 'chromiumos_test_image.bin'
 
 
 class GcloudApi(recipe_api.RecipeApi):
@@ -28,7 +32,80 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step(step_name or 'gcloud auth', ['gcloud', 'auth', 'list'])
 
-  def create_instance(self, image=DUMMY_IMAGE):
+  def prep_image(self, source_bucket, source_path, uniq_id):
+    """Prepare the image to be used for testing.
+
+    Args:
+      source_bucket(str): Source GS bucket to download from.
+      source_path(str): Path in GS to the build artifacts.
+      uniq_id(int): ID to differentiate the image. Usually
+          buildbucket_id of the build that generated the image.
+    
+    Returns: Path to the image tar file.
+    """
+    with self.m.step.nest('prepare image'):
+      image_archive_dir = self.m.path.mkdtemp(prefix='image-archive')
+      test_image_zip = image_archive_dir.join('image.zip')
+      test_image_dir = image_archive_dir.join('image')
+      test_image_path = str(test_image_dir.join(TEST_IMAGE_NAME))
+      raw_image_path = str(test_image_dir.join(RAW_IMAGE_NAME))
+      self.m.gsutil.download(source_bucket,
+                             os.path.join(source_path,
+                                          'image.zip'), test_image_zip,
+                             name='download image bundle from GS')
+      self.m.archive.extract('unzip image bundle', test_image_zip,
+                             test_image_dir, include_files=[TEST_IMAGE_NAME])
+      # Rename image and tar it up.
+      self.m.file.move('Rename image to disk.raw', test_image_path,
+                       raw_image_path)
+      tar_file = '{}.tar.gz'.format(uniq_id)
+      tar_path = str(test_image_dir.join(tar_file))
+      with self.m.context(cwd=test_image_dir):
+        self.m.step(
+            'tar image',
+            ['tar', '--format=oldgnu', '-Sczf', tar_file, RAW_IMAGE_NAME])
+      return tar_path
+
+  def create_image(self, tar_path, target, uniq_id):
+    """Create an image in the GCE project.
+
+    Args:
+      tar_path(str): Path to the requisite image tar_file.
+      target(str): Target being tested. (Ex:betty-arc-r)
+      uniq_id(int): ID to differentiate the image. Usually
+        buildbucket_id of the build that generated the image.
+
+    Returns: A string name of the image.
+    """
+    with self.m.step.nest('create image'):
+      tar_file = '{}.tar.gz'.format(uniq_id)
+      self.m.gsutil.upload(tar_path, GCE_TEST_BUCKET,
+                           '{}/{}'.format(target, tar_file))
+      with self.m.context(env={'VIRTUAL_ENV': '1'}):
+        image_name = '{}-{}'.format(target, uniq_id)
+        self.m.step('gce create image', [
+            'gcloud',
+            'compute',
+            'images',
+            'create',
+            image_name,
+            '--source-uri=gs://{}/{}/{}'.format(GCE_TEST_BUCKET, target,
+                                                tar_file),
+        ])
+        return image_name
+
+  def delete_image(self, image_name):
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('delete image', [
+          'gcloud',
+          'compute',
+          'images',
+          'delete',
+          image_name,
+          '--quiet',
+      ])
+
+  def create_instance(self, image):
     """Create an instance in the GCE project.
 
     Args:
@@ -36,19 +113,14 @@ class GcloudApi(recipe_api.RecipeApi):
 
     Returns: A string name of the instance.
     """
-    self.m.random.seed(int(self.m.time.time()))
-    rand_int = self.m.random.randint(10000, 99999)
-    instance_name = '{}-{}-{}'.format(GCE_PREFIX, image, rand_int)
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('create instance', [
-          'gcloud', 'compute', 'instances', 'create', instance_name,
-          '--image={}'.format(image), '--image-project=cos-cloud',
-          '--project=chromeos-gce-tests', '--machine-type=n1-standard-4',
-          '--no-scopes', '--no-address', '--network=chromeos-gce-tests',
-          '--subnet=us-central1', '--zone=us-central1-a'
+          'gcloud', 'compute', 'instances', 'create', image,
+          '--image={}'.format(image), '--project=chromeos-gce-tests',
+          '--machine-type=n1-standard-4', '--no-scopes', '--no-address',
+          '--network=chromeos-gce-tests', '--subnet=us-central1',
+          '--zone=us-central1-a'
       ])
-
-    return instance_name
 
   def delete_instance(self, instance):
     """Delete a GCE instance.

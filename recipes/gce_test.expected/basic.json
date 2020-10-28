@@ -24,14 +24,129 @@
     "name": "gcloud auth"
   },
   {
+    "cmd": [],
+    "name": "prepare image"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/betty-arc-r-snapshot/R88-13550.0.0-39788-8865622468216306576/image.zip",
+      "[CLEANUP]/image-archive_tmp_1/image.zip"
+    ],
+    "infra_step": true,
+    "name": "prepare image.gsutil download image bundle from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
+      "--json-input",
+      "{\"archive_file\": \"[CLEANUP]/image-archive_tmp_1/image.zip\", \"include_files\": [\"chromiumos_test_image.bin\"], \"output\": \"[CLEANUP]/image-archive_tmp_1/image\", \"safe_mode\": true}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "prepare image.unzip image bundle",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "move",
+      "[CLEANUP]/image-archive_tmp_1/image/chromiumos_test_image.bin",
+      "[CLEANUP]/image-archive_tmp_1/image/disk.raw"
+    ],
+    "infra_step": true,
+    "name": "prepare image.Rename image to disk.raw",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "--format=oldgnu",
+      "-Sczf",
+      "2491483.tar.gz",
+      "disk.raw"
+    ],
+    "cwd": "[CLEANUP]/image-archive_tmp_1/image",
+    "name": "prepare image.tar image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create image"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/image-archive_tmp_1/image/2491483.tar.gz",
+      "gs://images-in-test/betty-arc-r/2491483.tar.gz"
+    ],
+    "infra_step": true,
+    "name": "create image.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/images-in-test/betty-arc-r/2491483.tar.gz@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "images",
+      "create",
+      "betty-arc-r-2491483",
+      "--source-uri=gs://images-in-test/betty-arc-r/2491483.tar.gz"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "create image.gce create image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "gcloud",
       "compute",
       "instances",
       "create",
-      "gce-tests-cos-rc-85-13310-1015-0-24914",
-      "--image=cos-rc-85-13310-1015-0",
-      "--image-project=cos-cloud",
+      "betty-arc-r-2491483",
+      "--image=betty-arc-r-2491483",
       "--project=chromeos-gce-tests",
       "--machine-type=n1-standard-4",
       "--no-scopes",
@@ -51,7 +166,7 @@
       "compute",
       "instances",
       "delete",
-      "gce-tests-cos-rc-85-13310-1015-0-24914",
+      "betty-arc-r-2491483",
       "--quiet",
       "--zone=us-central1-a",
       "--project=chromeos-gce-tests"
@@ -60,6 +175,20 @@
       "VIRTUAL_ENV": "1"
     },
     "name": "delete instance"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "images",
+      "delete",
+      "betty-arc-r-2491483",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "delete image"
   },
   {
     "name": "$result"

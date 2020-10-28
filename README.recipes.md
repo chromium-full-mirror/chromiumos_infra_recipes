@@ -3011,20 +3011,32 @@ Returns:
   Config, GCE Provider Config defintion with updated values.
 ### *recipe_modules* / [gcloud](/recipe_modules/gcloud)
 
-[DEPS](/recipe_modules/gcloud/__init__.py#6): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/gcloud/__init__.py#6): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [GcloudApi](/recipe_modules/gcloud/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GcloudApi](/recipe_modules/gcloud/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#22)(self, step_name=None):**
+&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#26)(self, step_name=None):**
 
 Print out the auth creds currently on the bot.
 
 Args:
   step_name(str): Name of the step.
 
-&mdash; **def [create\_instance](/recipe_modules/gcloud/api.py#31)(self, image=DUMMY_IMAGE):**
+&mdash; **def [create\_image](/recipe_modules/gcloud/api.py#69)(self, tar_path, target, uniq_id):**
+
+Create an image in the GCE project.
+
+Args:
+  tar_path(str): Path to the requisite image tar_file.
+  target(str): Target being tested. (Ex:betty-arc-r)
+  uniq_id(int): ID to differentiate the image. Usually
+    buildbucket_id of the build that generated the image.
+
+Returns: A string name of the image.
+
+&mdash; **def [create\_instance](/recipe_modules/gcloud/api.py#108)(self, image):**
 
 Create an instance in the GCE project.
 
@@ -3033,14 +3045,28 @@ Args:
 
 Returns: A string name of the instance.
 
-&mdash; **def [delete\_instance](/recipe_modules/gcloud/api.py#53)(self, instance):**
+&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#97)(self, image_name):**
+
+&mdash; **def [delete\_instance](/recipe_modules/gcloud/api.py#125)(self, instance):**
 
 Delete a GCE instance.
 
 Args:
   instance(str): GCE instance to be deleted.
 
-&mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#16)(self):**
+&mdash; **def [prep\_image](/recipe_modules/gcloud/api.py#35)(self, source_bucket, source_path, uniq_id):**
+
+Prepare the image to be used for testing.
+
+Args:
+  source_bucket(str): Source GS bucket to download from.
+  source_path(str): Path in GS to the build artifacts.
+  uniq_id(int): ID to differentiate the image. Usually
+      buildbucket_id of the build that generated the image.
+
+Returns: Path to the image tar file.
+
+&mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#20)(self):**
 
 Set the default project for gcloud command.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
@@ -6062,11 +6088,11 @@ See https://crbug.com/1068743.
 &mdash; **def [RunSteps](/recipe_modules/gce_provider/examples/full.py#14)(api):**
 ### *recipes* / [gce\_test](/recipes/gce_test.py)
 
-[DEPS](/recipes/gce_test.py#8): [gcloud](#recipe_modules-gcloud)
+[DEPS](/recipes/gce_test.py#8): [gcloud](#recipe_modules-gcloud), [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 An experimental recipe for running GCE tests.
 
-&mdash; **def [RunSteps](/recipes/gce_test.py#13)(api):**
+&mdash; **def [RunSteps](/recipes/gce_test.py#18)(api):**
 ### *recipes* / [gcloud:examples/full](/recipe_modules/gcloud/examples/full.py)
 
 [DEPS](/recipe_modules/gcloud/examples/full.py#6): [gcloud](#recipe_modules-gcloud)
