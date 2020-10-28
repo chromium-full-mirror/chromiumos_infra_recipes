@@ -86,7 +86,7 @@ class TastExecApi(RecipeApi):
     return qcow_image_path, private_key_path
 
   def run(self, suite_name, expressions, qcow_image_path, test_artifacts_dir,
-          private_key_path):
+          private_key_path, artifacts_gs_bucket, artifacts_gs_path):
     """Run tast tests with one retry and upload logs to Google storage.
 
     Args:
@@ -95,6 +95,9 @@ class TastExecApi(RecipeApi):
         qcow_image_path(Path): Path to image in qcow format.
         test_artifacts_dir(Path): Dir containing test artifacts.
         private_key_path(Path): Path to private key.
+        artifacts_gs_bucket(str): The bucket containing build artifacts.
+        artifacts_gs_path(str): The bucket path containing the build output,
+          for example, "eve-paladin/R78-11588.0.0".
 
     Returns:
         A tuple of list(Failures) and a bool indicating whether
@@ -103,7 +106,8 @@ class TastExecApi(RecipeApi):
     # Setup qemu debug.
     task_result = self._retry_iter(suite_name, expressions, qcow_image_path,
                                    test_artifacts_dir, private_key_path,
-                                   'first')
+                                   'first', artifacts_gs_bucket,
+                                   artifacts_gs_path)
     tests_to_retry, _ = self.m.tast_results.get_tests_to_retry(task_result)
     all_test_cases = []
     if task_result.test_cases:
@@ -114,7 +118,9 @@ class TastExecApi(RecipeApi):
     if tests_to_retry:
       retry_task_result = self._retry_iter(suite_name, tests_to_retry,
                                            qcow_image_path, test_artifacts_dir,
-                                           private_key_path, 'second')
+                                           private_key_path, 'second',
+                                           artifacts_gs_bucket,
+                                           artifacts_gs_path)
       all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
       retry_failures, retry_tcs = self.m.tast_results.get_failures(
           retry_task_result)
@@ -129,16 +135,19 @@ class TastExecApi(RecipeApi):
     return failures, empty_result
 
   def _retry_iter(self, suite_name, expressions, qcow_image_path,
-                  test_artifacts_dir, private_key_path, tag):
+                  test_artifacts_dir, private_key_path, tag,
+                  artifacts_gs_bucket, artifacts_gs_path):
     with self.m.step.nest('%s tast iteration' % tag):
       test_results_dir = self.m.path.mkdtemp(prefix='test-results')
       tests = self.run_direct(expressions, qcow_image_path, test_artifacts_dir,
-                              private_key_path, test_results_dir)
+                              private_key_path, artifacts_gs_bucket,
+                              artifacts_gs_path, test_results_dir)
       return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
                                              tests)
 
   def run_direct(self, expressions, qcow_image_path, test_artifacts_dir,
-                 private_key_path, test_results_dir, run_args=None):
+                 private_key_path, artifacts_gs_bucket, artifacts_gs_path,
+                 test_results_dir, run_args=None):
     """Run tast tests without retries or results processing.
 
     Args:
@@ -148,6 +157,9 @@ class TastExecApi(RecipeApi):
         private_key_path(Path): Path to private key.
         test_results_dir(Path): Path to store tast results.
         run_args(list(str)): Additional arguments to pass to tast.
+        artifacts_gs_bucket(str): The bucket containing build artifacts.
+        artifacts_gs_path(str): The bucket path containing the build output,
+          for example, "eve-paladin/R78-11588.0.0".
 
     Returns:
         list(str): The list of tests that met the specified expression(s)."""
@@ -158,12 +170,17 @@ class TastExecApi(RecipeApi):
     kvm_monitor_file = self.m.path.mkstemp(prefix='kvm-monitor')
     kvm_monitor_serial_file = self.m.path.mkstemp(prefix='kvm-monitor-serial')
 
+    # Used by tast to determine where to download private bundles.
+    build_artifacts_url = 'gs://{}/{}/'.format(artifacts_gs_bucket,
+                                               artifacts_gs_path)
+
     self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
                     kvm_monitor_serial_file, private_key_path)
     tast_dir = test_artifacts_dir.join('tast')
-    tests = self._list_tests(expressions, tast_dir, private_key_path)
-    self._run_tests(expressions, tast_dir, private_key_path, test_results_dir,
-                    run_args)
+    tests = self._list_tests(expressions, tast_dir, private_key_path,
+                             build_artifacts_url)
+    self._run_tests(expressions, tast_dir, private_key_path,
+                    build_artifacts_url, test_results_dir, run_args)
 
     self._kill_vm(kvm_pid_file)
     self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
@@ -202,11 +219,14 @@ class TastExecApi(RecipeApi):
         'root@localhost:%s'%VM_ARTIFACT_TARBALL, str(output_dir.join(ARTIFACT_TARBALL_NAME))],
         infra_step=True, timeout=5*60)
 
-  def _list_tests(self, expressions, tast_dir, private_key_path):
+  def _list_tests(self, expressions, tast_dir, private_key_path,
+                  build_artifacts_url):
     list_stdout = self.m.easy.stdout_step('tast list', [
     str(tast_dir.join('tast')), \
     'list', \
     '-build=false', \
+    '-downloadprivatebundles=true', \
+    '-buildartifactsurl={}'.format(build_artifacts_url), \
     '-keyfile={}'.format(private_key_path), \
     '-remotebundledir={}'.format(
         str(tast_dir.join('bundles').join('remote'))), \
@@ -221,12 +241,14 @@ class TastExecApi(RecipeApi):
     return tests
 
   def _run_tests(self, expressions, tast_dir, private_key_path,
-                 test_results_dir, extra_args):
+                 build_artifacts_url, test_results_dir, extra_args):
     self.m.step('tast run', [
         str(tast_dir.join('tast')), \
         '-verbose', \
         'run', \
         '-build=false', \
+        '-downloadprivatebundles=true', \
+        '-buildartifactsurl={}'.format(build_artifacts_url), \
         '-waituntilready', \
         '-continueafterfailure', \
         '-extrauseflags=tast_vm', \

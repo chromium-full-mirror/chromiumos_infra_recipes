@@ -212,7 +212,7 @@ def build_vm_image(api, properties, artifacts_path, parallels_version):
 
     # Invoke tast to build the VM image.
     invoke_tast(api, test_artifacts_dir, qcow_image_path, private_key_path,
-                image_path)
+                artifacts_path, image_path)
 
     upload_path = '{}/{}'.format(properties.test_image_gs_path, image_name)
     with api.step.nest('upload image') as upload_step:
@@ -263,7 +263,7 @@ def build_vm_image(api, properties, artifacts_path, parallels_version):
 
 
 def invoke_tast(api, test_artifacts_dir, qcow_image_path, private_key_path,
-                dest_path):
+                artifacts_path, dest_path):
   """Runs tast to build the new VM image.
 
   Args:
@@ -272,6 +272,7 @@ def invoke_tast(api, test_artifacts_dir, qcow_image_path, private_key_path,
     qcow_image_path(Path): The location of the qcow-format VM image.
     private_key_path(Path): The location of the private key that can be used
       to authenticate to the VM.
+    artifacts_path(BuildPath): The location of build output artifacts.
     dest_path(Path): The location that the produced VM image should be copied
       to (on the local disk).
   """
@@ -279,6 +280,7 @@ def invoke_tast(api, test_artifacts_dir, qcow_image_path, private_key_path,
     tast_results_dir = api.path.mkdtemp(prefix='tast-results')
     tests = api.tast_exec.run_direct([_TAST_NAME], qcow_image_path,
                                      test_artifacts_dir, private_key_path,
+                                     artifacts_path.bucket, artifacts_path.path,
                                      tast_results_dir,
                                      ['-var=pita.windowsLicensed=true'])
 

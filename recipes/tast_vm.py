@@ -34,11 +34,11 @@ def RunSteps(api, properties):
       properties.build_payload.artifacts_gs_path, image_archive_dir)
 
   with api.step.nest('run tast tests'):
-    failures, empty_result = api.tast_exec.run(properties.name,
-                                               properties.expressions,
-                                               qcow_image_path,
-                                               test_artifacts_dir,
-                                               private_key_path)
+    failures, empty_result = api.tast_exec.run(
+        properties.name, properties.expressions, qcow_image_path,
+        test_artifacts_dir, private_key_path,
+        properties.build_payload.artifacts_gs_bucket,
+        properties.build_payload.artifacts_gs_path)
 
   api.tast_results.print_results(failures, empty_result)
 
@@ -46,4 +46,10 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield api.test('basic', api.properties(expressions=['expr']))
+  yield api.test(
+      'basic',
+      api.properties(
+          expressions=['expr'], build_payload={
+              'artifacts_gs_bucket': 'artifacts-bucket',
+              'artifacts_gs_path': 'artifacts-path'
+          }))

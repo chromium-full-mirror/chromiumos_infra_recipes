@@ -4914,7 +4914,7 @@ Returns:
     private_key_path (Path): The location of the SSH key. This will be
       a location inside image_archive_dir.
 
-&mdash; **def [run](/recipe_modules/tast_exec/api.py#88)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path):**
+&mdash; **def [run](/recipe_modules/tast_exec/api.py#88)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
 
 Run tast tests with one retry and upload logs to Google storage.
 
@@ -4924,12 +4924,15 @@ Args:
     qcow_image_path(Path): Path to image in qcow format.
     test_artifacts_dir(Path): Dir containing test artifacts.
     private_key_path(Path): Path to private key.
+    artifacts_gs_bucket(str): The bucket containing build artifacts.
+    artifacts_gs_path(str): The bucket path containing the build output,
+      for example, "eve-paladin/R78-11588.0.0".
 
 Returns:
     A tuple of list(Failures) and a bool indicating whether
     the results were empty.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#140)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, test_results_dir, run_args=None):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#148)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
 
 Run tast tests without retries or results processing.
 
@@ -4940,6 +4943,9 @@ Args:
     private_key_path(Path): Path to private key.
     test_results_dir(Path): Path to store tast results.
     run_args(list(str)): Additional arguments to pass to tast.
+    artifacts_gs_bucket(str): The bucket containing build artifacts.
+    artifacts_gs_path(str): The bucket path containing the build output,
+      for example, "eve-paladin/R78-11588.0.0".
 
 Returns:
     list(str): The list of tests that met the specified expression(s).
@@ -7101,7 +7107,7 @@ Args:
 Returns:
   dict: The details of the new test image.
 
-&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#323)(api, properties, package, new_version_pin):**
+&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#325)(api, properties, package, new_version_pin):**
 
 Commits and uploads the uprev of the version-pin file.
 
@@ -7110,18 +7116,18 @@ Args:
       commit message.
   new_version_pin (VersionPin): the new version pin data.
 
-&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#365)(api, properties):**
+&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#367)(api, properties):**
 
 Gets the latest version of Parallels from the upstream bucket.
 
 Returns:
   string: the latest upstream version of Parallels.
 
-&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#445)(api, properties):**
+&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#447)(api, properties):**
 
 Gets the path of the VERSION-PIN file.
 
-&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#406)(api, properties):**
+&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#408)(api, properties):**
 
 Reads and returns the content of the VERSION-PIN file.
 
@@ -7131,7 +7137,7 @@ have been checked out.
 Returns:
   VersionPin: the pinned version data.
 
-&mdash; **def [invoke\_tast](/recipes/uprev_parallels_pin.py#265)(api, test_artifacts_dir, qcow_image_path, private_key_path, dest_path):**
+&mdash; **def [invoke\_tast](/recipes/uprev_parallels_pin.py#265)(api, test_artifacts_dir, qcow_image_path, private_key_path, artifacts_path, dest_path):**
 
 Runs tast to build the new VM image.
 
@@ -7141,10 +7147,11 @@ Args:
   qcow_image_path(Path): The location of the qcow-format VM image.
   private_key_path(Path): The location of the private key that can be used
     to authenticate to the VM.
+  artifacts_path(BuildPath): The location of build output artifacts.
   dest_path(Path): The location that the produced VM image should be copied
     to (on the local disk).
 
-&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#450)(version, previous_version):**
+&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#452)(version, previous_version):**
 
 Returns if version occurs logically after pervious_version.
 
@@ -7154,7 +7161,7 @@ Args:
   version(str): The version to compare.
   previous_version(str): The previous version to compare with.
 
-&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#428)(api, properties, new_version):**
+&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#430)(api, properties, new_version):**
 
 Sets the content of the VERSION-PIN file.
 

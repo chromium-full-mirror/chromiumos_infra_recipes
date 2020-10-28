@@ -19,14 +19,16 @@ def RunSteps(api):
 
   # Run with retry
   api.tast_exec.run('tast_vm', ['!informational'], qcow_image, test_artifacts,
-                    private_key_path)
+                    private_key_path, 'artifacts-bucket', 'artifacts-path')
 
   # Run without retry
   results_dir = api.path.mkdtemp(prefix='temp')
   api.tast_exec.run_direct(['!informational'], qcow_image, test_artifacts,
-                           private_key_path, results_dir)
+                           private_key_path, 'artifacts-bucket',
+                           'artifacts-path', results_dir)
   api.tast_exec.run_direct(['example.Pass'], qcow_image, test_artifacts,
-                           private_key_path, results_dir,
+                           private_key_path, 'artifacts-bucket',
+                           'artifacts-path', results_dir,
                            run_args=['-var=myVar=myVal'])
 
 
