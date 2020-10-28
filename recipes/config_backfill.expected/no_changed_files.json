@@ -262,7 +262,8 @@
     "cmd": [],
     "name": "git transaction.diffing repo to find changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@no files changed@@@"
     ]
   },
   {

@@ -118,11 +118,11 @@ def RunSteps(api, properties):
                               generated_path)
 
     # Mock existence of source path for tests
-    api.path.mock_add_paths(SRC_CONFIG)
+    api.path.mock_add_paths(api.context.cwd.join(SRC_CONFIG))
 
     # Merge hwid and yaml files with any generated config that we have
     cmd = [cros_config_path.join(JOIN_SCRIPT_PATH), '--output', DST_CONFIG]
-    if api.path.exists(SRC_CONFIG):
+    if api.path.exists(api.context.cwd.join(SRC_CONFIG)):
       cmd += ['--config-bundle', SRC_CONFIG]
     if properties.HasField('public_yaml'):
       cmd += [
@@ -152,6 +152,7 @@ def RunSteps(api, properties):
       if changed_files:
         presentation.logs['changed files'] = ", ".join(changed_files)
       else:
+        presentation.step_summary_text = "no files changed"
         return False
 
       # Add and commit
