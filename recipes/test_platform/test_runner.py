@@ -19,7 +19,7 @@ from PB.recipes.chromeos.test_platform.test_runner import \
 from PB.test_platform import phosphorus
 from PB.test_platform import skylab_local_state
 from PB.test_platform.skylab_test_runner.result import AsyncResults, Result
-from PB.test_platform.skylab_test_runner.config import Config
+from PB.test_platform.skylab_test_runner.request import Request
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
@@ -313,7 +313,6 @@ def summarize_results(api, prejob_response, run_test_response, result):
 def _result_contains_no_failures(result):
   return not _result_contains_failures(result)
 
-
 def _result_contains_failures(result):
   verdicts = [
       p.verdict != Result.Prejob.Step.VERDICT_PASS for p in result.prejob.step
@@ -434,9 +433,9 @@ def _run_all_tests(api, phosphorus_config, properties, dut_hostname,
   * dut_state: string.
   """
   upload_to_gs_response = None
-  result = None
   autotest_results = {}
   run_test_response = None
+  result = None
 
   for test_id, test in tests.items():
     run_test_response = run_test_specific_steps(
@@ -456,6 +455,20 @@ def _run_all_tests(api, phosphorus_config, properties, dut_hostname,
     result.autotest_results[test_id].CopyFrom(test_result)
 
   return result, run_test_response, dut_state
+
+
+def _collect_tests(request):
+  """Collects tests from Request into one dictionary
+
+  Args:
+  * request: skylab_test_runner.Request instance
+
+  Returns: dictionary of skylab_test_runner.Request.Test instances
+  """
+  tests = {i: t for (i, t) in request.tests.items()}
+  if request.HasField('test'):
+    tests['original_test'] = request.test
+  return tests
 
 
 def publish_to_result_flow(api, config, request,
@@ -536,14 +549,11 @@ def execution_steps(api, properties, envvars):
     )
 
     dut_state = _DUT_STATE_NEEDS_REPAIR
-    prejob_response = None
     run_test_response = None
-    upload_to_gs_response = None
     max_duration_sec = (
         properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
     result = None
-    tests = {}
-    tests["original_test"] = properties.request.test
+    tests = _collect_tests(properties.request)
     try:
       # prejob and test failures are detected when parsing results.
       # An exception from the steps here indicates an infrastructure
@@ -803,6 +813,11 @@ def GenTests(api):
     return (api.properties(
         TestRunnerProperties(request=_canned_test_runner_request())))
 
+  # An example request with multiple tests on the test field.
+  def _request_properties_multitest():
+    return (api.properties(
+        TestRunnerProperties(request=_canned_multitest_request())))
+
   def _canned_test_runner_request():
     return {
         'prejob': {
@@ -820,6 +835,51 @@ def GenTests(api):
                 'is_client_test': True,
                 'display_name': 'fancy_name'
             }
+        }
+    }
+
+  def _canned_multitest_request():
+    multi_test_1 = Request.Test(
+        autotest={
+            'name': 'dummy_name',
+            'test_args': 'foo=bar',
+            'keyvals': {
+                'key1': 'val1'
+            },
+            'is_client_test': True,
+            'display_name': 'multi_test_1'
+        })
+    multi_test_2 = Request.Test(
+        autotest={
+            'name': 'dummy_name',
+            'test_args': 'foo=bar',
+            'keyvals': {
+                'key1': 'val1'
+            },
+            'is_client_test': True,
+            'display_name': 'multi_test_2'
+        })
+    original_test = Request.Test(
+        autotest={
+            'name': 'dummy_name',
+            'test_args': 'foo=bar',
+            'keyvals': {
+                'key1': 'val1'
+            },
+            'is_client_test': True,
+            'display_name': 'original_test'
+        })
+    return {
+        'prejob': {
+            'provisionable_labels': {
+                'label1': 'value1',
+                'label2': 'value2',
+            }
+        },
+        'test': original_test,
+        'tests': {
+            'multi_test_1': multi_test_1,
+            'multi_test_2': multi_test_2,
         }
     }
 
@@ -888,7 +948,7 @@ def GenTests(api):
       seconds=current_time_sec + 55)
 
   yield api.test(
-      'success with build deadline',
+      'success_with_build_deadline',
       api.buildbucket.build(_build_with_execution_timeout(30)),
       _misc_properties(),
       api.properties(TestRunnerProperties(request=r_with_deadline)),
@@ -899,7 +959,7 @@ def GenTests(api):
   ) + api.time.seed(current_time_sec)
 
   yield api.test(
-      'success with request deadline',
+      'success_with_request_deadline',
       api.buildbucket.build(_build_with_execution_timeout(66)),
       _misc_properties(),
       api.properties(TestRunnerProperties(request=r_with_deadline)),
@@ -941,7 +1001,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'mismatched test result directory',
+      'mismatched_test_result_directory',
       _misc_properties(),
       _request_properties(),
       api.step_data(
@@ -996,7 +1056,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'link to all archived logs',
+      'link_to_all_archived_logs',
       _set_build_id(id=42),
       _misc_properties(),
       _request_properties(),
@@ -1055,7 +1115,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'failed prejob with missing failures in result',
+      'failed_prejob_with_missing_failures_in_result',
       _set_build_id(id=42),
       _misc_properties(),
       _request_properties(),
@@ -1065,7 +1125,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'failed run-test with missing failures in result',
+      'failed_run-test_with_missing_failures_in_result',
       _set_build_id(id=42),
       _misc_properties(),
       _request_properties(),
@@ -1076,7 +1136,18 @@ def GenTests(api):
   )
 
   yield api.test(
-      'skip result_flow pubsub due to missing build ID',
+      'successful_run-test_with_multiple_tests',
+      _set_build_id(id=42),
+      _misc_properties(),
+      _request_properties_multitest(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _run_test_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'skip_result_flow_pubsub_due_to_missing_build_ID',
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -1086,7 +1157,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'skip result_flow pubsub due to missing topic',
+      'skip_result_flow_pubsub_due_to_missing_topic',
       _set_build_id(id=42),
       _misc_properties(),
       api.properties(
@@ -1104,7 +1175,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'skip result_flow pubsub due to missing project',
+      'skip_result_flow_pubsub_due_to_missing_project',
       _set_build_id(id=42),
       _misc_properties(),
       api.properties(
