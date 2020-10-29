@@ -21,6 +21,7 @@ def RunSteps(api):
   robocrop_action = api.bot_scaling.get_robocrop_action(
       bot_policy_config, api.bot_scaling.test_api.gce_provider_config(),
       swarming_stats=swarming_stats)
+  #api.assertions.assertIsNone(robocrop_action)
   for appl in robocrop_action.appl_resource_utilization:
     api.assertions.assertEqual(appl.application, 'chromeos')
     for resource in appl.resource_utilization:

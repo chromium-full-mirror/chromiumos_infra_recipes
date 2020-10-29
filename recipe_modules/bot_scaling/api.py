@@ -306,7 +306,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     config_map = self._get_prefix_to_gce_config(configs)
     appl_resource_utilization = {}
     for action in scaling_actions:
-      resource_utilization = []
+      resource_utilization = {}
       global_usage = ResourceUtilization(region='global', vms=0, cpus=0,
                                          memory_gb=0, disk_gb=0, max_cpus=0)
       if action.application in appl_resource_utilization:
@@ -317,18 +317,18 @@ class BotScalingApi(recipe_api.RecipeApi):
             ApplicationUtilization(application=action.application,
                                    resource_utilization=[global_usage]))
       for ru in appl_util.resource_utilization:
-        if ru.region == 'global':
-          global_usage = ru
+        resource_utilization[ru.region] = ru
+      global_usage = resource_utilization.get(
+          'global',
+          ResourceUtilization(region='global', vms=0, cpus=0, memory_gb=0,
+                              disk_gb=0, max_cpus=0))
       for regional_action in action.regional_actions:
         config = config_map.get(regional_action.prefix, None)
         if config:
-          usage = ResourceUtilization(region=regional_action.region, vms=0,
-                                      cpus=0, memory_gb=0, disk_gb=0,
-                                      max_cpus=0)
-          for ru in appl_util.resource_utilization:
-            if ru.region == regional_action.region:
-              usage = ru
-          resource_utilization.append(usage)
+          usage = resource_utilization.get(
+              regional_action.region,
+              ResourceUtilization(region=regional_action.region, vms=0, cpus=0,
+                                  memory_gb=0, disk_gb=0, max_cpus=0))
           if action.actionable == ScalingAction.NO:
             usage.vms += config.current_amount
             usage.memory_gb += config.current_amount * action.bot_type.memory_gb
@@ -337,27 +337,31 @@ class BotScalingApi(recipe_api.RecipeApi):
               usage.disk_gb += config.current_amount * disk.size
             global_usage.vms += config.current_amount
             global_usage.cpus += config.current_amount * action.bot_type.cores_per_bot
-            global_usage.memory_gb += config.current_amount * action.bot_type.memory_gb
+            global_usage.memory_gb += round(config.current_amount *
+                                            action.bot_type.memory_gb)
             for disk in config.attributes.disk:
               global_usage.disk_gb += config.current_amount * disk.size
             global_usage.max_cpus += config.amount.max * action.bot_type.cores_per_bot
           elif action.actionable == ScalingAction.YES:
             usage.vms += regional_action.bots_requested
-            usage.memory_gb += regional_action.bots_requested * action.bot_type.memory_gb
+            usage.memory_gb += round(regional_action.bots_requested *
+                                     action.bot_type.memory_gb)
             usage.cpus += regional_action.bots_requested * action.bot_type.cores_per_bot
             for disk in config.attributes.disk:
               usage.disk_gb += regional_action.bots_requested * disk.size
             usage.max_cpus += config.amount.max * action.bot_type.cores_per_bot
+          resource_utilization[regional_action.region] = usage
       if action.actionable == ScalingAction.YES:
         global_usage.vms += action.bots_requested
         global_usage.cpus += action.bots_requested * action.bot_type.cores_per_bot
-        global_usage.memory_gb += action.bots_requested * action.bot_type.memory_gb
+        global_usage.memory_gb += round(action.bots_requested *
+                                        action.bot_type.memory_gb)
         for disk in config.attributes.disk:
           global_usage.disk_gb += action.bots_requested * disk.size
-      resource_utilization.append(global_usage)
+      resource_utilization['global'] = global_usage
       appl_resource_utilization[action.application] = ApplicationUtilization(
           application=action.application,
-          resource_utilization=resource_utilization)
+          resource_utilization=resource_utilization.values())
     return appl_resource_utilization.values()
 
   def _get_prefix_to_gce_config(self, configs):
