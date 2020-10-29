@@ -46,6 +46,7 @@ type Options struct {
 	IncludeDetailedLabels bool `json:"include_detailed_labels"`
 	IncludeFiles          bool `json:"include_files"`
 	IncludeCommitInfo     bool `json:"include_commit_info"`
+	IncludeMessages       bool `json:"include_messages"`
 }
 
 func changesToQueryParams(changes Changes, options Options) gerrit.ChangeQueryParams {
@@ -79,6 +80,9 @@ func changesToQueryParams(changes Changes, options Options) gerrit.ChangeQueryPa
 	}
 	if options.IncludeDetailedLabels {
 		queryOpts = append(queryOpts, "DETAILED_LABELS")
+	}
+	if options.IncludeMessages {
+		queryOpts = append(queryOpts, "MESSAGES")
 	}
 	return gerrit.ChangeQueryParams{
 		Query:   strings.Join(queryOrs, " OR "),

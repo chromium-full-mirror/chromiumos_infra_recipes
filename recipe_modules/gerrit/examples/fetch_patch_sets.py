@@ -39,6 +39,8 @@ values_dict = {
             url='https://chromium.googlesource.com/chromium/src',
             ref='refs/changes/27/91827/1',
             files={'my/fake/file': dict(status='A', size_delta=0, size=0)},
+            hashtags=[],
+            messages=[],
             _display_id='chromium:91827',
             _display_url='https://chromium-review.googlesource.com/c/91827',
             _short_host='chromium',
@@ -61,6 +63,14 @@ values_dict = {
             url='https://example.com/project-path',
             ref='refs/something/02/2/3',
             files={'their/fake/file': dict(status='A', size_delta=0, size=0)},
+            hashtags=["foo", "bar"],
+            messages=[{
+                'id': "1",
+                "message": "hello!"
+            }, {
+                'id': "2",
+                "message": "goodbye."
+            }],
             _display_id='example.com:2',
             _display_url='https://example.com/c/2',
             _short_host='example.com',
@@ -91,6 +101,8 @@ def RunSteps(api):
     api.assertions.assertEqual(patch.created, values['created'])
     api.assertions.assertEqual(patch.updated, values['updated'])
     api.assertions.assertEqual(patch.submitted, values['submitted'])
+    api.assertions.assertEqual(patch.hashtags, values['hashtags'])
+    api.assertions.assertEqual(patch.messages, values['messages'])
     for fname in values['files']:
       api.assertions.assertIn(fname, patch.file_infos)
     api.assertions.assertEqual(patch.commit_info,

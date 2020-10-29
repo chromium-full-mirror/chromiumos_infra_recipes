@@ -27,6 +27,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'has_review_started': values.get('has_review_started', False),
         'branch': values.get('branch', 'master'),
         'subject': values.get('subject', 'Change title'),
+        'hashtags': values.get('hashtags', []),
+        'messages': values.get('messages', []),
     }
     ref = values.get(
         'ref', 'refs/changes/%s/%d/%d' % (

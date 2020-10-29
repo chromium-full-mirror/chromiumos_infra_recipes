@@ -105,6 +105,16 @@ class PatchSet(object):
     return self._change_info.get('submitted', None)
 
   @property
+  def hashtags(self):
+    """ Returns the hashtags associated with this PatchSet."""
+    return self._change_info['hashtags']
+
+  @property
+  def messages(self):
+    """Returns the messages associated with this PatchSet."""
+    return self._change_info['messages']
+
+  @property
   def git_fetch_url(self):
     """Returns a URL where 'git fetch' can access this PatchSet."""
     url = self._rev_info.get('fetch', {}).get('http', {}).get('url')
@@ -205,7 +215,8 @@ class GerritApi(RecipeApi):
                                timeout=10 * 60)
 
   def fetch_patch_sets(self, gerrit_changes, include_files=False,
-                       include_commit_info=False, test_output_data=None):
+                       include_commit_info=False, include_messages=False,
+                       test_output_data=None):
     """Fetch and return PatchSets from Gerrit.
 
     The step fails if any patch set is not found.
@@ -213,7 +224,8 @@ class GerritApi(RecipeApi):
     Args:
       gerrit_changes (List[GerritChange]): Buildbucket GerritChanges to fetch.
       include_files (bool): If True, include information about changed files.
-      incude_commit_info (bool): If True, include information about the commit.
+      include_commit_info (bool): If True, include information about the commit.
+      include_messages (bool): If True, include messages attached to the commit.
       test_output_data (dict): Test output for gerrit-fetch-changes.
 
     Returns:
@@ -230,7 +242,8 @@ class GerritApi(RecipeApi):
     request = {
         'changes': requests,
         'include_files': include_files,
-        'include_commit_info': include_commit_info
+        'include_commit_info': include_commit_info,
+        'include_messages': include_messages,
     }
     results = self._gerrit_fetch_changes(request, gerrit_changes,
                                          test_output_data=test_output_data)
