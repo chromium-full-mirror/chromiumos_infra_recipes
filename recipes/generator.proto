@@ -63,6 +63,23 @@ enum OutdatedClsPolicy {
   OUTDATED_ABANDON = 3;
 }
 
+// Describes how PUpr should retry existing open CLs that have failed.
+enum RetryClPolicy {
+  // No retries (default).
+  NO_RETRY = 0;
+
+  // Retry with default behavior -- either the most recent CL with the hashtag
+  // #pupr-retry-pinned is retried, or in the absence of such a hashtag,
+  // the most recent open CL is retried. Note that retries only happen
+  // when EXISTING_CLS_POLICY != FULL_RUN.
+  RETRY_LATEST_OR_LATEST_PINNED = 1;
+
+  // Retries will only occur for the most recent CL pinned #pupr-retry-pinned,
+  // again with the caveat that retries will not occur if EXISTING_CLS_POLICY
+  // is not FULL_RUN.
+  RETRY_LATEST_PINNED = 2;
+}
+
 message BranchPolicy {
   // The first BranchPolicy in the list to match the tag will be the one used.
   //
@@ -102,6 +119,9 @@ message BranchPolicy {
 
   // Policy to follow when for CLs that are still open but behind a merge.
   OutdatedClsPolicy outdated_cls_policy =  7;
+
+  // Policy to follow for retrying open failed CLs.
+  RetryClPolicy retry_cl_policy = 8;
 }
 
 message GeneratorProperties {

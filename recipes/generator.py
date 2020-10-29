@@ -31,10 +31,15 @@ from PB.recipes.chromeos.generator import (
     OUTDATED_DO_NOTHING,
     OUTDATED_LEAVE_COMMENT,
     OUTDATED_ABANDON,
+    RetryClPolicy,
+    NO_RETRY,
+    RETRY_LATEST_OR_LATEST_PINNED,
+    RETRY_LATEST_PINNED,
     BranchPolicy,
     Reviewer,
     GeneratorProperties,
 )
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
     GitilesTrigger, Trigger, WebUITrigger)
 from recipe_engine.recipe_api import StepFailure
@@ -44,6 +49,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -62,6 +68,35 @@ DEPS = [
 ]
 
 PROPERTIES = GeneratorProperties
+
+HASHTAG_FREEZE_RETRIES = "pupr-freeze-retries"
+HASHTAG_PINNED_RETRY = "pupr-retry-pinned"
+
+# TODO(jackneus): After generator has run for real on the chrome package, look at the
+# gerrit-fetch-changes step output to get a better idea of the 'CQ is trying...' message
+# and change the simple "in" queries below to narrower and more precise regexp matching.
+
+
+# Determine if the CL in question is in a failed state.
+def is_failed_cl(c):
+  # c.messages is sorted in ascending order of date. Reverse to get most recent first.
+  for m in reversed(c.messages):
+    if "Failed builds" in m["message"]:
+      return True
+  return False
+
+
+# Determine if the CL in question is in a running state.
+def is_running_cl(c):
+  # c.messages is sorted in ascending order of date. Reverse to get most recent first.
+  for m in reversed(c.messages):
+    # If we hit a try message before a failed message, the change
+    # hasn't failed yet for the most recent run.
+    if "CQ is trying the patch" in m["message"]:
+      return True
+    if "Failed builds" in m["message"]:
+      break
+  return False
 
 
 def RunSteps(api, properties):
@@ -101,7 +136,7 @@ def RunSteps(api, properties):
   cpv = api.naming.get_package_title(package)
 
   with api.cros_source.checkout_overlays_context(), \
-    api.cros_sdk.cleanup_context(checkout_path=workspace_path):
+      api.cros_sdk.cleanup_context(checkout_path=workspace_path):
     api.cros_source.ensure_synced_cache()
 
     # Check out the appropriate branch, and use the appropriate policy.
@@ -167,13 +202,13 @@ def RunSteps(api, properties):
       presentation.logs['uprev versions'] = [
           response.version for response in valid_responses
       ]
-
     Ebuilds = namedtuple('Ebuilds', 'path version')
 
     topic = policy.topic or cpv
     existing_cls_policy = policy.existing_cls_policy
     no_existing_cls_policy = policy.no_existing_cls_policy
     outdated_cls_policy = policy.outdated_cls_policy
+    retry_cl_policy = policy.retry_cl_policy or NO_RETRY
 
     with api.step.nest('commit uprev'):
       # Collect the changes by repository, so can do one CL per repository.
@@ -275,6 +310,59 @@ def RunSteps(api, properties):
                                       message=outdated_comment_message)
             abandoned_cls.append(outdated_cl)
 
+    existing_cls = open_changes and len(abandoned_cls) < len(open_changes)
+    send_to_cq_policy = (
+        existing_cls_policy if existing_cls else no_existing_cls_policy)
+
+    if retry_cl_policy != NO_RETRY and existing_cls_policy != FULL_RUN:
+      with api.step.nest('apply retry policy {}'.format(
+          RetryClPolicy.Name(retry_cl_policy))) as presentation:
+        if open_changes:
+          open_ci = api.gerrit.fetch_patch_sets(open_changes,
+                                                include_messages=True)
+
+          # Check for freeze hashtag
+          # TODO(jackneus|engeg): Check all open CLs, or only those that are not outdated?
+          freeze_retries = any(
+              [HASHTAG_FREEZE_RETRIES in ci.hashtags for c in open_ci])
+
+          # Filter out outdated CLs, sort by recency
+          open_ci = sorted([ci for ci in open_ci if ci.created > mrm.submitted],
+                           key=lambda ci: ci.created, reverse=True)
+
+          # If an open CL had the hashtag HASHTAG_FREEZE_RETRIES, do not attempt retry
+          # regardless of policy. Similarly, if send_to_cq_policy is FULL_RUN the new
+          # CL will be itself submitted to the CQ, so a retry is not useful.
+          if not freeze_retries and send_to_cq_policy != FULL_RUN:
+            # Look for open cl with hashtag HASHTAG_PINNED_RETRY
+            retry_ci = None
+            for ci in open_ci:
+              if HASHTAG_PINNED_RETRY in ci.hashtags:
+                retry_ci = ci
+                break
+
+            # If we haven't identified a pinned CL and the retry policy is not RETRY_PINNED_ONLY,
+            # find most recent failed CL.
+            if retry_cl_policy != RETRY_LATEST_PINNED and not retry_ci:
+              # Filter out CLs that haven't failed (i.e. been tried at least once)
+              failed_ci = list(filter(is_failed_cl, open_ci))
+
+              if failed_ci:
+                # Sort to get most recent failed
+                list.sort(failed_ci, key=lambda ci: ci.created, reverse=True)
+                retry_ci = failed_ci[0]
+
+            if retry_ci and is_failed_cl(
+                retry_ci) and not is_running_cl(retry_ci):
+              with api.step.nest("retry CL {}".format(retry_ci.change_id)):
+                # Then set labels.
+                labels = {
+                    api.gerrit.Label.BOT_COMMIT: 1,
+                    api.gerrit.Label.COMMIT_QUEUE: 2,
+                }
+                api.gerrit.set_change_labels(retry_ci.to_gerrit_change_proto(),
+                                             labels)
+
     with api.step.nest('generate CLs'):
       repositories = map(api.path.abs_to_path, ebuilds_by_repo.keys())
       changes = [
@@ -293,10 +381,6 @@ def RunSteps(api, properties):
             description = api.gerrit.get_change_description(change)
             description = '{}\n{}'.format(description, cq_depend)
             api.gerrit.set_change_description(change, description)
-
-    existing_cls = open_changes and len(abandoned_cls) < len(open_changes)
-    send_to_cq_policy = (
-        existing_cls_policy if existing_cls else no_existing_cls_policy)
 
     with api.step.nest('update CL labels'):
       for change in changes:
@@ -339,7 +423,6 @@ def RunSteps(api, properties):
 
         if labels is not None:
           api.gerrit.set_change_labels(change, labels)
-
 
 def _get_policy(api, trigger, policies):
   """Find the applicable policy for the trigger.
@@ -404,6 +487,7 @@ def GenTests(api):
     kwargs.setdefault('existing_cls_policy', DO_NOTHING)
     kwargs.setdefault('no_existing_cls_policy', DO_NOTHING)
     kwargs.setdefault('outdated_cls_policy', OUTDATED_DO_NOTHING)
+    kwargs.setdefault('retry_cl_policy', NO_RETRY)
     return BranchPolicy(**kwargs)
 
   def _props(**kwargs):
@@ -652,4 +736,94 @@ def GenTests(api):
               '',
           ]))),
       api.post_check(post_process.StatusAnyFailure),
+  )
+
+  changes = [
+      common_pb2.GerritChange(change=1,
+                              host='chromium-review.googlesource.com'),
+      common_pb2.GerritChange(change=2,
+                              host='chromium-review.googlesource.com'),
+  ]
+
+  value_dict = {
+      1: {
+          "change_id":
+              "1",
+          "created":
+              "2020-10-22 18:54:00.000000000",
+          "messages": [{
+              "message": "CQ is trying the patch..."
+          }, {
+              "message": "Failed builds: ..."
+          }]
+      },
+      2: {
+          "change_id": 2,
+          "created": "2020-10-23 18:54:00.000000000",
+      },
+  }
+
+  yield api.test(
+      'with-retry-policy',
+      _props(branch_policies=[
+          _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
+      ]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
+          value_dict),
+  )
+
+  changes = [
+      common_pb2.GerritChange(change=1,
+                              host='chromium-review.googlesource.com'),
+  ]
+
+  value_dict = {
+      1: {
+          "change_id":
+              1,
+          "created":
+              "2020-10-22 18:54:00.000000000",
+          "hashtags": [HASHTAG_PINNED_RETRY],
+          "messages": [{
+              "message": "CQ is trying the patch..."
+          }, {
+              "message": "Failed builds: ..."
+          }, {
+              "message": "CQ is trying the patch..."
+          }]
+      }
+  }
+
+  yield api.test(
+      'with-retry-pinned-policy-selected-cl-running',
+      _props(branch_policies=[
+          _policy(retry_cl_policy=RETRY_LATEST_PINNED,
+                  existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
+      ]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_PINNED', changes, value_dict),
+  )
+
+  changes = [
+      common_pb2.GerritChange(change=1),
+  ]
+
+  value_dict = {1: {"change_id": 1, "hashtags": [HASHTAG_FREEZE_RETRIES]}}
+
+  yield api.test(
+      'retry-freeze',
+      _props(branch_policies=[
+          _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED)
+      ]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
+          value_dict),
   )
