@@ -64,7 +64,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     builder = self.m.buildbucket.build.builder
     self._is_staging = (
         builder.bucket == 'staging' or builder.builder.startswith('staging-'))
-
+    self._properties.honor_gitiles_commit_ref |= (
+        'chromeos.cros_infra_config.honor_gitiles_commit_ref' in
+        self.experiments)
     self._switch_to_external_manifest |= (
         'chromeos.cros_infra_config.switch_to_external_manifest' in
         self.experiments)
@@ -369,6 +371,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     manifest = self.m.src_state.external_manifest
     if private:
       manifest = self.m.src_state.internal_manifest
+
+    # If the gitiles_commit we received is neither manifest, but has a ref,
+    # consider honoring that.
+    if (commit.ref and self._properties.honor_gitiles_commit_ref and
+        not self._has_valid_commit(None, commit, manifest)):
+      commit = manifest.as_gitiles_commit_proto
+      commit.ref = original_commit.ref
 
     # If we have a config, and the given commit is invalid, try the one from the
     # builder config.

@@ -19,5 +19,9 @@ message CrosInfraConfigProperties {
   bool ignore_config_changelist = 2;
 
   // Whether public builders should sync to the public manifest.
-  bool switch_to_external_manifest = 3;  
+  bool switch_to_external_manifest = 3;
+
+  // Feature flag: whether to honor gitiles_commit.ref when forcing host
+  // and project to the manifest.
+  bool honor_gitiles_commit_ref = 4;
 }
