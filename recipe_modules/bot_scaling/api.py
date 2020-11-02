@@ -325,35 +325,25 @@ class BotScalingApi(recipe_api.RecipeApi):
               regional_action.region,
               ResourceUtilization(region=regional_action.region, vms=0, cpus=0,
                                   memory_gb=0, disk_gb=0, max_cpus=0))
-          if action.actionable == ScalingAction.NO:
-            usage.vms += config.current_amount
-            usage.memory_gb += config.current_amount * action.bot_type.memory_gb
-            usage.cpus += config.current_amount * action.bot_type.cores_per_bot
-            for disk in config.attributes.disk:
-              usage.disk_gb += config.current_amount * disk.size
-            global_usage.vms += config.current_amount
-            global_usage.cpus += config.current_amount * action.bot_type.cores_per_bot
-            global_usage.memory_gb += round(config.current_amount *
-                                            action.bot_type.memory_gb)
-            for disk in config.attributes.disk:
-              global_usage.disk_gb += config.current_amount * disk.size
-            global_usage.max_cpus += config.amount.max * action.bot_type.cores_per_bot
-          elif action.actionable == ScalingAction.YES:
-            usage.vms += regional_action.bots_requested
-            usage.memory_gb += round(regional_action.bots_requested *
-                                     action.bot_type.memory_gb)
-            usage.cpus += regional_action.bots_requested * action.bot_type.cores_per_bot
-            for disk in config.attributes.disk:
-              usage.disk_gb += regional_action.bots_requested * disk.size
-            usage.max_cpus += config.amount.max * action.bot_type.cores_per_bot
+          base_count = config.current_amount
+          if action.actionable == ScalingAction.YES:
+            base_count = regional_action.bots_requested
+
+          # Set resource utilization per region
+          usage.vms += base_count
+          usage.memory_gb += round(base_count * action.bot_type.memory_gb)
+          usage.cpus += base_count * action.bot_type.cores_per_bot
+          for disk in config.attributes.disk:
+            usage.disk_gb += base_count * disk.size
+            global_usage.disk_gb += base_count * disk.size
+          usage.max_cpus += config.amount.max * action.bot_type.cores_per_bot
+          # Roll up each regional collection to global
+          global_usage.vms += base_count
+          global_usage.cpus += (base_count * action.bot_type.cores_per_bot)
+          global_usage.memory_gb += round(base_count *
+                                          action.bot_type.memory_gb)
+          global_usage.max_cpus += (base_count * action.bot_type.cores_per_bot)
           resource_utilization[regional_action.region] = usage
-      if action.actionable == ScalingAction.YES:
-        global_usage.vms += action.bots_requested
-        global_usage.cpus += action.bots_requested * action.bot_type.cores_per_bot
-        global_usage.memory_gb += round(action.bots_requested *
-                                        action.bot_type.memory_gb)
-        for disk in config.attributes.disk:
-          global_usage.disk_gb += action.bots_requested * disk.size
       resource_utilization['global'] = global_usage
       appl_resource_utilization[action.application] = ApplicationUtilization(
           application=action.application,
