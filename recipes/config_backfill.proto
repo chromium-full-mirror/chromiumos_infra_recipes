@@ -24,4 +24,7 @@ message ConfigBackfillProperties {
   // When no input config data is available, the project
   // name to use when generating the output.
   string project_name = 5;
+
+  // Program name
+  string program_name = 6;
 }
