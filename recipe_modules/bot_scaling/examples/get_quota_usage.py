@@ -28,6 +28,7 @@ def RunSteps(api):
         api.assertions.assertEqual(resource.vms, 120)
         api.assertions.assertEqual(resource.cpus, 480)
         api.assertions.assertEqual(resource.memory_gb, 1920)
+        api.assertions.assertEqual(resource.max_cpus, 1200)
       if resource.region == "first":
         api.assertions.assertEqual(resource.vms, 30)
         api.assertions.assertEqual(resource.cpus, 120)

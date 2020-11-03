@@ -28,7 +28,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"amount\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"max\": 15, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"max\": 20, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"min\": 15@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"attributes\": {@@@",
@@ -91,7 +91,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"amount\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"max\": 15, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"max\": 20, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"min\": 15@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"attributes\": {@@@",
@@ -154,7 +154,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"amount\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"max\": 15, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"max\": 20, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"min\": 15@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"attributes\": {@@@",
@@ -217,7 +217,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"amount\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"max\": 15, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"max\": 20, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"min\": 15@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"attributes\": {@@@",

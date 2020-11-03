@@ -18,7 +18,7 @@ class GceProviderTestApi(recipe_test_api.RecipeTestApi):
     """
     return {
         "amount": {
-            "max": 15,
+            "max": 20,
             "min": 15
         },
         "attributes": {

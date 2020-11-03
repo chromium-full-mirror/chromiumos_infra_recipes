@@ -342,7 +342,8 @@ class BotScalingApi(recipe_api.RecipeApi):
           global_usage.cpus += (base_count * action.bot_type.cores_per_bot)
           global_usage.memory_gb += round(base_count *
                                           action.bot_type.memory_gb)
-          global_usage.max_cpus += (base_count * action.bot_type.cores_per_bot)
+          global_usage.max_cpus += (
+              config.amount.max * action.bot_type.cores_per_bot)
           resource_utilization[regional_action.region] = usage
       resource_utilization['global'] = global_usage
       appl_resource_utilization[action.application] = ApplicationUtilization(
