@@ -1,0 +1,405 @@
+[
+  {
+    "cmd": [],
+    "name": "cloning config repo"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/config",
+      "[START_DIR]/config"
+    ],
+    "infra_step": true,
+    "name": "cloning config repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cloning public overlay"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://example.com/public/",
+      "[START_DIR]/public"
+    ],
+    "infra_step": true,
+    "name": "cloning public overlay.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cloning private overlay"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://example.com/private/",
+      "[START_DIR]/private"
+    ],
+    "infra_step": true,
+    "name": "cloning private overlay.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cloning hwid repo"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chromeos/chromeos-hwid",
+      "[START_DIR]/hwid"
+    ],
+    "infra_step": true,
+    "name": "cloning hwid repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configuring public baseboard overlay"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/overlays/board-overlays",
+      "[CLEANUP]/tmp_tmp_1/baseboard"
+    ],
+    "infra_step": true,
+    "name": "configuring public baseboard overlay.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "[CLEANUP]/tmp_tmp_1/baseboard/baseboard-reef/chromeos-base/chromeos-config-bsp-baseboard/files",
+      "[START_DIR]/public/overlay-reef/chromeos-base/chromeos-config-bsp/files/include-public"
+    ],
+    "infra_step": true,
+    "name": "configuring public baseboard overlay.copying files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configuring private baseboard overlay"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chromeos/overlays/baseboard-reef-private",
+      "[CLEANUP]/tmp_tmp_2/baseboard"
+    ],
+    "infra_step": true,
+    "name": "configuring private baseboard overlay.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "[CLEANUP]/tmp_tmp_2/baseboard/chromeos-base/chromeos-config-bsp-baseboard-private/files",
+      "[START_DIR]/private/chromeos-base/chromeos-config-bsp-private/files/include-private"
+    ],
+    "infra_step": true,
+    "name": "configuring private baseboard overlay.copying files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cloning destination repo"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://example.com/some/project/repo",
+      "[START_DIR]/dest"
+    ],
+    "infra_step": true,
+    "name": "cloning destination repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "git transaction"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/dest/imported"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.ensure [START_DIR]/dest/imported directory exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/public/some/model.yaml",
+      "[START_DIR]/dest/imported/public_model.yaml"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.copy public model.yaml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/dest/imported/public_model.yaml"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/private/some/model.yaml",
+      "[START_DIR]/dest/imported/private_model.yaml"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.copy private model.yaml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/dest/imported/private_model.yaml"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git add (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/hwid/v3/SOME_KEY",
+      "[START_DIR]/dest/imported/hwid"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.copy HWID database",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/dest/imported/hwid"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git add (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/dest/generated"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.ensure [START_DIR]/dest/generated directory exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[START_DIR]/config/payload_utils/join_config_payloads.py",
+      "--output",
+      "generated/joined.jsonproto",
+      "--config-bundle",
+      "generated/config.jsonproto",
+      "--public-model",
+      "[START_DIR]/public/some/model.yaml",
+      "--private-model",
+      "[START_DIR]/private/some/model.yaml",
+      "--hwid",
+      "[START_DIR]/hwid/v3/SOME_KEY",
+      "--project-name",
+      "test_project"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "name": "git transaction.Generate joined configuration",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "generated/joined.jsonproto"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git add (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "git transaction.diffing repo to find changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@changed files@a/b/text.txt, other_test.txt@@@",
+      "@@@STEP_LOG_END@changed files@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.diffing repo to find changes.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Merging legacy configs.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_backfill",
+      "[CLEANUP]/commit_msg_tmp_3"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.diffing repo to find changes.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Merging legacy configs.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Automation-Id: config_backfill@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_3"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.diffing repo to find changes.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "https://example.com/some/project/repo",
+      "HEAD:refs/heads/master"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -33,9 +33,14 @@ DEPS = [
 
 PROPERTIES = ConfigBackfillProperties
 
+CROS_EXTERNAL = 'https://chromium.googlesource.com/chromiumos'
+CROS_INTERNAL = 'https://chrome-internal.googlesource.com/chromeos'
+
 # Repo URL configuration
-CROS_HWID_REPO = 'https://chrome-internal.googlesource.com/chromeos/chromeos-hwid'
-CROS_CONFIG_REPO = 'https://chromium.googlesource.com/chromiumos/config'
+CROS_HWID_REPO = CROS_INTERNAL + '/chromeos-hwid'
+CROS_CONFIG_REPO = CROS_EXTERNAL + '/config'
+PUBLIC_BASEBOARD_REPO = CROS_EXTERNAL + '/overlays/board-overlays'
+PRIVATE_BASEBOARD_REPO = CROS_INTERNAL + '/overlays/baseboard-{program}-private'
 
 # Source and destination config files
 SRC_CONFIG = 'generated/config.jsonproto'
@@ -81,6 +86,55 @@ def RunSteps(api, properties):
   if properties.hwid_key:
     with api.step.nest('cloning hwid repo'):
       api.git.clone(CROS_HWID_REPO, target_path=hwid_repo_path)
+
+  # TODO(crbug.com/1144956).  This is a workaround for fizz and reef.  They're
+  # unique in that they expect their baseboard overlay to be available so they
+  # can include a common yaml file from it.  We don't have portage available
+  # so we have to clone the repos and hack it with symlinks.  Once the mentioned
+  # bug is resolved, we can make this more consistent for all projects.
+  def _copy_baseboard(step_text, overlay_path, dst, baseboard_repo, src_path):
+    """Copy files from baseboard overlay to project overlay.
+
+    Args:
+        step_text (str): display text for the step
+        overlay_path (str): path to the project overlay
+        dst_path (str): path in overlay to copy files to
+        baseboard_repo (str): url to the repo for the baseboard overlay
+        src_path (str): path in the baseboard overlay to copy from
+    """
+
+    with api.step.nest(step_text):
+      baseboard_path = api.path.mkdtemp().join('baseboard')
+      api.git.clone(baseboard_repo, baseboard_path)
+
+      api.file.copytree(
+          'copying files',
+          api.path.join(baseboard_path, src_path),
+          api.path.join(overlay_path, dst),
+      )
+
+  program = properties.program_name.lower()
+  config_path = 'chromeos-base/chromeos-config-bsp-baseboard/files'
+  if program in ['reef', 'fizz']:
+    _copy_baseboard(
+        'configuring public baseboard overlay',
+        public_repo_path,
+        'overlay-{program}/chromeos-base/chromeos-config-bsp/files/include-public'
+        .format(program=program),
+        PUBLIC_BASEBOARD_REPO,
+        api.path.join(
+            'baseboard-{program}'.format(program=program),
+            'chromeos-base/chromeos-config-bsp-baseboard/files',
+        ),
+    )
+
+    _copy_baseboard(
+        'configuring private baseboard overlay',
+        private_repo_path,
+        'chromeos-base/chromeos-config-bsp-private/files/include-private',
+        PRIVATE_BASEBOARD_REPO.format(program=program),
+        'chromeos-base/chromeos-config-bsp-baseboard-private/files',
+    )
 
   # Clone the destination repo.
   with api.step.nest('cloning destination repo'):
@@ -184,7 +238,26 @@ def GenTests(api):
                   'path': 'some/model.yaml'
               },
               'hwid_key': 'some_key',
-              'project_name': 'test_project'
+              'project_name': 'test_project',
+              'program_name': 'test_program',
+          }))
+
+  yield api.test(
+      'baseboard_workaround',
+      api.properties(
+          **{
+              'dest_repo': 'https://example.com/some/project/repo',
+              'public_yaml': {
+                  'repo': 'https://example.com/public/',
+                  'path': 'some/model.yaml'
+              },
+              'private_yaml': {
+                  'repo': 'https://example.com/private/',
+                  'path': 'some/model.yaml'
+              },
+              'hwid_key': 'some_key',
+              'project_name': 'test_project',
+              'program_name': 'reef',
           }))
 
   yield api.test(
@@ -200,7 +273,8 @@ def GenTests(api):
                   'path': 'some/model.yaml'
               },
               'hwid_key': 'some_key',
-              'project_name': 'test_project'
+              'project_name': 'test_project',
+              'program_name': 'test_program',
           }), api.expect_exception('ValueError'))
 
   yield api.test(
@@ -217,7 +291,8 @@ def GenTests(api):
                   'path': 'some/model.yaml'
               },
               'hwid_key': 'some_key',
-              'project_name': 'test_project'
+              'project_name': 'test_project',
+              'program_name': 'test_program',
           }),
       api.step_data('git transaction.diffing repo to find changes.git diff',
                     stdout=api.raw_io.output('')))

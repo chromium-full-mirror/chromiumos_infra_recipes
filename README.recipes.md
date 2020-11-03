@@ -5590,9 +5590,9 @@ For more details on the input properties, see cl_factory.proto.
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#53)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#58)(api, properties):**
 
-&mdash; **def [require](/recipes/config_backfill.py#47)(cond, message):**
+&mdash; **def [require](/recipes/config_backfill.py#52)(cond, message):**
 
 Require a given condition be true or throw a ValueError.
 ### *recipes* / [config\_postsubmit](/recipes/config_postsubmit.py)
