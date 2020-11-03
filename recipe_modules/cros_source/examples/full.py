@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -49,6 +50,7 @@ def RunSteps(api, properties):
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache(is_staging=True)
       api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
+      _ = api.cros_source.pinned_manifest
 
   # At this point should be dirty only for custom manifest cases.
   if properties.expected_snapshot_isolated_hash:
@@ -77,6 +79,13 @@ def GenTests(api):
 
   yield api.cros_source.test('basic',
                              api.post_check(post_process.StatusSuccess))
+
+  sync_step_name = ('sync to snapshot.fetch '
+                    '2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml')
+  yield api.cros_source.test(
+      'sync-to-branch', api.post_check(post_process.StatusSuccess),
+      api.step_data(sync_step_name, api.json.output(dict(value=''))), cq=False,
+      git_ref='refs/heads/release-R87-13505.B')
 
   yield api.cros_source.test(
       'merge-commit-fails',

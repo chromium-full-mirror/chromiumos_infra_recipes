@@ -22,15 +22,18 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
         - cq = True.
         - revision = arbitrary sha.
         - git_repo = internal manifest url.
+        - git_ref = refs/heads/snapshot (if not cq).
 
     Returns:
       (TestData) the build with cros_source properties included.
     """
     kwargs = kwargs or {}
     cros_source_properties = kwargs.pop('cros_source_properties', {})
-    kwargs.setdefault('cq', True)
     kwargs.setdefault('revision', '2d72510e447ab60a9728aeea2362d8be2cbd7789')
     kwargs.setdefault('git_repo', self.m.src_state.internal_manifest.url)
+    kwargs.setdefault('cq', True)
+    if not kwargs['cq']:
+      kwargs.setdefault('git_ref', 'refs/heads/snapshot')
 
     data = self.m.test_util.test_build(**kwargs).build
     if cros_source_properties:

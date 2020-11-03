@@ -455,7 +455,9 @@
       "--url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/2d72510e447ab60a9728aeea2362d8be2cbd7789/snapshot.xml",
       "--format",
-      "text"
+      "text",
+      "--accept-statuses",
+      "200,404"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "sync to snapshot.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",

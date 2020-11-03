@@ -21,6 +21,9 @@ from PB.chromite.api.sdk import UnmountRequest as UnmountSdkRequest
 from PB.chromite.api.sdk import CreateSnapshotRequest
 from PB.chromite.api.sdk import RestoreSnapshotRequest
 
+# Default value for the sdk cache version
+_DEFAULT_SDK_CACHE_VERSION = 1
+
 
 class CrosSdkApi(RecipeApi):
   """A module for interacting with cros_sdk."""
@@ -103,16 +106,19 @@ class CrosSdkApi(RecipeApi):
   def sdk_cache_version(self):
     """Lazily load from file. Can be None if version file doesn't exist."""
     if self._sdk_cache_version == None:
-      data = None
+      data = {}
       self.m.path.mock_add_paths(self._sdk_cache_version_file)
-      if self.m.path.exists(str(self._sdk_cache_version_file)):
-        data = self.m.file.read_json(name='read sdk cache version json',
-                                     source=self._sdk_cache_version_file)
-      self._sdk_cache_version = int(data['version']) if data else 1
+      if self.m.path.exists(self._sdk_cache_version_file):
+        data = self.m.file.read_json('read sdk cache version json',
+                                     self._sdk_cache_version_file, dict())
+      data.setdefault('version', _DEFAULT_SDK_CACHE_VERSION)
+      data.setdefault('manifest_branch', '')
+      self._sdk_cache_version = int(data['version'])
+      self._sdk_cache_manifest_branch = data['manifest_branch']
     return self._sdk_cache_version
 
   @sdk_cache_version.setter
-  def sdk_cache_version(self, value=1):
+  def sdk_cache_version(self, value=_DEFAULT_SDK_CACHE_VERSION):
     """Set sdk cache version and write to file.
 
     Args:
@@ -121,10 +127,8 @@ class CrosSdkApi(RecipeApi):
     tmp_file = self.m.path['cleanup'].join('sdk_cache_version.json')
     value = int(value)
     self.m.file.write_json(
-        name='write sdk cache version file',
-        dest=tmp_file,
-        data={'version': value},
-    )
+        'write sdk cache version file', tmp_file,
+        dict(version=value, manifest_branch=self.m.cros_source.manifest_branch))
     cmd = ['sudo', 'mv', tmp_file, self._sdk_cache_version_file]
     self.m.step('move sdk cache version file into place', cmd)
     self._sdk_cache_version = value
@@ -230,7 +234,7 @@ class CrosSdkApi(RecipeApi):
 
     Args:
       version (int): Required SDK cache version, if any.  Some recipes do not
-          care what version the SDK is, they just need any SDK.  Default: 1.
+          care what version the SDK is, they just need any SDK.
       use_image (boolean): Mount the SDK file as an image.  Default: True.
       bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
       timeout_sec (int): Step timeout (in seconds).  Default: None if
@@ -244,9 +248,9 @@ class CrosSdkApi(RecipeApi):
       chromiumos_pb2.Chroot protobuf for the chroot.
     """
     # If the builder's config does not have an sdk_cache_version specified, it
-    # is version 1.  (Once we need to bump the cache version, the config will
-    # have it for everyone.)
-    version = version or 1
+    # is version _DEFAULT_SDK_CACHE_VERSION (1).  (Once we need to bump the
+    # cache version, the config will have it for everyone.)
+    version = version or _DEFAULT_SDK_CACHE_VERSION
     with self.m.step.nest(name or 'init sdk') as presentation:
       try:
         self.build_chmod_chroot()
@@ -257,7 +261,13 @@ class CrosSdkApi(RecipeApi):
             'Version in config: %d' % version,
             'Version on disk: %d' % disk_version,
         ]
-        replace = version != disk_version
+        disk_branch = self._sdk_cache_manifest_branch
+        presentation.logs['sdk manifest branch'] = [
+            'Branch on disk: %s' % disk_branch
+        ]
+        replace = (
+            version != disk_version or
+            disk_branch != self.m.cros_source.manifest_branch)
         if timeout_sec == 'DEFAULT':
           timeout_sec = None if bootstrap else 90 * 60
 

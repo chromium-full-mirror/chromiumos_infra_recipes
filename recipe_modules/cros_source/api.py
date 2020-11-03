@@ -43,6 +43,7 @@ class CrosSourceApi(RecipeApi):
     # The currently active branch of the manifest.  Empty unless we switched
     # branches.
     self._manifest_branch = ''
+    self._pinned_manifest = None
     self._applied_patches = defaultdict(list)
 
   def initialize(self):
@@ -53,6 +54,12 @@ class CrosSourceApi(RecipeApi):
     self._make_manifest_changes_active |= (
         'chromeos.cros_source.make_manifest_changes_active' in
         self.m.cros_infra_config.experiments)
+
+  @property
+  def pinned_manifest(self):
+    self._pinned_manifest = (
+        self._pinned_manifest or self.m.repo.manifest(pinned=True))
+    return self._pinned_manifest
 
   @property
   def manifest_branch(self):
@@ -508,6 +515,7 @@ class CrosSourceApi(RecipeApi):
 
       # 5. Log a pinned version of the patched manifest.
       final = self.m.repo.manifest(pinned=True)
+      self._pinned_manifest = final
       pres.logs['patched-manifest.xml'] = [final]
 
   def _partition_patches(self, patch_sets):
@@ -669,7 +677,10 @@ class CrosSourceApi(RecipeApi):
       self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
                                 detach=True, optimized_fetch=True,
                                 retry_fetches=8)
-      self.m.repo.ensure_pinned_manifest(test_data='')
+      # Get the pinned manifest from repo.  If that returns None, then we
+      # already have the pinned manifest in snapshot_xml.
+      self._pinned_manifest = (
+          self.m.repo.ensure_pinned_manifest(test_data='') or snapshot_xml)
 
   def _get_snapshot(self, gitiles_commit):
     """Returns the snapshot to use.
@@ -699,13 +710,31 @@ class CrosSourceApi(RecipeApi):
     gitiles_url = 'https://%s/%s' % (gitiles_commit.host,
                                      gitiles_commit.project)
 
-    step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file(
-        '<manifest></manifest>')
+    testdata = '<manifest></manifest>'
+    step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file(testdata)
 
-    return self.m.gitiles.download_file(
+    data = self.m.gitiles.download_file(
         gitiles_url, 'snapshot.xml', branch=gitiles_commit.id,
-        step_test_data=step_test_data,
+        step_test_data=step_test_data, accept_statuses=[200, 404],
         timeout=self.test_api.gitiles_timeout_seconds)
+    if data:
+      return data
+
+    # If there is no snapshot.xml, then we need to go to the appropriate
+    # branch of the appropriate manifest and generate the manifest.
+    manifest = self.m.src_state.gitiles_commit_to_manifest(gitiles_commit)
+    with self.m.context(cwd=manifest.path):
+      self.checkout_branch(manifest.url, gitiles_commit.ref)
+      self.m.git.fetch(manifest.remote, [gitiles_commit.id])
+      self.m.git.checkout(gitiles_commit.id, force=True)
+      snapshot_path = manifest.path.join('snapshot.xml')
+      # If the branch is pinned, use snapshot.xml, otherwise generate an
+      # unpinned manifest and return that.
+      return (self.m.file.read_raw('read local snapshot.xml', snapshot_path,
+                                   test_data=testdata)
+              if self.m.path.exists(snapshot_path) else self.m.repo.manifest(
+                  manifest_file=manifest.path.join('default.xml'),
+                  pinned=False))
 
   def create_project_commits_archive(self, archive_path, project_commits):
     """Creates an archive with the given project commits from the workspace.

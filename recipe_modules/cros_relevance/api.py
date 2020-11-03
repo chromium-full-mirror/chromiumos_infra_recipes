@@ -207,6 +207,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           '--output_binary_pb',
           output_bin_file,
       ]
+      if self.m.cros_source.manifest_branch:
+        presentation.step_text = 'running on manifest branch'
+        pinned_manifest = self.m.path.mkstemp(prefix='pinned-manifest')
+        self.m.file.write_raw('write pinned manifest', pinned_manifest,
+                              self.m.cros_source.pinned_manifest)
+        cmd.extend(['--manifest_file', pinned_manifest])
+
       self.m.step('run check', cmd, infra_step=True)
 
       test_resp = PointlessBuildCheckResponse()

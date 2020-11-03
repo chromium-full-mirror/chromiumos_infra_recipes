@@ -69,13 +69,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\"version\": 3}",
+      "{\"manifest_branch\": \"\", \"version\": 3}",
       "[CLEANUP]/sdk_cache_version.json"
     ],
     "infra_step": true,
     "name": "write sdk cache version file",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": 3}@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"manifest_branch\": \"\", \"version\": 3}@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },

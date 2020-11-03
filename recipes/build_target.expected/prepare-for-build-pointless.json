@@ -677,7 +677,9 @@
       "--url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
       "--format",
-      "text"
+      "text",
+      "--accept-statuses",
+      "200,404"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "sync to snapshot.fetch snapshot-HEAD-SHA:snapshot.xml",

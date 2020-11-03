@@ -20,4 +20,7 @@ message PointlessTest {
 
   // Whether this is a CQ build.
   bool is_cq = 4;
+
+  // Any manifest branch to checkout.
+  string manifest_branch = 5;
 }

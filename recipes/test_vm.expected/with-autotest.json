@@ -587,7 +587,9 @@
       "--url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
       "--format",
-      "text"
+      "text",
+      "--accept-statuses",
+      "200,404"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "sync to snapshot.fetch snapshot-HEAD-SHA:snapshot.xml",
@@ -1091,6 +1093,8 @@
       "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
       "@@@STEP_LOG_END@sdk cache version@@@",
+      "@@@STEP_LOG_LINE@sdk manifest branch@Branch on disk: @@@",
+      "@@@STEP_LOG_END@sdk manifest branch@@@",
       "@@@STEP_LOG_LINE@sdk version@123@@@",
       "@@@STEP_LOG_END@sdk version@@@"
     ]
@@ -1126,7 +1130,7 @@
     "name": "init sdk.read sdk cache version json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@\"\"@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{}@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },
@@ -1296,7 +1300,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\"version\": 1}",
+      "{\"manifest_branch\": \"\", \"version\": 1}",
       "[CLEANUP]/sdk_cache_version.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1304,7 +1308,7 @@
     "name": "init sdk.write sdk cache version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": 1}@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"manifest_branch\": \"\", \"version\": 1}@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },
@@ -2041,7 +2045,9 @@
       "--url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
       "--format",
-      "text"
+      "text",
+      "--accept-statuses",
+      "200,404"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "sync to snapshot (2).fetch snapshot-HEAD-SHA:snapshot.xml",
@@ -2489,6 +2495,8 @@
       "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
       "@@@STEP_LOG_END@sdk cache version@@@",
+      "@@@STEP_LOG_LINE@sdk manifest branch@Branch on disk: @@@",
+      "@@@STEP_LOG_END@sdk manifest branch@@@",
       "@@@STEP_LOG_LINE@sdk version@123@@@",
       "@@@STEP_LOG_END@sdk version@@@"
     ]
@@ -2674,7 +2682,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\"version\": 1}",
+      "{\"manifest_branch\": \"\", \"version\": 1}",
       "[CLEANUP]/sdk_cache_version.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2682,7 +2690,7 @@
     "name": "init sdk (2).write sdk cache version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": 1}@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"manifest_branch\": \"\", \"version\": 1}@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },

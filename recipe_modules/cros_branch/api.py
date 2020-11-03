@@ -134,10 +134,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
 
         pkgs = self.m.cipd.EnsureFile()
-        # TODO(b/171253099): change this back to 'latest'.
-        # We need to hold off moving this label forward until test_manifest.py
-        # does the right thing for 'create'.
-        pkgs.add_package('chromiumos/infra/test_planner', 'test_manifest')
+        pkgs.add_package('chromiumos/infra/test_planner', 'latest')
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._branch_util_path = cipd_dir.join('branch_util')
