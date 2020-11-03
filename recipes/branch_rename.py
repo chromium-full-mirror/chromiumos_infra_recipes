@@ -7,7 +7,6 @@
 
 from PB.chromiumos.branch import Branch
 from PB.recipes.chromeos.branch_rename import RenameBranchProperties
-import os
 
 DEPS = [
     'recipe_engine/context',

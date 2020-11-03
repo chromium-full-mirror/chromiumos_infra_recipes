@@ -6,7 +6,6 @@
 """API for uploading CrOS build artifacts to Google Storage."""
 
 import collections
-import os
 
 from google.protobuf import json_format
 
@@ -106,11 +105,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
       _artifact_profile_info (ArtifactProfileInfo): profile information.
-      _test_data (str): JSON data to use for build API calls.
+      test_data (str): JSON data to use for build API calls.
 
     Returns:
       (artifacts.PrepareForBuildResponse.build_relevance) UNKNOWN.
     """
+    # Noop statement to clean up pylint.
+    test_data = test_data or None
     return artifacts.PrepareForBuildResponse.UNKNOWN
 
   def _prepare_toolchain(self, chroot, sysroot, artifact_types, input_artifacts,
@@ -227,7 +228,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     for service in json_format.MessageToDict(resp.artifacts).values():
       for paths in service.get('artifacts', []):
         files_by_artifact[paths['artifactType']] = [
-            os.path.relpath(f, outdir) for f in paths['paths']
+            self.m.path.relpath(f, outpath) for f in paths['paths']
         ]
 
     return files_by_artifact
@@ -271,7 +272,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       raise e
 
     return {
-        k: [os.path.relpath(f, outdir) for f in v] for k, v in files.items()
+        k: [self.m.path.relpath(f, outpath) for f in v
+           ] for k, v in files.items()
     }
 
   def _artifacts_gs_path_dict(self, builder_name, target, kind):
@@ -540,8 +542,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       download_paths = []
       for gs_file_name in gs_file_names:
         download_path = download_root.join(gs_file_name)
-        self.m.gsutil.download(gs_bucket, os.path.join(gs_path, gs_file_name),
-                               download_path)
+        self.m.gsutil.download(gs_bucket,
+                               self.m.path.join(gs_path,
+                                                gs_file_name), download_path)
         download_paths.append(download_path)
       return download_paths
 

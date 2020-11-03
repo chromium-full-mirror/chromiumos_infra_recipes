@@ -9,7 +9,6 @@ See: https://chromium.googlesource.com/external/repo/
 """
 
 from collections import namedtuple
-import os
 import re
 import types
 
@@ -246,8 +245,7 @@ class RepoApi(recipe_api.RecipeApi):
     self.m.file.write_raw('write manifest', manifest_path, manifest_data)
 
     repo_manifests_path = repo_root.join('.repo', 'manifests')
-    manifest_relpath = os.path.relpath(
-        str(manifest_path), str(repo_manifests_path))
+    manifest_relpath = self.m.path.relpath(manifest_path, repo_manifests_path)
     self.init(manifest_url, manifest_name=manifest_relpath)
     self.sync(**kwargs)
 
@@ -514,12 +512,12 @@ class RepoApi(recipe_api.RecipeApi):
       step = self.m.step(name, [])
       step.presentation.step_text = 'manifest diff failed; no repo root found'
       return
-    manifests_dir = self.m.path.abspath(repo_root.join('.repo', 'manifests'))
+    manifests_dir = repo_root.join('.repo', 'manifests')
 
     cmd = [
         'diffmanifests',
-        os.path.relpath(str(old_manifest_path), manifests_dir),
-        os.path.relpath(str(new_manifest_path), manifests_dir),
+        self.m.path.relpath(old_manifest_path, manifests_dir),
+        self.m.path.relpath(new_manifest_path, manifests_dir),
     ]
     self._step(cmd, name=name)
 

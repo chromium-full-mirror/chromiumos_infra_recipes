@@ -8,8 +8,6 @@
     use tast executable from build_artifacts.
 """
 
-import os
-
 from PB.recipes.chromeos.tast_vm import TastVmProperties
 
 DEPS = [

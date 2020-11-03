@@ -7,7 +7,6 @@
 
 import datetime
 import json
-import os
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from recipe_engine.util import exponential_retry

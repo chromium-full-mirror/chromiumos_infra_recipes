@@ -7,7 +7,6 @@
 
 import contextlib
 import json
-import os
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 
@@ -105,9 +104,8 @@ class CrosSdkApi(RecipeApi):
     """Lazily load from file. Can be None if version file doesn't exist."""
     if self._sdk_cache_version == None:
       data = None
-      # Use os.path because version file pre-exists recipe run.
-      if (os.path.exists(str(self._sdk_cache_version_file)) or
-          self._test_data.enabled):
+      self.m.path.mock_add_paths(self._sdk_cache_version_file)
+      if self.m.path.exists(str(self._sdk_cache_version_file)):
         data = self.m.file.read_json(name='read sdk cache version json',
                                      source=self._sdk_cache_version_file)
       self._sdk_cache_version = int(data['version']) if data else 1
@@ -347,7 +345,7 @@ class CrosSdkApi(RecipeApi):
                 chroot=self.chroot, toolchain_targets=toolchain_targets,
                 flags=UpdateSdkRequest.Flags(build_source=build_source,
                                              toolchain_changed=toolchain_cls)),
-            timeout=timeout_sec)
+            timeout=timeout_sec, test_output_data=test_data)
       except StepFailure:
         # If the update fails, also delete the SDK.
         self._remove_chroot(name='UpdateSDK failure')

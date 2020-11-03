@@ -29,7 +29,6 @@
 
 import fnmatch
 import re
-import os
 
 from collections import defaultdict
 
@@ -44,6 +43,7 @@ PROPERTIES = CheckFitImageProperties
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -174,10 +174,10 @@ def RunSteps(api, properties):
           bin_files = set()
           for fname in commit.patch_set.file_infos:
             if fnmatch.fnmatch(
-                os.path.basename(fname), "fitimage-*-versions.txt"):
+                api.path.basename(fname), "fitimage-*-versions.txt"):
               txt_files.add(fname)
 
-            if fnmatch.fnmatch(os.path.basename(fname), "fitimage-*.bin"):
+            if fnmatch.fnmatch(api.path.basename(fname), "fitimage-*.bin"):
               bin_files.add(fname)
 
           for fname in txt_files:
@@ -262,7 +262,7 @@ Program terminated.
 """ % version
 
 
-def mock_version_file(version="14.0.40.1206", hashes={}):
+def mock_version_file(version="14.0.40.1206", hashes=None):
   """Mock version file contents
 
   Args:
@@ -290,7 +290,7 @@ def mock_version_file(version="14.0.40.1206", hashes={}):
       "vsccommn.bin":
           "09dfa9ee3f4ab4fcc8b86f71d5a10b1ac7118127a2f4f55695add1d631a80315",
   }
-  file_hashes.update(hashes)
+  file_hashes.update(hashes or {})
 
   for fname, sha256 in file_hashes.items():
     contents += "%s  %s\n" % (sha256, fname)
@@ -311,7 +311,7 @@ def GenTests(api):
     """
     check(step_odict[step].step_summary_text == expected)
 
-  def properties_dict(extra_props={}):
+  def properties_dict(extra_props=None):
     """Returns a dict of basic valid properties, updated with extra_props."""
     props = {
         "configs": [{
@@ -322,7 +322,7 @@ def GenTests(api):
             "ref_path": "refs/fitimage-ref.txt"
         }]
     }
-    props.update(extra_props)
+    props.update(extra_props or {})
     return props
 
   def setup_build(config):

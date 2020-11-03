@@ -15,8 +15,6 @@ Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 """
 
-import os
-
 from collections import namedtuple
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure

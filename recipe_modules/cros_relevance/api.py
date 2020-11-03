@@ -23,8 +23,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
-import os
-
 
 class CrosRelevanceApi(recipe_api.RecipeApi):
   """A module for determining if a build is unnecessary."""
@@ -42,7 +40,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     return self._toolchain_cls_applied
 
   def get_necessary_builders(self, builder_configs, gerrit_changes,
-                             gitiles_commit, name=None, test_builder_ids=[]):
+                             gitiles_commit, name=None, test_builder_ids=None):
     """Determines which builders must be run (and which can be skipped).
 
     This filters on preconfigured RunWhen rules, as well as on rules allowing
@@ -91,7 +89,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       ]
       self.m.step('run planner', cmd, infra_step=True)
 
-      test_resp = GenerateBuildPlanResponse(builds_to_run=test_builder_ids,)
+      test_resp = GenerateBuildPlanResponse(
+          builds_to_run=test_builder_ids or [])
       response_bin = self.m.file.read_raw(
           'read output file', output_bin_file,
           test_data=test_resp.SerializeToString())
@@ -208,7 +207,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           '--output_binary_pb',
           output_bin_file,
       ]
-      test_plan_res = self.m.step('run check', cmd, infra_step=True)
+      self.m.step('run check', cmd, infra_step=True)
 
       test_resp = PointlessBuildCheckResponse()
       # None is the same as False, for all of the default values.

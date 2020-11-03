@@ -7,7 +7,6 @@
 
 from PB.chromiumos.branch import Branch
 from PB.recipes.chromeos.branch_delete import DeleteBranchProperties
-import os
 
 DEPS = [
     'recipe_engine/context',

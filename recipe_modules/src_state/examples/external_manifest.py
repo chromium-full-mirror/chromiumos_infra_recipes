@@ -5,11 +5,10 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/path',
     'src_state',
     'test_util',
 ]
-
-import os
 
 
 def RunSteps(api):
@@ -22,8 +21,7 @@ def RunSteps(api):
       external_manifest.url)
   api.assertions.assertEqual(
       'manifest',
-      os.path.relpath(
-          str(external_manifest.path), str(api.src_state.workspace_path)))
+      api.path.relpath(external_manifest.path, api.src_state.workspace_path))
   api.assertions.assertEqual('manifest', external_manifest.relpath)
 
 

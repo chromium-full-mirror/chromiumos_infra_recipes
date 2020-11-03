@@ -9,10 +9,9 @@ This recipe copies a VM image artifact from the chromeos-image-archive to the
 localmirror and then modifies the Guest VM's version pin to match this version.
 
 """
-import os
 
 from google.protobuf import json_format
-from google.protobuf import struct_pb2
+from google.protobuf.struct_pb2 import Struct
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.common import PackageInfo
@@ -160,7 +159,7 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache()
     version_path = api.cros_source.workspace_path.join(properties.version_file)
     package_path = api.path.dirname(version_path)
-    package = os.path.basename(package_path)
+    package = api.path.basename(package_path)
 
     with api.step.nest('try uprev version file') as presentation:
       api.file.write_raw(name='version file', dest=version_path,
@@ -428,7 +427,7 @@ def _generate_build_set(ids, board):
         'gs_path': 'postsubmit-{0}/R80-1.2.{1}-{1}'.format(board, id),
         'gs_bucket': 'chromeos-image-archive'
     }
-    properties = struct_pb2.Struct()
+    properties = Struct()
     properties['chromeos_version'] = 'R80-1.2.{0}'.format(id)
     properties['artifacts'] = build_artifacts
 

@@ -10,8 +10,6 @@ DEPS = [
     'test_util',
 ]
 
-import os
-
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 

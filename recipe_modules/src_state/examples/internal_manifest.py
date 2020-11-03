@@ -5,11 +5,10 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/path',
     'src_state',
     'test_util',
 ]
-
-import os
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
@@ -25,8 +24,7 @@ def RunSteps(api):
   api.assertions.assertEqual('manifest-internal', internal_manifest.relpath)
   api.assertions.assertEqual(
       'manifest-internal',
-      os.path.relpath(
-          str(internal_manifest.path), str(api.src_state.workspace_path)))
+      api.path.relpath(internal_manifest.path, api.src_state.workspace_path))
 
   api.assertions.assertEqual(
       GitilesCommit(host='chrome-internal.googlesource.com',

@@ -7,7 +7,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/branch_rename.py\", line 27, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/branch_rename.py\", line 26, in RunSteps",
       "    force=properties.force)",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_branch/api.py\", line 103, in rename",
       "    raise ValueError('New branch name is required.')",

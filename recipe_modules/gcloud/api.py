@@ -40,7 +40,7 @@ class GcloudApi(recipe_api.RecipeApi):
       source_path(str): Path in GS to the build artifacts.
       uniq_id(int): ID to differentiate the image. Usually
           buildbucket_id of the build that generated the image.
-    
+
     Returns: Path to the image tar file.
     """
     with self.m.step.nest('prepare image'):
