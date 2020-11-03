@@ -59,6 +59,10 @@ def RunSteps(api, properties):
   local_manifest = None
   if (properties.local_manifest.repo_url and
       properties.local_manifest.manifest_path):
+    if properties.manifest_branch:
+      raise ValueError(
+          'local_manifest cannot be specified if manifest_branch is specified')
+
     local_manifest = api.repo.LocalManifest(
         repo=properties.local_manifest.repo_url,
         path=properties.local_manifest.manifest_path)
@@ -66,6 +70,7 @@ def RunSteps(api, properties):
   with api.context(infra_steps=True), \
       api.workspace_util.sync_to_manifest_groups(
           manifest_groups=properties.manifest_groups,
+          manifest_branch=properties.manifest_branch,
           local_manifest=local_manifest,
           cache_path_override=api.src_state.workspace_path):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
@@ -189,6 +194,49 @@ def GenTests(api):
               'refs/changes/56/123456/7:',
           ],
       ),
+  )
+
+  yield api.test(
+      'manifest_branch',
+      api.properties(
+          LocalManifestPresubmitProperties(
+              project='chromeos',
+              manifest_groups=['partner-config'],
+              manifest_branch='release-R123',
+          ),
+      ),
+      project_config_cq_build(api),
+      api.post_process(
+          post_process.StepCommandContains, 'ensure synced checkout.repo init',
+          ['--manifest-branch', 'release-R123', '--groups', 'partner-config']),
+      # If manifest_branch is passed, an internal checkout should be used and no
+      # local manifest should be used.
+      api.post_process(post_process.DoesNotRunRE,
+                       '.*fetch.*:local_manifest.xml'),
+  )
+
+  yield api.test(
+      'local_manifest_and_manifest_branch_specified',
+      api.properties(
+          LocalManifestPresubmitProperties(
+              project='chromeos',
+              manifest_groups=['partner-config'],
+              local_manifest=LocalManifest(
+                  repo_url=('https://chrome-internal.googlesource.com'
+                            '/chromeos/project/testproject1'),
+                  manifest_path='local_manifest.xml',
+              ),
+              manifest_branch='release-R123',
+          ),
+      ),
+      project_config_cq_build(api),
+      api.expect_exception('ValueError'),
+      api.post_process(
+          post_process.ResultReasonRE,
+          ('.*local_manifest cannot be specified if manifest_branch is specified.*'
+          ),
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   extra_change = common_pb2.GerritChange(
