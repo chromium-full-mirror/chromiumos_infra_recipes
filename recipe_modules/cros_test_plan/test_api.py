@@ -26,7 +26,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
     common = TestUnitCommon(
         build_target=BuildTarget(name='target'),
         build_payload=BuildPayload(
-            artifacts_gs_bucket='gs://chromeos-image-archive',
+            artifacts_gs_bucket='chromeos-image-archive',
             artifacts_gs_path='target-cq/R12-3.4.5-6789',
         ),
     )
