@@ -1315,7 +1315,7 @@
       "--manifest-branch",
       "master",
       "--manifest-name",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/default.xml"
+      "../../manifest-internal/default.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -1447,7 +1447,7 @@
       "--jobs",
       "8",
       "--manifest-name",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/default.xml",
+      "../../manifest-internal/default.xml",
       "--optimized-fetch",
       "--retry-fetches",
       "2",

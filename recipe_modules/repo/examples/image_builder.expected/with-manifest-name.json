@@ -65,7 +65,7 @@
       "--groups",
       "all",
       "--manifest-name",
-      "manifest"
+      "../../manifest"
     ],
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,
@@ -193,7 +193,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--manifest-name",
-      "manifest"
+      "../../manifest"
     ],
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,

@@ -77,6 +77,8 @@
       "--repo-branch",
       "next",
       "--no-repo-verify",
+      "--manifest-name",
+      "../../snapshot.xml",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
@@ -281,7 +283,7 @@
       "--jobs",
       "99",
       "--manifest-name",
-      "snapshot.xml",
+      "../../snapshot.xml",
       "--no-tags",
       "--optimized-fetch",
       "--cache-dir",

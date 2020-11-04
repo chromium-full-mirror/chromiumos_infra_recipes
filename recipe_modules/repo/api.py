@@ -13,6 +13,7 @@ import re
 import types
 
 from recipe_engine import recipe_api
+from recipe_engine.config_types import Path
 from xml.etree import cElementTree as ElementTree
 
 MANIFEST_MOCK = """
@@ -123,7 +124,7 @@ class RepoApi(recipe_api.RecipeApi):
       * repo_branch (str): Repo binary branch to use.
       * local_manifest (LocalManifest): Local manifest to add. See
       https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.md#local-manifests.
-      * manifest_name (str): Name of manifest file to use.
+      * manifest_name (Path): The manifest file to use.
       * projects (List[str]): Projects of concern or None if all projects are of
       concern. Used to limit work where possible such as only clearing git locks
       in these projects.
@@ -567,14 +568,24 @@ class RepoApi(recipe_api.RecipeApi):
               self.m.file.rmtree('remove .repo/%s' % manifest_dir,
                                  root_path.join('.repo', manifest_dir))
 
-            opts = init_opts or {}
-            opts['projects'] = projects
-            self.init(manifest_url, **opts)
+            init_opts = dict(init_opts or {}, projects=projects)
+            sync_opts = dict(sync_opts or {}, projects=projects)
+            manifest_name = init_opts.get('manifest_name')
+            # The same value must be passed in both sets of options.
+            assert manifest_name == sync_opts.get('manifest_name')
+            if manifest_name:
+              # The path must be relative to .repo/manifests, and must be inside
+              # of the root_path.
+              assert isinstance(manifest_name, Path)
+              assert root_path.is_parent_of(manifest_name)
+              init_opts['manifest_name'] = self.m.path.relpath(
+                  manifest_name, root_path.join('.repo/manifests'))
+              sync_opts['manifest_name'] = self.m.path.relpath(
+                  manifest_name, root_path.join('.repo/manifests'))
+            self.init(manifest_url, **init_opts)
             self._git_clean_checkout(root_path, projects)
             self._binary_selfupdate(root_path)
-            opts = sync_opts or {}
-            opts['projects'] = projects
-            self.sync(**opts)
+            self.sync(**sync_opts)
             break
           except recipe_api.StepFailure:
             if retries >= 1:

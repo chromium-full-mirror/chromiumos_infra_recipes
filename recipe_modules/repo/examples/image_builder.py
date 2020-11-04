@@ -39,9 +39,14 @@ def RunSteps(api, properties):
                                           preserving_proto_field_name=True)
 
     projects = list(properties.projects)
-    api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
-                                    manifest_url, init_opts=init_opts,
-                                    sync_opts=sync_opts, projects=projects)
+    checkout_path = api.path['cleanup'].join('ensure')
+    if init_opts.get('manifest_name'):
+      manifest_name = checkout_path.join(init_opts['manifest_name'])
+      init_opts['manifest_name'] = manifest_name
+      sync_opts['manifest_name'] = manifest_name
+    api.repo.ensure_synced_checkout(checkout_path, manifest_url,
+                                    init_opts=init_opts, sync_opts=sync_opts,
+                                    projects=projects)
 
     manifest_data = ('<manifest></manifest>' if not properties.manifest_data
                      else properties.manifest_data.encode('utf-8'))
@@ -72,6 +77,7 @@ def GenTests(api):
               projects=['chromiumos/config', 'chromeos/project/puff/duffy'],
               init_opts=common.InitOpts(
                   manifest_branch='mybranch',
+                  manifest_name='snapshot.xml',
                   reference='/preload/chromeos',
                   groups=['group1', 'group2'],
                   depth=10,
