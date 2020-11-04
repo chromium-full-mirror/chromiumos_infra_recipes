@@ -7,6 +7,7 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
+from PB.test_platform import skylab_local_state
 from PB.test_platform.phosphorus.prejob import PrejobRequest, PrejobResponse
 from PB.test_platform.phosphorus.runtest import RunTestRequest, RunTestResponse
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
@@ -16,10 +17,16 @@ from PB.test_platform.phosphorus.upload_to_gs import UploadToGSResponse
 class PhosphorusCommand(recipe_api.RecipeApi):
   """Module for issuing Phosphorus commands"""
 
-  def __init__(self, properties, **kwargs):
+  def __init__(self, properties, env_vars, **kwargs):
     super(PhosphorusCommand, self).__init__(**kwargs)
     self._cmd = None
     self._version = str(properties.version.cipd_label)
+    self._config = properties.config
+    self._dut_hostname = self._dut_hostname_from_bot_id(
+        env_vars.SWARMING_BOT_ID)
+    self._dut_id = env_vars.SKYLAB_DUT_ID
+    self._run_id = env_vars.SWARMING_TASK_ID
+    self._local_state_results_dir = ''
     if not self._version: # pragma: no cover
       raise ValueError('No version label provided for '
           'phosphorus CIPD package.')
@@ -116,3 +123,71 @@ class PhosphorusCommand(recipe_api.RecipeApi):
                           self._version)
         self.m.cipd.ensure(cipd_dir, pkgs)
         self._cmd = cipd_dir.join('phosphorus')
+
+  def load_skylab_local_state(self):
+    """Load the local DUT state file.
+
+    Raises:
+      * InfraFailure
+    """
+    with self.m.context(infra_steps=True):
+      request = skylab_local_state.load.LoadRequest(config=self._config,
+                                                    dut_name=self._dut_hostname,
+                                                    run_id=self._run_id,
+                                                    dut_id=self._dut_id)
+      result = self._run('load', request, skylab_local_state.load.LoadRequest,
+                         skylab_local_state.load.LoadResponse,
+                         send_response=True)
+      self._local_state_results_dir = result.results_dir
+      return result
+
+  def save_skylab_local_state(self, dut_state):
+    """Update the local DUT state file.
+
+    Args:
+      * dut_state: DUT state string (e.g. 'ready').
+
+    Raises:
+      * InfraFailure
+    """
+    return self._save_skylab_local_state(dut_state, False)
+
+  def save_and_seal_skylab_local_state(self, dut_state):
+    """Update the local DUT state file and seal the results directory.
+
+    Args:
+      * dut_state: DUT state string (e.g. 'ready').
+
+    Raises:
+      * InfraFailure
+    """
+    return self._save_skylab_local_state(dut_state, True)
+
+  def _save_skylab_local_state(self, dut_state, seal_results_dir):
+    with self.m.context(infra_steps=True):
+      if not self._local_state_results_dir:
+        raise ValueError(
+            'Results directory not set. Did you call load() first?')
+
+      request = skylab_local_state.save.SaveRequest(
+          config=self._config, dut_name=self._dut_hostname, dut_id=self._dut_id,
+          dut_state=dut_state, results_dir=self._local_state_results_dir,
+          seal_results_dir=seal_results_dir)
+      self._run('save', request, skylab_local_state.save.SaveRequest)
+
+  def _dut_hostname_from_bot_id(self, swarming_bot_id):
+    """Extract the DUT hostname from the env vars.
+
+    Args:
+      * env_vars: PhosphorusEnvProperties instance.
+
+    Raises:
+      * AssertionError if the Swarming bot ID env var is missing or invalid.
+    """
+    expected_prefix = 'crossk-'
+    assert swarming_bot_id.startswith(expected_prefix)
+    return swarming_bot_id[len(expected_prefix):]
+
+  def read_dut_hostname(self):
+    """"Return the DUT hostname."""
+    return self._dut_hostname

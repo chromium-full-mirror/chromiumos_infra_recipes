@@ -92,13 +92,6 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.determine target DUT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "execution steps.load local DUT state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -106,7 +99,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.load local DUT state.call `skylab_local_state`",
+    "name": "execution steps.load local DUT state.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -133,7 +126,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.load local DUT state.call `skylab_local_state`.ensure skylab_local_state",
+    "name": "execution steps.load local DUT state.call `phosphorus`.ensure phosphorus",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -143,24 +136,24 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd/skylab_local_state",
+      "[START_DIR]/cipd/phosphorus",
       "-ensure-file",
-      "chromiumos/infra/skylab_local_state/${platform} sls_prod",
+      "chromiumos/infra/phosphorus/${platform} phosphorus_prod",
       "-max-threads",
       "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "execution steps.load local DUT state.call `skylab_local_state`.ensure skylab_local_state.ensure_installed",
+    "name": "execution steps.load local DUT state.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-sls_prod--------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/skylab_local_state/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-phosphorus_prod-\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/phosphorus/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
@@ -170,7 +163,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/skylab_local_state/skylab_local_state",
+      "[START_DIR]/cipd/phosphorus/phosphorus",
       "load",
       "-input_json",
       "/dev/stdin",
@@ -178,7 +171,7 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "name": "execution steps.load local DUT state.call `skylab_local_state`.load",
+    "name": "execution steps.load local DUT state.call `phosphorus`.load",
     "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -193,7 +186,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.mark local DUT state dirty.call `skylab_local_state`",
+    "name": "execution steps.mark local DUT state dirty.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -213,13 +206,13 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/skylab_local_state/skylab_local_state",
+      "[START_DIR]/cipd/phosphorus/phosphorus",
       "save",
       "-input_json",
       "/dev/stdin"
     ],
     "infra_step": true,
-    "name": "execution steps.mark local DUT state dirty.call `skylab_local_state`.save",
+    "name": "execution steps.mark local DUT state dirty.call `phosphorus`.save",
     "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"dutName\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -259,43 +252,6 @@
       "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execution steps.run prejob.call `phosphorus`.ensure phosphorus",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/phosphorus",
-      "-ensure-file",
-      "chromiumos/infra/phosphorus/${platform} phosphorus_prod",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "execution steps.run prejob.call `phosphorus`.ensure phosphorus.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-phosphorus_prod-\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/phosphorus/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -541,7 +497,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.save local DUT state.call `skylab_local_state`",
+    "name": "execution steps.save local DUT state.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -561,13 +517,13 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/skylab_local_state/skylab_local_state",
+      "[START_DIR]/cipd/phosphorus/phosphorus",
       "save",
       "-input_json",
       "/dev/stdin"
     ],
     "infra_step": true,
-    "name": "execution steps.save local DUT state.call `skylab_local_state`.save",
+    "name": "execution steps.save local DUT state.call `phosphorus`.save",
     "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"

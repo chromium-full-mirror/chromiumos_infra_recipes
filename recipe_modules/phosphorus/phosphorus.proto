@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.phosphorus;
 
+import "test_platform/skylab_local_state/common.proto";
+
 message PhosphorusProperties {
     // Version describes which cros_test_platform binary version to use.
     message Version {
@@ -14,4 +16,14 @@ message PhosphorusProperties {
     }
 
     Version version = 1;
+
+    // config describes configuration information for interaction with
+    // skylab_local_state. Is set by the builder properties, not the caller.
+    .test_platform.skylab_local_state.Config config = 2;
+}
+
+message PhosphorusEnvProperties {
+    string SWARMING_BOT_ID = 1;
+    string SWARMING_TASK_ID = 2;
+    string SKYLAB_DUT_ID = 3;
 }

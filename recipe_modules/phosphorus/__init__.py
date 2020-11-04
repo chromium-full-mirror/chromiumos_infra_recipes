@@ -4,6 +4,8 @@
 
 from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
   PhosphorusProperties
+from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
+  PhosphorusEnvProperties
 
 DEPS = [
     'recipe_engine/cipd',
@@ -15,3 +17,4 @@ DEPS = [
 ]
 
 PROPERTIES = PhosphorusProperties
+ENV_PROPERTIES = PhosphorusEnvProperties

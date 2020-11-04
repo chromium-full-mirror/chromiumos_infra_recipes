@@ -6,15 +6,22 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'phosphorus',
 ]
 
 from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
   PhosphorusProperties
+from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
+  PhosphorusEnvProperties
+from PB.test_platform import skylab_local_state
 from PB.test_platform.phosphorus.prejob import PrejobRequest
 from PB.test_platform.phosphorus.runtest import RunTestRequest
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
+
+from google.protobuf import json_format
+
 
 def RunSteps(api):
   with api.assertions.assertRaises(ValueError):
@@ -37,14 +44,39 @@ def RunSteps(api):
   upload_to_tko_req = UploadToTkoRequest()
   api.phosphorus.upload_to_tko(upload_to_tko_req)
 
+  api.phosphorus.read_dut_hostname()
+
+  with api.assertions.assertRaises(ValueError):
+    api.phosphorus.save_skylab_local_state('foo-state')
+  with api.assertions.assertRaises(ValueError):
+    api.phosphorus.save_and_seal_skylab_local_state('bar-state')
+  api.phosphorus.load_skylab_local_state()
+  api.phosphorus.save_skylab_local_state('baz-state')
+  api.phosphorus.save_and_seal_skylab_local_state('qux-state')
+
 
 def GenTests(api):
   yield api.test(
       'basic',
       api.properties(
-          **{'$chromeos/phosphorus':
-             PhosphorusProperties(
-                 version=PhosphorusProperties.Version(
-                     cipd_label='some-cipd-label',
-                 ))}),
+          **{
+              '$chromeos/phosphorus':
+                  PhosphorusProperties(
+                      version=PhosphorusProperties.Version(
+                          cipd_label='some-cipd-label',
+                      ), config={
+                          'admin_service': 'foo-service',
+                          'cros_inventory_service': 'inv-service',
+                          'cros_ufs_service': 'ufs-service',
+                          'autotest_dir': '/path/to/autotest',
+                      }),
+          }) + api.properties.environ(
+              PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
+                                      SWARMING_TASK_ID='dummy-task-id',
+                                      SKYLAB_DUT_ID='dummy-dut-id')) +
+      api.step_data(
+          'call `phosphorus` (9).load', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  skylab_local_state.load.LoadResponse(
+                      results_dir='dummy-results-dir')))),
   )

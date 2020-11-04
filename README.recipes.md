@@ -4163,34 +4163,65 @@ Args:
   * mount_path (Path): Path to unmount the OverlayFS from.
 ### *recipe_modules* / [phosphorus](/recipe_modules/phosphorus)
 
-[DEPS](/recipe_modules/phosphorus/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/phosphorus/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#71)(self, request):**
+&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#127)(self):**
+
+Load the local DUT state file.
+
+Raises:
+  * InfraFailure
+
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#78)(self, request):**
 
 Run a prejob or a provision via `prejob` subcommand.
 
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#80)(self, request):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#191)(self):**
+
+"Return the DUT hostname.
+
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#87)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#89)(self, request):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#155)(self, dut_state):**
+
+Update the local DUT state file and seal the results directory.
+
+Args:
+  * dut_state: DUT state string (e.g. 'ready').
+
+Raises:
+  * InfraFailure
+
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#144)(self, dut_state):**
+
+Update the local DUT state file.
+
+Args:
+  * dut_state: DUT state string (e.g. 'ready').
+
+Raises:
+  * InfraFailure
+
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#96)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#98)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#105)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 
@@ -6403,9 +6434,9 @@ Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 &mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#52)(api, properties):**
 ### *recipes* / [phosphorus:examples/full](/recipe_modules/phosphorus/examples/full.py)
 
-[DEPS](/recipe_modules/phosphorus/examples/full.py#6): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/phosphorus/examples/full.py#6): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/phosphorus/examples/full.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/phosphorus/examples/full.py#26)(api):**
 ### *recipes* / [portage:examples/full](/recipe_modules/portage/examples/full.py)
 
 [DEPS](/recipe_modules/portage/examples/full.py#6): [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -6837,11 +6868,11 @@ Raises:
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#29): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [cros\_tags](#recipe_modules-cros_tags), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [skylab\_local\_state](#recipe_modules-skylab_local_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#31): [autotest\_status\_parser](#recipe_modules-autotest_status_parser), [cros\_tags](#recipe_modules-cros_tags), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#651)(api, properties, envvars):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#627)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#187)(api, phosphorus_config, gs_root, result):**
 
@@ -6856,13 +6887,12 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#510)(api, properties, envvars):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#493)(api, properties):**
 
 Runs all the non-UI-related steps.
 
 Args:
 * properties: TestRunnerProperties instance.
-* envvars: TestRunnerEnvProperties instance.
 
 Returns:
   A tuple of three responses generated by the steps:
@@ -6902,7 +6932,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#479)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#462)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -6930,7 +6960,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#598)(api, phosphorus_config, properties, dut_hostname, test):**
+&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#574)(api, phosphorus_config, properties, dut_hostname, test):**
 
 Run the test execution and all steps that explicitly depend on it.
 
