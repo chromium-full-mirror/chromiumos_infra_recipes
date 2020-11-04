@@ -42,15 +42,13 @@ def RunSteps(api):
 
     # Request - step size is less than configured, scaling down.
     scaling_action = api.bot_scaling.get_scaling_action(40, policy, test_config)
-    api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
+    api.assertions.assertEqual(scaling_action.actionable, ScalingAction.NO)
     api.assertions.assertEqual(scaling_action.bots_requested, 60)
-    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 4.8528)
+    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 3.5048)
 
     # Request + step size is not less than configured.
     scaling_action = api.bot_scaling.get_scaling_action(70, policy, test_config)
-    api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
-    api.assertions.assertEqual(scaling_action.bots_requested, 95)
-    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 2.9656)
+    api.assertions.assertEqual(scaling_action.actionable, ScalingAction.NO)
 
     # Demand is equal to number of bots configured
     scaling_action = api.bot_scaling.get_scaling_action(60, policy, test_config)
@@ -64,8 +62,6 @@ def RunSteps(api):
                                                         test_config)
     api.assertions.assertEqual(scaling_action.bots_requested, 125)
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
-
-    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 1.348)
 
     # Bots requested equals ceiling but less than step size
     ceiling_config = api.bot_scaling.test_api.gce_provider_config_ceiling()

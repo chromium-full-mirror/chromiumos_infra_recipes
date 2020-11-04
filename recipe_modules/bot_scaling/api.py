@@ -69,12 +69,16 @@ class BotScalingApi(recipe_api.RecipeApi):
         bot_policy.region_restrictions, self._get_prefix_to_gce_config(configs))
     actionable = ScalingAction.NO
 
-
     # Check to determine whether bots should be scaled up or down.
     # Calculation based on weights can leave a bot group a few bots short,
     # thus we provide a small allowance when determining actionable.
     if (bots_configured > bot_policy.scaling_restriction.bot_ceiling or
-        bots_requested != bots_configured):
+        bots_configured + bot_policy.scaling_restriction.step_size <=
+        bots_requested or
+        bots_configured - bot_policy.scaling_restriction.step_size >=
+        bots_requested or
+        (bots_requested == bot_policy.scaling_restriction.bot_ceiling and
+         abs(bots_requested - bots_configured) > 2)):
       actionable = ScalingAction.YES
 
     # Check whether a bot policy is set as configured, otherwise set to NO.
