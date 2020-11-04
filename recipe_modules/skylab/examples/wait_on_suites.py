@@ -16,6 +16,9 @@ from PB.test_platform.taskstate import TaskState
 from google.protobuf import duration_pb2
 
 def RunSteps(api):
+  # Unused, but needed for coverage
+  api.skylab.test_api.hw_test()
+
   hw_test_unit = api.cros_test_plan.test_api.hw_test_unit
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.common.display_name = 'please_wait_on_me'
@@ -29,8 +32,7 @@ def RunSteps(api):
   another_hw_test.common.display_name = 'please_wait_on_me_too'
   another_task = api.skylab.test_api.skylab_task(
       id=1234,
-      url=
-      'https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b8899866335707109280',
+      url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b8899866335707109280',
       test=another_hw_test,
       unit=another_hw_test_unit,
   )

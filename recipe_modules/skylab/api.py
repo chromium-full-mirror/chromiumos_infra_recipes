@@ -244,52 +244,6 @@ class SkylabApi(recipe_api.RecipeApi):
     responses = ExecuteResponses.FromString(wire_format)
     return responses.tagged_responses
 
-  def wait_on_recipes(self, tasks, timeout):
-    """Wait for all Skylab suites to finish and return the results.
-
-    Args:
-      tasks (list[SkylabTask]): The Skylab tasks to wait on.
-      timeout (Duration): Timeout in timestamp_pb2.Duration.
-
-    Returns:
-      list[SkylabResult]: The results for each suite.
-    """
-    tasks_by_id = {task.id: task for task in tasks}
-
-    with self.m.step.nest('collect skylab tasks') as presentation:
-      task_ids = [task.id for task in tasks]
-      # Give 30 minutes grace period for recipes to time out.
-      timeout_seconds = int(timeout.seconds + 30 * 60)
-      try:
-        all_hw_tests = self.m.buildbucket.collect_builds(
-            task_ids, timeout=timeout_seconds)
-      except recipe_api.StepFailure as ex:  #pragma: no cover
-        # Mark the step as an INFRA_FAILURE and get the output
-        # properties of underlying recipes.
-        presentation.status = 'EXCEPTION'
-        all_hw_tests = self.m.buildbucket.get_multi(task_ids)
-
-      results = []
-      for test_id, test in all_hw_tests.items():
-        test_response = self._get_execute_response_json(test)
-        results.append(
-            self._translate_result(test_response, tasks_by_id[test_id]))
-
-      presentation.logs['return value'] = [str(x) for x in results]
-      return results
-
-  def _get_execute_response_json(self, build):
-    # ExecuteResponse is stored as a Struct in output.properties.
-    # This helper handles the re-casting and error catching.
-    try:
-      response_struct = build.output.properties['response']
-      response_json = json_format.MessageToJson(response_struct)
-      response = ExecuteResponse()
-      json_format.Parse(response_json, response, ignore_unknown_fields=True)
-    except (ValueError, json_format.ParseError) as e:  #pragma: no cover
-      return self._default_failed_response()
-    return response
-
   def _default_failed_response(self):
     response = ExecuteResponse()
     response.state.verdict = TaskState.VERDICT_FAILED

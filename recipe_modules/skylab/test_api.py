@@ -71,14 +71,6 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         child_results=child_results or [],
     )  # pragma: no cover
 
-  def test_with_execute_response_json(
-      self, id, task_state=TaskState(verdict=TaskState.VERDICT_PASSED)):
-    # Note(2020/03/23): This format is deprecated.
-    prop_string = '{ "response": %s }' % self._response_json(task_state)
-    prop_struct = json_format.Parse(prop_string, struct_pb2.Struct())
-    return build_pb2.Build(
-        id=id, output=build_pb2.Build.Output(properties=prop_struct))
-
   #######################
   # Keep this block in sync with recipes/test_platform/cros_test_platform.py
   # TODO(chromium:1067440): refactor both to call the same code

@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
-      "@@@STEP_TEXT@2 test(s) failed@@@"
+      "@@@STEP_TEXT@all tests passed. no need for baseline validation@@@"
     ]
   },
   {
@@ -2263,7 +2263,22 @@
       "@@@STEP_LOG_LINE@return value@    skylab_model: \"model\"@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), status=20, child_results=[])@@@",
+      "@@@STEP_LOG_LINE@return value@), status=12, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
+      "@@@STEP_LOG_LINE@return value@state {@@@",
+      "@@@STEP_LOG_LINE@return value@  life_cycle: LIFE_CYCLE_COMPLETED@@@",
+      "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@name: \"cheets_NotificationTest\"@@@",
+      "@@@STEP_LOG_LINE@return value@log_url: \"https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/\"@@@",
+      "@@@STEP_LOG_LINE@return value@test_cases {@@@",
+      "@@@STEP_LOG_LINE@return value@  name: \"tast\"@@@",
+      "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@test_cases {@@@",
+      "@@@STEP_LOG_LINE@return value@  name: \"tast.camera.TakesGreatPhotos\"@@@",
+      "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@])@@@",
       "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=1234L, url='https://cr-buildbucket.appspot.com/build/1234', test=suite: \"bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
@@ -2577,7 +2592,22 @@
       "@@@STEP_LOG_LINE@return value@    pool: \"my skylab pool\"@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), status=20, child_results=[])@@@",
+      "@@@STEP_LOG_LINE@return value@), status=12, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
+      "@@@STEP_LOG_LINE@return value@state {@@@",
+      "@@@STEP_LOG_LINE@return value@  life_cycle: LIFE_CYCLE_COMPLETED@@@",
+      "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@name: \"cheets_NotificationTest\"@@@",
+      "@@@STEP_LOG_LINE@return value@log_url: \"https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/\"@@@",
+      "@@@STEP_LOG_LINE@return value@test_cases {@@@",
+      "@@@STEP_LOG_LINE@return value@  name: \"tast\"@@@",
+      "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@test_cases {@@@",
+      "@@@STEP_LOG_LINE@return value@  name: \"tast.camera.TakesGreatPhotos\"@@@",
+      "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
+      "@@@STEP_LOG_LINE@return value@}@@@",
+      "@@@STEP_LOG_LINE@return value@])@@@",
       "@@@STEP_LOG_END@return value@@@"
     ]
   },
@@ -2624,10 +2654,10 @@
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"1234\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"compressed_json_responses\": \"eJztkl9LwzAUxb/KyLNNNxz+GYhIV2VQdWxVEBkjze7asLSpuXcbMvbdTdYpYw+iz/oSTuDcm9+5\\nNxtGwuZAvFjzbEWBqrSqgPVaG4YkqFErsDMlyWn2HI/6gyidDm/G47jPtict1wAXI8ClJnSO158V\\nujqt5hC9S+2tLBncxtPoJUrc+Xg/TOJ0312b/MlqbymIauyFoWvvKAGRS2NrnhuTa3C6DDNr1gih\\nLKwpwWAglmQIkALb4IW4FrZUVR50zzvi7DSTl7J70Wl32qEH8tZIIOxjfAtfiXLH7cKT5/yFnUt3\\nsYKnYgF4Z0HQsDBkkG0n+2keBf7K84nPRV1jbWgX2hdcq9nVcaTDZ2UBQDh9MKTmSgpSpkrBg0+a\\nBR7+APn2v/0/s/3tB7PhTvE=\\n\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJzlkL9KxEAQxtlwxbFVCIIgFmIpZPeCh38CamknV1wrMlnHZLkks+7MmTew8FHtfANX4RB9BYuB\\nr5nf7+Mr3jK9JxBbFNNNpnmR0o+9H7H4UPpdFdedSODaWtdFGpC45Ani4MfWQAgcSIyjwQrw5sY/\\nXi3PKzg7bdylW15Ui2pxMJuHXB3vuw5R+OGOxD95B+JpXCPLyf0OzwLJi8wJF4Npidoev9FNpInx\\nxw9bIUm/ZUTe9sJ2V6j8K7f1XM9SM8lVfaQPv5JxMGAEs4YN8m1EkFVHQpyrIkv3mun89xju+T8O\\n8QmFvrNK\\n\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"compressed_json_responses\": \"eJztkm9LAkEQxr+K7OtuL0n6I0TEeYVgJXoFESLrOt4t7t1cO6MS4ndvVy3CF1Gv683yLDwz+3tm\\ndi0KVi4HlsVKTpYcmcqaCkS7sRbEindqCW5qNHstntJBp5tk4/71cJh2xOaoIVjRfAC0sEze8fKz\\nQl9nzQySN22DVfS6N+k4eU56/ny46/fSbN/dYv7obLAUzDW149i395RAJDW6WuaIuQWvy3jicEUQ\\n68JhCUiRWjAyEEduhxfTSrnSVHnUOmuq05OJvtCt8+Zx8zgOQMGaKIJ9jG/hK1VuuX14Dpy/sEvt\\nL07JTM2Bbh0o7hfISGIz2k/zIPBnng98qeqaauRt6FBwZaaXh5G+PqsLAKbxPbKZGa3YYJVBAB+F\\nER98Af36v/4/s/7NO8wCT8E=\\n\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJzlkL9KxEAQxtlwxbFVDIggFmIpZPeCh38CamknFteKTNYxu1ySWXfmzCNY+KZ2voFROIR7BYuB\\nr5nf7+MrPjK97wVSi2L8aJo3KcPQhQGLL6U/VXHjRSLX1jqfqEfikkdIfRhaAzFyJDGOeivA69vw\\nfL28qOD8rHFXbnlZLarF4Wwec3Vy4Dyi8NM9SXgJDiTQsEKW08ctngUmLzJPuBRNS9R2+ItuEo2M\\nf37YCMn0WybkTSdst4XKXbmt53o2NZNc1cf66CcZBz0mMCtYI98lBHnwJMS5KrLp3jO9t7OGe/2P\\nS3wDKca0Hg==\\n\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"responses\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"target.hw.bvt-cq\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"htarget.hw.bvt-cq\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_PASSED\"@@@",
       "@@@STEP_LOG_LINE@json.output@                }, @@@",
@@ -2653,7 +2683,7 @@
       "@@@STEP_LOG_LINE@json.output@                  }@@@",
       "@@@STEP_LOG_LINE@json.output@                ]@@@",
       "@@@STEP_LOG_LINE@json.output@              }, @@@",
-      "@@@STEP_LOG_LINE@json.output@              \"target.hw.bvt-inline\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"htarget.hw.bvt-inline\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_PASSED\"@@@",
       "@@@STEP_LOG_LINE@json.output@                }, @@@",
@@ -2824,25 +2854,14 @@
   },
   {
     "cmd": [],
-    "name": "check test results",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "check test results"
   },
   {
     "cmd": [],
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"vm-test\"]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check test results.set test_failures",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@test_failures@{\"hw_test_failures\": [{\"failed_step\": \"check test results|hw test results|htarget.hw.bvt-cq\", \"suite\": \"bvt-cq\", \"test_spec\": \"{\\n  \\\"hwTestCfg\\\": {\\n    \\\"hwTest\\\": [\\n      {\\n        \\\"skylabModel\\\": \\\"model\\\", \\n        \\\"suite\\\": \\\"bvt-cq\\\", \\n        \\\"common\\\": {\\n          \\\"critical\\\": true, \\n          \\\"displayName\\\": \\\"htarget.hw.bvt-cq\\\"\\n        }, \\n        \\\"pool\\\": \\\"DUT_POOL_QUOTA\\\", \\n        \\\"skylabBoard\\\": \\\"target\\\"\\n      }\\n    ]\\n  }, \\n  \\\"common\\\": {\\n    \\\"buildTarget\\\": {\\n      \\\"name\\\": \\\"target\\\"\\n    }, \\n    \\\"buildPayload\\\": {\\n      \\\"artifactsGsBucket\\\": \\\"chromeos-image-archive\\\", \\n      \\\"artifactsGsPath\\\": \\\"target-cq/R12-3.4.5-6789\\\", \\n      \\\"filesByArtifact\\\": {\\n        \\\"UNVERIFIED_CHROME_CWP_AFDO_FILE\\\": [\\n          \\\"unverified_chrome_cwp_afdo_file.txt\\\"\\n        ], \\n        \\\"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\\\": [\\n          \\\"chrome_afdo_profile_for_android_linux.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_CHROME_LLVM_ORDERFILE\\\": [\\n          \\\"unverified_chrome_llvm_orderfile.txt\\\"\\n        ], \\n        \\\"VERIFIED_CHROME_LLVM_ORDERFILE\\\": [\\n          \\\"verified_chrome_llvm_orderfile.txt\\\"\\n        ], \\n        \\\"PINNED_GUEST_IMAGES\\\": [\\n          \\\"pinned_guest_images.txt\\\"\\n        ], \\n        \\\"CHROMEOS_CONFIG\\\": [\\n          \\\"chromeos_config.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\\\": [\\n          \\\"unverified_chrome_benchmark_perf_file.txt\\\"\\n        ], \\n        \\\"AUTOTEST_FILES\\\": [\\n          \\\"autotest_files.txt\\\"\\n        ], \\n        \\\"CPE_REPORT\\\": [\\n          \\\"cpe_report.txt\\\"\\n        ], \\n        \\\"VERIFIED_RELEASE_AFDO_FILE\\\": [\\n          \\\"verified_release_afdo_file.txt\\\"\\n        ], \\n        \\\"VERIFIED_KERNEL_CWP_AFDO_FILE\\\": [\\n          \\\"verified_kernel_cwp_afdo_file.txt\\\"\\n        ], \\n        \\\"CHROME_DEBUG_BINARY\\\": [\\n          \\\"chrome_debug_binary.txt\\\"\\n        ], \\n        \\\"FIRMWARE\\\": [\\n          \\\"firmware.txt\\\"\\n        ], \\n        \\\"EBUILD_LOGS\\\": [\\n          \\\"ebuild_logs.txt\\\"\\n        ], \\n        \\\"CHROME_CLANG_WARNINGS_FILE\\\": [\\n          \\\"chrome_clang_warnings_file.txt\\\"\\n        ], \\n        \\\"TEST_UPDATE_PAYLOAD\\\": [\\n          \\\"test_update_payload.txt\\\"\\n        ], \\n        \\\"IMAGE_ZIP\\\": [\\n          \\\"image_zip.txt\\\"\\n        ], \\n        \\\"CLANG_CRASH_DIAGNOSES\\\": [\\n          \\\"clang_crash_diagnoses.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_KERNEL_CWP_AFDO_FILE\\\": [\\n          \\\"unverified_kernel_cwp_afdo_file.txt\\\"\\n        ], \\n        \\\"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\\\": [\\n          \\\"verified_chrome_benchmark_afdo_file.txt\\\"\\n        ], \\n        \\\"IMAGE_ARCHIVES\\\": [\\n          \\\"image_archives.txt\\\"\\n        ], \\n        \\\"TAST_FILES\\\": [\\n          \\\"tast_files.txt\\\"\\n        ], \\n        \\\"FPMCU_UNITTESTS\\\": [\\n          \\\"fpmcu_unittests.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_LLVM_PGO_FILE\\\": [\\n          \\\"unverified_llvm_pgo_file.txt\\\"\\n        ], \\n        \\\"TOOLCHAIN_WARNING_LOGS\\\": [\\n          \\\"toolchain_warning_logs.txt\\\"\\n        ], \\n        \\\"VERIFIED_CHROME_CWP_AFDO_FILE\\\": [\\n          \\\"verified_chrome_cwp_afdo_file.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\\\": [\\n          \\\"unverified_chrome_benchmark_afdo_file.txt\\\"\\n        ], \\n        \\\"ARTIFACT_TYPES_UNSPECIFIED\\\": [\\n          \\\"artifact_types_unspecified.txt\\\"\\n        ]\\n      }\\n    }\\n  }\\n}\"}, {\"failed_step\": \"check test results|hw test results|htarget.hw.bvt-inline\", \"suite\": \"bvt-inline\", \"test_spec\": \"{\\n  \\\"hwTestCfg\\\": {\\n    \\\"hwTest\\\": [\\n      {\\n        \\\"suite\\\": \\\"bvt-inline\\\", \\n        \\\"common\\\": {\\n          \\\"critical\\\": true, \\n          \\\"displayName\\\": \\\"htarget.hw.bvt-inline\\\"\\n        }, \\n        \\\"pool\\\": \\\"my skylab pool\\\", \\n        \\\"skylabBoard\\\": \\\"target\\\"\\n      }\\n    ]\\n  }, \\n  \\\"common\\\": {\\n    \\\"buildTarget\\\": {\\n      \\\"name\\\": \\\"target\\\"\\n    }, \\n    \\\"buildPayload\\\": {\\n      \\\"artifactsGsBucket\\\": \\\"chromeos-image-archive\\\", \\n      \\\"artifactsGsPath\\\": \\\"target-cq/R12-3.4.5-6789\\\", \\n      \\\"filesByArtifact\\\": {\\n        \\\"UNVERIFIED_CHROME_CWP_AFDO_FILE\\\": [\\n          \\\"unverified_chrome_cwp_afdo_file.txt\\\"\\n        ], \\n        \\\"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\\\": [\\n          \\\"chrome_afdo_profile_for_android_linux.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_CHROME_LLVM_ORDERFILE\\\": [\\n          \\\"unverified_chrome_llvm_orderfile.txt\\\"\\n        ], \\n        \\\"VERIFIED_CHROME_LLVM_ORDERFILE\\\": [\\n          \\\"verified_chrome_llvm_orderfile.txt\\\"\\n        ], \\n        \\\"PINNED_GUEST_IMAGES\\\": [\\n          \\\"pinned_guest_images.txt\\\"\\n        ], \\n        \\\"CHROMEOS_CONFIG\\\": [\\n          \\\"chromeos_config.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\\\": [\\n          \\\"unverified_chrome_benchmark_perf_file.txt\\\"\\n        ], \\n        \\\"AUTOTEST_FILES\\\": [\\n          \\\"autotest_files.txt\\\"\\n        ], \\n        \\\"CPE_REPORT\\\": [\\n          \\\"cpe_report.txt\\\"\\n        ], \\n        \\\"VERIFIED_RELEASE_AFDO_FILE\\\": [\\n          \\\"verified_release_afdo_file.txt\\\"\\n        ], \\n        \\\"VERIFIED_KERNEL_CWP_AFDO_FILE\\\": [\\n          \\\"verified_kernel_cwp_afdo_file.txt\\\"\\n        ], \\n        \\\"CHROME_DEBUG_BINARY\\\": [\\n          \\\"chrome_debug_binary.txt\\\"\\n        ], \\n        \\\"FIRMWARE\\\": [\\n          \\\"firmware.txt\\\"\\n        ], \\n        \\\"EBUILD_LOGS\\\": [\\n          \\\"ebuild_logs.txt\\\"\\n        ], \\n        \\\"CHROME_CLANG_WARNINGS_FILE\\\": [\\n          \\\"chrome_clang_warnings_file.txt\\\"\\n        ], \\n        \\\"TEST_UPDATE_PAYLOAD\\\": [\\n          \\\"test_update_payload.txt\\\"\\n        ], \\n        \\\"IMAGE_ZIP\\\": [\\n          \\\"image_zip.txt\\\"\\n        ], \\n        \\\"CLANG_CRASH_DIAGNOSES\\\": [\\n          \\\"clang_crash_diagnoses.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_KERNEL_CWP_AFDO_FILE\\\": [\\n          \\\"unverified_kernel_cwp_afdo_file.txt\\\"\\n        ], \\n        \\\"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\\\": [\\n          \\\"verified_chrome_benchmark_afdo_file.txt\\\"\\n        ], \\n        \\\"IMAGE_ARCHIVES\\\": [\\n          \\\"image_archives.txt\\\"\\n        ], \\n        \\\"TAST_FILES\\\": [\\n          \\\"tast_files.txt\\\"\\n        ], \\n        \\\"FPMCU_UNITTESTS\\\": [\\n          \\\"fpmcu_unittests.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_LLVM_PGO_FILE\\\": [\\n          \\\"unverified_llvm_pgo_file.txt\\\"\\n        ], \\n        \\\"TOOLCHAIN_WARNING_LOGS\\\": [\\n          \\\"toolchain_warning_logs.txt\\\"\\n        ], \\n        \\\"VERIFIED_CHROME_CWP_AFDO_FILE\\\": [\\n          \\\"verified_chrome_cwp_afdo_file.txt\\\"\\n        ], \\n        \\\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\\\": [\\n          \\\"unverified_chrome_benchmark_afdo_file.txt\\\"\\n        ], \\n        \\\"ARTIFACT_TYPES_UNSPECIFIED\\\": [\\n          \\\"artifact_types_unspecified.txt\\\"\\n        ]\\n      }\\n    }\\n  }\\n}\"}], \"needs_bisection\": false}@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-inline\", \"htarget.hw.bvt-cq\", \"vm-test\"]@@@"
     ]
   },
   {
@@ -2850,8 +2869,7 @@
     "name": "check test results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@2 hw tests failed, 0 succeeded@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@all critical hw tests succeeded@@@"
     ]
   },
   {
@@ -2859,8 +2877,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/1234@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {
@@ -2868,8 +2885,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-inline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/1234@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {

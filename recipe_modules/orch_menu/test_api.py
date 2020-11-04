@@ -336,40 +336,43 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     ctp_normal = self.m.buildbucket.simulated_schedule_output(
         _ctp_sched_resp(id1),
         'run tests.schedule tests.schedule hardware tests.'
-        'schedule htarget.hw.bvt-cq.buildbucket.schedule')
+        'schedule skylab tests v2.buildbucket.schedule')
     ctp_bisect = self.m.buildbucket.simulated_schedule_output(
         _ctp_sched_resp(id1),
         'run tests.schedule tests.schedule hardware tests.'
-        'schedule kip.hw.bvt-cq.buildbucket.schedule')
+        'schedule skylab tests v2.buildbucket.schedule')
     ctp_failure = self.m.buildbucket.simulated_schedule_output(
         _ctp_sched_resp(id1),
         'run tests.schedule tests.schedule hardware tests.'
-        'schedule htarget.hw.bvt-cq.buildbucket.schedule')
+        'schedule skylab tests v2.buildbucket.schedule')
 
     ctp_normal += self.m.buildbucket.simulated_schedule_output(
         _ctp_sched_resp(id2),
         'run tests.schedule tests.schedule hardware tests.'
-        'schedule htarget.hw.bvt-inline.buildbucket.schedule')
+        'schedule skylab tests v2.buildbucket.schedule')
     ctp_failure += self.m.buildbucket.simulated_schedule_output(
         _ctp_sched_resp(id2),
         'run tests.schedule tests.schedule hardware tests.'
-        'schedule htarget.hw.bvt-inline.buildbucket.schedule')
+        'schedule skylab tests v2.buildbucket.schedule')
 
-    def _skylab_resp(task_id, passed=True):
+    def _skylab_resp(task_id, suite_names=None, passed=True):
       verdict = TaskState.VERDICT_PASSED if passed else TaskState.VERDICT_FAILED
-      return self.m.skylab.test_with_execute_response_json(
-          id=task_id, task_state=TaskState(verdict=verdict))
+      return self.m.skylab.test_with_multi_response(
+          id=task_id, names=suite_names or [],
+          task_state=TaskState(verdict=verdict))
 
-    ctp_normal += self.m.buildbucket.simulated_collect_output(
-        [_skylab_resp(id1), _skylab_resp(id2)],
-        'run tests.collect tests.collect skylab tasks.buildbucket.collect')
+    ctp_normal += self.m.buildbucket.simulated_collect_output([
+        _skylab_resp(id2,
+                     suite_names=['htarget.hw.bvt-cq', 'htarget.hw.bvt-inline'])
+    ], 'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
     ctp_bisect += self.m.buildbucket.simulated_collect_output(
-        [_skylab_resp(id1)],
-        'run tests.collect tests.collect skylab tasks.buildbucket.collect')
-    ctp_failure += self.m.buildbucket.simulated_collect_output(
-        [_skylab_resp(id1, False),
-         _skylab_resp(id2, False)],
-        'run tests.collect tests.collect skylab tasks.buildbucket.collect')
+        [_skylab_resp(id1, suite_names=['kip.hw.bvt-cq'])],
+        'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
+    ctp_failure += self.m.buildbucket.simulated_collect_output([
+        _skylab_resp(id2, suite_names=[
+            'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline'
+        ], passed=False)
+    ], 'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
 
     # The only things we care about are output.properties.name and status.
     vm_test_build = lambda x: self.m.test_util.test_build(

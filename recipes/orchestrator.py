@@ -109,9 +109,10 @@ def GenTests(api):
   def verify_qs_account_pupr(check, steps):
     data = json.loads(
         steps['run tests.schedule tests.schedule hardware tests.'
-              'schedule htarget.hw.bvt-cq.buildbucket.schedule'].stdin)
-    return check(data['requests'][0]['scheduleBuild']['properties']['request']
-                 ['params']['scheduling']['qsAccount'] == u'pupr')
+              'schedule skylab tests v2.buildbucket.schedule'].stdin)
+    return check(data['requests'][0]['scheduleBuild']['properties']['requests']
+                 ['htarget.hw.bvt-inline']['params']['scheduling']['qsAccount']
+                 == u'pupr')
 
   yield api.orch_menu.test(
       'quota_scheduler_override', data.ctp_normal,

@@ -293,7 +293,6 @@
   * [signing](#recipes-signing) &mdash; Recipe for signing ChromeOS images.
   * [skylab:examples/create_recipe](#recipes-skylab_examples_create_recipe)
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites)
-  * [skylab:examples/wait_on_recipes](#recipes-skylab_examples_wait_on_recipes)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
   * [skylab_local_state:examples/full](#recipes-skylab_local_state_examples_full)
@@ -2642,7 +2641,7 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#261)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#242)(self, test_results, baseline_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -2653,7 +2652,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
       by baseline failures.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#42)(self, need_tests_builds, snapshot, gerrit_changes, enable_history):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#38)(self, need_tests_builds, snapshot, gerrit_changes, enable_history):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -4557,17 +4556,6 @@ Returns:
 &mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#38)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
-
-&mdash; **def [wait\_on\_recipes](/recipe_modules/skylab/api.py#247)(self, tasks, timeout):**
-
-Wait for all Skylab suites to finish and return the results.
-
-Args:
-  tasks (list[SkylabTask]): The Skylab tasks to wait on.
-  timeout (Duration): Timeout in timestamp_pb2.Duration.
-
-Returns:
-  list[SkylabResult]: The results for each suite.
 
 &mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#201)(self, tasks, timeout):**
 
@@ -6562,11 +6550,6 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/skylab/examples/schedule_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites.py#15)(api):**
-### *recipes* / [skylab:examples/wait\_on\_recipes](/recipe_modules/skylab/examples/wait_on_recipes.py)
-
-[DEPS](/recipe_modules/skylab/examples/wait_on_recipes.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
-
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_recipes.py#17)(api):**
 ### *recipes* / [skylab:examples/wait\_on\_suites](/recipe_modules/skylab/examples/wait_on_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
