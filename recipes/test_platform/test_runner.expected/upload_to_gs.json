@@ -244,7 +244,8 @@
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {}@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"dutHostname\": \"dummy\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -303,7 +304,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"deadline\": \"2012-05-14T12:53:23Z\", \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"dutHostname\": \"dummy\"\n}",
+    "stdin": "{\n  \"deadline\": \"2012-05-14T12:53:23Z\", \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"logDataUploadStep\": {}\n  }, \n  \"dutHostname\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -338,7 +339,8 @@
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {}@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:24Z\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -360,7 +362,7 @@
       "/dev/stdout"
     ],
     "name": "execution steps.run test.call `phosphorus`.run-test",
-    "stdin": "{\n  \"environment\": {\n    \"gsRootDir\": \"gs://bucket/foo/bar\"\n  }, \n  \"autotest\": {\n    \"name\": \"dummy_name\"\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }, \n  \"deadline\": \"2012-05-14T12:53:24Z\"\n}",
+    "stdin": "{\n  \"environment\": {\n    \"gsRootDir\": \"gs://bucket/foo/bar\"\n  }, \n  \"autotest\": {\n    \"name\": \"dummy_name\"\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:24Z\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -386,7 +388,8 @@
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {}@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
@@ -401,7 +404,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.upload to TKO.call `phosphorus`.upload-to-tko",
-    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir/subdir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
+    "stdin": "{\n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir/subdir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"logDataUploadStep\": {}\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -495,7 +498,8 @@
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {}@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -516,7 +520,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.upload results to GS.call `phosphorus`.upload-to-gs",
-    "stdin": "{\n  \"gsDirectory\": \"gs://bucket/foo/bar/synchronous_offloads/00000000-0000-0000-0000-000000001337\", \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }\n  }\n}",
+    "stdin": "{\n  \"gsDirectory\": \"gs://bucket/foo/bar/synchronous_offloads/00000000-0000-0000-0000-000000001337\", \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"logDataUploadStep\": {}\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -535,7 +539,18 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-00000000133a\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"dummy-results-dir\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"dummy-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"synchronousOffloadDir\": \"synchronous_subdir\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {}@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -555,7 +570,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.archive all test logs to Google Storage.call `phosphorus`.upload-to-gs",
-    "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-00000000133a\", \n  \"localDirectory\": \"dummy-results-dir\"\n}",
+    "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-00000000133a\", \n  \"localDirectory\": \"dummy-results-dir\", \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"synchronousOffloadDir\": \"synchronous_subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"logDataUploadStep\": {}\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

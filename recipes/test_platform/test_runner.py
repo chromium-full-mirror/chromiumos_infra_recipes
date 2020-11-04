@@ -212,8 +212,10 @@ def archive_all_logs(api, phosphorus_config, gs_root, result):
                                    api.uuid.random())
       gs_res = api.phosphorus.upload_to_gs(
           phosphorus.upload_to_gs.UploadToGSRequest(
+              config=phosphorus_config,
               local_directory=phosphorus_config.task.results_dir,
-              gs_directory=gs_directory))
+              gs_directory=gs_directory,
+          ))
       # Logs are archived even in the case of catastrophic failures.
       # Thus, it is possible that we do not have a sane result message.
       if result is not None:
@@ -378,14 +380,17 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
     off_dir = ""
   subdir = os.path.join(load_response.results_dir, "autoserv_test")
   return phosphorus.common.Config(
+      log_data_upload_step=recipe_config.log_data_upload_step,
       bot=phosphorus.common.BotEnvironment(
           autotest_dir=recipe_config.harness.autotest_dir,
-      ), task=phosphorus.common.TaskEnvironment(
+      ),
+      task=phosphorus.common.TaskEnvironment(
           results_dir=load_response.results_dir,
           ssp_base_image_name=recipe_config.harness.ssp_base_image_name,
           synchronous_offload_dir=off_dir,
           test_results_dir=subdir,
-      ))
+      ),
+  )
 
 
 def _upload_to_tko_config(api, phosphorus_config, run_test_response):
