@@ -6125,7 +6125,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [is\_running\_cl](/recipes/generator.py#90)(c):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#468)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#472)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
