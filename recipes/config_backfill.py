@@ -92,7 +92,8 @@ def RunSteps(api, properties):
   # can include a common yaml file from it.  We don't have portage available
   # so we have to clone the repos and hack it with symlinks.  Once the mentioned
   # bug is resolved, we can make this more consistent for all projects.
-  def _copy_baseboard(step_text, overlay_path, dst, baseboard_repo, src_path):
+  def _copy_baseboard(step_text, overlay_path, dst_path, baseboard_repo,
+                      src_path):
     """Copy files from baseboard overlay to project overlay.
 
     Args:
@@ -107,33 +108,61 @@ def RunSteps(api, properties):
       baseboard_path = api.path.mkdtemp().join('baseboard')
       api.git.clone(baseboard_repo, baseboard_path)
 
-      api.file.copytree(
-          'copying files',
-          api.path.join(baseboard_path, src_path),
-          api.path.join(overlay_path, dst),
-      )
+      src_path = api.path.join(baseboard_path, src_path)
+      dst_path = api.path.join(overlay_path, dst_path)
+      api.path.mock_add_paths(src_path)
+      if api.path.exists(src_path):
+        api.file.copytree(
+            'copying files',
+            src_path,
+            dst_path,
+        )
 
   program = properties.program_name.lower()
-  config_path = 'chromeos-base/chromeos-config-bsp-baseboard/files'
+
+  # These paths aren't consistent so we'll just enumerate them
+  config_paths = {
+      'reef': {
+          'public_src':
+              'chromeos-base/chromeos-config-bsp-baseboard/files',
+          'public_dst':
+              'chromeos-base/chromeos-config-bsp/files/include-public',
+          'private_src':
+              'chromeos-base/chromeos-config-bsp-baseboard-private/files',
+          'private_dst':
+              'chromeos-base/chromeos-config-bsp-private/files/include-private',
+      },
+      'fizz': {
+          'public_src':
+              'chromeos-base/chromeos-config-bsp-baseboard/files',
+          'public_dst':
+              'chromeos-base/chromeos-config-bsp-fizz/files/include-public',
+          'private_src':
+              'chromeos-base/chromeos-config-bsp-baseboard/files/include',
+          'private_dst':
+              'chromeos-base/chromeos-config-bsp-fizz-private/files/include',
+      }
+  }
+
   if program in ['reef', 'fizz']:
     _copy_baseboard(
         'configuring public baseboard overlay',
         public_repo_path,
-        'overlay-{program}/chromeos-base/chromeos-config-bsp/files/include-public'
-        .format(program=program),
+        'overlay-{program}/'.format(program=program) +
+        config_paths[program]['public_dst'],
         PUBLIC_BASEBOARD_REPO,
         api.path.join(
             'baseboard-{program}'.format(program=program),
-            'chromeos-base/chromeos-config-bsp-baseboard/files',
+            config_paths[program]['public_src'],
         ),
     )
 
     _copy_baseboard(
         'configuring private baseboard overlay',
         private_repo_path,
-        'chromeos-base/chromeos-config-bsp-private/files/include-private',
+        config_paths[program]['private_dst'],
         PRIVATE_BASEBOARD_REPO.format(program=program),
-        'chromeos-base/chromeos-config-bsp-baseboard-private/files',
+        config_paths[program]['private_src'],
     )
 
   # Clone the destination repo.
