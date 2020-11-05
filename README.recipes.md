@@ -324,6 +324,7 @@
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) &mdash; Recipe that triggers cros_test_platform runs.
   * [test_platform/ctp_uprev](#recipes-test_platform_ctp_uprev)
+  * [test_platform/dut_leaser](#recipes-test_platform_dut_leaser)
   * [test_platform/multi_bot/follower](#recipes-test_platform_multi_bot_follower)
   * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader)
   * [test_platform/result_flow](#recipes-test_platform_result_flow)
@@ -6830,6 +6831,11 @@ Args:
     `cipd set-ref`.
 Raises:
   A ValueError if validation fails.
+### *recipes* / [test\_platform/dut\_leaser](/recipes/test_platform/dut_leaser.py)
+
+[DEPS](/recipes/test_platform/dut_leaser.py#14): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+&mdash; **def [RunSteps](/recipes/test_platform/dut_leaser.py#27)(api, properties):**
 ### *recipes* / [test\_platform/multi\_bot/follower](/recipes/test_platform/multi_bot/follower.py)
 
 [DEPS](/recipes/test_platform/multi_bot/follower.py#11): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
