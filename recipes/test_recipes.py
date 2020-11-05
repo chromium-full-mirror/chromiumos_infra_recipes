@@ -168,6 +168,7 @@ def _launch_builders(api, test_builders, always_launch_builders):
 
     builders = list(test_builders)
     builders += [x for x in always_launch_builders if x not in test_builders]
+    my_id = api.swarming.task_id
 
     for builder in builders:
       with api.step.nest(
@@ -186,6 +187,9 @@ def _launch_builders(api, test_builders, always_launch_builders):
           # staging jobs.  We could run it with the dimension 'role=infra',
           # but there are no large role=infra bots.
           name = '%s %s' % (builder, last_successful_build.id)
+          tag = buildbucket.bbagent_args.build.tags.add()
+          tag.key = "test_recipes_task_id"
+          tag.value = my_id
           result = intermediate_result.then('edit-recipe-bundle').then(
               'edit-system', '-p', '20').then('edit', '-name',
                                               name).then('launch').launch_result
