@@ -7,7 +7,8 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
-from PB.test_platform import skylab_local_state
+from PB.test_platform.skylab_local_state.load import LoadRequest, LoadResponse
+from PB.test_platform.skylab_local_state.save import SaveRequest
 from PB.test_platform.phosphorus.prejob import PrejobRequest, PrejobResponse
 from PB.test_platform.phosphorus.runtest import RunTestRequest, RunTestResponse
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
@@ -131,12 +132,9 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       * InfraFailure
     """
     with self.m.context(infra_steps=True):
-      request = skylab_local_state.load.LoadRequest(config=self._config,
-                                                    dut_name=self._dut_hostname,
-                                                    run_id=self._run_id,
-                                                    dut_id=self._dut_id)
-      result = self._run('load', request, skylab_local_state.load.LoadRequest,
-                         skylab_local_state.load.LoadResponse,
+      request = LoadRequest(config=self._config, dut_name=self._dut_hostname,
+                            run_id=self._run_id, dut_id=self._dut_id)
+      result = self._run('load', request, LoadRequest, LoadResponse,
                          send_response=True)
       self._local_state_results_dir = result.results_dir
       return result
@@ -169,11 +167,11 @@ class PhosphorusCommand(recipe_api.RecipeApi):
         raise ValueError(
             'Results directory not set. Did you call load() first?')
 
-      request = skylab_local_state.save.SaveRequest(
-          config=self._config, dut_name=self._dut_hostname, dut_id=self._dut_id,
-          dut_state=dut_state, results_dir=self._local_state_results_dir,
-          seal_results_dir=seal_results_dir)
-      self._run('save', request, skylab_local_state.save.SaveRequest)
+      request = SaveRequest(config=self._config, dut_name=self._dut_hostname,
+                            dut_id=self._dut_id, dut_state=dut_state,
+                            results_dir=self._local_state_results_dir,
+                            seal_results_dir=seal_results_dir)
+      self._run('save', request, SaveRequest)
 
   def _dut_hostname_from_bot_id(self, swarming_bot_id):
     """Extract the DUT hostname from the env vars.

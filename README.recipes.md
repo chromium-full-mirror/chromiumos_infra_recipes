@@ -4164,36 +4164,36 @@ Args:
 
 [DEPS](/recipe_modules/phosphorus/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#127)(self):**
+&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#128)(self):**
 
 Load the local DUT state file.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#78)(self, request):**
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#79)(self, request):**
 
 Run a prejob or a provision via `prejob` subcommand.
 
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#191)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#189)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#87)(self, request):**
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#88)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#155)(self, dut_state):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#153)(self, dut_state):**
 
 Update the local DUT state file and seal the results directory.
 
@@ -4203,7 +4203,7 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#144)(self, dut_state):**
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#142)(self, dut_state):**
 
 Update the local DUT state file.
 
@@ -4213,14 +4213,14 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#96)(self, request):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#97)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#105)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#106)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 
