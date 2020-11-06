@@ -20,7 +20,6 @@ _RECIPE_CIPD_PACKAGE = (
 _GO_BINARY_CIPD_PACKAGE_PATTERN = 'chromiumos/infra/%s/linux-amd64'
 
 _GO_BINARIES = ['cros_test_platform',
-                'skylab_local_state',
                 'phosphorus',
                 'autotest_status_parser']
 

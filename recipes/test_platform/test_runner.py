@@ -14,8 +14,6 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusEnvProperties
 from PB.recipe_modules.chromeos.autotest_status_parser.autotest_status_parser \
   import AutotestStatusParserProperties
-from PB.recipe_modules.chromeos.skylab_local_state.skylab_local_state import \
-  SkylabLocalStateProperties
 from PB.recipes.chromeos.test_platform.test_runner import \
   TestRunnerProperties
 from PB.test_platform import phosphorus
