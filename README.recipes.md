@@ -173,7 +173,8 @@
   * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils)
   * [cros_paygen:examples/full](#recipes-cros_paygen_examples_full)
-  * [cros_paygen:examples/get_request](#recipes-cros_paygen_examples_get_request)
+  * [cros_paygen:examples/get_delta_requests](#recipes-cros_paygen_examples_get_delta_requests)
+  * [cros_paygen:examples/get_full_requests](#recipes-cros_paygen_examples_get_full_requests)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
@@ -1889,13 +1890,9 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_dlc\_requests](/recipe_modules/cros_paygen/api.py#155)(self):**
+&mdash; **def [get\_delta\_requests](/recipe_modules/cros_paygen/api.py#110)(self, payload_def, src_artifacts, tgt_artifacts, bucket, verify, keyset, dryrun):**
 
-&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#151)(self):**
-
-&mdash; **def [get\_requests](/recipe_modules/cros_paygen/api.py#110)(self, cfg, src_artifacts, tgt_artifacts, bucket, verify, keyset, dryrun):**
-
-Examine cfg, source, and target and return list(GenerationRequests).
+Examine def, source, and target and return list(GenerationRequests).
 
 If there isn't a matching source and target available, then return [].
 
@@ -1903,8 +1900,22 @@ bucket, verify, keyset, and dryrun are all used to fill out the
 GenerationRequest().
 
 Args:
-  cfg (dict): A singular configuration from pulled config.
+  payload_def (dict): A singular configuration from pulled config.
   src_artifacts (list[cros_storage.Image]): Available src images.
+  tgt_artifacts (list[cros_storage.Image]): Available tgt images.
+  bucket (str): The bucket containing the requests (and destination).
+  verify (bool): Should we run payload verification.
+  keyset (str): The keyset of the payload.
+  dryrun (bool): Should we not upload resulting artifacts.
+
+Returns:
+  A completed list[GenerationRequest] or [].
+
+&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#159)(self, tgt_artifacts, bucket, verify, keyset, dryrun):**
+
+Get the configured full requests for a set of artifacts.
+
+Args:
   tgt_artifacts (list[cros_storage.Image]): Available tgt images.
   bucket (str): The bucket containing the requests (and destination).
   verify (bool): Should we run payload verification.
@@ -5863,11 +5874,16 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_paygen/examples/full.py#5): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/full.py#20)(api, properties):**
-### *recipes* / [cros\_paygen:examples/get\_request](/recipe_modules/cros_paygen/examples/get_request.py)
+### *recipes* / [cros\_paygen:examples/get\_delta\_requests](/recipe_modules/cros_paygen/examples/get_delta_requests.py)
 
-[DEPS](/recipe_modules/cros_paygen/examples/get_request.py#15): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_paygen/examples/get_delta_requests.py#13): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_request.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_delta_requests.py#22)(api, properties):**
+### *recipes* / [cros\_paygen:examples/get\_full\_requests](/recipe_modules/cros_paygen/examples/get_full_requests.py)
+
+[DEPS](/recipe_modules/cros_paygen/examples/get_full_requests.py#13): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_full_requests.py#22)(api, properties):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

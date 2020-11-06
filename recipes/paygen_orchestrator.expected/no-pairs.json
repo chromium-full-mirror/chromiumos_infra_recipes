@@ -415,7 +415,9 @@
     "cmd": [],
     "name": "pairing artifacts",
     "~followup_annotations": [
-      "@@@STEP_TEXT@No payload pairs (src->tgt) found.@@@"
+      "@@@STEP_TEXT@No payload pairs (src->tgt) found.@@@",
+      "@@@STEP_LOG_END@delta@@@",
+      "@@@STEP_LOG_END@full@@@"
     ]
   },
   {

@@ -20,6 +20,7 @@ from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 import PB.chromiumos.common as common_pb2
 from PB.chromiumos.common import BuildTarget as BuildTarget_pb2
+from PB.recipe_modules.chromeos.cros_paygen.examples.test import GetRequestTestInputProperties
 
 
 def _read_test_file(filename):
@@ -53,7 +54,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
   # The following examples are to be used in conjunction with the above.
   SIGNED_SRC = SignedImage_pb2(
       build=Build_pb2(
-          build_target=BuildTarget_pb2(name='coral'), version='12345.6.7',
+          build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
           bucket='b', channel='stable'),
       image_type=common_pb2.RECOVERY,
       key='mp-v2',
@@ -61,7 +62,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
 
   SIGNED_SRC_IRRELEVANT = SignedImage_pb2(
       build=Build_pb2(
-          build_target=BuildTarget_pb2(name='coral'), version='12345.6.7',
+          build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
           bucket='b', channel='beta'),
       image_type=common_pb2.TEST,
       key='mp-v2',
@@ -69,7 +70,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
 
   SIGNED_TGT = SignedImage_pb2(
       build=Build_pb2(
-          build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
+          build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
           bucket='b', channel='stable'),
       image_type=common_pb2.RECOVERY,
       key='mp-v2',
@@ -77,19 +78,19 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
 
   UNSIGNED_SRC = UnsignedImage_pb2(
       build=Build_pb2(
-          build_target=BuildTarget_pb2(name='coral'), version='12345.6.7',
+          build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
           bucket='b', channel='stable'),
       milestone='86',
   )
 
   UNSIGNED_TGT = UnsignedImage_pb2(
       build=Build_pb2(
-          build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
+          build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
           bucket='b', channel='stable'),
       milestone='86',
   )
 
-  EXAMPLE_GEN_REQUEST_SIGNED = [
+  EXAMPLE_GEN_REQUEST_DELTA_SIGNED = [
       GenerationRequest_pb2(
           src_signed_image=SIGNED_SRC,
           tgt_signed_image=SIGNED_TGT,
@@ -99,7 +100,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           dryrun=True,
       )
   ]
-  EXAMPLE_GEN_REQUEST_UNSIGNED = [
+  EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED = [
       GenerationRequest_pb2(
           src_unsigned_image=UNSIGNED_SRC,
           tgt_unsigned_image=UNSIGNED_TGT,
@@ -110,8 +111,51 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
       )
   ]
 
+  EXAMPLE_GEN_REQUEST_FULL_SIGNED = [
+      GenerationRequest_pb2(
+          full_update=True,
+          tgt_signed_image=SIGNED_TGT,
+          bucket='b',
+          verify=True,
+          keyset='mp-v2',
+          dryrun=True,
+      )
+  ]
+
+  EXAMPLE_GEN_REQUEST_FULL_UNSIGNED = [
+      GenerationRequest_pb2(
+          full_update=True,
+          tgt_unsigned_image=UNSIGNED_TGT,
+          bucket='b',
+          verify=True,
+          keyset='mp-v2',
+          dryrun=True,
+      )
+  ]
+
+  BASIC_TEST_PROPS = {
+      'payload_cfg': EXAMPLE_SINGLE_PAYGEN_CONFIG,
+      'signed_srcs': [SIGNED_SRC],
+      'signed_tgts': [SIGNED_TGT],
+      'unsigned_srcs': [UNSIGNED_SRC],
+      'unsigned_tgts': [UNSIGNED_TGT],
+      'full_update': False,
+  }
+
   def test_paygen(self, step_name, json_return):
     """Mock up step results for the GS cat."""
     test_response = self.m.step.step_data(
         step_name, stdout=self.m.raw_io.output(json_return))
     return test_response
+
+  def props(self, api_props, request_type, expected_reqs, **kwargs):
+    """Define a test prop from a request_type and incoming kwargs."""
+    return api_props(
+        GetRequestTestInputProperties(request_type=request_type,
+                                      payload_cfg=kwargs['payload_cfg'],
+                                      signed_srcs=kwargs['signed_srcs'],
+                                      signed_tgts=kwargs['signed_tgts'],
+                                      unsigned_srcs=kwargs['unsigned_srcs'],
+                                      unsigned_tgts=kwargs['unsigned_tgts'],
+                                      full_update=kwargs['full_update'],
+                                      expected_reqs=expected_reqs))

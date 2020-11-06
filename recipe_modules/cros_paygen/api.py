@@ -46,7 +46,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     return deepcopy(self._internal_config)
 
   def _get_gs_config(self):
-    """Pull and load the current paygen configuration."""
+    """Pull and load the current paygen configuration as a string."""
     with self.m.step.nest('get paygen json') as pres:
       cat_res = self.m.gsutil.cat(self._paygen_json_gs_path, infra_step=True,
                                   stdout=self.m.raw_io.output())
@@ -107,9 +107,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           match_boards.append(b)
     return match_boards
 
-  def get_requests(self, cfg, src_artifacts, tgt_artifacts, bucket, verify,
-                   keyset, dryrun):
-    """Examine cfg, source, and target and return list(GenerationRequests).
+  def get_delta_requests(self, payload_def, src_artifacts, tgt_artifacts,
+                         bucket, verify, keyset, dryrun):
+    """Examine def, source, and target and return list(GenerationRequests).
 
     If there isn't a matching source and target available, then return [].
 
@@ -117,7 +117,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     GenerationRequest().
 
     Args:
-      cfg (dict): A singular configuration from pulled config.
+      payload_def (dict): A singular configuration from pulled config.
       src_artifacts (list[cros_storage.Image]): Available src images.
       tgt_artifacts (list[cros_storage.Image]): Available tgt images.
       bucket (str): The bucket containing the requests (and destination).
@@ -129,13 +129,21 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       A completed list[GenerationRequest] or [].
     """
     reqs = []
+
+    # See if we're configured to do deltas at all.
+    if not payload_def['generate_delta']:
+      return reqs  # pragma: nocover
+
     # For each src query all the target artifacts for a match (naively).
     for tgt in tgt_artifacts:
       tgt_type = type(tgt)
       for src in src_artifacts:
+        # Validate the artifact pair.
         if (tgt_type != type(src) or tgt.image_type != src.image_type or
-            tgt.build.channel != src.build.channel):
+            tgt.build.channel != src.build.channel or
+            src.build.version != payload_def['chrome_os_version']):
           continue  # pragma: nocover
+
         elif isinstance(src, SignedImage_pb2):
           reqs.append(
               GenerationRequest(src_signed_image=src, tgt_signed_image=tgt,
@@ -148,10 +156,34 @@ class CrosPaygenApi(recipe_api.RecipeApi):
                                 dryrun=dryrun))
     return reqs
 
-  def get_full_requests(self):
-    # TODO(crbug.com/1122854): IMPL full request (only target).
-    return []
+  def get_full_requests(self, tgt_artifacts, bucket, verify, keyset, dryrun):
+    """Get the configured full requests for a set of artifacts.
 
-  def get_dlc_requests(self):
-    # TODO(crbug.com/1122854): IMPL DLC requests.
-    return []
+    Args:
+      tgt_artifacts (list[cros_storage.Image]): Available tgt images.
+      bucket (str): The bucket containing the requests (and destination).
+      verify (bool): Should we run payload verification.
+      keyset (str): The keyset of the payload.
+      dryrun (bool): Should we not upload resulting artifacts.
+
+    Returns:
+      A completed list[GenerationRequest] or [].
+    """
+    reqs = []
+    for tgt in tgt_artifacts:
+      if isinstance(tgt, SignedImage_pb2):
+        reqs.append(
+            GenerationRequest(full_update=True, tgt_signed_image=tgt,
+                              bucket=bucket, verify=verify, keyset=keyset,
+                              dryrun=dryrun))
+      elif isinstance(tgt, UnsignedImage_pb2):
+        reqs.append(
+            GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
+                              bucket=bucket, verify=verify, keyset=keyset,
+                              dryrun=dryrun))
+
+    # TODO(crbug.com/1122854): The chromite code checks the number of mp and
+    # premp signing requests here. We are generally more relaxed at enforcing
+    # this at the moment. We maybe revist this philosophy generally as we
+    # approach launching this.
+    return reqs

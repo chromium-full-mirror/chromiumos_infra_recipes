@@ -21,7 +21,7 @@ message TestPaygenProperties {
 
 message GetRequestTestInputProperties {
   // The json payload config to pass to GetRequest.
-  string cfg = 1;
+  string payload_cfg = 1;
 
   // What can we expect to unpack?
   enum GetRequestType {

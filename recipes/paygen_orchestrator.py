@@ -87,22 +87,22 @@ def RunSteps(api, properties):
     with api.step.nest('examining %s' % long_chan_name):
 
       # Create Source Image definitions based upon the configuration alone.
-      for payload_def in configured_payloads:
-        if payload_def['channel'] == _short_channel_name(channel):
-          src_artifacts = api.cros_storage.discover_gs_artifacts(
+      for payload_cfg in configured_payloads:
+        if payload_cfg['channel'] == _short_channel_name(channel):
+          found_arts = api.cros_storage.discover_gs_artifacts(
               path.join('gs://' + properties.bucket, long_chan_name,
-                        payload_def['builder_name'],
-                        payload_def['chrome_os_version']))
-          for art in src_artifacts:
+                        payload_cfg['builder_name'],
+                        payload_cfg['chrome_os_version']))
+          for art in found_arts:
             source_artifacts.append(art.to_proto())
 
       # Discover the Images that exist at the remote path.
-      tgt_artifacts = api.cros_storage.discover_gs_artifacts(
+      found_arts = api.cros_storage.discover_gs_artifacts(
           path.join('gs://' + properties.bucket, long_chan_name,
                     properties.builder_name,
                     properties.target_chrome_os_version))
 
-      for art in tgt_artifacts:
+      for art in found_arts:
         target_artifacts.append(art.to_proto())
 
   # Match configuration with discovered artifacts.
@@ -110,33 +110,44 @@ def RunSteps(api, properties):
     pres.logs['target_artifacts'] = [MessageToJson(x) for x in target_artifacts]
     pres.logs['source_artifacts'] = [MessageToJson(x) for x in source_artifacts]
 
-  # Find the src and tgt artifacts applicable for each configured payload
-  # and construct the child request. Report missing artifacts.
-  # TODO(crbug.com/1122854): Missing but expected artifacts are silently ignored.
-  child_build_requests = []
-  with api.step.nest('pairing artifacts') as pres:
-    for cfg in configured_payloads:
-      gen_requests = api.cros_paygen.get_requests(cfg, source_artifacts,
-                                                  target_artifacts,
-                                                  properties.bucket, True,
-                                                  properties.keyset,
-                                                  properties.dryrun)
-      child_build_requests.extend(gen_requests)
+  # Aka: "Child Build Requests".
+  cbr = []
 
-    if not child_build_requests:
+  # Find the src and tgt artifacts applicable for each configured payload
+  # and construct the child requests. Report missing artifacts.
+  # TODO(crbug.com/1122854): Missing but expected artifacts are silently ignored.
+  with api.step.nest('pairing artifacts') as pres:
+
+    # Do configured delta payloads.
+    for payload_cfg in configured_payloads:
+      reqs = api.cros_paygen.get_delta_requests(payload_cfg, source_artifacts,
+                                                target_artifacts,
+                                                properties.bucket, True,
+                                                properties.keyset,
+                                                properties.dryrun)
+      cbr.extend(reqs)
+    pres.logs['delta'] = [MessageToJson(x) for x in cbr]
+
+    # Do full payloads.
+    reqs = api.cros_paygen.get_full_requests(target_artifacts,
+                                             properties.bucket, True,
+                                             properties.keyset,
+                                             properties.dryrun)
+    pres.logs['full'] = [MessageToJson(x) for x in reqs]
+    cbr.extend(reqs)
+
+    # Do dlc payloads.
+    # TODO(crbug.com/1122854): Impl.
+
+    if not cbr:
       pres.step_text = 'No payload pairs (src->tgt) found.'
       return
 
-    pres.logs['child build requests'] = [
-        MessageToJson(x) for x in child_build_requests
-    ]
-
   # Schedule child builders.
-  # pp = [PaygenProperties(request=x) for x in child_build_requests]
   br = [
       api.buildbucket.schedule_request(bucket='packaging', builder='paygen',
                                        properties={'request': MessageToDict(x)})
-      for x in child_build_requests
+      for x in cbr
   ]
 
   # TODO(engeg@): Only schedule one, as we're testing and bot cap is low.
@@ -148,7 +159,7 @@ def RunSteps(api, properties):
     fail = [x for x in res if x.status != common_pb2.SUCCESS]
     pres.step_text = '%s of %s passed' % (len(suc), len(br))
 
-  # Schedule AU tests if configured, don't wait for them.
+  # Launch AU tests if configured, don't wait for them.
 
 
 def GenTests(api):
