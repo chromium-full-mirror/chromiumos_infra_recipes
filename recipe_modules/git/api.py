@@ -82,7 +82,7 @@ class GitApi(recipe_api.RecipeApi):
     Returns:
       bool: True if the file changed from HEAD (or didn't exists), False
           otherwise.
-      """
+    """
     # Both `ls-files` and `diff-index` appear to be needed here. They return:
     #  git ls-files --error-unmatch <FILE>
     #    0 - no change & change
@@ -466,15 +466,18 @@ class GitApi(recipe_api.RecipeApi):
     args += [repo_url, target_path]
     self._step(args, timeout=timeout_sec)
 
-  def rebase(self, force=False):
+  def rebase(self, force=False, branch=None):
     """Run `git rebase` with the given arguments.
 
     Args:
       force (bool): If True, set --force.
+      branch (str): If set, rebase from specific branch.
     """
     cmd = ['rebase']
     if force:
       cmd.append('--force-rebase')
+    if branch:
+      cmd.append(branch)
     self._step(cmd)
 
   def set_global_config(self, args):

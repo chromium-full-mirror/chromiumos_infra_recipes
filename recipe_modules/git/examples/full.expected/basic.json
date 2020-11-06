@@ -340,6 +340,16 @@
   {
     "cmd": [
       "git",
+      "rebase",
+      "--force-rebase",
+      "feature-branch"
+    ],
+    "infra_step": true,
+    "name": "git rebase (2)"
+  },
+  {
+    "cmd": [
+      "git",
       "config",
       "--global",
       "upstream.hammer-branch",

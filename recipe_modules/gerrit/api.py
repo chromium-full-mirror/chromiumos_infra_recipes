@@ -34,6 +34,8 @@ class PatchSet(object):
     self.host = change['host']
     self._change_info = change['info']
     self._rev_info = change['revision_info']
+    # TODO(crbug/1146603): Consider changing to change['revision_info']['_number'].
+    # change['patch_set'] appears to always be set to 0.
     self._patch_set = change['patch_set']
 
   @property
@@ -414,12 +416,56 @@ class GerritApi(RecipeApi):
         change.project = project_info.name
         return change
 
+  def set_change_labels_remote(self, gerrit_change, fetch_ref, labels):
+    """Set the given labels for the given Gerrit change.
+      set_change_labels only works when the change exists in the local checkout.
+      This function should be used in other cases.
+
+    Args:
+      gerrit_change (GerritChange): The change of interest.
+      fetch_ref (str): The ref at which the change can be fetched.
+      labels (dict): Mapping from label (Label) to value (int).
+
+    Returns:
+      str: The new label ref (primarily for testing).
+    """
+    with self.m.context(cwd=self.m.src_state.workspace_path):
+      project_info = self.m.repo.project_info(gerrit_change.project)
+
+    current_branch = self.m.git.current_branch()
+    # Fetch the the given Gerrit change.
+    self.m.git.fetch(project_info.remote, [fetch_ref], timeout_sec=60)
+    # Temporarily checkout the fetched ref.
+    self.m.git.checkout("FETCH_HEAD")
+
+    ref = self._set_change_labels(gerrit_change, labels,
+                                  rebase_from_remote=True)
+
+    # Clean up, checkout the original branch.
+    self.m.git.checkout(current_branch)
+
+    return ref
+
   def set_change_labels(self, gerrit_change, labels):
     """Set the given labels for the given Gerrit change.
 
     Args:
       gerrit_change (GerritChange): The change of interest.
       labels (dict): Mapping from label (Label) to value (int).
+
+    Returns:
+      str: The new label ref (primarily for testing).
+    """
+    return self._set_change_labels(gerrit_change, labels)
+
+  def _set_change_labels(self, gerrit_change, labels, rebase_from_remote=False):
+    """Set the given labels for the given Gerrit change.
+
+    Args:
+      gerrit_change (GerritChange): The change of interest.
+      labels (dict): Mapping from label (Label) to value (int).
+      rebase_from_remote (bool): If true, sets the rebase branch to the equiv.
+        of origin/master (usually cros/master).
 
     Returns:
       str: The new label ref (primarily for testing).
@@ -440,7 +486,8 @@ class GerritApi(RecipeApi):
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         # Rebase before pushing so Gerrit does not complain there was no change.
-        self.m.git.rebase(force=True)
+        rebase_branch = branch = "%s/master" % project_info.remote if rebase_from_remote else None
+        self.m.git.rebase(force=True, branch=rebase_branch)
         self.m.git.push(project_info.remote, refspec)
 
       return ref

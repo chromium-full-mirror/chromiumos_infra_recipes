@@ -72,19 +72,15 @@ PROPERTIES = GeneratorProperties
 HASHTAG_FREEZE_RETRIES = "pupr-freeze-retries"
 HASHTAG_PINNED_RETRY = "pupr-retry-pinned"
 
-# TODO(jackneus): After generator has run for real on the chrome package, look at the
-# gerrit-fetch-changes step output to get a better idea of the 'CQ is trying...' message
-# and change the simple "in" queries below to narrower and more precise regexp matching.
-
-
+FAILED_RE = re.compile("^Patch Set \d+:\n\nFailed builds")
+RUNNING_RE = re.compile("^Patch Set \d+:\n\nCQ is trying the patch")
 # Determine if the CL in question is in a failed state.
 def is_failed_cl(c):
   # c.messages is sorted in ascending order of date. Reverse to get most recent first.
   for m in reversed(c.messages):
-    if "Failed builds" in m["message"]:
+    if FAILED_RE.match(m["message"]):
       return True
   return False
-
 
 # Determine if the CL in question is in a running state.
 def is_running_cl(c):
@@ -92,9 +88,9 @@ def is_running_cl(c):
   for m in reversed(c.messages):
     # If we hit a try message before a failed message, the change
     # hasn't failed yet for the most recent run.
-    if "CQ is trying the patch" in m["message"]:
+    if RUNNING_RE.match(m["message"]):
       return True
-    if "Failed builds" in m["message"]:
+    if FAILED_RE.match(m["message"]):
       break
   return False
 
@@ -359,13 +355,21 @@ def RunSteps(api, properties):
             if retry_ci and is_failed_cl(
                 retry_ci) and not is_running_cl(retry_ci):
               with api.step.nest("retry CL {}".format(retry_ci.change_id)):
-                # Then set labels.
                 labels = {
                     api.gerrit.Label.BOT_COMMIT: 1,
-                    api.gerrit.Label.COMMIT_QUEUE: 2,
+                    api.gerrit.Label.COMMIT_QUEUE:
+                        1,  # TODO(jackneus): change to 2
                 }
-                api.gerrit.set_change_labels(retry_ci.to_gerrit_change_proto(),
-                                             labels)
+                retry_cl = retry_ci.to_gerrit_change_proto()
+                # Find path of appropriate project in local checkout, then set labels.
+                with api.context(cwd=workspace_path):
+                  project_info = api.repo.project_info(retry_cl.project)
+                  repository_path = api.path.join(workspace_path,
+                                                  project_info.path)
+                  with api.context(cwd=api.path.abs_to_path(repository_path)):
+                    api.gerrit.set_change_labels_remote(retry_cl,
+                                                        retry_ci.git_fetch_ref,
+                                                        labels)
 
     with api.step.nest('generate CLs'):
       repositories = map(api.path.abs_to_path, ebuilds_by_repo.keys())
@@ -751,15 +755,18 @@ def GenTests(api):
 
   value_dict = {
       1: {
-          "change_id":
-              "1",
-          "created":
-              "2020-10-22 18:54:00.000000000",
+          "change_id": "1",
+          "created": "2020-10-22 18:54:00.000000000",
           "messages": [{
-              "message": "CQ is trying the patch..."
+              "message": "Quote: Patch Set 3:\n\nFailed builds: ..."
           }, {
-              "message": "Failed builds: ..."
-          }]
+              "message": "Patch Set 3:\n\nCQ is trying the patch..."
+          }, {
+              "message": "Patch Set 3:\n\nFailed builds: ..."
+          }],
+          "revision_info": {
+              "ref": "refs/change/foo",
+          },
       },
       2: {
           "change_id": 2,
@@ -787,18 +794,19 @@ def GenTests(api):
 
   value_dict = {
       1: {
-          "change_id":
-              1,
-          "created":
-              "2020-10-22 18:54:00.000000000",
+          "change_id": 1,
+          "created": "2020-10-22 18:54:00.000000000",
           "hashtags": [HASHTAG_PINNED_RETRY],
           "messages": [{
-              "message": "CQ is trying the patch..."
+              "message": "Patch Set 12:\n\nCQ is trying the patch..."
           }, {
-              "message": "Failed builds: ..."
+              "message": "Patch Set 9:\n\nFailed builds: ..."
           }, {
-              "message": "CQ is trying the patch..."
-          }]
+              "message": "Patch Set 9:\n\nCQ is trying the patch..."
+          }],
+          "revision_info": {
+              "ref": "refs/change/foo",
+          },
       }
   }
 

@@ -62,6 +62,7 @@ def RunSteps(api):
   api.assertions.assertEqual(len(api.git.ls_remote(['snapshot', 'foo'])), 2)
   api.git.repository_root()
   api.git.rebase(force=True)
+  api.git.rebase(force=True, branch='feature-branch')
   api.git.set_global_config(['upstream.hammer-branch', '1'])
 
   commit = api.git.gitiles_commit(test_url='https://example.com/pro/ject/')
