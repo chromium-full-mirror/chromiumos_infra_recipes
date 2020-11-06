@@ -11,6 +11,8 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.payload import GenerationRequest
+from PB.chromite.api.payload import SignedImage as SignedImage_pb2
+from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 
 DEFAULT_DELTA_TYPES = [
     'STEPPING_STONE', 'OMAHA', 'NO_DELTA', 'MILESTONE', 'FSI'
@@ -105,18 +107,51 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           match_boards.append(b)
     return match_boards
 
-  def get_request(self, cfg, src_artifacts, tgt_artifacts):
-    """Look at source and target artifacts and return a GenerationRequest.
+  def get_requests(self, cfg, src_artifacts, tgt_artifacts, bucket, verify,
+                   keyset, dryrun):
+    """Examine cfg, source, and target and return list(GenerationRequests).
 
-    If there isn't a matching source and target available, thn return None.
+    If there isn't a matching source and target available, then return [].
+
+    bucket, verify, keyset, and dryrun are all used to fill out the
+    GenerationRequest().
 
     Args:
       cfg (dict): A singular configuration from pulled config.
       src_artifacts (list[cros_storage.Image]): Available src images.
       tgt_artifacts (list[cros_storage.Image]): Available tgt images.
+      bucket (str): The bucket containing the requests (and destination).
+      verify (bool): Should we run payload verification.
+      keyset (str): The keyset of the payload.
+      dryrun (bool): Should we not upload resulting artifacts.
 
     Returns:
-      A completed GenerationRequest or None.
+      A completed list[GenerationRequest] or [].
     """
-    # TODO(crbug/1122854): Impl
-    return GenerationRequest()
+    reqs = []
+    # For each src query all the target artifacts for a match (naively).
+    for tgt in tgt_artifacts:
+      tgt_type = type(tgt)
+      for src in src_artifacts:
+        if (tgt_type != type(src) or tgt.image_type != src.image_type or
+            tgt.build.channel != src.build.channel):
+          continue  # pragma: nocover
+        elif isinstance(src, SignedImage_pb2):
+          reqs.append(
+              GenerationRequest(src_signed_image=src, tgt_signed_image=tgt,
+                                bucket=bucket, verify=verify, keyset=keyset,
+                                dryrun=dryrun))
+        elif isinstance(src, UnsignedImage_pb2):
+          reqs.append(
+              GenerationRequest(src_unsigned_image=src, tgt_unsigned_image=tgt,
+                                bucket=bucket, verify=verify, keyset=keyset,
+                                dryrun=dryrun))
+    return reqs
+
+  def get_full_requests(self):
+    # TODO(crbug.com/1122854): IMPL full request (only target).
+    return []
+
+  def get_dlc_requests(self):
+    # TODO(crbug.com/1122854): IMPL DLC requests.
+    return []

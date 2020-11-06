@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_paygen.examples;
 
+import "chromite/api/payload.proto";
+
 message TestPaygenProperties {
   // Builder name to use.
   string builder_name = 1;
@@ -15,4 +17,31 @@ message TestPaygenProperties {
 
   // Delta type requested.
   string delta_type = 3;
+}
+
+message GetRequestTestInputProperties {
+  // The json payload config to pass to GetRequest.
+  string cfg = 1;
+
+  // What can we expect to unpack?
+  enum GetRequestType {
+    MISMATCHED = 0;
+    SIGNED = 1;
+    UNSIGNED = 2;
+    FULL = 3;
+  }
+
+  GetRequestType request_type = 2;
+
+  // The following are the possible input images (see GenerationRequest).
+  repeated chromite.api.SignedImage signed_srcs = 3;
+  repeated chromite.api.SignedImage signed_tgts = 4;
+
+  repeated chromite.api.UnsignedImage unsigned_srcs = 5;
+  repeated chromite.api.UnsignedImage unsigned_tgts = 6;
+
+  bool full_update = 7;
+
+  // The expected results of calling gen_requests.
+  repeated chromite.api.GenerationRequest expected_reqs = 8;
 }

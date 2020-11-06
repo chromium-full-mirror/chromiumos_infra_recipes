@@ -1,0 +1,34 @@
+{
+  "board": {
+    "public_codename": "coral",
+    "is_active": true,
+    "builder_name": "coral"
+  },
+  "delta_type": "OMAHA",
+  "channel": "stable",
+  "chrome_os_version": "13421.89.0",
+  "chrome_version": "86.0.4240.183",
+  "milestone": 86,
+  "generate_delta": true,
+  "delta_payload_tests": true,
+  "full_payload_tests": true,
+  "applicable_models": [
+    "astronaut",
+    "nasher360",
+    "blue",
+    "bruce",
+    "lava",
+    "whitetip",
+    "santa",
+    "blacktip360",
+    "blacktiplte",
+    "babymega",
+    "robo",
+    "nasher",
+    "blacktip",
+    "robo360",
+    "rabbid",
+    "babytiger",
+    "epaulette"
+  ]
+}

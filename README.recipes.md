@@ -1847,17 +1847,17 @@ This is used by findit, which has a single builder that performs
 bisection using the configuration of another builder.
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
 
-[DEPS](/recipe_modules/cros_paygen/__init__.py#6): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_paygen/__init__.py#6): [cros\_storage](#recipe_modules-cros_storage), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with Paygen and its config.
 
-#### **class [CrosPaygenApi](/recipe_modules/cros_paygen/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPaygenApi](/recipe_modules/cros_paygen/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific paygen steps.
 
-&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/cros_paygen/api.py#62)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/cros_paygen/api.py#64)(self):**
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_paygen/api.py#66)(self, builder_name, \*\*kwargs):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_paygen/api.py#68)(self, builder_name, \*\*kwargs):**
 
 Return the configs matching the query or [].
 
@@ -1891,19 +1891,30 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_request](/recipe_modules/cros_paygen/api.py#108)(self, cfg, src_artifacts, tgt_artifacts):**
+&mdash; **def [get\_dlc\_requests](/recipe_modules/cros_paygen/api.py#155)(self):**
 
-Look at source and target artifacts and return a GenerationRequest.
+&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#151)(self):**
 
-If there isn't a matching source and target available, thn return None.
+&mdash; **def [get\_requests](/recipe_modules/cros_paygen/api.py#110)(self, cfg, src_artifacts, tgt_artifacts, bucket, verify, keyset, dryrun):**
+
+Examine cfg, source, and target and return list(GenerationRequests).
+
+If there isn't a matching source and target available, then return [].
+
+bucket, verify, keyset, and dryrun are all used to fill out the
+GenerationRequest().
 
 Args:
   cfg (dict): A singular configuration from pulled config.
   src_artifacts (list[cros_storage.Image]): Available src images.
   tgt_artifacts (list[cros_storage.Image]): Available tgt images.
+  bucket (str): The bucket containing the requests (and destination).
+  verify (bool): Should we run payload verification.
+  keyset (str): The keyset of the payload.
+  dryrun (bool): Should we not upload resulting artifacts.
 
 Returns:
-  A completed GenerationRequest or None.
+  A completed list[GenerationRequest] or [].
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -5879,9 +5890,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/full.py#20)(api, properties):**
 ### *recipes* / [cros\_paygen:examples/get\_request](/recipe_modules/cros_paygen/examples/get_request.py)
 
-[DEPS](/recipe_modules/cros_paygen/examples/get_request.py#6): [cros\_paygen](#recipe_modules-cros_paygen)
+[DEPS](/recipe_modules/cros_paygen/examples/get_request.py#15): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_request.py#9)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_request.py#20)(api, properties):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -6424,11 +6435,11 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 &mdash; **def [RunSteps](/recipes/paygen.py#21)(api, properties):**
 ### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
 
-[DEPS](/recipes/paygen_orchestrator.py#23): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen_orchestrator.py#26): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#52)(api, properties):**
+&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#56)(api, properties):**
 ### *recipes* / [phosphorus:examples/full](/recipe_modules/phosphorus/examples/full.py)
 
 [DEPS](/recipe_modules/phosphorus/examples/full.py#6): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

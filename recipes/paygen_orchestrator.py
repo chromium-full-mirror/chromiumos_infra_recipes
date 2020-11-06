@@ -5,6 +5,7 @@
 
 """Recipe for orchestrating ChromeOS payloads (AU deltas etc)."""
 
+from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 import itertools
 import json
@@ -18,9 +19,12 @@ from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage
 from PB.chromite.api.payload import UnsignedImage
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -108,18 +112,41 @@ def RunSteps(api, properties):
 
   # Find the src and tgt artifacts applicable for each configured payload
   # and construct the child request. Report missing artifacts.
-  # TODO(crbug.com/1122854): Deal with reporting missing artifacts.
+  # TODO(crbug.com/1122854): Missing but expected artifacts are silently ignored.
   child_build_requests = []
   with api.step.nest('pairing artifacts') as pres:
     for cfg in configured_payloads:
-      gen_request = api.cros_paygen.get_request(cfg, source_artifacts,
-                                                target_artifacts)
-      if gen_request:
-        child_build_requests.append(PaygenProperties(request=gen_request))
+      gen_requests = api.cros_paygen.get_requests(cfg, source_artifacts,
+                                                  target_artifacts,
+                                                  properties.bucket, True,
+                                                  properties.keyset,
+                                                  properties.dryrun)
+      child_build_requests.extend(gen_requests)
+
+    if not child_build_requests:
+      pres.step_text = 'No payload pairs (src->tgt) found.'
+      return
+
+    pres.logs['child build requests'] = [
+        MessageToJson(x) for x in child_build_requests
+    ]
 
   # Schedule child builders.
+  # pp = [PaygenProperties(request=x) for x in child_build_requests]
+  br = [
+      api.buildbucket.schedule_request(bucket='packaging', builder='paygen',
+                                       properties={'request': MessageToDict(x)})
+      for x in child_build_requests
+  ]
 
-  # Collect and handle failures.
+  # TODO(engeg@): Only schedule one, as we're testing and bot cap is low.
+  res = api.buildbucket.run(br[0:1], timeout=PAYGEN_CHILDREN_TIMEOUT_SEC,
+                            step_name='running children')
+
+  with api.step.nest('results') as pres:
+    suc = [x for x in res if x.status == common_pb2.SUCCESS]
+    fail = [x for x in res if x.status != common_pb2.SUCCESS]
+    pres.step_text = '%s of %s passed' % (len(suc), len(br))
 
   # Schedule AU tests if configured, don't wait for them.
 
@@ -135,12 +162,12 @@ def GenTests(api):
                            channels=channels)
     return props
 
-  good_paygen = api.cros_paygen.test_paygen(
+  good_paygen_cfg = api.cros_paygen.test_paygen(
       'discovering payload configuration.get paygen json.gsutil cat',
       api.cros_paygen.EXAMPLE_PAYGEN_JSON)
 
   yield api.test(
-      'basic', get_props(), good_paygen,
+      'basic', get_props(), good_paygen_cfg,
       api.cros_storage.test_listing(
           'examining beta-channel.discover gs artifacts.gsutil list'),
       api.cros_storage.test_listing(
@@ -149,8 +176,21 @@ def GenTests(api):
           'examining beta-channel.discover gs artifacts (3).gsutil list',
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
       api.post_check(post_process.StatusSuccess),
-      api.post_check(post_process.MustRun, 'pairing artifacts'))
-  # TODO(crbug.com/1122854): Add more as we finish the recipe.
+      api.post_check(post_process.MustRun, 'pairing artifacts'),
+      api.post_check(post_process.MustRun, 'results'))
 
   yield api.test('no-payloads', get_props(builder_name='goobolywhobbly'),
-                 good_paygen, api.post_check(post_process.StatusSuccess))
+                 good_paygen_cfg, api.post_check(post_process.StatusSuccess))
+
+  # Successful lists but don't find a suitable pair in get_requests().
+  yield api.test(
+      'no-pairs', get_props(), good_paygen_cfg,
+      api.cros_storage.test_listing(
+          'examining beta-channel.discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.discover gs artifacts (2).gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.discover gs artifacts (3).gsutil list',
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-factory-R87-13505.15.0-coral.tar.xz'
+      ), api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.DoesNotRun, 'running children'))
