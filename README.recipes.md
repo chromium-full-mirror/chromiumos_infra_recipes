@@ -6869,7 +6869,7 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#627)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#628)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#187)(api, phosphorus_config, gs_root, result):**
 
@@ -6884,7 +6884,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#493)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#494)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -6929,7 +6929,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#462)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#463)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -6957,7 +6957,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#574)(api, phosphorus_config, properties, dut_hostname, test):**
+&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#575)(api, phosphorus_config, properties, dut_hostname, test):**
 
 Run the test execution and all steps that explicitly depend on it.
 
@@ -6972,7 +6972,7 @@ Returns: phosphorus.RunTestResponse.
 Raises:
 * InfraFailure.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#335)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#336)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 

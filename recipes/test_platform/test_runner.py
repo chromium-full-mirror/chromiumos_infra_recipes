@@ -282,13 +282,14 @@ def summarize_results(api, prejob_response, run_test_response, result):
           step.presentation.status = api.step.FAILURE
         if prejob.human_readable_summary:
           step.presentation.logs['summary'] = prejob.human_readable_summary
-    for ar in result.autotest_results.values():
-      for tc in ar.test_cases:
-        with api.step.nest(tc.name) as step:
-          if tc.verdict != Result.Autotest.TestCase.VERDICT_PASS:
-            step.presentation.status = api.step.FAILURE
-          if tc.human_readable_summary:
-            step.presentation.logs['summary'] = tc.human_readable_summary
+    for test_id, ar in result.autotest_results.items():
+      with api.step.nest(test_id):
+        for tc in ar.test_cases:
+          with api.step.nest(tc.name) as step:
+            if tc.verdict != Result.Autotest.TestCase.VERDICT_PASS:
+              step.presentation.status = api.step.FAILURE
+            if tc.human_readable_summary:
+              step.presentation.logs['summary'] = tc.human_readable_summary
       if result.autotest_result.incomplete:
         with api.step.nest("autoserv") as step:
           step.presentation.status = api.step.FAILURE

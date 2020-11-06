@@ -601,6 +601,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "test results.original_test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
