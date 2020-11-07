@@ -2699,11 +2699,11 @@ Returns
 
 API for working with CrOS version numbers.
 
-#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#68)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#52)(self):**
+&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#73)(self):**
 
 Read the Chrome OS version from the workspace.
 

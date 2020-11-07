@@ -5,6 +5,7 @@
 
 """API for working with CrOS version numbers."""
 
+from functools import total_ordering
 import re
 
 from recipe_engine import recipe_api
@@ -19,6 +20,7 @@ CHROMEOS_VERSION_RE_MAPPING = {
 }
 
 
+@total_ordering
 class Version(object):
   __slots__ = ('chrome_branch', 'build', 'branch', 'patch', 'snapshot')
 
@@ -34,6 +36,25 @@ class Version(object):
     if self.snapshot is not None:
       version += '-%s' % self.snapshot
     return version
+
+  def __eq__(self, other):
+    """Determine if versions are equal, ignoring chrome branch or snapshot."""
+    return (self.build == other.build and self.branch == other.branch and
+            self.patch == other.patch)
+
+  def __lt__(self, other):
+    """Find lesser of two versions, ignoring chrome branch or snapshot."""
+    if self.build < other.build:
+      return True
+    if self.build > other.build:
+      return False
+    if self.branch < other.branch:
+      return True
+    if self.branch > other.branch:
+      return False
+    if self.patch < other.patch:
+      return True
+    return False
 
   @property
   def platform_version(self):

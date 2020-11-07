@@ -21,6 +21,7 @@ PROPERTIES = TestInputProperties
 
 def RunSteps(api, properties):
   v = api.cros_version.Version(99, 1234, 56, 1, 2)
+
   api.assertions.assertEqual(str(v), 'R99-1234.56.1-2')
   api.assertions.assertEqual(v.buildspec_filename, '99/1234.56.1.xml')
 
@@ -31,6 +32,21 @@ def RunSteps(api, properties):
   # The second read gets an empty file.
   api.assertions.assertRaises(ValueError,
                               api.cros_version.read_workspace_version)
+
+  v1 = api.cros_version.Version(99, 1234, 56, 1, 2)
+  v1_2 = api.cros_version.Version(99, 1234, 56, 1, 2)
+  v2 = api.cros_version.Version(98, 1235, 56, 1, 2)
+  v3 = api.cros_version.Version(98, 1235, 57, 1, 2)
+  v4 = api.cros_version.Version(98, 1235, 57, 2, 2)
+  # Test the version comparisons.
+  api.assertions.assertTrue(v1 < v2)
+  api.assertions.assertTrue(v2 < v3)
+  api.assertions.assertTrue(v3 < v4)
+  api.assertions.assertTrue(v3 > v2)
+  api.assertions.assertTrue(v2 > v1)
+  api.assertions.assertTrue(v4 > v3)
+
+  api.assertions.assertTrue(v1 == v1_2)
 
 
 def GenTests(api):
