@@ -38,6 +38,7 @@ def RunSteps(api, properties):
   v2 = api.cros_version.Version(98, 1235, 56, 1, 2)
   v3 = api.cros_version.Version(98, 1235, 57, 1, 2)
   v4 = api.cros_version.Version(98, 1235, 57, 2, 2)
+
   # Test the version comparisons.
   api.assertions.assertTrue(v1 < v2)
   api.assertions.assertTrue(v2 < v3)
@@ -47,6 +48,13 @@ def RunSteps(api, properties):
   api.assertions.assertTrue(v4 > v3)
 
   api.assertions.assertTrue(v1 == v1_2)
+
+  # Test the parsing of arbitrary strings.
+  v = api.cros_version.Version.from_string('134.1.2')
+  api.assertions.assertEqual(v, api.cros_version.Version(None, 134, 1, 2, None))
+  # Close but not a real version.
+  v = api.cros_version.Version.from_string('1213.123.41.21')
+  api.assertions.assertTrue(v == None)
 
 
 def GenTests(api):

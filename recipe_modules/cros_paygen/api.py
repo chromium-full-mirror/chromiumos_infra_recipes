@@ -138,6 +138,14 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     for tgt in tgt_artifacts:
       tgt_type = type(tgt)
       for src in src_artifacts:
+        # Create and compare the versions, we don't paygen backwards.
+        v_src = self.m.cros_version.Version.from_string(src.build.version)
+        v_tgt = self.m.cros_version.Version.from_string(tgt.build.version)
+
+        if v_tgt < v_src:
+          # TODO(crbug.com/1122854): Add test, remove pragma.
+          continue  # pragma: nocover
+
         # Validate the artifact pair.
         if (tgt_type != type(src) or tgt.image_type != src.image_type or
             tgt.build.channel != src.build.channel or

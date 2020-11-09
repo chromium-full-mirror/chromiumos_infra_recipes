@@ -19,10 +19,39 @@ CHROMEOS_VERSION_RE_MAPPING = {
     'patch': re.compile(r'\bCHROMEOS_PATCH=(\d+)\b'),
 }
 
+# The following regexs are evaluated greedily against strings in order to
+# extract a Version instantance. The constructor is called with the lambda
+# provided (based upon groups found).
+CHROMEOS_VERSION_STRING_RES = [
+    (re.compile(r'^(?P<build>\d+)\.(?P<branch>\d+).(?P<patch>\d)+$'),
+     lambda cls, grps: cls(None, int(grps['build']), int(grps['branch']),
+                           int(grps['patch']), None))
+]
+
 
 @total_ordering
 class Version(object):
   __slots__ = ('chrome_branch', 'build', 'branch', 'patch', 'snapshot')
+
+  @classmethod
+  def from_string(cls, version_string):
+    """Construct a Version from a string.
+
+    We should extend for differing representations of the version string as
+    they become useful.
+
+    Args:
+      version (str): The version string to parse.
+        This supports the following formats:
+          "13505.0.0"
+          ...
+
+    Returns: A constructed Version, or None.
+    """
+    for (r, l) in CHROMEOS_VERSION_STRING_RES:
+      m = re.match(r, version_string)
+      if m:
+        return l(cls, m.groupdict())
 
   def __init__(self, chrome_branch, build, branch=0, patch=0, snapshot=None):
     self.chrome_branch = chrome_branch

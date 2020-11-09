@@ -150,8 +150,7 @@ def RunSteps(api, properties):
       for x in cbr
   ]
 
-  # TODO(engeg@): Only schedule one, as we're testing and bot cap is low.
-  res = api.buildbucket.run(br[0:1], timeout=PAYGEN_CHILDREN_TIMEOUT_SEC,
+  res = api.buildbucket.run(br, timeout=PAYGEN_CHILDREN_TIMEOUT_SEC,
                             step_name='running children')
 
   with api.step.nest('results') as pres:

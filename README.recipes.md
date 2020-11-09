@@ -1847,7 +1847,7 @@ This is used by findit, which has a single builder that performs
 bisection using the configuration of another builder.
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
 
-[DEPS](/recipe_modules/cros_paygen/__init__.py#6): [cros\_storage](#recipe_modules-cros_storage), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_paygen/__init__.py#6): [cros\_storage](#recipe_modules-cros_storage), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with Paygen and its config.
 
@@ -1912,7 +1912,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#159)(self, tgt_artifacts, bucket, verify, keyset, dryrun):**
+&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#167)(self, tgt_artifacts, bucket, verify, keyset, dryrun):**
 
 Get the configured full requests for a set of artifacts.
 
@@ -2700,11 +2700,11 @@ Returns
 
 API for working with CrOS version numbers.
 
-#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#68)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#97)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#73)(self):**
+&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#102)(self):**
 
 Read the Chrome OS version from the workspace.
 
