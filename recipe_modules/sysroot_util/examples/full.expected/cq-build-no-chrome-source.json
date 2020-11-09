@@ -1461,7 +1461,7 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"directory\": \"[CLEANUP]/image-test-result-_tmp_10\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -1477,8 +1477,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  }, \n  \"image\": {\n    \"buildTarget\": {\n      \"name\": \"eve\"\n    }, \n    \"path\": \"/build/images/base.bin\", \n    \"type\": \"BASE\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"result\": {\n    \"directory\": \"[CLEANUP]/image-test-result-_tmp_10\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
+      "{\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  }, \n  \"image\": {\n    \"buildTarget\": {\n      \"name\": \"eve\"\n    }, \n    \"path\": \"/build/images/base.bin\", \n    \"type\": \"BASE\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"result\": {\n    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "infra_step": true,
     "name": "build images.test images.call chromite.api.ImageService/Test.write input file",
@@ -1499,7 +1499,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"directory\": \"[CLEANUP]/image-test-result-_tmp_10\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -1509,9 +1509,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ImageService/Test"
@@ -1534,7 +1534,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1578,7 +1578,7 @@
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"result\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"directory\": \"[CLEANUP]/image-test-result-_tmp_10\"@@@",
+      "@@@STEP_LOG_LINE@published event@      \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:48.500Z\", @@@",
@@ -1610,7 +1610,7 @@
     },
     "infra_step": true,
     "name": "build images.test images.call chromite.api.ImageService/Test.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI3IDE/QQQgMq17gEiBgjegMT9BLIBaAohChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaBQoD\\nZXZlEgUKA2V2ZRolCiNbQ0xFQU5VUF0vaW1hZ2UtdGVzdC1yZXN1bHQtX3RtcF8xMCIVChNbQ0FD\\nSEVdL2Nyb3NfY2hyb290ugECCAHQAtDsgNmu8bWSfNoCUmJ1aWxkIGltYWdlc3x0ZXN0IGltYWdl\\nc3xjYWxsIGNocm9taXRlLmFwaS5JbWFnZVNlcnZpY2UvVGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3Jp\\ncHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI3IDE/QQQgMq17gEiBgjegMT9BLIBZwohChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaBQoD\\nZXZlEgUKA2V2ZRokCiJbQ0xFQU5VUF0vaW1hZ2UtdGVzdC1yZXN1bHQtX3RtcF8xIhUKE1tDQUNI\\nRV0vY3Jvc19jaHJvb3S6AQIIAdAC0OyA2a7xtZJ82gJSYnVpbGQgaW1hZ2VzfHRlc3QgaW1hZ2Vz\\nfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9UZXN0fGNhbGwgYnVpbGQgQVBJIHNjcmlw\\ndA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

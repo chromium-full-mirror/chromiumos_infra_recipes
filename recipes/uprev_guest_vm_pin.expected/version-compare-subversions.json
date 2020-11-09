@@ -625,7 +625,7 @@
       "gs://chromeos-image-archive/postsubmit-tatl/R80-1.2.9.0-9.0/image.zip",
       "./"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "infra_step": true,
     "name": "copy images to destination bucket.gsutil download",
     "~followup_annotations": [
@@ -638,11 +638,11 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_2/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_2/image\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_1/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_1/image\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "name": "copy images to destination bucket.unzip image archive",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -662,9 +662,9 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "name": "copy images to destination bucket.archive base guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\"}",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-base\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -675,9 +675,9 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "name": "copy images to destination bucket.archive test guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\"}",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-test\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -694,7 +694,7 @@
       "*.tbz",
       "gs://termina-component-testing/uprev-test/amd64/80.1.2.9.0/"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
     "infra_step": true,
     "name": "copy images to destination bucket.gsutil upload",
     "~followup_annotations": [
@@ -746,7 +746,7 @@
       "gs://chromeos-image-archive/postsubmit-tael/R80-1.2.9.0-9.0/image.zip",
       "./"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "infra_step": true,
     "name": "copy images to destination bucket.gsutil download (2)",
     "~followup_annotations": [
@@ -759,11 +759,11 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_3/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_3/image\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_2/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_2/image\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "name": "copy images to destination bucket.unzip image archive (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -783,9 +783,9 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "name": "copy images to destination bucket.archive base guest VM (2)",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_3/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_3/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_3/image/guest-vm-base\"}",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -796,9 +796,9 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "name": "copy images to destination bucket.archive test guest VM (2)",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_3/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_3/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_3/image/guest-vm-test\"}",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -815,7 +815,7 @@
       "*.tbz",
       "gs://termina-component-testing/uprev-test/arm/80.1.2.9.0/"
     ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_3",
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
     "infra_step": true,
     "name": "copy images to destination bucket.gsutil upload (2)",
     "~followup_annotations": [

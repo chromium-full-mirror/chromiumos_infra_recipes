@@ -1214,7 +1214,7 @@
       "clone",
       "--bare",
       ".",
-      "[CLEANUP]/repo-overwrite-_tmp_2"
+      "[CLEANUP]/repo-overwrite-_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.push manifest.clone",
@@ -1237,7 +1237,7 @@
     "cmd": [
       "git",
       "push",
-      "[CLEANUP]/repo-overwrite-_tmp_2",
+      "[CLEANUP]/repo-overwrite-_tmp_1",
       "+refs/remotes//*:refs/heads/*",
       "+refs/heads/master:refs/heads/master"
     ],
@@ -1311,7 +1311,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "file://[CLEANUP]/repo-overwrite-_tmp_2",
+      "file://[CLEANUP]/repo-overwrite-_tmp_1",
       "--groups",
       "all",
       "--manifest-branch",
@@ -1623,7 +1623,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/create_project_commits_archive_tmp_3/projects/src/chromiumos/manifest"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromiumos/manifest"
     ],
     "infra_step": true,
     "name": "create project commits archive.project path",
@@ -1636,7 +1636,7 @@
       "git",
       "bundle",
       "create",
-      "[CLEANUP]/create_project_commits_archive_tmp_3/projects/src/chromiumos/manifest/bundle",
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromiumos/manifest/bundle",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/manifest",
@@ -1656,7 +1656,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/create_project_commits_archive_tmp_3/projects/src/chromeos/project"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/project"
     ],
     "infra_step": true,
     "name": "create project commits archive.project path (2)",
@@ -1669,7 +1669,7 @@
       "git",
       "bundle",
       "create",
-      "[CLEANUP]/create_project_commits_archive_tmp_3/projects/src/chromeos/project/bundle",
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/project/bundle",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/project",
@@ -1689,7 +1689,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/create_project_commits_archive_tmp_3/projects/src/chromeos/manifest-internal"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/manifest-internal"
     ],
     "infra_step": true,
     "name": "create project commits archive.project path (3)",
@@ -1702,7 +1702,7 @@
       "git",
       "bundle",
       "create",
-      "[CLEANUP]/create_project_commits_archive_tmp_3/projects/src/chromeos/manifest-internal/bundle",
+      "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/manifest-internal/bundle",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal",
@@ -1721,7 +1721,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\"project_paths\": [\"src/chromiumos/manifest\", \"src/chromeos/project\", \"src/chromeos/manifest-internal\"]}",
-      "[CLEANUP]/create_project_commits_archive_tmp_3/metadata.json"
+      "[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json"
     ],
     "infra_step": true,
     "name": "create project commits archive.metadata.json",
@@ -1738,7 +1738,7 @@
       "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
     ],
     "name": "create project commits archive.create archive",
-    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_3/projects/src/chromiumos/manifest/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_3/projects/src/chromeos/project/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_3/projects/src/chromeos/manifest-internal/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_3/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_3\"}",
+    "stdin": "{\"archive_type\": \"tar\", \"entries\": [{\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromiumos/manifest/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/project/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/manifest-internal/bundle\", \"type\": \"file\"}, {\"path\": \"[CLEANUP]/create_project_commits_archive_tmp_1/metadata.json\", \"type\": \"file\"}], \"output\": \"[START_DIR]/commits.tar\", \"root\": \"[CLEANUP]/create_project_commits_archive_tmp_1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1753,7 +1753,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_4/archive\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_1/archive\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -1778,7 +1778,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_4/archive/metadata.json",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_1/archive/metadata.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -1793,7 +1793,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_4/archive/a/b/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_1/archive/a/b/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b",
@@ -1833,7 +1833,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_4/archive/a/b/c/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_1/archive/a/b/c/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",

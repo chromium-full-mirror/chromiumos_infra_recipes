@@ -122,11 +122,11 @@
       "-usbdevice",
       "tablet",
       "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_4",
+      "[CLEANUP]/kvm-pid_tmp_1",
       "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_5",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_1",
       "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_6",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_1",
       "-mon",
       "chardev=control_pipe",
       "-cpu",
@@ -213,7 +213,7 @@
       "-extrauseflags=tast_vm",
       "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
       "-resultsdir",
-      "[CLEANUP]/test-results_tmp_3",
+      "[CLEANUP]/test-results_tmp_1",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
@@ -275,7 +275,7 @@
       "-i",
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/test-results_tmp_3/artifacts.tar"
+      "[CLEANUP]/test-results_tmp_1/artifacts.tar"
     ],
     "infra_step": true,
     "name": "first tast iteration.download artifacts from VM",
@@ -288,7 +288,7 @@
     "cmd": [
       "pkill",
       "-F",
-      "[CLEANUP]/kvm-pid_tmp_4"
+      "[CLEANUP]/kvm-pid_tmp_1"
     ],
     "name": "first tast iteration.kill vm",
     "~followup_annotations": [
@@ -314,14 +314,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor_tmp_5",
+      "[CLEANUP]/kvm-monitor_tmp_1",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "first tast iteration.qemu logs.reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_5@@@"
+      "@@@STEP_LOG_END@kvm-monitor_tmp_1@@@"
     ]
   },
   {
@@ -332,14 +332,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_6",
+      "[CLEANUP]/kvm-monitor-serial_tmp_1",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "first tast iteration.qemu logs.reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_6@@@"
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_1@@@"
     ]
   },
   {
@@ -357,7 +357,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-results_tmp_3/results.json",
+      "[CLEANUP]/test-results_tmp_1/results.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -389,7 +389,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/test-results_tmp_3",
+      "[CLEANUP]/test-results_tmp_1",
       "gs://chromeos-vmtest-archive//0/first_results"
     ],
     "infra_step": true,
@@ -475,11 +475,11 @@
       "-usbdevice",
       "tablet",
       "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_8",
+      "[CLEANUP]/kvm-pid_tmp_2",
       "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_9",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_2",
       "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_10",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_2",
       "-mon",
       "chardev=control_pipe",
       "-cpu",
@@ -566,7 +566,7 @@
       "-extrauseflags=tast_vm",
       "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
       "-resultsdir",
-      "[CLEANUP]/test-results_tmp_7",
+      "[CLEANUP]/test-results_tmp_2",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
@@ -628,7 +628,7 @@
       "-i",
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/test-results_tmp_7/artifacts.tar"
+      "[CLEANUP]/test-results_tmp_2/artifacts.tar"
     ],
     "infra_step": true,
     "name": "second tast iteration.download artifacts from VM",
@@ -641,7 +641,7 @@
     "cmd": [
       "pkill",
       "-F",
-      "[CLEANUP]/kvm-pid_tmp_8"
+      "[CLEANUP]/kvm-pid_tmp_2"
     ],
     "name": "second tast iteration.kill vm",
     "~followup_annotations": [
@@ -667,14 +667,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor_tmp_9",
+      "[CLEANUP]/kvm-monitor_tmp_2",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "second tast iteration.qemu logs.reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_9@@@"
+      "@@@STEP_LOG_END@kvm-monitor_tmp_2@@@"
     ]
   },
   {
@@ -685,14 +685,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_10",
+      "[CLEANUP]/kvm-monitor-serial_tmp_2",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "second tast iteration.qemu logs.reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_10@@@"
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_2@@@"
     ]
   },
   {
@@ -710,7 +710,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-results_tmp_7/results.json",
+      "[CLEANUP]/test-results_tmp_2/results.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -742,7 +742,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/test-results_tmp_7",
+      "[CLEANUP]/test-results_tmp_2",
       "gs://chromeos-vmtest-archive//0/second_results"
     ],
     "infra_step": true,
@@ -774,7 +774,7 @@
       "cp",
       "-rf",
       "/var/log",
-      "[CLEANUP]/var-log-dump_tmp_11"
+      "[CLEANUP]/var-log-dump_tmp_1"
     ],
     "name": "record logs.copy logs",
     "~followup_annotations": [
@@ -788,7 +788,7 @@
       "chmod",
       "-R",
       "777",
-      "[CLEANUP]/var-log-dump_tmp_11"
+      "[CLEANUP]/var-log-dump_tmp_1"
     ],
     "name": "record logs.loosen permission",
     "~followup_annotations": [
@@ -816,7 +816,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/var-log-dump_tmp_11",
+      "[CLEANUP]/var-log-dump_tmp_1",
       "gs://chromeos-vmtest-archive//0/system_logs"
     ],
     "infra_step": true,
@@ -839,11 +839,11 @@
       "-usbdevice",
       "tablet",
       "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_13",
+      "[CLEANUP]/kvm-pid_tmp_3",
       "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_14",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_3",
       "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_15",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_3",
       "-mon",
       "chardev=control_pipe",
       "-cpu",
@@ -921,7 +921,7 @@
       "-extrauseflags=tast_vm",
       "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
       "-resultsdir",
-      "[CLEANUP]/temp_tmp_12",
+      "[CLEANUP]/temp_tmp_3",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
@@ -977,7 +977,7 @@
       "-i",
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/temp_tmp_12/artifacts.tar"
+      "[CLEANUP]/temp_tmp_3/artifacts.tar"
     ],
     "infra_step": true,
     "name": "download artifacts from VM",
@@ -987,7 +987,7 @@
     "cmd": [
       "pkill",
       "-F",
-      "[CLEANUP]/kvm-pid_tmp_13"
+      "[CLEANUP]/kvm-pid_tmp_3"
     ],
     "name": "kill vm"
   },
@@ -1009,14 +1009,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor_tmp_14",
+      "[CLEANUP]/kvm-monitor_tmp_3",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "qemu logs.reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_14@@@"
+      "@@@STEP_LOG_END@kvm-monitor_tmp_3@@@"
     ]
   },
   {
@@ -1027,14 +1027,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_15",
+      "[CLEANUP]/kvm-monitor-serial_tmp_3",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "qemu logs.reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_15@@@"
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_3@@@"
     ]
   },
   {
@@ -1050,11 +1050,11 @@
       "-usbdevice",
       "tablet",
       "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_16",
+      "[CLEANUP]/kvm-pid_tmp_4",
       "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_17",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_4",
       "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_18",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_4",
       "-mon",
       "chardev=control_pipe",
       "-cpu",
@@ -1132,7 +1132,7 @@
       "-extrauseflags=tast_vm",
       "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
       "-resultsdir",
-      "[CLEANUP]/temp_tmp_12",
+      "[CLEANUP]/temp_tmp_3",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
@@ -1189,7 +1189,7 @@
       "-i",
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/temp_tmp_12/artifacts.tar"
+      "[CLEANUP]/temp_tmp_3/artifacts.tar"
     ],
     "infra_step": true,
     "name": "download artifacts from VM (2)",
@@ -1199,7 +1199,7 @@
     "cmd": [
       "pkill",
       "-F",
-      "[CLEANUP]/kvm-pid_tmp_16"
+      "[CLEANUP]/kvm-pid_tmp_4"
     ],
     "name": "kill vm (2)"
   },
@@ -1221,14 +1221,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor_tmp_17",
+      "[CLEANUP]/kvm-monitor_tmp_4",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "qemu logs (2).reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_17@@@"
+      "@@@STEP_LOG_END@kvm-monitor_tmp_4@@@"
     ]
   },
   {
@@ -1239,14 +1239,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_18",
+      "[CLEANUP]/kvm-monitor-serial_tmp_4",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "qemu logs (2).reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_18@@@"
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_4@@@"
     ]
   },
   {

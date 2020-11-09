@@ -158,7 +158,7 @@
       "/path/to/tmp/json",
       "copy",
       "2\u0007my hash:\u0004\n\u0002\u0018{:\u0005\n\u0003\u0018\ufffd\u0003B\u000b\n\t\u001a\u0007my hashJ\u0010\n\u000esome/other/dir",
-      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
     "name": "path relevancy check.write input binaryproto",
@@ -177,9 +177,9 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
     "name": "path relevancy check.run check",
@@ -195,7 +195,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,

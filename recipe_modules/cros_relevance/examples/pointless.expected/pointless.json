@@ -165,7 +165,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"my_build_target\"\n  }, \n  \"chroot\": {}, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"my_build_target\"\n    }, \n    \"path\": \"/build/target\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
@@ -190,9 +190,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.DependencyService/GetBuildDependencyGraph"
@@ -215,7 +215,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {

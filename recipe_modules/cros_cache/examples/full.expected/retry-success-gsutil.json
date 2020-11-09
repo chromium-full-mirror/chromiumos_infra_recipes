@@ -426,7 +426,7 @@
       "/path/to/tmp/json",
       "copy",
       "test_file.tar.gz",
-      "[CLEANUP]/source_cache_tmp_2/version.txt"
+      "[CLEANUP]/source_cache_tmp_1/version.txt"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
@@ -442,12 +442,12 @@
       "tar",
       "--use-compress-program=pigz",
       "-cf",
-      "[CLEANUP]/source_cache_tmp_2/test_file.tar.gz",
+      "[CLEANUP]/source_cache_tmp_1/test_file.tar.gz",
       "."
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
-    "name": "tar up source repo checkout.packaging via ['tar', '--use-compress-program=pigz', '-cf', Path([CLEANUP], 'source_cache_tmp_2', 'test_file.tar.gz'), '.'] for cache",
+    "name": "tar up source repo checkout.packaging via ['tar', '--use-compress-program=pigz', '-cf', Path([CLEANUP], 'source_cache_tmp_1', 'test_file.tar.gz'), '.'] for cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -461,7 +461,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_2/test_file.tar.gz",
+      "[CLEANUP]/source_cache_tmp_1/test_file.tar.gz",
       "gs://test cache upload/chromeos-ci"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
@@ -481,7 +481,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_2/test_file.tar.gz",
+      "[CLEANUP]/source_cache_tmp_1/test_file.tar.gz",
       "gs://test cache upload/chromeos-ci"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
@@ -501,7 +501,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_2/test_file.tar.gz",
+      "[CLEANUP]/source_cache_tmp_1/test_file.tar.gz",
       "gs://test cache upload/chromeos-ci"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
@@ -518,7 +518,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_2/version.txt",
+      "[CLEANUP]/source_cache_tmp_1/version.txt",
       "gs://test cache version/chromeos-ci"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",

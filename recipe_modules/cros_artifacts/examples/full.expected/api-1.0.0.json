@@ -120,7 +120,7 @@
       "/path/to/tmp/json",
       "copy",
       "{}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.MethodService/Get.write input file",
@@ -134,9 +134,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.MethodService/Get"
@@ -159,7 +159,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -200,7 +200,7 @@
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"/build/board\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"artifacts\": [{\"path\": \"[START_DIR]/tmp/artifact.tar.gz\"}]}@@@",
@@ -215,8 +215,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"board\"\n  }, \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"board\"\n    }, \n    \"path\": \"/build/board\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+      "{\n  \"buildTarget\": {\n    \"name\": \"board\"\n  }, \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"board\"\n    }, \n    \"path\": \"/build/board\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.write input file",
@@ -235,7 +235,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"/build/board\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -244,9 +244,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/BundleEbuildLogs"
@@ -270,7 +270,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -314,7 +314,7 @@
       "@@@STEP_LOG_LINE@published event@      }, @@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"/build/board\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"@@@",
+      "@@@STEP_LOG_LINE@published event@    \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:29Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"bundleResponse\": {@@@",
@@ -407,7 +407,7 @@
     },
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BCpQCgcKBWJvYXJkEhlbQ0xFQU5VUF0vYXJ0aWZhY3RzX3Rt\\ncF8yGhEKDy9wYXRoL3RvL2Nocm9vdCIXCgwvYnVpbGQvYm9hcmQSBwoFYm9hcmQyIwohCh9bU1RB\\nUlRfRElSXS90bXAvYXJ0aWZhY3QudGFyLmd62gJ4dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgRUJV\\nSUxEX0xPR1MgZm9yIHVwbG9hZHxjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1\\nbmRsZUVidWlsZExvZ3N8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BCpQCgcKBWJvYXJkEhlbQ0xFQU5VUF0vYXJ0aWZhY3RzX3Rt\\ncF8xGhEKDy9wYXRoL3RvL2Nocm9vdCIXCgwvYnVpbGQvYm9hcmQSBwoFYm9hcmQyIwohCh9bU1RB\\nUlRfRElSXS90bXAvYXJ0aWZhY3QudGFyLmd62gJ4dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgRUJV\\nSUxEX0xPR1MgZm9yIHVwbG9hZHxjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1\\nbmRsZUVidWlsZExvZ3N8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -435,7 +435,7 @@
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"/build/board\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"artifacts_info\": [{\"artifacts\": [{\"path\": \"my_output_artifact\"}], \"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"}]}@@@",
@@ -450,8 +450,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"profileInfo\": {}, \n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ], \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"board\"\n    }, \n    \"path\": \"/build/board\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+      "{\n  \"profileInfo\": {}, \n  \"artifactTypes\": [\n    \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"\n  ], \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"board\"\n    }, \n    \"path\": \"/build/board\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload artifacts.call chromite.api.ToolchainService/BundleArtifacts.write input file",
@@ -471,7 +471,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"/build/board\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_2\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -480,9 +480,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ToolchainService/BundleArtifacts"
@@ -506,7 +506,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -615,7 +615,7 @@
       "-m",
       "----",
       "rsync",
-      "[CLEANUP]/artifacts_tmp_2",
+      "[CLEANUP]/artifacts_tmp_1",
       "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-0"
     ],
     "infra_step": true,

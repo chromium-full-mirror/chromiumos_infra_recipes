@@ -1301,15 +1301,15 @@
       "/path/to/tmp/json",
       "copy",
       "Marking set of ebuilds as stable",
-      "[CLEANUP]/commit_msg_tmp_2"
+      "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos/src/private-overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
   {
@@ -1317,7 +1317,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_2",
+      "[CLEANUP]/commit_msg_tmp_1",
       "--",
       "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild"
     ],
@@ -1350,15 +1350,15 @@
       "/path/to/tmp/json",
       "copy",
       "Marking set of ebuilds as stable",
-      "[CLEANUP]/commit_msg_tmp_3"
+      "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.write commit message (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Marking set of ebuilds as stable@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
   },
   {
@@ -1366,7 +1366,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_3",
+      "[CLEANUP]/commit_msg_tmp_2",
       "--",
       "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
     ],

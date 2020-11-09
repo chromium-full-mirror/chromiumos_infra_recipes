@@ -68,15 +68,15 @@
       "/path/to/tmp/json",
       "copy",
       "expecting rejection for forged commit",
-      "[CLEANUP]/commit_msg_tmp_2"
+      "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
     "name": "attempt forge commit to https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@expecting rejection for forged commit@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@expecting rejection for forged commit@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
   {
@@ -84,7 +84,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_2",
+      "[CLEANUP]/commit_msg_tmp_1",
       "--author",
       "Sean Abraham <seanabraham@google.com>"
     ],

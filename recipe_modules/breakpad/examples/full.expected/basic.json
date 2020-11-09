@@ -52,7 +52,7 @@
       "----",
       "cp",
       "gs://chromeos-image-archive/test-board-release/R10-11.0.0/debug_breakpad.tar.xz",
-      "[CLEANUP]/image_archive_tmp_2/debug_breakpad.tar.xz"
+      "[CLEANUP]/image_archive_tmp_1/debug_breakpad.tar.xz"
     ],
     "infra_step": true,
     "name": "symbolicate dump.gsutil download_url",
@@ -65,9 +65,9 @@
     "cmd": [
       "tar",
       "xf",
-      "[CLEANUP]/image_archive_tmp_2/debug_breakpad.tar.xz",
+      "[CLEANUP]/image_archive_tmp_1/debug_breakpad.tar.xz",
       "-C",
-      "[CLEANUP]/extracted_symbols_tmp_3"
+      "[CLEANUP]/extracted_symbols_tmp_1"
     ],
     "name": "symbolicate dump.extract symbols",
     "~followup_annotations": [
@@ -112,7 +112,7 @@
     "cmd": [
       "[START_DIR]/breakpad/minidump_stackwalk",
       "./a/b/c.dmp",
-      "[CLEANUP]/extracted_symbols_tmp_3"
+      "[CLEANUP]/extracted_symbols_tmp_1"
     ],
     "cwd": "[CLEANUP]/test_result_tmp_1",
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/c.dmp.minidump_stackwalk",
@@ -153,7 +153,7 @@
     "cmd": [
       "[START_DIR]/breakpad/minidump_stackwalk",
       "./a/b/d.dmp",
-      "[CLEANUP]/extracted_symbols_tmp_3"
+      "[CLEANUP]/extracted_symbols_tmp_1"
     ],
     "cwd": "[CLEANUP]/test_result_tmp_1",
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/d.dmp.minidump_stackwalk",
@@ -195,7 +195,7 @@
     "cmd": [
       "[START_DIR]/breakpad/minidump_stackwalk",
       "./a/b/corrupted.dmp",
-      "[CLEANUP]/extracted_symbols_tmp_3"
+      "[CLEANUP]/extracted_symbols_tmp_1"
     ],
     "cwd": "[CLEANUP]/test_result_tmp_1",
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/corrupted.dmp.minidump_stackwalk",

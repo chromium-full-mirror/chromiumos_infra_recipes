@@ -682,7 +682,7 @@
       "/path/to/tmp/json",
       "copy",
       ":\u0013\n\u0011\u0012\fchromium/src\u0018\ufffd\tB\u0000J\u0010\n\u000esome/other/dir",
-      "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
     "name": "init sdk.detect toolchain change.path relevancy check.write input binaryproto",
@@ -699,9 +699,9 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_3/output.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
     "name": "init sdk.detect toolchain change.path relevancy check.run check",
@@ -717,7 +717,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/pointless-build-_tmp_3/output.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -780,7 +780,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
     "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.write input file",
@@ -798,9 +798,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.DependencyService/GetToolchainPaths"
@@ -823,7 +823,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -875,7 +875,7 @@
       "/path/to/tmp/json",
       "copy",
       ":\u0005\n\u0003\u0018\ufffd\tB\u0000J\u0010\n\u000esome/other/dir",
-      "[CLEANUP]/pointless-build-_tmp_5/input.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto"
     ],
     "infra_step": true,
     "name": "update sdk.detect toolchain change.path relevancy check.write input binaryproto",
@@ -892,9 +892,9 @@
       "[START_DIR]/cipd/test_planner/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_5/input.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_5/output.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto"
     ],
     "infra_step": true,
     "name": "update sdk.detect toolchain change.path relevancy check.run check",
@@ -910,7 +910,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/pointless-build-_tmp_5/output.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -952,7 +952,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot\"\n  }, \n  \"flags\": {}\n}",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.write input file",
@@ -971,9 +971,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Update"
@@ -997,7 +997,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1097,7 +1097,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"overlayType\": \"OVERLAYTYPE_BOTH\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "infra_step": true,
     "name": "uprev packages.call chromite.api.PackageService/Uprev.write input file",
@@ -1113,9 +1113,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.PackageService/Uprev"
@@ -1139,7 +1139,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1286,7 +1286,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot\", \n    \"chromeDir\": \"/chrome_dir\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"goma\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "infra_step": true,
     "name": "creating chroot snapshot.call chromite.api.SdkService/CreateSnapshot.write input file",
@@ -1312,9 +1312,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/CreateSnapshot"
@@ -1337,7 +1337,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1399,7 +1399,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot\", \n    \"chromeDir\": \"/chrome_dir\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"goma\"\n        }\n      ]\n    }\n  }, \n  \"snapshotToken\": {\n    \"value\": \"TEST_SNAPSHOT\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "infra_step": true,
     "name": "restoring chroot from snapshot.call chromite.api.SdkService/RestoreSnapshot.write input file",
@@ -1428,9 +1428,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/RestoreSnapshot"
@@ -1453,7 +1453,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1626,7 +1626,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot\", \n    \"chromeDir\": \"/chrome_dir\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"goma\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "infra_step": true,
     "name": "unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
@@ -1652,9 +1652,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Unmount"
@@ -1677,7 +1677,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1774,7 +1774,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot\", \n    \"chromeDir\": \"/chrome_dir\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"goma\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
@@ -1800,9 +1800,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -1825,7 +1825,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1887,7 +1887,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot\", \n    \"chromeDir\": \"/chrome_dir\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"goma\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
@@ -1913,9 +1913,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Unmount"
@@ -1938,7 +1938,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -2000,7 +2000,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot\", \n    \"chromeDir\": \"/chrome_dir\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"goma\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.write input file",
@@ -2026,9 +2026,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Delete"
@@ -2051,7 +2051,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {

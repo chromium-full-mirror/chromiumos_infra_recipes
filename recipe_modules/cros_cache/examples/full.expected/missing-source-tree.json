@@ -426,7 +426,7 @@
       "/path/to/tmp/json",
       "copy",
       "test_file.tar.gz",
-      "[CLEANUP]/source_cache_tmp_2/version.txt"
+      "[CLEANUP]/source_cache_tmp_1/version.txt"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,

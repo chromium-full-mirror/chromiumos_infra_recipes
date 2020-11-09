@@ -1066,7 +1066,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_2/archive\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[START_DIR]/commits.tar\", \"include_files\": [], \"output\": \"[CLEANUP]/checkout_project_commits_archive_tmp_1/archive\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -1091,7 +1091,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/metadata.json",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_1/archive/metadata.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -1106,7 +1106,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_1/archive/a/b/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b",
@@ -1146,7 +1146,7 @@
     "cmd": [
       "git",
       "fetch",
-      "[CLEANUP]/checkout_project_commits_archive_tmp_2/archive/a/b/c/bundle",
+      "[CLEANUP]/checkout_project_commits_archive_tmp_1/archive/a/b/c/bundle",
       "HEAD:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",

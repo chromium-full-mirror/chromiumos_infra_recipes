@@ -627,7 +627,7 @@
       "/path/to/tmp/json",
       "copy",
       "\n5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\u0012\u0011snapshot-HEAD-SHA\u001av\n\u001c\n\u0010amd64-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0006\n\u0002\b\u00018\u0001\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u001c\n\u0011\n\u000fchrome_internal0\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002@\u0001\u001aT\n\u001a\n\u000earm-generic-cq\u0012\u0006master\u0018\u0001\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002@\u0001\u001aE\n\u001c\n\u0010arm64-generic-cq\u0012\u0006master\u0018\u0001\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001a^\n$\n\u0018arm-generic-pointless-cq\u0012\u0006master\u0018\u0001\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002@\u0001\u001ac\n\u0014\n\batlas-cq\u0012\u0006master\u0018\u0001\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\t0\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f\"\u0019\n\bchromite\u0012\rchromeos-base(\u0002@\u0001\u001aC\n\u0013\n\u0007cave-cq\u0012\u0006master\u0018\u0001*\u0002\b\u00012\"\n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0003\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\"h\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.write input binaryproto",
@@ -681,9 +681,9 @@
       "[START_DIR]/cipd/test_planner/build_plan_generator",
       "generate-plan",
       "--input_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_2/input.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto"
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run builds.plan builds.run planner",
@@ -699,7 +699,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build-plan-_tmp_2/output.binaryproto",
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -3034,7 +3034,7 @@
       "/path/to/tmp/json",
       "copy",
       "*\ufffd\u0003\n\ufffd\u0003\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u00120\n\bchromeos\u0012\npostsubmit\u001a\u0018amd64-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u0012c\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u0011refs/heads/master\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514000\ufffd\u0001\u0001:\u0011snapshot-HEAD-SHAB5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Jh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/test-plan-_tmp_3/input.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.write input binaryproto",
@@ -3071,9 +3071,9 @@
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_3/input.binaryproto",
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_3/output.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
@@ -3089,7 +3089,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-plan-_tmp_3/output.binaryproto",
+      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,

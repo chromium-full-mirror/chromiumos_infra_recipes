@@ -2117,7 +2117,7 @@
       "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_7\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"legacy\": {\"artifacts\": [{\"artifact_type\": \"EBUILD_LOGS\", \"paths\": [\"[START_DIR]/log.tar.gz\"]}]}, \"toolchain\": {\"artifacts\": [{\"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \"paths\": [\"[START_DIR]/orderfile\"]}]}}}@@@",
@@ -2132,8 +2132,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"artifactInfo\": {\n    \"profileInfo\": {\n      \"afdoRelease\": {\n        \"chromeCwpProfile\": \"silvermont\"\n      }\n    }, \n    \"toolchain\": {\n      \"inputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"\n          ]\n        }, \n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }, \n        {\n          \"gsLocations\": [\n            \"chromeos-image-archive/BUILDER/VERSION-BUILD_ID\"\n          ], \n          \"artifactTypes\": [\n            \"CHROME_DEBUG_BINARY\"\n          ]\n        }\n      ], \n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_7\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
+      "{\n  \"artifactInfo\": {\n    \"profileInfo\": {\n      \"afdoRelease\": {\n        \"chromeCwpProfile\": \"silvermont\"\n      }\n    }, \n    \"toolchain\": {\n      \"inputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\"\n          ]\n        }, \n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }, \n        {\n          \"gsLocations\": [\n            \"chromeos-image-archive/BUILDER/VERSION-BUILD_ID\"\n          ], \n          \"artifactTypes\": [\n            \"CHROME_DEBUG_BINARY\"\n          ]\n        }\n      ], \n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\", \n            \"chromeos-prebuilt/afdo-job/llvm\"\n          ], \n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\"\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -2200,7 +2200,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_7\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -2209,9 +2209,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/BundleArtifacts"
@@ -2236,7 +2236,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2347,7 +2347,7 @@
       "-m",
       "----",
       "rsync",
-      "[CLEANUP]/artifacts_tmp_7",
+      "[CLEANUP]/artifacts_tmp_1",
       "gs://chromeos-image-archive/benchmark-afdo-process/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2551,7 +2551,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"chell\"\n    ], \n    \"bot-config\": \"benchmark-afdo-process\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"benchmark-afdo-process\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"create-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:44\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false\n}",
-      "[CLEANUP]/metadata_tmp_9/metadata.json"
+      "[CLEANUP]/metadata_tmp_1/metadata.json"
     ],
     "infra_step": true,
     "name": "finalize metadata.upload metadata.writing metadata.json",
@@ -2690,7 +2690,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/metadata_tmp_9/metadata.json",
+      "[CLEANUP]/metadata_tmp_1/metadata.json",
       "gs://chromeos-image-archive/benchmark-afdo-process/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
     "infra_step": true,
@@ -2742,7 +2742,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
@@ -2767,9 +2767,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -2792,7 +2792,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -2853,7 +2853,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
@@ -2878,9 +2878,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Unmount"
@@ -2903,7 +2903,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {

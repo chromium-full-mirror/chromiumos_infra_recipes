@@ -701,7 +701,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
@@ -726,9 +726,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -751,7 +751,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -812,7 +812,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
@@ -837,9 +837,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Unmount"
@@ -862,7 +862,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {

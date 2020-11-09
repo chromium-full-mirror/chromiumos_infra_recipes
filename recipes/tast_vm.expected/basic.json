@@ -48,7 +48,7 @@
       "----",
       "cp",
       "gs://artifacts-bucket/artifacts-path/image.zip",
-      "[CLEANUP]/image-archive_tmp_2/image.zip"
+      "[CLEANUP]/image-archive_tmp_1/image.zip"
     ],
     "infra_step": true,
     "name": "setup vm image.gsutil download image bundle from GS",
@@ -62,7 +62,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/image-archive_tmp_2/image.zip\", \"include_files\": [\"chromiumos_qemu_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/image-archive_tmp_2/image\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/image-archive_tmp_1/image.zip\", \"include_files\": [\"chromiumos_qemu_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/image-archive_tmp_1/image\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -86,8 +86,8 @@
       "-f",
       "qcow2",
       "-b",
-      "[CLEANUP]/image-archive_tmp_2/image/chromiumos_qemu_image.bin",
-      "[CLEANUP]/image-archive_tmp_2/image/qcow2.img"
+      "[CLEANUP]/image-archive_tmp_1/image/chromiumos_qemu_image.bin",
+      "[CLEANUP]/image-archive_tmp_1/image/qcow2.img"
     ],
     "name": "setup vm image.convert image to qcow format",
     "~followup_annotations": [
@@ -98,7 +98,7 @@
     "cmd": [
       "chmod",
       "400",
-      "[CLEANUP]/image-archive_tmp_2/image/id_rsa"
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa"
     ],
     "name": "setup vm image.calibrate ssh key permissions",
     "~followup_annotations": [
@@ -129,11 +129,11 @@
       "-usbdevice",
       "tablet",
       "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_4",
+      "[CLEANUP]/kvm-pid_tmp_1",
       "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_5",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_1",
       "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_6",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_1",
       "-mon",
       "chardev=control_pipe",
       "-cpu",
@@ -147,7 +147,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/image-archive_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[CLEANUP]/image-archive_tmp_1/image/qcow2.img,cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -175,7 +175,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -194,7 +194,7 @@
       "-build=false",
       "-downloadprivatebundles=true",
       "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
-      "-keyfile=[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "-keyfile=[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
@@ -220,8 +220,8 @@
       "-extrauseflags=tast_vm",
       "-defaultvarsdir=[CLEANUP]/test-artifacts_tmp_1/tast/vars",
       "-resultsdir",
-      "[CLEANUP]/test-results_tmp_3",
-      "-keyfile=[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "[CLEANUP]/test-results_tmp_1",
+      "-keyfile=[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
@@ -249,7 +249,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "root@localhost",
       "--",
       "tar",
@@ -280,9 +280,9 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/test-results_tmp_3/artifacts.tar"
+      "[CLEANUP]/test-results_tmp_1/artifacts.tar"
     ],
     "infra_step": true,
     "name": "run tast tests.first tast iteration.download artifacts from VM",
@@ -295,7 +295,7 @@
     "cmd": [
       "pkill",
       "-F",
-      "[CLEANUP]/kvm-pid_tmp_4"
+      "[CLEANUP]/kvm-pid_tmp_1"
     ],
     "name": "run tast tests.first tast iteration.kill vm",
     "~followup_annotations": [
@@ -321,14 +321,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor_tmp_5",
+      "[CLEANUP]/kvm-monitor_tmp_1",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "run tast tests.first tast iteration.qemu logs.reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_5@@@"
+      "@@@STEP_LOG_END@kvm-monitor_tmp_1@@@"
     ]
   },
   {
@@ -339,14 +339,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_6",
+      "[CLEANUP]/kvm-monitor-serial_tmp_1",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "run tast tests.first tast iteration.qemu logs.reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_6@@@"
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_1@@@"
     ]
   },
   {
@@ -364,7 +364,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-results_tmp_3/results.json",
+      "[CLEANUP]/test-results_tmp_1/results.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -396,7 +396,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/test-results_tmp_3",
+      "[CLEANUP]/test-results_tmp_1",
       "gs://chromeos-vmtest-archive//0/first_results"
     ],
     "infra_step": true,
@@ -486,11 +486,11 @@
       "-usbdevice",
       "tablet",
       "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_8",
+      "[CLEANUP]/kvm-pid_tmp_2",
       "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_9",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_2",
       "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_10",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_2",
       "-mon",
       "chardev=control_pipe",
       "-cpu",
@@ -504,7 +504,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/image-archive_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[CLEANUP]/image-archive_tmp_1/image/qcow2.img,cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -532,7 +532,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -551,7 +551,7 @@
       "-build=false",
       "-downloadprivatebundles=true",
       "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
-      "-keyfile=[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "-keyfile=[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
@@ -577,8 +577,8 @@
       "-extrauseflags=tast_vm",
       "-defaultvarsdir=[CLEANUP]/test-artifacts_tmp_1/tast/vars",
       "-resultsdir",
-      "[CLEANUP]/test-results_tmp_7",
-      "-keyfile=[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "[CLEANUP]/test-results_tmp_2",
+      "-keyfile=[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
@@ -606,7 +606,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "root@localhost",
       "--",
       "tar",
@@ -637,9 +637,9 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_2/image/id_rsa",
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/test-results_tmp_7/artifacts.tar"
+      "[CLEANUP]/test-results_tmp_2/artifacts.tar"
     ],
     "infra_step": true,
     "name": "run tast tests.second tast iteration.download artifacts from VM",
@@ -652,7 +652,7 @@
     "cmd": [
       "pkill",
       "-F",
-      "[CLEANUP]/kvm-pid_tmp_8"
+      "[CLEANUP]/kvm-pid_tmp_2"
     ],
     "name": "run tast tests.second tast iteration.kill vm",
     "~followup_annotations": [
@@ -678,14 +678,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor_tmp_9",
+      "[CLEANUP]/kvm-monitor_tmp_2",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "run tast tests.second tast iteration.qemu logs.reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_9@@@"
+      "@@@STEP_LOG_END@kvm-monitor_tmp_2@@@"
     ]
   },
   {
@@ -696,14 +696,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_10",
+      "[CLEANUP]/kvm-monitor-serial_tmp_2",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "run tast tests.second tast iteration.qemu logs.reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_10@@@"
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_2@@@"
     ]
   },
   {
@@ -721,7 +721,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test-results_tmp_7/results.json",
+      "[CLEANUP]/test-results_tmp_2/results.json",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -753,7 +753,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/test-results_tmp_7",
+      "[CLEANUP]/test-results_tmp_2",
       "gs://chromeos-vmtest-archive//0/second_results"
     ],
     "infra_step": true,
@@ -787,7 +787,7 @@
       "cp",
       "-rf",
       "/var/log",
-      "[CLEANUP]/var-log-dump_tmp_11"
+      "[CLEANUP]/var-log-dump_tmp_1"
     ],
     "name": "run tast tests.record logs.copy logs",
     "~followup_annotations": [
@@ -801,7 +801,7 @@
       "chmod",
       "-R",
       "777",
-      "[CLEANUP]/var-log-dump_tmp_11"
+      "[CLEANUP]/var-log-dump_tmp_1"
     ],
     "name": "run tast tests.record logs.loosen permission",
     "~followup_annotations": [
@@ -829,7 +829,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/var-log-dump_tmp_11",
+      "[CLEANUP]/var-log-dump_tmp_1",
       "gs://chromeos-vmtest-archive//0/system_logs"
     ],
     "infra_step": true,

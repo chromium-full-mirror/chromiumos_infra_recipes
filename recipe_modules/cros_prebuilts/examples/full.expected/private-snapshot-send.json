@@ -340,7 +340,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.read gs acls.write input file",
@@ -358,9 +358,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.BinhostService/GetPrivatePrebuiltAclArgs"
@@ -384,7 +384,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -571,7 +571,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"private\": true\n}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get.write input file",
@@ -590,9 +590,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.BinhostService/Get"
@@ -616,7 +616,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -708,7 +708,7 @@
       "----",
       "cp",
       "gs://bucket1/some/path/PackageIndex",
-      "[CLEANUP]/binhosts_tmp_4/some/path/PackageIndex"
+      "[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex"
     ],
     "infra_step": true,
     "name": "upload prebuilts.get binhosts.gsutil download",
@@ -726,7 +726,7 @@
       "----",
       "cp",
       "gs://bucket2/diff/path/PackageIndex",
-      "[CLEANUP]/binhosts_tmp_4/diff/path/PackageIndex"
+      "[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex"
     ],
     "infra_step": true,
     "name": "upload prebuilts.get binhosts.gsutil download (2)",
@@ -753,13 +753,13 @@
       "@@@STEP_LOG_LINE@request@  \"packageIndexFiles\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/binhosts_tmp_4/some/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\", @@@",
       "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/binhosts_tmp_4/diff/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\", @@@",
       "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
@@ -779,8 +779,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"packageIndexFiles\": [\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_4/some/path/PackageIndex\", \n        \"location\": \"OUTSIDE\"\n      }\n    }, \n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_4/diff/path/PackageIndex\", \n        \"location\": \"OUTSIDE\"\n      }\n    }\n  ], \n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"packageIndexFiles\": [\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\", \n        \"location\": \"OUTSIDE\"\n      }\n    }, \n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\", \n        \"location\": \"OUTSIDE\"\n      }\n    }\n  ], \n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.write input file",
@@ -793,13 +793,13 @@
       "@@@STEP_LOG_LINE@input_proto.json@  \"packageIndexFiles\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"path\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"path\": \"[CLEANUP]/binhosts_tmp_4/some/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        \"path\": \"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@        \"location\": \"OUTSIDE\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"path\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"path\": \"[CLEANUP]/binhosts_tmp_4/diff/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        \"path\": \"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@        \"location\": \"OUTSIDE\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
@@ -813,9 +813,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.BinhostService/PrepareBinhostUploads"
@@ -839,7 +839,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -887,13 +887,13 @@
       "@@@STEP_LOG_LINE@published event@    \"packageIndexFiles\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
       "@@@STEP_LOG_LINE@published event@        \"path\": {@@@",
-      "@@@STEP_LOG_LINE@published event@          \"path\": \"[CLEANUP]/binhosts_tmp_4/some/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"path\": \"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\", @@@",
       "@@@STEP_LOG_LINE@published event@          \"location\": \"OUTSIDE\"@@@",
       "@@@STEP_LOG_LINE@published event@        }@@@",
       "@@@STEP_LOG_LINE@published event@      }, @@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
       "@@@STEP_LOG_LINE@published event@        \"path\": {@@@",
-      "@@@STEP_LOG_LINE@published event@          \"path\": \"[CLEANUP]/binhosts_tmp_4/diff/path/PackageIndex\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"path\": \"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\", @@@",
       "@@@STEP_LOG_LINE@published event@          \"location\": \"OUTSIDE\"@@@",
       "@@@STEP_LOG_LINE@published event@        }@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
@@ -922,7 +922,7 @@
     },
     "infra_step": true,
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BGLjAQoPCg1hbWQ2NC1nZW5lcmljEmJnczovL3ByZWJ1aWx0\\nLWJ1Y2tldC9ib2FyZC9hbWQ2NC1nZW5lcmljL3Bvc3RzdWJtaXQtUjk5LTEyMzQuNTYuMC0xMDEt\\nODk0NTUxMTc1MTUxNDg2MzE4NC9wYWNrYWdlcyo1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBf\\nNC9zb21lL3BhdGgvUGFja2FnZUluZGV4EAIqNQozCi9bQ0xFQU5VUF0vYmluaG9zdHNfdG1wXzQv\\nZGlmZi9wYXRoL1BhY2thZ2VJbmRleBACaiUKF1tTVEFSVF9ESVJdL3VwbG9hZHMvZGlyEgoKCGZv\\nby50Ynoy0ALQ7IDZrvG1knzaAnV1cGxvYWQgcHJlYnVpbHRzfHByZXBhcmUgYmluaG9zdCB1cGxv\\nYWRzfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1ByZXBhcmVCaW5ob3N0VXBsb2Fk\\nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BGLjAQoPCg1hbWQ2NC1nZW5lcmljEmJnczovL3ByZWJ1aWx0\\nLWJ1Y2tldC9ib2FyZC9hbWQ2NC1nZW5lcmljL3Bvc3RzdWJtaXQtUjk5LTEyMzQuNTYuMC0xMDEt\\nODk0NTUxMTc1MTUxNDg2MzE4NC9wYWNrYWdlcyo1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBf\\nMS9zb21lL3BhdGgvUGFja2FnZUluZGV4EAIqNQozCi9bQ0xFQU5VUF0vYmluaG9zdHNfdG1wXzEv\\nZGlmZi9wYXRoL1BhY2thZ2VJbmRleBACaiUKF1tTVEFSVF9ESVJdL3VwbG9hZHMvZGlyEgoKCGZv\\nby50Ynoy0ALQ7IDZrvG1knzaAnV1cGxvYWQgcHJlYnVpbHRzfHByZXBhcmUgYmluaG9zdCB1cGxv\\nYWRzfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1ByZXBhcmVCaW5ob3N0VXBsb2Fk\\nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -944,7 +944,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/symlink.py",
       "--link-json",
-      "{\"[START_DIR]/uploads/dir/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_6/foo.tbz2\"]}"
+      "{\"[START_DIR]/uploads/dir/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_1/foo.tbz2\"]}"
     ],
     "infra_step": true,
     "name": "upload prebuilts.upload prebuilt blobs to GS.link files to upload",
@@ -965,7 +965,7 @@
       "----",
       "rsync",
       "-r",
-      "[CLEANUP]/prebuilts_tmp_6",
+      "[CLEANUP]/prebuilts_tmp_1",
       "gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages"
     ],
     "infra_step": true,
@@ -1041,7 +1041,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"key\": \"POSTSUBMIT_BINHOST\", \n  \"private\": true, \n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.write input file",
@@ -1062,9 +1062,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.BinhostService/SetBinhost"
@@ -1088,7 +1088,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1298,15 +1298,15 @@
       "/path/to/tmp/json",
       "copy",
       "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.",
-      "[CLEANUP]/commit_msg_tmp_8"
+      "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.git transaction.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_8@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
   {
@@ -1314,7 +1314,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_8",
+      "[CLEANUP]/commit_msg_tmp_1",
       "--",
       "[START_DIR]/BINHOST.conf"
     ],
@@ -1431,7 +1431,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"location\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", \n  \"profile\": {\n    \"name\": \"base\"\n  }, \n  \"snapshotNumber\": 101, \n  \"snapshotSha\": \"snapshot-HEAD-SHA\"\n}\n",
-      "[CLEANUP]/metadata_tmp_9/PackageIndexInfo.json"
+      "[CLEANUP]/metadata_tmp_2/PackageIndexInfo.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.write metadata",
@@ -1460,7 +1460,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/metadata_tmp_9/PackageIndexInfo.json",
+      "[CLEANUP]/metadata_tmp_2/PackageIndexInfo.json",
       "gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
     ],
     "infra_step": true,
@@ -1500,7 +1500,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/metadata_tmp_9/PackageIndexInfo.json",
+      "[CLEANUP]/metadata_tmp_2/PackageIndexInfo.json",
       "gs://prebuilt-bucket/snapshot/internal-101/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
     ],
     "infra_step": true,

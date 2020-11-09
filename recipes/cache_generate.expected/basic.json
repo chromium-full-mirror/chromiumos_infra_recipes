@@ -111,7 +111,7 @@
       "/path/to/tmp/json",
       "copy",
       "chromiumos_repo-1337000001500.tar.gz",
-      "[CLEANUP]/source_cache_tmp_2/version.txt"
+      "[CLEANUP]/source_cache_tmp_1/version.txt"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
     "infra_step": true,
@@ -127,12 +127,12 @@
       "tar",
       "--use-compress-program=pigz",
       "-cf",
-      "[CLEANUP]/source_cache_tmp_2/chromiumos_repo-1337000001500.tar.gz",
+      "[CLEANUP]/source_cache_tmp_1/chromiumos_repo-1337000001500.tar.gz",
       "."
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
     "infra_step": true,
-    "name": "package source.tar up source repo checkout.packaging via ['tar', '--use-compress-program=pigz', '-cf', Path([CLEANUP], 'source_cache_tmp_2', 'chromiumos_repo-1337000001500.tar.gz'), '.'] for cache",
+    "name": "package source.tar up source repo checkout.packaging via ['tar', '--use-compress-program=pigz', '-cf', Path([CLEANUP], 'source_cache_tmp_1', 'chromiumos_repo-1337000001500.tar.gz'), '.'] for cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -150,7 +150,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_2/chromiumos_repo-1337000001500.tar.gz",
+      "[CLEANUP]/source_cache_tmp_1/chromiumos_repo-1337000001500.tar.gz",
       "gs://chromeos-bot-cache/chromeos-ci"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
@@ -174,7 +174,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/source_cache_tmp_2/version.txt",
+      "[CLEANUP]/source_cache_tmp_1/version.txt",
       "gs://chromeos-bot-cache/chromeos-ci"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
