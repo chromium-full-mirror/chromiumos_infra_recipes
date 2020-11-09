@@ -357,8 +357,7 @@ def RunSteps(api, properties):
               with api.step.nest("retry CL {}".format(retry_ci.change_id)):
                 labels = {
                     api.gerrit.Label.BOT_COMMIT: 1,
-                    api.gerrit.Label.COMMIT_QUEUE:
-                        1,  # TODO(jackneus): change to 2
+                    api.gerrit.Label.COMMIT_QUEUE: 2,
                 }
                 retry_cl = retry_ci.to_gerrit_change_proto()
                 # Find path of appropriate project in local checkout, then set labels.

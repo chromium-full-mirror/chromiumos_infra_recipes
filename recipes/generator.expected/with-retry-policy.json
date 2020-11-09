@@ -1517,7 +1517,7 @@
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+1@@@",
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromium/src/+/1@@@"
     ]
   },
@@ -1557,7 +1557,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+1"
+      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
