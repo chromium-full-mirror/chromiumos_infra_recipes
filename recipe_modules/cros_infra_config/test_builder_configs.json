@@ -1579,6 +1579,23 @@
         "ebuildsRunSpec": "RUN",
         "dependencies": "ALL_DEPENDENCIES"
       }
+    },
+    {
+      "id": {
+        "name": "fw-ec-cq",
+        "branch": "master",
+        "type": "CQ"
+      },
+      "build": {
+        "applyGerritChanges": true
+      }
+    },
+    {
+      "id": {
+        "name": "fw-ec-postsubmit",
+        "branch": "master",
+        "type": "CQ"
+      }
     }
   ]
 }

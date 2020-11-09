@@ -97,6 +97,7 @@
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
+  * [build_firmware](#recipes-build_firmware) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) &mdash; Recipe for generating artifacts for Informational builders.
   * [build_menu:examples/full](#recipes-build_menu_examples_full)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
@@ -5398,6 +5399,15 @@ Recipe for building a BuildTarget image for CQ.
 &mdash; **def [DoRunSteps](/recipes/build_cq.py#27)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_cq.py#20)(api, properties):**
+### *recipes* / [build\_firmware](/recipes/build_firmware.py)
+
+[DEPS](/recipes/build_firmware.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)
+
+Recipe that builds and tests firmware.
+
+This recipe lives on its own because it is agnostic of ChromeOS build targets.
+
+&mdash; **def [RunSteps](/recipes/build_firmware.py#25)(api, properties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
 
 [DEPS](/recipes/build_informational.py#11): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
