@@ -151,6 +151,18 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def firmware_service_responses(self):
+    """Generate responses for FirmwareService."""
+    responses = {}
+    responses['BuildAllTotFirmware'] = jsonify(
+        # TODO(b/172268309): Provide sample data.
+    )
+    responses['TestAllTotFirmware'] = jsonify(
+        # TODO(b/172268309): Provide sample data.
+    )
+    return responses
+
+  @property
   def image_service_responses(self):
     """Generate responses for ImageService."""
     responses = {}
@@ -326,6 +338,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'ArtifactsService': self.artifact_service_responses,
         'BinhostService': self.binhost_service_responses,
         'DependencyService': self.dependency_service_responses,
+        'FirmwareService': self.firmware_service_responses,
         'ImageService': self.image_service_responses,
         'PackageService': self.package_service_responses,
         'PayloadService': self.payload_service_responses,

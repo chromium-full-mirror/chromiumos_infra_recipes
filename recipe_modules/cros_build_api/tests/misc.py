@@ -17,6 +17,7 @@ from PB.chromite.api import api as meta_api
 from PB.chromite.api import artifacts
 from PB.chromite.api import binhost
 from PB.chromite.api import depgraph
+from PB.chromite.api import firmware
 from PB.chromite.api import image
 from PB.chromite.api import packages
 from PB.chromite.api import payload
@@ -94,6 +95,10 @@ def RunSteps(api):
           'GetBuildDependencyGraph': depgraph.GetBuildDependencyGraphResponse,
           'GetToolchainPaths': depgraph.GetToolchainPathsResponse,
           'List': depgraph.ListResponse,
+      },
+      'FirmwareService': {
+          'BuildAllTotFirmware': firmware.BuildAllTotFirmwareResponse,
+          'TestAllTotFirmware': firmware.TestAllTotFirmwareResponse,
       },
       'ImageService': {
           'Create': image.CreateImageResult,
