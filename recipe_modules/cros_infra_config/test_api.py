@@ -48,6 +48,12 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     # Humans can edit the JSON file for test data, impl reads binary proto.
     return self._read_config('test_bot_policy_config.json', BotPolicyCfg())
 
+  def bot_policy_test_data_chrome(self):
+    """A function for step_test_data to generate BotPolicies."""
+    # Humans can edit the JSON file for test data, impl reads binary proto.
+    return self._read_config('test_bot_policy_config_chrome.json',
+                             BotPolicyCfg())
+
   def vm_retry_test_data(self):
     """A function for step_test_data to generate SuiteRetryCfg."""
     # Humans can edit the JSON file for test data, impl reads binary proto.

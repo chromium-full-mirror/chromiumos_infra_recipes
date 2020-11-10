@@ -11,4 +11,6 @@ message RoboCropProperties {
   repeated string pools_to_monitor = 1;
   // Boolean as to whether to make call to commit changes to GCE Provider.
   bool commit_changes = 2;
+  // Chrome or ChromeOS. Determines the correct config repo to read from.
+  string application = 3;
 }

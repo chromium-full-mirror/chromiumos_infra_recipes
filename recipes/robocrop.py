@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for scaling bots in the Chrome OS pool."""
+"""Recipe for scaling bots in Chrome and Chrome OS pools."""
 
 from google.protobuf import json_format as jsonpb
 
@@ -23,10 +23,12 @@ PROPERTIES = RoboCropProperties
 
 def RunSteps(api, properties):
   pools_to_monitor = properties.pools_to_monitor or ['cq', 'postsubmit']
+  application = properties.application or 'ChromeOS'
 
   with api.step.nest('scale bot groups'):
     with api.step.nest('read bot policies'):
-      bot_policy_config = api.cros_infra_config.get_bot_policy_config()
+      bot_policy_config = api.cros_infra_config.get_bot_policy_config(
+          application=application)
     with api.step.nest('get current GCE config') as pres:
       gce_config = api.bot_scaling.get_current_gce_config(bot_policy_config)
       pres.logs['gce_config'] = jsonpb.MessageToJson(gce_config)
@@ -54,3 +56,5 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test('basic', api.properties(commit_changes=True))
+  yield api.test('basic_chrome',
+                 api.properties(commit_changes=True, application='Chrome'))

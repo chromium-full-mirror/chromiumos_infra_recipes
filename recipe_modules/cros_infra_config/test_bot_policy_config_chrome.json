@@ -1,0 +1,37 @@
+{
+  "botPolicies": [
+    {
+		"botGroup": "try-test",
+			"botType": {
+				"botSize": "e2-standard-8",
+				"coresPerBot": 8,
+				"hourlyCost": 0.0804,
+				"memoryGb": 32
+			},
+			"scalingRestriction": {
+				"minIdle": 10,
+				"botFallback": 100
+			},
+			"regionRestrictions": [
+				{
+					"region": "us-central1-c",
+					"prefix": "chrome-robocrop-xenial-us-central1-c",
+					"weight": 1
+				}
+			],
+			"swarmingDimensions": [
+				{
+					"name": "pool",
+					"values": [
+						"chromium.tests.robocrop"
+					]
+				}
+			],
+			"policyMode": "CONFIGURED",
+			"lookbackHours": -1,
+			"scalingMode": "DEMAND",
+			"swarmingInstance": "chromium-swarm.appspot.com",
+			"application": "chrome"
+    }
+  ]
+}

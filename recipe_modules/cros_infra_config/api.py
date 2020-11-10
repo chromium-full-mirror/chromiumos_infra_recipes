@@ -22,7 +22,8 @@ from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.testplans.test_retry import SuiteRetryCfg
 
-REPO_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
+CHROME_OS_REPO_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
+CHROME_REPO_URL = 'https://chrome-internal.googlesource.com/infradata/config'
 
 
 def ConvertPB(inpb, typ):
@@ -33,7 +34,10 @@ def ConvertPB(inpb, typ):
 
 
 class CrosInfraConfigApi(recipe_api.RecipeApi):
-  """A module for accessing data in the chromeos/infra/config repo"""
+  """A module for accessing data in the chromeos/infra/config repo
+
+  go/robocrop-chrome-browser-proposal: This module is temporarily used to
+  access the Chrome Browser infradata/config repo"""
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosInfraConfigApi, self).__init__(*args, **kwargs)
@@ -192,10 +196,14 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def _download_binproto(self, filename, step_test_data, branch='master',
-                         timeout=None):
+                         timeout=None, application='ChromeOS'):
     """Helper method to fetch a file from gititles."""
+    repo = CHROME_OS_REPO_URL
+    if application == 'Chrome':
+      repo = CHROME_REPO_URL
+
     return self.m.depot_gitiles.download_file(
-        REPO_URL, filename + '.binaryproto', branch=self._config_ref,
+        repo, filename + '.binaryproto', branch=self._config_ref,
         step_test_data=step_test_data, timeout=timeout or
         self.test_api.gitiles_timeout_seconds)
 
@@ -290,12 +298,18 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   def should_exit(self, run_spec):
     return run_spec == BuilderConfig.RUN_EXIT
 
-  def get_bot_policy_config(self):
+  def get_bot_policy_config(self, application='ChromeOS'):
     """Get BotPolicies as defined in infra/config.
+    If application is Chrome, BotPolicies will be fetched from infradata/config.
 
     Returns:
       BotPolicyCfg as defined in the config repo.
     """
+    if application == 'Chrome':
+      return BotPolicyCfg.FromString(
+          self._download_binproto('configs/bot-scaling/generated/bot_policy',
+                                  self.test_api.bot_policy_test_data_chrome,
+                                  application='Chrome'))
     return BotPolicyCfg.FromString(
         self._download_binproto('bot_scaling/generated/bot_policy',
                                 self.test_api.bot_policy_test_data))
@@ -472,7 +486,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       config = self.config
       if config:
         # The url can be constructed from output.properties.config_ref:
-        # ('+/%s/%s' % (REPO_URL, self._config_ref, filename))
+        # ('+/%s/%s' % (CHROME_OS_REPO_URL, self._config_ref, filename))
         presentation.logs['builder config'] = [str(config)]
       else:
         presentation.step_text = 'config not found, assuming deleted'
