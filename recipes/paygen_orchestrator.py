@@ -86,24 +86,27 @@ def RunSteps(api, properties):
     long_chan_name = _long_channel_name(channel)
     with api.step.nest('examining %s' % long_chan_name):
 
-      # Create Source Image definitions based upon the configuration alone.
-      for payload_cfg in configured_payloads:
-        if payload_cfg['channel'] == _short_channel_name(channel):
-          found_arts = api.cros_storage.discover_gs_artifacts(
-              path.join('gs://' + properties.bucket, long_chan_name,
-                        payload_cfg['builder_name'],
-                        payload_cfg['chrome_os_version']))
-          for art in found_arts:
-            source_artifacts.append(art.to_proto())
+      # Iterate the configured payloads and find artifacts at each source.
+      with api.step.nest('source artifacts'):
+        # Create Source Image definitions based upon the configuration alone.
+        for payload_cfg in configured_payloads:
+          if payload_cfg['channel'] == _short_channel_name(channel):
+            found_arts = api.cros_storage.discover_gs_artifacts(
+                path.join('gs://' + properties.bucket, long_chan_name,
+                          payload_cfg['builder_name'],
+                          payload_cfg['chrome_os_version']))
+            for art in found_arts:
+              source_artifacts.append(art.to_proto())
 
-      # Discover the Images that exist at the remote path.
-      found_arts = api.cros_storage.discover_gs_artifacts(
-          path.join('gs://' + properties.bucket, long_chan_name,
-                    properties.builder_name,
-                    properties.target_chrome_os_version))
+      # Discover the target images for this channel.
+      with api.step.nest('target artifacts'):
+        found_arts = api.cros_storage.discover_gs_artifacts(
+            path.join('gs://' + properties.bucket, long_chan_name,
+                      properties.builder_name,
+                      properties.target_chrome_os_version))
 
-      for art in found_arts:
-        target_artifacts.append(art.to_proto())
+        for art in found_arts:
+          target_artifacts.append(art.to_proto())
 
   # Match configuration with discovered artifacts.
   with api.step.nest('discovered artifacts') as pres:
@@ -126,14 +129,14 @@ def RunSteps(api, properties):
                                                 properties.keyset,
                                                 properties.dryrun)
       cbr.extend(reqs)
-    pres.logs['delta'] = [MessageToJson(x) for x in cbr]
+    pres.logs['%s deltas' % len(cbr)] = [MessageToJson(x) for x in cbr]
 
     # Do full payloads.
     reqs = api.cros_paygen.get_full_requests(target_artifacts,
                                              properties.bucket, True,
                                              properties.keyset,
                                              properties.dryrun)
-    pres.logs['full'] = [MessageToJson(x) for x in reqs]
+    pres.logs['%s full' % len(reqs)] = [MessageToJson(x) for x in reqs]
     cbr.extend(reqs)
 
     # Do dlc payloads.
@@ -142,6 +145,8 @@ def RunSteps(api, properties):
     if not cbr:
       pres.step_text = 'No payload pairs (src->tgt) found.'
       return
+    else:
+      pres.step_text = '%s payloads found.' % len(cbr)
 
   # Schedule child builders.
   br = [
@@ -179,11 +184,13 @@ def GenTests(api):
   yield api.test(
       'basic', get_props(), good_paygen_cfg,
       api.cros_storage.test_listing(
-          'examining beta-channel.discover gs artifacts.gsutil list'),
+          'examining beta-channel.source artifacts.discover gs artifacts.gsutil list'
+      ),
       api.cros_storage.test_listing(
-          'examining beta-channel.discover gs artifacts (2).gsutil list'),
+          'examining beta-channel.source artifacts.discover gs artifacts (2).gsutil list'
+      ),
       api.cros_storage.test_listing(
-          'examining beta-channel.discover gs artifacts (3).gsutil list',
+          'examining beta-channel.target artifacts.discover gs artifacts.gsutil list',
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
@@ -196,11 +203,13 @@ def GenTests(api):
   yield api.test(
       'no-pairs', get_props(), good_paygen_cfg,
       api.cros_storage.test_listing(
-          'examining beta-channel.discover gs artifacts.gsutil list'),
+          'examining beta-channel.source artifacts.discover gs artifacts.gsutil list'
+      ),
       api.cros_storage.test_listing(
-          'examining beta-channel.discover gs artifacts (2).gsutil list'),
+          'examining beta-channel.source artifacts.discover gs artifacts (2).gsutil list'
+      ),
       api.cros_storage.test_listing(
-          'examining beta-channel.discover gs artifacts (3).gsutil list',
+          'examining beta-channel.target artifacts.discover gs artifacts.gsutil list',
           test_data='gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-factory-R87-13505.15.0-coral.tar.xz'
       ), api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DoesNotRun, 'running children'))
