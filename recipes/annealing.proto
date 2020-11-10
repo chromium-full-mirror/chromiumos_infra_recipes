@@ -40,6 +40,9 @@ message AnnealingProperties {
     repeated Job jobs = 3;
   }
   repeated PathTrigger path_triggers = 4;
+
+  // If this is a dry run, do not actually push the manifest ref.
+  bool dry_run = 5;
 }
 
 // Annealing determines what Gerrit changes have landed since its last run,
