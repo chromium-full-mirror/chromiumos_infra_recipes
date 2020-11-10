@@ -1432,7 +1432,7 @@
   },
   {
     "cmd": [],
-    "name": "build ToT firmware",
+    "name": "build firmware",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -1458,7 +1458,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "build ToT firmware.write input file",
+    "name": "build firmware.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
@@ -1487,7 +1487,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "build ToT firmware.call build API script",
+    "name": "build firmware.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1510,14 +1510,14 @@
       ]
     },
     "infra_step": true,
-    "name": "build ToT firmware.read output file",
+    "name": "build firmware.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build ToT firmware.call response",
+    "name": "build firmware.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -1526,7 +1526,7 @@
   },
   {
     "cmd": [],
-    "name": "test ToT firmware",
+    "name": "test firmware",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -1552,7 +1552,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "test ToT firmware.write input file",
+    "name": "test firmware.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
@@ -1581,7 +1581,7 @@
         "[START_DIR]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "test ToT firmware.call build API script",
+    "name": "test firmware.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1604,14 +1604,14 @@
       ]
     },
     "infra_step": true,
-    "name": "test ToT firmware.read output file",
+    "name": "test firmware.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test ToT firmware.call response",
+    "name": "test firmware.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",

@@ -29,12 +29,12 @@ def RunSteps(api, properties):
         BuildAllTotFirmwareRequest(
             chroot=api.cros_sdk.chroot,
             firmware_location=properties.firmware_location),
-        name='build ToT firmware')
+        name='build firmware')
     api.cros_build_api.FirmwareService.TestAllTotFirmware(
         TestAllTotFirmwareRequest(
             chroot=api.cros_sdk.chroot,
             firmware_location=properties.firmware_location),
-        name='test ToT firmware')
+        name='test firmware')
 
 
 def GenTests(api):
