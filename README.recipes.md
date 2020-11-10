@@ -2504,9 +2504,9 @@ Much of the inspiration for this module came from:
 As long as there are two versions of the the path construction any changes
 to one of these needs to be reflected in the other.
 
-#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#255)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#407)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#268)(self, prefix_uri):**
+&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#424)(self, prefix_uri):**
 
 Discover and return all the GS artifacts found in a given ArtifactRoot.
 
@@ -2518,7 +2518,7 @@ Args:
   prefix_uri (str): The gs path prefix recursively crawled.
 
 Returns:
-  (list[Image]): A list of images found in the prefix.
+  (list[Image and Payload]): A list of artifacts found in the prefix.
 ### *recipe_modules* / [cros\_tags](/recipe_modules/cros_tags)
 
 [DEPS](/recipe_modules/cros_tags/__init__.py#5): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq]

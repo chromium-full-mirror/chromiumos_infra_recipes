@@ -252,17 +252,173 @@ class UnsignedImage(Image):
     self._milestone = milestone
 
 
+class Payload(object):
+  """Base class of a payload of a particular type resident in storage."""
+
+  @property
+  def uri(self):
+    """A Payload's full uri."""
+    return path.join(self._tgt_image._artifact_root.uri, 'payloads',
+                     self.basename)
+
+  @property
+  def key(self):
+    """The key to sign the image with."""
+    return self._key
+
+  def __init__(self, tgt_image, unique_id):
+    self._tgt_image = tgt_image
+    self._unique_id = unique_id
+    self._key = tgt_image._key if isinstance(tgt_image, SignedImage) else None
+
+
+class FullPayload(Payload):
+  """A full payload resident in storage."""
+
+  _FULL_PAYLOAD_TEMPLATE = ('chromeos_%(version)s_%(board)s_%(channel)s_'
+                            'full_%(key)s.bin-%(unique_id)s%(signed_ext)s')
+
+  # Matches a full payload basename. Example:
+  # chromeos_13506.0.0_coral_dev-channel_full_test.bin-abc123
+  _FULL_PAYLOAD_REGEXP = (r'chromeos_(?P<tgt_version>[^/]+)_'
+                          r'(?P<build_target>[^/]+)_'
+                          r'(?P<channel>[^/]+)_full_'
+                          r'(?P<key>[^/]+).bin-'
+                          r'(?P<unique_id>[^/.]+)'
+                          r'(?P<signed_ext>(.+)?)')
+
+  @classmethod
+  def parse_uri(cls, uri):
+    """Construct a FullPayload from a provided uri, or return None."""
+    ar = ArtifactRoot.parse_uri(uri)
+    if not ar:
+      return None
+    m = re.search(cls._FULL_PAYLOAD_REGEXP, uri)
+    if not m:
+      return None
+    values = m.groupdict()
+    if values['signed_ext'] == '.signed':
+      tgt_image = SignedImage(ar, image_type=ImageType.Value('TEST'),
+                              key=values['key'])
+    elif values['signed_ext'] == '':
+      tgt_image = UnsignedImage(ar, image_type=ImageType.Value('TEST'),
+                                milestone=None)
+    # Filter out .json and .log files.
+    else:
+      return None
+    return FullPayload(tgt_image, values['unique_id'])
+
+  def __init__(self, tgt_image, unique_id):
+    """Construct a FullPayload instance.
+
+    Args:
+      tgt_image (Image): A representation of the image the payload updates to.
+      unique_id (str): A random value appended to payloads at generation time.
+    """
+    super(FullPayload, self).__init__(tgt_image, unique_id)
+
+  @property
+  def basename(self):
+    """The basename portion of the path of a FullPayload."""
+    artifact_root = self._tgt_image._artifact_root
+    return self._FULL_PAYLOAD_TEMPLATE % {
+        'channel': artifact_root.channel,
+        'board': artifact_root.build_target_name,
+        'version': artifact_root.version,
+        'key': self.key or 'test',
+        'unique_id': self._unique_id,
+        'signed_ext': '.signed' if self._key else '',
+    }
+
+
+class DeltaPayload(Payload):
+  """A delta payload resident in storage."""
+
+  _DELTA_PAYLOAD_TEMPLATE = (
+      'chromeos_%(src_version)s-%(version)s_%(board)s_%(channel)s_'
+      'delta_%(key)s.bin-%(unique_id)s%(signed_ext)s')
+
+  # Matches a delta payload basename. Example:
+  # chromeos_13502.0.0-13506.0.0_coral_dev-channel_delta_mp-v5.bin-abc123.signed
+  _DELTA_PAYLOAD_REGEXP = (r'chromeos_'
+                           r'(?P<src_version>[^/]+)-'
+                           r'(?P<tgt_version>[^/]+)_'
+                           r'(?P<build_target>[^/]+)_'
+                           r'(?P<channel>[^/]+)_delta_'
+                           r'(?P<key>[^/]+).bin-'
+                           r'(?P<unique_id>[^/.]+)'
+                           r'(?P<signed_ext>(.+)?)')
+
+  @classmethod
+  def parse_uri(cls, uri):
+    """Construct a DeltaPayload from a provided uri, or return None."""
+    tgt_ar = ArtifactRoot.parse_uri(uri)
+    if not tgt_ar:
+      return None
+    m = re.search(cls._DELTA_PAYLOAD_REGEXP, uri)
+    if not m:
+      return None
+    values = m.groupdict()
+
+    src_ar = ArtifactRoot.parse_uri(uri)
+    src_ar.version = values['src_version']
+
+    if values['signed_ext'] == '.signed':
+      tgt_image = SignedImage(tgt_ar, image_type=ImageType.Value('TEST'),
+                              key=values['key'])
+      src_image = SignedImage(src_ar, image_type=ImageType.Value('TEST'),
+                              key=values['key'])
+    elif values['signed_ext'] == '':
+      tgt_image = UnsignedImage(tgt_ar, image_type=ImageType.Value('TEST'),
+                                milestone=None)
+      src_image = UnsignedImage(src_ar, image_type=ImageType.Value('TEST'),
+                                milestone=None)
+    # Filter out .json and .log files.
+    else:
+      return None
+    return DeltaPayload(tgt_image, src_image, values['unique_id'])
+
+  @property
+  def basename(self):
+    """The basename portion of the path of a DeltaPayload."""
+    artifact_root = self._tgt_image._artifact_root
+    return self._DELTA_PAYLOAD_TEMPLATE % {
+        'channel': artifact_root.channel,
+        'board': artifact_root.build_target_name,
+        'version': artifact_root.version,
+        'key': self.key or 'test',
+        'unique_id': self._unique_id,
+        'src_version': self._src_image._artifact_root.version,
+        'signed_ext': '.signed' if self._key else '',
+    }
+
+  def __init__(self, tgt_image, src_image, unique_id):
+    """Construct a DeltaPayload instance.
+
+    Args:
+      tgt_image (Image): A representation of the image the payload updates to.
+      src_image (Image): A representation of the image the payload updates from.
+      unique_id (str): A random value appended to payloads at generation time.
+    """
+    super(DeltaPayload, self).__init__(tgt_image, unique_id)
+    self._src_image = src_image
+
+
 class CrosStorageApi(recipe_api.RecipeApi):
 
   UnsupportedImageTypeException = UnsupportedImageTypeException
   ArtifactRoot = ArtifactRoot
   SignedImage = SignedImage
   UnsignedImage = UnsignedImage
+  FullPayload = FullPayload
+  DeltaPayload = DeltaPayload
 
   # This is the list of available URL parsers, used for discovery.
   ParserOptions = [
       UnsignedImage.parse_uri,
       SignedImage.parse_uri,
+      FullPayload.parse_uri,
+      DeltaPayload.parse_uri,
   ]
 
   def discover_gs_artifacts(self, prefix_uri):
@@ -276,13 +432,13 @@ class CrosStorageApi(recipe_api.RecipeApi):
       prefix_uri (str): The gs path prefix recursively crawled.
 
     Returns:
-      (list[Image]): A list of images found in the prefix.
+      (list[Image and Payload]): A list of artifacts found in the prefix.
     """
     with self.m.step.nest('discover gs artifacts') as presentation:
       recursive_uri = path.join(prefix_uri, '**')
       gsutil_ls_stdout = self.m.raw_io.output_text(name='ls results',
                                                    add_output_log=True)
-      images = []
+      artifacts = []
       try:
         listing = self.m.gsutil.list(recursive_uri,
                                      timeout=GSUTIL_TIMEOUT_SECONDS,
@@ -291,11 +447,12 @@ class CrosStorageApi(recipe_api.RecipeApi):
         return []
       for uri in listing.stdout.split():
         for po in self.ParserOptions:
-          img = po(uri)
-          if img:
-            images.append(img)
+          art = po(uri)
+          if art:
+            artifacts.append(art)
             break
 
       # Logs the results for inspection & return.
-      presentation.logs['images found'] = '\n'.join([i.uri for i in images])
-      return images
+      presentation.logs['artifacts found'] = '\n'.join(
+          [i.uri for i in artifacts])
+      return artifacts

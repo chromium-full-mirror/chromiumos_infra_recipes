@@ -3,8 +3,8 @@
     "cmd": [],
     "name": "discover gs artifacts",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-test-R87-13505.15.0-coral.tar.xz@@@",
-      "@@@STEP_LOG_END@images found@@@"
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-test-R87-13505.15.0-coral.tar.xz@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
     ]
   },
   {

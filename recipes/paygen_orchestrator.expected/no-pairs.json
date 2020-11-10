@@ -161,8 +161,8 @@
     "name": "examining dev-channel.target artifacts.discover gs artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@images found@@@@",
-      "@@@STEP_LOG_END@images found@@@"
+      "@@@STEP_LOG_LINE@artifacts found@@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
     ]
   },
   {
@@ -200,10 +200,15 @@
     "name": "examining beta-channel.source artifacts.discover gs artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.11.0/ChromeOS-recovery-R87-13505.11.0-coral.tar.xz@@@",
-      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.11.0/ChromeOS-test-R87-13505.11.0-coral.tar.xz@@@",
-      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.11.0/chromeos_13505.11.0_coral_recovery_beta_mp-v19.bin@@@",
-      "@@@STEP_LOG_END@images found@@@"
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/ChromeOS-recovery-R87-13505.11.0-coral.tar.xz@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/ChromeOS-test-R87-13505.11.0-coral.tar.xz@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/chromeos_13505.11.0_coral_recovery_beta_mp-v19.bin@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13421.53.0-13505.11.0_coral_beta-channel_delta_mp-v19.bin-gvtdqntcmnrtapuf5mkje6ayy6hsmmtm.signed@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13421.53.0-13505.11.0_coral_beta-channel_delta_test.bin-gvtdqntcmnrtab6ik6lxzc4ej66x7sic@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0-13505.11.0_coral_beta-channel_delta_test.bin-gvtdqntcmnrtbmhutv3moyro4736xvmz@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_mp-v19.bin-gvtdqntcmnrtbxv23xepee5yqvhsozho.signed@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
     ]
   },
   {
@@ -264,10 +269,15 @@
     "name": "examining beta-channel.source artifacts.discover gs artifacts (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.11.0/ChromeOS-recovery-R87-13505.11.0-coral.tar.xz@@@",
-      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.11.0/ChromeOS-test-R87-13505.11.0-coral.tar.xz@@@",
-      "@@@STEP_LOG_LINE@images found@gs://chromeos-releases/beta-channel/coral/13505.11.0/chromeos_13505.11.0_coral_recovery_beta_mp-v19.bin@@@",
-      "@@@STEP_LOG_END@images found@@@"
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/ChromeOS-recovery-R87-13505.11.0-coral.tar.xz@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/ChromeOS-test-R87-13505.11.0-coral.tar.xz@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/chromeos_13505.11.0_coral_recovery_beta_mp-v19.bin@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13421.53.0-13505.11.0_coral_beta-channel_delta_mp-v19.bin-gvtdqntcmnrtapuf5mkje6ayy6hsmmtm.signed@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13421.53.0-13505.11.0_coral_beta-channel_delta_test.bin-gvtdqntcmnrtab6ik6lxzc4ej66x7sic@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0-13505.11.0_coral_beta-channel_delta_test.bin-gvtdqntcmnrtbmhutv3moyro4736xvmz@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_mp-v19.bin-gvtdqntcmnrtbxv23xepee5yqvhsozho.signed@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
     ]
   },
   {
@@ -335,8 +345,8 @@
     "name": "examining beta-channel.target artifacts.discover gs artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@images found@@@@",
-      "@@@STEP_LOG_END@images found@@@"
+      "@@@STEP_LOG_LINE@artifacts found@@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
     ]
   },
   {

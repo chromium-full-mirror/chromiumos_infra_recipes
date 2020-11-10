@@ -96,7 +96,10 @@ def RunSteps(api, properties):
                           payload_cfg['builder_name'],
                           payload_cfg['chrome_os_version']))
             for art in found_arts:
-              source_artifacts.append(art.to_proto())
+              # TODO(crbug/1122854): Remove conditional once the search uri is more granual.
+              if isinstance(art, api.cros_storage.UnsignedImage) or isinstance(
+                  art, api.cros_storage.SignedImage):
+                source_artifacts.append(art.to_proto())
 
       # Discover the target images for this channel.
       with api.step.nest('target artifacts'):
@@ -106,7 +109,10 @@ def RunSteps(api, properties):
                       properties.target_chrome_os_version))
 
         for art in found_arts:
-          target_artifacts.append(art.to_proto())
+          # TODO(crbug/1122854): Remove conditional once the search uri is more granual.
+          if isinstance(art, api.cros_storage.UnsignedImage) or isinstance(
+              art, api.cros_storage.SignedImage):
+            target_artifacts.append(art.to_proto())
 
   # Match configuration with discovered artifacts.
   with api.step.nest('discovered artifacts') as pres:
