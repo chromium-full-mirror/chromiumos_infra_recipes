@@ -125,7 +125,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
         self._cmd = cipd_dir.join('phosphorus')
 
-  def load_skylab_local_state(self):
+  def load_skylab_local_state(self, test_id=''):
     """Load the local DUT state file.
 
     Raises:
@@ -133,7 +133,8 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     """
     with self.m.context(infra_steps=True):
       request = LoadRequest(config=self._config, dut_name=self._dut_hostname,
-                            run_id=self._run_id, dut_id=self._dut_id)
+                            run_id=self._run_id, dut_id=self._dut_id,
+                            test_id=test_id)
       result = self._run('load', request, LoadRequest, LoadResponse,
                          send_response=True)
       self._local_state_results_dir = result.results_dir

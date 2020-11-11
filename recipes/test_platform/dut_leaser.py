@@ -23,6 +23,8 @@ PROPERTIES = DutLeaserProperties
 
 _DUT_STATE_NEEDS_REPAIR = 'needs_repair'
 
+_DUT_LEASER_TEST_ID = 'dut-leaser'
+
 
 def RunSteps(api, properties):
   lease_end_seconds = api.time.time() + 60 * properties.lease_length_minutes
@@ -31,7 +33,7 @@ def RunSteps(api, properties):
                       properties.lease_length_minutes % 60)):
     with api.step.nest('update DUT state to %s' % _DUT_STATE_NEEDS_REPAIR):
       # Load the local state to set the results directory to save to.
-      api.phosphorus.load_skylab_local_state()
+      api.phosphorus.load_skylab_local_state(_DUT_LEASER_TEST_ID)
       api.phosphorus.save_and_seal_skylab_local_state(_DUT_STATE_NEEDS_REPAIR)
 
     with api.step.nest('sleep for remainder of lease'):

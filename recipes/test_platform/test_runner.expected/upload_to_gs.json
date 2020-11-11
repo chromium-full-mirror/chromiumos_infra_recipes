@@ -100,6 +100,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"testId\": \"original_test\", @@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
@@ -169,7 +170,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.load local DUT state.call `phosphorus`.load",
-    "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
+    "stdin": "{\n  \"testId\": \"original_test\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -618,7 +619,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyVjzEPwiAUhGviRGJMcOsPcFApSUcHJxc3l85NQaRE4DU80Lj50y3tH9Dt5d7dlzvCyr3GI+ci\\nyYeK/A7ARRd401zOHN9e9gE8JGwxiZsJ5WdBDpM/P5wCZFFhZBY0cgnOgWfKP+d4Fum1j3HIAYyd\\n8VYhVhLCUGkAbdV4Oy4CvFD9StxtySYzR+RYdvKxFCxdT7WyNAv1khS0qE9kBcFo4zvbZjD9b/AX\\nkQBjsw==\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyNjjEOwjAMRYvElAWpbD0AA5BaYmRmYWPpjJpg0qpJXMUJiI2j07QXYLOe/3/6QlYHw2cAlfSA\\nEZ5EoNoATXO9AH+87gJ5SnznpB59qL4rcZzz+eGQWEbkKC0ZBk3OkZfoX0s9w/LWxTjmAse29xaZ\\na01hrA2RsTjdDlSgN+O/xv1ObLNzUk5j55xMwZabeVZGCzitRVEWP5b4TSU=\\n\"@@@"
     ]
   },
   {

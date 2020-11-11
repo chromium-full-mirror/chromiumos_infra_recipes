@@ -30,10 +30,10 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 627, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 603, in RunSteps",
       "    prejob_response, run_test_response, result = execution_steps(api, properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 517, in execution_steps",
-      "    validate_request(api, properties.request.test)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 481, in execution_steps",
+      "    validate_request(api, test)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 57, in validate_request",
       "    raise ValueError(\"Test name must be specified\")",
       "ValueError: Test name must be specified"

@@ -403,47 +403,6 @@ def _upload_to_tko_config(api, phosphorus_config, run_test_response):
   return ret
 
 
-def _run_all_tests(api, phosphorus_config, properties, dut_hostname,
-                   load_response, dut_state, tests):
-  """Runs all tests
-
-  Args:
-  * phosphorus_config: phosphorus.Config instance.
-  * properties: TestRunnerProperties instance.
-  * dut_hostname: string.
-  * load_response: LoadStateResponse instance.
-  * tests: dictionary of skylab_test_runner.Request.Test instances.
-
-  Returns:
-  * result: skylab_test_runner.Result instance.
-  * run_test_response: phosphorus.runtest.RunTestResponse instance.
-  * dut_state: string.
-  """
-  upload_to_gs_response = None
-  autotest_results = {}
-  run_test_response = None
-  result = None
-
-  for test_id, test in tests.items():
-    run_test_response = run_test_specific_steps(
-        api, phosphorus_config=phosphorus_config, properties=properties,
-        dut_hostname=dut_hostname, test=test)
-    result = get_results(api, load_response.results_dir)
-    result.async_results.CopyFrom(load_response.async_results)
-    if result.HasField('autotest_result'):
-      autotest_results[test_id] = result.autotest_result
-    if _should_upload_to_gs(result, test):
-      upload_to_gs_response = upload_sync_results(
-          api, config=phosphorus_config, output_config=properties.config.output)
-    _set_offload_dir(result, upload_to_gs_response)
-    dut_state = result.state_update.dut_state
-
-  for test_id, test_result in autotest_results.items():
-    result.autotest_results[test_id].CopyFrom(test_result)
-
-  return result, run_test_response, dut_state
-
-
 def _collect_tests(request):
   """Collects tests from Request into one dictionary
 
@@ -504,70 +463,87 @@ def execution_steps(api, properties):
   Raises:
   * InfraFailure.
   """
-  with api.step.nest('execution steps') as presentation:
-    build = api.buildbucket.build
-    # Providing link to parent if parent tag exists.
-    parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
-    if parent:
-      presentation.links['parent link'] = (
-          api.buildbucket.build_url(build_id=parent[0]))
-    publish_to_result_flow(api, properties.config, properties.request)
+  tests = _collect_tests(properties.request)
+  autotest_results = {}
+  prejob_response = None
 
-    upload_response = None
-    validate_request(api, properties.request.test)
-    dut_hostname = api.phosphorus.read_dut_hostname()
+  for test_id, test in tests.items():
+    with api.step.nest('execution steps') as presentation:
+      build = api.buildbucket.build
+      # Providing link to parent if parent tag exists.
+      parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
+      if parent:
+        presentation.links['parent link'] = (
+            api.buildbucket.build_url(build_id=parent[0]))
+      publish_to_result_flow(api, properties.config, properties.request)
 
-    with api.step.nest('load local DUT state'):
-      load_response = api.phosphorus.load_skylab_local_state()
-    with api.step.nest('mark local DUT state dirty'):
-      api.phosphorus.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR)
+      upload_to_gs_response = None
+      validate_request(api, test)
+      dut_hostname = api.phosphorus.read_dut_hostname()
 
-    phosphorus_config = _get_phosphorus_config(
-        properties.config,
-        load_response,
-        properties.request.test.offload.synchronous_gs_enable,
-    )
+      with api.step.nest('load local DUT state'):
+        load_response = api.phosphorus.load_skylab_local_state(test_id=test_id)
+      with api.step.nest('mark local DUT state dirty'):
+        api.phosphorus.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR)
 
-    dut_state = _DUT_STATE_NEEDS_REPAIR
-    run_test_response = None
-    max_duration_sec = (
-        properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
-    result = None
-    tests = _collect_tests(properties.request)
-    try:
-      # prejob and test failures are detected when parsing results.
-      # An exception from the steps here indicates an infrastructure
-      # failure that should be bubbled up immediately.
-      prejob_response = prejob(api, config=phosphorus_config,
-                               request=properties.request,
-                               dut_hostname=dut_hostname,
-                               load_response=load_response,
-                               max_duration_seconds=max_duration_sec)
-
-      if not _prejob_failed(prejob_response):
-        result, run_test_response, dut_state = _run_all_tests(
-            api=api, phosphorus_config=phosphorus_config, properties=properties,
-            dut_hostname=dut_hostname, load_response=load_response,
-            dut_state=dut_state, tests=tests)
-      else:
-        result = get_results(api, load_response.results_dir)
-    finally:
-      # Must complete synchronous logs upload before sealing the results
-      # directory. Once the results directory is sealed, gs_offloader may delete
-      # the result files.
-      result = archive_all_logs(
-          api,
-          phosphorus_config=phosphorus_config,
-          gs_root=properties.config.output.log_data_gs_root,
-          result=result,
+      phosphorus_config = _get_phosphorus_config(
+          properties.config,
+          load_response,
+          properties.request.test.offload.synchronous_gs_enable,
       )
 
-      with api.step.nest('save local DUT state'):
-        api.phosphorus.save_and_seal_skylab_local_state(dut_state)
-      publish_to_result_flow(api, properties.config, properties.request,
-                             should_poll_for_completion=True)
-    set_output_properties(api, result=result)
-    return prejob_response, run_test_response, result
+      dut_state = _DUT_STATE_NEEDS_REPAIR
+      run_test_response = None
+      max_duration_sec = (
+          properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
+      result = None
+
+      try:
+        # prejob and test failures are detected when parsing results.
+        # An exception from the steps here indicates an infrastructure
+        # failure that should be bubbled up immediately.
+        prejob_response = prejob(api, config=phosphorus_config,
+                                 request=properties.request,
+                                 dut_hostname=dut_hostname,
+                                 load_response=load_response,
+                                 max_duration_seconds=max_duration_sec)
+        if not _prejob_failed(prejob_response):
+          run_test_response = run_test_specific_steps(
+              api, phosphorus_config=phosphorus_config, properties=properties,
+              dut_hostname=dut_hostname, test=test)
+          result = get_results(api, load_response.results_dir)
+          result.async_results.CopyFrom(load_response.async_results)
+          if result.HasField('autotest_result'):
+            autotest_results[test_id] = result.autotest_result
+          if _should_upload_to_gs(result, test):
+            upload_to_gs_response = upload_sync_results(
+                api, config=phosphorus_config,
+                output_config=properties.config.output)
+          _set_offload_dir(result, upload_to_gs_response)
+          dut_state = result.state_update.dut_state
+        else:
+          result = get_results(api, load_response.results_dir)
+      finally:
+        # Must complete synchronous logs upload before sealing the results
+        # directory. Once the results directory is sealed, gs_offloader may delete
+        # the result files.
+        result = archive_all_logs(
+            api,
+            phosphorus_config=phosphorus_config,
+            gs_root=properties.config.output.log_data_gs_root,
+            result=result,
+        )
+
+        with api.step.nest('save local DUT state'):
+          api.phosphorus.save_and_seal_skylab_local_state(dut_state)
+        publish_to_result_flow(api, properties.config, properties.request,
+                               should_poll_for_completion=True)
+      set_output_properties(api, result=result)
+
+  for test_id, test_result in autotest_results.items():
+    result.autotest_results[test_id].CopyFrom(test_result)
+
+  return prejob_response, run_test_response, result
 
 
 def run_test_specific_steps(api, phosphorus_config, properties, dut_hostname,
@@ -714,6 +690,10 @@ def GenTests(api):
     return (api.properties(
         TestRunnerProperties(request=_canned_test_runner_request())))
 
+  def _request_properties_no_name():
+    return (api.properties(
+        TestRunnerProperties(request=_canned_request_missing_name())))
+
   # An example request with multiple tests on the test field.
   def _request_properties_multitest():
     return (api.properties(
@@ -738,6 +718,9 @@ def GenTests(api):
             }
         }
     }
+
+  def _canned_request_missing_name():
+    return {'test': {'autotest': {'display_name': 'name'}}}
 
   def _canned_multitest_request():
     multi_test_1 = Request.Test(
@@ -777,9 +760,7 @@ def GenTests(api):
                 'label2': 'value2',
             }
         },
-        'test': original_test,
         'tests': {
-            'multi_test_1': multi_test_1,
             'multi_test_2': multi_test_2,
         }
     }
@@ -829,6 +810,7 @@ def GenTests(api):
   yield api.test(
       'test_name_missing',
       _misc_properties(),
+      _request_properties_no_name(),
       api.expect_exception('ValueError'),
   )
 
@@ -1043,7 +1025,7 @@ def GenTests(api):
       _request_properties_multitest(),
       _mock_load_step(),
       _successful_prejob_step(),
-      _run_test_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
+      _run_test_step_with_state(phosphorus.runtest.RunTestResponse.SUCCEEDED),
       _successful_logs_archive_step(),
   )
 

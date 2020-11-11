@@ -100,6 +100,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"testId\": \"original_test\", @@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
@@ -169,7 +170,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.load local DUT state.call `phosphorus`.load",
-    "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
+    "stdin": "{\n  \"testId\": \"original_test\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -592,7 +593,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyVkDEPgjAQhYNjE6LixsRkiKE0cTRxc3FzYSaAR6kpPdKruvrTpRB23S5f3n15eSxjKdu2ldLK\\nyNIBubKpCDareIGJh8kEgyhle7Zb0oOFB9YlORjGfOgx3JOZxp+AZZJOQjSdxR6QuPdwjZJEg32P\\nhoN5iaK4XoSH0a1zbvAP5CplNBDlDdohl4hSw3j3orb4JvjVeBireueobBGnHH9aHa2nWh7N4Hhm\\nIVollan0tED01yZfyktsXQ==\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyNzjEPgjAQBeDg2MSouDExGWIo3Z1d3FyYCeBRMG2v6VVd/em2EHa3y5d3L4+VrGCHoZ3UZGTj\\ngXzTtwT7TbZiHjGfMUkLdmLHNW0dPLFryIMN+W1keOSLZt+ElZIuQvSjQw1IPPZwhZJEj1qj4WDe\\noq5vVxExvY/e2/hAvp2MAqKqR2criSgVhFuLzuGH4N/Gc5gaO0PlgDjn+MupdDfPirTAD5ScWCA=\\n\"@@@"
     ]
   },
   {

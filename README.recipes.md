@@ -4206,7 +4206,7 @@ Args:
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#128)(self):**
+&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#128)(self, test_id=''):**
 
 Load the local DUT state file.
 
@@ -4220,7 +4220,7 @@ Run a prejob or a provision via `prejob` subcommand.
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#189)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#190)(self):**
 
 "Return the DUT hostname.
 
@@ -4231,7 +4231,7 @@ Run a test via `run-test` subcommand.
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#153)(self, dut_state):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#154)(self, dut_state):**
 
 Update the local DUT state file and seal the results directory.
 
@@ -4241,7 +4241,7 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#142)(self, dut_state):**
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#143)(self, dut_state):**
 
 Update the local DUT state file.
 
@@ -6864,7 +6864,7 @@ Raises:
 
 [DEPS](/recipes/test_platform/dut_leaser.py#14): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-&mdash; **def [RunSteps](/recipes/test_platform/dut_leaser.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/dut_leaser.py#29)(api, properties):**
 ### *recipes* / [test\_platform/multi\_bot/follower](/recipes/test_platform/multi_bot/follower.py)
 
 [DEPS](/recipes/test_platform/multi_bot/follower.py#11): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6890,7 +6890,7 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#626)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#602)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#185)(api, phosphorus_config, gs_root, result):**
 
@@ -6905,7 +6905,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#492)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#451)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -6950,7 +6950,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#461)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#420)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -6978,7 +6978,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#573)(api, phosphorus_config, properties, dut_hostname, test):**
+&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#549)(api, phosphorus_config, properties, dut_hostname, test):**
 
 Run the test execution and all steps that explicitly depend on it.
 
