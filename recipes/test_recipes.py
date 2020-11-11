@@ -173,15 +173,12 @@ def _launch_builders(api, test_builders, always_launch_builders):
     for builder in builders:
       with api.step.nest(
           'analyze and launch {}'.format(builder)) as builder_pres:
-        # Get a led result from led to extract the builder definition.
+        # Get an intermediate result from led to extract the builder definition.
         # Then, chain on calls to launch the builder (if it is relevant).
-        # Mark this as a dry_run so that builders with side effects (for
-        # example, annealing pushes a manifest_ref) can avoid them.
         last_successful_build = _get_last_successful_build(api, builder)
-        led_result = api.led('get-build', last_successful_build.id).then(
-            'edit', '-p', 'dry_run=true')
+        intermediate_result = api.led('get-build', last_successful_build.id)
 
-        buildbucket = led_result.result.buildbucket
+        buildbucket = intermediate_result.result.buildbucket
         recipe = buildbucket.bbagent_args.build.input.properties['recipe']
 
         if (builder in always_launch_builders or
@@ -193,7 +190,7 @@ def _launch_builders(api, test_builders, always_launch_builders):
           tag = buildbucket.bbagent_args.build.tags.add()
           tag.key = "test_recipes_task_id"
           tag.value = my_id
-          result = led_result.then('edit-recipe-bundle').then(
+          result = intermediate_result.then('edit-recipe-bundle').then(
               'edit-system', '-p', '20').then('edit', '-name',
                                               name).then('launch').launch_result
           url = 'https://{}/task?id={}'.format(result.swarming_hostname,
