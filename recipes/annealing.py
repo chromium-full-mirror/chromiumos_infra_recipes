@@ -84,6 +84,9 @@ def RunSteps(api, properties):
             api.git.add([external_full])
             api.git.commit(commit_message)
 
+          if not api.git_txn.update_ref(external_manifest.url, 'main',
+                                        _update_callback):
+            presentation.step_text = 'No diffs'
           if not api.git_txn.update_ref(external_manifest.url, 'master',
                                         _update_callback):
             presentation.step_text = 'No diffs'
@@ -404,7 +407,7 @@ def GenTests(api):
   )
 
   yield api.test('sync-manifests-has-manifest-change',
-                 api.properties(AnnealingProperties(manifest_ref='master')),
+                 api.properties(AnnealingProperties(manifest_ref='main')),
                  api.git.diff_check(True))
 
   # No changes in the manifest at all.

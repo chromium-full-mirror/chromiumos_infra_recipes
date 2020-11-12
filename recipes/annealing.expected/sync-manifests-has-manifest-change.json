@@ -524,11 +524,106 @@
       "push",
       "--porcelain",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "HEAD:refs/heads/master"
+      "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "sync manifests.git transaction.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifests.git transaction (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/full.xml",
+      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git transaction (2).Copy manifest-internal/full.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifests.git transaction (2).diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git transaction (2).git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Syncing with internal manifest.",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git transaction (2).write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Syncing with internal manifest.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git transaction (2).git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "HEAD:refs/heads/master"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git transaction (2).git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
@@ -559,7 +654,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "master:"
+      "main:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -702,20 +797,20 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "annealing manifest master 102\n\n**** Writing Gerrit Changes Disabled ****\n\nCr-Commit-Position: refs/heads/master@{#102}",
-      "[CLEANUP]/commit_msg_tmp_2"
+      "annealing manifest main 102\n\n**** Writing Gerrit Changes Disabled ****\n\nCr-Commit-Position: refs/heads/main@{#102}",
+      "[CLEANUP]/commit_msg_tmp_3"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git transaction.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@annealing manifest master 102@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@**** Writing Gerrit Changes Disabled ****@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Commit-Position: refs/heads/master@{#102}@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@annealing manifest main 102@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@**** Writing Gerrit Changes Disabled ****@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Commit-Position: refs/heads/main@{#102}@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
     ]
   },
   {
@@ -723,7 +818,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_2",
+      "[CLEANUP]/commit_msg_tmp_3",
       "--",
       "[START_DIR]/chromiumos_workspace/manifest/snapshot.xml"
     ],
@@ -740,7 +835,7 @@
       "push",
       "--porcelain",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "HEAD:refs/heads/master"
+      "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -803,7 +898,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "master:"
+      "main:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
