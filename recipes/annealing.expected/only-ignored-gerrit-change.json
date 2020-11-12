@@ -443,6 +443,38 @@
     ]
   },
   {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/manifest",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/manifest|src/[START_DIR]/chromiumos_workspace/manifest|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "--symref",
+      "cros",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git ls-remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "sync manifests.git transaction",
     "~followup_annotations": [
@@ -500,68 +532,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "sync manifests.git transaction.diff check.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync manifests.git transaction (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/full.xml",
-      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "sync manifests.git transaction (2).Copy manifest-internal/full.xml",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync manifests.git transaction (2).diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-files",
-      "--error-unmatch",
-      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "sync manifests.git transaction (2).diff check.git ls-files",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--quiet",
-      "HEAD",
-      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "sync manifests.git transaction (2).diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

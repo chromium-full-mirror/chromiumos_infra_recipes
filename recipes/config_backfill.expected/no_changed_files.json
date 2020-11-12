@@ -85,6 +85,34 @@
     ]
   },
   {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/dest",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "repo forall",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/dest|src/[START_DIR]/dest|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "--symref",
+      "cros",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git ls-remote"
+  },
+  {
     "cmd": [],
     "name": "git transaction",
     "~followup_annotations": [

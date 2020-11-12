@@ -23,7 +23,7 @@ class TooManyAttempts(Error):
 class GitTxnApi(recipe_api.RecipeApi):
   """A module for executing git transactions."""
 
-  def update_ref(self, remote, ref, update_callback, retries=3,
+  def update_ref(self, remote, update_callback, ref=None, retries=3,
                  automerge=False):
     """Transactionally update a remote git repository ref.
 
@@ -42,13 +42,14 @@ class GitTxnApi(recipe_api.RecipeApi):
 
     Args:
       remote (str): The remote repository to update.
-      ref (str): The remote ref to update. If it does not start with 'refs/' it
-          will be treated as a branch name.
       update_callback (callable): The callback function that will update the
           local repo's HEAD. The callback is passed no arguments. If the
           callback returns False the update will be cancelled but succeed.
       retries (int): Number of update attempts to make before failing.
       automerge (bool): Whether to use Gerrit's "auto-merge" feature.
+      ref (str): The remote ref to update. If it does not start with 'refs/' it
+          will be treated as a branch name. If not specified, the HEAD ref for
+          the remote of the current repo project will be used.
 
     Returns:
       bool: True if the transaction succeeded, false if it explicitly aborts.
@@ -56,6 +57,8 @@ class GitTxnApi(recipe_api.RecipeApi):
     Raises:
       TooManyAttempts: if the number of attempts exceeds |retries|.
     """
+    ref = ref or self.m.git.remote_head(self.m.repo.project_info().remote)
+
     if not ref.startswith('refs/'):
       ref = 'refs/heads/%s' % ref
     for i in range(retries):
@@ -87,7 +90,8 @@ class GitTxnApi(recipe_api.RecipeApi):
 
     raise TooManyAttempts()
 
-  def update_ref_write_file(self, remote, ref, message, dest, data, **kwargs):
+  def update_ref_write_file(self, remote, message, dest, data, ref=None,
+                            **kwargs):
     """Transactionally update a file in a remote git repository ref.
 
     See 'self.update_ref'. Instead of running a callback, this will attempt to
@@ -95,12 +99,13 @@ class GitTxnApi(recipe_api.RecipeApi):
 
     Args:
       remote (str): The remote repository to update.
-      ref (str): The remote ref to update. If it does not start with 'refs/' it
-          will be treated as a branch name.
       message (str): The commit message to use.
       dest (Path): The path of the file to write.
       data (str): The data to write.
       kwargs: See 'self.update_ref'.
+      ref (str): The remote ref to update. If it does not start with 'refs/' it
+          will be treated as a branch name. If not specified, the HEAD ref for
+          the remote of the current repo project will be used.
 
     Returns:
       bool: True if the transaction succeeded, false if the file didn't change.
@@ -115,4 +120,5 @@ class GitTxnApi(recipe_api.RecipeApi):
         return False
       self.m.git.add([dest])
       self.m.git.commit(message, files=[dest])
-    return self.update_ref(remote, ref, update_callback, **kwargs)
+
+    return self.update_ref(remote, update_callback, ref=ref, **kwargs)

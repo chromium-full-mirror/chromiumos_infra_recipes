@@ -63,6 +63,28 @@
   {
     "cmd": [
       "git",
+      "ls-remote",
+      "--symref",
+      "https://mygithost.google.com/somerepo",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git ls-remote"
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "--symref",
+      "https://mygithost.google.com/somerepo",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git ls-remote (2)"
+  },
+  {
+    "cmd": [
+      "git",
       "merge",
       "branch",
       "-m",
@@ -326,7 +348,7 @@
       "foo"
     ],
     "infra_step": true,
-    "name": "git ls-remote"
+    "name": "git ls-remote (3)"
   },
   {
     "cmd": [

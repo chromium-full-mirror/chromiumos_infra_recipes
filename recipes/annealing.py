@@ -84,10 +84,7 @@ def RunSteps(api, properties):
             api.git.add([external_full])
             api.git.commit(commit_message)
 
-          if not api.git_txn.update_ref(external_manifest.url, 'main',
-                                        _update_callback):
-            presentation.step_text = 'No diffs'
-          if not api.git_txn.update_ref(external_manifest.url, 'master',
+          if not api.git_txn.update_ref(external_manifest.url,
                                         _update_callback):
             presentation.step_text = 'No diffs'
 
@@ -243,8 +240,8 @@ def _publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
       for key, val in footers:
         commit_message += "%s: %s\n" % (key, val)
 
-    api.git_txn.update_ref_write_file(repo_url, snapshot_ref, commit_message,
-                                      snapshot_file, snapshot_xml)
+    api.git_txn.update_ref_write_file(repo_url, commit_message, snapshot_file,
+                                      snapshot_xml, ref=snapshot_ref)
     return _make_gitiles_commit(api, repo_url, 'refs/heads/%s' % snapshot_ref,
                                 api.git.head_commit())
 

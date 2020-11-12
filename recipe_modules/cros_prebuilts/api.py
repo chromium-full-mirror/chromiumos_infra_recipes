@@ -347,9 +347,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
             self.m.git.checkout('FETCH_HEAD', force=True)
 
           self.m.git_txn.update_ref_write_file(
-              project.remote, branch,
+              project.remote,
               'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),
-              binhost_path, binhost_data, automerge=True)
+              binhost_path, binhost_data, automerge=True, ref=branch)
 
   def _upload(self, root, paths, uri, acls):
     """Upload the paths within root to the GS URI.

@@ -330,6 +330,32 @@ class GitApi(recipe_api.RecipeApi):
       return None
     return step_data.stdout.strip()
 
+  def remote_head(self, remote, test_stdout=None):
+    """Returns the HEAD ref of the given remote.
+
+    Args:
+       remote (str): remote name to query
+
+    Returns:
+       ref contained in the remote HEAD (ie the default branch), or None on
+       error.
+    """
+    if test_stdout is None:
+      test_stdout = 'ref: refs/heads/main  HEAD\n'
+
+    step_data = self._step(
+        ['ls-remote', '--symref', remote, 'HEAD'],
+        ok_ret=(0, 1),
+        stdout=self.m.raw_io.output(),
+        test_stdout=test_stdout,
+    )
+
+    for line in step_data.stdout.split('\n'):
+      if line.startswith('ref:'):
+        _, ref, _ = line.split()
+        return ref
+    return None
+
   def head_commit(self):
     """Returns the HEAD commit ID."""
     return self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),

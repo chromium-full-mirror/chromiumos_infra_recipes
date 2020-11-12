@@ -126,8 +126,8 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatt
       try:
         api.git_txn.update_ref(
             project_info.remote,
-            project_info.branch,
             _flatten_config,
+            ref=project_info.branch,
         )
       except StepFailure:
         # Mark step as failed, but continue processing
@@ -186,8 +186,8 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatt
     try:
       api.git_txn.update_ref(
           config_project_info.remote,
-          config_project_info.branch,
           _merge_configs,
+          ref=config_project_info.branch,
       )
     except StepFailure:
       presentation.status = 'FAILURE'  # swallow StepFailure and keep going

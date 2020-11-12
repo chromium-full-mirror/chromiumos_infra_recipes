@@ -335,15 +335,17 @@ class RepoApi(recipe_api.RecipeApi):
       infos.append(ProjectInfo(name, path, remote, branch, rrev))
     return infos
 
-  def project_info(self, project):
+  def project_info(self, project=None):
     """Use 'repo forall' to gather project information for one project.
 
     Args:
-      project (str|Path): Project name or path to return info for.
+      project (str|Path): Project name or path to return info for. If None, then
+      use the cwd as the path for the project.
 
     Returns:
       ProjectInfo: The request project info.
     """
+    project = project or self.m.context.cwd
     project_infos = self.project_infos(projects=[project])
     assert len(set(project_infos)) == 1, 'expected one project'
     return project_infos[0]

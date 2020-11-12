@@ -17,13 +17,15 @@ DEPS = [
 
 def RunSteps(api):
   commit_id = 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
-  api.git.clone('https://mygithost.google.com/somerepo')
-  api.git.clone('https://mygithost.google.com/somerepo',
-                reference=api.path.mkdtemp(), dissociate=True)
+  remote = 'https://mygithost.google.com/somerepo'
+  api.git.clone(remote)
+  api.git.clone(remote, reference=api.path.mkdtemp(), dissociate=True)
   api.git.fetch('remote')
   api.assertions.assertEqual(
       api.git.fetch_ref('remote', 'refs/heads/branch'), commit_id)
   api.git.checkout('master', force=True)
+  api.assertions.assertEqual(api.git.remote_head(remote), 'refs/heads/main')
+  api.assertions.assertEqual(api.git.remote_head(remote, test_stdout=''), None)
   api.git.merge_silent_fail('branch', 'yeet')
   api.git.merge('branch', 'yeet')
   api.git.merge_abort()
