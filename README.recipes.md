@@ -59,6 +59,7 @@
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [phosphorus](#recipe_modules-phosphorus)
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
+  * [pupr](#recipe_modules-pupr) &mdash; APIs for PUpr.
   * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [result_flow](#recipe_modules-result_flow)
@@ -277,6 +278,8 @@
   * [portage:examples/full](#recipes-portage_examples_full)
   * [presubmit_cq](#recipes-presubmit_cq) &mdash; Launches presubmit tests for CQ.
   * [presubmit_tests](#recipes-presubmit_tests) &mdash; Recipe for running presubmit on multiple CLs.
+  * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry)
+  * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [repo:examples/annealing](#recipes-repo_examples_annealing)
@@ -4293,6 +4296,37 @@ Must be run with cwd inside a chromiumos source root.
 
 Args:
   dryrun (bool): If set, do everything except the actual push.
+### *recipe_modules* / [pupr](/recipe_modules/pupr)
+
+[DEPS](/recipe_modules/pupr/__init__.py#6): [gerrit](#recipe_modules-gerrit), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+APIs for PUpr.
+
+#### **class [PuprApi](/recipe_modules/pupr/api.py#45)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for PUpr steps.
+
+&mdash; **def [identify\_retry](/recipe_modules/pupr/api.py#61)(self, retry_policy, open_cls):**
+
+Identify the CL to be retried based on retry_policy.
+
+Args:
+  retry_policy (RetryClPolicy): The retry policy to follow. Can be NO_RETRY,
+    LATEST_OR_LATEST_PINNED, or LATEST_PINNED.
+  open_cls (List[gerrit.PatchSet]): List of CLs.
+
+Returns:
+  PatchSet: The CL to be retried (or None if no retry)
+
+&mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#50)(self, changes):**
+
+Examine open CLs for the HASHTAG_FREEZE_RETRIES hashtag.
+
+Args:
+  changes (List[gerrit.PatchSet]): List of CLs.
+
+Returns:
+  bool: Whether or not a HASHTAG_FREEZE_RETRIES hashtag is present.
 ### *recipe_modules* / [recipe\_analyze](/recipe_modules/recipe_analyze)
 
 [DEPS](/recipe_modules/recipe_analyze/__init__.py#5): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6173,7 +6207,7 @@ An experimental recipe for running GCE tests.
 &mdash; **def [RunSteps](/recipe_modules/gcloud/examples/full.py#11)(api):**
 ### *recipes* / [generator](/recipes/generator.py)
 
-[DEPS](/recipes/generator.py#48): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/generator.py#48): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the PUpr generator.
 
@@ -6183,13 +6217,9 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#103)(api, properties):**
+&mdash; **def [RunSteps](/recipes/generator.py#75)(api, properties):**
 
-&mdash; **def [is\_failed\_cl](/recipes/generator.py#82)(c):**
-
-&mdash; **def [is\_running\_cl](/recipes/generator.py#91)(c):**
-
-&mdash; **def [response\_has\_changes](/recipes/generator.py#513)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#459)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
@@ -6489,6 +6519,16 @@ Launches presubmit tests for CQ.
 Recipe for running presubmit on multiple CLs.
 
 &mdash; **def [RunSteps](/recipes/presubmit_tests.py#34)(api, properties):**
+### *recipes* / [pupr:examples/identify\_retry](/recipe_modules/pupr/examples/identify_retry.py)
+
+[DEPS](/recipe_modules/pupr/examples/identify_retry.py#6): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/pupr/examples/identify_retry.py#22)(api):**
+### *recipes* / [pupr:examples/retries\_frozen](/recipe_modules/pupr/examples/retries_frozen.py)
+
+[DEPS](/recipe_modules/pupr/examples/retries_frozen.py#6): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/pupr/examples/retries_frozen.py#15)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
