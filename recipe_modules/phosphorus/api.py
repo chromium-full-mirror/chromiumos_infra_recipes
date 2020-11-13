@@ -125,7 +125,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
         self._cmd = cipd_dir.join('phosphorus')
 
-  def load_skylab_local_state(self, test_id=''):
+  def load_skylab_local_state(self, test_id):
     """Load the local DUT state file.
 
     Raises:

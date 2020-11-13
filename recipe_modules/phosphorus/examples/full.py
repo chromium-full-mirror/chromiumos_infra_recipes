@@ -50,7 +50,7 @@ def RunSteps(api):
     api.phosphorus.save_skylab_local_state('foo-state')
   with api.assertions.assertRaises(ValueError):
     api.phosphorus.save_and_seal_skylab_local_state('bar-state')
-  api.phosphorus.load_skylab_local_state()
+  api.phosphorus.load_skylab_local_state('test-id')
   api.phosphorus.save_skylab_local_state('baz-state')
   api.phosphorus.save_and_seal_skylab_local_state('qux-state')
 
