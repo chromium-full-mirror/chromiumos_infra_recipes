@@ -83,6 +83,7 @@ def RunSteps(api):
           'ExportCpeReport': artifacts.BundleResponse,
           'BundleImageArchives': artifacts.BundleResponse,
           'BundleFpmcuUnittests': artifacts.BundleResponse,
+          'BundleGceTarball': artifacts.BundleResponse,
       },
       'BinhostService': {
           'PrepareBinhostUploads': binhost.PrepareBinhostUploadsResponse,

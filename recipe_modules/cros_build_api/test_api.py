@@ -76,6 +76,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'ExportCpeReport',
         'BundleImageArchives',
         'BundleFpmcuUnittests',
+        'BundleGceTarball',
     ]
     ret.update({endpoint: bundle_response for endpoint in bundle_endpoints})
     return ret
