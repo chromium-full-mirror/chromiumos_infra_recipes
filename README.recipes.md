@@ -4111,7 +4111,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#132)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#379)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#397)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None):**
 
 Plan, schedule, and run child builders.
 
@@ -4124,7 +4124,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#613)(self, testable_builds=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#631)(self, testable_builds=None):**
 
 Plan, schedule, and run tests.
 
@@ -4137,11 +4137,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#544)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#562)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#550)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#568)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 

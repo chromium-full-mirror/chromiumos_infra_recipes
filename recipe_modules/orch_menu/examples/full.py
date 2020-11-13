@@ -91,6 +91,15 @@ def GenTests(api):
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
 
+  yield api.orch_menu.test(
+      'branch', data.ctp_normal, api.post_check(post_process.StatusSuccess),
+      api.orch_menu.snapshot_xml_exists(False),
+      api.post_check(post_process.DoesNotRun,
+                     'update manifest ref refs/heads/test.git push'),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test')),
+      with_manifest_refs=True, with_history=True)
+
   summary = ('2 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:')
   yield api.orch_menu.test(

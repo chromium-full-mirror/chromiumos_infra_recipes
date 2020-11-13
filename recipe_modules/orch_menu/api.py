@@ -94,7 +94,7 @@ class OrchMenuApi(RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(OrchMenuApi, self).__init__(*args, **kwargs)
-    self._has_manifest_refs = False
+    self._update_manifest_refs = False
     self._internal_repo_path = None
     self._external_repo_path = None
     self._external_gitiles_commit = None
@@ -240,7 +240,7 @@ class OrchMenuApi(RecipeApi):
       if not value.startswith('refs/heads/'):
         raise StepFailure('%s ref %s is missing refs/heads/' %
                           (ref.name, value))
-      self._has_manifest_refs = True
+      self._update_manifest_refs = True
 
   def _sync_manifest_repos(self, test_footers):
     """Sync the manifest repos.
@@ -253,8 +253,27 @@ class OrchMenuApi(RecipeApi):
       test_footers (str): test Cr-External-Snapshot footer data(values separated
           by newlines), or None.
     """
+    external_manifest = self.m.src_state.external_manifest
     self._internal_repo_path = self._clone_repo('internal manifest',
                                                 self.gitiles_commit)
+
+    snapshot_xml = self._internal_repo_path.join('snapshot.xml')
+    # If the branch we are running on lacks snapshots, use tip-of-branch
+    # instead.
+    if self._test_data.enabled and self._test_data.get('snapshot_xml_exists',
+                                                       True):
+      self.m.path.mock_add_paths(snapshot_xml)
+    if not self.m.path.exists(snapshot_xml):
+      # We may want to read the commit hash from the external manifest, but the
+      # child builder will do that in cros_infra_config.configure_builder(), so
+      # we'll pass on that for now.
+      ext_commit = external_manifest.as_gitiles_commit_proto
+      ext_commit.ref = self.gitiles_commit.ref
+      self._external_gitiles_commit = ext_commit
+
+      # We do not want to push manifest refs on unpinned branches.
+      self._update_manifest_refs = False
+      return
 
     # Read the Cr-External-Snapshot footer to get ref of external snapshot
     # that corresponds with the internal snapshot.
@@ -270,12 +289,11 @@ class OrchMenuApi(RecipeApi):
         raise StepFailure('expected exactly one Cr-External-Snapshot footer')
       extern_snapshot_id = footer_values[0]
 
-    external_manifest = self.m.src_state.external_manifest
     self._external_gitiles_commit = common_pb2.GitilesCommit(
         host=external_manifest.host, project=external_manifest.project,
         ref=self.gitiles_commit.ref, id=extern_snapshot_id)
 
-    if not self._has_manifest_refs:
+    if not self._update_manifest_refs:
       return
     # If updating manifests, also clone the external manifest repo.
     self._external_repo_path = self._clone_repo('external manifest',
@@ -307,7 +325,7 @@ class OrchMenuApi(RecipeApi):
     Args:
       ref (str): Ref to push to (possibly empty) or None
     """
-    if ref:
+    if self._update_manifest_refs and ref:
       for external in False, True:
         manifest = self._get_manifest_info(external)
         with self.m.step.nest('update %s ref %s' % (manifest.name, ref)), \
