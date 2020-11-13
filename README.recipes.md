@@ -751,7 +751,7 @@ Args:
 
 A module to plan the builds to be launched.
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#27)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#31)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -766,7 +766,7 @@ Args:
   internal_snapshot (GitilesCommit): gitiles_commit of the internal manifest
     to be supplied to child builds syncing to the internal manifest.
   external_snapshot (GitilesCommit): gitiles_commit of the public manifest
-  to be supplied to child builds syncing to the external manifest.
+    to be supplied to child builds syncing to the external manifest.
 
 Returns:
   A tuple of three lists:
@@ -774,7 +774,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#225)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#231)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -788,7 +788,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#383)(self, builder_name):**
+&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#389)(self, builder_name):**
 
 Returns to the name of the full variant of the builder.
 
@@ -799,7 +799,7 @@ Args:
 Returns:
    A string of the full builder name.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#368)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#374)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -810,7 +810,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#287)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#293)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 

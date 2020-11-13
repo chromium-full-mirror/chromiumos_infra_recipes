@@ -16,3 +16,7 @@ DEPS = [
     'git_footers',
     'test_util',
 ]
+
+from PB.recipe_modules.chromeos.build_plan.build_plan import BuildPlanProperties
+
+PROPERTIES = BuildPlanProperties

@@ -1,0 +1,12 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.build_plan;
+
+message BuildPlanProperties {
+  // Whether to disable any pruning of necessary builds in get_build_plan.
+  bool disable_build_plan_pruning = 1;
+}

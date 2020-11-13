@@ -15,6 +15,10 @@ from datetime import datetime
 class BuildPlanApi(recipe_api.RecipeApi):
   """A module to plan the builds to be launched."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super(BuildPlanApi, self).__init__(*args, **kwargs)
+    self._properties = properties
+
   # A Git footer than can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
   DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
@@ -39,7 +43,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       internal_snapshot (GitilesCommit): gitiles_commit of the internal manifest
         to be supplied to child builds syncing to the internal manifest.
       external_snapshot (GitilesCommit): gitiles_commit of the public manifest
-      to be supplied to child builds syncing to the external manifest.
+        to be supplied to child builds syncing to the external manifest.
 
     Returns:
       A tuple of three lists:
@@ -54,10 +58,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
     builder_configs = [
         self.m.cros_infra_config.get_builder_config(b.name) for b in child_specs
     ]
-    necessary_builders = self.m.cros_relevance.get_necessary_builders(
-        builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
-            b.id for b in builder_configs if 'pointless' not in b.id.name
-        ])
+    necessary_builders = [b.id.name for b in builder_configs]
+    if not self._properties.disable_build_plan_pruning:
+      necessary_builders = self.m.cros_relevance.get_necessary_builders(
+          builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
+              b.id for b in builder_configs if 'pointless' not in b.id.name
+          ])
 
     if enable_history:
       if gerrit_changes:
