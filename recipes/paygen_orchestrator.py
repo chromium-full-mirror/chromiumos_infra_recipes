@@ -94,25 +94,18 @@ def RunSteps(api, properties):
             found_arts = api.cros_storage.discover_gs_artifacts(
                 path.join('gs://' + properties.bucket, long_chan_name,
                           payload_cfg['builder_name'],
-                          payload_cfg['chrome_os_version']))
-            for art in found_arts:
-              # TODO(crbug/1122854): Remove conditional once the search uri is more granual.
-              if isinstance(art, api.cros_storage.UnsignedImage) or isinstance(
-                  art, api.cros_storage.SignedImage):
-                source_artifacts.append(art.to_proto())
+                          payload_cfg['chrome_os_version']),
+                parse_types=api.cros_storage.image_types)
+            source_artifacts.extend([x.to_proto() for x in found_arts])
 
       # Discover the target images for this channel.
       with api.step.nest('target artifacts'):
         found_arts = api.cros_storage.discover_gs_artifacts(
             path.join('gs://' + properties.bucket, long_chan_name,
                       properties.builder_name,
-                      properties.target_chrome_os_version))
-
-        for art in found_arts:
-          # TODO(crbug/1122854): Remove conditional once the search uri is more granual.
-          if isinstance(art, api.cros_storage.UnsignedImage) or isinstance(
-              art, api.cros_storage.SignedImage):
-            target_artifacts.append(art.to_proto())
+                      properties.target_chrome_os_version),
+            parse_types=api.cros_storage.image_types)
+        target_artifacts.extend([x.to_proto() for x in found_arts])
 
   # Match configuration with discovered artifacts.
   with api.step.nest('discovered artifacts') as pres:

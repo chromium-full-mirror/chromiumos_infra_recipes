@@ -54,6 +54,16 @@ def RunSteps(api):
       'gs://test-bucket/canary-channel/zork/13337.0.1/'
       'payloads/chromeos_13336.0.1-13337.0.1_zork_canary-channel_delta_mp-v5.bin-abc123.signed'
   )
+  good_delta_dlc_payload_uri = (
+      'gs://test-bucket/canary-channel/zork/13337.0.1/'
+      'payloads/dlc/termina-dlc/package/'
+      'dlc_termina-dlc_package_13336.0.1-13337.0.1_zork_canary-channel_delta.bin-gvtgcmjugztghjioi4bbf32rlvybuioo.signed'
+  )
+  good_full_dlc_payload_uri = (
+      'gs://test-bucket/canary-channel/zork/13337.0.1/'
+      'payloads/dlc/termina-dlc/package/'
+      'dlc_termina-dlc_package_13337.0.1_zork_canary-channel_full.bin-gvtgcmjugztghuefrdqmdn2x56si2xej.signed'
+  )
 
   src_test_artifact_root = api.cros_storage.ArtifactRoot(
       'test-bucket', 'canary-channel', 'zork', '13336.0.1')
@@ -63,6 +73,10 @@ def RunSteps(api):
   src_test_signed_image = (
       api.cros_storage.UnsignedImage(src_test_artifact_root,
                                      ImageType.Value('RECOVERY'), 'mp-v5'))
+  src_test_dlc_image = (
+      api.cros_storage.DLCImage(src_test_artifact_root, 'termina-dlc',
+                                'package', 'gvtgcmjugztghjioi4bbf32rlvybuioo'))
+
   unsigned_full_payload = api.cros_storage.FullPayload(test_unsigned_image,
                                                        'abc123')
   signed_full_payload = api.cros_storage.FullPayload(test_signed_image,
@@ -73,6 +87,9 @@ def RunSteps(api):
                                                        src_test_signed_image,
                                                        'abc123')
 
+  delta_dlc_payload = api.cros_storage.DeltaDLCPayload(
+      test_dlc_image, src_test_dlc_image, 'gvtgcmjugztghjioi4bbf32rlvybuioo')
+
   api.assertions.assertEqual(good_unsigned_full_payload_uri,
                              unsigned_full_payload.uri)
   api.assertions.assertEqual(good_signed_full_payload_uri,
@@ -81,6 +98,7 @@ def RunSteps(api):
                              unsigned_delta_payload.uri)
   api.assertions.assertEqual(good_signed_delta_payload_uri,
                              signed_delta_payload.uri)
+  api.assertions.assertEqual(good_delta_dlc_payload_uri, delta_dlc_payload.uri)
 
   # Make a round trip from construction back to the uri.
   api.assertions.assertEqual(
@@ -114,6 +132,11 @@ def RunSteps(api):
       api.cros_storage.DeltaPayload.parse_uri(
           good_signed_delta_payload_uri).uri)
 
+  api.assertions.assertEqual(
+      good_delta_dlc_payload_uri,
+      api.cros_storage.DeltaDLCPayload.parse_uri(
+          good_delta_dlc_payload_uri).uri)
+
   # Ensure None returns on unmatched input.
   api.assertions.assertIsNone(
       api.cros_storage.SignedImage.parse_uri(
@@ -126,12 +149,17 @@ def RunSteps(api):
       api.cros_storage.DeltaPayload.parse_uri('gs://crumbos/nonsense'))
   api.assertions.assertIsNone(
       api.cros_storage.FullPayload.parse_uri('gs://crumbos/nonsense'))
+  api.assertions.assertIsNone(
+      api.cros_storage.DeltaDLCPayload.parse_uri('gs://crumbos/nonsense'))
 
   # Ensure close results even return None.
   api.assertions.assertIsNone(
       api.cros_storage.SignedImage.parse_uri(good_signed_image_uri[:-1]))
   api.assertions.assertIsNone(
       api.cros_storage.UnsignedImage.parse_uri(good_unsigned_image_uri[:-1]))
+  api.assertions.assertIsNone(
+      api.cros_storage.DeltaDLCPayload.parse_uri(good_delta_dlc_payload_uri +
+                                                 '.json'))
 
   # Split off the dlc.img part of the path.
   bad_dlc_image_uri = '/'.join(good_dlc_image_uri.split('/')[:-1])

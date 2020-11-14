@@ -325,7 +325,7 @@ class Payload(object):
 
   @property
   def key(self):
-    """The key to sign the image with."""
+    """The key to sign the image with, or None."""
     return self._key
 
   def __init__(self, tgt_image, unique_id):
@@ -466,26 +466,121 @@ class DeltaPayload(Payload):
     self._src_image = src_image
 
 
+class DLCPayload(Payload):
+  """A DLCPayload is a payload type for DLCs."""
+
+  # The url for a DLCPayload isn't encoded with this, so we must assume it.
+  _DEFAULT_DLC_IMAGE_NAME = 'dlc.img'
+
+  @property
+  def uri(self):
+    """A DLC Payload's full uri, overrides Payload's impl."""
+    return path.join(self._tgt_image._artifact_root.uri, 'payloads', 'dlc',
+                     self._tgt_image._dlc_id, self._tgt_image._dlc_package,
+                     self.basename)
+
+  def __init__(self, *args, **kwargs):
+    """Initialize a DLCPayload."""
+    super(DLCPayload, self).__init__(*args, **kwargs)
+
+
+class DeltaDLCPayload(DLCPayload):
+  """A delta dlc payload resident in storage."""
+
+  _DELTA_DLC_PAYLOAD_TEMPLATE = (
+      'dlc_%(dlc_id)s_%(dlc_package)s_%(src_version)s-%(tgt_version)s_'
+      '%(build_target)s_%(channel)s_delta.bin-%(unique_id)s.signed')
+
+  # Matches a delta dlc payload basename. Example:
+  # dlc_termina-dlc_package_13505.27.0-13505.33.0_fizz_beta-channel_delta.bin-gvtgcmjugztghjioi4bbf32rlvybuioo.signed
+  _DELTA_DLC_PAYLOAD_REGEXP = (r'dlc_'
+                               r'(?P<dlc_id>[^/]+)_'
+                               r'(?P<dlc_package>[^/]+)_'
+                               r'(?P<src_version>[^/]+)-'
+                               r'(?P<tgt_version>[^/]+)_'
+                               r'(?P<build_target>[^/]+)_'
+                               r'(?P<channel>[^/]+)_delta\.bin-'
+                               r'(?P<unique_id>[^/^\.]+)\.signed$')
+
+  @classmethod
+  def parse_uri(cls, uri):
+    """Construct a DeltaDLCPayload from a provided uri, or return None."""
+    tgt_ar = ArtifactRoot.parse_uri(uri)
+    if not tgt_ar:
+      return None
+    m = re.search(cls._DELTA_DLC_PAYLOAD_REGEXP, uri)
+    if not m:
+      return None
+    values = m.groupdict()
+
+    src_ar = ArtifactRoot.parse_uri(uri)
+    src_ar.version = values['src_version']
+
+    tgt_dlc_image = DLCImage(
+        tgt_ar, values['dlc_id'], values['dlc_package'],
+        super(DeltaDLCPayload, cls)._DEFAULT_DLC_IMAGE_NAME)
+    src_dlc_image = DLCImage(
+        src_ar, values['dlc_id'], values['dlc_package'],
+        super(DeltaDLCPayload, cls)._DEFAULT_DLC_IMAGE_NAME)
+    return DeltaDLCPayload(tgt_dlc_image, src_dlc_image, values['unique_id'])
+
+  @property
+  def basename(self):
+    """The basename portion of the path of a DeltaDLCPayload."""
+    artifact_root = self._tgt_image._artifact_root
+    return self._DELTA_DLC_PAYLOAD_TEMPLATE % {
+        'dlc_id': self._tgt_image._dlc_id,
+        'dlc_package': self._tgt_image._dlc_package,
+        'src_version': self._src_image._artifact_root.version,
+        'tgt_version': artifact_root.version,
+        'build_target': artifact_root.build_target_name,
+        'channel': artifact_root.channel,
+        'unique_id': self._unique_id,
+    }
+
+  def __init__(self, tgt_image, src_image, unique_id):
+    """Construct a DLCDeltaPayload instance.
+
+    Args:
+      tgt_image (Image): A representation of the image the payload updates to.
+      src_image (Image): A representation of the image the payload updates from.
+      unique_id (str): A random value appended to payloads at generation time.
+    """
+    super(DeltaDLCPayload, self).__init__(tgt_image, unique_id)
+    self._src_image = src_image
+
+
 class CrosStorageApi(recipe_api.RecipeApi):
   """Apis for dealing with stored images, payloads, and artifacts."""
 
   UnsupportedImageTypeException = UnsupportedImageTypeException
+
   ArtifactRoot = ArtifactRoot
   SignedImage = SignedImage
   UnsignedImage = UnsignedImage
   DLCImage = DLCImage
   FullPayload = FullPayload
   DeltaPayload = DeltaPayload
+  #FullDLCPayload = FullDLCPayload
+  DeltaDLCPayload = DeltaDLCPayload
 
-  # This is the list of available URL parsers, used for discovery.
-  ParserOptions = [
+  image_types = [
       UnsignedImage.parse_uri,
       SignedImage.parse_uri,
-      FullPayload.parse_uri,
-      DeltaPayload.parse_uri,
+      DLCImage.parse_uri,
   ]
 
-  def discover_gs_artifacts(self, prefix_uri):
+  payload_types = [
+      FullPayload.parse_uri,
+      DeltaPayload.parse_uri,
+      #FullDLCPayload,
+      DeltaDLCPayload.parse_uri,
+  ]
+
+  # This is the list of available URL parsers, used for discovery.
+  all_artifact_types = image_types + payload_types
+
+  def discover_gs_artifacts(self, prefix_uri, parse_types=all_artifact_types):
     """Discover and return all the GS artifacts found in a given ArtifactRoot.
 
     We assume that each uri will match at most a single ParserOption and we
@@ -494,9 +589,10 @@ class CrosStorageApi(recipe_api.RecipeApi):
 
     Args:
       prefix_uri (str): The gs path prefix recursively crawled.
+      parse_types list(parse_uri()): A list of uri parser fn()s to consider.
 
     Returns:
-      (list[Image and Payload]): A list of artifacts found in the prefix.
+      list[artifact_type]: list of artifacts found in the prefix.
     """
     with self.m.step.nest('discover gs artifacts') as presentation:
       recursive_uri = path.join(prefix_uri, '**')
@@ -510,7 +606,7 @@ class CrosStorageApi(recipe_api.RecipeApi):
       except self.m.step.StepFailure:
         return []
       for uri in listing.stdout.split():
-        for po in self.ParserOptions:
+        for po in parse_types:
           art = po(uri)
           if art:
             artifacts.append(art)
