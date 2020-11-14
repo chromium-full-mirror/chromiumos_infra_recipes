@@ -13,11 +13,14 @@ from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 from PB.chromiumos.common import ImageType
 
+
 def RunSteps(api):
   good_unsigned_image_uri = ('gs://test-bucket/canary-channel/zork/13337.0.1/'
                              'ChromeOS-recovery-R82-13337.0.1-zork.tar.xz')
   good_signed_image_uri = ('gs://test-bucket/canary-channel/zork/13337.0.1/'
                            'chromeos_13337.0.1_zork_recovery_canary_mp-v5.bin')
+  good_dlc_image_uri = ('gs://test-bucket/canary-channel/zork/13337.0.1/'
+                        'dlc/termina-dlc/package/dlc.img')
 
   test_artifact_root = api.cros_storage.ArtifactRoot('test-bucket',
                                                      'canary-channel', 'zork',
@@ -28,9 +31,13 @@ def RunSteps(api):
   test_signed_image = (
       api.cros_storage.SignedImage(test_artifact_root,
                                    ImageType.Value('RECOVERY'), 'mp-v5'))
+  test_dlc_image = (
+      api.cros_storage.DLCImage(test_artifact_root, 'termina-dlc', 'package',
+                                'dlc.img'))
 
   api.assertions.assertEqual(good_unsigned_image_uri, test_unsigned_image.uri)
   api.assertions.assertEqual(good_signed_image_uri, test_signed_image.uri)
+  api.assertions.assertEqual(good_dlc_image_uri, test_dlc_image.uri)
 
   good_unsigned_full_payload_uri = (
       'gs://test-bucket/canary-channel/zork/13337.0.1/'
@@ -85,6 +92,10 @@ def RunSteps(api):
       api.cros_storage.SignedImage.parse_uri(good_signed_image_uri).uri)
 
   api.assertions.assertEqual(
+      good_dlc_image_uri,
+      api.cros_storage.DLCImage.parse_uri(good_dlc_image_uri).uri)
+
+  api.assertions.assertEqual(
       good_unsigned_full_payload_uri,
       api.cros_storage.FullPayload.parse_uri(
           good_unsigned_full_payload_uri).uri)
@@ -110,6 +121,8 @@ def RunSteps(api):
   api.assertions.assertIsNone(
       api.cros_storage.UnsignedImage.parse_uri('gs://crumbos/nonsense'))
   api.assertions.assertIsNone(
+      api.cros_storage.DLCImage.parse_uri('gs://crumbos/nonsense/downloadable'))
+  api.assertions.assertIsNone(
       api.cros_storage.DeltaPayload.parse_uri('gs://crumbos/nonsense'))
   api.assertions.assertIsNone(
       api.cros_storage.FullPayload.parse_uri('gs://crumbos/nonsense'))
@@ -120,6 +133,11 @@ def RunSteps(api):
   api.assertions.assertIsNone(
       api.cros_storage.UnsignedImage.parse_uri(good_unsigned_image_uri[:-1]))
 
+  # Split off the dlc.img part of the path.
+  bad_dlc_image_uri = '/'.join(good_dlc_image_uri.split('/')[:-1])
+  api.assertions.assertIsNone(
+      api.cros_storage.DLCImage.parse_uri(bad_dlc_image_uri))
+
   with api.assertions.assertRaises(
       api.cros_storage.UnsupportedImageTypeException):
     api.cros_storage.SignedImage(test_artifact_root, ImageType.Value('DEV'),
@@ -128,6 +146,7 @@ def RunSteps(api):
   # Make protos out of them.
   test_unsigned_image.to_proto()
   test_signed_image.to_proto()
+  test_dlc_image.to_proto()
 
 
 def GenTests(api):

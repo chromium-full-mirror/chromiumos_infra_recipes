@@ -2512,9 +2512,11 @@ Much of the inspiration for this module came from:
 As long as there are two versions of the the path construction any changes
 to one of these needs to be reflected in the other.
 
-#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#407)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#469)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#424)(self, prefix_uri):**
+Apis for dealing with stored images, payloads, and artifacts.
+
+&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#488)(self, prefix_uri):**
 
 Discover and return all the GS artifacts found in a given ArtifactRoot.
 
@@ -6065,7 +6067,7 @@ returns a list of repos to make commits to.
 
 [DEPS](/recipe_modules/cros_storage/examples/full.py#6): [cros\_storage](#recipe_modules-cros_storage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_storage/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_storage/examples/full.py#17)(api):**
 ### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
 
 [DEPS](/recipe_modules/cros_tags/examples/full.py#11): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

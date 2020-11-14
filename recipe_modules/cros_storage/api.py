@@ -18,6 +18,7 @@ import re
 
 from recipe_engine import recipe_api
 from PB.chromite.api.payload import Build as Build_pb2
+from PB.chromite.api.payload import DLCImage as DLCImage_pb2
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 from PB.chromiumos.common import BuildTarget, ImageType
@@ -107,6 +108,7 @@ class Image(object):
       ImageType.Value('RECOVERY'),
       ImageType.Value('BASE'),
       ImageType.Value('TEST'),
+      ImageType.Value('DLC'),
   ]
 
   # Construct regex for image types (e.g. '(base|recovery|dev|test)').
@@ -191,6 +193,7 @@ class SignedImage(Image):
 
 
 class UnsignedImage(Image):
+  """An unsigned image in storage."""
 
   _UNSIGNED_IMAGE_TEMPLATE = (
       'ChromeOS-%(image_type)s-%(milestone)s-%(version)s-%(build_target_name)s.tar.xz'
@@ -250,6 +253,65 @@ class UnsignedImage(Image):
     """
     super(UnsignedImage, self).__init__(artifact_root, image_type)
     self._milestone = milestone
+
+
+class DLCImage(Image):
+  """A DLC Image or Downloadable Content Image in storage."""
+
+  _DLC_IMAGE_TEMPLATE = 'dlc/%(dlc_id)s/%(dlc_package)s/%(dlc_image)s'
+  _DLC_REGEXP = r'/dlc/(?P<dlc_id>.*)/(?P<dlc_package>.*)/(?P<dlc_image>.*)$'
+
+  @classmethod
+  def parse_uri(cls, uri):
+    """Construct a DLC from a provided Uri, or return None."""
+    ar = ArtifactRoot.parse_uri(uri)
+    if not ar:
+      return None
+    m = re.search(cls._DLC_REGEXP, uri)
+    if not m:
+      return None
+    values = m.groupdict()
+    return cls(ar, values['dlc_id'], values['dlc_package'], values['dlc_image'])
+
+  @property
+  def basename(self):
+    """Basename for DLC is different, starts at the artifact root."""
+    return self._DLC_IMAGE_TEMPLATE % {
+        'dlc_id': self._dlc_id,
+        'dlc_package': self._dlc_package,
+        'dlc_image': self._dlc_image,
+    }
+
+  def to_proto(self):
+    """Convert self into a chromite api DLCImage proto."""
+    return DLCImage_pb2(
+        build=Build_pb2(
+            build_target=BuildTarget(
+                name=self._artifact_root.build_target_name,
+            ),
+            version=self._artifact_root.version,
+            bucket=self._artifact_root.bucket,
+            channel=self._artifact_root.channel,
+        ),
+        dlc_id=self._dlc_id,
+        dlc_package=self._dlc_package,
+        dlc_image=self._dlc_image,
+    )
+
+  def __init__(self, artifact_root, dlc_id, dlc_package, dlc_image):
+    """Construct a DLCImage instance.
+
+    Args:
+      artifact_root (ArtifactRoot): A ArtifactRoot instance.
+      dlc_id (str): The name of the DLC (e.g. 'terminal-dlc').
+      dlc_package (str): The DLC package name (e.g. 'package').
+      dlc_image (str): The name of the dlc image (e.g. 'dlc.img').
+    """
+    super(DLCImage, self).__init__(artifact_root, ImageType.Value('DLC'))
+    self._artifact_root = artifact_root
+    self._dlc_id = dlc_id
+    self._dlc_package = dlc_package
+    self._dlc_image = dlc_image
 
 
 class Payload(object):
@@ -405,11 +467,13 @@ class DeltaPayload(Payload):
 
 
 class CrosStorageApi(recipe_api.RecipeApi):
+  """Apis for dealing with stored images, payloads, and artifacts."""
 
   UnsupportedImageTypeException = UnsupportedImageTypeException
   ArtifactRoot = ArtifactRoot
   SignedImage = SignedImage
   UnsignedImage = UnsignedImage
+  DLCImage = DLCImage
   FullPayload = FullPayload
   DeltaPayload = DeltaPayload
 
