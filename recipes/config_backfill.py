@@ -18,10 +18,6 @@ from recipe_engine import post_process
 
 # Recipe dependencies
 DEPS = [
-    'gerrit',
-    'git',
-    'git_txn',
-    'gitiles',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
@@ -29,6 +25,10 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'gerrit',
+    'git',
+    'git_txn',
+    'gitiles',
 ]
 
 PROPERTIES = ConfigBackfillProperties
@@ -248,7 +248,8 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_backfill')
 
   # Update the repo atomically
   with api.context(cwd=dest_repo_path):
-    api.git_txn.update_ref(properties.dest_repo, _merge_configs)
+    api.git_txn.update_ref(properties.dest_repo, _merge_configs,
+                           ref=api.git.remote_head())
 
 
 def GenTests(api):

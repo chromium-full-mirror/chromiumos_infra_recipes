@@ -330,11 +330,11 @@ class GitApi(recipe_api.RecipeApi):
       return None
     return step_data.stdout.strip()
 
-  def remote_head(self, remote, test_stdout=None):
+  def remote_head(self, remote='.', test_stdout=None):
     """Returns the HEAD ref of the given remote.
 
     Args:
-       remote (str): remote name to query
+       remote (str): remote name to query, by default remote of current branch
 
     Returns:
        ref contained in the remote HEAD (ie the default branch), or None on

@@ -3546,12 +3546,12 @@ Args:
   force (bool): If True, set --force.
   branch (str): If set, rebase from specific branch.
 
-&mdash; **def [remote\_head](/recipe_modules/git/api.py#333)(self, remote, test_stdout=None):**
+&mdash; **def [remote\_head](/recipe_modules/git/api.py#333)(self, remote='.', test_stdout=None):**
 
 Returns the HEAD ref of the given remote.
 
 Args:
-   remote (str): remote name to query
+   remote (str): remote name to query, by default remote of current branch
 
 Returns:
    ref contained in the remote HEAD (ie the default branch), or None on
