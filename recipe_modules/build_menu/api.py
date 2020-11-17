@@ -315,6 +315,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       relevant_packages = self.m.cros_relevance.get_package_dependencies(
           sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
           patch_sets=self.m.workspace_util.patch_sets, packages=packages)
+      # Ensure implicit dependencies are installed.
+      relevant_packages.add(category='virtual', package_name='implicit-system')
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = Profile(name=config.build.portage_profile.profile)
