@@ -67,14 +67,23 @@ def RunSteps(api, properties):
     external_full = external_manifest.path.join('full.xml')
 
     with api.context(cwd=internal_manifest.path):
+      _debug(api, 'internal pre-sync')
+      with api.context(
+          cwd=api.src_state.workspace_path.join('.repo/manifests')):
+        _debug(api, '.repo/manifests pre-sync')
       api.cros_source.ensure_synced_cache(is_staging=is_staging)
+      with api.context(
+          cwd=api.src_state.workspace_path.join('.repo/manifests')):
+        _debug(api, '.repo/manifests post-sync')
 
       with api.context(cwd=external_manifest.path):
+        _debug(api, 'external pre sync-manifests')
         # Sync manifest/full.xml with manifest-internal/full.xml
         with api.step.nest('sync manifests') as presentation:
 
           def _update_callback():
             """Callback function for git_txn to update manifest/full.xml."""
+            _debug(api, 'in _update_callback')
             api.file.copy('Copy manifest-internal/full.xml',
                           internal_manifest.path.join('full.xml'),
                           external_full)
@@ -83,6 +92,7 @@ def RunSteps(api, properties):
             commit_message = 'Syncing with internal manifest.'
             api.git.add([external_full])
             api.git.commit(commit_message)
+            _debug(api, 'end _update_callback')
 
           if not api.git_txn.update_ref(external_manifest.url,
                                         _update_callback):
@@ -104,6 +114,7 @@ def RunSteps(api, properties):
               disable_gerrit=True)
           external_snapshot_ref = external_snapshot_commit.id
 
+      _debug(api, 'pre-generate-internal')
       # snapshot internal manifest
       snapshot_xml_intern = api.repo.manifest(
           pinned=True, step_name='generate internal manifest')
@@ -203,6 +214,16 @@ def _schedule_triggered_builds(api, commit, jobs):
                            step_name='schedule triggered builds')
 
 
+# TODO(crbug/1148052): remove debugging code.
+def _debug(api, name):
+  with api.step.nest(name):
+    api.step('status', ['git', 'status'], ok_ret='any')
+    api.step('HEAD', ['git', 'rev-parse', 'HEAD'], ok_ret='any')
+    api.step('diff', ['git', 'diff'], ok_ret='any')
+    api.step('diff', ['git', 'diff', '--cached'], ok_ret='any')
+    api.step('log', ['git', 'log', 'HEAD~2..HEAD'], ok_ret='any')
+
+
 def _publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
                       gerrit_commits=None, disable_gerrit=False, footers=[]):
   """Generate snapshot.xml file and commit it to a ref.
@@ -223,25 +244,16 @@ def _publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
   Returns:
       GitilesCommit object representing the new commit.
   """
-
-  # TODO(crbug/1148052): remove debugging code.
-  def _debug(name):
-    with api.step.nest(name):
-      api.step('status', ['git', 'status'])
-      api.step('diff', ['git', 'diff'])
-      api.step('diff', ['git', 'diff', '--cached'])
-      api.step('log', ['git', 'log', 'HEAD~2..HEAD'])
-
   if not gerrit_commits:
     gerrit_commits = []
 
-  _debug('publish pre-fetch')
+  _debug(api, 'publish pre-fetch')
   # fetch and update the ref with the new snapshot file
   api.git.fetch_ref(repo_url, snapshot_ref)
-  _debug('publish post-fetch')
+  _debug(api, 'publish post-fetch')
 
   with api.git.head_context():
-    _debug('publish pre-checkout')
+    _debug(api, 'publish pre-checkout')
     api.git.checkout('FETCH_HEAD')
     commit_message = _make_message(api, snapshot_ref, gerrit_commits,
                                    disable_gerrit)
