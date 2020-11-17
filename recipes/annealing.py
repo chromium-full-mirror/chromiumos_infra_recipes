@@ -55,7 +55,7 @@ PROPERTIES = AnnealingProperties
 
 def RunSteps(api, properties):
   # If we're configured not to publish uprev's run as staging.
-  is_staging = not properties.publish_uprevs
+  is_staging = not properties.publish_uprevs or properties.dry_run
 
   manifest_ref = properties.manifest_ref
   if not manifest_ref:
@@ -67,19 +67,21 @@ def RunSteps(api, properties):
     external_full = external_manifest.path.join('full.xml')
 
     with api.context(cwd=internal_manifest.path):
-      _debug(api, 'internal pre-sync')
-      with api.context(
-          cwd=api.src_state.workspace_path.join('.repo/manifests')):
-        _debug(api, '.repo/manifests pre-sync')
-      api.cros_source.ensure_synced_cache(is_staging=is_staging)
-      with api.context(
-          cwd=api.src_state.workspace_path.join('.repo/manifests')):
-        _debug(api, '.repo/manifests post-sync')
+      prior_internal = api.git.fetch_ref(internal_manifest.url, manifest_ref)
 
-      with api.context(cwd=external_manifest.path):
+      _debug(api, 'internal pre-sync')
+      api.cros_source.ensure_synced_cache(is_staging=is_staging)
+
+      with api.context(cwd=external_manifest.path) as ext_pres:
+        prior_external = api.git.fetch_ref(external_manifest.url, manifest_ref)
+
         _debug(api, 'external pre sync-manifests')
         # Sync manifest/full.xml with manifest-internal/full.xml
         with api.step.nest('sync manifests') as presentation:
+          presentation.logs['prior versions'] = [
+              'internal {}: {}'.format(manifest_ref, prior_internal),
+              'external {}: {}'.format(manifest_ref, prior_external),
+          ]
 
           def _update_callback():
             """Callback function for git_txn to update manifest/full.xml."""
@@ -88,6 +90,9 @@ def RunSteps(api, properties):
                           internal_manifest.path.join('full.xml'),
                           external_full)
             if not api.git.diff_check(external_full):
+              return False
+            if is_staging:
+              presentation.logs['skip'] = ['staging/dry-run: skipping sync']
               return False
             commit_message = 'Syncing with internal manifest.'
             api.git.add([external_full])
@@ -98,6 +103,10 @@ def RunSteps(api, properties):
                                         _update_callback):
             presentation.step_text = 'No diffs'
 
+        prior_external = (
+            manifest_ref if properties.use_ref_not_id else prior_external)
+        prior_internal = (
+            manifest_ref if properties.use_ref_not_id else prior_internal)
         # Generate a public snapshot of the manifest in the manifest/ repo.  We
         # need to do this _first_ so that we can fill in the Cr-External-Snapshot
         # footer in in the internal snapshot commit.
@@ -106,12 +115,12 @@ def RunSteps(api, properties):
         snapshot_xml_extern = api.repo.manifest(
             external_full, pinned=True, step_name='generate external manifest')
 
-        # And publish
+        # And publish.
         with api.step.nest('publish external snapshot'):
           external_snapshot_commit = _publish_snapshot(
-              api, external_manifest.url, manifest_ref,
+              api, external_manifest.url, manifest_ref, prior_external,
               external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
-              disable_gerrit=True)
+              disable_gerrit=True, dry_run=properties.dry_run)
           external_snapshot_ref = external_snapshot_commit.id
 
       _debug(api, 'pre-generate-internal')
@@ -139,15 +148,16 @@ def RunSteps(api, properties):
 
       with api.step.nest('publish internal snapshot'):
         internal_snapshot_commit = _publish_snapshot(
-            api, internal_manifest.url, manifest_ref,
+            api, internal_manifest.url, manifest_ref, prior_internal,
             internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
             gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
-            footers=[("Cr-External-Snapshot", external_snapshot_ref)])
+            footers=[("Cr-External-Snapshot", external_snapshot_ref)],
+            dry_run=properties.dry_run)
 
         # Use new snapshot commit as the build output
         api.buildbucket.set_output_gitiles_commit(internal_snapshot_commit)
 
-      if jobs:
+      if jobs and not properties.dry_run:
         _schedule_triggered_builds(api, internal_snapshot_commit, jobs)
 
       # It may seem weird that we publish uprevs after publishing the snapshot.
@@ -193,7 +203,7 @@ def RunSteps(api, properties):
               project = projects[0]
               push(project.remote,
                    'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
-                   dry_run=not properties.publish_uprevs)
+                   dry_run=is_staging)
 
 
 def _schedule_triggered_builds(api, commit, jobs):
@@ -224,8 +234,9 @@ def _debug(api, name):
     api.step('log', ['git', 'log', 'HEAD~2..HEAD'], ok_ret='any')
 
 
-def _publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
-                      gerrit_commits=None, disable_gerrit=False, footers=[]):
+def _publish_snapshot(api, repo_url, snapshot_ref, prior_commit, snapshot_file,
+                      snapshot_xml, gerrit_commits=None, disable_gerrit=False,
+                      footers=None, dry_run=False):
   """Generate snapshot.xml file and commit it to a ref.
 
   Does not call api.context() so the cwd should be set to the appropriate
@@ -235,21 +246,23 @@ def _publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
       api (object):   See RunSteps documentation
       repo_url:       URL to git repo to publish snapshot.xml file to
       snapshot_ref:   git ref to publish to (e.g.: "snapshot")
+      prior_commit:   The prior commit ID.
       snapshot_file:  location of snapshot.xml to write
       snapshot_xml:   contents to write to snapshot.xml in cwd
       gerrit_commits: List of gerrit commits to reference in commit message
       disable_gerrit: If True, disable gerrit commits in commit message
       footers:        List of (key,value) pairs to add as footers
+      dry_run:        Whether this is a dry run.
 
   Returns:
       GitilesCommit object representing the new commit.
   """
-  if not gerrit_commits:
-    gerrit_commits = []
+  footers = footers or []
+  gerrit_commits = gerrit_commits or []
 
   _debug(api, 'publish pre-fetch')
   # fetch and update the ref with the new snapshot file
-  api.git.fetch_ref(repo_url, snapshot_ref)
+  api.git.fetch_ref(repo_url, prior_commit)
   _debug(api, 'publish post-fetch')
 
   with api.git.head_context():
@@ -263,8 +276,9 @@ def _publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
       for key, val in footers:
         commit_message += "%s: %s\n" % (key, val)
 
-    api.git_txn.update_ref_write_file(repo_url, commit_message, snapshot_file,
-                                      snapshot_xml, ref=snapshot_ref)
+    if not dry_run:
+      api.git_txn.update_ref_write_file(repo_url, commit_message, snapshot_file,
+                                        snapshot_xml, ref=snapshot_ref)
     return _make_gitiles_commit(api, repo_url, 'refs/heads/%s' % snapshot_ref,
                                 api.git.head_commit())
 
@@ -368,6 +382,7 @@ def _make_message(api, manifest_ref, gerrit_commits, disable_gerrit_commits):
 
 
 def GenTests(api):
+
   yield api.test(
       'basic',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
@@ -426,7 +441,13 @@ def GenTests(api):
           api.gerrit.test_gerrit_change_url()),
   )
 
-  yield api.test('sync-manifests-has-manifest-change',
+  yield api.test(
+      'sync-manifests-has-manifest-change',
+      api.properties(
+          AnnealingProperties(manifest_ref='main', publish_uprevs=True)),
+      api.git.diff_check(True))
+
+  yield api.test('staging-sync-manifests-has-manifest-change',
                  api.properties(AnnealingProperties(manifest_ref='main')),
                  api.git.diff_check(True))
 
@@ -456,6 +477,31 @@ def GenTests(api):
   yield api.test(
       'no-gerrit-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''),
+      api.post_check(post_process.MustRun, 'record new gerrit changes'),
+      api.post_check(post_process.MustRun, 'publish internal snapshot'),
+  )
+
+  # Dry Run: manifest changes, but no gerrit change to go with it.
+  yield api.test(
+      'dry-run',
+      api.properties(
+          AnnealingProperties(manifest_ref='snapshot', dry_run=True)),
       api.step_data(
           'generate external manifest',
           stdout=api.raw_io.output('<manifest visibility="external">'
