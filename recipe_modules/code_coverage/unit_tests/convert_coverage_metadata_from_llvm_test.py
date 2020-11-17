@@ -16,6 +16,8 @@ sys.path.insert(0,
 
 import convert_coverage_metadata_from_llvm as converter
 
+CONSTANTS_FILE = 'constants.json'
+
 
 class GenerateCoverageMetadataTest(unittest.TestCase):
 
@@ -59,14 +61,69 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     self.assertDictEqual(expected_line_data, line_data)
     self.assertDictEqual(expected_block_data, block_data)
 
-  @mock.patch('constants.PACKAGE_MAPPING', [
-      {
-          'prefix': 'base-[^/]*/base',
-          'src_path': 'base',
-      },
-  ])
+  def mocked_open(filename, _):
+    if filename == CONSTANTS_FILE:
+      content = '{"chromiumos/platform2":[{"prefix": "base-[^/]*/base","src_path":"base"}]}'
+    else:
+      content = """{
+            "data":
+              [
+                {
+                  "files":
+                    [
+                      {
+                        "segments":
+                          [
+                            [1, 12, 1, true, true],
+                            [2, 7, 1, true, true],
+                            [2, 14, 1, true, false],
+                            [2, 18, 0, true, true],
+                            [2, 25, 1, true, false],
+                            [2, 27, 1, true, true],
+                            [4, 4, 0, true, false],
+                            [6, 3, 0, true, true],
+                            [7, 2, 0, false, false]
+                          ],
+                        "summary":
+                          {
+                            "lines":
+                              {
+                                "count": 7,
+                                "covered": 4,
+                                "percent": 57
+                              }
+                          },
+                        "filename": "/build/betty/base-0.0.1/base/base1.cc"
+                      },
+                      {
+                        "segments":
+                          [
+                            [1, 12, 1, true, true],
+                            [1, 25, 0, false, false]
+                          ],
+                        "summary":
+                          {
+                            "lines":
+                              {
+                                "count": 1,
+                                "covered": 1,
+                                "percent": 100
+                              }
+                        },
+                      "filename": "/build/betty/base-0.0.1/base/base2.cc"
+                    }
+                  ]
+                }
+              ]
+            }"""
+    file_object = mock.mock_open(read_data=content).return_value
+    file_object.__iter__.return_value = content.splitlines(True)
+    return file_object
+
+  @mock.patch('__builtin__.open', new=mocked_open)
   def test_to_compressed_file_record(self):
     build_target = 'betty'
+    project_name = 'chromiumos/platform2'
     file_coverage_data = {
         'segments': [
             [1, 12, 1, True, True],
@@ -123,21 +180,18 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     }
     self.maxDiff = None
     record = converter._to_compressed_file_record(file_coverage_data,
-                                                  build_target)
+                                                  CONSTANTS_FILE, build_target,
+                                                  project_name)
     self.assertDictEqual(expected_record, record)
 
   # This test uses made-up segments, and the intention is to test that for
   # *uncontinous* regions, even if their lines are executed the same number of
   # times, when converted to compressed format, lines in different regions
   # shouldn't be merged together.
-  @mock.patch('constants.PACKAGE_MAPPING', [
-      {
-          'prefix': 'base-[^/]*/base',
-          'src_path': 'base',
-      },
-  ])
+  @mock.patch('__builtin__.open', new=mocked_open)
   def test_to_compressed_file_record_for_uncontinous_lines(self):
     build_target = 'betty'
+    project_name = 'chromiumos/platform2'
     file_coverage_data = {
         'segments': [
             [102, 35, 4, True, True],
@@ -176,7 +230,8 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     }
     self.maxDiff = None
     record = converter._to_compressed_file_record(file_coverage_data,
-                                                  build_target)
+                                                  CONSTANTS_FILE, build_target,
+                                                  project_name)
     self.assertDictEqual(expected_record, record)
 
   def test_rebase_line_and_block_data(self):
@@ -195,14 +250,10 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     self.assertListEqual(expected_line_data, rebased_line_data)
     self.assertDictEqual(expected_block_data, rebased_block_data)
 
-  @mock.patch('constants.PACKAGE_MAPPING', [
-      {
-          'prefix': 'base-[^/]*/base',
-          'src_path': 'base',
-      },
-  ])
+  @mock.patch('__builtin__.open', new=mocked_open)
   def test_to_compressed_file_record_with_diff_mapping(self):
     build_target = 'betty'
+    project_name = 'chromiumos/platform2'
     file_coverage_data = {
         'segments': [
             [1, 12, 1, True, True],
@@ -232,7 +283,8 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     }
 
     record = converter._to_compressed_file_record(file_coverage_data,
-                                                  build_target, diff_mapping)
+                                                  CONSTANTS_FILE, build_target,
+                                                  project_name, diff_mapping)
 
     expected_record = {
         'path':
@@ -266,64 +318,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     self.maxDiff = None
     self.assertDictEqual(expected_record, record)
 
-  @mock.patch('__builtin__.open',
-              mock.mock_open(read_data="""{
-            "data":
-              [
-                {
-                  "files":
-                    [
-                      {
-                        "segments":
-                          [
-                            [1, 12, 1, true, true],
-                            [2, 7, 1, true, true],
-                            [2, 14, 1, true, false],
-                            [2, 18, 0, true, true],
-                            [2, 25, 1, true, false],
-                            [2, 27, 1, true, true],
-                            [4, 4, 0, true, false],
-                            [6, 3, 0, true, true],
-                            [7, 2, 0, false, false]
-                          ],
-                        "summary":
-                          {
-                            "lines":
-                              {
-                                "count": 7,
-                                "covered": 4,
-                                "percent": 57
-                              }
-                          },
-                        "filename": "/build/betty/base-0.0.1/base/base1.cc"
-                      },
-                      {
-                        "segments":
-                          [
-                            [1, 12, 1, true, true],
-                            [1, 25, 0, false, false]
-                          ],
-                        "summary":
-                          {
-                            "lines":
-                              {
-                                "count": 1,
-                                "covered": 1,
-                                "percent": 100
-                              }
-                        },
-                      "filename": "/build/betty/base-0.0.1/base/base2.cc"
-                    }
-                  ]
-                }
-              ]
-            }"""))
-  @mock.patch('constants.PACKAGE_MAPPING', [
-      {
-          'prefix': 'base-[^/]*/base',
-          'src_path': 'base',
-      },
-  ])
+  @mock.patch('__builtin__.open', new=mocked_open)
   def test_load_files_coverage_data(self):
     expected_files_coverage_data = [
         {
@@ -373,8 +368,9 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     ]
     coverage_files = ['coverage.json']
     build_target = 'betty'
+    project_name = 'chromiumos/platform2'
     files_coverage_data = converter._load_files_coverage_data(
-        coverage_files, build_target, None)
+        coverage_files, CONSTANTS_FILE, build_target, project_name, None)
     self.maxDiff = None
     self.assertListEqual(expected_files_coverage_data, files_coverage_data)
 
@@ -438,7 +434,9 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
         checkout_dir='/path/to/checkout_dir',
         project_dir='project_dir',
         output_dir='/path/to/output_dir',
+        constants_file='constants.json',
         build_target='betty',
+        project_name='chromiumos/platform2',
         diff_mapping=None,
     )
 

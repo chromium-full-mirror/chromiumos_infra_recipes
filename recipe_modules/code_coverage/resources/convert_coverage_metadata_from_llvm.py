@@ -17,7 +17,6 @@ import time
 import zlib
 
 import aggregation_util
-import constants
 import repository_util
 
 
@@ -206,8 +205,8 @@ def _rebase_line_and_block_data(line_data, block_data, line_mapping):
   return rebased_line_data, rebased_block_data
 
 
-def _to_compressed_file_record(file_coverage_data, build_target,
-                               diff_mapping=None):
+def _to_compressed_file_record(file_coverage_data, constants_file, build_target,
+                               project_name, diff_mapping=None):
   """Converts the given Clang file coverage data to coverage metadata format.
 
   Coverage metadata format:
@@ -249,10 +248,13 @@ def _to_compressed_file_record(file_coverage_data, build_target,
   if not segments:
     return None
 
+  constants = {}
+  with open(constants_file, 'r') as f:
+    constants = json.load(f)
   filename = file_coverage_data['filename']
   coverage_path = os.path.normpath(filename)
   matched = False
-  for mapping in constants.PACKAGE_MAPPING:
+  for mapping in constants[project_name]:
     pre = os.path.join('/build', build_target, mapping['prefix'])
     if re.match(pre, filename):
       matched = True
@@ -363,7 +365,8 @@ def _convert_clang_summary_to_metadata(clang_summary):
   } for k, v in sorted(clang_summary.iteritems())]
 
 
-def _load_files_coverage_data(coverage_files, build_target, diff_mapping):
+def _load_files_coverage_data(coverage_files, constants_file, build_target,
+                              project_name, diff_mapping):
   """Loads coverage data from json files
 
   Args:
@@ -383,7 +386,8 @@ def _load_files_coverage_data(coverage_files, build_target, diff_mapping):
       data = json.load(f)
     for datum in data['data']:
       for file_data in datum['files']:
-        record = _to_compressed_file_record(file_data, build_target,
+        record = _to_compressed_file_record(file_data, constants_file,
+                                            build_target, project_name,
                                             diff_mapping)
         if record is not None:
           path = record['path']
@@ -421,7 +425,7 @@ def _load_files_coverage_data(coverage_files, build_target, diff_mapping):
 
 
 def _convert_metadata(chroot_dir, checkout_dir, project_dir, output_dir,
-                      build_target, diff_mapping):
+                      constants_file, build_target, project_name, diff_mapping):
   """Convert coverage metadata from LLVM format.
 
   Args:
@@ -452,8 +456,9 @@ def _convert_metadata(chroot_dir, checkout_dir, project_dir, output_dir,
 
   logging.info('Processing coverage data ...')
   start_time = time.time()
-  files_coverage_data = _load_files_coverage_data(coverage_files, build_target,
-                                                  diff_mapping)
+  files_coverage_data = _load_files_coverage_data(coverage_files,
+                                                  constants_file, build_target,
+                                                  project_name, diff_mapping)
 
   per_directory_coverage_data = {}
   if diff_mapping is None:
@@ -510,6 +515,13 @@ def _parse_args(args):
       help='relative path from the chromiumos directory to the project directory'
   )
   parser.add_argument(
+      '--project-name', required=True, type=str,
+      help='name of the project. This is used for picking the package mapping')
+  parser.add_argument(
+      '--constants-file', required=True, type=str,
+      help='absolute path to the file containing constants for package mapping, must exist'
+  )
+  parser.add_argument(
       '--output-dir', required=True, type=str,
       help='absolute path to the directory to store the metadata, must exist')
   parser.add_argument('--build-target', required=True, type=str,
@@ -537,6 +549,9 @@ def main():
   if not os.path.exists(params.chroot_dir):
     raise RuntimeError('Chroot directory %s must exist' % params.chroot_dir)
 
+  if not os.path.exists(params.constants_file):
+    raise RuntimeError('Constants file %s must exist' % params.chroot_dir)
+
   if not os.path.exists(
       os.path.join(params.chroot_dir, "build", params.build_target)):
     raise RuntimeError('Build data for target %s is missing' %
@@ -552,7 +567,9 @@ def main():
 
   compressed_data = _convert_metadata(params.chroot_dir, params.checkout_dir,
                                       params.project_dir, params.output_dir,
-                                      params.build_target, diff_mapping)
+                                      params.constants_file,
+                                      params.build_target, params.project_name,
+                                      diff_mapping)
 
   with open(os.path.join(params.output_dir, 'all.json.gz'), 'wb') as f:
     f.write(zlib.compress(json.dumps(compressed_data)))

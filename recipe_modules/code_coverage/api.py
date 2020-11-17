@@ -99,8 +99,12 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         self.m.cros_source.find_project_paths(self._project, BRANCH)[0],
         '--output-dir',
         self.metadata_dir,
+        '--constants-file',
+        self.resource('constants.json'),
         '--build-target',
         build_target.name,
+        '--project-name',
+        self._project,
     ]
 
     try:

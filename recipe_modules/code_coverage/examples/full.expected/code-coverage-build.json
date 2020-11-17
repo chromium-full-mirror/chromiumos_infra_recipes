@@ -3738,8 +3738,12 @@
       "src/chromiumos/platform2",
       "--output-dir",
       "[CLEANUP]/code-coverage_tmp_1",
+      "--constants-file",
+      "RECIPE_MODULE[chromeos::code_coverage]/resources/constants.json",
       "--build-target",
-      "amd64-generic"
+      "amd64-generic",
+      "--project-name",
+      "chromiumos/platform2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "run ebuild tests.process code coverage data.converting metadata for test coverage",
