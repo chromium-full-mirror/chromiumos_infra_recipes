@@ -197,13 +197,13 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 309, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 321, in RunSteps",
       "    requests = split(api, requests, properties.config)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 223, in split",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 235, in split",
       "    for t, r in split_resp.tagged_responses.iteritems()",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 223, in <dictcomp>",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 235, in <dictcomp>",
       "    for t, r in split_resp.tagged_responses.iteritems()",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 231, in _get_backend_request",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 243, in _get_backend_request",
       "    raise ValueError('Traffic split contains no traffic for any backend.')",
       "ValueError: Traffic split contains no traffic for any backend."
     ]

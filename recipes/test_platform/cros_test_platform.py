@@ -139,11 +139,23 @@ def _validate_scheduling_params(api, requests):
   return validation_error
 
 
+_MANAGED_POOL_ALLOW_LIST = (
+    Request.Params.Scheduling.MANAGED_POOL_UNSPECIFIED,
+    Request.Params.Scheduling.MANAGED_POOL_QUOTA,
+    Request.Params.Scheduling.MANAGED_POOL_CTS,
+)
+
+
 def _get_scheduling_error(api, request):
+  managed_pool = request.params.scheduling.managed_pool
+  if managed_pool not in _MANAGED_POOL_ALLOW_LIST:
+    return ('Pool %s not supported. See go/managed-pools-deprecation' %
+            Request.Params.Scheduling.ManagedPool.Name(managed_pool))
+
   qs_account = request.params.scheduling.qs_account
   priority = request.params.scheduling.priority
-  # Requests for which the pool is overridden downstream may have both priority
-  # and quota account unset, see crbug.com/1074373.
+  if not priority and not qs_account:
+    return 'Exactly one of priority and qs_account must be set. Found none.'
   if priority:
     if qs_account:
       return ('priority and qs_account should not both be set. ' +
@@ -674,10 +686,14 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=Request(
                      params=Request.Params(
-                         time=Request.Params.Time(
-                             maximum_duration=duration_pb2.Duration(
-                                 seconds=3600))),
+                         scheduling=Request.Params.Scheduling(
+                             priority=100), time=Request.Params.Time(
+                                 maximum_duration=duration_pb2.Duration(
+                                     seconds=3600))),
                  ))))
+
+  yield (api.test('neither priority and qs_account set') +  #
+         api.properties(CrosTestPlatformProperties(request=Request())))
 
   # Request with too large priority should cause build failure.
   yield (api.test('priority out of range') +  #
@@ -698,15 +714,26 @@ def GenTests(api):
                              priority=100, qs_account='foo-qs-account')),
                  ))))
 
+  yield (api.test('deprecated managed pool') +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=Request(
+                     params=Request.Params(
+                         scheduling=Request.Params.Scheduling(
+                             priority=120,
+                             managed_pool='MANAGED_POOL_BVT',
+                         ))))))
+
   # Config set the result flow pubsub project and topic should push build ID.
   yield (
       api.test('Config has pubsub topic to publish CTP build ID') +  #
       _set_build_id(id=42, tags={'parent_buildbucket_id': '1234'}) +  #
       api.properties(
           CrosTestPlatformProperties(
-              request=Request(), config=Config(
-                  pubsub=Config.PubSub(project='foo-proj', topic='foo-topic'))))
-      +  #
+              request=_test_request('default'),
+              config=Config(
+                  pubsub=Config.PubSub(project='foo-proj', topic='foo-topic')),
+          )) +  #
       api.step_data(
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
@@ -723,9 +750,10 @@ def GenTests(api):
       api.buildbucket.build(build_pb2.Build(id=0)) +  #
       api.properties(
           CrosTestPlatformProperties(
-              request=Request(), config=Config(
-                  pubsub=Config.PubSub(project='foo-proj', topic='foo-topic'))))
-      +  #
+              request=_test_request('default'),
+              config=Config(
+                  pubsub=Config.PubSub(project='foo-proj', topic='foo-topic')),
+          )) +  #
       _generic_scheduler_traffic_split_response(api) +  #
       _generic_enumerate_response(api) +  #
       _generic_passing_execute_response(api))
@@ -735,7 +763,7 @@ def GenTests(api):
          api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
          api.properties(
              CrosTestPlatformProperties(
-                 request=Request(),
+                 request=_test_request('default'),
                  config=Config(pubsub=Config.PubSub(project='foo-proj')))) +  #
          _generic_scheduler_traffic_split_response(api) +  #
          _generic_enumerate_response(api) +  #
@@ -746,7 +774,7 @@ def GenTests(api):
          api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
          api.properties(
              CrosTestPlatformProperties(
-                 request=Request(),
+                 request=_test_request('default'),
                  config=Config(pubsub=Config.PubSub(topic='foo-topic')))) +  #
          _generic_scheduler_traffic_split_response(api) +  #
          _generic_enumerate_response(api) +  #
