@@ -470,6 +470,39 @@
   },
   {
     "cmd": [
+      "[CACHE]/led/led",
+      "edit",
+      "-p",
+      "dry_run=true"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-Annealing\"\n}, \n\"id\": \"1\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"annealing\"\n}\n}\n}\n}\n}\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-Annealing\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"1\", @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true, @@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"annealing\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
       "./recipes.py",
       "analyze",
       "{\"files\": [\"a/b/text.txt\", \"other_test.txt\"], \"recipes\": [\"annealing\"]}",
@@ -496,7 +529,7 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit-recipe-bundle",
-    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-Annealing\"\n}, \n\"id\": \"1\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"annealing\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}\n}",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-Annealing\"\n}, \n\"id\": \"1\", \n\"input\": {\n\"properties\": {\n\"dry_run\": true, \n\"recipe\": \"annealing\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -509,6 +542,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"id\": \"1\", @@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true, @@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"annealing\"@@@",
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        }, @@@",
@@ -537,7 +571,7 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit-system",
-    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-Annealing\"\n}, \n\"id\": \"1\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"annealing\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-Annealing\"\n}, \n\"id\": \"1\", \n\"input\": {\n\"properties\": {\n\"dry_run\": true, \n\"recipe\": \"annealing\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -550,6 +584,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"id\": \"1\", @@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true, @@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"annealing\"@@@",
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        }, @@@",
@@ -577,8 +612,8 @@
       "staging-Annealing 1"
     ],
     "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit",
-    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-Annealing\"\n}, \n\"id\": \"1\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"annealing\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
+    "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit (2)",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-Annealing\"\n}, \n\"id\": \"1\", \n\"input\": {\n\"properties\": {\n\"dry_run\": true, \n\"recipe\": \"annealing\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -591,6 +626,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"id\": \"1\", @@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true, @@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"annealing\"@@@",
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        }, @@@",
@@ -618,7 +654,7 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "name": "analyze and launch builders.analyze and launch staging-Annealing.led launch",
-    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-Annealing\"\n}, \n\"id\": \"1\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"annealing\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}, \n\"name\": \"staging-Annealing 1\"\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-Annealing\"\n}, \n\"id\": \"1\", \n\"input\": {\n\"properties\": {\n\"dry_run\": true, \n\"recipe\": \"annealing\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}, \n\"name\": \"staging-Annealing 1\"\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -696,11 +732,13 @@
   {
     "cmd": [
       "[CACHE]/led/led",
-      "edit-recipe-bundle"
+      "edit",
+      "-p",
+      "dry_run=true"
     ],
     "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-recipe-bundle",
-    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"release-triggerer\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}\n}",
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"release-triggerer\"\n}\n}\n}\n}\n}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -713,6 +751,38 @@
       "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\", @@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true, @@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CACHE]/led/led",
+      "edit-recipe-bundle"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-recipe-bundle",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"dry_run\": true, \n\"recipe\": \"release-triggerer\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }, @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\", @@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true, @@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        }, @@@",
@@ -741,7 +811,7 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-system",
-    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"release-triggerer\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"dry_run\": true, \n\"recipe\": \"release-triggerer\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -754,6 +824,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\", @@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true, @@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        }, @@@",
@@ -781,8 +852,8 @@
       "staging-release-triggerer 2"
     ],
     "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit",
-    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"release-triggerer\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
+    "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit (2)",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"dry_run\": true, \n\"recipe\": \"release-triggerer\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -795,6 +866,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\", @@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true, @@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        }, @@@",
@@ -822,7 +894,7 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led launch",
-    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"recipe\": \"release-triggerer\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}, \n\"name\": \"staging-release-triggerer 2\"\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
+    "stdin": "{\n\"buildbucket\": {\n\"bbagent_args\": {\n\"build\": {\n\"builder\": {\n\"builder\": \"staging-release-triggerer\"\n}, \n\"id\": \"2\", \n\"input\": {\n\"properties\": {\n\"dry_run\": true, \n\"recipe\": \"release-triggerer\"\n}\n}, \n\"tags\": [\n{\n\"key\": \"test_recipes_task_id\", \n\"value\": \"fake-task-id\"\n}\n]\n}\n}, \n\"name\": \"staging-release-triggerer 2\"\n}, \n\"user_payload\": {\n\"digest\": \"c54351654b12ce71ac0c9a4d40dd53ca42874034\"\n}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
