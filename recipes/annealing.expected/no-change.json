@@ -557,6 +557,59 @@
     "name": "publish external snapshot"
   },
   {
+    "cmd": [],
+    "name": "publish external snapshot.publish pre-fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "status"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish pre-fetch.status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish pre-fetch.diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--cached"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish pre-fetch.diff (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "HEAD~2..HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish pre-fetch.log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "fetch",
@@ -584,6 +637,59 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "publish external snapshot.publish post-fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "status"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish post-fetch.status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish post-fetch.diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--cached"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish post-fetch.diff (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "HEAD~2..HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish post-fetch.log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "symbolic-ref",
@@ -595,6 +701,59 @@
     "name": "publish external snapshot.git symbolic-ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish external snapshot.publish pre-checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "status"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish pre-checkout.status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish pre-checkout.diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--cached"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish pre-checkout.diff (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "HEAD~2..HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "publish external snapshot.publish pre-checkout.log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

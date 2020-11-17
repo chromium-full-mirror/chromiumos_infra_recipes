@@ -224,13 +224,24 @@ def _publish_snapshot(api, repo_url, snapshot_ref, snapshot_file, snapshot_xml,
       GitilesCommit object representing the new commit.
   """
 
+  # TODO(crbug/1148052): remove debugging code.
+  def _debug(name):
+    with api.step.nest(name):
+      api.step('status', ['git', 'status'])
+      api.step('diff', ['git', 'diff'])
+      api.step('diff', ['git', 'diff', '--cached'])
+      api.step('log', ['git', 'log', 'HEAD~2..HEAD'])
+
   if not gerrit_commits:
     gerrit_commits = []
 
+  _debug('publish pre-fetch')
   # fetch and update the ref with the new snapshot file
   api.git.fetch_ref(repo_url, snapshot_ref)
+  _debug('publish post-fetch')
 
   with api.git.head_context():
+    _debug('publish pre-checkout')
     api.git.checkout('FETCH_HEAD')
     commit_message = _make_message(api, snapshot_ref, gerrit_commits,
                                    disable_gerrit)
