@@ -22,7 +22,7 @@ DEFAULT_CACHE_SYNC_OPTS = dict(current_branch=True, detach=True,
                                optimized_fetch=True, retry_fetches=8,
                                timeout=3600)
 
-STAGING_INIT_OPTS = dict(repo_branch='master')
+STAGING_INIT_OPTS = dict(repo_branch='main')
 
 # Default options for checking out a branch.
 DEFAULT_CHECKOUT_SYNC_OPTS = dict(jobs=8, optimized_fetch=True, timeout=3600,
