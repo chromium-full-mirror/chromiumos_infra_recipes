@@ -89,6 +89,8 @@ def RunSteps(api):
 
   delta_dlc_payload = api.cros_storage.DeltaDLCPayload(
       test_dlc_image, src_test_dlc_image, 'gvtgcmjugztghjioi4bbf32rlvybuioo')
+  full_dlc_payload = api.cros_storage.FullDLCPayload(
+      test_dlc_image, 'gvtgcmjugztghuefrdqmdn2x56si2xej')
 
   api.assertions.assertEqual(good_unsigned_full_payload_uri,
                              unsigned_full_payload.uri)
@@ -99,6 +101,7 @@ def RunSteps(api):
   api.assertions.assertEqual(good_signed_delta_payload_uri,
                              signed_delta_payload.uri)
   api.assertions.assertEqual(good_delta_dlc_payload_uri, delta_dlc_payload.uri)
+  api.assertions.assertEqual(good_full_dlc_payload_uri, full_dlc_payload.uri)
 
   # Make a round trip from construction back to the uri.
   api.assertions.assertEqual(
@@ -137,6 +140,10 @@ def RunSteps(api):
       api.cros_storage.DeltaDLCPayload.parse_uri(
           good_delta_dlc_payload_uri).uri)
 
+  api.assertions.assertEqual(
+      good_full_dlc_payload_uri,
+      api.cros_storage.FullDLCPayload.parse_uri(good_full_dlc_payload_uri).uri)
+
   # Ensure None returns on unmatched input.
   api.assertions.assertIsNone(
       api.cros_storage.SignedImage.parse_uri(
@@ -151,6 +158,8 @@ def RunSteps(api):
       api.cros_storage.FullPayload.parse_uri('gs://crumbos/nonsense'))
   api.assertions.assertIsNone(
       api.cros_storage.DeltaDLCPayload.parse_uri('gs://crumbos/nonsense'))
+  api.assertions.assertIsNone(
+      api.cros_storage.FullDLCPayload.parse_uri('gs://crumbos/nonsense'))
 
   # Ensure close results even return None.
   api.assertions.assertIsNone(
@@ -160,7 +169,9 @@ def RunSteps(api):
   api.assertions.assertIsNone(
       api.cros_storage.DeltaDLCPayload.parse_uri(good_delta_dlc_payload_uri +
                                                  '.json'))
-
+  api.assertions.assertIsNone(
+      api.cros_storage.FullDLCPayload.parse_uri(good_full_dlc_payload_uri +
+                                                '.json'))
   # Split off the dlc.img part of the path.
   bad_dlc_image_uri = '/'.join(good_dlc_image_uri.split('/')[:-1])
   api.assertions.assertIsNone(

@@ -259,7 +259,7 @@ class DLCImage(Image):
   """A DLC Image or Downloadable Content Image in storage."""
 
   _DLC_IMAGE_TEMPLATE = 'dlc/%(dlc_id)s/%(dlc_package)s/%(dlc_image)s'
-  _DLC_REGEXP = r'/dlc/(?P<dlc_id>.*)/(?P<dlc_package>.*)/(?P<dlc_image>.*)$'
+  _DLC_REGEXP = r'/dlc/(?P<dlc_id>[^/]+)/(?P<dlc_package>[^/]+)/dlc.img$'
 
   @classmethod
   def parse_uri(cls, uri):
@@ -271,7 +271,7 @@ class DLCImage(Image):
     if not m:
       return None
     values = m.groupdict()
-    return cls(ar, values['dlc_id'], values['dlc_package'], values['dlc_image'])
+    return cls(ar, values['dlc_id'], values['dlc_package'], 'dlc.img')
 
   @property
   def basename(self):
@@ -484,6 +484,61 @@ class DLCPayload(Payload):
     super(DLCPayload, self).__init__(*args, **kwargs)
 
 
+class FullDLCPayload(DLCPayload):
+  """A full dlc payload resident in storage."""
+
+  _FULL_DLC_PAYLOAD_TEMPLATE = (
+      'dlc_%(dlc_id)s_%(dlc_package)s_%(tgt_version)s_'
+      '%(build_target)s_%(channel)s_full.bin-%(unique_id)s.signed')
+
+  # Matches a full dlc payload basename. Example:
+  # dlc_termina-dlc_package_13505.33.0_fizz_beta-channel_full.bin-gvtgcmjugztghjioi4bbf32rlvybuioo.signed
+  _FULL_DLC_PAYLOAD_REGEXP = (r'dlc_'
+                              r'(?P<dlc_id>[^/]+)_'
+                              r'(?P<dlc_package>[^/]+)_'
+                              r'(?P<tgt_version>[^/]+)_'
+                              r'(?P<build_target>[^/]+)_'
+                              r'(?P<channel>[^/]+)_full\.bin-'
+                              r'(?P<unique_id>[^/^\.]+)\.signed$')
+
+  @classmethod
+  def parse_uri(cls, uri):
+    """Construct a FullDLCPayload from a provided uri, or return None."""
+    tgt_ar = ArtifactRoot.parse_uri(uri)
+    if not tgt_ar:
+      return None
+    m = re.search(cls._FULL_DLC_PAYLOAD_REGEXP, uri)
+    if not m:
+      return None
+    values = m.groupdict()
+
+    tgt_dlc_image = DLCImage(tgt_ar, values['dlc_id'], values['dlc_package'],
+                             super(FullDLCPayload, cls)._DEFAULT_DLC_IMAGE_NAME)
+    return FullDLCPayload(tgt_dlc_image, values['unique_id'])
+
+  @property
+  def basename(self):
+    """The basename portion of the path of a FullDLCPayload."""
+    artifact_root = self._tgt_image._artifact_root
+    return self._FULL_DLC_PAYLOAD_TEMPLATE % {
+        'dlc_id': self._tgt_image._dlc_id,
+        'dlc_package': self._tgt_image._dlc_package,
+        'tgt_version': artifact_root.version,
+        'build_target': artifact_root.build_target_name,
+        'channel': artifact_root.channel,
+        'unique_id': self._unique_id,
+    }
+
+  def __init__(self, tgt_image, unique_id):
+    """Construct a FullDLCPayload instance.
+
+    Args:
+      tgt_image (Image): A representation of the image the payload updates to.
+      unique_id (str): A random value appended to payloads at generation time.
+    """
+    super(FullDLCPayload, self).__init__(tgt_image, unique_id)
+
+
 class DeltaDLCPayload(DLCPayload):
   """A delta dlc payload resident in storage."""
 
@@ -539,7 +594,7 @@ class DeltaDLCPayload(DLCPayload):
     }
 
   def __init__(self, tgt_image, src_image, unique_id):
-    """Construct a DLCDeltaPayload instance.
+    """Construct a DeltaDLCPayload instance.
 
     Args:
       tgt_image (Image): A representation of the image the payload updates to.
@@ -561,7 +616,7 @@ class CrosStorageApi(recipe_api.RecipeApi):
   DLCImage = DLCImage
   FullPayload = FullPayload
   DeltaPayload = DeltaPayload
-  #FullDLCPayload = FullDLCPayload
+  FullDLCPayload = FullDLCPayload
   DeltaDLCPayload = DeltaDLCPayload
 
   image_types = [
@@ -573,7 +628,7 @@ class CrosStorageApi(recipe_api.RecipeApi):
   payload_types = [
       FullPayload.parse_uri,
       DeltaPayload.parse_uri,
-      #FullDLCPayload,
+      FullDLCPayload.parse_uri,
       DeltaDLCPayload.parse_uri,
   ]
 

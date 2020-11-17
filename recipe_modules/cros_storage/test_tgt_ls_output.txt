@@ -32,3 +32,10 @@ gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.
 gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0_coral_beta-channel_full_test.bin-gvtdqyzqgizdlohjw66hzs53bjvfeh7o.json
 gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/chromeos_13505.15.0_coral_beta-channel_full_test.bin-gvtdqyzqgizdlohjw66hzs53bjvfeh7o.log
 gs://chromeos-releases/beta-channel/coral/13505.15.0/stateful.tgz
+gs://chromeos-releases/beta-channel/coral/13505.15.0/dlc/termina-dlc/package/dlc.img
+gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/dlc/termina-dlc/package/dlc_termina-dlc_package_13505.11.0-13505.15.0_coral_beta-channel_delta.bin-gvtgcmjugztghjioi4bbf32rlvybuioo.signed
+gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/dlc/termina-dlc/package/dlc_termina-dlc_package_13505.11.0-13505.15.0_coral_beta-channel_delta.bin-gvtgcmjugztghjioi4bbf32rlvybuioo.signed.json
+gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/dlc/termina-dlc/package/dlc_termina-dlc_package_13505.11.0-13505.15.0_coral_beta-channel_delta.bin-gvtgcmjugztghjioi4bbf32rlvybuioo.signed.log
+gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/dlc/termina-dlc/package/dlc_termina-dlc_package_13505.15.0_coral_beta-channel_full.bin-gvtgcmjugztghuefrdqmdn2x56si2xej.signed
+gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/dlc/termina-dlc/package/dlc_termina-dlc_package_13505.15.0_coral_beta-channel_full.bin-gvtgcmjugztghuefrdqmdn2x56si2xej.signed.json
+gs://chromeos-releases/beta-channel/coral/13505.15.0/payloads/dlc/termina-dlc/package/dlc_termina-dlc_package_13505.15.0_coral_beta-channel_full.bin-gvtgcmjugztghuefrdqmdn2x56si2xej.signed.log
