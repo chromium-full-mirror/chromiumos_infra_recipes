@@ -440,13 +440,13 @@ def execution_steps(api, properties):
   prejob_response = None
   run_test_responses = {}
 
-  for test_id, test in tests.items():
-    with api.step.nest('execution steps') as presentation:
+  with api.step.nest('execution steps') as step:
+    for test_id, test in tests.items():
       build = api.buildbucket.build
       # Providing link to parent if parent tag exists.
       parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
       if parent:
-        presentation.links['parent link'] = (
+        step.links['parent link'] = (
             api.buildbucket.build_url(build_id=parent[0]))
       publish_to_result_flow(api, properties.config, properties.request)
 
