@@ -441,17 +441,18 @@ def execution_steps(api, properties):
   run_test_responses = {}
 
   with api.step.nest('execution steps') as step:
-    for test_id, test in tests.items():
-      build = api.buildbucket.build
-      # Providing link to parent if parent tag exists.
-      parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
-      if parent:
-        step.links['parent link'] = (
-            api.buildbucket.build_url(build_id=parent[0]))
-      publish_to_result_flow(api, properties.config, properties.request)
+    build = api.buildbucket.build
+    # Providing link to parent if parent tag exists.
+    parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
+    if parent:
+      step.links['parent link'] = (
+          api.buildbucket.build_url(build_id=parent[0]))
+    publish_to_result_flow(api, properties.config, properties.request)
+    dut_hostname = api.phosphorus.read_dut_hostname()
 
+    for test_id, test in tests.items():
       validate_request(api, test)
-      dut_hostname = api.phosphorus.read_dut_hostname()
+      # Needs to be distinct per test as logs are uploaded for each test separately.
       logs_gs_dir = _logs_gs_dir(api, properties.config.output.log_data_gs_root)
 
       with api.step.nest('load local DUT state'):
