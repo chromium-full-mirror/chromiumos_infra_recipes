@@ -451,62 +451,65 @@ def execution_steps(api, properties):
     dut_hostname = api.phosphorus.read_dut_hostname()
 
     for test_id, test in tests.items():
-      validate_request(api, test)
-      # Needs to be distinct per test as logs are uploaded for each test separately.
-      logs_gs_dir = _logs_gs_dir(api, properties.config.output.log_data_gs_root)
+      with api.step.nest(test_id):
+        validate_request(api, test)
+        # Needs to be distinct per test as logs are uploaded for each test separately.
+        logs_gs_dir = _logs_gs_dir(api,
+                                   properties.config.output.log_data_gs_root)
 
-      with api.step.nest('load local DUT state'):
-        load_response = api.phosphorus.load_skylab_local_state(test_id=test_id)
-      with api.step.nest('mark local DUT state dirty'):
-        api.phosphorus.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR)
+        with api.step.nest('load local DUT state'):
+          load_response = api.phosphorus.load_skylab_local_state(
+              test_id=test_id)
+        with api.step.nest('mark local DUT state dirty'):
+          api.phosphorus.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR)
 
-      phosphorus_config = _get_phosphorus_config(
-          properties.config,
-          load_response,
-      )
-
-      dut_state = _DUT_STATE_NEEDS_REPAIR
-      run_test_response = None
-      max_duration_sec = (
-          properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
-      result = None
-
-      try:
-        # prejob and test failures are detected when parsing results.
-        # An exception from the steps here indicates an infrastructure
-        # failure that should be bubbled up immediately.
-        prejob_response = prejob(api, config=phosphorus_config,
-                                 request=properties.request,
-                                 dut_hostname=dut_hostname,
-                                 load_response=load_response,
-                                 max_duration_seconds=max_duration_sec)
-        if not _prejob_failed(prejob_response):
-          run_test_response = run_test_specific_steps(
-              api, phosphorus_config=phosphorus_config, properties=properties,
-              dut_hostname=dut_hostname, test=test)
-          run_test_responses[test_id] = run_test_response
-          result = get_results(api, load_response.results_dir)
-          if result.HasField('autotest_result'):
-            autotest_results[test_id] = result.autotest_result
-          dut_state = result.state_update.dut_state
-        else:
-          result = get_results(api, load_response.results_dir)
-      finally:
-        # Must complete synchronous logs upload before sealing the results
-        # directory. Once the results directory is sealed, gs_offloader may delete
-        # the result files.
-        result = archive_all_logs(
-            api,
-            phosphorus_config=phosphorus_config,
-            gs_dir=logs_gs_dir,
-            result=result,
+        phosphorus_config = _get_phosphorus_config(
+            properties.config,
+            load_response,
         )
 
-        with api.step.nest('save local DUT state'):
-          api.phosphorus.save_and_seal_skylab_local_state(dut_state)
-        publish_to_result_flow(api, properties.config, properties.request,
-                               should_poll_for_completion=True)
-      set_output_properties(api, result=result)
+        dut_state = _DUT_STATE_NEEDS_REPAIR
+        run_test_response = None
+        max_duration_sec = (
+            properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
+        result = None
+
+        try:
+          # prejob and test failures are detected when parsing results.
+          # An exception from the steps here indicates an infrastructure
+          # failure that should be bubbled up immediately.
+          prejob_response = prejob(api, config=phosphorus_config,
+                                   request=properties.request,
+                                   dut_hostname=dut_hostname,
+                                   load_response=load_response,
+                                   max_duration_seconds=max_duration_sec)
+          if not _prejob_failed(prejob_response):
+            run_test_response = run_test_specific_steps(
+                api, phosphorus_config=phosphorus_config, properties=properties,
+                dut_hostname=dut_hostname, test=test)
+            run_test_responses[test_id] = run_test_response
+            result = get_results(api, load_response.results_dir)
+            if result.HasField('autotest_result'):
+              autotest_results[test_id] = result.autotest_result
+            dut_state = result.state_update.dut_state
+          else:
+            result = get_results(api, load_response.results_dir)
+        finally:
+          # Must complete synchronous logs upload before sealing the results
+          # directory. Once the results directory is sealed, gs_offloader may delete
+          # the result files.
+          result = archive_all_logs(
+              api,
+              phosphorus_config=phosphorus_config,
+              gs_dir=logs_gs_dir,
+              result=result,
+          )
+
+          with api.step.nest('save local DUT state'):
+            api.phosphorus.save_and_seal_skylab_local_state(dut_state)
+          publish_to_result_flow(api, properties.config, properties.request,
+                                 should_poll_for_completion=True)
+        set_output_properties(api, result=result)
 
   for test_id, test_result in autotest_results.items():
     result.autotest_results[test_id].CopyFrom(test_result)
@@ -670,36 +673,6 @@ def GenTests(api):
     return {'test': {'autotest': {'display_name': 'name'}}}
 
   def _canned_multitest_request():
-    multi_test_1 = Request.Test(
-        autotest={
-            'name': 'dummy_name',
-            'test_args': 'foo=bar',
-            'keyvals': {
-                'key1': 'val1'
-            },
-            'is_client_test': True,
-            'display_name': 'multi_test_1'
-        })
-    multi_test_2 = Request.Test(
-        autotest={
-            'name': 'dummy_name',
-            'test_args': 'foo=bar',
-            'keyvals': {
-                'key1': 'val1'
-            },
-            'is_client_test': True,
-            'display_name': 'multi_test_2'
-        })
-    original_test = Request.Test(
-        autotest={
-            'name': 'dummy_name',
-            'test_args': 'foo=bar',
-            'keyvals': {
-                'key1': 'val1'
-            },
-            'is_client_test': True,
-            'display_name': 'original_test'
-        })
     return {
         'prejob': {
             'provisionable_labels': {
@@ -708,25 +681,36 @@ def GenTests(api):
             }
         },
         'tests': {
-            'multi_test_2': multi_test_2,
+            'multi_test_2':
+                Request.Test(
+                    autotest={
+                        'name': 'dummy_name',
+                        'test_args': 'foo=bar',
+                        'keyvals': {
+                            'key1': 'val1'
+                        },
+                        'is_client_test': True,
+                        'display_name': 'multi_test_2'
+                    }),
         }
     }
 
   # Required for steps following `skylab_local_state load`.
-  def _mock_load_step():
+  def _mock_load_step(test_id='original_test'):
     return (api.step_data(
-        'execution steps.load local DUT state.call `phosphorus`.load',
-        stdout=api.raw_io.output(
+        'execution steps.%s.load local DUT state.call `phosphorus`.load' %
+        test_id, stdout=api.raw_io.output(
             json_format.MessageToJson(
                 skylab_local_state.load.LoadResponse(
                     results_dir='dummy-results-dir')))))
 
-  def _successful_prejob_step():
-    return _prejob_step_with_state(phosphorus.prejob.PrejobResponse.SUCCEEDED)
+  def _successful_prejob_step(test_id='original_test'):
+    return _prejob_step_with_state(phosphorus.prejob.PrejobResponse.SUCCEEDED,
+                                   test_id)
 
-  def _prejob_step_with_state(state):
+  def _prejob_step_with_state(state, test_id='original_test'):
     return (api.step_data(
-        'execution steps.run prejob.call `phosphorus`.prejob',
+        'execution steps.%s.run prejob.call `phosphorus`.prejob' % test_id,
         stdout=api.raw_io.output(
             json_format.MessageToJson(
                 phosphorus.prejob.PrejobResponse(state=state)))))
@@ -735,18 +719,18 @@ def GenTests(api):
     return _run_test_step_with_state(
         phosphorus.runtest.RunTestResponse.SUCCEEDED)
 
-  def _run_test_step_with_state(state):
+  def _run_test_step_with_state(state, test_id='original_test'):
     return (api.step_data(
-        'execution steps.run test.call `phosphorus`.run-test',
+        'execution steps.%s.run test.call `phosphorus`.run-test' % test_id,
         stdout=api.raw_io.output(
             json_format.MessageToJson(
                 phosphorus.runtest.RunTestResponse(
                     results_dir='dummy-results-dir/subdir', state=state)))))
 
-  def _successful_logs_archive_step():
+  def _successful_logs_archive_step(test_id='original_test'):
     return api.step_data(
-        'execution steps.archive all test logs to Google Storage.'
-        'call `phosphorus`.upload-to-gs', stdout=api.raw_io.output(
+        'execution steps.%s.archive all test logs to Google Storage.'
+        'call `phosphorus`.upload-to-gs' % test_id, stdout=api.raw_io.output(
             json_format.MessageToJson(
                 phosphorus.upload_to_gs.UploadToGSResponse(
                     gs_url='gs://chromeos-test-logs/common-env/UUID/logs'))))
@@ -801,8 +785,9 @@ def GenTests(api):
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
-      api.step_data('execution steps.run prejob.call `phosphorus`.prejob',
-                    retcode=1),
+      api.step_data(
+          'execution steps.original_test.run prejob.call `phosphorus`.prejob',
+          retcode=1),
   )
 
   yield api.test(
@@ -811,8 +796,9 @@ def GenTests(api):
       _request_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
-      api.step_data('execution steps.run test.call `phosphorus`.run-test',
-                    retcode=1),
+      api.step_data(
+          'execution steps.original_test.run test.call `phosphorus`.run-test',
+          retcode=1),
   )
 
   yield api.test(
@@ -823,7 +809,7 @@ def GenTests(api):
       _successful_prejob_step(),
       _successful_run_test_step(),
       api.step_data(
-          'execution steps.upload to TKO.call `phosphorus`.upload-to-tko',
+          'execution steps.original_test.upload to TKO.call `phosphorus`.upload-to-tko',
           retcode=1),
   )
 
@@ -832,14 +818,14 @@ def GenTests(api):
       _misc_properties(),
       _request_properties(),
       api.step_data(
-          'execution steps.load local DUT state.call `phosphorus`.load',
+          'execution steps.original_test.load local DUT state.call `phosphorus`.load',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
                       results_dir='dummy-results-dir')))),
       _successful_prejob_step(),
       api.step_data(
-          'execution steps.run test.call `phosphorus`.run-test',
+          'execution steps.original_test.run test.call `phosphorus`.run-test',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
                   phosphorus.runtest.RunTestResponse(
@@ -856,7 +842,7 @@ def GenTests(api):
       _successful_prejob_step(),
       _successful_run_test_step(),
       api.step_data(
-          'execution steps.get test results.'
+          'execution steps.original_test.get test results.'
           'call `autotest_status_parser`.parse', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   Result(
@@ -874,7 +860,7 @@ def GenTests(api):
       _successful_prejob_step(),
       _successful_run_test_step(),
       api.step_data(
-          'execution steps.get test results.'
+          'execution steps.original_test.get test results.'
           'call `autotest_status_parser`.parse', retcode=1),
   )
 
@@ -888,7 +874,7 @@ def GenTests(api):
       _successful_run_test_step(),
       _successful_logs_archive_step(),
       api.step_data(
-          'execution steps.get test results.call `autotest_status_parser`.'
+          'execution steps.original_test.get test results.call `autotest_status_parser`.'
           'parse', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   Result(
@@ -932,10 +918,11 @@ def GenTests(api):
       _set_build_id(id=42),
       _misc_properties(),
       _request_properties_multitest(),
-      _mock_load_step(),
-      _successful_prejob_step(),
-      _run_test_step_with_state(phosphorus.runtest.RunTestResponse.SUCCEEDED),
-      _successful_logs_archive_step(),
+      _mock_load_step(test_id='multi_test_2'),
+      _successful_prejob_step(test_id='multi_test_2'),
+      _run_test_step_with_state(phosphorus.runtest.RunTestResponse.SUCCEEDED,
+                                test_id='multi_test_2'),
+      _successful_logs_archive_step(test_id='multi_test_2'),
   )
 
   yield api.test(
