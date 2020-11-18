@@ -273,6 +273,13 @@ class DLCImage(Image):
     values = m.groupdict()
     return cls(ar, values['dlc_id'], values['dlc_package'], 'dlc.img')
 
+  @classmethod
+  def compatible(cls, one, other):
+    """Is one DLC image proto compatible with the other DLC image proto."""
+    return (one.dlc_id == other.dlc_id and
+            one.dlc_package == other.dlc_package and
+            one.dlc_image == other.dlc_image)
+
   @property
   def basename(self):
     """Basename for DLC is different, starts at the artifact root."""
@@ -492,7 +499,7 @@ class FullDLCPayload(DLCPayload):
       '%(build_target)s_%(channel)s_full.bin-%(unique_id)s.signed')
 
   # Matches a full dlc payload basename. Example:
-  # dlc_termina-dlc_package_13505.33.0_fizz_beta-channel_full.bin-gvtgcmjugztghjioi4bbf32rlvybuioo.signed
+  # dlc_termina-dlc_package_13505.33.0_fizz_beta-channel_fullt :.bin-gvtgcmjugztghjioi4bbf32rlvybuioo.signed
   _FULL_DLC_PAYLOAD_REGEXP = (r'dlc_'
                               r'(?P<dlc_id>[^/]+)_'
                               r'(?P<dlc_package>[^/]+)_'

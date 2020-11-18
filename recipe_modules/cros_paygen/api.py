@@ -10,6 +10,7 @@ from copy import deepcopy
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
+from PB.chromite.api.payload import DLCImage as DLCImage_pb2
 from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
@@ -162,6 +163,13 @@ class CrosPaygenApi(recipe_api.RecipeApi):
               GenerationRequest(src_unsigned_image=src, tgt_unsigned_image=tgt,
                                 bucket=bucket, verify=verify, keyset=keyset,
                                 dryrun=dryrun))
+        elif isinstance(src, DLCImage_pb2):
+          if not self.m.cros_storage.DLCImage.compatible(tgt, src):
+            continue  # pragma: nocover
+          reqs.append(
+              GenerationRequest(src_dlc_image=src, tgt_dlc_image=tgt,
+                                bucket=bucket, verify=verify, keyset='',
+                                dryrun=dryrun))
     return reqs
 
   def get_full_requests(self, tgt_artifacts, bucket, verify, keyset, dryrun):
@@ -188,6 +196,11 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         reqs.append(
             GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
                               bucket=bucket, verify=verify, keyset=keyset,
+                              dryrun=dryrun))
+      elif isinstance(tgt, DLCImage_pb2):
+        reqs.append(
+            GenerationRequest(full_update=True, tgt_dlc_image=tgt,
+                              bucket=bucket, verify=verify, keyset='',
                               dryrun=dryrun))
 
     # TODO(crbug.com/1122854): The chromite code checks the number of mp and

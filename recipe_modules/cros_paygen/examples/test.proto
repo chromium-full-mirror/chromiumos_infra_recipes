@@ -29,6 +29,7 @@ message GetRequestTestInputProperties {
     SIGNED = 1;
     UNSIGNED = 2;
     FULL = 3;
+    DLC = 4;
   }
 
   GetRequestType request_type = 2;
@@ -39,6 +40,9 @@ message GetRequestTestInputProperties {
 
   repeated chromite.api.UnsignedImage unsigned_srcs = 5;
   repeated chromite.api.UnsignedImage unsigned_tgts = 6;
+
+  repeated chromite.api.DLCImage dlc_srcs = 9;
+  repeated chromite.api.DLCImage dlc_tgts = 10;
 
   bool full_update = 7;
 

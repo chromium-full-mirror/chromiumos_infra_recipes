@@ -23,11 +23,11 @@ def RunSteps(api, properties):
   payload_cfg = json.loads(properties.payload_cfg)
 
   if properties.request_type == GetRequestTestInputProperties.SIGNED:
-    srcs = properties.signed_srcs
     tgts = properties.signed_tgts
   elif properties.request_type == GetRequestTestInputProperties.UNSIGNED:
-    srcs = properties.unsigned_srcs
     tgts = properties.unsigned_tgts
+  elif properties.request_type == GetRequestTestInputProperties.DLC:
+    tgts = properties.dlc_tgts
 
   reqs = api.cros_paygen.get_full_requests(tgts, 'b', True, 'mp-v2', True)
 
@@ -50,5 +50,12 @@ def GenTests(api):
       api.cros_paygen.props(api.properties,
                             GetRequestTestInputProperties.UNSIGNED,
                             api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_UNSIGNED,
+                            **api.cros_paygen.BASIC_TEST_PROPS),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'basic-payload',
+      api.cros_paygen.props(api.properties, GetRequestTestInputProperties.DLC,
+                            api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC,
                             **api.cros_paygen.BASIC_TEST_PROPS),
       api.post_check(post_process.StatusSuccess))

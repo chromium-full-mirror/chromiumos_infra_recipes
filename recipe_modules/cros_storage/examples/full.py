@@ -34,6 +34,12 @@ def RunSteps(api):
   test_dlc_image = (
       api.cros_storage.DLCImage(test_artifact_root, 'termina-dlc', 'package',
                                 'dlc.img'))
+  test_dlc_image_2 = (
+      api.cros_storage.DLCImage(test_artifact_root, 'sample-dlc', 'package',
+                                'dlc.img'))
+  api.assertions.assertFalse(
+      api.cros_storage.DLCImage.compatible(test_dlc_image.to_proto(),
+                                           test_dlc_image_2.to_proto()))
 
   api.assertions.assertEqual(good_unsigned_image_uri, test_unsigned_image.uri)
   api.assertions.assertEqual(good_signed_image_uri, test_signed_image.uri)
