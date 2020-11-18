@@ -12,8 +12,8 @@ class ChromiteApi(recipe_api.RecipeApi):
   depot_tools_url = (
       'https://chromium.googlesource.com/chromium/tools/depot_tools.git')
   # Keep this pin in sync with manifest pin in:
-  #   https://chromium.googlesource.com/chromiumos/manifest/+/master/full.xml
-  depot_tools_pin = 'fdd2cd6e5fc0c1e5584fc1136043f9509615f817'
+  #   https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml
+  depot_tools_pin = 'fd5c198347e13bdb96f6685fdab451c1183e21ff'
 
   # Only used by the internal goma recipe.
   manifest_url = 'https://chromium.googlesource.com/chromiumos/manifest.git'

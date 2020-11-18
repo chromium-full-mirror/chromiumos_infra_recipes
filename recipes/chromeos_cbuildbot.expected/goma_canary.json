@@ -17,7 +17,7 @@
       "--revision",
       "chromite@master",
       "--revision",
-      "depot_tools@fdd2cd6e5fc0c1e5584fc1136043f9509615f817"
+      "depot_tools@fd5c198347e13bdb96f6685fdab451c1183e21ff"
     ],
     "env": {
       "GIT_HTTP_LOW_SPEED_LIMIT": "102400",
@@ -39,7 +39,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"did_run\": true, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"fixed_revisions\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"chromite\": \"master\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"depot_tools\": \"fdd2cd6e5fc0c1e5584fc1136043f9509615f817\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"depot_tools\": \"fd5c198347e13bdb96f6685fdab451c1183e21ff\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"manifest\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"chromite\": {@@@",
@@ -48,7 +48,7 @@
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"depot_tools\": {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"repository\": \"https://fake.org/depot_tools.git\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision\": \"fdd2cd6e5fc0c1e5584fc1136043f9509615f817\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision\": \"fd5c198347e13bdb96f6685fdab451c1183e21ff\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"patch_failure\": false, @@@",
@@ -66,7 +66,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"depot_tools\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"git_checkout\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"repo_url\": \"https://fake.org/depot_tools.git\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"revision\": \"fdd2cd6e5fc0c1e5584fc1136043f9509615f817\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"revision\": \"fd5c198347e13bdb96f6685fdab451c1183e21ff\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
