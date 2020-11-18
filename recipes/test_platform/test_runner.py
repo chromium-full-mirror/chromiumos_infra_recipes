@@ -162,26 +162,6 @@ def _build_deadline(api):
   return timestamp_pb2.Timestamp(seconds=now_seconds + build_timeout.seconds)
 
 
-def upload_sync_results(api, config=None, output_config=None):
-  """Upload synchronously-needed test results to Google Storage.
-
-  Args:
-    * config: phosphorus.Config instance
-    * output_config: skylab_test_runner.Config.Output instance.
-  Returns:
-    UploadToGSResponse proto
-  Raises:
-    * InfraFailure if binary call fails.
-  """
-  with api.context(infra_steps=True):
-    root = output_config.gs_root_dir
-    derived = url_join(root, "synchronous_offloads", api.uuid.random())
-    with api.step.nest('upload results to GS') as step:
-      req = phosphorus.upload_to_gs.UploadToGSRequest(config=config,
-                                                      gs_directory=derived)
-      return api.phosphorus.upload_to_gs(req)
-
-
 def archive_all_logs(api, phosphorus_config, gs_root, result):
   """Archive all test logs to Google Storage.
 
@@ -344,22 +324,15 @@ def set_output_properties(api, result=None):
       )
 
 
-def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
+def _get_phosphorus_config(recipe_config, load_response):
   """Construct a phosphorus.Config.
 
   Args:
     * recipe_config: skylab_test_runner.Config instance.
     * load_response: skylab_local_state.LoadResponse instance.
-    * set_offload_dir: whether to embed the GS offload dir into the config.
-        This will be used if set, so setting it where it is inapplicable (such
-        as for a non-test task) will result in a downstream error.
 
   Returns: phosphorus.Config.
   """
-  if set_offload_dir:
-    off_dir = recipe_config.harness.synch_offload_subdir
-  else:
-    off_dir = ""
   subdir = os.path.join(load_response.results_dir, "autoserv_test")
   return phosphorus.common.Config(
       log_data_upload_step=recipe_config.log_data_upload_step,
@@ -369,7 +342,6 @@ def _get_phosphorus_config(recipe_config, load_response, set_offload_dir):
       task=phosphorus.common.TaskEnvironment(
           results_dir=load_response.results_dir,
           ssp_base_image_name=recipe_config.harness.ssp_base_image_name,
-          synchronous_offload_dir=off_dir,
           test_results_dir=subdir,
       ),
   )
@@ -478,7 +450,6 @@ def execution_steps(api, properties):
             api.buildbucket.build_url(build_id=parent[0]))
       publish_to_result_flow(api, properties.config, properties.request)
 
-      upload_to_gs_response = None
       validate_request(api, test)
       dut_hostname = api.phosphorus.read_dut_hostname()
 
@@ -490,7 +461,6 @@ def execution_steps(api, properties):
       phosphorus_config = _get_phosphorus_config(
           properties.config,
           load_response,
-          properties.request.test.offload.synchronous_gs_enable,
       )
 
       dut_state = _DUT_STATE_NEEDS_REPAIR
@@ -517,11 +487,6 @@ def execution_steps(api, properties):
           result.async_results.CopyFrom(load_response.async_results)
           if result.HasField('autotest_result'):
             autotest_results[test_id] = result.autotest_result
-          if _should_upload_to_gs(result, test):
-            upload_to_gs_response = upload_sync_results(
-                api, config=phosphorus_config,
-                output_config=properties.config.output)
-          _set_offload_dir(result, upload_to_gs_response)
           dut_state = result.state_update.dut_state
         else:
           result = get_results(api, load_response.results_dir)
@@ -571,34 +536,6 @@ def run_test_specific_steps(api, phosphorus_config, properties, dut_hostname,
       api, config=_upload_to_tko_config(api, phosphorus_config,
                                         run_test_response))
   return run_test_response
-
-
-def _should_upload_to_gs(result, test, test_id=''):
-  """Decide whether to perform the upload to GS.
-
-  Skip offload when it's disabled by policy or the test exited abnormally.
-
-  Args:
-  * result: test_runner.Result instance.
-  * test: skylab_test_runner.Request.Test instance.
-  * test_id: UUID for test.
-
-  Returns: bool.
-  """
-  return (test.offload.synchronous_gs_enable and
-          not result.autotest_results[test_id].incomplete and
-          not result.autotest_result.incomplete)
-
-
-def _set_offload_dir(result, upload_response):
-  """Populate the synchronous log data URL of the result.
-
-  Args:
-  * result: test_runner.Result.
-  * upload_response: phosphorus.UploadToGsResponse instance or None.
-  """
-  if upload_response:
-    result.autotest_result.synchronous_log_data_url = upload_response.gs_url
 
 
 def RunSteps(api, properties):
@@ -910,41 +847,6 @@ def GenTests(api):
                   phosphorus.runtest.RunTestResponse(
                       results_dir='not-a-subdir-of-dummy-results-dir',
                       state=phosphorus.runtest.RunTestResponse.SUCCEEDED)))),
-  )
-
-  yield api.test(
-      'upload_to_gs',
-      _set_build_id(id=42),
-      _misc_properties(),
-      _mock_load_step(),
-      _successful_prejob_step(),
-      _successful_run_test_step(),
-      api.properties(
-          TestRunnerProperties(
-              request={
-                  'test': {
-                      'autotest': {
-                          'name': 'dummy_name'
-                      },
-                      'offload': {
-                          'synchronous_gs_enable': True
-                      }
-                  }
-              })),
-      api.step_data(
-          'execution steps.get test results.'
-          'call `autotest_status_parser`.parse', stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  Result(
-                      autotest_result=Result.Autotest(test_cases=[]),
-                  )))),
-      api.step_data(
-          'execution steps.upload results to GS.'
-          'call `phosphorus`.upload-to-gs', stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  phosphorus.upload_to_gs.UploadToGSResponse(
-                      gs_url=os.path.join(_gs_root, "UUID", _sync_subdir))))),
-      _successful_logs_archive_step(),
   )
 
   yield api.test(
