@@ -162,12 +162,12 @@ def _build_deadline(api):
   return timestamp_pb2.Timestamp(seconds=now_seconds + build_timeout.seconds)
 
 
-def archive_all_logs(api, phosphorus_config, gs_root, result):
+def archive_all_logs(api, phosphorus_config, gs_dir, result):
   """Archive all test logs to Google Storage.
 
   Args:
     * phosphorus_config: phosphorus.Config instance
-    * gs_root: str, path to Google Storage directory to archive to.
+    * gs_dir: str, path to Google Storage directory to archive to.
     * result: test_runner.Result.
   Returns:
     Updated test_runner.Result
@@ -176,23 +176,11 @@ def archive_all_logs(api, phosphorus_config, gs_root, result):
   """
   with api.context(infra_steps=True):
     with api.step.nest('archive all test logs to Google Storage'):
-      # Create a reasonable directory tree to avoid directories with a huge
-      # number of entries.
-      # - b/167219452 - Large number of entries at top-level can cause Google
-      #   Storage meltdown.
-      # - Being able to easily crawl the logs chronologically is very useful.
-      # - Inject a random element to
-      #   - keep logs across tasks on a single day separate
-      #   - make it harder to hard-code paths to the target directory
-      #     downstream.
-      now = api.time.utcnow()
-      gs_directory = '%s/%s/%s' % (gs_root, now.date().isoformat(),
-                                   api.uuid.random())
       gs_res = api.phosphorus.upload_to_gs(
           phosphorus.upload_to_gs.UploadToGSRequest(
               config=phosphorus_config,
               local_directory=phosphorus_config.task.results_dir,
-              gs_directory=gs_directory,
+              gs_directory=gs_dir,
           ))
       # Logs are archived even in the case of catastrophic failures.
       # Thus, it is possible that we do not have a sane result message.
@@ -201,6 +189,20 @@ def archive_all_logs(api, phosphorus_config, gs_root, result):
         result.log_data.stainless_url = _stainless_logs_from_gs_path(
             gs_res.gs_url)
   return result
+
+
+def _logs_gs_dir(api, gs_root):
+  # Create a reasonable directory tree to avoid directories with a huge
+  # number of entries.
+  # - b/167219452 - Large number of entries at top-level can cause Google
+  #   Storage meltdown.
+  # - Being able to easily crawl the logs chronologically is very useful.
+  # - Inject a random element to
+  #   - keep logs across tasks on a single day separate
+  #   - make it harder to hard-code paths to the target directory
+  #     downstream.
+  now = api.time.utcnow()
+  return '%s/%s/%s' % (gs_root, now.date().isoformat(), api.uuid.random())
 
 
 def _stainless_logs_from_gs_path(path):
@@ -450,6 +452,7 @@ def execution_steps(api, properties):
 
       validate_request(api, test)
       dut_hostname = api.phosphorus.read_dut_hostname()
+      logs_gs_dir = _logs_gs_dir(api, properties.config.output.log_data_gs_root)
 
       with api.step.nest('load local DUT state'):
         load_response = api.phosphorus.load_skylab_local_state(test_id=test_id)
@@ -494,7 +497,7 @@ def execution_steps(api, properties):
         result = archive_all_logs(
             api,
             phosphorus_config=phosphorus_config,
-            gs_root=properties.config.output.log_data_gs_root,
+            gs_dir=logs_gs_dir,
             result=result,
         )
 
