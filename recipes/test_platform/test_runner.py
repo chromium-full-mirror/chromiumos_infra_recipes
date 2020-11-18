@@ -251,8 +251,6 @@ def summarize_results(api, prejob_response, run_test_responses, result):
   with api.step.nest('test results') as step:
     if result.log_data.stainless_url:
       step.links['Autotest logs'] = result.log_data.stainless_url
-    if result.async_results.logs_url:
-      step.links['Autotest logs (async)'] = result.async_results.logs_url
     step.presentation.logs['JSON output'] = json_format.MessageToJson(result)
     for prejob in result.prejob.step:
       with api.step.nest(prejob.name) as step:
@@ -484,7 +482,6 @@ def execution_steps(api, properties):
               dut_hostname=dut_hostname, test=test)
           run_test_responses[test_id] = run_test_response
           result = get_results(api, load_response.results_dir)
-          result.async_results.CopyFrom(load_response.async_results)
           if result.HasField('autotest_result'):
             autotest_results[test_id] = result.autotest_result
           dut_state = result.state_update.dut_state
@@ -718,10 +715,7 @@ def GenTests(api):
         stdout=api.raw_io.output(
             json_format.MessageToJson(
                 skylab_local_state.load.LoadResponse(
-                    async_results=AsyncResults(
-                        logs_url='http://foo-logs-url',
-                        gs_url='gs://foo-gs-url',
-                    ), results_dir='dummy-results-dir')))))
+                    results_dir='dummy-results-dir')))))
 
   def _successful_prejob_step():
     return _prejob_step_with_state(phosphorus.prejob.PrejobResponse.SUCCEEDED)

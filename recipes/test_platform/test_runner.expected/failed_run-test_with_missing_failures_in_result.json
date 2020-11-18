@@ -113,10 +113,6 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"asyncResults\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"logsUrl\": \"http://foo-logs-url\", @@@",
-      "@@@STEP_LOG_LINE@response@    \"gsUrl\": \"gs://foo-gs-url\"@@@",
-      "@@@STEP_LOG_LINE@response@  }, @@@",
       "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -573,7 +569,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyTamDk0kkvttLXT84oys9NzS/WLUktLtHNyU8v1k/Oz83Nz9NNzSvTDw31dNEHCQoFZJSUFIA0\\nFJckZublpBYX6yXnFxXopefnp+ekAtm5+klF+eXFqcSaqKXGJQwyE2hkWn4+WJ1uaVGOED/YWSAh\\niAAAVDU8SA==\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyTamDk0kkvttLXT84oys9NzS/WLUktLtHNyU8v1k/Oz83Nz9NNzSvTDw31dNEHCQoFZJSUFIA0\\nFJckZublpBYX6yXnFxXopefnp+ekAtm5+klF+eXFqcSaCADxRS9/\\n\"@@@"
     ]
   },
   {
@@ -584,15 +580,10 @@
       "@@@STEP_LOG_LINE@JSON output@  \"logData\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/UUID/logs\", @@@",
       "@@@STEP_LOG_LINE@JSON output@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/UUID/logs\"@@@",
-      "@@@STEP_LOG_LINE@JSON output@  }, @@@",
-      "@@@STEP_LOG_LINE@JSON output@  \"asyncResults\": {@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"logsUrl\": \"http://foo-logs-url\", @@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://foo-gs-url\"@@@",
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",
       "@@@STEP_LINK@Autotest logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/UUID/logs@@@",
-      "@@@STEP_LINK@Autotest logs (async)@http://foo-logs-url@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

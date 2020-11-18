@@ -47,10 +47,6 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"asyncResults\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"logsUrl\": \"http://foo-logs-url\", @@@",
-      "@@@STEP_LOG_LINE@response@    \"gsUrl\": \"gs://foo-gs-url\"@@@",
-      "@@@STEP_LOG_LINE@response@  }, @@@",
       "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"

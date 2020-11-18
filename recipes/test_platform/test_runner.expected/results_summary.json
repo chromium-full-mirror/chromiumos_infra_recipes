@@ -113,10 +113,6 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"asyncResults\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"logsUrl\": \"http://foo-logs-url\", @@@",
-      "@@@STEP_LOG_LINE@response@    \"gsUrl\": \"gs://foo-gs-url\"@@@",
-      "@@@STEP_LOG_LINE@response@  }, @@@",
       "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -593,7 +589,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyNzjEPgjAQBeDg2MSouDExGWIo3Z1d3FyYCeBRMG2v6VVd/em2EHa3y5d3L4+VrGCHoZ3UZGTj\\ngXzTtwT7TbZiHjGfMUkLdmLHNW0dPLFryIMN+W1keOSLZt+ElZIuQvSjQw1IPPZwhZJEj1qj4WDe\\noq5vVxExvY/e2/hAvp2MAqKqR2criSgVhFuLzuGH4N/Gc5gaO0PlgDjn+MupdDfPirTAD5ScWCA=\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyNzDEPwiAUBODUkcRE69aJyXQoZXd2cXPpTCg+aQ3wCI/o6k+3aLq7Xb7cHetYy/Z3Pbs5WJWB\\nsjKaYLdpVuQF+RerumVHdljbMcEDR0UZ4tLfFoYb/2nzrlhn6SSlmRJ6QBLlRzi0JA16j0FAeMph\\nuJxlwfo65RzLgLKegwOi3mCKvUW0Dpbs5ZjwRfDv4wfXsEtX\\n\"@@@"
     ]
   },
   {
@@ -614,10 +610,6 @@
       "@@@STEP_LOG_LINE@JSON output@  \"logData\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/UUID/logs\", @@@",
       "@@@STEP_LOG_LINE@JSON output@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/UUID/logs\"@@@",
-      "@@@STEP_LOG_LINE@JSON output@  }, @@@",
-      "@@@STEP_LOG_LINE@JSON output@  \"asyncResults\": {@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"logsUrl\": \"http://foo-logs-url\", @@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://foo-gs-url\"@@@",
       "@@@STEP_LOG_LINE@JSON output@  }, @@@",
       "@@@STEP_LOG_LINE@JSON output@  \"autotestResults\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"original_test\": {@@@",
@@ -643,7 +635,6 @@
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",
       "@@@STEP_LINK@Autotest logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/UUID/logs@@@",
-      "@@@STEP_LINK@Autotest logs (async)@http://foo-logs-url@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
