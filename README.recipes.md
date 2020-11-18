@@ -6957,7 +6957,7 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#545)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#526)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#165)(api, phosphorus_config, gs_dir, result):**
 
@@ -7044,21 +7044,6 @@ Returns:
 Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
-
-&mdash; **def [run\_test\_specific\_steps](/recipes/test_platform/test_runner.py#520)(api, phosphorus_config, properties, dut_hostname, test):**
-
-Run the test execution and all steps that explicitly depend on it.
-
-Args:
-* phosphorus_config: phosphorus.Config instance.
-* properties: TestRunnerProperties instance.
-* dut_hostname: string.
-* test: skylab_test_runner.Request.Test instance.
-
-Returns: phosphorus.RunTestResponse.
-
-Raises:
-* InfraFailure.
 
 &mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#314)(api, result=None):**
 

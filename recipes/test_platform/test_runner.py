@@ -483,10 +483,16 @@ def execution_steps(api, properties):
                                    dut_hostname=dut_hostname,
                                    load_response=load_response,
                                    max_duration_seconds=max_duration_sec)
+
           if not _prejob_failed(prejob_response):
-            run_test_response = run_test_specific_steps(
-                api, phosphorus_config=phosphorus_config, properties=properties,
-                dut_hostname=dut_hostname, test=test)
+            run_test_response = run_test(api, config=phosphorus_config,
+                                         request=properties.request,
+                                         output_config=properties.config.output,
+                                         dut_hostname=dut_hostname, test=test)
+            upload_to_tko(
+                api, config=_upload_to_tko_config(api, phosphorus_config,
+                                                  run_test_response))
+
             run_test_responses[test_id] = run_test_response
             result = get_results(api, load_response.results_dir)
             if result.HasField('autotest_result'):
@@ -515,31 +521,6 @@ def execution_steps(api, properties):
     result.autotest_results[test_id].CopyFrom(test_result)
 
   return prejob_response, run_test_responses, result
-
-
-def run_test_specific_steps(api, phosphorus_config, properties, dut_hostname,
-                            test):
-  """Run the test execution and all steps that explicitly depend on it.
-
-  Args:
-  * phosphorus_config: phosphorus.Config instance.
-  * properties: TestRunnerProperties instance.
-  * dut_hostname: string.
-  * test: skylab_test_runner.Request.Test instance.
-
-  Returns: phosphorus.RunTestResponse.
-
-  Raises:
-  * InfraFailure.
-  """
-  run_test_response = run_test(api, config=phosphorus_config,
-                               request=properties.request,
-                               output_config=properties.config.output,
-                               dut_hostname=dut_hostname, test=test)
-  upload_to_tko(
-      api, config=_upload_to_tko_config(api, phosphorus_config,
-                                        run_test_response))
-  return run_test_response
 
 
 def RunSteps(api, properties):
