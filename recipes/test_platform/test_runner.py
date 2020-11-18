@@ -94,7 +94,7 @@ def prejob(api, config=None, request=None, dut_hostname='', load_response=None,
 
 
 def run_test(api, config=None, request=None, output_config=None,
-             dut_hostname='', test=None):
+             dut_hostname='', test=None, logs_gs_dir=''):
   """Run a test against the DUT via `autoserv`.
 
   Args:
@@ -103,6 +103,7 @@ def run_test(api, config=None, request=None, output_config=None,
     * output_config: skylab_test_runner.Config.Output instance.
     * dut_hostname: DUT hostname string.
     * test: skylab_test_runner.Request.Test instance.
+    * logs_gs_dir: The Google Storage directory where test logs will be uploaded.
 
   Returns:
     * phosphorus.runtest.RunTestResponse
@@ -119,7 +120,7 @@ def run_test(api, config=None, request=None, output_config=None,
             name=test.autotest.name,
             test_args=test.autotest.test_args,
             display_name=test.autotest.display_name,
-            keyvals=test.autotest.keyvals,
+            keyvals=_with_gs_logs_keyval(test.autotest.keyvals, logs_gs_dir),
             is_client_test=test.autotest.is_client_test,
         ),
         environment=phosphorus.runtest.RunTestRequest.Environment(
@@ -128,6 +129,19 @@ def run_test(api, config=None, request=None, output_config=None,
     deadline = _deadline(api, request)
     run_test_request.deadline.MergeFrom(deadline)
     return api.phosphorus.run_test(run_test_request)
+
+
+def _with_gs_logs_keyval(keyvals, logs_gs_dir):
+  # This keyval is required for stainless' test results view to link to the
+  # test logs.
+  # - Autoserv drops keyvals in a file in the logs directory
+  # - tko/parse parses that file and injects keyvals in the TKO database
+  # - Stainless table builder extracts this particular keyval and uses the value
+  #   to link to the archived logs.
+  keyvals['synchronous_log_data_url'] = logs_gs_dir
+  keyvals['synchronous_log_data_stainless_url'] = _stainless_logs_from_gs_path(
+      logs_gs_dir)
+  return keyvals
 
 
 def _deadline(api, request):
@@ -485,13 +499,23 @@ def execution_steps(api, properties):
                                    max_duration_seconds=max_duration_sec)
 
           if not _prejob_failed(prejob_response):
-            run_test_response = run_test(api, config=phosphorus_config,
-                                         request=properties.request,
-                                         output_config=properties.config.output,
-                                         dut_hostname=dut_hostname, test=test)
+            run_test_response = run_test(
+                api,
+                config=phosphorus_config,
+                request=properties.request,
+                output_config=properties.config.output,
+                dut_hostname=dut_hostname,
+                test=test,
+                logs_gs_dir=logs_gs_dir,
+            )
             upload_to_tko(
-                api, config=_upload_to_tko_config(api, phosphorus_config,
-                                                  run_test_response))
+                api,
+                config=_upload_to_tko_config(
+                    api,
+                    phosphorus_config,
+                    run_test_response,
+                ),
+            )
 
             run_test_responses[test_id] = run_test_response
             result = get_results(api, load_response.results_dir)
@@ -921,12 +945,17 @@ def GenTests(api):
       _set_build_id(id=42),
       _misc_properties(),
       api.properties(
-          TestRunnerProperties(config={
-              'result_flow_pubsub': {
-                  'topic': '',
-                  'project': 'foo-proj',
-              },
-          })),
+          TestRunnerProperties(
+              config={
+                  'result_flow_pubsub': {
+                      'topic': '',
+                      'project': 'foo-proj',
+                  },
+                  'output': {
+                      'gs_root_dir': _gs_root,
+                      'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
+                  },
+              })),
       _request_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
@@ -939,12 +968,17 @@ def GenTests(api):
       _set_build_id(id=42),
       _misc_properties(),
       api.properties(
-          TestRunnerProperties(config={
-              'result_flow_pubsub': {
-                  'topic': 'foo-topic',
-                  'project': '',
-              },
-          })),
+          TestRunnerProperties(
+              config={
+                  'result_flow_pubsub': {
+                      'topic': 'foo-topic',
+                      'project': '',
+                  },
+                  'output': {
+                      'gs_root_dir': _gs_root,
+                      'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
+                  },
+              })),
       _request_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
