@@ -38,6 +38,9 @@ class RepoApi(recipe_api.RecipeApi):
   ProjectInfo = ProjectInfo
   LocalManifest = LocalManifest
 
+  def initialize(self):
+    self._binary_updated = False
+
   @property
   def repo_path(self):
     return self.m.depot_tools.repo_resource('repo')
@@ -102,7 +105,13 @@ class RepoApi(recipe_api.RecipeApi):
     try:
       self._step(git_cmd + ['--ignore-missing'] + base_args, 'clear git locks')
     except recipe_api.StepFailure:  # pragma: nocover
-      self._step(git_cmd + base_args, 'retry clear git locks')
+      self.m.step.active_result.presentation.status = self.m.step.WARNING
+      try:
+        self._step(git_cmd + base_args, 'retry clear git locks')
+      except recipe_api.StepFailure:  # pragma: nocover
+        self.m.step.active_result.presentation.status = self.m.step.WARNING
+        self._step(['forall'] + base_args,
+                   'retry clear git locks without projects')
 
   def version(self):
     """Prints the current version information of repo."""
@@ -150,6 +159,7 @@ class RepoApi(recipe_api.RecipeApi):
     if verbose:
       cmd += ['--verbose']
     self._step(cmd, timeout=15 * 60)
+    self._binary_selfupdate(self.m.context.cwd)
     self._clear_git_locks(projects)
 
     if self.m.context.cwd:
@@ -533,12 +543,18 @@ class RepoApi(recipe_api.RecipeApi):
       * root_path (Path): Path to the repo root.
       * projects (List[str]): Projects to clean or None to clean all projects.
     """
-    with self.m.step.nest('ensure clean checkout'):
-      with self.m.context(cwd=root_path, infra_steps=True):
-        cmd = ['forall'] + (projects or [])
-        cmd.extend(
-            ['--ignore-missing', '-j', '32', '-c', 'git', 'clean', '-d', '-f'])
-        self._step(cmd, stdout=self.m.raw_io.output(add_output_log=True))
+    with self.m.step.nest('ensure clean checkout'), self.m.context(
+        cwd=root_path, infra_steps=True):
+      cmd = ['forall'] + (projects or [])
+      base_args = [
+          '--ignore-missing', '-j', '32', '-c', 'git', 'clean', '-d', '-f'
+      ]
+      try:
+        self._step(cmd + base_args,
+                   stdout=self.m.raw_io.output(add_output_log=True))
+      except recipe_api.StepFailure:  # pragma: nocover
+        self.m.step.active_result.presentation.status = self.m.step.WARNING
+        self._step(['forall'] + base_args, 'retry clear git locks')
 
   @property
   def manifest_gitiles_commit(self):
@@ -586,7 +602,6 @@ class RepoApi(recipe_api.RecipeApi):
                   manifest_name, root_path.join('.repo/manifests'))
             self.init(manifest_url, **init_opts)
             self._git_clean_checkout(root_path, projects)
-            self._binary_selfupdate(root_path)
             self.sync(**sync_opts)
             break
           except recipe_api.StepFailure:
@@ -604,9 +619,12 @@ class RepoApi(recipe_api.RecipeApi):
     Args"
       * root_path (Path): Path to the repo root.
     """
+    if self._binary_updated:
+      return
     with self.m.step.nest('repo binary update'):
       self.version()
       with self.m.context(cwd=root_path, infra_steps=True):
         cmd = ['selfupdate']
         self._step(cmd, ok_ret='any')
       self.version()
+      self._binary_updated = True
