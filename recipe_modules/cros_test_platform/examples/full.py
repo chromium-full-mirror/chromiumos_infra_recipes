@@ -14,16 +14,12 @@ from PB.recipe_modules.chromeos.cros_test_platform.cros_test_platform import \
   CrosTestPlatformModuleProperties
 from PB.test_platform.steps.enumeration import \
   EnumerationRequests, EnumerationResponses
-from PB.test_platform.steps.scheduler_traffic_split import \
-  SchedulerTrafficSplitRequests, SchedulerTrafficSplitResponses
 from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
 
 
 def RunSteps(api):
   with api.assertions.assertRaises(ValueError):
     api.cros_test_platform.enumerate(None)
-  with api.assertions.assertRaises(ValueError):
-    api.cros_test_platform.scheduler_traffic_split(None)
   with api.assertions.assertRaises(ValueError):
     api.cros_test_platform.skylab_execute(None)
   with api.assertions.assertRaises(ValueError):
@@ -36,12 +32,6 @@ def RunSteps(api):
     api.assertions.assertEqual(
         EnumerationResponses(),
         api.cros_test_platform.enumerate(EnumerationRequests()),
-    )
-  with api.step.nest('callsite-scheduler-traffic-split'):
-    api.assertions.assertEqual(
-        SchedulerTrafficSplitResponses(),
-        api.cros_test_platform.scheduler_traffic_split(
-            SchedulerTrafficSplitRequests()),
     )
   with api.step.nest('callsite-skylab-execute'):
     api.assertions.assertEqual(
@@ -68,9 +58,6 @@ def GenTests(api):
           }) +  #
       api.cros_test_platform.set_enumerate_response_json(
           'callsite-enumerate', '{}') +  #
-      api.cros_test_platform.set_scheduler_traffic_split_response(
-          'callsite-scheduler-traffic-split', SchedulerTrafficSplitResponses())
-      +  #
       api.cros_test_platform.set_skylab_execute_response(
           'callsite-skylab-execute', ExecuteResponses()),
       api.cros_test_platform.set_execute_luciexe_response(

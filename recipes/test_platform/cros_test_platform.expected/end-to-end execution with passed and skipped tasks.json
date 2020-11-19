@@ -81,138 +81,6 @@
   },
   {
     "cmd": [],
-    "name": "traffic split",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@selected backend: skylab@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "traffic split.call binary",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        }, @@@",
-      "@@@STEP_LOG_LINE@response@        \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@response@            {@@@",
-      "@@@STEP_LOG_LINE@response@              \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@response@            }@@@",
-      "@@@STEP_LOG_LINE@response@          ]@@@",
-      "@@@STEP_LOG_LINE@response@        }@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  }@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "traffic split.call binary.ensure cros_test_platform",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/cros_test_platform",
-      "-ensure-file",
-      "chromiumos/infra/cros_test_platform/${platform} latest",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "traffic split.call binary.ensure cros_test_platform.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cros_test_platform/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "traffic split.call binary.pre-execution debug data",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform scheduler-traffic-split -input_json /dev/stdin -output_json /dev/stdout -rip-cautotest@@@",
-      "@@@STEP_LOG_END@cmd@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"params\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"qsAccount\": \"foo-qs-account\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@request@            {@@@",
-      "@@@STEP_LOG_LINE@request@              \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          ]@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "scheduler-traffic-split",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout",
-      "-rip-cautotest"
-    ],
-    "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"request\": {\n        \"params\": {\n          \"scheduling\": {\n            \"qsAccount\": \"foo-qs-account\"\n          }, \n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "enumerate tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
@@ -238,6 +106,43 @@
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary.ensure cros_test_platform",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/cros_test_platform",
+      "-ensure-file",
+      "chromiumos/infra/cros_test_platform/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "enumerate tests.call binary.ensure cros_test_platform.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cros_test_platform/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -296,28 +201,27 @@
       "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_PASSED_ON_RETRY\", @@@",
+      "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_PASSED\", @@@",
       "@@@STEP_LOG_LINE@response@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
       "@@@STEP_LOG_LINE@response@      }, @@@",
       "@@@STEP_LOG_LINE@response@      \"taskResults\": [@@@",
       "@@@STEP_LOG_LINE@response@        {@@@",
       "@@@STEP_LOG_LINE@response@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_FAILED\", @@@",
+      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_PASSED\", @@@",
       "@@@STEP_LOG_LINE@response@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-retried\"@@@",
+      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-passed\"@@@",
       "@@@STEP_LOG_LINE@response@        }, @@@",
       "@@@STEP_LOG_LINE@response@        {@@@",
       "@@@STEP_LOG_LINE@response@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_PASSED\", @@@",
+      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_NO_VERDICT\", @@@",
       "@@@STEP_LOG_LINE@response@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
       "@@@STEP_LOG_LINE@response@          }, @@@",
       "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz1\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"attempt\": 1, @@@",
       "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz1\", @@@",
-      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-retried\"@@@",
+      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-skipped\"@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
       "@@@STEP_LOG_LINE@response@      ]@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
@@ -391,9 +295,9 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJylUMEKgkAQ/RWZcyFevcm6gmApaoFEyKZjSGvG7haU+O/thpcOldBhhmHem/ceM0CNDbtyBa41\\ngFRM4Wu6oajbymxhS1M/JHmZeFlG/TJelynN0wIWFvC2QXKvuLmBKAxoSQoS6R6vkojm1IdRsxST\\npxSlNpGat/thE3hhpA9nq/P+uBHcUPQkXds+MKHrAZPzBDZ9/46dWYcTsBSoRIu10Zv1hP/TOUaC\\nKYXdxeg7X8I6H9Pux/EJYayJFA==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTquViT0lNSyzNKREq4jIS4k3Lz7fS109KLALiKikWjgIBJiVuoKBuUWpJUWZqihZfTn56MUIJ\\nl5kQH4oeQ7AmRlRN/KiaDA0YhUCqWAASkSOq\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED_ON_RETRY\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"attempt\": 1, \"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-retried\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz1\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8QGOwcGuLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKgWqKoksTg7KLUYaHYxUF00lU3PyU8PLcoBKQGyiq309ZMS\\ni4C4SglqM1QyLT8fVS4vMTcVKqFbkFhcnJoCMo6A4/z846FMyh1oiM+FhuhOLM7OLCgAuTG2thYA\\nvdeDAw==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTquJiT0lNSyzNKRHK5zIU4k3Lz7fS109KLALiKikWjgIBRiUuoKBuQWJxcWqKFl9OfnoxQgWX\\niRAfihZDsB5mJW6QnuLszIICoCZ+VE2GQmBzAZgiIv8=\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-skipped\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_NO_VERDICT\"}, \"taskUrl\": \"foo://bar/baz1\"}]}@@@"
     ]
   },
   {
@@ -492,17 +396,17 @@
     "name": "summarize.default task results.passed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(log)   foo-retried attempt #1 passed on retry@logs://bar/baz1@@@",
-      "@@@STEP_LINK@(task)  foo-retried attempt #1 passed on retry@foo://bar/baz1@@@"
+      "@@@STEP_LINK@(log)   foo-passed@logs://bar/baz@@@",
+      "@@@STEP_LINK@(task)  foo-passed@foo://bar/baz@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.flaked",
+    "name": "summarize.default task results.skipped",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(log)   foo-retried@logs://bar/baz@@@",
-      "@@@STEP_LINK@(task)  foo-retried@foo://bar/baz@@@"
+      "@@@STEP_LINK@(log)   foo-skipped@logs://bar/baz1@@@",
+      "@@@STEP_LINK@(task)  foo-skipped@foo://bar/baz1@@@"
     ]
   },
   {

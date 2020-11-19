@@ -81,40 +81,27 @@
   },
   {
     "cmd": [],
-    "name": "traffic split",
+    "name": "enumerate tests",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@selected backend: skylab@@@"
+      "@@@STEP_LOG_LINE@autotest tests for first@foo-test@@@",
+      "@@@STEP_LOG_END@autotest tests for first@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "traffic split.call binary",
+    "name": "enumerate tests.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@response@    \"first\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"autotestInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"test\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"name\": \"foo-test\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        }, @@@",
-      "@@@STEP_LOG_LINE@response@        \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@response@            {@@@",
-      "@@@STEP_LOG_LINE@response@              \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@response@            }@@@",
-      "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
@@ -123,7 +110,7 @@
   },
   {
     "cmd": [],
-    "name": "traffic split.call binary.ensure cros_test_platform",
+    "name": "enumerate tests.call binary.ensure cros_test_platform",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -142,7 +129,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "traffic split.call binary.ensure cros_test_platform.ensure_installed",
+    "name": "enumerate tests.call binary.ensure cros_test_platform.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -160,88 +147,6 @@
   },
   {
     "cmd": [],
-    "name": "traffic split.call binary.pre-execution debug data",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform scheduler-traffic-split -input_json /dev/stdin -output_json /dev/stdout -rip-cautotest@@@",
-      "@@@STEP_LOG_END@cmd@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"params\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"qsAccount\": \"foo-qs-account\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@request@            {@@@",
-      "@@@STEP_LOG_LINE@request@              \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          ]@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "scheduler-traffic-split",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout",
-      "-rip-cautotest"
-    ],
-    "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"request\": {\n        \"params\": {\n          \"scheduling\": {\n            \"qsAccount\": \"foo-qs-account\"\n          }, \n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "enumerate tests",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
-      "@@@STEP_LOG_END@autotest tests for default@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "enumerate tests.call binary",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@response@      \"autotestInvocations\": [@@@",
-      "@@@STEP_LOG_LINE@response@        {@@@",
-      "@@@STEP_LOG_LINE@response@          \"test\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"name\": \"foo-test\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        }@@@",
-      "@@@STEP_LOG_LINE@response@      ]@@@",
-      "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  }@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "enumerate tests.call binary.pre-execution debug data",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -249,7 +154,7 @@
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"first\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
@@ -278,7 +183,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"first\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -292,7 +197,27 @@
     "name": "execute.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"first\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"state\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"verdict\": \"VERDICT_PASSED\", @@@",
+      "@@@STEP_LOG_LINE@response@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
+      "@@@STEP_LOG_LINE@response@      }, @@@",
+      "@@@STEP_LOG_LINE@response@      \"taskResults\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"state\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"verdict\": \"VERDICT_PASSED\", @@@",
+      "@@@STEP_LOG_LINE@response@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
+      "@@@STEP_LOG_LINE@response@          \"logUrl\": \"logs://bar/baz\", @@@",
+      "@@@STEP_LOG_LINE@response@          \"taskUrl\": \"foo://bar/baz\", @@@",
+      "@@@STEP_LOG_LINE@response@          \"name\": \"foo-passed\"@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -305,7 +230,7 @@
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"first\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"requestParams\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"scheduling\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"qsAccount\": \"foo-qs-account\"@@@",
@@ -352,7 +277,7 @@
     ],
     "infra_step": true,
     "name": "execute.call binary.skylab-execute",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"qsAccount\": \"foo-qs-account\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"first\": {\n      \"requestParams\": {\n        \"scheduling\": {\n          \"qsAccount\": \"foo-qs-account\"\n        }, \n        \"hardwareAttributes\": {\n          \"model\": \"foo-model\"\n        }, \n        \"metadata\": {\n          \"testMetadataUrl\": \"foo-metadata-url\", \n          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n        }\n      }, \n      \"config\": {\n        \"skylabWorker\": {\n          \"luciProject\": \"foo luci project\"\n        }\n      }, \n      \"enumeration\": {\n        \"autotestInvocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      }\n    }\n  }, \n  \"build\": {\n    \"createTime\": \"1970-01-01T00:00:00Z\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -361,8 +286,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkrLLCouUbJSqFYqLkksSQWzylKLUjKTQaJKYa5BLp7OIfEBjsHBri5KOgpKOZlpqc6VyTkg\\npUo+nm6u8c6Rzj5A0t83wMc1BKioFqiqJLE4Oyi1uDSnpBioLprKpufkp4cW5YCUAFnFVvr6SYlF\\nQFylBLUZKpmWn48ql5eYmwqV0C1ILC5OTVGqja2tBQBJGlCe\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuJiTcssKi4RsuQyFOJNy8+30tdPSiwC4iopFo4CAUYlLqCgbkFicXFqihZfTn56MUKFEFgF\\nAGqWEjc=\\n\"@@@"
     ]
   },
   {
@@ -378,16 +303,91 @@
   },
   {
     "cmd": [],
-    "name": "summarize",
+    "name": "postprocess.first",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "No requests ran"
-    },
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "postprocess.first.buildbucket.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_postprocess\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"debugSymbolsArchiveUrl\": \"foo-metadata-url\", \"testResults\": [{\"logData\": {}}]}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"testplatform\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"cros_test_postprocess\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"bucket\": \"testplatform\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"cros_test_postprocess\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"debugSymbolsArchiveUrl\": \"foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"logData\": {}@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize"
+  },
+  {
+    "cmd": [],
+    "name": "summarize.first task results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize.first task results.passed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@(log)   foo-passed@logs://bar/baz@@@",
+      "@@@STEP_LINK@(task)  foo-passed@foo://bar/baz@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

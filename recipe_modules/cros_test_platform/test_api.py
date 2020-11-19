@@ -26,17 +26,6 @@ class CrosTestPlatformTestApi(recipe_test_api.RecipeTestApi):
     """
     return self._set_step_data_for_run(name, 'enumerate', response)
 
-  def set_scheduler_traffic_split_response(self, name, response):
-    """Set the response from CrosTestPlatformCommand.scheduler_traffic_split().
-
-    Args:
-      name: Name the step that calls
-          CrosTestPlatformCommand.scheduler_traffic_split()
-      response: A SchedulerTrafficSplitResponses payload.
-    """
-    return self._set_step_data_for_run(name, 'scheduler-traffic-split',
-                                       json_format.MessageToJson(response))
-
   def set_skylab_execute_response(self, name, response):
     """Set the response from CrosTestPlatformCommand.skylab_execute().
 

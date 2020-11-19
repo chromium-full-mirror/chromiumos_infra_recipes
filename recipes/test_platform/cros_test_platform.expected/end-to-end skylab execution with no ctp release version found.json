@@ -71,138 +71,6 @@
   },
   {
     "cmd": [],
-    "name": "traffic split",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@selected backend: skylab@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "traffic split.call binary",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@response@      \"skylabRequest\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"params\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"qsAccount\": \"foo-qs-account\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@response@          }, @@@",
-      "@@@STEP_LOG_LINE@response@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@response@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@response@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        }, @@@",
-      "@@@STEP_LOG_LINE@response@        \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@response@          \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@response@            {@@@",
-      "@@@STEP_LOG_LINE@response@              \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@response@            }@@@",
-      "@@@STEP_LOG_LINE@response@          ]@@@",
-      "@@@STEP_LOG_LINE@response@        }@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  }@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "traffic split.call binary.ensure cros_test_platform",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/cros_test_platform",
-      "-ensure-file",
-      "chromiumos/infra/cros_test_platform/${platform} latest",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "traffic split.call binary.ensure cros_test_platform.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cros_test_platform/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "traffic split.call binary.pre-execution debug data",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform scheduler-traffic-split -input_json /dev/stdin -output_json /dev/stdout -rip-cautotest@@@",
-      "@@@STEP_LOG_END@cmd@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"params\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"qsAccount\": \"foo-qs-account\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"model\": \"foo-model\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@request@            {@@@",
-      "@@@STEP_LOG_LINE@request@              \"name\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          ]@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "scheduler-traffic-split",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout",
-      "-rip-cautotest"
-    ],
-    "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"request\": {\n        \"params\": {\n          \"scheduling\": {\n            \"qsAccount\": \"foo-qs-account\"\n          }, \n          \"hardwareAttributes\": {\n            \"model\": \"foo-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"foo-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"foo-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "enumerate tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
@@ -228,6 +96,43 @@
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary.ensure cros_test_platform",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/cros_test_platform",
+      "-ensure-file",
+      "chromiumos/infra/cros_test_platform/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "enumerate tests.call binary.ensure cros_test_platform.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cros_test_platform/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {

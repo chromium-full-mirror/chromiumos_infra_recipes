@@ -81,27 +81,20 @@
   },
   {
     "cmd": [],
-    "name": "traffic split",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "enumerate tests"
   },
   {
     "cmd": [],
-    "name": "traffic split.call binary",
+    "name": "enumerate tests.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"default\": {}@@@",
-      "@@@STEP_LOG_LINE@response@  }@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "traffic split.call binary.ensure cros_test_platform",
+    "name": "enumerate tests.call binary.ensure cros_test_platform",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -120,7 +113,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "traffic split.call binary.ensure cros_test_platform.ensure_installed",
+    "name": "enumerate tests.call binary.ensure cros_test_platform.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -138,34 +131,24 @@
   },
   {
     "cmd": [],
-    "name": "traffic split.call binary.pre-execution debug data",
+    "name": "enumerate tests.call binary.pre-execution debug data",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform scheduler-traffic-split -input_json /dev/stdin -output_json /dev/stdout -rip-cautotest@@@",
+      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform enumerate -input_json /dev/stdin -output_json /dev/stdout@@@",
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"request\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"params\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"qsAccount\": \"foo-qs-account\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"hardwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"model\": \"default-model\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"testMetadataUrl\": \"default-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"debugSymbolsArchiveUrl\": \"default-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"name\": \"foo-suite\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"suite\": [@@@",
-      "@@@STEP_LOG_LINE@request@            {@@@",
-      "@@@STEP_LOG_LINE@request@              \"name\": \"default-suite\"@@@",
-      "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          ]@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
@@ -176,15 +159,15 @@
   {
     "cmd": [
       "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "scheduler-traffic-split",
+      "enumerate",
       "-input_json",
       "/dev/stdin",
       "-output_json",
-      "/dev/stdout",
-      "-rip-cautotest"
+      "/dev/stdout"
     ],
-    "name": "traffic split.call binary.scheduler-traffic-split",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"request\": {\n        \"params\": {\n          \"scheduling\": {\n            \"qsAccount\": \"foo-qs-account\"\n          }, \n          \"hardwareAttributes\": {\n            \"model\": \"default-model\"\n          }, \n          \"metadata\": {\n            \"testMetadataUrl\": \"default-metadata-url\", \n            \"debugSymbolsArchiveUrl\": \"default-metadata-url\"\n          }\n        }, \n        \"testPlan\": {\n          \"suite\": [\n            {\n              \"name\": \"default-suite\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+    "infra_step": true,
+    "name": "enumerate tests.call binary.enumerate",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -197,20 +180,18 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 321, in RunSteps",
-      "    requests = split(api, requests, properties.config)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 235, in split",
-      "    for t, r in split_resp.tagged_responses.iteritems()",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 235, in <dictcomp>",
-      "    for t, r in split_resp.tagged_responses.iteritems()",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 243, in _get_backend_request",
-      "    raise ValueError('Traffic split contains no traffic for any backend.')",
-      "ValueError: Traffic split contains no traffic for any backend."
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 277, in RunSteps",
+      "    api, _execute_requests(api, requests, enumerations, properties.config))",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 248, in _execute_requests",
+      "    _ensure_all_requests_enumerated(requests, enumerations)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 263, in _ensure_all_requests_enumerated",
+      "    raise ValueError('No enumerations for requests tagged %s' % missing)",
+      "ValueError: No enumerations for requests tagged set(['default'])"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('Traffic split contains no traffic for any backend.',)"
+      "humanReason": "Uncaught Exception: ValueError(\"No enumerations for requests tagged set(['default'])\",)"
     },
     "name": "$result"
   }

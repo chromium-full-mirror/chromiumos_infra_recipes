@@ -29,8 +29,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     # from the config.
     self._version = str(properties.version.cipd_label) or 'latest'
 
-  def _run(self, subcommand, request, request_type, response_type,
-           extra_args=None):
+  def _run(self, subcommand, request, request_type, response_type):
     """Generic subcommand runner for cros_test_platform.
 
     All cros_test_platform subcommands take the same basic commandline
@@ -58,8 +57,6 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
         '-output_json',
         '/dev/stdout',
       ]
-      if extra_args:
-        cmd += extra_args
 
       # Pre-execution logging is in a nested step so that the step closes before
       # the (possibly long) command execution.
@@ -91,18 +88,6 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     """
     return self._run('enumerate', request, EnumerationRequests,
                      EnumerationResponses)
-
-  def scheduler_traffic_split(self, request):
-    """Determine scheduler via `scheduler-traffic-split` subcommand.
-
-    Args:
-      request: a SchedulerTrafficSplitRequests.
-
-    Returns: SchedulerTrafficSplitResponses.
-    """
-    return self._run(
-        'scheduler-traffic-split', request, SchedulerTrafficSplitRequests,
-        SchedulerTrafficSplitResponses, extra_args=['-rip-cautotest'])
 
   def skylab_execute(self, request):
     """Execute work via `skylab-execute` subcommand.

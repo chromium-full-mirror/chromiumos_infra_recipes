@@ -15,13 +15,6 @@
   },
   {
     "cmd": [],
-    "name": "call binary (3)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "ensure cros_test_platform"
   },
   {
@@ -56,7 +49,7 @@
   },
   {
     "cmd": [],
-    "name": "call binary (4)",
+    "name": "call binary (3)",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]
@@ -95,46 +88,6 @@
       "/dev/stdout"
     ],
     "name": "callsite-enumerate.call binary.enumerate",
-    "stdin": "{}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "callsite-scheduler-traffic-split"
-  },
-  {
-    "cmd": [],
-    "name": "callsite-scheduler-traffic-split.call binary",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "callsite-scheduler-traffic-split.call binary.pre-execution debug data",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform scheduler-traffic-split -input_json /dev/stdin -output_json /dev/stdout -rip-cautotest@@@",
-      "@@@STEP_LOG_END@cmd@@@",
-      "@@@STEP_LOG_LINE@request@{}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
-      "scheduler-traffic-split",
-      "-input_json",
-      "/dev/stdin",
-      "-output_json",
-      "/dev/stdout",
-      "-rip-cautotest"
-    ],
-    "name": "callsite-scheduler-traffic-split.call binary.scheduler-traffic-split",
     "stdin": "{}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

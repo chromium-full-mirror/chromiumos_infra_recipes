@@ -2609,11 +2609,11 @@ Returns:
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_platform/api.py#192)(self):**
+&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_platform/api.py#177)(self):**
 
 Return the CTP CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#84)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#81)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -2622,7 +2622,7 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#118)(self, request):**
+&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#103)(self, request):**
 
 Execute work via `luciexe` binary for cros_test_platform
 
@@ -2635,16 +2635,7 @@ Args:
 
 Returns: ExecuteResponses.
 
-&mdash; **def [scheduler\_traffic\_split](/recipe_modules/cros_test_platform/api.py#95)(self, request):**
-
-Determine scheduler via `scheduler-traffic-split` subcommand.
-
-Args:
-  request: a SchedulerTrafficSplitRequests.
-
-Returns: SchedulerTrafficSplitResponses.
-
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#107)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#92)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 
@@ -6088,7 +6079,7 @@ returns a list of repos to make commits to.
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#20)(api):**
 ### *recipes* / [cros\_test\_postprocess:examples/full](/recipe_modules/cros_test_postprocess/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_postprocess/examples/full.py#6): [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -6801,15 +6792,15 @@ Verifies a repo manifest.
 &mdash; **def [RunSteps](/recipes/test_manifest.py#30)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#46): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#42): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#312)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#266)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#167)(api, requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#163)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -6819,23 +6810,23 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#274)(api, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#228)(api, requests):**
 
 Execute request in the correct backend.
 
 Args:
   requests: ExecutionRequests payload.
 
-&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#336)(api):**
+&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#288)(api):**
 
-&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#65)(api, properties):**
+&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#61)(api, properties):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#345)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#297)(api, requests, responses):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#251)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#205)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -6844,33 +6835,15 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#443)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#395)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#511)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#463)(task_results):**
 
-&mdash; **def [split](/recipes/test_platform/cros_test_platform.py#209)(api, requests, config):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#337)(api, enumerations, responses):**
 
-Run the almost no-op traffic splitter step.
-
-This step now always directs traffic to Skylab.
-TODO(crbug.com/1026367) Completely skip this step once we stop receiving
-                        requests for legacy bvt, suites pools.
-
-Args:
-  * api (object): See RunSteps documentation.
-  * requests: {tag: test_platform.Request} dict.
-  * config: test_platform.Config instance.
-
-Returns: bool, [test_platform.Request]
-  * First item in the pair indicates whether this is a skylab request.
-  * Second item in the pair is {tag: test_platform.Request} dict of extracted
-        requests.
-
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#385)(api, enumerations, responses):**
-
-&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#84)(api, properties):**
+&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#80)(api, properties):**
 
 Get and validate requests from input properties.
 
