@@ -212,6 +212,20 @@
   },
   {
     "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "snapshot-HEAD-SHA"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.clone internal manifest repo.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
@@ -272,6 +286,20 @@
     "infra_step": true,
     "name": "set up orchestrator.clone external manifest repo.git rev-parse",
     "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "external-manifest-SHA"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "set up orchestrator.clone external manifest repo.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

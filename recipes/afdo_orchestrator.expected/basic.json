@@ -236,6 +236,20 @@
   },
   {
     "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "snapshot-HEAD-SHA"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.clone internal manifest repo.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",

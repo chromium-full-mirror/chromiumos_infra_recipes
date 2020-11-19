@@ -235,6 +235,20 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "snapshot-HEAD-SHA"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.clone internal manifest repo.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "run builds",
     "~followup_annotations": [

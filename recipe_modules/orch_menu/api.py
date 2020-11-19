@@ -307,7 +307,7 @@ class OrchMenuApi(RecipeApi):
       commit (GitilesCommit): The commit to clone (and fetch).
 
     Returns:
-      (Path) path of the repo.
+      (Path) path of the repo, where |commit| is now HEAD.
     """
     path = self.m.path.mkdtemp()
     url = self.m.gitiles.repo_url(commit)
@@ -315,6 +315,7 @@ class OrchMenuApi(RecipeApi):
       self.m.git.clone(url, timeout_sec=60 * 60)
       if commit.id:
         self.m.git.fetch_ref(url, commit.id, timeout_sec=60 * 60)
+        self.m.git.checkout(commit.id, force=True)
     return path
 
   def _push_manifest_refs(self, ref):
