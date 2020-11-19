@@ -1383,7 +1383,9 @@
       "--input_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
+      "--manifest_file",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",

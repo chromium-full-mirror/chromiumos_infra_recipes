@@ -62,6 +62,10 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           self._test_planner_path, 'gen-test-plan', '--input_binary_pb',
           input_bin_file, '--output_binary_pb', output_bin_file
       ]
+      # We already have a local copy of the manifest.  Use it, rather than
+      # fetching it from the network.
+      cmd.extend(['--manifest_file', self.m.cros_source.branch_manifest_file])
+
       self.m.step('call test_planner', cmd, infra_step=True)
 
       response_bin = self.m.file.read_raw(

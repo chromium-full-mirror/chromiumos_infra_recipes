@@ -2611,7 +2611,7 @@ Returns:
   (list[StringPair]) tags.
 ### *recipe_modules* / [cros\_test\_plan](/recipe_modules/cros_test_plan)
 
-[DEPS](/recipe_modules/cros_test_plan/__init__.py#6): [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_plan/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 

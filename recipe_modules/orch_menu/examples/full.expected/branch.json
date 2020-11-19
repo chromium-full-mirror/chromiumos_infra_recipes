@@ -2536,7 +2536,9 @@
       "--input_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto"
+      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
+      "--manifest_file",
+      "[CLEANUP]/manifest_tmp_1"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.call test_planner",
