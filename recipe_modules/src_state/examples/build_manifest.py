@@ -18,6 +18,10 @@ def RunSteps(api):
   external_manifest = api.src_state.external_manifest
   internal_manifest = api.src_state.internal_manifest
 
+  api.assertions.assertEqual(
+      api.src_state.manifest_projects,
+      [internal_manifest.project, external_manifest.project])
+
   def _change(manifest):
     return GerritChange(host=manifest.host, project=manifest.project)
 

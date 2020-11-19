@@ -56,6 +56,11 @@ class SrcStateApi(recipe_api.RecipeApi):
             if self.build_manifest == self.external_manifest else 'internal')
 
   @property
+  def manifest_projects(self):
+    """Return the manifest project names."""
+    return [self.internal_manifest.project, self.external_manifest.project]
+
+  @property
   def internal_manifest(self):
     """Information about internal manifest.
 

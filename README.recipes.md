@@ -4678,7 +4678,7 @@ There are two classes of properties in this module.
 
 Source State related attributes for Chrome OS recipes.
 
-&emsp; **@build_manifest.setter**<br>&mdash; **def [build\_manifest](/recipe_modules/src_state/api.py#93)(self, build_manifest):**
+&emsp; **@build_manifest.setter**<br>&mdash; **def [build\_manifest](/recipe_modules/src_state/api.py#98)(self, build_manifest):**
 
 Set the manifest that will be used for the build.
 
@@ -4687,7 +4687,7 @@ Sets the manifest used by this builder.
 Args:
   (ManifestProject): information about the manifest for this build.
 
-&emsp; **@property**<br>&mdash; **def [external\_manifest](/recipe_modules/src_state/api.py#69)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_manifest](/recipe_modules/src_state/api.py#74)(self):**
 
 Information about external manifest.
 
@@ -4696,21 +4696,21 @@ Provides immutable information about the Chrome OS external manifest.
 Returns:
   (ManifestProject): information about the external manifest.
 
-&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#162)(self, gerrit_changes):**
+&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#167)(self, gerrit_changes):**
 
 Set the gerrit_changes that will be used for the build.
 
 Args:
   gerrit_changes (list[GerritChanges]): The gerrit_changes.
 
-&emsp; **@gitiles_commit.setter**<br>&mdash; **def [gitiles\_commit](/recipe_modules/src_state/api.py#134)(self, gitiles_commit):**
+&emsp; **@gitiles_commit.setter**<br>&mdash; **def [gitiles\_commit](/recipe_modules/src_state/api.py#139)(self, gitiles_commit):**
 
 Set the gitiles_commit that will be used for the build.
 
 Args:
   gitiles_commit (GitilesCommit): The value to use.
 
-&mdash; **def [gitiles\_commit\_to\_manifest](/recipe_modules/src_state/api.py#106)(self, gitiles_commit):**
+&mdash; **def [gitiles\_commit\_to\_manifest](/recipe_modules/src_state/api.py#111)(self, gitiles_commit):**
 
 Return the manifest corresponding to the gitiles_commit.
 
@@ -4722,7 +4722,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/src_state/api.py#37)(self):**
 
-&emsp; **@property**<br>&mdash; **def [internal\_manifest](/recipe_modules/src_state/api.py#58)(self):**
+&emsp; **@property**<br>&mdash; **def [internal\_manifest](/recipe_modules/src_state/api.py#63)(self):**
 
 Information about internal manifest.
 
@@ -4734,6 +4734,10 @@ Returns:
 &emsp; **@property**<br>&mdash; **def [manifest\_name](/recipe_modules/src_state/api.py#52)(self):**
 
 Return the name of the manifest.
+
+&emsp; **@property**<br>&mdash; **def [manifest\_projects](/recipe_modules/src_state/api.py#58)(self):**
+
+Return the manifest project names.
 
 &emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/src_state/api.py#42)(self):**
 
