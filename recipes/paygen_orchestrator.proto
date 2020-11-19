@@ -42,9 +42,12 @@ message PaygenOrchestratorProperties {
   // The payload channels to generate for, empty requires DeltaType == NO_DELTA.
   repeated Channel channels = 5;
 
-  // The bucket to look for artifacts in and place results (e.g.
-  // chromeos-releases).
-  string bucket = 6;
+  // The bucket to look for source artifacts in (e.g, chromeos-releases).
+  string src_bucket = 6;
+
+  // The bucket to place resulting artifacts in (e.g.
+  // chromes-throw-away-bucket).
+  string dest_bucket = 11;
 
   // The keyset to sign with (e.g. "coral-mp-v16"), if empty do not sign.
   string keyset = 7;

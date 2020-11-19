@@ -92,7 +92,7 @@ def RunSteps(api, properties):
         for payload_cfg in configured_payloads:
           if payload_cfg['channel'] == _short_channel_name(channel):
             found_arts = api.cros_storage.discover_gs_artifacts(
-                path.join('gs://' + properties.bucket, long_chan_name,
+                path.join('gs://' + properties.src_bucket, long_chan_name,
                           payload_cfg['builder_name'],
                           payload_cfg['chrome_os_version']),
                 parse_types=api.cros_storage.image_types)
@@ -101,7 +101,7 @@ def RunSteps(api, properties):
       # Discover the target images for this channel.
       with api.step.nest('target artifacts'):
         found_arts = api.cros_storage.discover_gs_artifacts(
-            path.join('gs://' + properties.bucket, long_chan_name,
+            path.join('gs://' + properties.src_bucket, long_chan_name,
                       properties.builder_name,
                       properties.target_chrome_os_version),
             parse_types=api.cros_storage.image_types)
@@ -124,7 +124,7 @@ def RunSteps(api, properties):
     for payload_cfg in configured_payloads:
       reqs = api.cros_paygen.get_delta_requests(payload_cfg, source_artifacts,
                                                 target_artifacts,
-                                                properties.bucket, True,
+                                                properties.dest_bucket, True,
                                                 properties.keyset,
                                                 properties.dryrun)
       cbr.extend(reqs)
@@ -132,7 +132,7 @@ def RunSteps(api, properties):
 
     # Do full payloads.
     reqs = api.cros_paygen.get_full_requests(target_artifacts,
-                                             properties.bucket, True,
+                                             properties.dest_bucket, True,
                                              properties.keyset,
                                              properties.dryrun)
     pres.logs['%s full' % len(reqs)] = [MessageToJson(x) for x in reqs]
