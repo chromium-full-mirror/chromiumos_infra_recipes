@@ -16,6 +16,7 @@ DEPS = [
     'easy',
     'gerrit',
     'git',
+    'git_footers',
     'overlayfs',
     'repo',
     'src_state',

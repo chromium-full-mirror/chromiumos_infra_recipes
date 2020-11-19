@@ -625,6 +625,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "determine branch.checkout branch release-R79-*.B.set manifest_branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R79-*.B\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",

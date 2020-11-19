@@ -43,7 +43,10 @@ class CrosSourceApi(RecipeApi):
     # The currently active branch of the manifest.  Empty unless we switched
     # branches.
     self._manifest_branch = ''
+    # (XML data) The pinned manifest for this build.
     self._pinned_manifest = None
+    # (Path) either manifest-internal/snapshot.xml, or (unpinned) manifest.xml.
+    self._branch_manifest_file = None
     self._applied_patches = defaultdict(list)
 
   def initialize(self):
@@ -57,9 +60,16 @@ class CrosSourceApi(RecipeApi):
 
   @property
   def pinned_manifest(self):
+    """Return the pinned manifest for this build."""
     self._pinned_manifest = (
         self._pinned_manifest or self.m.repo.manifest(pinned=True))
     return self._pinned_manifest
+
+  @property
+  def branch_manifest_file(self):
+    """Returns the Path to the manifest_file for this build."""
+    return (self._branch_manifest_file or
+            self.m.src_state.internal_manifest.path.join('snapshot.xml'))
 
   @property
   def manifest_branch(self):
@@ -207,6 +217,98 @@ class CrosSourceApi(RecipeApi):
           with self.m.context(cwd=cache_path):
             self.m.repo.sync(**sync_opts)
 
+  def checkout_manifests(self, commit=None, is_staging=False,
+                         test_footers=None):
+    """Check out the manifest projects.
+
+    Syncs the manifest projects into the workspace, at the appropriate revision.
+    This is intended for builders that *only* need the manifest projects, not
+    for builders that have other projects checked out as well.
+
+    If |commit| is on an unpinned branch, there is no reasonable way to discern
+    which revision of the external manifest is correct. The branch's copy of the
+    external manifest is unbranched.  As such, the return will have an empty
+    commit id, and the external manifest source tree may be dirty (full.xml will
+    be copied from the internal manifest, but not committed.)
+
+    Args:
+      commit (GitilesCommit): The commit to use, or None for the default (from
+        cros_infra_config.configure_builder)
+      is_staging (bool): Whether this is staging.
+      test_footers (str): test Cr-External-Snapshot footer data(values separated
+          by newlines), or None.
+
+    Returns:
+      (GitilesCommit) The GitilesCommit to use for the external manifest.
+    """
+    i_manifest = self.m.src_state.internal_manifest
+    e_manifest = self.m.src_state.external_manifest
+    commit = commit or self.m.src_state.gitiles_commit
+    commit = commit if commit.host else i_manifest.as_gitiles_commit_proto
+    # Start building the external commit.  The id field will be set later, if we
+    # can determine the one that matches the current checkout.
+    ext_commit = e_manifest.as_gitiles_commit_proto
+    ext_commit.ref = commit.ref
+    branch = (
+        commit.ref[len('refs/heads/'):]
+        if commit.ref.startswith('refs/heads/') else commit.ref)
+
+    projects = self.m.src_state.manifest_projects
+
+    # Sync only the manifest projects, into the workspace directory.
+    self.ensure_synced_cache(cache_path_override=self.workspace_path,
+                             is_staging=is_staging,
+                             init_opts=dict(manifest_branch=branch or None),
+                             sync_opts=dict(current_branch=False),
+                             projects=projects)
+
+    # If the commit uses a ref other than the manifest's ref, switch to that.
+    # In general, this means that we will switch to either "snapshot", or to
+    # some release branch (such as "release-R88-13597.B").
+    if commit.ref != i_manifest.ref:
+      self._manifest_branch = branch
+    with self.m.context(cwd=i_manifest.path):
+      # If we have an ID in the ref, make that HEAD.
+      if commit.id:
+        self.m.git.checkout(commit.id, force=True)
+
+      # The branch we are on is either a snapshot branch (has a snapshot.xml
+      # file), or it is an unpinned branch.
+      snapshot_xml = i_manifest.path.join('snapshot.xml')
+      self._branch_manifest_file = snapshot_xml
+      if self._test_data.enabled and self._test_data.get(
+          'snapshot_xml_exists', True):
+        self.m.path.mock_add_paths(snapshot_xml)
+      if not self.m.path.exists(snapshot_xml):
+        # If there is no snapshot.xml, then there is no reasonable way to
+        # determine which revision of the external manifest corresponds to our
+        # commit.  Copy full.xml into the public manifest, and leave the tree
+        # dirty.
+        self.m.path.mock_add_paths(i_manifest.path.join('full.xml'))
+        self.m.file.copy('copy full.xml', i_manifest.path.join('full.xml'),
+                         e_manifest.path.join('full.xml'))
+
+        # Generate a manifest file, and save the path.
+        manifest_file = self.m.path.mkstemp(prefix='manifest')
+        self.m.file.write_raw('write manifest file', manifest_file,
+                              self.m.repo.manifest())
+        self._branch_manifest_file = manifest_file
+        return ext_commit
+
+      # If we have a snapshot.xml, checkout the corresponding public manifest
+      # commit id, and update the external commit.
+      test_data = self.m.git_footers.test_api.step_test_data_factory(
+          test_footers or 'e' * 40)
+      footers = self.m.git_footers.from_ref(commit.id,
+                                            key='Cr-External-Snapshot',
+                                            step_test_data=test_data)
+      if not footers or len(footers) != 1:
+        raise StepFailure('expected exactly one Cr-External-Snapshot footer')
+      ext_commit.id = footers[0]
+      with self.m.context(cwd=e_manifest.path):
+        self.m.git.checkout(ext_commit.id, force=True)
+      return ext_commit
+
   def checkout_branch(self, manifest_url, manifest_branch, init_opts=None,
                       sync_opts=None, step_name=None):
     """Check out a branch of the current manifest.
@@ -215,16 +317,22 @@ class CrosSourceApi(RecipeApi):
     rebase them to the new branch.
 
     Args:
+      * manifest_url (str): The manifest url.
       * manifest_branch (str): The branch to check out, such as
           'release-R86-13421.B'
-      * manifest_url (str): The manifest url.
       * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
       * step_name (str): Name for the step, or None for default.
     """
+    # Strip any leading "refs/heads/" from manifest_branch.
+    manifest_branch = (
+        manifest_branch[len('refs/heads/'):]
+        if manifest_branch.startswith('refs/heads/') else manifest_branch)
+
     with self.m.context(cwd=self.workspace_path), \
         self.m.step.nest(step_name or
                          'checkout branch %s' % manifest_branch) as pres:
+      self.m.easy.set_properties_step(manifest_branch=manifest_branch)
       my_init_opts = {}
       my_init_opts.update(init_opts or {})
       my_init_opts['manifest_branch'] = manifest_branch

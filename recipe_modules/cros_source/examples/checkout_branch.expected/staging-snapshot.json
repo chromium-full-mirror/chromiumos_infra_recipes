@@ -415,6 +415,14 @@
     "name": "checkout branch staging-snapshot"
   },
   {
+    "cmd": [],
+    "name": "checkout branch staging-snapshot.set manifest_branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"staging-snapshot\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",

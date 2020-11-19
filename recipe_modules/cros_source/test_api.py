@@ -41,3 +41,8 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
           **{'$chromeos/cros_source': cros_source_properties})
 
     return super(CrosSourceTestApi, self).test(name, data, *args)
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def snapshot_xml_exists(value):
+    return value

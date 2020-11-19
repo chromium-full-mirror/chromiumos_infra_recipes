@@ -4,6 +4,14 @@
     "name": "checkout branch BRANCH"
   },
   {
+    "cmd": [],
+    "name": "checkout branch BRANCH.set manifest_branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"BRANCH\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",

@@ -415,6 +415,14 @@
     "name": "checkout branch release-R86-13421.B"
   },
   {
+    "cmd": [],
+    "name": "checkout branch release-R86-13421.B.set manifest_branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R86-13421.B\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
