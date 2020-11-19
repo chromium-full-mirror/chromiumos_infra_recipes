@@ -39,6 +39,34 @@ class SkylabApi(recipe_api.RecipeApi):
     """Override the quota scheduler account at runtime."""
     self._qs_account = qs_account
 
+  def schedule_ctp_requests(self, tagged_requests, swarming_parent_run_id=None,
+                            bb_tags=None):
+    """Schedule a cros_test_platform build.
+
+    Args:
+      tagged_requests (dict): Dictionary of string to test_platform.Request
+        objects.
+      swarming_parent_run_id (str): Swarming run id to with which to associate
+        the child build request.
+      bb_tags (dict): Dict mapping keys to values.  If the value is a list,
+        multiple tags for the same key will be created.
+
+    Returns:
+      The scheduled buildbucket build.
+    """
+    bb_request = self.m.buildbucket.schedule_request(
+        self._ctp_builder,
+        bucket='testplatform',
+        properties={
+            'requests': tagged_requests,
+        },
+        tags=self.m.cros_tags.tags(**bb_tags),
+        gerrit_changes=[],
+        swarming_parent_run_id=swarming_parent_run_id,
+        # Disable inheriting the version from the parent builder.
+        exe_cipd_version='')
+    return self.m.buildbucket.schedule([bb_request])[0]
+
   def schedule_suites(self, unit_hw_tests, timeout, name=None,
                       async_suite_run=False):
     """Schedule HW test suites by invoking the cros_test_platform recipe.
@@ -88,18 +116,9 @@ class SkylabApi(recipe_api.RecipeApi):
       # cause cascading termination. For that see swarming_parent_run_id.
       bb_tags = {'parent_buildbucket_id': str(self.m.buildbucket.build.id)}
       swarming_parent_run_id = None if async_suite_run else self.m.swarming.task_id
-      bb_request = self.m.buildbucket.schedule_request(
-          self._ctp_builder,
-          bucket='testplatform',
-          properties={
-              'requests': reqs,
-          },
-          tags=self.m.cros_tags.tags(**bb_tags),
-          gerrit_changes=[],
-          swarming_parent_run_id=swarming_parent_run_id,
-          # Disable inheriting the version from the parent builder.
-          exe_cipd_version='')
-      build = self.m.buildbucket.schedule([bb_request])[0]
+      build = self.schedule_ctp_requests(
+          tagged_requests=reqs, swarming_parent_run_id=swarming_parent_run_id,
+          bb_tags=bb_tags)
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
       presentation.links['suite link'] = build_url
@@ -140,7 +159,7 @@ class SkylabApi(recipe_api.RecipeApi):
       image_path = unit.common.build_payload.artifacts_gs_path
       req.params.metadata.test_metadata_url = (
           'gs://' + unit.common.build_payload.artifacts_gs_bucket + '/' +
-          unit.common.build_payload.artifacts_gs_path)
+          image_path)
       self._set_pool(req.params.scheduling, test.pool)
       sw_dep = req.params.software_dependencies.add()
       sw_dep.chromeos_build = image_path
