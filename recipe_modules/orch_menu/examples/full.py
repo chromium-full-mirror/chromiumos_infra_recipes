@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'cros_source',
     'cros_tags',
     'gerrit',
     'git_footers',
@@ -93,9 +94,11 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'branch', data.ctp_normal, api.post_check(post_process.StatusSuccess),
-      api.orch_menu.snapshot_xml_exists(False),
+      api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.DoesNotRun,
                      'update manifest ref refs/heads/test.git push'),
+      api.post_check(post_process.DoesNotRun,
+                     'set up orchestrator.read git footers'),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
@@ -114,13 +117,6 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
-
-  yield api.orch_menu.test(
-      'two-footers',
-      api.properties(
-          FullProperties(expect_missing_config=True,
-                         test_footers='foot1\nfoot2')), with_manifest_refs=True,
-      with_history=True)
 
   yield api.orch_menu.test(
       'bad-ref',

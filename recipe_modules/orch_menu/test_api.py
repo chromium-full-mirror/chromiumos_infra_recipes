@@ -394,8 +394,3 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     values.extend([ctp_normal, ctp_bisect, ctp_failure])
     return _ret(*values)
-
-  @recipe_test_api.mod_test_data
-  @staticmethod
-  def snapshot_xml_exists(value):
-    return value

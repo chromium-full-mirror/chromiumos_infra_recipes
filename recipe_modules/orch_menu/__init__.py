@@ -16,6 +16,7 @@ DEPS = [
     'cros_bisect',
     'cros_history',
     'cros_infra_config',
+    'cros_source',
     'cros_tags',
     'cros_test_proctor',
     'easy',

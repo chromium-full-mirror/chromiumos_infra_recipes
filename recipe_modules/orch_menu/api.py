@@ -95,8 +95,6 @@ class OrchMenuApi(RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(OrchMenuApi, self).__init__(*args, **kwargs)
     self._update_manifest_refs = False
-    self._internal_repo_path = None
-    self._external_repo_path = None
     self._external_gitiles_commit = None
     # Our properties: OrchMenuProperties ($chromeos/orch_menu).
     self._properties = properties
@@ -150,14 +148,12 @@ class OrchMenuApi(RecipeApi):
         path (Path): Path to the checked out repo.
         url (str): URL for the repo.
     """
+    manifest = self.m.src_state.internal_manifest
+    commit = self.gitiles_commit
     if external:
-      return _manifest_info(
-          'manifest', self._external_gitiles_commit, self._external_repo_path,
-          self.m.gitiles.repo_url(self._external_gitiles_commit))
-    else:
-      return _manifest_info('manifest-internal', self.gitiles_commit,
-                            self._internal_repo_path,
-                            self.m.gitiles.repo_url(self.gitiles_commit))
+      manifest = self.m.src_state.external_manifest
+      commit = self._external_gitiles_commit
+    return _manifest_info(manifest.relpath, commit, manifest.path, manifest.url)
 
   @contextlib.contextmanager
   def setup_orchestrator(self, missing_ok=False, test_footers=None):
@@ -192,7 +188,13 @@ class OrchMenuApi(RecipeApi):
         presentation.links['manifest snapshot revision'] = (
             self.m.gitiles.file_url(self.gitiles_commit, 'snapshot.xml'))
 
-        self._sync_manifest_repos(test_footers)
+        external_commit = self.m.cros_source.checkout_manifests(
+            is_staging=self.m.cros_infra_config.is_staging,
+            test_footers=test_footers)
+        self._external_gitiles_commit = external_commit
+
+        # We cannot push manifest refs to unpinned branches.
+        self._update_manifest_refs &= (external_commit.id != '')
 
         if not config and not missing_ok:
           raise StepFailure('Missing configuration for {}'.format(
@@ -241,82 +243,6 @@ class OrchMenuApi(RecipeApi):
         raise StepFailure('%s ref %s is missing refs/heads/' %
                           (ref.name, value))
       self._update_manifest_refs = True
-
-  def _sync_manifest_repos(self, test_footers):
-    """Sync the manifest repos.
-
-    Sync the needed manifest repos. Always sync the internal manifest repo in
-    order to set the external_gitiles_commit property. Only sync the external
-    manifest if updating manifest refs.
-
-    Args:
-      test_footers (str): test Cr-External-Snapshot footer data(values separated
-          by newlines), or None.
-    """
-    external_manifest = self.m.src_state.external_manifest
-    self._internal_repo_path = self._clone_repo('internal manifest',
-                                                self.gitiles_commit)
-
-    snapshot_xml = self._internal_repo_path.join('snapshot.xml')
-    # If the branch we are running on lacks snapshots, use tip-of-branch
-    # instead.
-    if self._test_data.enabled and self._test_data.get('snapshot_xml_exists',
-                                                       True):
-      self.m.path.mock_add_paths(snapshot_xml)
-    if not self.m.path.exists(snapshot_xml):
-      # We may want to read the commit hash from the external manifest, but the
-      # child builder will do that in cros_infra_config.configure_builder(), so
-      # we'll pass on that for now.
-      ext_commit = external_manifest.as_gitiles_commit_proto
-      ext_commit.ref = self.gitiles_commit.ref
-      self._external_gitiles_commit = ext_commit
-
-      # We do not want to push manifest refs on unpinned branches.
-      self._update_manifest_refs = False
-      return
-
-    # Read the Cr-External-Snapshot footer to get ref of external snapshot
-    # that corresponds with the internal snapshot.
-    test_data = self.m.git_footers.test_api.step_test_data_factory(
-        test_footers or 'external-manifest-SHA')
-    with self.m.context(cwd=self._internal_repo_path):
-      footer_values = self.m.git_footers.from_ref(self.gitiles_commit.id,
-                                                  key='Cr-External-Snapshot',
-                                                  step_test_data=test_data)
-
-      # Make sure we got exactly one snapshot ref.
-      if not footer_values or len(footer_values) != 1:
-        raise StepFailure('expected exactly one Cr-External-Snapshot footer')
-      extern_snapshot_id = footer_values[0]
-
-    self._external_gitiles_commit = common_pb2.GitilesCommit(
-        host=external_manifest.host, project=external_manifest.project,
-        ref=self.gitiles_commit.ref, id=extern_snapshot_id)
-
-    if not self._update_manifest_refs:
-      return
-    # If updating manifests, also clone the external manifest repo.
-    self._external_repo_path = self._clone_repo('external manifest',
-                                                self._external_gitiles_commit)
-
-  def _clone_repo(self, name, commit):
-    """Clone a repo into a temporary directory.
-
-    Args:
-      name (str): Display name for the repo.
-      commit (GitilesCommit): The commit to clone (and fetch).
-
-    Returns:
-      (Path) path of the repo, where |commit| is now HEAD.
-    """
-    path = self.m.path.mkdtemp()
-    url = self.m.gitiles.repo_url(commit)
-    with self.m.step.nest('clone %s repo' % name), self.m.context(cwd=path):
-      self.m.git.clone(url, timeout_sec=60 * 60)
-      if commit.id:
-        self.m.git.fetch_ref(url, commit.id, timeout_sec=60 * 60)
-        self.m.git.checkout(commit.id, force=True)
-    return path
 
   def _push_manifest_refs(self, ref):
     """Update the remote ref (if any).
