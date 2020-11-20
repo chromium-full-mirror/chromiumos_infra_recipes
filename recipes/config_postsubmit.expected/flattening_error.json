@@ -652,14 +652,14 @@
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.importing flattened configs",
+    "name": "Do copy_to_internal and create CL.aggregating configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
@@ -668,18 +668,16 @@
   {
     "cmd": [
       "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace/src/config-internal/generated"
+      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
+      "-m",
+      "chromiumos.config.payload.FlatConfigList",
+      "-a",
+      "chromiumos.config.payload.FlatConfigList",
+      "-o",
+      "generated/flattened.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.create generated directory",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.merge flattened configs to config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -687,19 +685,23 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/merge_flat_configs.py",
+      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
+      "-m",
+      "chromiumos.config.payload.ConfigBundle",
+      "-a",
+      "chromiumos.config.payload.ConfigBundleList",
       "-o",
-      "generated/flattened.jsonproto"
+      "generated/configs.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.merge flattened configs to config-internal",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.merge joined configs to config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.diffing to find changes",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_SUMMARY_TEXT@No changes to commit@@@"
@@ -707,7 +709,7 @@
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.diffing to find changes.diff check",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -721,7 +723,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.diffing to find changes.diff check.git ls-files",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes.diff check.git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -736,7 +738,43 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.importing flattened configs.git transaction.diffing to find changes.diff check.git diff",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes.diff check.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes.diff check (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "generated/configs.jsonproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes.diff check (2).git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "generated/configs.jsonproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes.diff check (2).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]

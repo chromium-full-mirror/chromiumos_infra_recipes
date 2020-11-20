@@ -32,13 +32,28 @@ DEPS = [
     'git_txn',
     'repo',
 ]
-"""Represents a commit that should be made as the result of an action.
 
-Fields:
-  project_path (str): Path to the repo to commit to.
-  message (str): Commit message.
-"""
+# Represents a commit that should be made as the result of an action.
+#
+# Fields:
+#  project_path (str): Path to the repo to commit to.
+#  message (str): Commit message.
+#
 CommitInfo = namedtuple('CommitInfo', ['project_path', 'message'])
+
+# Represents the config for a data ingestion/aggregation task.
+#
+# Fields:
+#   name (str): name of the task for display purposes
+#   input_path (str): input path in each project
+#   output_path (str): output path in config-internal
+#   message_type (str): message type to read in from projects
+#   aggregate_type (str): aggregate message type to write to config-internal
+#
+IngestConfig = namedtuple(
+    'IngestConfig',
+    ['name', 'input_path', 'output_path', 'message_type', 'aggregate_type'],
+)
 
 
 def _replicate_public_config(api, project_infos):
@@ -137,52 +152,71 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatt
 
 
 def _copy_to_internal(api, project_infos):
-  """Merge any flattened messages into a single list and write to config-internal.
+  """Aggregate config messages and copy them to config-internal
 
   This provides a single centralized location from which services can read all
   device configurations.
   """
 
+  configs = [
+      IngestConfig(
+          'flattened',
+          'generated/flattened.jsonproto',
+          'generated/flattened.jsonproto',
+          'chromiumos.config.payload.FlatConfigList',
+          'chromiumos.config.payload.FlatConfigList',
+      ),
+      IngestConfig(
+          'joined',
+          'generated/joined.jsonproto',
+          'generated/configs.jsonproto',
+          'chromiumos.config.payload.ConfigBundle',
+          'chromiumos.config.payload.ConfigBundleList',
+      ),
+  ]
+
   # get project info for internal config repo
   config_project_info = api.repo.project_info("chromeos/config-internal")
 
   cwd = api.context.cwd
-  merge_script = cwd.join('src/config/payload_utils/merge_flat_configs.py')
+  merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
   config_internal = cwd.join('src/config-internal')
-  output = 'generated/flattened.jsonproto'
-
-  # find all the flattened configs
-  files = []
-  for project_info in project_infos:
-    path = cwd.join(project_info.path, "generated/flattened.jsonproto")
-
-    if api.path.exists(path):
-      files.append(path)
 
   def _merge_configs():
-    api.file.ensure_directory("create generated directory",
-                              config_internal.join('generated'))
+    outputs = []
+    for config in configs:
+      # find all the input config files
+      files = []
+      for project_info in project_infos:
+        path = cwd.join(project_info.path, config.input_path)
 
-    # merge and import
-    api.step('merge flattened configs to config-internal',
-             ['vpython', merge_script, "-o", output] + files)
+        if api.path.exists(path):
+          files.append(path)
+
+      # merge and import
+      api.step('merge {} configs to config-internal'.format(config.name), [
+          'vpython', merge_script, "-m", config.message_type, "-a",
+          config.aggregate_type, "-o", config.output_path
+      ] + files)
+
+      outputs.append(config.output_path)
 
     with api.step.nest("diffing to find changes") as presentation:
-      if not api.git.diff_check(output):
+      if not any(api.git.diff_check(output) for output in outputs):
         presentation.step_summary_text = "No changes to commit"
         return False  # abort transaction
 
     # commit files
-    api.git.add([output])
+    api.git.add(outputs)
     message = \
-      '''Automerging and importing flattened config changes.
+      '''Automerging and importing config changes.
 
 Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatten')
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/aggregate')
     api.git.commit(message)
 
   with api.context(config_internal),\
-       api.step.nest("importing flattened configs") as presentation:
+       api.step.nest("aggregating configs") as presentation:
     try:
       api.git_txn.update_ref(
           config_project_info.remote,
@@ -391,7 +425,7 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_process(
           post_process.MustRun,
-          'Do copy_to_internal and create CL.importing flattened configs.git transaction.merge flattened configs to config-internal',
+          'Do copy_to_internal and create CL.aggregating configs.git transaction.merge flattened configs to config-internal',
       ),
   )
 
@@ -403,7 +437,7 @@ def GenTests(api):
       api.git.diff_check(False),
       api.post_process(
           StepSummaryEquals,
-          'Do copy_to_internal and create CL.importing flattened configs.git transaction.diffing to find changes',
+          'Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes',
           "No changes to commit"),
   )
 
@@ -414,6 +448,6 @@ def GenTests(api):
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
-          'Do copy_to_internal and create CL.importing flattened configs.git transaction.merge flattened configs to config-internal',
+          'Do copy_to_internal and create CL.aggregating configs.git transaction.merge flattened configs to config-internal',
           retcode=1),
   )
