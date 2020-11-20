@@ -42,6 +42,10 @@ message PaygenOrchestratorProperties {
   // The payload channels to generate for, empty requires DeltaType == NO_DELTA.
   repeated Channel channels = 5;
 
+  // The models in which we've enabled AU testing. If empty we will assume
+  // that the board name is the builder name (i.e. this isn't a unibuild).
+  repeated string au_testing_models = 12;
+
   // The bucket to look for source artifacts in (e.g, chromeos-releases).
   string src_bucket = 6;
 

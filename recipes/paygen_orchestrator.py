@@ -58,6 +58,9 @@ def RunSteps(api, properties):
   delta_types = properties.delta_types
   delta_types = delta_types or api.cros_paygen.default_delta_types
 
+  # Set default to builder name if we haven't specified au_testing_models.
+  au_testing_models = properties.au_testing_models or properties.builder_name
+
   # Get the current paygen configuration.
   with api.step.nest('discovering payload configuration') as pres:
     configured_payloads = []
