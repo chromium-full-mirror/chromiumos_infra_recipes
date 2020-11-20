@@ -245,7 +245,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "chromeos/manifest-internal"
+      "chromeos/manifest-internal",
+      "chromiumos/manifest"
     ],
     "cwd": "[CACHE]/chromiumos-external",
     "infra_step": true,

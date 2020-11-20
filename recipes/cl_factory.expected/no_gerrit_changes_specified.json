@@ -492,7 +492,8 @@
       "--retry-fetches",
       "8",
       "--verbose",
-      "chromeos/manifest-internal"
+      "chromeos/manifest-internal",
+      "chromiumos/manifest"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,

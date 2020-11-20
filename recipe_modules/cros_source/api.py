@@ -212,8 +212,12 @@ class CrosSourceApi(RecipeApi):
       # present, so don't bother.
       if not groups:
         with self.m.step.nest('sync manifest branches'):
-          sync_opts.update(current_branch=False,
-                           projects=[self.m.src_state.build_manifest.project])
+          sync_opts.update(
+              current_branch=False, projects=sorted(
+                  set([
+                      self.m.src_state.build_manifest.project,
+                      self.m.src_state.external_manifest.project
+                  ])))
           with self.m.context(cwd=cache_path):
             self.m.repo.sync(**sync_opts)
 
@@ -252,6 +256,7 @@ class CrosSourceApi(RecipeApi):
     branch = (
         commit.ref[len('refs/heads/'):]
         if commit.ref.startswith('refs/heads/') else commit.ref)
+    branch = '' if branch == "snapshot" else branch
 
     projects = self.m.src_state.manifest_projects
 

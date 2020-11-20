@@ -255,9 +255,7 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
-      "all",
-      "--manifest-branch",
-      "snapshot"
+      "all"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -426,7 +424,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "chromeos/manifest-internal"
+      "chromeos/manifest-internal",
+      "chromiumos/manifest"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
