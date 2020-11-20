@@ -25,6 +25,7 @@ DEPS = [
 ]
 
 import contextlib
+import re
 from recipe_engine.recipe_api import StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -170,6 +171,16 @@ def _launch_builders(api, test_builders, always_launch_builders):
     builders += [x for x in always_launch_builders if x not in test_builders]
     my_id = api.swarming.task_id
 
+    # TODO(crbug/1012763) small bots do not work well with led launch.
+    def _bad_bot_size(led_result):
+      swarm = led_result.result.buildbucket.bbagent_args.build.infra.swarming
+      for d in swarm.task_dimensions:
+        if d.key == "bot_size":
+          if d.value and d.value != "small":
+            return False
+          break
+      return True
+
     for builder in builders:
       with api.step.nest(
           'analyze and launch {}'.format(builder)) as builder_pres:
@@ -184,11 +195,8 @@ def _launch_builders(api, test_builders, always_launch_builders):
         buildbucket = led_result.result.buildbucket
         recipe = buildbucket.bbagent_args.build.input.properties['recipe']
 
-        # TODO(crbug/1012763) small bots do not work well with led launch.
-        for d in buildbucket.bbagent_args.build.infra.swarming.task_dimensions:
-          if d.key == "bot_size" and d.value == "small":
-            led_result = led_result.then('edit', '-d', 'bot_size=medium')
-            break
+        if _bad_bot_size(led_result):
+          led_result = led_result.then('edit', '-d', 'bot_size=large')
 
         if (builder in always_launch_builders or
             api.recipe_analyze.is_recipe_affected(affected_files, recipe)):
@@ -407,19 +415,38 @@ def GenTests(api):
                         if skipped_builders else {}))
     return ret
 
+  def _mock_edit(job, cmd, cwd):
+    """Handler for `led edit -d` (set task_dimension).
+
+    We use this to mock setting the bot_size in the recipe.
+    """
+    vals = api.led.get_arg_values(cmd, 'd')
+    k, v = vals[0].split('=')
+    swarm = job.buildbucket.bbagent_args.build.infra.swarming
+    for d in swarm.task_dimensions:
+      if d.key == k:
+        d.value = v
+      return job
+    dim = swarm.task_dimensions.add()
+    dim.key = k
+    dim.value = v
+    return job
+
   def buildbucket_search_and_get_build(builder, recipe_name, fake_id):
     fake_build = job_pb2.Definition()
     build_proto = fake_build.buildbucket.bbagent_args.build
     build_proto.input.properties['recipe'] = recipe_name
     build_proto.builder.builder = builder
 
-    dim = build_proto.infra.swarming.task_dimensions.add()
-    dim.key = 'bot_size'
-    dim.value = 'small' if recipe_name == 'release_triggerer' else 'large'
+    if recipe_name != 'no_size_recipe':
+      dim = build_proto.infra.swarming.task_dimensions.add()
+      dim.key = 'bot_size'
+      dim.value = 'small' if recipe_name == 'release_triggerer' else 'large'
 
     ret = api.buildbucket.simulated_search_results(
         builds=[build_pb2.Build(id=fake_id, builder={'builder': builder})],
         step_name=launch_step_name(builder, 'buildbucket.search'))
+    ret += api.led.mock_edit(_mock_edit, cmd_filter=['edit', '-d'])
     return ret + api.led.mock_get_build(fake_build, fake_id)
 
   def recipe_analyze_test_data(builder, recipes):
@@ -495,8 +522,10 @@ def GenTests(api):
       'basic',
       # Specify two builders to run.
       api.properties(
-          TestRecipesProperties(
-              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
+          TestRecipesProperties(builders=[
+              'staging-Annealing', 'staging-chromite-postsubmit',
+              'staging-no-size'
+          ])),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # No builders are skipped
       get_non_skipped_builders_test_data(),
@@ -506,8 +535,11 @@ def GenTests(api):
                                        'test_chromite', 2),
       buildbucket_search_and_get_build('staging-release-triggerer',
                                        'release_triggerer', 3),
+      buildbucket_search_and_get_build('staging-no-size', 'no_size_recipe', 4),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
+      recipe_analyze_test_data(builder='staging-no-size',
+                               recipes=['no_size_recipe']),
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
       recipe_analyze_test_data(builder='staging-chromite-postsubmit',
