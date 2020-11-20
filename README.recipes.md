@@ -178,6 +178,7 @@
   * [cros_paygen:examples/full](#recipes-cros_paygen_examples_full)
   * [cros_paygen:examples/get_delta_requests](#recipes-cros_paygen_examples_get_delta_requests)
   * [cros_paygen:examples/get_full_requests](#recipes-cros_paygen_examples_get_full_requests)
+  * [cros_paygen:examples/get_n2n_requests](#recipes-cros_paygen_examples_get_n2n_requests)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
@@ -1860,13 +1861,13 @@ bisection using the configuration of another builder.
 
 API for working with Paygen and its config.
 
-#### **class [CrosPaygenApi](/recipe_modules/cros_paygen/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPaygenApi](/recipe_modules/cros_paygen/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific paygen steps.
 
-&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/cros_paygen/api.py#65)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/cros_paygen/api.py#67)(self):**
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_paygen/api.py#69)(self, builder_name, \*\*kwargs):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_paygen/api.py#71)(self, builder_name, \*\*kwargs):**
 
 Return the configs matching the query or [].
 
@@ -1874,8 +1875,8 @@ Note that all comparisons are made _in lower case_!
 
 Args:
   builder_name (str): The name of the builders to return configuration for.
-  **kwargs: Match keyword to top level dictionary contents. For example passing
-            delta_payload_tests=true will match only if matched.
+  **kwargs: Match keyword to top level dictionary contents. For example
+            passing delta_payload_tests=true will match only if matched.
 
 Returns:
   A list of dictionaries of the matching configurations. For example:
@@ -1900,7 +1901,7 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_delta\_requests](/recipe_modules/cros_paygen/api.py#111)(self, payload_def, src_artifacts, tgt_artifacts, bucket, verify, keyset, dryrun):**
+&mdash; **def [get\_delta\_requests](/recipe_modules/cros_paygen/api.py#139)(self, payload_def, src_artifacts, tgt_artifacts, bucket, verify, keyset, dryrun):**
 
 Examine def, source, and target and return list(GenerationRequests).
 
@@ -1921,7 +1922,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#175)(self, tgt_artifacts, bucket, verify, keyset, dryrun):**
+&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#206)(self, tgt_artifacts, bucket, verify, keyset, dryrun):**
 
 Get the configured full requests for a set of artifacts.
 
@@ -1934,6 +1935,23 @@ Args:
 
 Returns:
   A completed list[GenerationRequest] or [].
+
+&mdash; **def [get\_n2n\_requests](/recipe_modules/cros_paygen/api.py#113)(self, tgt_artifacts, bucket, verify, dryrun):**
+
+Generate a N2N testing payloads.
+
+We will examine all the artifacts in tgt artifacts for unsigned
+test images and generate n2n requests (a request that updates to
+and from the same version.
+
+Args:
+  tgt_artifacts (list[cros_storage.Image]): Available tgt images.
+  bucket (str): The bucket containing the requests (and destination).
+  verify (bool): Should we run payload verification.
+  dryrun (bool): Should we not upload resulting artifacts.
+
+Returns:
+  A list[GenerationRequest] or [].
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
 [DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -6012,6 +6030,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_paygen/examples/get_full_requests.py#13): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_full_requests.py#22)(api, properties):**
+### *recipes* / [cros\_paygen:examples/get\_n2n\_requests](/recipe_modules/cros_paygen/examples/get_n2n_requests.py)
+
+[DEPS](/recipe_modules/cros_paygen/examples/get_n2n_requests.py#10): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_n2n_requests.py#19)(api, properties):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

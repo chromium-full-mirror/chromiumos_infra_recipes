@@ -82,6 +82,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
           bucket='b', channel='stable'),
       milestone='86',
+      image_type=common_pb2.TEST,
   )
 
   UNSIGNED_TGT = UnsignedImage_pb2(
@@ -89,6 +90,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
           bucket='b', channel='stable'),
       milestone='86',
+      image_type=common_pb2.TEST,
   )
 
   DLC_SRC = DLCImage_pb2(
@@ -168,6 +170,17 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
       GenerationRequest_pb2(
           full_update=True,
           tgt_dlc_image=DLC_TGT,
+          bucket='b',
+          verify=True,
+          keyset='',
+          dryrun=True,
+      )
+  ]
+
+  EXAMPLE_GEN_REQUEST_N2N = [
+      GenerationRequest_pb2(
+          src_unsigned_image=UNSIGNED_TGT,
+          tgt_unsigned_image=UNSIGNED_TGT,
           bucket='b',
           verify=True,
           keyset='',

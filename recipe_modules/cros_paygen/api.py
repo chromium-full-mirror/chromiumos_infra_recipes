@@ -15,6 +15,8 @@ from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 
+import PB.chromiumos.common as common_pb2
+
 DEFAULT_DELTA_TYPES = [
     'STEPPING_STONE', 'OMAHA', 'NO_DELTA', 'MILESTONE', 'FSI'
 ]
@@ -73,8 +75,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
 
     Args:
       builder_name (str): The name of the builders to return configuration for.
-      **kwargs: Match keyword to top level dictionary contents. For example passing
-                delta_payload_tests=true will match only if matched.
+      **kwargs: Match keyword to top level dictionary contents. For example
+                passing delta_payload_tests=true will match only if matched.
 
     Returns:
       A list of dictionaries of the matching configurations. For example:
@@ -107,6 +109,32 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             [k in b and b[k].lower() == v.lower() for k, v in kwargs.items()]):
           match_boards.append(b)
     return match_boards
+
+  def get_n2n_requests(self, tgt_artifacts, bucket, verify, dryrun):
+    """Generate a N2N testing payloads.
+
+    We will examine all the artifacts in tgt artifacts for unsigned
+    test images and generate n2n requests (a request that updates to
+    and from the same version.
+
+    Args:
+      tgt_artifacts (list[cros_storage.Image]): Available tgt images.
+      bucket (str): The bucket containing the requests (and destination).
+      verify (bool): Should we run payload verification.
+      dryrun (bool): Should we not upload resulting artifacts.
+
+    Returns:
+      A list[GenerationRequest] or [].
+    """
+    reqs = []
+    for tgt in tgt_artifacts:
+      if (tgt.image_type == common_pb2.ImageType.Value('TEST') and
+          isinstance(tgt, UnsignedImage_pb2)):
+        reqs.append(
+            GenerationRequest(src_unsigned_image=tgt, tgt_unsigned_image=tgt,
+                              bucket=bucket, verify=verify, keyset='',
+                              dryrun=dryrun))
+    return reqs
 
   def get_delta_requests(self, payload_def, src_artifacts, tgt_artifacts,
                          bucket, verify, keyset, dryrun):
@@ -143,7 +171,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         v_src = self.m.cros_version.Version.from_string(src.build.version)
         v_tgt = self.m.cros_version.Version.from_string(tgt.build.version)
 
-        if v_tgt < v_src:
+        if v_tgt <= v_src:
           # TODO(crbug.com/1122854): Add test, remove pragma.
           continue  # pragma: nocover
 
@@ -159,6 +187,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
                                 bucket=bucket, verify=verify, keyset=keyset,
                                 dryrun=dryrun))
         elif isinstance(src, UnsignedImage_pb2):
+          # We don't create delta paygens for unsigned recovery images.
+          if src.image_type == common_pb2.ImageType.Value('RECOVERY'):
+            continue  # pragma: nocover
           reqs.append(
               GenerationRequest(src_unsigned_image=src, tgt_unsigned_image=tgt,
                                 bucket=bucket, verify=verify, keyset=keyset,

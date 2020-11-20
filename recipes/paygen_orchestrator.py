@@ -123,6 +123,12 @@ def RunSteps(api, properties):
   # TODO(crbug.com/1122854): Missing but expected artifacts are silently ignored.
   with api.step.nest('pairing artifacts') as pres:
 
+    # Do N2N testing payloads.
+    cbr.extend(
+        api.cros_paygen.get_n2n_requests(target_artifacts,
+                                         properties.dest_bucket, True,
+                                         properties.dryrun))
+
     # Do configured delta payloads.
     for payload_cfg in configured_payloads:
       reqs = api.cros_paygen.get_delta_requests(payload_cfg, source_artifacts,
@@ -140,9 +146,6 @@ def RunSteps(api, properties):
                                              properties.dryrun)
     pres.logs['%s full' % len(reqs)] = [MessageToJson(x) for x in reqs]
     cbr.extend(reqs)
-
-    # Do dlc payloads.
-    # TODO(crbug.com/1122854): Impl.
 
     if not cbr:
       pres.step_text = 'No payload pairs (src->tgt) found.'
