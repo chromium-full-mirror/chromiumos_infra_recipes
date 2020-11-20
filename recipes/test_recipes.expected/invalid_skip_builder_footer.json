@@ -75,9 +75,9 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 337, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 343, in RunSteps",
       "    non_skipped_builders = _get_non_skipped_builders(api, builders)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 280, in _get_non_skipped_builders",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 286, in _get_non_skipped_builders",
       "    builders))",
       "ValueError: Builder other-builder is specified in the Test-Recipes-Skip-Builder footer, but is not in the builders list ([u'staging-Annealing', u'staging-chromite-postsubmit'])"
     ]

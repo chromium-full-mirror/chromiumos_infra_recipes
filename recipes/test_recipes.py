@@ -184,6 +184,12 @@ def _launch_builders(api, test_builders, always_launch_builders):
         buildbucket = led_result.result.buildbucket
         recipe = buildbucket.bbagent_args.build.input.properties['recipe']
 
+        # TODO(crbug/1012763) small bots do not work well with led launch.
+        for d in buildbucket.bbagent_args.build.infra.swarming.task_dimensions:
+          if d.key == "bot_size" and d.value == "small":
+            led_result = led_result.then('edit', '-d', 'bot_size=medium')
+            break
+
         if (builder in always_launch_builders or
             api.recipe_analyze.is_recipe_affected(affected_files, recipe)):
           # Run the child task with priority=20, to put it ahead of actual
@@ -407,6 +413,10 @@ def GenTests(api):
     build_proto.input.properties['recipe'] = recipe_name
     build_proto.builder.builder = builder
 
+    dim = build_proto.infra.swarming.task_dimensions.add()
+    dim.key = 'bot_size'
+    dim.value = 'small' if recipe_name == 'release_triggerer' else 'large'
+
     ret = api.buildbucket.simulated_search_results(
         builds=[build_pb2.Build(id=fake_id, builder={'builder': builder})],
         step_name=launch_step_name(builder, 'buildbucket.search'))
@@ -495,7 +505,7 @@ def GenTests(api):
       buildbucket_search_and_get_build('staging-chromite-postsubmit',
                                        'test_chromite', 2),
       buildbucket_search_and_get_build('staging-release-triggerer',
-                                       'release-triggerer', 3),
+                                       'release_triggerer', 3),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
@@ -516,7 +526,7 @@ def GenTests(api):
       buildbucket_search_and_get_build('staging-chromite-postsubmit',
                                        'test_chromite', 2),
       buildbucket_search_and_get_build('staging-release-triggerer',
-                                       'release-triggerer', 3),
+                                       'release_triggerer', 3),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
@@ -537,7 +547,7 @@ def GenTests(api):
       buildbucket_search_and_get_build('staging-chromite-postsubmit',
                                        'test_chromite', 2),
       buildbucket_search_and_get_build('staging-release-triggerer',
-                                       'release-triggerer', 3),
+                                       'release_triggerer', 3),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
@@ -559,7 +569,7 @@ def GenTests(api):
       buildbucket_search_and_get_build('staging-chromite-postsubmit',
                                        'test_chromite', 1),
       buildbucket_search_and_get_build('staging-release-triggerer',
-                                       'release-triggerer', 2),
+                                       'release_triggerer', 2),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-chromite-postsubmit',
@@ -575,7 +585,7 @@ def GenTests(api):
       # Buildbucket search and led get-build results.
       buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
       buildbucket_search_and_get_build('staging-release-triggerer',
-                                       'release-triggerer', 2),
+                                       'release_triggerer', 2),
       # recipe analyze results. Note that the annealing recipe is affected
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
