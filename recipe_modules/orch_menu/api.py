@@ -190,6 +190,7 @@ class OrchMenuApi(RecipeApi):
 
         external_commit = self.m.cros_source.checkout_manifests(
             is_staging=self.m.cros_infra_config.is_staging,
+            checkout_external=self._update_manifest_refs,
             test_footers=test_footers)
         self._external_gitiles_commit = external_commit
 

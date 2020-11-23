@@ -2360,7 +2360,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#445)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#452)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
@@ -2388,7 +2388,7 @@ This is the cached version of source (the internal manifest checkout),
 usually updated once at the beginning of a build and then mounted into the
 master and/or workspace paths.
 
-&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#317)(self, manifest_url, manifest_branch, init_opts=None, sync_opts=None, step_name=None):**
+&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#324)(self, manifest_url, manifest_branch, init_opts=None, sync_opts=None, step_name=None):**
 
 Check out a branch of the current manifest.
 
@@ -2403,7 +2403,7 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
   * step_name (str): Name for the step, or None for default.
 
-&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#224)(self, commit=None, is_staging=False, test_footers=None):**
+&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#224)(self, commit=None, is_staging=False, checkout_external=False, test_footers=None):**
 
 Check out the manifest projects.
 
@@ -2421,17 +2421,18 @@ Args:
   commit (GitilesCommit): The commit to use, or None for the default (from
     cros_infra_config.configure_builder)
   is_staging (bool): Whether this is staging.
+  checkout_external (bool): Whether to checkout the external manifest.
   test_footers (str): test Cr-External-Snapshot footer data(values separated
       by newlines), or None.
 
 Returns:
   (GitilesCommit) The GitilesCommit to use for the external manifest.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#404)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#411)(self):**
 
 Returns a context where overlays can be mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#895)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#902)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2444,7 +2445,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#852)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#859)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -2474,7 +2475,7 @@ Args:
   * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
   current value.
 
-&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#353)(self, count=((7 \* 24) \* 2)):**
+&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#360)(self, count=((7 \* 24) \* 2)):**
 
 Return snapshot SHAs for the manifest.
 
@@ -2488,7 +2489,7 @@ Args:
 Returns:
   (list[str]) The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#417)(self, project, branch, empty_ok=False):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#424)(self, project, branch, empty_ok=False):**
 
 Find the source paths for a given project in the workspace.
 
@@ -2535,7 +2536,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#779)(self, gitiles_commit, manifest_url=None):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#786)(self, gitiles_commit, manifest_url=None):**
 
 Sync a checkout to the snapshot.
 
@@ -4137,7 +4138,7 @@ via this module, and are a simple sequence of steps.
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#114)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#217)(self):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#218)(self):**
 
 Create the correct return value for RunSteps.
 
@@ -4154,7 +4155,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#130)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#324)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#325)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None):**
 
 Plan, schedule, and run child builders.
 
@@ -4167,7 +4168,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#558)(self, testable_builds=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#559)(self, testable_builds=None):**
 
 Plan, schedule, and run tests.
 
@@ -4180,11 +4181,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#489)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#490)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#495)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#496)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 

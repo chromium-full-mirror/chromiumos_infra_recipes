@@ -7,5 +7,9 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_source.examples;
 
 message CheckoutManifestsProperties {
+  // The branch to checkout.
   string branch_name = 1;
+
+  // Whether to checkout the external manifest.
+  bool checkout_external = 2;
 }

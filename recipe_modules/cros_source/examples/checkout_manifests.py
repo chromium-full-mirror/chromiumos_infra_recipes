@@ -29,7 +29,8 @@ def RunSteps(api, properties):
   # snapshot.xml.
   api.assertions.assertEqual(api.cros_source.branch_manifest_file, snapshot_xml)
 
-  api.cros_source.checkout_manifests()
+  api.cros_source.checkout_manifests(
+      checkout_external=properties.checkout_external)
   api.assertions.assertEqual(api.cros_source.manifest_branch,
                              properties.branch_name)
 
@@ -43,9 +44,12 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  yield api.cros_source.test('basic',
-                             api.post_check(post_process.StatusSuccess),
-                             revision=None, cq=False, git_ref=None)
+  # The normal case for postsubmit: checkout the external manifest, so we can
+  # push manifest refs.
+  yield api.cros_source.test(
+      'basic', api.post_check(post_process.StatusSuccess),
+      api.properties(CheckoutManifestsProperties(checkout_external=True)),
+      revision=None, cq=False, git_ref=None)
 
   # Running on an unpinned branch.
   branch = 'release-R88-13597.B'

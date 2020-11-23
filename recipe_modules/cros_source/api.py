@@ -222,7 +222,7 @@ class CrosSourceApi(RecipeApi):
             self.m.repo.sync(**sync_opts)
 
   def checkout_manifests(self, commit=None, is_staging=False,
-                         test_footers=None):
+                         checkout_external=False, test_footers=None):
     """Check out the manifest projects.
 
     Syncs the manifest projects into the workspace, at the appropriate revision.
@@ -239,6 +239,7 @@ class CrosSourceApi(RecipeApi):
       commit (GitilesCommit): The commit to use, or None for the default (from
         cros_infra_config.configure_builder)
       is_staging (bool): Whether this is staging.
+      checkout_external (bool): Whether to checkout the external manifest.
       test_footers (str): test Cr-External-Snapshot footer data(values separated
           by newlines), or None.
 
@@ -310,8 +311,14 @@ class CrosSourceApi(RecipeApi):
       if not footers or len(footers) != 1:
         raise StepFailure('expected exactly one Cr-External-Snapshot footer')
       ext_commit.id = footers[0]
-      with self.m.context(cwd=e_manifest.path):
-        self.m.git.checkout(ext_commit.id, force=True)
+      if checkout_external:
+        # Default to not checking out the external manifest.  It's possible that
+        # GoB hasn't quite reconciled all of its copies, and it may not have
+        # been included in the repo sync above, because of that timing.  The
+        # orchestrator only needs to have it checked out if it is pushing
+        # manifest_refs (such as postsubmit-orchestrator).
+        with self.m.context(cwd=e_manifest.path):
+          self.m.git.checkout(ext_commit.id, force=True)
       return ext_commit
 
   def checkout_branch(self, manifest_url, manifest_branch, init_opts=None,

@@ -501,20 +501,6 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "name": "set up orchestrator.git checkout (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "check for merge conflicts",
     "~followup_annotations": [
