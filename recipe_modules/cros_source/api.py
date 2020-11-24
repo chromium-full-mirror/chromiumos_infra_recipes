@@ -492,18 +492,62 @@ class CrosSourceApi(RecipeApi):
       patch_sets (list[PatchSet]): patch sets to consider.
     """
 
+    # Partition the patches:
+    # - build: patches to the build manifest (whatever it is), and then one of:
+    #   - internal: patches to the internal manifest (build is external), or
+    #   - external: patches to the external manifest (build is internal).
+    # - manifest: union of the above.
     manifests, patches = self._partition_patches(patch_sets)
     if not patches.manifest:
       # There are no manifest changes. We are done.
       return
 
+    external = manifests.build in manifests.extern
     with self.m.step.nest('patch manifest') as pres:
-      branches = set(x.branch for x in patches.manifest)
-      if len(branches) > 1:
+      # COIL: Allow manifest-internal master branch with manifest main branch.
+      # In reality, we could first checkout the internal (or build) manifest to
+      # the correct branch, and then confirm that the branch of the external (or
+      # build) manifest agrees with the patchesets.  However, they are *almost*
+      # always the same, so we simply check the one case where they are expected
+      # to be different.
+
+      # Determine the branches for each of the (three) manifests, propagating
+      # the build manifest to internal/external as appropriate.
+      b_branches = {x.branch for x in patches.build}
+      e_branches = {
+          x.branch for x in (patches.build if external else patches.extern)
+      }
+      i_branches = {
+          x.branch for x in (patches.intern if external else patches.build)
+      }
+
+      # If we have more than one branch, that is only valid if we are ToT for
+      # both the internal and external manifests.
+      branches = {x.branch for x in patches.manifest}
+      if len(branches) > 1 and not (e_branches == {manifests.extern.branch} and
+                                    i_branches == {manifests.intern.branch}):
         raise StepFailure('Cannot patch multiple branches: {}'.format(' '.join(
             sorted(branches))))
-      branch = branches.pop()
-      self.m.easy.set_properties_step(manifest_branch=branch)
+
+      # Determine the branch name(s) to use.  At least one if e_branches and/or
+      # i_branches is non-empty, since there are manifest patches to apply.
+      i_branch = i_branches.pop() if i_branches else None
+      e_branch = e_branches.pop() if e_branches else None
+
+      # If we have no patches to one of the manifests, then determine the
+      # correct branch based on the other manifest's branch.
+      i_branch = i_branch or (manifests.intern.branch if
+                              e_branch == manifests.extern.branch else e_branch)
+      e_branch = e_branch or (manifests.extern.branch if
+                              i_branch == manifests.intern.branch else i_branch)
+      branch = e_branch if external else i_branch
+
+      if e_branch == i_branch:
+        self.m.easy.set_properties_step(manifest_branch=branch)
+      else:
+        self.m.easy.set_properties_step(manifest_branch=branch,
+                                        external_manifest_branch=e_branch,
+                                        internal_manifest_branch=i_branch)
 
       # Now we know what branch we need to be on, and we need the manifest
       # repo(s) to be on that branch so that the CLs will apply.
@@ -513,8 +557,7 @@ class CrosSourceApi(RecipeApi):
       _changes_full_xml = lambda p: any('full.xml' in x.file_infos for x in p)
 
       # If there are changes to the external copy of full.xml, that is an error.
-      if _changes_full_xml(patches.build if manifests.build ==
-                           manifests.extern else patches.extern):
+      if _changes_full_xml(patches.build if external else patches.extern):
         raise StepFailure('Full.xml changes must be made in manifest-internal')
 
       # If patches.intern changes full.xml, then:
@@ -529,6 +572,8 @@ class CrosSourceApi(RecipeApi):
               manifests.intern.url, target_path=manifests.intern.path,
               reference=self.cache_path.join(manifests.intern.relpath),
               dissociate=True, timeout_sec=60 * 60)
+          # Also, check out the correct branch of the internal manifest.
+          self.m.git.checkout(i_branch)
 
       def _copy_full_xml():
         # Copy full.xml from internal to external manifest and commit
@@ -591,7 +636,7 @@ class CrosSourceApi(RecipeApi):
 
         # Determine the correct name for the remote.
         step_test_data = lambda: self.m.raw_io.test_api.output(
-            'cros-internal' if manifests.build == manifests.intern else 'cros')
+            'cros' if external else 'cros-internal')
         remote = self.m.step('remote', ['git', 'remote'],
                              stdout=self.m.raw_io.output(),
                              step_test_data=step_test_data).stdout.strip()
@@ -626,10 +671,11 @@ class CrosSourceApi(RecipeApi):
           self.m.step('branch {}'.format(branch), ['git', 'checkout', branch])
           self.m.step('reset {}'.format(branch),
                       ['git', 'reset', '--hard', head])
-        if manifests.build.path != manifests.extern.path:
+        if not external:
           with self.m.context(cwd=manifests.extern.path):
-            self.m.step('branch {}'.format(branch), ['git', 'checkout', branch])
-            self.m.step('reset {}'.format(branch),
+            self.m.step('branch {}'.format(e_branch),
+                        ['git', 'checkout', e_branch])
+            self.m.step('reset {}'.format(e_branch),
                         ['git', 'reset', '--hard', e_head])
 
       # 5. Log a pinned version of the patched manifest.
