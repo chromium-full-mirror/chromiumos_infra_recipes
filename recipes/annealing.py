@@ -115,12 +115,23 @@ def RunSteps(api, properties):
         snapshot_xml_extern = api.repo.manifest(
             external_full, pinned=True, step_name='generate external manifest')
 
+        # Generate Cr-Snapshot-Identifer (b/171751551).
+        with api.step.nest('fetch previous snapshot identifier'):
+          api.git.fetch_ref(internal_manifest.url, prior_internal)
+          snapshot_identifier_footers = api.git_footers.from_ref(
+              "FETCH_HEAD", key='Cr-Snapshot-Identifier')
+        if snapshot_identifier_footers:
+          snapshot_identifier = snapshot_identifier_footers[0]
+        else:
+          snapshot_identifier = 1000000
+
         # And publish.
         with api.step.nest('publish external snapshot'):
           external_snapshot_commit = _publish_snapshot(
               api, external_manifest.url, manifest_ref, prior_external,
               external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
-              disable_gerrit=True, dry_run=properties.dry_run)
+              disable_gerrit=True, dry_run=properties.dry_run,
+              footers=[("Cr-Snapshot-Identifier", snapshot_identifier)])
           external_snapshot_ref = external_snapshot_commit.id
 
       _debug(api, 'pre-generate-internal')
@@ -151,7 +162,8 @@ def RunSteps(api, properties):
             api, internal_manifest.url, manifest_ref, prior_internal,
             internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
             gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
-            footers=[("Cr-External-Snapshot", external_snapshot_ref)],
+            footers=[("Cr-External-Snapshot", external_snapshot_ref),
+                     ("Cr-Snapshot-Identifier", snapshot_identifier)],
             dry_run=properties.dry_run)
 
         # Use new snapshot commit as the build output
@@ -408,6 +420,8 @@ def GenTests(api):
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers',
           api.gerrit.test_gerrit_change_url()),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', ''),
   )
 
   yield api.test(

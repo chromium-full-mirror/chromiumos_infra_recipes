@@ -761,6 +761,53 @@
   },
   {
     "cmd": [],
+    "name": "fetch previous snapshot identifier"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "fetch previous snapshot identifier.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "fetch previous snapshot identifier.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "FETCH_HEAD",
+      "--key",
+      "Cr-Snapshot-Identifier"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "fetch previous snapshot identifier.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "publish external snapshot"
   },
   {
@@ -1106,7 +1153,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "annealing manifest main 102\n\n**** Writing Gerrit Changes Disabled ****\n\nCr-Commit-Position: refs/heads/main@{#102}",
+      "annealing manifest main 102\n\n**** Writing Gerrit Changes Disabled ****\n\nCr-Commit-Position: refs/heads/main@{#102}\nCr-Snapshot-Identifier: FETCH_HEAD:Cr-Snapshot-Identifier\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
@@ -1119,6 +1166,7 @@
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@**** Writing Gerrit Changes Disabled ****@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Commit-Position: refs/heads/main@{#102}@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Snapshot-Identifier: FETCH_HEAD:Cr-Snapshot-Identifier@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
