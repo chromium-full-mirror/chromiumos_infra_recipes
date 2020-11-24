@@ -41,13 +41,13 @@ class ManifestProject(object):
 
   def __init__(self, host, project, relpath, workspace_path, ref=None,
                gerrit_host=None):
+    external = (host == 'chromium.googlesource.com')
     self.host = host
-    self.remote = ('cros'
-                   if host == 'chromium.googlesource.com' else 'cros-internal')
+    self.remote = ('cros' if external else 'cros-internal')
     self.project = project
     self.relpath = relpath
     gerrit_host = gerrit_host or host.replace('.', '-review.')
-    self.ref = ref or 'refs/heads/master'
+    self.ref = ref or 'refs/heads/{}'.format('main' if external else 'master')
     self.gerrit_host = gerrit_host
     self.path = workspace_path.join(relpath)
     self.url = 'https://{}/{}'.format(host, project)

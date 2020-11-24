@@ -201,7 +201,7 @@ class CrosSourceApi(RecipeApi):
     configuration = self._validate_args(manifest_url, local_manifest, groups,
                                         cache_path, manifest_branch)
     if configuration == 'INTERNAL':
-      self._sync_cached_dir(retry_fetches, projects, verbose, external=False,
+      self._sync_cached_dir(retry_fetches, projects, verbose,
                             is_staging=is_staging)
     else:
       self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
@@ -343,7 +343,7 @@ class CrosSourceApi(RecipeApi):
 
     with self.m.context(cwd=self.workspace_path), \
         self.m.step.nest(step_name or
-                         'checkout branch %s' % manifest_branch) as pres:
+                         'checkout branch %s' % manifest_branch):
       self.m.easy.set_properties_step(manifest_branch=manifest_branch)
       my_init_opts = {}
       my_init_opts.update(init_opts or {})
@@ -379,7 +379,7 @@ class CrosSourceApi(RecipeApi):
           count=count)
 
   def _sync_cached_dir(self, retry_fetches=None, projects=None, verbose=False,
-                       external=False, is_staging=False):
+                       is_staging=False):
     """Sync to the chromiumos overlay.
 
     Args:
@@ -387,7 +387,6 @@ class CrosSourceApi(RecipeApi):
       projects (List[str]): Projects to limit the sync to, or None to sync
         all projects.
       verbose (bool): Whether to produce verbose output.
-      external (bool): Flag to indiciate syncing to the external manifest.
       is_staging (bool): Flag to indicate staging environment
     """
     sync_path = self.cache_path
@@ -520,7 +519,7 @@ class CrosSourceApi(RecipeApi):
 
       # If patches.intern changes full.xml, then:
       # 1. We do not have the internal manifest checked out, and
-      # 2. We will need it so taht we can copy full.xml over to the external
+      # 2. We will need it so that we can copy full.xml over to the external
       #    manifest.
       if _changes_full_xml(patches.intern):
         with self.m.step.nest('sync internal manifest for patching'):
