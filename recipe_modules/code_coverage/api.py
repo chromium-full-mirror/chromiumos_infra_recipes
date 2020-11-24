@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
 DEFAULT_CODE_PROJECT = 'chromiumos/platform2'
@@ -65,7 +66,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         self._commit_id = self.m.gitiles.fetch_revision(PUBLIC_CODE_HOST,
                                                         self._project, BRANCH)
         self._generate_and_upload_metadata(build_target)
-      except:  # pylint: disable=bare-except
+      except StepFailure:
         self.m.step.active_result.presentation.properties[
             'process_coverage_data_failure'] = True
         raise

@@ -157,3 +157,23 @@ def GenTests(api):
       input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True)
       })
+
+  yield api.build_menu.test(
+      'code-coverage-test-failure',
+      api.step_data(
+          'run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call build API script',
+          retcode=1),
+      api.post_check(post_process.MustRun,
+                     'run ebuild tests.process code coverage data'),
+      builder='sarien-code-coverage-postsubmit', input_properties={
+          '$chromeos/build_menu': dict(test_with_code_coverage=True)
+      })
+
+  yield api.build_menu.test(
+      'code-coverage-failure',
+      api.step_data(
+          'run ebuild tests.process code coverage data.converting metadata for test coverage',
+          retcode=1), builder='sarien-code-coverage-postsubmit',
+      input_properties={
+          '$chromeos/build_menu': dict(test_with_code_coverage=True)
+      })

@@ -11,6 +11,7 @@ import contextlib
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
@@ -358,25 +359,37 @@ class BuildMenuApi(recipe_api.RecipeApi):
         if (config.unit_tests.dependencies ==
             BuilderConfig.CL_AFFECTED_DEPENDENCIES):
           testable_packages_optional = True
-        response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
-            BuildTargetUnitTestRequest(
-                build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
-                result_path=str(self.m.path.mkdtemp()),
-                package_blacklist=unit_tests.package_blacklist,
-                packages=relevant_testable_packages,
-                flags=BuildTargetUnitTestRequest.Flags(
-                    code_coverage=self._test_with_code_coverage,
-                    empty_sysroot=unit_tests.empty_sysroot,
-                    testable_packages_optional=testable_packages_optional)),
-            # Allow 2.5 hours for this step because the change associated with
-            # https://bugs.chromium.org/p/chromium/issues/detail?id=1095661#c76
-            # dumps additional debug at 2 hours.
-            timeout=150 * 60,
-            response_lambda=self.m.cros_build_api.failed_pkg_names)
-        self.m.failures.set_failed_packages(presentation,
-                                            response.failed_packages)
-        if self._test_with_code_coverage:
-          self.m.code_coverage.process_coverage_data(self.build_target)
+        raise_coverage_failure = True
+        # Wrap this in a try so that we can upload code coverage results even if
+        # tests fail or timeout.
+        try:
+          response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
+              BuildTargetUnitTestRequest(
+                  build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
+                  result_path=str(self.m.path.mkdtemp()),
+                  package_blacklist=unit_tests.package_blacklist,
+                  packages=relevant_testable_packages,
+                  flags=BuildTargetUnitTestRequest.Flags(
+                      code_coverage=self._test_with_code_coverage,
+                      empty_sysroot=unit_tests.empty_sysroot,
+                      testable_packages_optional=testable_packages_optional)),
+              # Allow 2.5 hours for this step because the change associated with
+              # https://bugs.chromium.org/p/chromium/issues/detail?id=1095661#c76
+              # dumps additional debug at 2 hours.
+              timeout=150 * 60,
+              response_lambda=self.m.cros_build_api.failed_pkg_names)
+          self.m.failures.set_failed_packages(presentation,
+                                              response.failed_packages)
+        except StepFailure:
+          raise_coverage_failure = False
+          raise
+        finally:
+          if self._test_with_code_coverage:
+            try:
+              self.m.code_coverage.process_coverage_data(self.build_target)
+            except StepFailure:
+              if raise_coverage_failure:
+                raise
 
     return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 

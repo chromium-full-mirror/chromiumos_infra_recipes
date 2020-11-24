@@ -619,14 +619,14 @@ Returns:
 
 API providing a menu for build steps
 
-#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by image builders.
 
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#288)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#289)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -643,7 +643,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#331)(self, config=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#332)(self, config=None):**
 
 Build the image and run ebuild tests.
 
@@ -655,15 +655,15 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#62)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#63)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#90)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#91)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#66)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#67)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#70)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#71)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#98)(self, is_staging=None, missing_ok=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#99)(self, is_staging=None, missing_ok=False):**
 
 Initial setup steps for the builder.
 
@@ -679,24 +679,24 @@ Args:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#94)(self):**
+&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#95)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#429)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#442)(self, config=None):**
 
 Generate release payloads for the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#78)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#79)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#74)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#75)(self):**
 
-&mdash; **def [initialize](/recipe_modules/build_menu/api.py#57)(self):**
+&mdash; **def [initialize](/recipe_modules/build_menu/api.py#58)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#82)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#83)(self):**
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#199)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#200)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -711,7 +711,7 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#146)(self, no_chroot_timeout=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#147)(self, no_chroot_timeout=False):**
 
 Setup the workspace and chroot for the builder.
 
@@ -720,16 +720,16 @@ This context manager sets up the workspace path.
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#419)(self, config=None):**
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#432)(self, config=None):**
 
 Sign the uploaded images.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#86)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#87)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#383)(self, config=None, disable_publish=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#396)(self, config=None, disable_publish=False):**
 
 Upload artifacts from the build.
 
@@ -737,7 +737,7 @@ Args:
   config (BuilderConfig): The Builder Config for the build, or None.
   disable_publish (bool): Whether to disable publishing artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#400)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#413)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1083,17 +1083,17 @@ Args:
 
 [DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This module contains apis to generate code coverage data.
 
-&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#31)(self):**
+&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#32)(self):**
 
 A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#61)(self, build_target):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#62)(self, build_target):**
 
 Processes the coverage data for metadata.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
