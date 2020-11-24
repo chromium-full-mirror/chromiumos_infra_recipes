@@ -199,6 +199,10 @@ class UnsignedImage(Image):
       'ChromeOS-%(image_type)s-%(milestone)s-%(version)s-%(build_target_name)s.tar.xz'
   )
 
+  _UNSIGNED_IMAGE_ARCHIVE_TEMPLATE = (
+      'gs://chromeos-image-archive/%(build_target_name)s-release/%(milestone)s-%(version)s'
+  )
+
   _UNSIGNED_IMAGE_REGEXP = (r'ChromeOS-(?P<image_type>%s)-'
                             r'(?P<milestone>R[0-9]+)-'
                             r'(?P<version>[^/]+)-'
@@ -213,6 +217,15 @@ class UnsignedImage(Image):
         'version': self._artifact_root.version,
         'milestone': self._milestone,
         'image_type': ImageType.Name(self._image_type).lower(),
+    }
+
+  @property
+  def archive_uri(self):
+    """The chromeos-image-archive directory uri for this image."""
+    return self._UNSIGNED_IMAGE_ARCHIVE_TEMPLATE % {
+        'build_target_name': self._artifact_root.build_target_name,
+        'version': self._artifact_root.version,
+        'milestone': self._milestone,
     }
 
   def to_proto(self):

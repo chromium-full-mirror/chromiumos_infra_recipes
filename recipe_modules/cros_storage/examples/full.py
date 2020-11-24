@@ -17,6 +17,8 @@ from PB.chromiumos.common import ImageType
 def RunSteps(api):
   good_unsigned_image_uri = ('gs://test-bucket/canary-channel/zork/13337.0.1/'
                              'ChromeOS-recovery-R82-13337.0.1-zork.tar.xz')
+  good_unsigned_image_archive_uri = (
+      'gs://chromeos-image-archive/zork-release/R82-13337.0.1')
   good_signed_image_uri = ('gs://test-bucket/canary-channel/zork/13337.0.1/'
                            'chromeos_13337.0.1_zork_recovery_canary_mp-v5.bin')
   good_dlc_image_uri = ('gs://test-bucket/canary-channel/zork/13337.0.1/'
@@ -42,6 +44,8 @@ def RunSteps(api):
                                            test_dlc_image_2.to_proto()))
 
   api.assertions.assertEqual(good_unsigned_image_uri, test_unsigned_image.uri)
+  api.assertions.assertEqual(good_unsigned_image_archive_uri,
+                             test_unsigned_image.archive_uri)
   api.assertions.assertEqual(good_signed_image_uri, test_signed_image.uri)
   api.assertions.assertEqual(good_dlc_image_uri, test_dlc_image.uri)
 
