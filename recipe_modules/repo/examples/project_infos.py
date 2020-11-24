@@ -52,6 +52,8 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test('basic')
 
+  yield api.test('passing info', api.repo.project_infos_step_data())
+
   yield api.test(
       'one-project',
       api.properties(

@@ -309,10 +309,9 @@ class RepoApi(recipe_api.RecipeApi):
     projects = projects or []
     regexes = regexes or []
 
-    test_data = '\n'.join(
-        '%s|src/%s|cros|refs/heads/master|refs/heads/master' % (p, p)
-        for p in projects or
-        self.test_api.test_projects) if test_data is None else test_data
+    if test_data is None:
+      test_data = self.test_api.project_infos_test_data(
+          [dict(project=p) for p in projects or self.test_api.test_projects])
     step_test_data = lambda: self.m.raw_io.test_api.stream_output(test_data)
 
     cmd = ['forall'] + projects
