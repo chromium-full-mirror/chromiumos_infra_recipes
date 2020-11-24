@@ -224,6 +224,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
                               bucket=bucket, verify=verify, keyset=keyset,
                               dryrun=dryrun))
       elif isinstance(tgt, UnsignedImage_pb2):
+        # We don't create full payloads for unsigned recovery images.
+        if tgt.image_type == common_pb2.ImageType.Value('RECOVERY'):
+          continue  #  pragma: nocover
         reqs.append(
             GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
                               bucket=bucket, verify=verify, keyset=keyset,
