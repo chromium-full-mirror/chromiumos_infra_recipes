@@ -7140,11 +7140,11 @@ Raises:
   * ValueError if there are invalid properties.
 ### *recipes* / [test\_recipes](/recipes/test_recipes.py)
 
-[DEPS](/recipes/test_recipes.py#8): [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [recipe\_analyze](#recipe_modules-recipe_analyze), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/test_recipes.py#8): [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [recipe\_analyze](#recipe_modules-recipe_analyze), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 Tests a recipe CL by running ChromeOS builders.
 
-&mdash; **def [RunSteps](/recipes/test_recipes.py#337)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_recipes.py#340)(api, properties):**
 ### *recipes* / [test\_util:examples/full](/recipe_modules/test_util/examples/full.py)
 
 [DEPS](/recipe_modules/test_util/examples/full.py#6): [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

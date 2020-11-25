@@ -7,6 +7,7 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/json',
@@ -193,7 +194,9 @@ def _launch_builders(api, test_builders, always_launch_builders):
             'edit', '-p', 'dry_run=true')
 
         buildbucket = led_result.result.buildbucket
-        recipe = buildbucket.bbagent_args.build.input.properties['recipe']
+        build_properties = buildbucket.bbagent_args.build.input.properties
+        recipe = build_properties['recipe']
+        build_properties.update(api.cq.props_for_child_build)
 
         if _bad_bot_size(led_result):
           led_result = led_result.then('edit', '-d', 'bot_size=large')
@@ -520,6 +523,7 @@ def GenTests(api):
 
   yield api.test(
       'basic',
+      api.cq(full_run=True),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(builders=[
@@ -547,6 +551,7 @@ def GenTests(api):
 
   yield api.test(
       'two_changes',
+      api.cq(full_run=True),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
@@ -568,6 +573,7 @@ def GenTests(api):
 
   yield api.test(
       'two_changes_mixed_repos',
+      api.cq(full_run=True),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
@@ -589,6 +595,7 @@ def GenTests(api):
 
   yield api.test(
       'skipped_builder',
+      api.cq(full_run=True),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
@@ -609,6 +616,7 @@ def GenTests(api):
 
   yield api.test(
       'failed_swarming_task',
+      api.cq(full_run=True),
       # Specify one builder to run.
       api.properties(TestRecipesProperties(builders=['staging-Annealing'])),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
@@ -626,6 +634,7 @@ def GenTests(api):
 
   yield api.test(
       'invalid_skip_builder_footer',
+      api.cq(full_run=True),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
@@ -636,12 +645,14 @@ def GenTests(api):
       api.expect_exception('ValueError'))
 
   yield api.test(
-      'no_successful_builds', get_non_skipped_builders_test_data(),
+      'no_successful_builds', api.cq(full_run=True),
+      get_non_skipped_builders_test_data(),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'))
 
-  yield api.test('no_gerrit_changes', api.expect_exception('ValueError'))
+  yield api.test('no_gerrit_changes', api.cq(full_run=True),
+                 api.expect_exception('ValueError'))
 
   yield api.test(
-      'invalid_builders',
+      'invalid_builders', api.cq(full_run=True),
       api.properties(TestRecipesProperties(builders=['production-builder'])),
       api.expect_exception('ValueError'))

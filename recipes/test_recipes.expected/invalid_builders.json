@@ -7,7 +7,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 346, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 349, in RunSteps",
       "    builder))",
       "ValueError: only staging builders can be used (builder production-builder not valid)"
     ]
