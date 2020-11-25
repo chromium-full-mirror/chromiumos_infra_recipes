@@ -829,19 +829,22 @@ class CrosSourceApi(RecipeApi):
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
 
   @exponential_retry(retries=3, condition=retry_timeouts)
-  def sync_snapshot(self, gitiles_commit, manifest_url=None):
+  def sync_snapshot(self, gitiles_commit, manifest_url=None, **kwargs):
     """Sync a checkout to the snapshot.
 
     Args:
       gitiles_commit (GitilesCommit): commit to sync to
       manifest_url: URL of manifest repo.  Default: internal manifest
+      kwargs (dict): additional args for repo.sync_manifest.
     """
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
-    with self.m.step.nest('sync to snapshot'):
+    with self.m.step.nest('sync to snapshot'), self.m.context(
+        cwd=self.workspace_path):
       snapshot_xml = self._get_snapshot(gitiles_commit)
+      sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8)
+      sync_opts.update(kwargs)
       self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
-                                detach=True, optimized_fetch=True,
-                                retry_fetches=8)
+                                **sync_opts)
       # Get the pinned manifest from repo.  If that returns None, then we
       # already have the pinned manifest in snapshot_xml.
       self._pinned_manifest = (

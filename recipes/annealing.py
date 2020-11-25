@@ -30,6 +30,7 @@ from recipe_engine import util
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -58,6 +59,9 @@ def RunSteps(api, properties):
   # If we're configured not to publish uprev's run as staging.
   is_staging = not properties.publish_uprevs
 
+  commit = api.src_state.gitiles_commit
+  prior_internal = prior_external = None
+
   manifest_ref = properties.manifest_ref
   if not manifest_ref:
     raise ValueError('must set manifest ref')
@@ -68,12 +72,46 @@ def RunSteps(api, properties):
     external_full = external_manifest.path.join('full.xml')
 
     with api.context(cwd=internal_manifest.path):
-      prior_internal = api.git.fetch_ref(internal_manifest.url, manifest_ref)
-
       api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
+      if api.cq.state != api.cq.INACTIVE and not commit.id:
+        # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
+        ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)
+        commit.host = commit.host or api.src_state.internal_manifest.host
+        commit.project = commit.project or internal_manifest.project
+        commit.ref = ref
+        commit.id = api.git.fetch_refs(internal_manifest.url, ref)[0]
+
+      if commit.id:
+        with api.step.nest('recreating older run'):
+          properties.dry_run = True
+          # Check out the gitiles_commit we received, and declare the prior commit
+          # in each manifest to be the prior commit. Start by forcing a checkout
+          # on the right branch.
+          branch = (
+              commit.ref[len('refs/heads/'):]
+              if commit.ref.startswith('refs/heads/') else commit.ref)
+          api.cros_source.ensure_synced_cache(
+              cache_path_override=api.src_state.workspace_path,
+              is_staging=is_staging, init_opts=dict(manifest_branch=branch))
+          api.cros_source.sync_snapshot(commit)
+          prior_internal = api.git.fetch_refs(internal_manifest.url, commit.id,
+                                              count=2)[-1]
+          test_data = api.git_footers.test_api.step_test_data_factory('e' * 40)
+          footers = api.git_footers.from_ref(commit.id,
+                                             key='Cr-External-Snapshot',
+                                             step_test_data=test_data)
+          prior_external = footers[0] if footers else None
+          with api.context(cwd=api.src_state.workspace_path):
+            api.repo.init(internal_manifest.url,
+                          manifest_branch=internal_manifest.branch)
+
+      prior_internal = prior_internal or api.git.fetch_ref(
+          internal_manifest.url, manifest_ref)
+
       with api.context(cwd=external_manifest.path):
-        prior_external = api.git.fetch_ref(external_manifest.url, manifest_ref)
+        prior_external = prior_external or api.git.fetch_ref(
+            external_manifest.url, manifest_ref)
 
         # Sync manifest/full.xml with manifest-internal/full.xml
         with api.step.nest('sync manifests') as presentation:
@@ -538,6 +576,59 @@ def GenTests(api):
           'record new gerrit changes.NAME.read git footers', ''),
       api.git_footers.step_data(
           'fetch previous snapshot identifier.read git footers', '1000000'),
+      api.post_check(post_process.MustRun, 'record new gerrit changes'),
+      api.post_check(post_process.MustRun, 'publish internal snapshot'),
+  )
+
+  # CQ: manifest changes, but no gerrit change to go with it.
+  yield api.test(
+      'cq-build',
+      api.buildbucket.ci_build(project='chromeos',
+                               git_repo=api.src_state.internal_manifest.url,
+                               git_ref='refs/heads/snapshot'),
+      api.cq(full_run=True),
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''),
+      api.post_check(post_process.MustRun, 'record new gerrit changes'),
+      api.post_check(post_process.MustRun, 'publish internal snapshot'),
+  )
+
+  # CQ without bb commit: manifest changes, but no gerrit change to go with it.
+  yield api.test(
+      'cq-build-no-commit',
+      api.cq(full_run=True),
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
   )

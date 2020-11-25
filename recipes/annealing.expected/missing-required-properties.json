@@ -29,7 +29,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/annealing.py\", line 63, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/annealing.py\", line 67, in RunSteps",
       "    raise ValueError('must set manifest ref')",
       "ValueError: must set manifest ref"
     ]

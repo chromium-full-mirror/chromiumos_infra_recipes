@@ -176,27 +176,6 @@
   {
     "cmd": [
       "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "main:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "git fetch"
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "git rev-parse"
-  },
-  {
-    "cmd": [
-      "git",
       "config",
       "--global",
       "gc.auto",
@@ -452,6 +431,27 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "main:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "git fetch"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "git rev-parse"
   },
   {
     "cmd": [
