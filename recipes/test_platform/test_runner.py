@@ -41,6 +41,7 @@ DEPS = [
 ]
 
 PROPERTIES = TestRunnerProperties
+_DUMMY_TEST_ID = 'original_test'
 
 
 def validate_request(api, test):
@@ -399,7 +400,7 @@ def _collect_tests(request):
   """
   tests = {i: t for (i, t) in request.tests.items()}
   if request.HasField('test'):
-    tests['original_test'] = request.test
+    tests[_DUMMY_TEST_ID] = request.test
   return tests
 
 
@@ -465,6 +466,12 @@ def execution_steps(api, properties):
     dut_hostname = api.phosphorus.read_dut_hostname()
 
     for test_id, test in tests.items():
+      # TODO: Remove this once all tests have IDs
+      # The dummy test ID gets replaced with an empty string here because
+      # the test ID gets included in the results directory. By sending through
+      # an empty string, the results directory won't be changed for the 'test'
+      # field.
+      passthrough_test_id = '' if test_id == _DUMMY_TEST_ID else test_id
       with api.step.nest(test_id):
         validate_request(api, test)
         # Needs to be distinct per test as logs are uploaded for each test separately.
@@ -473,7 +480,7 @@ def execution_steps(api, properties):
 
         with api.step.nest('load local DUT state'):
           load_response = api.phosphorus.load_skylab_local_state(
-              test_id=test_id)
+              test_id=passthrough_test_id)
         with api.step.nest('mark local DUT state dirty'):
           api.phosphorus.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR)
 

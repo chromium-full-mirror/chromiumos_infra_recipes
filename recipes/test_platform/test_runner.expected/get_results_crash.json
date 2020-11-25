@@ -111,7 +111,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"testId\": \"original_test\", @@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
@@ -177,7 +176,7 @@
     ],
     "infra_step": true,
     "name": "execution steps.original_test.load local DUT state.call `phosphorus`.load",
-    "stdin": "{\n  \"testId\": \"original_test\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
+    "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

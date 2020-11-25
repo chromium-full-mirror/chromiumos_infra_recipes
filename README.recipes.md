@@ -7011,9 +7011,9 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#550)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#557)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#179)(api, phosphorus_config, gs_dir, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#180)(api, phosphorus_config, gs_dir, result):**
 
 Archive all test logs to Google Storage.
 
@@ -7026,7 +7026,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#437)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#438)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -7042,7 +7042,7 @@ Returns:
 Raises:
 * InfraFailure.
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#243)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#244)(api, results_dir=''):**
 
 Parse test results.
 
@@ -7054,7 +7054,7 @@ Returns: skylab_test_runner.Result.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [prejob](/recipes/test_platform/test_runner.py#60)(api, config=None, request=None, dut_hostname='', load_response=None, max_duration_seconds=None):**
+&mdash; **def [prejob](/recipes/test_platform/test_runner.py#61)(api, config=None, request=None, dut_hostname='', load_response=None, max_duration_seconds=None):**
 
 Run a prejob (e.g. provision) against the DUT via `autoserv`.
 
@@ -7071,7 +7071,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#406)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#407)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -7081,7 +7081,7 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#96)(api, config=None, request=None, output_config=None, dut_hostname='', test=None, logs_gs_dir=''):**
+&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#97)(api, config=None, request=None, output_config=None, dut_hostname='', test=None, logs_gs_dir=''):**
 
 Run a test against the DUT via `autoserv`.
 
@@ -7100,14 +7100,14 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#328)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#329)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#259)(api, prejob_response, run_test_responses, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#260)(api, prejob_response, run_test_responses, result):**
 
 Display test cases as recipe substeps.
 
@@ -7116,7 +7116,7 @@ Args:
   * run_test_responses: dictionary of phosphorus.runtest.RunTestResponse instances.
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#228)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#229)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 
@@ -7126,7 +7126,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#46)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#47)(api, test):**
 
 Validate the TestRunnerProperties.
 
