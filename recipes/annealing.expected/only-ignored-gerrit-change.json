@@ -195,68 +195,6 @@
     "name": "git rev-parse"
   },
   {
-    "cmd": [],
-    "name": "internal pre-sync"
-  },
-  {
-    "cmd": [
-      "git",
-      "status"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "internal pre-sync.status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "internal pre-sync.HEAD",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "internal pre-sync.diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--cached"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "internal pre-sync.diff (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "HEAD~2..HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "internal pre-sync.log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "git",
       "config",
@@ -541,68 +479,6 @@
   },
   {
     "cmd": [],
-    "name": "external pre sync-manifests"
-  },
-  {
-    "cmd": [
-      "git",
-      "status"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "external pre sync-manifests.status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "external pre sync-manifests.HEAD",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "external pre sync-manifests.diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--cached"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "external pre sync-manifests.diff (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "HEAD~2..HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "external pre sync-manifests.log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "sync manifests",
     "~followup_annotations": [
       "@@@STEP_TEXT@No diffs@@@",
@@ -649,71 +525,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync manifests.git transaction.in _update_callback",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "status"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "sync manifests.git transaction.in _update_callback.status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "sync manifests.git transaction.in _update_callback.HEAD",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "sync manifests.git transaction.in _update_callback.diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--cached"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "sync manifests.git transaction.in _update_callback.diff (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "HEAD~2..HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "sync manifests.git transaction.in _update_callback.log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -768,6 +579,13 @@
     "name": "sync manifests.git transaction.diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set dry_run",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@dry_run@false@@@"
     ]
   },
   {
@@ -838,71 +656,6 @@
     "name": "publish external snapshot"
   },
   {
-    "cmd": [],
-    "name": "publish external snapshot.publish pre-fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "status"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-fetch.status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-fetch.HEAD",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-fetch.diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--cached"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-fetch.diff (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "HEAD~2..HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-fetch.log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [
       "git",
       "fetch",
@@ -930,71 +683,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "publish external snapshot.publish post-fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "status"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish post-fetch.status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish post-fetch.HEAD",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish post-fetch.diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--cached"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish post-fetch.diff (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "HEAD~2..HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish post-fetch.log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [
       "git",
       "symbolic-ref",
@@ -1006,71 +694,6 @@
     "name": "publish external snapshot.git symbolic-ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "publish external snapshot.publish pre-checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "status"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-checkout.status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-checkout.HEAD",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-checkout.diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--cached"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-checkout.diff (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "HEAD~2..HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "publish external snapshot.publish pre-checkout.log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1211,68 +834,6 @@
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git checkout (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "pre-generate-internal"
-  },
-  {
-    "cmd": [
-      "git",
-      "status"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "pre-generate-internal.status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "pre-generate-internal.HEAD",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "pre-generate-internal.diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--cached"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "pre-generate-internal.diff (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "HEAD~2..HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "pre-generate-internal.log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

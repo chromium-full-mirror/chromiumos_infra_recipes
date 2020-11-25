@@ -41,6 +41,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'cros_tags',
+    'easy',
     'gerrit',
     'git',
     'git_footers',
@@ -55,7 +56,7 @@ PROPERTIES = AnnealingProperties
 
 def RunSteps(api, properties):
   # If we're configured not to publish uprev's run as staging.
-  is_staging = not properties.publish_uprevs or properties.dry_run
+  is_staging = not properties.publish_uprevs
 
   manifest_ref = properties.manifest_ref
   if not manifest_ref:
@@ -69,13 +70,11 @@ def RunSteps(api, properties):
     with api.context(cwd=internal_manifest.path):
       prior_internal = api.git.fetch_ref(internal_manifest.url, manifest_ref)
 
-      _debug(api, 'internal pre-sync')
       api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
-      with api.context(cwd=external_manifest.path) as ext_pres:
+      with api.context(cwd=external_manifest.path):
         prior_external = api.git.fetch_ref(external_manifest.url, manifest_ref)
 
-        _debug(api, 'external pre sync-manifests')
         # Sync manifest/full.xml with manifest-internal/full.xml
         with api.step.nest('sync manifests') as presentation:
           presentation.logs['prior versions'] = [
@@ -85,31 +84,33 @@ def RunSteps(api, properties):
 
           def _update_callback():
             """Callback function for git_txn to update manifest/full.xml."""
-            _debug(api, 'in _update_callback')
             api.file.copy('Copy manifest-internal/full.xml',
                           internal_manifest.path.join('full.xml'),
                           external_full)
             if not api.git.diff_check(external_full):
               return False
-            if is_staging:
+            if properties.dry_run or is_staging:
               presentation.logs['skip'] = ['staging/dry-run: skipping sync']
+              properties.dry_run = True
+              api.step('git reset', ['git', 'reset', '--hard'])
               return False
             commit_message = 'Syncing with internal manifest.'
             api.git.add([external_full])
             api.git.commit(commit_message)
-            _debug(api, 'end _update_callback')
 
           if not api.git_txn.update_ref(external_manifest.url,
                                         _update_callback):
             presentation.step_text = 'No diffs'
+
+        api.easy.set_properties_step(dry_run=properties.dry_run)
 
         prior_external = (
             manifest_ref if properties.use_ref_not_id else prior_external)
         prior_internal = (
             manifest_ref if properties.use_ref_not_id else prior_internal)
         # Generate a public snapshot of the manifest in the manifest/ repo.  We
-        # need to do this _first_ so that we can fill in the Cr-External-Snapshot
-        # footer in in the internal snapshot commit.
+        # need to do this _first_ so that we can fill in the
+        # Cr-External-Snapshot footer in in the internal snapshot commit.
         external_snapshot_ref = None
         # Generate the manifest from public repo
         snapshot_xml_extern = api.repo.manifest(
@@ -118,8 +119,10 @@ def RunSteps(api, properties):
         # Generate Cr-Snapshot-Identifer (b/171751551).
         with api.step.nest('fetch previous snapshot identifier'):
           api.git.fetch_ref(internal_manifest.url, prior_internal)
+          test_data = api.git_footers.test_api.step_test_data_factory('100000')
           snapshot_identifier_footers = api.git_footers.from_ref(
-              "FETCH_HEAD", key='Cr-Snapshot-Identifier')
+              "FETCH_HEAD", key='Cr-Snapshot-Identifier',
+              step_test_data=test_data)
           snapshot_identifier = int(snapshot_identifier_footers[0]
                                    ) if snapshot_identifier_footers else 1000000
           snapshot_identifier += 1
@@ -133,7 +136,6 @@ def RunSteps(api, properties):
               footers=[("Cr-Snapshot-Identifier", str(snapshot_identifier))])
           external_snapshot_ref = external_snapshot_commit.id
 
-      _debug(api, 'pre-generate-internal')
       # snapshot internal manifest
       snapshot_xml_intern = api.repo.manifest(
           pinned=True, step_name='generate internal manifest')
@@ -207,14 +209,15 @@ def RunSteps(api, properties):
                 if api.path.exists(ebuild):
                   existing_ebuilds.append(ebuild)
               projects = api.repo.project_infos(projects=existing_ebuilds)
-              # The list of projects should be checked to see if all elements are
-              # equivalent. This check is temporarily removed because Annealing is
-              # broken, and length isn't the right thing to check.
-              # assert len(projects) == 1, 'expected 1 project, got: %r' % projects
+              # The list of projects should be checked to see if all elements
+              # are equivalent. This check is temporarily removed because
+              # Annealing is broken, and length isn't the right thing to check.
+              # assert len(projects) == 1, \
+              #     'expected 1 project, got: %r' % projects
               project = projects[0]
               push(project.remote,
                    'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
-                   dry_run=is_staging)
+                   dry_run=is_staging or properties.dry_run)
 
 
 def _schedule_triggered_builds(api, commit, jobs):
@@ -233,16 +236,6 @@ def _schedule_triggered_builds(api, commit, jobs):
             builder=job.builder, gitiles_commit=commit, properties=props))
   api.buildbucket.schedule(requests, url_title_fn=api.naming.get_build_title,
                            step_name='schedule triggered builds')
-
-
-# TODO(crbug/1148052): remove debugging code.
-def _debug(api, name):
-  with api.step.nest(name):
-    api.step('status', ['git', 'status'], ok_ret='any')
-    api.step('HEAD', ['git', 'rev-parse', 'HEAD'], ok_ret='any')
-    api.step('diff', ['git', 'diff'], ok_ret='any')
-    api.step('diff', ['git', 'diff', '--cached'], ok_ret='any')
-    api.step('log', ['git', 'log', 'HEAD~2..HEAD'], ok_ret='any')
 
 
 def _publish_snapshot(api, repo_url, snapshot_ref, prior_commit, snapshot_file,
@@ -271,13 +264,10 @@ def _publish_snapshot(api, repo_url, snapshot_ref, prior_commit, snapshot_file,
   footers = footers or []
   gerrit_commits = gerrit_commits or []
 
-  _debug(api, 'publish pre-fetch')
   # fetch and update the ref with the new snapshot file
   api.git.fetch_ref(repo_url, prior_commit)
-  _debug(api, 'publish post-fetch')
 
   with api.git.head_context():
-    _debug(api, 'publish pre-checkout')
     api.git.checkout('FETCH_HEAD')
     commit_message = _make_message(api, snapshot_ref, gerrit_commits,
                                    disable_gerrit)
@@ -339,7 +329,7 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
     return gerrit_commits, jobs
 
 
-def _make_gitiles_commit(api, repo_url, ref, commit_id):
+def _make_gitiles_commit(_api, repo_url, ref, commit_id):
   """Create a GitilesCommit for the given |repo_url|, |ref|, and |commit_id|."""
   url = urlparse.urlparse(repo_url)
   return common_pb2.GitilesCommit(
