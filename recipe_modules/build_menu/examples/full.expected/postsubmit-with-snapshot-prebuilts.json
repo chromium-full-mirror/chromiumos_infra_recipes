@@ -5957,6 +5957,22 @@
     "cmd": [
       "python",
       "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "refs/heads/snapshot",
+      "--key",
+      "Cr-Snapshot-Identifier"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
       "RECIPE_REPO[depot_tools]/gsutil.py",
@@ -6005,7 +6021,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_3/PackageIndexInfo.json",
-      "gs://chromeos-prebuilt/snapshot/internal-101/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+      "gs://chromeos-prebuilt/snapshot/internal-id-5555/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -6028,7 +6044,7 @@
       "value1",
       "arg2",
       "value2",
-      "gs://chromeos-prebuilt/snapshot/internal-101/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+      "gs://chromeos-prebuilt/snapshot/internal-id-5555/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,

@@ -20,6 +20,7 @@ DEPS = [
     'cros_source',
     'cros_version',
     'git',
+    'git_footers',
     'git_txn',
     'repo',
     'src_state',
