@@ -120,10 +120,9 @@ def RunSteps(api, properties):
           api.git.fetch_ref(internal_manifest.url, prior_internal)
           snapshot_identifier_footers = api.git_footers.from_ref(
               "FETCH_HEAD", key='Cr-Snapshot-Identifier')
-        if snapshot_identifier_footers:
-          snapshot_identifier = snapshot_identifier_footers[0]
-        else:
-          snapshot_identifier = 1000000
+          snapshot_identifier = int(snapshot_identifier_footers[0]
+                                   ) if snapshot_identifier_footers else 1000000
+          snapshot_identifier += 1
 
         # And publish.
         with api.step.nest('publish external snapshot'):
@@ -131,7 +130,7 @@ def RunSteps(api, properties):
               api, external_manifest.url, manifest_ref, prior_external,
               external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
               disable_gerrit=True, dry_run=properties.dry_run,
-              footers=[("Cr-Snapshot-Identifier", snapshot_identifier)])
+              footers=[("Cr-Snapshot-Identifier", str(snapshot_identifier))])
           external_snapshot_ref = external_snapshot_commit.id
 
       _debug(api, 'pre-generate-internal')
@@ -163,7 +162,7 @@ def RunSteps(api, properties):
             internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
             gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
             footers=[("Cr-External-Snapshot", external_snapshot_ref),
-                     ("Cr-Snapshot-Identifier", snapshot_identifier)],
+                     ("Cr-Snapshot-Identifier", str(snapshot_identifier))],
             dry_run=properties.dry_run)
 
         # Use new snapshot commit as the build output
@@ -398,6 +397,8 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000000'),
   )
 
   yield api.test(
@@ -421,7 +422,7 @@ def GenTests(api):
           'record new gerrit changes.NAME.read git footers',
           api.gerrit.test_gerrit_change_url()),
       api.git_footers.step_data(
-          'fetch previous snapshot identifier.read git footers', ''),
+          'fetch previous snapshot identifier.read git footers', '1000001'),
   )
 
   yield api.test(
@@ -453,17 +454,26 @@ def GenTests(api):
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers',
           api.gerrit.test_gerrit_change_url()),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000000'),
   )
 
   yield api.test(
       'sync-manifests-has-manifest-change',
       api.properties(
           AnnealingProperties(manifest_ref='main', publish_uprevs=True)),
-      api.git.diff_check(True))
+      api.git.diff_check(True),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', ''),
+  )
 
-  yield api.test('staging-sync-manifests-has-manifest-change',
-                 api.properties(AnnealingProperties(manifest_ref='main')),
-                 api.git.diff_check(True))
+  yield api.test(
+      'staging-sync-manifests-has-manifest-change',
+      api.properties(AnnealingProperties(manifest_ref='main')),
+      api.git.diff_check(True),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000000'),
+  )
 
   # No changes in the manifest at all.
   yield api.test(
@@ -485,6 +495,8 @@ def GenTests(api):
           )),
       api.post_check(post_process.DoesNotRun, 'record new gerrit changes'),
       api.post_check(post_process.DoesNotRun, 'publish internal snapshot'),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000000'),
   )
 
   # Manifest changes, but no gerrit change to go with it.
@@ -507,6 +519,8 @@ def GenTests(api):
           )),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000000'),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
   )
@@ -532,6 +546,8 @@ def GenTests(api):
           )),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000000'),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
   )
@@ -557,6 +573,8 @@ def GenTests(api):
               '<project name="SNAP" revision="FROM_REV"><annotation '
               'name="snapshot-mode" value="ignore-diff"/></project>'
               '</manifest>')),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000000'),
       api.post_check(post_process.DoesNotRun, 'record new gerrit changes'),
       api.post_check(post_process.DoesNotRun, 'publish internal snapshot'),
   )
@@ -583,6 +601,8 @@ def GenTests(api):
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers',
           api.gerrit.test_gerrit_change_url()),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000000'),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
   )

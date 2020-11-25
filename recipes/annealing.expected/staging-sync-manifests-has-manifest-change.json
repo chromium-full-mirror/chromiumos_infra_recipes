@@ -1153,7 +1153,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "annealing manifest main 102\n\n**** Writing Gerrit Changes Disabled ****\n\nCr-Commit-Position: refs/heads/main@{#102}\nCr-Snapshot-Identifier: FETCH_HEAD:Cr-Snapshot-Identifier\n",
+      "annealing manifest main 102\n\n**** Writing Gerrit Changes Disabled ****\n\nCr-Commit-Position: refs/heads/main@{#102}\nCr-Snapshot-Identifier: 1000001\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
@@ -1166,7 +1166,7 @@
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@**** Writing Gerrit Changes Disabled ****@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Commit-Position: refs/heads/main@{#102}@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Snapshot-Identifier: FETCH_HEAD:Cr-Snapshot-Identifier@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Snapshot-Identifier: 1000001@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
