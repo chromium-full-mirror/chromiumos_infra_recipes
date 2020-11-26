@@ -40,6 +40,16 @@ class SrcStateApi(recipe_api.RecipeApi):
     self._build_manifest = None
 
   @property
+  def default_ref(self):
+    """The default ref for Chrome OS repos"""
+    return common.default_ref
+
+  @property
+  def default_branch(self):
+    """The default branch for Chrome OS repos"""
+    return common.default_branch
+
+  @property
   def workspace_path(self):
     """The "workspace" checkout path.
 

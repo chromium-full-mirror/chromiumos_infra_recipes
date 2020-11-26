@@ -395,13 +395,13 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "http://repo.url/+/master/manifest_path",
+      "http://repo.url/+/HEAD/manifest_path",
       "--format",
       "text"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "infra_step": true,
-    "name": "ensure synced checkout.fetch master:manifest_path",
+    "name": "ensure synced checkout.fetch HEAD:manifest_path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

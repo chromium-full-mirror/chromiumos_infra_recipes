@@ -132,7 +132,7 @@ class RepoApi(recipe_api.RecipeApi):
       * repo_url (str): URL of the repo repository.
       * repo_branch (str): Repo binary branch to use.
       * local_manifest (LocalManifest): Local manifest to add. See
-      https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.md#local-manifests.
+      https://gerrit.googlesource.com/git-repo/+/HEAD/docs/manifest-format.md#local-manifests.
       * manifest_name (Path): The manifest file to use.
       * projects (List[str]): Projects of concern or None if all projects are of
       concern. Used to limit work where possible such as only clearing git locks
@@ -173,20 +173,9 @@ class RepoApi(recipe_api.RecipeApi):
       self.m.file.ensure_directory(name='ensure local manifest dir',
                                    dest=local_manifest_dir)
 
-      # Repos are being transitioned to use 'main' as the default branch.
-      # During the transition period, fallback to 'main' if the initial download
-      # of the local_manifest fails.
-      #
-      # TODO(crbug.com/1138630): Remove this fallback once 'main' is used for
-      # all repos.
-      try:
-        manifest_data = self.m.gitiles.download_file(
-            local_manifest.repo, local_manifest.path, branch='master',
-            step_test_data=self.test_api.local_manifest_step_test_data)
-      except self.m.step.StepFailure as ex:
-        manifest_data = self.m.gitiles.download_file(
-            local_manifest.repo, local_manifest.path, branch='main',
-            step_test_data=self.test_api.local_manifest_step_test_data)
+      manifest_data = self.m.gitiles.download_file(
+          local_manifest.repo, local_manifest.path, branch='HEAD',
+          step_test_data=self.test_api.local_manifest_step_test_data)
       self.m.file.write_raw(name='write local manifest',
                             dest=local_manifest_dir.join('local_manifest.xml'),
                             data=manifest_data)

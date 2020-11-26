@@ -55,7 +55,7 @@ message InitOpts {
   string repo_branch = 7;
 
   // local_manifest (LocalManifest): Local manifest to add.
-  // See https://gerrit.googlesource.com/git-repo/+/master/docs/manifest-format.md#local-manifests.
+  // See https://gerrit.googlesource.com/git-repo/+/HEAD/docs/manifest-format.md#local-manifests.
   LocalManifest local_manifest = 8;
 
   // manifest_name (str): Name of manifest file to use.

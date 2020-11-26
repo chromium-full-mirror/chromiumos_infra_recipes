@@ -37,20 +37,22 @@ class RepoTestApi(recipe_test_api.RecipeTestApi):
         project (str): The name of the project.
         path (str): The tree relpath.  Default: src/{project}.
         remote (str): The remote.  Default: cros.
-        rrev (str): The remote revision.  Default: refs/heads/master.
-        upstream (str): The upstream revision. Default: refs/heads/master.
+        rrev (str): The remote revision.  Default: from src_state.
+        upstream (str): The upstream revision. Default: from src_state.
 
     Returns:
       step_test_data for the step.
     """
-    data = data or [dict(project=p) for p in self.test_projects]
+    data = ([dict(project=p) for p in self.test_projects]
+            if data is None else data)
 
     def _generate(x):
       p = x['project']
+      default_ref = self.m.src_state.default_ref
       return dict(project=p, path=x.get('path', 'src/%s' % p),
-                  rrev=x.get('rrev', 'refs/heads/master'),
-                  upstream=x.get('upstream', 'refs/heads/master'),
-                  remote=x.get('remote', 'cros'))
+                  rrev=x.get('rrev', default_ref),
+                  upstream=x.get('upstream',
+                                 default_ref), remote=x.get('remote', 'cros'))
 
     return '\n'.join(
         '{project}|{path}|{remote}|{rrev}|{upstream}'.format(**_generate(x))
@@ -65,8 +67,8 @@ class RepoTestApi(recipe_test_api.RecipeTestApi):
         project (str): The name of the project.
         path (str): The tree relpath.  Default: src/{project}.
         remote (str): The remote.  Default: cros.
-        rrev (str): The remote revision.  Default: refs/heads/master.
-        upstream (str): The upstream revision. Default: refs/heads/master.
+        rrev (str): The remote revision.  Default: from src_state.
+        upstream (str): The upstream revision. Default: from src_state.
       iteration (int): Which call this applies to for this step/endpoint.
 
     Returns:

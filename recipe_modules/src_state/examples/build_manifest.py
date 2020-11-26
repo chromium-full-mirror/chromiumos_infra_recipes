@@ -32,14 +32,13 @@ def RunSteps(api):
     want_manifest = external_manifest
     other_manifest = internal_manifest
     api.assertions.assertEqual(api.src_state.manifest_name, 'external')
-    want_branch = 'main'
   else:
     want_manifest = internal_manifest
     other_manifest = external_manifest
     api.assertions.assertEqual(api.src_state.manifest_name, 'internal')
-    want_branch = 'master'
 
-  api.assertions.assertEqual(api.src_state.build_manifest.branch, want_branch)
+  api.assertions.assertEqual(api.src_state.build_manifest.branch,
+                             want_manifest.branch)
 
   api.assertions.assertEqual(want_manifest, api.src_state.build_manifest)
   api.assertions.assertTrue(

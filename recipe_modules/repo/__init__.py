@@ -13,4 +13,5 @@ DEPS = [
     'depot_tools/gitiles',
     'git',
     'failures',
+    'src_state',
 ]

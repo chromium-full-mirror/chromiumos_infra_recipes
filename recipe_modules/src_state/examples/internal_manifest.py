@@ -26,6 +26,7 @@ def RunSteps(api):
       'manifest-internal',
       api.path.relpath(internal_manifest.path, api.src_state.workspace_path))
 
+  # TODO(crbug/1152875): track branch name of manifest-internal ToT.
   api.assertions.assertEqual(
       GitilesCommit(host='chrome-internal.googlesource.com',
                     project='chromeos/manifest-internal',
@@ -34,6 +35,10 @@ def RunSteps(api):
 
   api.assertions.assertNotEqual(internal_manifest,
                                 api.src_state.external_manifest)
+  api.assertions.assertEqual(api.src_state.test_api.default_branch,
+                             api.src_state.default_branch)
+  api.assertions.assertEqual(api.src_state.test_api.default_ref,
+                             api.src_state.default_ref)
 
 
 def GenTests(api):

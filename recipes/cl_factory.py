@@ -9,7 +9,7 @@ This recipe is currently focused on the use case of running gen_config in
 program and project repositories. Invocation is most easily handled via the
 cl_factory script in the chromiumos/config repo's bin directory:
 
-https://chromium.googlesource.com/chromiumos/config/+/refs/heads/master/bin/cl_factory
+https://chromium.googlesource.com/chromiumos/config/+/HEAD/bin/cl_factory
 
 That script is a wrapper around the `bb add` command which ends up executing
 something that looks like this:
@@ -127,14 +127,12 @@ def _validate_inputs(properties):
     properties (ClFactoryProperties): recipe input properties.
   """
   if not properties.repo_regexes:
-    raise ValueError(
-        'Projects to operate on must be specified by the '
-        'repo_regexes property.')
+    raise ValueError('Projects to operate on must be specified by the '
+                     'repo_regexes property.')
 
   if not properties.message_template:
-    raise ValueError(
-        'A message_template property must specify how to create '
-        'commit messages')
+    raise ValueError('A message_template property must specify how to create '
+                     'commit messages')
 
 
 def _make_changes(api, cl_infos, gerrit_changes, properties):
@@ -226,9 +224,12 @@ def _set_source_cq_depends(api, changes, gc_infos, gerrit_changes):
 
         # For the change description commands to work we must be operating
         # on a tracking branch.
+        branch = (
+            info.branch[len('refs/heads/'):]
+            if info.branch.startswith('refs/heads/') else info.branch)
         api.step('create cl_factory branch', [
             'git', 'checkout', '-b', '__cl_factory', '--track', '{}/{}'.format(
-                info.remote, 'master')
+                info.remote, branch)
         ])
         description = api.gerrit.get_change_description(change)
         description = re.sub(_CHANGE_ID_REGEX, replacement, description)
@@ -455,10 +456,9 @@ TEST=CQ
 
     return api.buildbucket.build(build_message)
 
-  def forall_output(*projects):
-    return '\n'.join(
-        '{0}|src/{0}|cros|refs/heads/master|refs/heads/master'.format(p)
-        for p in projects)
+  def forall_data(*projects):
+    """Returns a generator for project_infos_step_data."""
+    return (dict(project=p) for p in projects)
 
   def no_git_diff_step_data(project):
     step_name = 'generate project change lists.working on project {}.git status'
@@ -578,12 +578,12 @@ TEST=CQ
               hashtags=['refactor-audio-config'],
               message_template=message_template,
           )),
-      api.step_data('find gerrit change repos.repo forall',
-                    stdout=api.raw_io.output(forall_output('a', 'b'))),
-      api.step_data('find regex matching CL repos.repo forall',
-                    stdout=api.raw_io.output(forall_output('c', 'd'))),
-      api.step_data('find additional repos to sync.repo forall',
-                    stdout=api.raw_io.output(forall_output('c', 'e'))),
+      api.repo.project_infos_step_data('find gerrit change repos',
+                                       forall_data('a', 'b')),
+      api.repo.project_infos_step_data('find regex matching CL repos',
+                                       forall_data('c', 'd')),
+      api.repo.project_infos_step_data('find additional repos to sync',
+                                       forall_data('c', 'e')),
       api.post_check(post_process.StatusSuccess),
   )
 
@@ -599,10 +599,9 @@ TEST=CQ
               hashtags=['refactor-audio-config'],
               message_template=message_template,
           )),
-      api.step_data('find gerrit change repos.repo forall',
-                    stdout=api.raw_io.output(forall_output('a', 'b'))),
-      api.step_data('find regex matching CL repos.repo forall',
-                    stdout=api.raw_io.output('')),
+      api.repo.project_infos_step_data('find gerrit change repos',
+                                       forall_data('a', 'b')),
+      api.repo.project_infos_step_data('find regex matching CL repos', {}),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE, '.*No matching projects.*'),
       api.post_process(post_process.DropExpectation),
@@ -639,14 +638,14 @@ TEST=CQ
   yield api.test(
       'no_message_template_specified',
       build(),
-      api.properties(ClFactoryProperties(
-          repo_regexes = ['src/project/galaxy'],
-          reviewers = ['johndoe@google.com'],
-          hashtags = ['refactor-audio-config'],
-      )),
+      api.properties(
+          ClFactoryProperties(
+              repo_regexes=['src/project/galaxy'],
+              reviewers=['johndoe@google.com'],
+              hashtags=['refactor-audio-config'],
+          )),
       api.expect_exception('ValueError'),
-      api.post_process(
-          post_process.ResultReasonRE,
-          '.*A message_template property must specify.*'),
+      api.post_process(post_process.ResultReasonRE,
+                       '.*A message_template property must specify.*'),
       api.post_process(post_process.DropExpectation),
   )

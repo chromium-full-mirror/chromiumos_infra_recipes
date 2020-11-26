@@ -21,6 +21,10 @@ _manifests = dict(
     external=_project_info('chromium.googlesource.com', 'chromiumos/manifest',
                            'manifest'))
 
+# TODO(crbug/1152875): track branch name of manifest-internal ToT.
+default_branch = 'master'
+default_ref = 'refs/heads/{}'.format(default_branch)
+
 
 class ManifestProject(object):
   """Information about a manifest.
@@ -30,7 +34,7 @@ class ManifestProject(object):
     gerrit_host (str): The gerrit host.
     remote (str): The name of the git remote used by repo for this project.
     project (str): The project name.
-    ref (str): The revision, typically 'refs/heads/master', may be a SHA.
+    ref (str): The revision, typically 'refs/heads/main', may be a SHA1 hash.
     relpath (str): The location of the source tree, relative to the
       workspace_path.
     path (Path): The checked out source tree.
@@ -47,7 +51,8 @@ class ManifestProject(object):
     self.project = project
     self.relpath = relpath
     gerrit_host = gerrit_host or host.replace('.', '-review.')
-    self.ref = ref or 'refs/heads/{}'.format('main' if external else 'master')
+    self.ref = ref or 'refs/heads/{}'.format(
+        'main' if external else default_branch)
     self.gerrit_host = gerrit_host
     self.path = workspace_path.join(relpath)
     self.url = 'https://{}/{}'.format(host, project)

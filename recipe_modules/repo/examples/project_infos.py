@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'repo',
+    'src_state',
 ]
 
 from PB.recipe_modules.chromeos.repo.examples.project_infos import (
@@ -32,8 +33,8 @@ def RunSteps(api, properties):
   if not properties.expected_infos:
     expected = [
         api.repo.ProjectInfo(name=x, path='src/{}'.format(x), remote='cros',
-                             branch='refs/heads/master',
-                             rrev='refs/heads/master')
+                             branch=api.src_state.default_ref,
+                             rrev=api.src_state.default_ref)
         for x in api.repo.test_api.test_projects
     ]
   else:
@@ -60,12 +61,13 @@ def GenTests(api):
           ProjectInfosProperties(
               projects=['galaxy'], expected_infos=[
                   ProjectInfo(name='galaxy', path='src/galaxy', remote='cros',
-                              branch='refs/heads/master',
-                              rrev='refs/heads/master')
+                              branch=api.src_state.default_ref,
+                              rrev=api.src_state.default_ref)
               ])))
 
   test_hash = '0123456789ABCDEFabcdef555555555555555555'
-  with_hash = 'galaxy|src/galaxy|cros|%s|refs/heads/master' % test_hash
+  with_hash = 'galaxy|src/galaxy|cros|%s|%s' % (test_hash,
+                                                api.src_state.default_ref)
 
   yield api.test(
       'snapshot',
@@ -76,7 +78,7 @@ def GenTests(api):
           ProjectInfosProperties(
               projects=['galaxy'], expected_infos=[
                   ProjectInfo(name='galaxy', path='src/galaxy', remote='cros',
-                              branch='refs/heads/master', rrev=test_hash),
+                              branch=api.src_state.default_ref, rrev=test_hash),
               ])))
 
   yield api.test(
@@ -85,11 +87,11 @@ def GenTests(api):
           ProjectInfosProperties(
               projects=['galaxy', 'other'], expected_infos=[
                   ProjectInfo(name='galaxy', path='src/galaxy', remote='cros',
-                              branch='refs/heads/master',
-                              rrev='refs/heads/master'),
+                              branch=api.src_state.default_ref,
+                              rrev=api.src_state.default_ref),
                   ProjectInfo(name='other', path='src/other', remote='cros',
-                              branch='refs/heads/master',
-                              rrev='refs/heads/master')
+                              branch=api.src_state.default_ref,
+                              rrev=api.src_state.default_ref)
               ])))
 
   yield api.test(
@@ -98,7 +100,8 @@ def GenTests(api):
           ProjectInfosProperties(
               regexes=['src/program/galaxy', 'src/program/other'])))
 
-  missing_refs_heads = '\n'.join('%s|src/%s|cros|refs/heads/master|' % (p, p)
+  missing_refs_heads = '\n'.join('%s|src/%s|cros|%s|' %
+                                 (p, p, api.src_state.default_ref)
                                  for p in api.repo.test_projects)
   yield api.test(
       'no-upstream-attribute',

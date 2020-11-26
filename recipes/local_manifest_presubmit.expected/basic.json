@@ -352,13 +352,13 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/project/testproject1/+/master/local_manifest.xml",
+      "https://chrome-internal.googlesource.com/chromeos/project/testproject1/+/HEAD/local_manifest.xml",
       "--format",
       "text"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "ensure synced checkout.fetch master:local_manifest.xml",
+    "name": "ensure synced checkout.fetch HEAD:local_manifest.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

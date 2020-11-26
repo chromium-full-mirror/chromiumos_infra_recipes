@@ -197,10 +197,9 @@ def GenTests(api):
     Note that the project name lines up with the project specified by
     project_config_cq_build.
     """
-    return api.step_data(
-        'cherry-pick gerrit changes.apply gerrit patch sets.repo forall',
-        stdout=api.raw_io.output(
-            'project1|src/project1|cros|refs/heads/master|refs/heads/branch'))
+    return api.repo.project_infos_step_data(
+        'cherry-pick gerrit changes.apply gerrit patch sets',
+        [dict(project='project1')])
 
   def check_constraints_with_output():
     """Returns StepData for a check constraints step with stdout."""
