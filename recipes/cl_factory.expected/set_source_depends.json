@@ -610,7 +610,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -648,7 +648,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -1465,7 +1465,6 @@
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/config/+/1234@@@"
     ]
@@ -1503,7 +1502,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -1535,7 +1534,6 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1,chromium:1,chromium:1@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/config/+/1234@@@"
     ]
@@ -1577,7 +1575,7 @@
       ]
     },
     "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.set CL 1234 description.git_cl set description",
-    "stdin": "a quick description\n\nCq-Depend: chromium:1,chromium:1,chromium:1\nChange-Id: deadbeef\n    ",
+    "stdin": "a quick description\n\nCq-Depend: chromium:1,chromium:1,chromium:1\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1612,7 +1610,6 @@
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/1234@@@"
     ]
@@ -1650,7 +1647,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -1682,7 +1679,6 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1,chromium:1,chromium:1@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chrome-internal-review.googlesource.com/c/chromeos/program/galaxy/+/1234@@@"
     ]
@@ -1724,7 +1720,7 @@
       ]
     },
     "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.set CL 1234 description.git_cl set description",
-    "stdin": "a quick description\n\nCq-Depend: chromium:1,chromium:1,chromium:1\nChange-Id: deadbeef\n    ",
+    "stdin": "a quick description\n\nCq-Depend: chromium:1,chromium:1,chromium:1\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

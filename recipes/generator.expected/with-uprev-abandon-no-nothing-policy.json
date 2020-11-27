@@ -1181,7 +1181,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -1305,7 +1305,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -1359,7 +1359,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -1397,7 +1397,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -1614,7 +1614,6 @@
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1@@@"
     ]
@@ -1651,7 +1650,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -1682,7 +1681,7 @@
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/private-overlay/+/1@@@"
@@ -1725,7 +1724,7 @@
       ]
     },
     "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL.set CL 1 description.git_cl set description",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n    \nCq-Depend: chromium:1",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n\nCq-Depend: chromium:1\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1745,7 +1744,6 @@
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1@@@"
     ]
@@ -1782,7 +1780,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -1813,7 +1811,7 @@
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos/src/overlay/+/1@@@"
@@ -1856,7 +1854,7 @@
       ]
     },
     "name": "cq-depend generated CLs.set cq-depend for [START_DIR]/chromiumos/src/overlay CL (2).set CL 1 description.git_cl set description",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n    \nCq-Depend: chromium:1",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n\nCq-Depend: chromium:1\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

@@ -529,6 +529,9 @@ class GerritApi(RecipeApi):
       patch_set = self.fetch_patch_sets([gerrit_change],
                                         include_commit_info=True)[0]
       description = patch_set.commit_info.get('message')
+      # Make sure that there is a trailing newline.
+      description = (
+          description if description.endswith('\n') else description + '\n')
       pres.logs['description text'] = [description]
       return description
 
@@ -542,6 +545,9 @@ class GerritApi(RecipeApi):
     """
     with self.m.step.nest('set CL %d description' %
                           gerrit_change.change) as pres:
+      # Make sure that there is a trailing newline.
+      description = (
+          description if description.endswith('\n') else description + '\n')
       gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
       pres.links['link to change'] = gerrit_change_url
       pres.logs['description text'] = [description]

@@ -38,7 +38,7 @@ def _get_values_dict(api):
               branch=api.src_state.default_branch,
               subject='Change title',
               message='\n'.join(
-                  ['a quick description', '', 'Change-Id: deadbeef', '    ']),
+                  ['a quick description', '', 'Change-Id: deadbeef', '']),
               url='https://chromium.googlesource.com/chromium/src',
               ref='refs/changes/27/91827/1',
               files={'my/fake/file': dict(status='A', size_delta=0, size=0)},

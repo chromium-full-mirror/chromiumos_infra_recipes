@@ -3159,7 +3159,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#556)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#562)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -3267,7 +3267,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#570)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#576)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -3280,7 +3280,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#535)(self, gerrit_change, description):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#538)(self, gerrit_change, description):**
 
 Set the description of the given Gerrit change.
 

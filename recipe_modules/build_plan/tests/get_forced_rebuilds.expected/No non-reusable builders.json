@@ -6,7 +6,6 @@
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/1234@@@"
     ]
@@ -92,7 +91,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -125,7 +124,7 @@
     ],
     "infra_step": true,
     "name": "read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n    "
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
   },
   {
     "cmd": [],
@@ -134,7 +133,6 @@
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/5678@@@"
     ]
@@ -171,7 +169,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -204,7 +202,7 @@
     ],
     "infra_step": true,
     "name": "read git footers (2)",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n    "
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
   },
   {
     "name": "$result"

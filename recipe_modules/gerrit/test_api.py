@@ -112,11 +112,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     return 'https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1'
 
   def test_gerrit_change_description(self):
-    return '''\
-a quick description
-
-Change-Id: deadbeef
-    '''
+    return 'a quick description\n\nChange-Id: deadbeef\n'
 
   def test_changes_are_submittable(self, errors=[]):
     """Test output for changes_are_submitted.

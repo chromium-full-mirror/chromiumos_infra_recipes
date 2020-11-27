@@ -45,7 +45,7 @@
       ]
     },
     "name": "set CL 123 description.git_cl set description",
-    "stdin": "my new desc",
+    "stdin": "my new desc\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

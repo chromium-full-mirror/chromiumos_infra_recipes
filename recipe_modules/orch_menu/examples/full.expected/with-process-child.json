@@ -769,7 +769,6 @@
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@    @@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/1394249/-1@@@"
     ]
@@ -806,7 +805,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": -1, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n    \"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
@@ -839,7 +838,7 @@
     ],
     "infra_step": true,
     "name": "run builds.filter builds.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n    ",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
