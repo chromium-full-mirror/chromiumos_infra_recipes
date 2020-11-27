@@ -317,7 +317,9 @@ class CrosSourceApi(RecipeApi):
         # been included in the repo sync above, because of that timing.  The
         # orchestrator only needs to have it checked out if it is pushing
         # manifest_refs (such as postsubmit-orchestrator).
-        with self.m.context(cwd=e_manifest.path):
+        with self.m.step.nest('checkout external manifest'), self.m.context(
+            cwd=e_manifest.path):
+          self.m.git.fetch(e_manifest.remote, ['%s:' % ext_commit.id])
           self.m.git.checkout(ext_commit.id, force=True)
       return ext_commit
 
