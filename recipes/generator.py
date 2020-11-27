@@ -468,10 +468,7 @@ def _get_policy(api, trigger, policies):
               query, ' '.join(x.ref for x in refs)))
         # If we found no references, this policy does not apply.
 
-    # TODO(b/167619469): Once the global policy properties are gone this will
-    # become reachable, and needs to be tested.  We will know, because we will
-    # return None here and not have a valid PolicyInfo.
-    # raise StepFailure('No matching policy found for tag {}'.format(tag))
+    raise StepFailure('No matching policy found for tag {}'.format(tag))
 
 
 # TODO(dburger): deleted files should be at the end of the modified_ebuilds list
@@ -585,6 +582,14 @@ def GenTests(api):
               outdated_cls_policy=OUTDATED_LEAVE_COMMENT)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
+  )
+
+  yield api.test(
+      'no-matching-policy',
+      _props(branch_policies=[]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.DoesNotRun, 'set policy'),
   )
 
   yield api.test(
