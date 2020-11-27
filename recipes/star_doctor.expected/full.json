@@ -318,6 +318,20 @@
   {
     "cmd": [
       "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "commit changes.committing to chromeos/infra/config.git symbolic-ref",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "status",
       "--porcelain"
     ],
@@ -563,6 +577,20 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@change committed@https://crrev.com/i/somenumber@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.git symbolic-ref",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

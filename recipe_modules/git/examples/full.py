@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'git',
+    'src_state',
 ]
 
 # TODO(crbug/1098567): Refactor this to be actual examples, and move the tests
@@ -23,7 +24,7 @@ def RunSteps(api):
   api.git.fetch('remote')
   api.assertions.assertEqual(
       api.git.fetch_ref('remote', 'refs/heads/branch'), commit_id)
-  api.git.checkout('master', force=True)
+  api.git.checkout('main', force=True)
   api.assertions.assertEqual(api.git.remote_head(remote), 'refs/heads/main')
   api.assertions.assertEqual(api.git.remote_head(remote, test_stdout=''), None)
   api.git.merge_silent_fail('branch', 'yeet')
@@ -32,7 +33,7 @@ def RunSteps(api):
   api.git.cherry_pick('branch')
   api.git.commit('Updated README\n\nMuch better now.', files=['README.md'],
                  author='John Doe <john.doe@example.com>')
-  api.git.push('origin', 'HEAD:master', dry_run=True, capture_stdout=True)
+  api.git.push('origin', 'HEAD:main', dry_run=True, capture_stdout=True)
 
   with api.step.nest('check diffs') as presentation:
     has_diffs = api.git.diff_check('some/file/path')
@@ -48,10 +49,10 @@ def RunSteps(api):
     api.git.show_file('deadbeef', 'some/path')
     api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')
     api.assertions.assertEqual(
-        api.git.get_diff_files('master', 'HEAD'),
+        api.git.get_diff_files('main', 'HEAD'),
         ['a/b/text.txt', 'other_test.txt'])
     api.assertions.assertEqual(
-        api.git.get_diff_files('master'), ['a/b/text.txt', 'other_test.txt'])
+        api.git.get_diff_files('main'), ['a/b/text.txt', 'other_test.txt'])
     api.assertions.assertEqual(api.git.get_diff_files(),
                                ['a/b/text.txt', 'other_test.txt'])
     api.assertions.assertFalse(api.git.get_diff_files(test_stdout='\n'), [])
@@ -70,7 +71,7 @@ def RunSteps(api):
   commit = api.git.gitiles_commit(test_url='https://example.com/pro/ject/')
   api.assertions.assertEqual('example.com', commit.host)
   api.assertions.assertEqual('pro/ject', commit.project)
-  api.assertions.assertEqual('refs/heads/master', commit.ref)
+  api.assertions.assertEqual(api.src_state.default_ref, commit.ref)
 
   api.assertions.assertEqual(
       api.git.extract_branch('refs/heads/something', 'whatever'), 'something')

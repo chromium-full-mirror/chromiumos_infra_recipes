@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'repo',
     'workspace_util',
 ]
 
@@ -43,15 +44,11 @@ def GenTests(api):
       ),
       # When fail_not_applicable is True, do a repo forall to find out
       # what repos are checked out.
-      api.step_data(
-          'successful apply changes.apply gerrit patch sets.repo forall',
-          stdout=api.raw_io.output(
-              '\n'.join([
-                  'chromiumos/config|src/config|cros|refs/heads/master|refs/heads/master',
-                  'privateproject1|src/privateproject1|cros|refs/heads/master|refs/heads/master'
-              ]),
-          ),
-      ),
+      api.repo.project_infos_step_data(
+          'successful apply changes.apply gerrit patch sets', [
+              dict(project='chromiumos/config', path='src/config'),
+              dict(project='privateproject1')
+          ]),
       # privateproject2 was not checked out, so it's change is discarded
       api.post_process(
           post_process.StepTextEquals,
@@ -76,14 +73,9 @@ def GenTests(api):
           stdout=api.raw_io.output(
               'error: project chromiumos/config not found'),
       ),
-      api.step_data(
-          'successful apply changes.apply gerrit patch sets.repo forall',
-          stdout=api.raw_io.output(
-              '\n'.join([
-                  'privateproject3|src/privateproject3|cros|refs/heads/master|refs/heads/master'
-              ]),
-          ),
-      ),
+      api.repo.project_infos_step_data(
+          'successful apply changes.apply gerrit patch sets',
+          [dict(project='privateproject3')]),
       # All changes were discarded.
       api.post_process(
           post_process.StepTextEquals,

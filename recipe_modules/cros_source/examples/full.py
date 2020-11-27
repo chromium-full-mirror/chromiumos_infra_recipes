@@ -135,7 +135,7 @@ def GenTests(api):
   def _gerrit_return(changes, name='', values_dict=None):
     values_dict = values_dict or {
         555:
-            dict(branch='master',
+            dict(branch=api.src_state.default_branch,
                  files={'full.xml': dict(status='M', size_delta=0, size=0)}),
         556:
             dict(branch='main')
@@ -152,13 +152,13 @@ def GenTests(api):
       'empty-change-to-full.xml', api.post_check(post_process.StatusSuccess),
       _gerrit_return(changes),
       api.repo.project_infos_step_data(
-          'patch manifest.checkout branch master.ensure manifest is pinned',
-          data=[
-              _project_data(api.src_state.internal_manifest),
-              _project_data(api.src_state.external_manifest),
-              dict(project='project', path='chromeos/project',
-                   remote='cros-internal')
-          ]),
+          'patch manifest.checkout branch {}.ensure manifest is pinned'.format(
+              api.src_state.default_branch), data=[
+                  _project_data(api.src_state.internal_manifest),
+                  _project_data(api.src_state.external_manifest),
+                  dict(project='project', path='chromeos/project',
+                       remote='cros-internal')
+              ]),
       api.repo.project_infos_step_data(
           'patch manifest.chromeos/manifest-internal: apply gerrit patch sets',
           data=[

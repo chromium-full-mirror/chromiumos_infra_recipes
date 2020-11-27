@@ -127,7 +127,7 @@ class CrosCqDependsApi(RecipeApi):
                   'info': {
                       # This project name corresponds to a repo test_data project.
                       'project': 'project-c',
-                      'branch': 'master',
+                      'branch': self.m.src_state.default_branch,
                       'current_revision': 'deadbeef',
                   },
               },
@@ -135,7 +135,7 @@ class CrosCqDependsApi(RecipeApi):
                   'info': {
                       # Imitates a project outside the chromiumos checkout.
                       'project': 'not-a-project',
-                      'branch': 'master',
+                      'branch': self.m.src_state.default_branch,
                       'current_revision': 'deadbeef',
                   },
               },

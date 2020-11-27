@@ -123,7 +123,7 @@
       "git",
       "push",
       "https://chrome-internal.googlesource.com/chrome/tools/build/internal.DEPS",
-      "master"
+      "main"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,

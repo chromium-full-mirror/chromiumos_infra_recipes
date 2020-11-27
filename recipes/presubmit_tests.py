@@ -90,7 +90,8 @@ def _FullCheckout(api, properties):
             continue
 
           info = path_info[commit.path]
-          branch = api.git.extract_branch(info.branch, 'master')
+          # All of the projects will have a branch defined by the manifest.
+          branch = api.git.extract_branch(info.branch, None)
           with api.context(cwd=full_path), api.depot_tools.on_path():
             # Several checks require that we have an upstream tracking branch.
             # This requires us to have a branch, which we don't yet have.

@@ -325,7 +325,8 @@ class GitApi(recipe_api.RecipeApi):
     """
     step_data = self._step(['symbolic-ref', '--short', 'HEAD'],
                            ok_ret=(0, 1, 128), stdout=self.m.raw_io.output(),
-                           test_stdout='master\n')
+                           test_stdout='{}\n'.format(
+                               self.m.src_state.default_branch))
     if step_data.retcode != 0:
       return None
     return step_data.stdout.strip()

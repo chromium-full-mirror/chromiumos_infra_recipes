@@ -170,6 +170,7 @@ def _commit_changed_files(api, repo_dir, project, labels):
 
   with api.step.nest(step_name) as presentation:
     with api.context(cwd=repo_dir):
+      branch = api.git.current_branch()
       changed_files = api.git.get_working_dir_diff_files()
       if not changed_files:  # pragma: nocover
         presentation.step_text = 'no files changed'
@@ -184,7 +185,8 @@ def _commit_changed_files(api, repo_dir, project, labels):
           field='url', fast=True,
           step_test_data=functools.partial(api.raw_io.test_api.stream_output,
                                            'https://crrev.com/i/somenumber'))
-      api.git.push(repo_url, 'HEAD:refs/for/master%{}'.format(','.join(labels)))
+      api.git.push(repo_url,
+                   'HEAD:refs/for/{}%{}'.format(branch, ','.join(labels)))
       presentation.links['change committed'] = gerrit_change_url
 
 

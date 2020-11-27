@@ -30,6 +30,7 @@ class MetadataJsonApi(RecipeApi):
     self._metadata['build-number'] = 0
     self._metadata['build_id'] = 0
     self._metadata['board-metadata'] = {}
+    # TODO(crbug/1148834): change this to 'parent_buildbucket_id'?
     self._metadata['master_build_id'] = 0
     self._metadata['metadata-version'] = '2'
     self._metadata['child-configs'] = []
@@ -76,8 +77,8 @@ class MetadataJsonApi(RecipeApi):
     self._metadata['bot-config'] = builder_name
     # For now consider builder_type = bucket.
     self._metadata['builder_type'] = build.builder.bucket
-    # Branch is always master for now.
-    self._metadata['branch'] = 'master'
+    # Branch is always the tip-of-tree branch for now.
+    self._metadata['branch'] = self.m.src_state.default_branch
 
     self._metadata['time'] = {
         'start':

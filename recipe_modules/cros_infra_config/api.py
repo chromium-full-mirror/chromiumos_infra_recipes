@@ -48,9 +48,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._properties = properties
 
     # Parse properties.config_ref
-    self._config_ref = properties.config_ref or 'master'
+    self._config_ref = properties.config_ref
 
-    # The sha of the recipes package from cipd.
+    # The sha1 of the recipes package from cipd.
     self._package_git_revision = None
 
     # Is this builder running in the staging bucket?
@@ -63,6 +63,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._switch_to_external_manifest = properties.switch_to_external_manifest
 
   def initialize(self):
+    # Parse properties.config_ref
+    self._config_ref = self._config_ref or self.m.src_state.default_branch
+
     # If the builder is in the staging bucket, or has a name that begins
     # 'staging-', then assume we are in staging.
     builder = self.m.buildbucket.build.builder
@@ -195,7 +198,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
-  def _download_binproto(self, filename, step_test_data, branch='master',
+  def _download_binproto(self, filename, step_test_data, branch='HEAD',
                          timeout=None, application='ChromeOS'):
     """Helper method to fetch a file from gititles."""
     repo = CHROME_OS_REPO_URL
@@ -239,7 +242,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return self._name_to_builder_config
 
   def get_builder_config(self, builder_name, missing_ok=False):
-    """Gets the BuilderConfig for the specified builder from the master branch.
+    """Gets the BuilderConfig for the specified builder from HEAD.
 
     Finds the BuilderConfig whose id.name matches the specified Buildbucket
     builder.
@@ -267,7 +270,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return config
 
   def safe_get_builder_configs(self, builder_names):
-    """Gets the BuilderConfigs for the specified builder names from master.
+    """Gets the BuilderConfigs for the specified builder names from HEAD.
 
     The returned dict will not contain key/values for builder names that could
     not be found in config.

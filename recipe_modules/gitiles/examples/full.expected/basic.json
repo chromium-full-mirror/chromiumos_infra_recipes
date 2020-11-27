@@ -52,7 +52,7 @@
     ],
     "infra_step": true,
     "name": "gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"master\", \"host\": \"testgerrit\", \"project\": \"my/project\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"testgerrit\", \"project\": \"my/project\"}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
@@ -68,7 +68,7 @@
     ],
     "infra_step": true,
     "name": "gitiles-fetch-ref (2)",
-    "stdin": "{\"branch\": {\"branch\": \"master\", \"host\": \"testgerrit\", \"project\": \"my/project\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"testgerrit\", \"project\": \"my/project\"}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",

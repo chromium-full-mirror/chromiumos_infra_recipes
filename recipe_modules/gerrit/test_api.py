@@ -25,7 +25,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'change_id': values.get('change_id', 'Ideadbeef'),
         'project': values.get('project', 'chromium/src'),
         'has_review_started': values.get('has_review_started', False),
-        'branch': values.get('branch', 'master'),
+        'branch': values.get('branch', self.m.src_state.default_branch),
         'subject': values.get('subject', 'Change title'),
         'hashtags': values.get('hashtags', []),
         'messages': values.get('messages', []),

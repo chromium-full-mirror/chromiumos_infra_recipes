@@ -87,7 +87,8 @@ def RunSteps(api, properties):
       # Create the "__presubmit" branch, run the check, and then delete
       # it.
       # A refspec can't be used to set upstream, so extract the branch.
-      branch = api.git.extract_branch(project.branch, 'master')
+      # All of the projects will have a branch defined by the manifest.
+      branch = api.git.extract_branch(project.branch, None)
       api.step('setup', ['git', 'checkout', '-b', '__presubmit'])
       api.step('set tracking', [
           'git', 'branch', '--set-upstream-to',
@@ -131,10 +132,9 @@ def GenTests(api):
     Note that the project name lines up with the project specified by
     project_config_cq_build.
     """
-    return api.step_data(
-        'cherry-pick gerrit changes.apply gerrit patch sets.repo forall',
-        stdout=api.raw_io.output(
-            'project1|src/project1|cros|refs/heads/master|refs/heads/master'))
+    return api.repo.project_infos_step_data(
+        'cherry-pick gerrit changes.apply gerrit patch sets',
+        [dict(project='project1')])
 
   def presubmit_with_output():
     """Returns StepData for a presubmit step with stdout."""

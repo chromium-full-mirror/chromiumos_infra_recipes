@@ -9,7 +9,7 @@ package recipe_modules.chromeos.cros_infra_config;
 message CrosInfraConfigProperties {
   // For testing, this is a reference to what refspec to use when fetching
   // builder_configs.binaryproto.  Example values:
-  // - 'master' (default)
+  // - tip-of-tree (default)
   // - 'refs/changes/80/2472480/2': patchset 2 of crrev.com/i/2472480
   // - 'refs/changes/FG/NNNNNFG/PP': patchset PP of crrev.com/i/NNNNNFG
   // This may be propogated to spawned builders.

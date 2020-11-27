@@ -181,10 +181,10 @@ As of Dec 11, 2019 will return a json object like the following:
       "patch_set": 1,
       "info": {
         "_number": 1922269,
-        "id": "infra%2Fluci%2Fluci-go~master~I46fa9df260e77144e39bfd39b996a85bd01a5084",
+        "id": "infra%2Fluci%2Fluci-go~main~I46fa9df260e77144e39bfd39b996a85bd01a5084",
         "change_id": "I46fa9df260e77144e39bfd39b996a85bd01a5084",
         "project": "infra/luci/luci-go",
-        "branch": "master",
+        "branch": "main",
         "topic": "",
         "hashtags": [],
         "subject": "gerrit: add ListFiles endpoint to Gerrit API client",

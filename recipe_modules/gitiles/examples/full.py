@@ -12,11 +12,11 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 
 def RunSteps(api):
-  api.gitiles.fetch_revision('testgerrit', 'my/project', 'master')
-  api.gitiles.fetch_revision('testgerrit', 'my/project', 'refs/heads/master')
+  api.gitiles.fetch_revision('testgerrit', 'my/project', 'main')
+  api.gitiles.fetch_revision('testgerrit', 'my/project', 'refs/heads/main')
 
   commit = GitilesCommit(host='host.example.com', project='project/name',
-                         ref='refs/heads/master', id='snap')
+                         ref='refs/heads/main', id='snap')
   api.assertions.assertEqual(
       api.gitiles.repo_url(commit), 'https://host.example.com/project/name')
 

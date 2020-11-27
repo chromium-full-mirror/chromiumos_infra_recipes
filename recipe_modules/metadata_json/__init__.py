@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/time',
     'cros_artifacts',
     'cros_infra_config',
+    'src_state',
     'test_util',
     'urls',
 ]

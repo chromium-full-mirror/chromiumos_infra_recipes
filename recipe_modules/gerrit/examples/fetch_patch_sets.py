@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
     'gerrit',
+    'src_state',
 ]
 
 step_name = 'testing'
@@ -18,66 +19,68 @@ changes = [
     GerritChange(host='example.com', change=2, patchset=3),
 ]
 
+
 # Values with a leading underscore in the name are for validation purposes only
 # and are not used by in generating test data.
-values_dict = {
-    # Negative value so that we get the default values, but can verify them
-    # easily.
-    -91827:
-        dict(
-            status='NEW',
-            created='2017-01-30 13:11:20.000000000',
-            updated='2017-02-01 13:11:20.000000000',
-            submitted='2017-02-02 13:11:20.000000000',
-            change_id='Ideadbeef',
-            project='chromium/src',
-            has_review_started=False,
-            branch='master',
-            subject='Change title',
-            message='\n'.join(
-                ['a quick description', '', 'Change-Id: deadbeef', '    ']),
-            url='https://chromium.googlesource.com/chromium/src',
-            ref='refs/changes/27/91827/1',
-            files={'my/fake/file': dict(status='A', size_delta=0, size=0)},
-            hashtags=[],
-            messages=[],
-            _display_id='chromium:91827',
-            _display_url='https://chromium-review.googlesource.com/c/91827',
-            _short_host='chromium',
-            _patch_set=1,
-            _host='chromium-review.googlesource.com',
-        ),
-    2:
-        dict(
-            status='OLD',
-            created='2020-08-01 11:11:11.000000000',
-            updated='2020-08-02 12:12:22.000000000',
-            submitted='2020-08-02 12:12:22.000000000',
-            change_id='Ib767aac2',
-            project='new-project',
-            has_review_started=True,
-            branch='release',
-            subject='Different title',
-            message='\n'.join(
-                ['Different title', '', 'Change-Id: Ib767aac2', '']),
-            url='https://example.com/project-path',
-            ref='refs/something/02/2/3',
-            files={'their/fake/file': dict(status='A', size_delta=0, size=0)},
-            hashtags=["foo", "bar"],
-            messages=[{
-                'id': "1",
-                "message": "hello!"
-            }, {
-                'id': "2",
-                "message": "goodbye."
-            }],
-            _display_id='example.com:2',
-            _display_url='https://example.com/c/2',
-            _short_host='example.com',
-            _patch_set=3,
-            _host='example.com',
-        )
-}
+def _get_values_dict(api):
+  return {
+      # Negative value so that we get the default values, but can verify them
+      # easily.
+      -91827:
+          dict(
+              status='NEW',
+              created='2017-01-30 13:11:20.000000000',
+              updated='2017-02-01 13:11:20.000000000',
+              submitted='2017-02-02 13:11:20.000000000',
+              change_id='Ideadbeef',
+              project='chromium/src',
+              has_review_started=False,
+              branch=api.src_state.default_branch,
+              subject='Change title',
+              message='\n'.join(
+                  ['a quick description', '', 'Change-Id: deadbeef', '    ']),
+              url='https://chromium.googlesource.com/chromium/src',
+              ref='refs/changes/27/91827/1',
+              files={'my/fake/file': dict(status='A', size_delta=0, size=0)},
+              hashtags=[],
+              messages=[],
+              _display_id='chromium:91827',
+              _display_url='https://chromium-review.googlesource.com/c/91827',
+              _short_host='chromium',
+              _patch_set=1,
+              _host='chromium-review.googlesource.com',
+          ),
+      2:
+          dict(
+              status='OLD',
+              created='2020-08-01 11:11:11.000000000',
+              updated='2020-08-02 12:12:22.000000000',
+              submitted='2020-08-02 12:12:22.000000000',
+              change_id='Ib767aac2',
+              project='new-project',
+              has_review_started=True,
+              branch='release',
+              subject='Different title',
+              message='\n'.join(
+                  ['Different title', '', 'Change-Id: Ib767aac2', '']),
+              url='https://example.com/project-path',
+              ref='refs/something/02/2/3',
+              files={'their/fake/file': dict(status='A', size_delta=0, size=0)},
+              hashtags=["foo", "bar"],
+              messages=[{
+                  'id': "1",
+                  "message": "hello!"
+              }, {
+                  'id': "2",
+                  "message": "goodbye."
+              }],
+              _display_id='example.com:2',
+              _display_url='https://example.com/c/2',
+              _short_host='example.com',
+              _patch_set=3,
+              _host='example.com',
+          )
+  }
 
 
 def RunSteps(api):
@@ -87,6 +90,7 @@ def RunSteps(api):
     patches = api.gerrit.fetch_patch_sets(changes)
   api.assertions.assertEqual(len(patches), len(changes))
 
+  values_dict = _get_values_dict(api)
   for patch in patches:
     values = values_dict.get(patch.change_id, values_dict.get(-patch.change_id))
     api.assertions.assertEqual(patch.project, values['project'])
@@ -133,4 +137,4 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.gerrit.set_gerrit_fetch_changes_response(step_name, changes,
-                                                   values_dict))
+                                                   _get_values_dict(api)))

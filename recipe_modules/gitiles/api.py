@@ -17,7 +17,7 @@ class GitilesApi(recipe_api.RecipeApi):
     Args:
       host (str): Gerrit host, e.g. chrome-internal
       project (str): Gerrit project, e.g. chromiumos/chromite
-      branch (str): Gerrit branch, e.g. master
+      branch (str): Gerrit branch, e.g. main
       test_output_data (dict): Test output for gitiles-fetch-ref.
 
     Returns:

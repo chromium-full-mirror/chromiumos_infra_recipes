@@ -100,16 +100,13 @@ def GenTests(api):
               'gitiles_commit': {
                   'host': 'chromium.googlesource.com',
                   'project': 'manifest/internal',
-                  'ref': 'refs/head/master'
+                  'ref': 'refs/head/main'
               }
-          },
-          push=True,
-          force=True,
-          branch_info={
+          }, push=True, force=True, branch_info={
               'name': 'my_custom_branch',
               'descriptor': 'nami',
               'type': Branch.CUSTOM
           }),
-      api.step_data('fetch manifest.fetch refs/head/master:foo.xml',
+      api.step_data('fetch manifest.fetch refs/head/main:foo.xml',
                     api.gitiles.make_encoded_file('foo')),
   )

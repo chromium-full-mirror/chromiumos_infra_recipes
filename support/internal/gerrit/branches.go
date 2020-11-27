@@ -1,3 +1,7 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package gerrit
 
 import (
@@ -21,7 +25,7 @@ type Branch struct {
 	Host string `json:"host"`
 	// Requested gerrit repo, e.g. "chromiumos/chromite".
 	Project string `json:"project"`
-	// Requested branch from the repo, e.g. "master".
+	// Requested branch from the repo, e.g. "main".
 	Branch string `json:"branch"`
 	// Returned HEAD revision from that branch.
 	Revision string `json:"revision"`
@@ -57,8 +61,8 @@ func MustFetchBranch(ctx context.Context, httpClient *http.Client, branch Branch
 		log.Fatal(err)
 	}
 	resp := <-ch
-	// For some weird reason, a request of "refs/heads/master" comes back in the response as
-	// "refs/heads/master/refs/heads/master". Maybe it's a bug somewhere? In the meantime, let's
+	// For some weird reason, a request of "refs/heads/main" comes back in the response as
+	// "refs/heads/main/refs/heads/main". Maybe it's a bug somewhere? In the meantime, let's
 	// handle this case and the eventually-fixed case.
 	if rev, found := resp.Revisions[fmt.Sprintf("%s/%s", ref, ref)]; found {
 		branch.Revision = rev

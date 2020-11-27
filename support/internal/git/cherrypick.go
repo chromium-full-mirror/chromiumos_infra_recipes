@@ -1,3 +1,7 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package git
 
 import (
@@ -26,7 +30,7 @@ func CheckCherryPick(
 	sChanges := sgerrit.MustFetchChanges(ctx, httpClient, changes, sgerrit.Options{})
 
 	// e.g.
-	// https://chromium-review.googlesource.com/chromiumos/third_party/kernel -> master -> change
+	// https://chromium-review.googlesource.com/chromiumos/third_party/kernel -> main -> change
 	projectUrlBranchChanges := make(map[string]map[string][]*sgerrit.Change)
 	for _, c := range sChanges {
 		url := fmt.Sprintf("%s/%s", fullHost(c.Host), c.Info.Project)

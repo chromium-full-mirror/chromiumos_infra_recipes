@@ -9,6 +9,7 @@ DEPS = [
     'cros_infra_config',
     'cros_prebuilts',
     'git',
+    'src_state',
     'test_util',
 ]
 
@@ -110,8 +111,9 @@ def GenTests(api):
       ret += api.step_data(
           'upload prebuilts.update binhost conf file.git transaction.diff check.git diff',
           retcode=1)
-      ret += api.post_check(verify_branch,
-                            'staging' if use_staging else 'master')
+      ret += api.post_check(
+          verify_branch,
+          'staging' if use_staging else api.src_state.default_branch)
     return ret
 
   def verify_branch(check, steps, branch):

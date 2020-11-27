@@ -11,6 +11,7 @@ DEPS = [
     'easy',
     'git',
     'repo',
+    'src_state',
     'support',
 ]
 

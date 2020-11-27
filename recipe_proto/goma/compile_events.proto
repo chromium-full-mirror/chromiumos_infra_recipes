@@ -1,13 +1,13 @@
 // Copyright 2020 The Chromium Authors. All Rights Reserved.
 
-// Copied from https://chromium.googlesource.com/chromium/tools/build/+/master/scripts/slave/goma/compile_events.proto
+// Copied from https://chromium.googlesource.com/chromium/tools/build/+/HEAD/scripts/slave/goma/compile_events.proto
 
 syntax = "proto3";
 
-// https://chromium.googlesource.com/infra/goma/client/+/master/lib/goma_stats.proto
+// https://chromium.googlesource.com/infra/goma/client/+/HEAD/lib/goma_stats.proto
 import "goma/goma_stats.proto";
 
-// https://chromium.googlesource.com/infra/goma/client/+/master/client/counterz.proto
+// https://chromium.googlesource.com/infra/goma/client/+/HEAD/client/counterz.proto
 import "goma/counterz.proto";
 
 package devtools_goma;

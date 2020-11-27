@@ -1500,7 +1500,7 @@ Args:
   upload_file (Path):  Location of cache artifact file to upload.
 ### *recipe_modules* / [cros\_cq\_depends](/recipe_modules/cros_cq_depends)
 
-[DEPS](/recipe_modules/cros_cq_depends/__init__.py#5): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_cq_depends/__init__.py#5): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for interacting with Cq-Depends.
 
@@ -1662,7 +1662,7 @@ A module for accessing data in the chromeos/infra/config repo
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#558)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#561)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -1673,7 +1673,7 @@ Args:
 
 Returns: a dict(str, Build) of build_target names.
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#114)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#117)(self):**
 
 Return the config for this builder.
 
@@ -1683,7 +1683,7 @@ which caches the data.
 Returns:
   BuilderConfig for this builder.
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#127)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#130)(self):**
 
 Config or default config.
 
@@ -1693,7 +1693,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#458)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#461)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1714,32 +1714,32 @@ Args:
 Returns:
   BuilderConfig or None
 
-&emsp; **@property**<br>&mdash; **def [current\_builder\_group](/recipe_modules/cros_infra_config/api.py#175)(self):**
+&emsp; **@property**<br>&mdash; **def [current\_builder\_group](/recipe_modules/cros_infra_config/api.py#178)(self):**
 
 Get the builder group for the currently running builder.
 
-&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#97)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#100)(self):**
 
 Return the list of experiments active for this build.
 
-&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#104)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#107)(self):**
 
 Return value for bb schedule_request experiments arg.
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#291)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#294)(self):**
 
 Force a reload of the config map from ToT.
 
-&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#148)(self):**
+&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#151)(self):**
 
 Return a freshly loaded config for this builder.
 
 Returns:
   BuilderConfig for this builder, freshly reloaded.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#93)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#96)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#301)(self, application='ChromeOS'):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#304)(self, application='ChromeOS'):**
 
 Get BotPolicies as defined in infra/config.
 If application is Chrome, BotPolicies will be fetched from infradata/config.
@@ -1747,7 +1747,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#519)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#522)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -1758,7 +1758,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#544)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#547)(self, build=None):**
 
 Return the build target name from input properties.
 
@@ -1769,9 +1769,9 @@ Args:
 Returns:
   (str) The name of the build target, or None.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#241)(self, builder_name, missing_ok=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#244)(self, builder_name, missing_ok=False):**
 
-Gets the BuilderConfig for the specified builder from the master branch.
+Gets the BuilderConfig for the specified builder from HEAD.
 
 Finds the BuilderConfig whose id.name matches the specified Buildbucket
 builder.
@@ -1792,43 +1792,43 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#327)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#330)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#317)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#320)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
 Returns:
   SuiteRetryCfg as defined in the config repo.
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#89)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#92)(self):**
 
 &mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#65)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#81)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#84)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#144)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#147)(self):**
 
-&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#85)(self):**
+&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#88)(self):**
 
-&emsp; **@property**<br>&mdash; **def [parent\_builder\_group](/recipe_modules/cros_infra_config/api.py#182)(self):**
+&emsp; **@property**<br>&mdash; **def [parent\_builder\_group](/recipe_modules/cros_infra_config/api.py#185)(self):**
 
 Get the builder group for the parent builder.
 
-&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#160)(self):**
+&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#163)(self):**
 
 Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#269)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#272)(self, builder_names):**
 
-Gets the BuilderConfigs for the specified builder names from master.
+Gets the BuilderConfigs for the specified builder names from HEAD.
 
 The returned dict will not contain key/values for builder names that could
 not be found in config.
@@ -1840,15 +1840,15 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#298)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#301)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#295)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#298)(self, run_spec):**
 
-&emsp; **@property**<br>&mdash; **def [switch\_to\_external\_manifest](/recipe_modules/cros_infra_config/api.py#109)(self):**
+&emsp; **@property**<br>&mdash; **def [switch\_to\_external\_manifest](/recipe_modules/cros_infra_config/api.py#112)(self):**
 
 Returns whether public builders should use the public manifest.
 
-&emsp; **@property**<br>&mdash; **def [target\_builder\_group](/recipe_modules/cros_infra_config/api.py#187)(self):**
+&emsp; **@property**<br>&mdash; **def [target\_builder\_group](/recipe_modules/cros_infra_config/api.py#190)(self):**
 
 Get the builder group for the target builder.
 
@@ -2385,7 +2385,7 @@ The cached checkout path.
 
 This is the cached version of source (the internal manifest checkout),
 usually updated once at the beginning of a build and then mounted into the
-master and/or workspace paths.
+workspace path.
 
 &mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#324)(self, manifest_url, manifest_branch, init_opts=None, sync_opts=None, step_name=None):**
 
@@ -2431,7 +2431,7 @@ Returns:
 
 Returns a context where overlays can be mounted.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#950)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#951)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2444,7 +2444,7 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#907)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#908)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -2535,7 +2535,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot isolate hash in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#831)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_snapshot](/recipe_modules/cros_source/api.py#832)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the snapshot.
 
@@ -3315,7 +3315,7 @@ Returns:
   str: The new label ref (primarily for testing).
 ### *recipe_modules* / [git](/recipe_modules/git)
 
-[DEPS](/recipe_modules/git/__init__.py#1): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git/__init__.py#5): [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with git.
 
@@ -3349,7 +3349,7 @@ Args:
   * commit (str): The commit to cherry pick.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#472)(self, repo_url, target_path=None, reference=None, dissociate=False, timeout_sec=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#473)(self, repo_url, target_path=None, reference=None, dissociate=False, timeout_sec=None):**
 
 Clones a Git repo into the current directory.
 
@@ -3372,7 +3372,7 @@ Args:
       added to test permission oddities by forcing forged commit failure.
   * kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#458)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#459)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -3403,7 +3403,7 @@ Returns:
   bool: True if the file changed from HEAD (or didn't exists), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#517)(self, refspec, default):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#518)(self, refspec, default):**
 
 Splits the branch from the refspec.
 
@@ -3465,7 +3465,7 @@ Args:
 Returns:
   A list[str] of changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#532)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#533)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -3478,7 +3478,7 @@ Returns: list[str] parent commit sha.
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#555)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#556)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -3489,15 +3489,15 @@ Args:
 Returns:
   (GitilesCommit): The GitilesCommit corresponding to HEAD.
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#359)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#360)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#365)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#366)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#545)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#546)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -3506,7 +3506,7 @@ Args:
 
 Returns: Bool if the commit has more than 1 parent.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#428)(self, revision):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#429)(self, revision):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -3516,7 +3516,7 @@ Args:
 Returns:
   bool: True if the revision can be reached from HEAD.
 
-&mdash; **def [log](/recipe_modules/git/api.py#396)(self, from_rev, to_rev, limit=None, paths=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#397)(self, from_rev, to_rev, limit=None, paths=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -3529,7 +3529,7 @@ Args:
 Returns:
   List(Commit) A list of commit metas.
 
-&mdash; **def [ls\_remote](/recipe_modules/git/api.py#375)(self, refs, repo_url=None):**
+&mdash; **def [ls\_remote](/recipe_modules/git/api.py#376)(self, refs, repo_url=None):**
 
 Return ls-remote output for a repository.
 
@@ -3579,7 +3579,7 @@ Args:
 Returns:
   StepData: See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#495)(self, force=False, branch=None):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#496)(self, force=False, branch=None):**
 
 Run `git rebase` with the given arguments.
 
@@ -3587,7 +3587,7 @@ Args:
   force (bool): If True, set --force.
   branch (str): If set, rebase from specific branch.
 
-&mdash; **def [remote\_head](/recipe_modules/git/api.py#333)(self, remote='.', test_stdout=None):**
+&mdash; **def [remote\_head](/recipe_modules/git/api.py#334)(self, remote='.', test_stdout=None):**
 
 Returns the HEAD ref of the given remote.
 
@@ -3605,14 +3605,14 @@ Return the git repository root for the current directory.
 Returns:
   str: The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#509)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#510)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   * args list[str]: args for `git config`.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#440)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#441)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -3814,7 +3814,7 @@ Call gitiles-fetch-ref support tool.
 Args:
   host (str): Gerrit host, e.g. chrome-internal
   project (str): Gerrit project, e.g. chromiumos/chromite
-  branch (str): Gerrit branch, e.g. master
+  branch (str): Gerrit branch, e.g. main
   test_output_data (dict): Test output for gitiles-fetch-ref.
 
 Returns:
@@ -3956,28 +3956,28 @@ Raises:
   matching predicate.
 ### *recipe_modules* / [metadata\_json](/recipe_modules/metadata_json)
 
-[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to write metadata.json into GS for GoldenEye consumption.
 
-&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#62)(self):**
+&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#63)(self):**
 
 These fields are available at the start of the build.
 
-&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#176)(self):**
+&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#177)(self):**
 
 Add stage results for DebugSymbols and Unittest stages.
 
-&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#97)(self, version_dict):**
+&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#98)(self, version_dict):**
 
 Update metadata with version info.
 
 Args:
   version_dict (dict): Map containing version info.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#226)(self, config, target):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#227)(self, config, target):**
 
 Returns a context that upload final metadata.json to GS.
 
@@ -3985,7 +3985,7 @@ Args:
   config (BuilderConfig): builder config of this builder.
   target (BuildTarget): The build target of this builder.
 
-&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#204)(self, config, target, success):**
+&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#205)(self, config, target, success):**
 
 Finish the build stats and upload metadata.json.
 
@@ -3994,13 +3994,13 @@ Args:
   target (BuildTarget): The build target of this builder.
   success (bool): Did this build pass.
 
-&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#110)(self):**
+&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#111)(self):**
 
 Get the metadata dict. Should only be used for unittesting.
 
 Returns: dict, metadata info.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#132)(self, config, build_target, partial=False):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#133)(self, config, build_target, partial=False):**
 
 Upload metadata to GS at its current state.
 
@@ -4009,7 +4009,7 @@ Args:
   target (BuildTarget): The build target of this builder.
   partial (bool): whether the metadata is incomplete.
 
-&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#117)(self, filename):**
+&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#118)(self, filename):**
 
 Write metadata dict to a tempfile.
 
@@ -6046,9 +6046,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_n2n_requests.py#19)(api, properties):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#30)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#31)(api, properties):**
 ### *recipes* / [cros\_prebuilts:tests/get\_pkg\_idx\_info](/recipe_modules/cros_prebuilts/tests/get_pkg_idx_info.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/tests/get_pkg_idx_info.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -6275,7 +6275,7 @@ json files.
 &mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
 ### *recipes* / [forge\_commit](/recipes/forge_commit.py)
 
-[DEPS](/recipes/forge_commit.py#14): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/forge_commit.py#14): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for forcing forge commit failure.
 
@@ -6284,7 +6284,7 @@ Recipe used to force a forge commit failure so the failure response
 can be analyzed to determine what user is being used for the invocation.
 See https://crbug.com/1068743.
 
-&mdash; **def [RunSteps](/recipes/forge_commit.py#27)(api):**
+&mdash; **def [RunSteps](/recipes/forge_commit.py#28)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -6341,9 +6341,9 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/create_change.py#14)(api):**
 ### *recipes* / [gerrit:examples/fetch\_patch\_sets](/recipe_modules/gerrit/examples/fetch_patch_sets.py)
 
-[DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#83)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#86)(api):**
 ### *recipes* / [gerrit:examples/get\_change\_description](/recipe_modules/gerrit/examples/get_change_description.py)
 
 [DEPS](/recipe_modules/gerrit/examples/get_change_description.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -6351,9 +6351,9 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/get_change_description.py#14)(api):**
 ### *recipes* / [gerrit:examples/has\_chromite\_changes](/recipe_modules/gerrit/examples/has_chromite_changes.py)
 
-[DEPS](/recipe_modules/gerrit/examples/has_chromite_changes.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gerrit/examples/has_chromite_changes.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/has_chromite_changes.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/has_chromite_changes.py#17)(api):**
 ### *recipes* / [gerrit:examples/parse\_gerrit\_change](/recipe_modules/gerrit/examples/parse_gerrit_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/parse_gerrit_change.py#10): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -6391,9 +6391,9 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/git/examples/fetch_refs.py#22)(api, properties):**
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
-[DEPS](/recipe_modules/git/examples/full.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git/examples/full.py#6): [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#19)(api):**
 ### *recipes* / [git\_cl:examples/forwarding](/recipe_modules/git_cl/examples/forwarding.py)
 
 [DEPS](/recipe_modules/git_cl/examples/forwarding.py#6): [git\_cl](#recipe_modules-git_cl)
@@ -7331,9 +7331,9 @@ Basic tests for the urls recipe module.
 &mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_groups.py#27)(api, properties):**
 ### *recipes* / [workspace\_util:tests/only\_checked\_out\_projects](/recipe_modules/workspace_util/tests/only_checked_out_projects.py)
 
-[DEPS](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#6): [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#6): [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#19)(api):**
 
 [depot_tools/recipe_modules/bot_update]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/90b4c0f76b3360d25e08caba83b57781910d1fa0/recipes/README.recipes.md#recipe_modules-bot_update
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/90b4c0f76b3360d25e08caba83b57781910d1fa0/recipes/README.recipes.md#recipe_modules-depot_tools

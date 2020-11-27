@@ -35,9 +35,9 @@ def RunSteps(api, properties):
     if len(changes) == 1:
       presentation.step_text = 'One CL, using Infra Presubmit'
       builder = 'Infra Presubmit'
-      # Infra Presubmit doesn't have a 'prod' version, it always runs
-      # refs/heads/master.
-      exe_cipd_version = 'refs/heads/master'
+      # Do not inherit our version tag for Infra Presubmit, use the builder
+      # definition.
+      exe_cipd_version = ''
       if properties.runhooks:
         input_props['runhooks'] = properties.runhooks
       if properties.timeout_s > 0:

@@ -19,6 +19,7 @@ DEPS = [
     'depot_tools/depot_tools',
     'git',
     'git_cl',
+    'src_state',
 ]
 
 from recipe_engine import post_process
@@ -39,7 +40,7 @@ def RunSteps(api):
       api.git.commit('expecting rejection for forged commit',
                      author='Sean Abraham <seanabraham@google.com>')
       api.git_cl.upload(name='git cl upload')
-      api.git.push(url, 'master')
+      api.git.push(url, 'main')
   finally:
     zips = api.file.glob_paths('glob traces', api.depot_tools.root,
                                'traces/*.zip')

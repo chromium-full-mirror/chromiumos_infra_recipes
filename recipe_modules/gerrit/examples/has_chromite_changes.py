@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
     'gerrit',
+    'src_state',
 ]
 
 
@@ -20,7 +21,7 @@ def RunSteps(api):
   change.patchset = 1
   patch = api.gerrit.fetch_patch_sets([change])[0]
   api.assertions.assertEqual(patch.project, 'chromium/src')
-  api.assertions.assertEqual(patch.branch, 'master')
+  api.assertions.assertEqual(patch.branch, api.src_state.default_branch)
   api.assertions.assertEqual(patch.subject, 'Change title')
   api.assertions.assertEqual(patch.git_fetch_url,
                              'https://chromium.googlesource.com/chromium/src')

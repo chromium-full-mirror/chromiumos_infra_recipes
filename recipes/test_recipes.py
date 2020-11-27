@@ -142,7 +142,7 @@ def _get_last_successful_build(api, builder):
   return successful_builds[0]
 
 
-def _launch_builders(api, test_builders, always_launch_builders):
+def _launch_builders(api, test_builders, always_launch_builders, head):
   """Launch builders with recipe changes patched in.
 
   Builders are only launched if the files in the patched changes affect the
@@ -154,6 +154,7 @@ def _launch_builders(api, test_builders, always_launch_builders):
     * api (object): See RunSteps documentation.
     * test_builders (list[str]): Builders to CONDITIONALLY launch.
     * always_launch_builders (list[str]): Builders to ALWAYS launch.
+    * head (str): The HEAD commit before applying patches.
 
   Returns:
     A list of led.LedLaunchData.
@@ -163,9 +164,8 @@ def _launch_builders(api, test_builders, always_launch_builders):
 
     with api.step.nest('get affected files') as affected_files_pres:
       # Changes should be cherry picked at this point. The relevant diffs should
-      # be between the original master and HEAD.
-      affected_files = api.git.get_diff_files(from_rev='origin/master',
-                                              to_rev='HEAD')
+      # be between the original checkout and HEAD.
+      affected_files = api.git.get_diff_files(from_rev=head, to_rev='HEAD')
       affected_files_pres.logs['affected files'] = affected_files
 
     builders = list(test_builders)
@@ -354,9 +354,10 @@ def RunSteps(api, properties):
   non_skipped_builders = _get_non_skipped_builders(api, builders)
 
   with _checkout_recipes_repo(api):
+    head = api.git.head_commit()
     _apply_gerrit_changes(api)
     led_results = _launch_builders(api, non_skipped_builders,
-                                   always_launch_builders)
+                                   always_launch_builders, head)
 
   if led_results:
     swarming_results = _collect_results(api, led_results)

@@ -55,7 +55,7 @@
       "git",
       "checkout",
       "--force",
-      "master"
+      "main"
     ],
     "infra_step": true,
     "name": "git checkout"
@@ -163,7 +163,7 @@
       "--dry-run",
       "--porcelain",
       "origin",
-      "HEAD:master"
+      "HEAD:main"
     ],
     "infra_step": true,
     "name": "git push",

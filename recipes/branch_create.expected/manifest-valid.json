@@ -11,11 +11,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chromium.googlesource.com/manifest/internal/+/refs/head/master/foo.xml",
+      "https://chromium.googlesource.com/manifest/internal/+/refs/head/main/foo.xml",
       "--format",
       "text"
     ],
-    "name": "fetch manifest.fetch refs/head/master:foo.xml",
+    "name": "fetch manifest.fetch refs/head/main:foo.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

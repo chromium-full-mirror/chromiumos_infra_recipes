@@ -193,6 +193,16 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
+    "name": "git rev-parse"
+  },
+  {
     "cmd": [],
     "name": "apply gerrit changes"
   },
@@ -367,7 +377,7 @@
       "git",
       "diff",
       "--name-only",
-      "origin/master",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
       "HEAD"
     ],
     "cwd": "[CLEANUP]/recipes/src",

@@ -101,7 +101,7 @@ class CrosSourceApi(RecipeApi):
 
     This is the cached version of source (the internal manifest checkout),
     usually updated once at the beginning of a build and then mounted into the
-    master and/or workspace paths.
+    workspace path.
     """
     return self.m.path['cache'].join('chromiumos')
 
@@ -504,7 +504,8 @@ class CrosSourceApi(RecipeApi):
 
     external = manifests.build in manifests.extern
     with self.m.step.nest('patch manifest') as pres:
-      # COIL: Allow manifest-internal master branch with manifest main branch.
+      # COIL: Allow manifest-internal and manifest to be on different branches
+      # for tip-of-tree.
       # In reality, we could first checkout the internal (or build) manifest to
       # the correct branch, and then confirm that the branch of the external (or
       # build) manifest agrees with the patchesets.  However, they are *almost*
