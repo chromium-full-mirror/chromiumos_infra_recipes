@@ -981,8 +981,8 @@
     "name": "commit uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/private-overlay|src/[START_DIR]/chromiumos/src/private-overlay|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/overlay|src/[START_DIR]/chromiumos/src/overlay|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@overlay|src/overlay|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@private-overlay|src/private-overlay|cros-internal|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -991,8 +991,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "pupr",
-      "[START_DIR]/chromiumos/src/private-overlay",
-      "[START_DIR]/chromiumos/src/overlay"
+      "overlay",
+      "private-overlay"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
