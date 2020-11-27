@@ -66,10 +66,7 @@ def RunSteps(api, properties):
     for project_info in project_infos:
       manifest_path = api.cros_source.workspace_path.join(
           project_info.path, 'default.xml')
-      branch = project_info.branch
-      branch = (
-          branch[len('refs/heads/'):]
-          if branch.startswith('refs/heads/') else branch)
+      branch = project_info.branch_name
       # Test cros branch on the listed projects, but only on the checked out
       # branch.
       manifest_branch = (

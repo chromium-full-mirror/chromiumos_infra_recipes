@@ -25,8 +25,18 @@ MANIFEST_MOCK = """
 ManifestDiff = namedtuple('ManifestDiff',
                           ['name', 'path', 'from_rev', 'to_rev'])
 
-ProjectInfo = namedtuple('ProjectInfo',
-                         ['name', 'path', 'remote', 'branch', 'rrev'])
+
+class ProjectInfo(
+    namedtuple('ProjectInfo', ['name', 'path', 'remote', 'branch', 'rrev'])):
+
+  __slots__ = ()
+
+  @property
+  def branch_name(self):
+    """Return the branch name."""
+    return (self.branch[len('refs/heads/'):]
+            if self.branch.startswith('refs/heads/') else self.branch)
+
 
 LocalManifest = namedtuple('LocalManifest', ['repo', 'path'])
 

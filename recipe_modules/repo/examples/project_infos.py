@@ -49,6 +49,14 @@ def RunSteps(api, properties):
       any(x.branch == x.rrev for x in expected),
       bool(api.repo.ensure_pinned_manifest()))
 
+  info = api.repo.ProjectInfo(name='name', path='path', remote='cros',
+                              branch='refs/heads/main', rrev='refs/heads/main')
+  api.assertions.assertEqual('main', info.branch_name)
+
+  info = api.repo.ProjectInfo(name='name', path='path', remote='cros',
+                              branch='refs/tags/tag', rrev='1' * 40)
+  api.assertions.assertEqual('refs/tags/tag', info.branch_name)
+
 
 def GenTests(api):
   yield api.test('basic')

@@ -224,12 +224,9 @@ def _set_source_cq_depends(api, changes, gc_infos, gerrit_changes):
 
         # For the change description commands to work we must be operating
         # on a tracking branch.
-        branch = (
-            info.branch[len('refs/heads/'):]
-            if info.branch.startswith('refs/heads/') else info.branch)
         api.step('create cl_factory branch', [
             'git', 'checkout', '-b', '__cl_factory', '--track', '{}/{}'.format(
-                info.remote, branch)
+                info.remote, info.branch_name)
         ])
         description = api.gerrit.get_change_description(change)
         description = re.sub(_CHANGE_ID_REGEX, replacement, description)
