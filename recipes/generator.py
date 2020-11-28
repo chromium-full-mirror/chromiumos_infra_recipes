@@ -48,6 +48,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/json',
     'recipe_engine/path',
@@ -139,7 +140,7 @@ def RunSteps(api, properties):
         pres.step_text = 'using default branch'
     api.easy.set_properties_step(policy=MessageToDict(policy))
 
-    if api.src_state.gerrit_changes:
+    if api.cq.state != api.cq.INACTIVE or api.src_state.gerrit_changes:
       # Use case: Developer is working on the versioned uprev code for a
       # package, such as Chrome, and wants to test the changes prior to landing
       # them in chromite.  While launching a build with the correct polcies and
@@ -151,7 +152,8 @@ def RunSteps(api, properties):
       # override the policy so that we do not submit, abandon, or comment on
       # anything.
       with api.step.nest('apply gerrit changes'):
-        api.cros_source.apply_gerrit_changes(api.src_state.gerrit_changes)
+        if api.src_state.gerrit_changes:
+          api.cros_source.apply_gerrit_changes(api.src_state.gerrit_changes)
         with api.step.nest('update policy') as pres:
           user = api.buildbucket.build.created_by.replace('user:', '', 1)
           api.easy.set_properties_step(original_policy=MessageToDict(policy))
@@ -649,10 +651,21 @@ def GenTests(api):
       'with-gerrit-changes', _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
+      api.post_check(post_process.MustRun,
+                     'apply gerrit changes.update policy'),
       api.test_util.test_build(
           revision=None, extra_changes=[
               GerritChange(host='chromium-review.googlesource.com', change=1234)
           ], created_by='user:lamontjones@chromium.org').build)
+
+  yield _with_infos(
+      'cq-active', _props(), api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True), api.cq(full_run=True),
+      api.post_check(post_process.MustRun,
+                     'apply gerrit changes.update policy'),
+      api.test_util.test_build(
+          revision=None, extra_changes=[],
+          created_by='user:lamontjones@chromium.org').build)
 
   # Set up for testing chromeos-base/chromeos-chrome trigger filtering.
   package_chrome = PackageInfo(category='chromeos-base',
