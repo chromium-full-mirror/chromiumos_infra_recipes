@@ -61,7 +61,7 @@ def RunSteps(api, properties):
     request = api.buildbucket.schedule_request(
         builder=builder, bucket=bucket, critical=True, tags=tags,
         properties=child_props, exe_cipd_version=exe_cipd_version,
-        swarming_parent_run_id=api.swarming.task_id)
+        swarming_parent_run_id=api.swarming.task_id, inherit_buildsets=False)
     child = api.buildbucket.schedule([request])[0]
     presentation.links[builder] = api.buildbucket.build_url(build_id=child.id)
 

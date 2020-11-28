@@ -195,7 +195,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
           new_build_requests.append(
               self.m.buildbucket.schedule_request(
-                  gitiles_commit=child_build_snapshot,
+                  gitiles_commit=child_build_snapshot, inherit_buildsets=False,
                   builder=full_builder_name, bucket=bucket,
                   gerrit_changes=gerrit_changes, critical=full_builder_critical,
                   tags=tags, properties=properties, experiments=child_exps,
@@ -203,9 +203,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
-                gitiles_commit=child_build_snapshot, builder=child_builder_name,
-                bucket=bucket, gerrit_changes=gerrit_changes, critical=critical,
-                tags=tags, properties=properties, experiments=child_exps,
+                gitiles_commit=child_build_snapshot, inherit_buildsets=False,
+                builder=child_builder_name, bucket=bucket,
+                gerrit_changes=gerrit_changes, critical=critical, tags=tags,
+                properties=properties, experiments=child_exps,
                 swarming_parent_run_id=parent_run_id))
       presentation.logs['filter log'] = filter_log
       # Don't include irrelevant builder configs or snapshot builds in this

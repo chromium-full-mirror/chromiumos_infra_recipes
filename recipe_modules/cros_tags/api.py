@@ -11,11 +11,12 @@ from recipe_engine import recipe_api
 class CrosTagsApi(recipe_api.RecipeApi):
   """A module for generating tags."""
 
-  def make_schedule_tags(self, snapshot):
+  def make_schedule_tags(self, snapshot, inherit_buildsets=True):
     """Returns the tags typically added to scheduled child builders.
 
     Args:
       snapshot (GitilesCommit): snapshot the build was synced on
+      inherit_buildsets (bool): whether to include non-gitiles_commit buildsets.
 
     Returns:
       list[StringPair] to pass as buildbucket tags
@@ -26,6 +27,16 @@ class CrosTagsApi(recipe_api.RecipeApi):
         snapshot=snapshot.id,
         commit_position=str(snapshot.position),
     )
+
+    if inherit_buildsets:
+      buildsets = [
+          x.value
+          for x in self.m.buildbucket.build.tags
+          if x.key == 'buildset' and not x.value.startswith('commit/gitiles/')
+      ]
+      buildsets.append('commit/gitiles/%s/%s/+/%s' %
+                       (snapshot.host, snapshot.project, snapshot.id))
+      tag_dict['buildset'] = buildsets
 
     if self.cq_cl_group_key:
       tag_dict['cq_cl_group_key'] = self.cq_cl_group_key

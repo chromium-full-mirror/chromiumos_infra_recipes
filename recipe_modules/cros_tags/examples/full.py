@@ -20,11 +20,13 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
-  snapshot = bbcommon_pb2.GitilesCommit(id='deadbeef')
+  snapshot = bbcommon_pb2.GitilesCommit(host='host', project='proj',
+                                        id='deadbeef')
   expected_tags = api.cros_tags.tags(
       parent_buildbucket_id=str(api.buildbucket.build.id),
       snapshot=snapshot.id,
       commit_position=str(snapshot.position),
+      buildset='commit/gitiles/host/proj/+/deadbeef',
   )
   if properties.cq_cl_group_key:
     expected_tags.extend(
@@ -58,6 +60,14 @@ def RunSteps(api, properties):
       api.cros_tags.has_entry('snapshotx', snapshot.id, tags))
   api.assertions.assertTrue(
       api.cros_tags.has_entry('commit_position', str(snapshot.position), tags))
+
+  tags2 = api.cros_tags.make_schedule_tags(snapshot, inherit_buildsets=False)
+  expected2 = [x for x in expected_tags if x.key != 'buildset']
+
+  api.assertions.assertEqual(len(expected2), len(tags2))
+  for tag in expected2:
+    api.assertions.assertTrue(
+        api.cros_tags.has_entry(tag.key, tag.value, tags2))
 
 
 def GenTests(api):

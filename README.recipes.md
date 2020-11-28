@@ -775,7 +775,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#231)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#232)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -789,7 +789,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#389)(self, builder_name):**
+&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#390)(self, builder_name):**
 
 Returns to the name of the full variant of the builder.
 
@@ -800,7 +800,7 @@ Args:
 Returns:
    A string of the full builder name.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#374)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#375)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -811,7 +811,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#293)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#294)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -2590,35 +2590,36 @@ API for generating tags.
 
 A module for generating tags.
 
-&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#60)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#71)(self):**
 
 Return the cq_cl_group_key, if any.
 
 Returns:
   (str) cq_cl_group_key, or None
 
-&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#43)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#54)(self):**
 
 Return the cq_equivalent_cl_group_key, if any.
 
 Returns:
   (str) cq_equivalent_cl_group_key, or None
 
-&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#36)(self, key, value, tags):**
+&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#47)(self, key, value, tags):**
 
 Returns whether tags contains a tag with key and value.
 
-&mdash; **def [make\_schedule\_tags](/recipe_modules/cros_tags/api.py#14)(self, snapshot):**
+&mdash; **def [make\_schedule\_tags](/recipe_modules/cros_tags/api.py#14)(self, snapshot, inherit_buildsets=True):**
 
 Returns the tags typically added to scheduled child builders.
 
 Args:
   snapshot (GitilesCommit): snapshot the build was synced on
+  inherit_buildsets (bool): whether to include non-gitiles_commit buildsets.
 
 Returns:
   list[StringPair] to pass as buildbucket tags
 
-&mdash; **def [tags](/recipe_modules/cros_tags/api.py#77)(self, \*\*tags):**
+&mdash; **def [tags](/recipe_modules/cros_tags/api.py#88)(self, \*\*tags):**
 
 Helper for generating a list of StringPair messages.
 
@@ -4168,7 +4169,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#559)(self, testable_builds=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#560)(self, testable_builds=None):**
 
 Plan, schedule, and run tests.
 

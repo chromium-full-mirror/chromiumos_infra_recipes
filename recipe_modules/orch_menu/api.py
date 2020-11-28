@@ -530,7 +530,8 @@ class OrchMenuApi(RecipeApi):
       req = self.m.buildbucket.schedule_request(
           gitiles_commit=self.gitiles_commit, project=project, bucket=bucket,
           builder=builder, gerrit_changes=self.gerrit_changes, critical=True,
-          experiments=exps, properties=props, tags=tags)
+          experiments=exps, properties=props, tags=tags,
+          inherit_buildsets=False)
       title_fn = self.m.naming.get_build_title
       [build] = self.m.buildbucket.schedule([req], url_title_fn=title_fn)
       url = self.m.buildbucket.build_url(build_id=build.id)
