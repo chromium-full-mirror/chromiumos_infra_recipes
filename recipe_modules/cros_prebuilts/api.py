@@ -202,13 +202,14 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
       snapshot_strs = [commit.id]
 
-      snapshot_identifier = self.m.git_footers.from_ref(
-          commit.ref, key='Cr-Snapshot-Identifier',
-          step_test_data=self.m.git_footers.test_api.step_test_data_factory(
-              '5555'))
-      if snapshot_identifier:
-        snapshot_strs.append('{}-id-{}'.format(self.m.src_state.manifest_name,
-                                               snapshot_identifier[0]))
+      with self.m.context(cwd=self.m.src_state.build_manifest.path):
+        snapshot_identifier = self.m.git_footers.from_ref(
+            commit.id, key='Cr-Snapshot-Identifier',
+            step_test_data=self.m.git_footers.test_api.step_test_data_factory(
+                '5555'))
+        if snapshot_identifier:
+          snapshot_strs.append('{}-id-{}'.format(self.m.src_state.manifest_name,
+                                                 snapshot_identifier[0]))
       for snapshot_str in snapshot_strs:
         tmpl = os.path.join(METADATA_GS_DIR_TMPL, METADATA_GS_FILE_TMPL)
         uri = tmpl.format(

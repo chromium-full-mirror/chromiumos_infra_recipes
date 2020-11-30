@@ -5958,11 +5958,11 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "refs/heads/snapshot",
+      "snapshot-HEAD-SHA",
       "--key",
       "Cr-Snapshot-Identifier"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload prebuilts.upload metadata.read git footers",
     "~followup_annotations": [
