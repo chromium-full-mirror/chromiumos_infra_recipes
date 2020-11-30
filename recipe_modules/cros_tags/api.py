@@ -34,8 +34,9 @@ class CrosTagsApi(recipe_api.RecipeApi):
           for x in self.m.buildbucket.build.tags
           if x.key == 'buildset' and not x.value.startswith('commit/gitiles/')
       ]
-      buildsets.append('commit/gitiles/%s/%s/+/%s' %
-                       (snapshot.host, snapshot.project, snapshot.id))
+      if snapshot.host and snapshot.project and snapshot.id:
+        buildsets.append('commit/gitiles/%s/%s/+/%s' %
+                         (snapshot.host, snapshot.project, snapshot.id))
       tag_dict['buildset'] = buildsets
 
     if self.cq_cl_group_key:
