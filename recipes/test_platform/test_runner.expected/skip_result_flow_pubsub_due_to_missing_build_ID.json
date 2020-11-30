@@ -214,9 +214,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"environment\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"gsRootDir\": \"gs://bucket/foo/bar\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"autotest\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"keyvals\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", @@@",
@@ -261,7 +258,7 @@
       "/dev/stdout"
     ],
     "name": "execution steps.original_test.run test.call `phosphorus`.run-test",
-    "stdin": "{\n  \"environment\": {\n    \"gsRootDir\": \"gs://bucket/foo/bar\"\n  }, \n  \"autotest\": {\n    \"keyvals\": {\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n      \"key1\": \"value1\", \n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    }, \n    \"testArgs\": \"foo=bar\", \n    \"displayName\": \"fancy_name\", \n    \"name\": \"dummy_name\", \n    \"isClientTest\": true\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:26Z\"\n}",
+    "stdin": "{\n  \"autotest\": {\n    \"keyvals\": {\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n      \"key1\": \"value1\", \n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    }, \n    \"testArgs\": \"foo=bar\", \n    \"displayName\": \"fancy_name\", \n    \"name\": \"dummy_name\", \n    \"isClientTest\": true\n  }, \n  \"dutHostnames\": [\n    \"dummy\"\n  ], \n  \"config\": {\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:26Z\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

@@ -18,7 +18,7 @@ from PB.recipes.chromeos.test_platform.test_runner import \
   TestRunnerProperties
 from PB.test_platform import phosphorus
 from PB.test_platform import skylab_local_state
-from PB.test_platform.skylab_test_runner.result import AsyncResults, Result
+from PB.test_platform.skylab_test_runner.result import Result
 from PB.test_platform.skylab_test_runner.request import Request
 
 from google.protobuf import duration_pb2
@@ -124,8 +124,6 @@ def run_test(api, config=None, request=None, output_config=None,
             keyvals=_with_gs_logs_keyval(test.autotest.keyvals, logs_gs_dir),
             is_client_test=test.autotest.is_client_test,
         ),
-        environment=phosphorus.runtest.RunTestRequest.Environment(
-            gs_root_dir=output_config.gs_root_dir),
     )
     deadline = _deadline(api, request)
     run_test_request.deadline.MergeFrom(deadline)
@@ -616,11 +614,9 @@ def GenTests(api):
                 },
                 'harness': {
                     'autotest_dir': '/path/to/autotest',
-                    'synch_offload_subdir': _sync_subdir,
                     'prejob_deadline_seconds': 60 * 60,
                 },
                 'output': {
-                    'gs_root_dir': _gs_root,
                     'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
                 },
                 'result_flow_pubsub': {
@@ -959,7 +955,6 @@ def GenTests(api):
                       'project': 'foo-proj',
                   },
                   'output': {
-                      'gs_root_dir': _gs_root,
                       'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
                   },
               })),
@@ -982,7 +977,6 @@ def GenTests(api):
                       'project': '',
                   },
                   'output': {
-                      'gs_root_dir': _gs_root,
                       'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
                   },
               })),
