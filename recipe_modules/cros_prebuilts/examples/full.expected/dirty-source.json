@@ -309,7 +309,17 @@
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1009, @@@",
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000000\"@@@",
       "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
+      "@@@STEP_LOG_END@proto.output@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1009-postsubmit.json@snapshot_sha: \"deadbeef00000000000000000000000000000000\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1009-postsubmit.json@snapshot_number: 1009@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1009-postsubmit.json@build_target {@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1009-postsubmit.json@  name: \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1009-postsubmit.json@}@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1009-postsubmit.json@location: \"gs://prebuilt-bucket/board/amd64-generic/KIND-VER-888/packages\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1009-postsubmit.json@profile {@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1009-postsubmit.json@  name: \"base\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1009-postsubmit.json@}@@@",
+      "@@@STEP_LOG_END@amd64-generic-kind-1009-postsubmit.json@@@"
     ]
   },
   {
@@ -403,7 +413,17 @@
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1008, @@@",
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000001\"@@@",
       "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
+      "@@@STEP_LOG_END@proto.output@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1008-postsubmit.json@snapshot_sha: \"deadbeef00000000000000000000000000000001\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1008-postsubmit.json@snapshot_number: 1008@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1008-postsubmit.json@build_target {@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1008-postsubmit.json@  name: \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1008-postsubmit.json@}@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1008-postsubmit.json@location: \"gs://prebuilt-bucket/board/amd64-generic/KIND-VER-888/packages\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1008-postsubmit.json@profile {@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1008-postsubmit.json@  name: \"base\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1008-postsubmit.json@}@@@",
+      "@@@STEP_LOG_END@amd64-generic-kind-1008-postsubmit.json@@@"
     ]
   },
   {
@@ -497,7 +517,17 @@
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1007, @@@",
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000002\"@@@",
       "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
+      "@@@STEP_LOG_END@proto.output@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1007-postsubmit.json@snapshot_sha: \"deadbeef00000000000000000000000000000002\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1007-postsubmit.json@snapshot_number: 1007@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1007-postsubmit.json@build_target {@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1007-postsubmit.json@  name: \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1007-postsubmit.json@}@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1007-postsubmit.json@location: \"gs://prebuilt-bucket/board/amd64-generic/KIND-VER-888/packages\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1007-postsubmit.json@profile {@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1007-postsubmit.json@  name: \"base\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1007-postsubmit.json@}@@@",
+      "@@@STEP_LOG_END@amd64-generic-kind-1007-postsubmit.json@@@"
     ]
   },
   {
@@ -591,7 +621,17 @@
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 1006, @@@",
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"deadbeef00000000000000000000000000000003\"@@@",
       "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
+      "@@@STEP_LOG_END@proto.output@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1006-postsubmit.json@snapshot_sha: \"deadbeef00000000000000000000000000000003\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1006-postsubmit.json@snapshot_number: 1006@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1006-postsubmit.json@build_target {@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1006-postsubmit.json@  name: \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1006-postsubmit.json@}@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1006-postsubmit.json@location: \"gs://prebuilt-bucket/board/amd64-generic/KIND-VER-888/packages\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1006-postsubmit.json@profile {@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1006-postsubmit.json@  name: \"base\"@@@",
+      "@@@STEP_LOG_LINE@amd64-generic-kind-1006-postsubmit.json@}@@@",
+      "@@@STEP_LOG_END@amd64-generic-kind-1006-postsubmit.json@@@"
     ]
   },
   {

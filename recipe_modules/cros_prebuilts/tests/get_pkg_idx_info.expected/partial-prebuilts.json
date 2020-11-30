@@ -235,7 +235,17 @@
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 5555, @@@",
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"1\"@@@",
       "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
+      "@@@STEP_LOG_END@proto.output@@@",
+      "@@@STEP_LOG_LINE@a-prof-881-ps.json@snapshot_sha: \"1\"@@@",
+      "@@@STEP_LOG_LINE@a-prof-881-ps.json@snapshot_number: 5555@@@",
+      "@@@STEP_LOG_LINE@a-prof-881-ps.json@build_target {@@@",
+      "@@@STEP_LOG_LINE@a-prof-881-ps.json@  name: \"a\"@@@",
+      "@@@STEP_LOG_LINE@a-prof-881-ps.json@}@@@",
+      "@@@STEP_LOG_LINE@a-prof-881-ps.json@location: \"gs://bucket/board/a/KIND-VER-888/packages\"@@@",
+      "@@@STEP_LOG_LINE@a-prof-881-ps.json@profile {@@@",
+      "@@@STEP_LOG_LINE@a-prof-881-ps.json@  name: \"prof\"@@@",
+      "@@@STEP_LOG_LINE@a-prof-881-ps.json@}@@@",
+      "@@@STEP_LOG_END@a-prof-881-ps.json@@@"
     ]
   },
   {
@@ -264,7 +274,17 @@
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_number\": 5555, @@@",
       "@@@STEP_LOG_LINE@proto.output@  \"snapshot_sha\": \"1\"@@@",
       "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
+      "@@@STEP_LOG_END@proto.output@@@",
+      "@@@STEP_LOG_LINE@a-prof-asan-882-ps.json@snapshot_sha: \"1\"@@@",
+      "@@@STEP_LOG_LINE@a-prof-asan-882-ps.json@snapshot_number: 5555@@@",
+      "@@@STEP_LOG_LINE@a-prof-asan-882-ps.json@build_target {@@@",
+      "@@@STEP_LOG_LINE@a-prof-asan-882-ps.json@  name: \"a\"@@@",
+      "@@@STEP_LOG_LINE@a-prof-asan-882-ps.json@}@@@",
+      "@@@STEP_LOG_LINE@a-prof-asan-882-ps.json@location: \"other\"@@@",
+      "@@@STEP_LOG_LINE@a-prof-asan-882-ps.json@profile {@@@",
+      "@@@STEP_LOG_LINE@a-prof-asan-882-ps.json@  name: \"prof\"@@@",
+      "@@@STEP_LOG_LINE@a-prof-asan-882-ps.json@}@@@",
+      "@@@STEP_LOG_END@a-prof-asan-882-ps.json@@@"
     ]
   },
   {
