@@ -39,7 +39,6 @@
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [disk_usage](#recipe_modules-disk_usage)
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
-  * [f20_proto_validation](#recipe_modules-f20_proto_validation) &mdash; A sample module to validate F20 metadata definitions.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gce_provider](#recipe_modules-gce_provider)
   * [gcloud](#recipe_modules-gcloud)
@@ -213,7 +212,6 @@
   * [easy:examples/full](#recipes-easy_examples_full)
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step)
   * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step)
-  * [f20_proto_validation:examples/full](#recipes-f20_proto_validation_examples_full)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
   * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
@@ -2866,30 +2864,6 @@ Args:
 
 Returns:
   See 'step.__call__'.
-### *recipe_modules* / [f20\_proto\_validation](/recipe_modules/f20_proto_validation)
-
-[DEPS](/recipe_modules/f20_proto_validation/__init__.py#6): [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-A sample module to validate F20 metadata definitions.
-
-F20 metadata definitions are not yet used from any recipes.
-This recipe module ensures that the protobuf definitions continue
-to be usable from the infra recipe code while F20 is in early stages.
-
-TODO(crbug.com/1062307): Delete this recipe module once a real recipe
-exists to generalize cros_test_platform a la F20.
-
-#### **class [F20ProtoValidationAPI](/recipe_modules/f20_proto_validation/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A sample module to validate F20 metadata definitions.
-
-&mdash; **def [log\_sample\_metadata](/recipe_modules/f20_proto_validation/api.py#30)(self):**
-
-Log a sample Metadata instance.
-
-&mdash; **def [log\_sample\_plan](/recipe_modules/f20_proto_validation/api.py#49)(self):**
-
-Log a sample Plan instance.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
 [DEPS](/recipe_modules/failures/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -6222,11 +6196,6 @@ json files.
 [DEPS](/recipe_modules/easy/examples/stdout_jsonpb_step.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#14)(api):**
-### *recipes* / [f20\_proto\_validation:examples/full](/recipe_modules/f20_proto_validation/examples/full.py)
-
-[DEPS](/recipe_modules/f20_proto_validation/examples/full.py#6): [f20\_proto\_validation](#recipe_modules-f20_proto_validation)
-
-&mdash; **def [RunSteps](/recipe_modules/f20_proto_validation/examples/full.py#11)(api):**
 ### *recipes* / [failures:examples/aggregate\_failures](/recipe_modules/failures/examples/aggregate_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/aggregate_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
