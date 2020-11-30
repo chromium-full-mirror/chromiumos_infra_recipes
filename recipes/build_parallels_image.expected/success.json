@@ -1,0 +1,442 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.ensure chroot directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate properties",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all properties good@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup tast"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345/autotest_server_package.tar.bz2",
+      "[CLEANUP]/test-artifacts_tmp_1/autotest_server_package.tar.bz2"
+    ],
+    "infra_step": true,
+    "name": "setup tast.gsutil download tast bundle from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "xjf",
+      "[CLEANUP]/test-artifacts_tmp_1/autotest_server_package.tar.bz2",
+      "--directory",
+      "[CLEANUP]/test-artifacts_tmp_1"
+    ],
+    "name": "setup tast.untar tast",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "provision DUT",
+    "~followup_annotations": [
+      "@@@STEP_LINK@build artifacts@https://console.cloud.google.com/storage/browser/chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "provision DUT.call `build-parallels-image`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "provision DUT.call `build-parallels-image`.ensure build-parallels-image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/build-parallels-image",
+      "-ensure-file",
+      "chromiumos/infra/build-parallels-image/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "provision DUT.call `build-parallels-image`.ensure build-parallels-image.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/build-parallels-image/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/build-parallels-image/build-parallels-image",
+      "provision",
+      "--dut_name",
+      "dummy-dut-name",
+      "--image_gs_path",
+      "gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345"
+    ],
+    "name": "provision DUT.call `build-parallels-image`.provision",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "invoke tast",
+    "~followup_annotations": [
+      "@@@STEP_LINK@tast_logs@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/first_results@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/test-artifacts_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345/",
+      "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
+      "dummy-dut-name",
+      "pita.CreateFromIso.uprev"
+    ],
+    "name": "invoke tast.tast list",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/test-artifacts_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-sshretries=2",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345/",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-defaultvarsdir=[CLEANUP]/test-artifacts_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/tast-results_tmp_1",
+      "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
+      "-var=pita.windowsLicensed=true",
+      "dummy-dut-name",
+      "pita.CreateFromIso.uprev"
+    ],
+    "name": "invoke tast.tast run",
+    "timeout": 2700,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "mv",
+      "[CLEANUP]/tast-results_tmp_1/tests/pita.CreateFromIso.uprev/PvmDefault.zip",
+      "[CLEANUP]/parallels-image_tmp_1/pre_pluginvm_image_1.2.3.4_20120514.zip"
+    ],
+    "name": "invoke tast.rename VM image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "invoke tast.process tast output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tast-results_tmp_1/results.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "invoke tast.process tast output.read results.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@results.json@[@@@",
+      "@@@STEP_LOG_LINE@results.json@  {@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"errors\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"end\": \"2020-01-27T15:16:33.420622341-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"attr\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"name:pita.CreateFromIso.uprev\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:chrome\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"contacts\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"someone@chromium.org\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"additionalTime\": 30000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"name\": \"pita.CreateFromIso.uprev\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"start\": \"2020-01-27T15:16:15.146771555-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"skipReason\": \"\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"pkg\": \"chromiumos/tast/local/bundles/pita\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"timeout\": 300000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"softwareDeps\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/pita.CreateFromIso.uprev\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"data\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"desc\": \"Description\"@@@",
+      "@@@STEP_LOG_LINE@results.json@  }@@@",
+      "@@@STEP_LOG_LINE@results.json@]@@@",
+      "@@@STEP_LOG_END@results.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "invoke tast.process tast output.GS upload first_results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/first_results@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/tast-results_tmp_1",
+      "gs://chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/first_results"
+    ],
+    "infra_step": true,
+    "name": "invoke tast.process tast output.GS upload first_results.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "invoke tast.record logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/system_logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "cp",
+      "-rf",
+      "/var/log",
+      "[CLEANUP]/var-log-dump_tmp_1"
+    ],
+    "name": "invoke tast.record logs.copy logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "-R",
+      "777",
+      "[CLEANUP]/var-log-dump_tmp_1"
+    ],
+    "name": "invoke tast.record logs.loosen permission",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "invoke tast.record logs.GS upload system_logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/system_logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/var-log-dump_tmp_1",
+      "gs://chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/system_logs"
+    ],
+    "infra_step": true,
+    "name": "invoke tast.record logs.GS upload system_logs.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload image",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@name: pre_pluginvm_image_1.2.3.4_20120514.zip@@@",
+      "@@@STEP_LINK@destination directory@https://console.cloud.google.com/storage/browser/chromeos-test-assets-private/tast/pita/pita@@@",
+      "@@@STEP_LINK@uploaded image@https://console.cloud.google.com/storage/browser/chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "-n",
+      "[CLEANUP]/parallels-image_tmp_1/pre_pluginvm_image_1.2.3.4_20120514.zip",
+      "gs://chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip"
+    ],
+    "infra_step": true,
+    "name": "upload image.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload image.set image permissions on destination",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "acl",
+      "ch",
+      "-r",
+      "-u",
+      "owner@google.com:OWNER",
+      "-u",
+      "reader@google.com:READ",
+      "-g",
+      "aclgroup@google.com:READ",
+      "gs://chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip"
+    ],
+    "infra_step": true,
+    "name": "upload image.set image permissions on destination.gsutil acl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "compute image size and sha256",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@metadata@{@@@",
+      "@@@STEP_LOG_LINE@metadata@  \"url\": \"gs://chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip\", @@@",
+      "@@@STEP_LOG_LINE@metadata@  \"sha256sum\": \"1234567890abcdef1234567890abcdef\", @@@",
+      "@@@STEP_LOG_LINE@metadata@  \"size\": 9123456789@@@",
+      "@@@STEP_LOG_LINE@metadata@}@@@",
+      "@@@STEP_LOG_END@metadata@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sha256sum",
+      "[CLEANUP]/parallels-image_tmp_1/pre_pluginvm_image_1.2.3.4_20120514.zip"
+    ],
+    "name": "compute image size and sha256.get file sha256 hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "stat",
+      "--printf=%s",
+      "[CLEANUP]/parallels-image_tmp_1/pre_pluginvm_image_1.2.3.4_20120514.zip"
+    ],
+    "name": "compute image size and sha256.get file length",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

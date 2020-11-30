@@ -18,6 +18,7 @@ from PB.test_platform.phosphorus.upload_to_gs import UploadToGSResponse
 from PB.test_platform.skylab_test_runner.result import Result
 
 
+
 class PhosphorusCommand(recipe_api.RecipeApi):
   """Module for issuing Phosphorus commands"""
 
@@ -31,14 +32,12 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     self._dut_id = env_vars.SKYLAB_DUT_ID
     self._run_id = env_vars.SWARMING_TASK_ID
     self._local_state_results_dir = ''
-    if not self._version: # pragma: no cover
+    if not self._version:  # pragma: no cover
       raise ValueError('No version label provided for '
-          'phosphorus CIPD package.')
+                       'phosphorus CIPD package.')
 
-  def _run(self,
-           subcommand,
-           request, request_type,
-           response_type=None, send_response=False):
+  def _run(self, subcommand, request, request_type, response_type=None,
+           send_response=False):
     """Generic subcommand runner for phosphorus.
 
     Args:
@@ -56,12 +55,12 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       presentation.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_phosphorus()
       cmd = [
-        self._cmd,
-        subcommand,
-        '-input_json',
-        '/dev/stdin',
+          self._cmd,
+          subcommand,
+          '-input_json',
+          '/dev/stdin',
       ]
-      stdin=self.m.raw_io.input_text(json_format.MessageToJson(request))
+      stdin = self.m.raw_io.input_text(json_format.MessageToJson(request))
       if not send_response:
         self.m.easy.step(subcommand, cmd, stdin=stdin)
         return
@@ -69,13 +68,10 @@ class PhosphorusCommand(recipe_api.RecipeApi):
           '-output_json',
           '/dev/stdout',
       ]
-      response = self.m.easy.stdout_jsonpb_step(
-          subcommand,
-          cmd,
-          response_type,
-          stdin=stdin,
-          test_output=response_type(),
-          ok_ret=(0,))
+      response = self.m.easy.stdout_jsonpb_step(subcommand, cmd, response_type,
+                                                stdin=stdin,
+                                                test_output=response_type(),
+                                                ok_ret=(0,))
       presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
@@ -113,7 +109,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       request: an UploadToGSRequest.
     """
     return self._run('upload-to-gs', request, UploadToGSRequest,
-              UploadToGSResponse, send_response=True)
+                     UploadToGSResponse, send_response=True)
 
   def upload_to_tko(self, request):
     """Upload test results to TKO via `upload-to-tko` subcommand.
@@ -155,7 +151,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'phosphorus')
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/phosphorus/${platform}',
-                          self._version)
+                         self._version)
         self.m.cipd.ensure(cipd_dir, pkgs)
         self._cmd = cipd_dir.join('phosphorus')
 
@@ -217,6 +213,9 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     Raises:
       * AssertionError if the Swarming bot ID env var is missing or invalid.
     """
+    # This same 'crossk-' check is used elsewhere in recipes, so if you have
+    # reason to change it here, please search the code and update the other
+    # references too.
     expected_prefix = 'crossk-'
     assert swarming_bot_id.startswith(expected_prefix)
     return swarming_bot_id[len(expected_prefix):]

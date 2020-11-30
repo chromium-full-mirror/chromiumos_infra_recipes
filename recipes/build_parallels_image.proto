@@ -1,0 +1,57 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_parallels_image;
+
+message BuildParallelsImageProperties {
+  // The bucket containing the Chrome OS build with Parallels.
+  // Required
+  string build_gs_bucket = 1;
+
+  // The bucket path containing the Chrome OS build with Parallels.
+  // Required
+  string build_gs_path = 2;
+
+  // The bucket to which testing images should be uploaded.
+  // Required
+  string test_image_gs_bucket = 3;
+
+  // The bucket path to which testing images should be uploaded.
+  // Required
+  string test_image_gs_path = 4;
+
+  // The Parallels version for which an image is being generated. This version
+  // string will be included verbatim in the name of the generated image.
+  // Required
+  string parallels_version = 5;
+
+  // List of user acls to set for the uploaded image on the localmirror. ACLs
+  // are in the format expected by `gsutil acl`. e.g
+  // username@google.com:OWNER
+  repeated string user_acls = 6;
+
+  // List of group acls to set for the uploaded image on the localmirror. ACLs
+  // are in the format expected by `gsutil acl`. e.g
+  // username@google.com:OWNER
+  repeated string group_acls = 7;
+
+  // The name of the generated image, inside test_image_gs_path. Set by the
+  // execution, not the caller.
+  string image_name = 8;
+
+  // The base64-encoded SHA256-hash of the generated image. Set by the
+  // execution, not the caller.
+  string image_sha256 = 9;
+
+  // The file size of the generated image, in bytes. Set by the execution,
+  // not the caller.
+  int64 image_size = 10;
+
+  // Whether the builder should run in test mode. If true, finishes immediately
+  // and populates dummy values for image_name, image_sha256 and image_size.
+  bool test_mode = 11;
+}
+

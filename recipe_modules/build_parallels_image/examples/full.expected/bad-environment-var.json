@@ -1,0 +1,27 @@
+[
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_parallels_image/examples/full.py\", line 19, in RunSteps",
+      "    'gs://chromeos-image-archive/eve-release/R86-13380.0.0')",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_parallels_image/api.py\", line 48, in provision",
+      "    ['--dut_name', self.dut_name, '--image_gs_path', image_gs_path])",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_parallels_image/api.py\", line 68, in dut_name",
+      "    return _dut_name_from_bot_id(self._bot_id)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_parallels_image/api.py\", line 87, in _dut_name_from_bot_id",
+      "    expected_prefix, bot_id))",
+      "ValueError: SWARMING_BOT_ID does not start with expected prefix crossk-, got bad-val"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: ValueError('SWARMING_BOT_ID does not start with expected prefix crossk-, got bad-val',)"
+    },
+    "name": "$result"
+  }
+]

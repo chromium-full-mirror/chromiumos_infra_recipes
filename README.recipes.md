@@ -9,6 +9,7 @@
   * [bot_scaling](#recipe_modules-bot_scaling)
   * [breakpad](#recipe_modules-breakpad)
   * [build_menu](#recipe_modules-build_menu) &mdash; API providing a menu for build steps.
+  * [build_parallels_image](#recipe_modules-build_parallels_image)
   * [build_plan](#recipe_modules-build_plan)
   * [buildbucket_stats](#recipe_modules-buildbucket_stats)
   * [chrome](#recipe_modules-chrome)
@@ -104,6 +105,8 @@
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
   * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph)
   * [build_menu:tests/properties](#recipes-build_menu_tests_properties) &mdash; Verify module inherits some recipe properties.
+  * [build_parallels_image](#recipes-build_parallels_image) &mdash; Recipe for building a Parallels image for testing.
+  * [build_parallels_image:examples/full](#recipes-build_parallels_image_examples_full)
   * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan)
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
   * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
@@ -760,6 +763,31 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
+### *recipe_modules* / [build\_parallels\_image](/recipe_modules/build_parallels_image)
+
+[DEPS](/recipe_modules/build_parallels_image/__init__.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [BuildParallelsImageCommand](/recipe_modules/build_parallels_image/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for issuing build-parallels-image commands.
+
+This module should only be used on lab drones, where SWARMING_BOT_ID
+is set.
+
+&emsp; **@property**<br>&mdash; **def [dut\_name](/recipe_modules/build_parallels_image/api.py#65)(self):**
+
+Returns the DUT resource name.
+
+&mdash; **def [provision](/recipe_modules/build_parallels_image/api.py#36)(self, image_gs_path):**
+
+Provisions the given Chrome OS image onto the attached DUT.
+
+The provisioned image will include the pita DLC.
+
+Args:
+  image_gs_path (str): the Google Storage path to where kernel,
+    rootfs and stateful images are located. For example,
+    'gs://chromeos-image-archive/eve-release/R86-13380.0.0'.
 ### *recipe_modules* / [build\_plan](/recipe_modules/build_plan)
 
 [DEPS](/recipe_modules/build_plan/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -4302,25 +4330,25 @@ Args:
 
 [DEPS](/recipe_modules/phosphorus/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#100)(self, request):**
+&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#96)(self, request):**
 
 Fetch crashes via the `fetch-crashes` subcommand.
 
 Args:
   request: a FetchCrashesRequest.
 
-&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#162)(self, test_id):**
+&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#158)(self, test_id):**
 
 Load the local DUT state file.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [parse](/recipe_modules/phosphorus/api.py#126)(self, results_dir):**
+&mdash; **def [parse](/recipe_modules/phosphorus/api.py#122)(self, results_dir):**
 
 Extract test results from an results directory.
 
@@ -4329,25 +4357,25 @@ Args:
 
 Returns: Result.
 
-&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#82)(self, request):**
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#78)(self, request):**
 
 Run a prejob or a provision via `prejob` subcommand.
 
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#224)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#223)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#91)(self, request):**
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#87)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#188)(self, dut_state):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#184)(self, dut_state):**
 
 Update the local DUT state file and seal the results directory.
 
@@ -4357,7 +4385,7 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#177)(self, dut_state):**
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#173)(self, dut_state):**
 
 Update the local DUT state file.
 
@@ -4367,14 +4395,14 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#109)(self, request):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#105)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#118)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#114)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 
@@ -5641,6 +5669,50 @@ Verify that merging BuildTargetProperties into BuildMenuProperties is
 behaving as expected.
 
 &mdash; **def [RunSteps](/recipe_modules/build_menu/tests/properties.py#27)(api, properties):**
+### *recipes* / [build\_parallels\_image](/recipes/build_parallels_image.py)
+
+[DEPS](/recipes/build_parallels_image.py#26): [build\_menu](#recipe_modules-build_menu), [build\_parallels\_image](#recipe_modules-build_parallels_image), [easy](#recipe_modules-easy), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+Recipe for building a Parallels image for testing.
+
+This recipe runs on a lab drone and takes control of a physical DUT
+to build a new Parallels VM image, for later use in automated testing.
+
+This recipe involves booting up Windows in a virtual machine on the DUT.
+The caller is responsible for ensuring this is only invoked in contexts
+where the necessary license(s) have been obtained. Contact parallels-cros@
+for more details.
+
+This recipe is invoked as part of uprev_parallels_pin.
+
+&mdash; **def [RunSteps](/recipes/build_parallels_image.py#54)(api, properties):**
+
+&mdash; **def [build\_vm\_image](/recipes/build_parallels_image.py#84)(api, properties):**
+
+Builds a new VM image for testing.
+
+Returns:
+  image_name(str): The name of the generated image.
+  image_size(int): The size of the generated image, in bytes.
+  image_hash(str): The base64-encoded SHA256 hash of the generated image.
+
+&mdash; **def [invoke\_tast](/recipes/build_parallels_image.py#168)(api, test_artifacts_dir, build_gs_bucket, build_gs_path, dest_path):**
+
+Runs tast to build the new VM image.
+
+Args:
+  test_artifacts_dir (Path): The location of test artifacts produced by the
+    build.
+  build_gs_bucket (str): The google storage bucket of build output artifacts.
+  build_gs_path (str): The path of build output artifacts, within
+    build_gs_bucket.
+  dest_path (Path): The location that the produced VM image should be copied
+    to (on the local disk).
+### *recipes* / [build\_parallels\_image:examples/full](/recipe_modules/build_parallels_image/examples/full.py)
+
+[DEPS](/recipe_modules/build_parallels_image/examples/full.py#11): [build\_parallels\_image](#recipe_modules-build_parallels_image), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/build_parallels_image/examples/full.py#17)(api):**
 ### *recipes* / [build\_plan:examples/bisect\_build\_plan](/recipe_modules/build_plan/examples/bisect_build_plan.py)
 
 [DEPS](/recipe_modules/build_plan/examples/bisect_build_plan.py#10): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
