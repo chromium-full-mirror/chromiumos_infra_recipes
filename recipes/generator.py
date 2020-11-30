@@ -221,8 +221,9 @@ def RunSteps(api, properties):
             for ebuild in uprev_resp.modified_ebuilds)
       with api.context(cwd=workspace_path):
         ebuilds_by_pinfo = defaultdict(list)
-        infos = api.repo.project_infos(
-            projects=[ebuild.path for ebuild in modified_ebuilds])
+        infos = api.repo.project_infos(projects=[
+            api.path.dirname(ebuild.path) for ebuild in modified_ebuilds
+        ])
         for ebuild, info in zip(modified_ebuilds, infos):
           ebuilds_by_pinfo[info].append(ebuild)
 

@@ -762,8 +762,8 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos/src/overlay/foo.ebuild",
-      "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild",
+      "[START_DIR]/chromiumos/src/overlay",
+      "[START_DIR]/chromiumos/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
