@@ -278,11 +278,11 @@ def invoke_tast(api, test_artifacts_dir, qcow_image_path, private_key_path,
   """
   with api.step.nest('invoke tast') as presentation:
     tast_results_dir = api.path.mkdtemp(prefix='tast-results')
-    tests = api.tast_exec.run_direct([_TAST_NAME], qcow_image_path,
-                                     test_artifacts_dir, private_key_path,
-                                     artifacts_path.bucket, artifacts_path.path,
-                                     tast_results_dir,
-                                     ['-var=pita.windowsLicensed=true'])
+    tests = api.tast_exec.run_direct_vm([_TAST_NAME], qcow_image_path,
+                                        test_artifacts_dir, private_key_path,
+                                        artifacts_path.bucket,
+                                        artifacts_path.path, tast_results_dir,
+                                        ['-var=pita.windowsLicensed=true'])
 
     try:
       src_path = tast_results_dir.join('tests').join(_TAST_NAME).join(

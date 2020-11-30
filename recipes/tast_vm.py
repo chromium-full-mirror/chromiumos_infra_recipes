@@ -34,7 +34,7 @@ def RunSteps(api, properties):
       properties.build_payload.artifacts_gs_path, image_archive_dir)
 
   with api.step.nest('run tast tests'):
-    failures, empty_result = api.tast_exec.run(
+    failures, empty_result = api.tast_exec.run_vm(
         properties.name, properties.expressions, qcow_image_path,
         test_artifacts_dir, private_key_path,
         properties.build_payload.artifacts_gs_bucket,

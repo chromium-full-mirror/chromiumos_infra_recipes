@@ -5019,65 +5019,84 @@ A module to execute tast commands.
 Downloads the tast executable from specified build artifacts.
 
 Args:
-    artifacts_gs_bucket(str): The bucket containing build artifacts.
-    artifacts_gs_path(str): The bucket path containing the build output,
-      for example, "eve-paladin/R78-11588.0.0".
-    test_artifacts_dir(str): The directory to which files should be
-      downloaded. The tast executable will be found at tast/tast relative
-      to this directory.
+  artifacts_gs_bucket (str): The bucket containing build artifacts.
+  artifacts_gs_path (str): The bucket path containing the build output,
+    for example, "eve-paladin/R78-11588.0.0".
+  test_artifacts_dir (str): The directory to which files should be
+    downloaded. The tast executable will be found at tast/tast relative
+    to this directory.
 
 &mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#47)(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):**
 
 Downloads the VM image from specified build artifacts.
 
 Args:
-    artifacts_gs_bucket(str): The bucket containing build artifacts.
-    artifacts_gs_path(str): The bucket path containing the build output,
-      for example, "eve-paladin/R78-11588.0.0".
-    vm_dir(Path): The directory to which files should be
-      downloaded.
+  artifacts_gs_bucket (str): The bucket containing build artifacts.
+  artifacts_gs_path (str): The bucket path containing the build output,
+    for example, "eve-paladin/R78-11588.0.0".
+  vm_dir (Path): The directory to which files should be
+    downloaded.
 
 Returns:
-    qcow_image_path (Path): The location of the qcow image. This will be
-      a location inside image_archive_dir.
-    private_key_path (Path): The location of the SSH key. This will be
-      a location inside image_archive_dir.
+  qcow_image_path (Path): The location of the qcow image. This will be
+    a location inside image_archive_dir.
+  private_key_path (Path): The location of the SSH key. This will be
+    a location inside image_archive_dir.
 
-&mdash; **def [run](/recipe_modules/tast_exec/api.py#88)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
-
-Run tast tests with one retry and upload logs to Google storage.
-
-Args:
-    suite_name(str): Name of the suite to run.
-    expressions(list(str)): Expressions to test.
-    qcow_image_path(Path): Path to image in qcow format.
-    test_artifacts_dir(Path): Dir containing test artifacts.
-    private_key_path(Path): Path to private key.
-    artifacts_gs_bucket(str): The bucket containing build artifacts.
-    artifacts_gs_path(str): The bucket path containing the build output,
-      for example, "eve-paladin/R78-11588.0.0".
-
-Returns:
-    A tuple of list(Failures) and a bool indicating whether
-    the results were empty.
-
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#148)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#190)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
 
 Run tast tests without retries or results processing.
 
 Args:
-    expressions(list(str)): Expressions describing tests to run.
-    qcow_image_path(Path): Path to image in qcow format.
-    test_artifacts_dir(Path): Dir containing test artifacts.
-    private_key_path(Path): Path to private key.
-    test_results_dir(Path): Path to store tast results.
-    run_args(list(str)): Additional arguments to pass to tast.
-    artifacts_gs_bucket(str): The bucket containing build artifacts.
-    artifacts_gs_path(str): The bucket path containing the build output,
-      for example, "eve-paladin/R78-11588.0.0".
+  dut_name (str): The identity of the DUT to connect to,
+    for example, my-dut-host-name or localhost:9222 (if testing a VM).
+  expressions (list[str]): Expressions describing tests to run.
+  test_artifacts_dir (Path): Dir containing test artifacts.
+  artifacts_gs_bucket (str): The bucket containing build artifacts.
+  artifacts_gs_path (str): The bucket path containing the build output,
+    for example, "eve-paladin/R78-11588.0.0".
+  test_results_dir (Path): Path to store tast results.
+  private_key_path (Path): Path to private key to use (optional).
+  run_args (list[str]): Additional arguments to pass to tast (optional).
 
 Returns:
-    list(str): The list of tests that met the specified expression(s).
+  list[str]: The list of tests that met the specified expression(s).
+
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#150)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
+
+Run tast tests in a VM without retries or results processing.
+
+Args:
+  expressions (list[str]): Expressions describing tests to run.
+  qcow_image_path (Path): Path to image in qcow format.
+  test_artifacts_dir (Path): Dir containing test artifacts.
+  private_key_path (Path): Path to private key.
+  artifacts_gs_bucket (str): The bucket containing build artifacts.
+  artifacts_gs_path (str): The bucket path containing the build output,
+    for example, "eve-paladin/R78-11588.0.0".
+  test_results_dir (Path): Path to store tast results.
+  run_args (list[str]): Additional arguments to pass to tast (optional).
+
+Returns:
+  list[str]: The list of tests that met the specified expression(s).
+
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#88)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
+
+Run tast tests in a VM with one retry and upload logs to Google storage.
+
+Args:
+  suite_name (str): Name of the suite to run.
+  expressions (list[str]): Expressions to test.
+  qcow_image_path (Path): Path to image in qcow format.
+  test_artifacts_dir (Path): Dir containing test artifacts.
+  private_key_path (Path): Path to private key.
+  artifacts_gs_bucket (str): The bucket containing build artifacts.
+  artifacts_gs_path (str): The bucket path containing the build output,
+    for example, "eve-paladin/R78-11588.0.0".
+
+Returns:
+  A tuple of list(Failures) and a bool indicating whether
+    the results were empty.
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
 [DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
