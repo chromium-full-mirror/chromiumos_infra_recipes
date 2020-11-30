@@ -7351,7 +7351,7 @@ localmirror and then modifies the Guest VM's version pin to match this version.
 &mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#104)(api, properties):**
 ### *recipes* / [uprev\_parallels\_pin](/recipes/uprev_parallels_pin.py)
 
-[DEPS](/recipes/uprev_parallels_pin.py#25): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [skylab](#recipe_modules-skylab), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/uprev_parallels_pin.py#32): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe for generating Parallels uprev CLs.
 
@@ -7362,12 +7362,11 @@ This recipe involves booting up Windows in a virtual machine. The
 caller is responsible for ensuring this is only invoked in contexts
 where the necessary license(s) have been obtained.
 
-&mdash; **def [RunSteps](/recipes/uprev_parallels_pin.py#68)(api, properties):**
+&mdash; **def [RunSteps](/recipes/uprev_parallels_pin.py#66)(api, properties):**
 
-&mdash; **def [build\_os\_with\_uprev](/recipes/uprev_parallels_pin.py#101)(api, properties, package, upstream_version):**
+&mdash; **def [build\_os\_with\_uprev](/recipes/uprev_parallels_pin.py#99)(api, properties, package, upstream_version):**
 
-Builds a version of Chrome OS with given version of the Parallels
-package.
+Builds a version of Chrome OS with given version of the Parallels package.
 
 The build will still contain an old VM image for testing.
 
@@ -7383,13 +7382,13 @@ Returns:
 Builds a new VM image for testing.
 
 Args:
-  artifacts_path(BuildPath): The location of build output artifacts.
-  parallels_version(str): The Parallels version included in the given build.
+  artifacts_path (BuildPath): The location of build output artifacts.
+  parallels_version (str): The Parallels version included in the given build.
 
 Returns:
   dict: The details of the new test image.
 
-&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#325)(api, properties, package, new_version_pin):**
+&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#247)(api, properties, package, new_version_pin):**
 
 Commits and uploads the uprev of the version-pin file.
 
@@ -7398,18 +7397,18 @@ Args:
       commit message.
   new_version_pin (VersionPin): the new version pin data.
 
-&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#367)(api, properties):**
+&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#289)(api, properties):**
 
 Gets the latest version of Parallels from the upstream bucket.
 
 Returns:
   string: the latest upstream version of Parallels.
 
-&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#447)(api, properties):**
+&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#370)(api, properties):**
 
 Gets the path of the VERSION-PIN file.
 
-&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#408)(api, properties):**
+&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#329)(api, properties):**
 
 Reads and returns the content of the VERSION-PIN file.
 
@@ -7419,31 +7418,17 @@ have been checked out.
 Returns:
   VersionPin: the pinned version data.
 
-&mdash; **def [invoke\_tast](/recipes/uprev_parallels_pin.py#265)(api, test_artifacts_dir, qcow_image_path, private_key_path, artifacts_path, dest_path):**
-
-Runs tast to build the new VM image.
-
-Args:
-  test_artifacts_dir(Path): The location of test artifacts produced by the
-    build.
-  qcow_image_path(Path): The location of the qcow-format VM image.
-  private_key_path(Path): The location of the private key that can be used
-    to authenticate to the VM.
-  artifacts_path(BuildPath): The location of build output artifacts.
-  dest_path(Path): The location that the produced VM image should be copied
-    to (on the local disk).
-
-&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#452)(version, previous_version):**
+&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#375)(version, previous_version):**
 
 Returns if version occurs logically after pervious_version.
 
 For example, is_version_after('1.0.3.1', '1.0.2.2') returns true.
 
 Args:
-  version(str): The version to compare.
-  previous_version(str): The previous version to compare with.
+  version (str): The version to compare.
+  previous_version (str): The previous version to compare with.
 
-&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#430)(api, properties, new_version):**
+&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#352)(api, properties, new_version):**
 
 Sets the content of the VERSION-PIN file.
 
@@ -7451,7 +7436,7 @@ Before calling this function, ensure a synced version of the source must
 have been checked out.
 
 Args:
-  new_version(VersionPin): the new version pin data.
+  new_version (VersionPin): the new version pin data.
 
 &mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#148)(api, properties, package, to_version):**
 

@@ -13,6 +13,8 @@ caller is responsible for ensuring this is only invoked in contexts
 where the necessary license(s) have been obtained.
 """
 from collections import namedtuple
+from google.protobuf import json_format
+from google.protobuf import timestamp_pb2
 
 import json
 import re
@@ -20,18 +22,24 @@ import re
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.chromite.api.packages import UprevVersionedPackageRequest
-from PB.test_platform.taskstate import TaskState
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipes.chromeos.build_parallels_image import \
+  BuildParallelsImageProperties
+from PB.recipes.chromeos.uprev_parallels_pin import UprevParallelsPinProperties
 
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
-    'recipe_engine/scheduler',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'recipe_engine/time',
     'build_menu',
     'cros_artifacts',
@@ -43,23 +51,13 @@ DEPS = [
     'git',
     'repo',
     'naming',
-    'skylab',
-    'test_util',
-    'tast_exec',
-    'tast_results',
 ]
-
-from PB.recipes.chromeos.uprev_parallels_pin import UprevParallelsPinProperties
 
 PROPERTIES = UprevParallelsPinProperties
 
 _PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 _BUILD_STEP_NAME = 'build chromiumos with upreved Parallels'
 _IMAGE_STEP_NAME = 'build VM image'
-# TODO(meiring): Fix up once the real process to generate a VM image is
-# available and is enabled on betty.
-_TAST_NAME = 'example.DataFiles'
-_SYS_LOG_DIR = '/var/log'
 
 BuildPath = namedtuple('BuildPath', ['bucket', 'path'])
 VersionPin = namedtuple('VersionPin', ['version', 'test_image'])
@@ -99,8 +97,7 @@ def RunSteps(api, properties):
 
 
 def build_os_with_uprev(api, properties, package, upstream_version):
-  """Builds a version of Chrome OS with given version of the Parallels
-  package.
+  """Builds a version of Chrome OS with given version of the Parallels package.
 
   The build will still contain an old VM image for testing.
 
@@ -109,14 +106,16 @@ def build_os_with_uprev(api, properties, package, upstream_version):
     upstream_version (str): the version of Parallels to include in the build.
 
   Returns:
-    BuildPath: where the build artifacts were uploaded."""
+    BuildPath: where the build artifacts were uploaded.
+  """
   with api.step.nest(_BUILD_STEP_NAME) as presentation:
     with api.build_menu.configure_builder() as config, \
         api.build_menu.setup_workspace_and_chroot():
 
       version_pin = get_version_pin(api, properties)
       if not is_version_after(upstream_version, version_pin.version):
-        presentation.step_text = 'build not required, Parallels already up to date.'
+        presentation.step_text = 'build not required, Parallels already up to'\
+          ' date.'
         return None
 
       uprev_package(api, properties, package, upstream_version)
@@ -124,9 +123,10 @@ def build_os_with_uprev(api, properties, package, upstream_version):
       env_info = api.build_menu.setup_sysroot_and_determine_relevance()
       packages = env_info.packages
 
-      # Artifacts are frequently of use even if the build failed.  For example, it
-      # is likely that the developer will want to see the ebuild logs from install
-      # packages when that step fails, or even if build images fail afterward.
+      # Artifacts are frequently of use even if the build failed.  For example,
+      # it is likely that the developer will want to see the ebuild logs from
+      # install packages when that step fails, or even if build images fail
+      # afterward.
       publish = True
       try:
         api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
@@ -140,7 +140,7 @@ def build_os_with_uprev(api, properties, package, upstream_version):
       with api.step.nest('get artifacts path'):
         gs_path = api.cros_artifacts.artifacts_gs_path(
             config.id.name, api.build_menu.build_target, config.id.type)
-        presentation.links['build artifacts'] = "{}/{}/{}".format(
+        presentation.links['build artifacts'] = '{}/{}/{}'.format(
             _PANTHEON_PREFIX, config.artifacts.artifacts_gs_bucket, gs_path)
         return BuildPath(config.artifacts.artifacts_gs_bucket, gs_path)
 
@@ -186,140 +186,62 @@ def build_vm_image(api, properties, artifacts_path, parallels_version):
   """Builds a new VM image for testing.
 
   Args:
-    artifacts_path(BuildPath): The location of build output artifacts.
-    parallels_version(str): The Parallels version included in the given build.
+    artifacts_path (BuildPath): The location of build output artifacts.
+    parallels_version (str): The Parallels version included in the given build.
 
   Returns:
-    dict: The details of the new test image."""
+    dict: The details of the new test image.
+  """
   with api.step.nest(_IMAGE_STEP_NAME) as presentation:
     presentation.links['destination directory'] = '{}/{}/{}'.format(
         _PANTHEON_PREFIX, properties.test_image_gs_bucket,
         properties.test_image_gs_path)
 
-    test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
-    api.tast_exec.download_tast(artifacts_path.bucket, artifacts_path.path,
-                                test_artifacts_dir)
+    bucket = 'infra'
+    builder = 'build-parallels-image'
+    if api.build_menu.is_staging:  # pragma: nocover
+      bucket = 'staging'
+      builder = 'staging-build-parallels-image'
 
-    image_archive_dir = api.path.mkdtemp(prefix='image-archive')
-    qcow_image_path, private_key_path = api.tast_exec.download_vm(
-        artifacts_path.bucket, artifacts_path.path, image_archive_dir)
+    request = api.buildbucket.schedule_request(
+        bucket=bucket, builder=builder, properties=json_format.MessageToDict(
+            BuildParallelsImageProperties(
+                build_gs_bucket=artifacts_path.bucket,
+                build_gs_path=artifacts_path.path,
+                test_image_gs_bucket=properties.test_image_gs_bucket,
+                test_image_gs_path=properties.test_image_gs_path,
+                parallels_version=parallels_version,
+                user_acls=properties.user_acls,
+                group_acls=properties.group_acls,
+            )), swarming_parent_run_id=api.swarming.task_id)
 
-    image_dir = api.path.mkdtemp(prefix='parallels-image')
-    image_name = 'pre_pluginvm_image_{}_{}.zip'.format(
-        parallels_version,
-        api.time.utcnow().strftime("%Y%m%d"))
-    image_path = image_dir.join(image_name)
+    # Invoke the build-parallels-image builder to build the VM image
+    # on real hardware and wait for it to compelte.
+    build = api.buildbucket.run([request], timeout=4 * 3600,
+                                step_name='run ' + builder)[0]
+    if build.status != common_pb2.SUCCESS:
+      raise StepFailure('Triggered VM image build did not succeed')
 
-    # Invoke tast to build the VM image.
-    invoke_tast(api, test_artifacts_dir, qcow_image_path, private_key_path,
-                artifacts_path, image_path)
+    output = json_format.ParseDict(build.output.properties,
+                                   BuildParallelsImageProperties())
 
-    upload_path = '{}/{}'.format(properties.test_image_gs_path, image_name)
-    with api.step.nest('upload image') as upload_step:
-      upload_step.step_text = 'name: {}'.format(image_name)
+    presentation.links['uploaded image'] = '{}/{}/{}/{}'.format(
+        _PANTHEON_PREFIX, properties.test_image_gs_bucket,
+        properties.test_image_gs_path, output.image_name)
 
-      # Upload the file to google storage (but do not overwrite anything
-      # existing (-n)).
-      api.gsutil.upload(image_path, properties.test_image_gs_bucket,
-                        upload_path, args=['-n'])
-
-    if properties.user_acls or properties.group_acls:
-      with api.step.nest('set image permissions on destination'):
-        cmd = ['acl', 'ch', '-r']
-        for user_acl in properties.user_acls:
-          cmd += ['-u', user_acl]
-
-        for group_acl in properties.group_acls:
-          cmd += ['-g', group_acl]
-
-        cmd += [
-            'gs://{}/{}'.format(properties.test_image_gs_bucket, upload_path)
-        ]
-
-        api.gsutil(cmd)
-
-    sha256 = api.easy.stdout_step(
-        'get file sha256 hash', ['sha256sum', image_path],
-        test_stdout='1234567890abcdef1234567890abcdef /path/to/file').split(
-            ' ', 1)[0]
-    size = int(
-        api.easy.stdout_step('get file length',
-                             ['stat', '--printf=%s', image_path],
-                             test_stdout="9123456789"))
-
+    # This blob is defined by tast. See go/tast-writing#external-data-files.
     image_details = {
         'url':
-            'gs://{}/{}'.format(properties.test_image_gs_bucket, upload_path),
+            'gs://{}/{}/{}'.format(properties.test_image_gs_bucket,
+                                   properties.test_image_gs_path,
+                                   output.image_name),
         'size':
-            size,
+            output.image_size,
         'sha256sum':
-            sha256,
+            output.image_sha256,
     }
-    presentation.links['uploaded image'] = '{}/{}/{}'.format(
-        _PANTHEON_PREFIX, properties.test_image_gs_bucket, upload_path)
-    presentation.logs['metadata'] = json.dumps(image_details, indent=2)
-    # This blob is defined by tast. See go/tast-writing#external-data-files.
+    presentation.logs['image metadata'] = json.dumps(image_details, indent=2)
     return image_details
-
-
-def invoke_tast(api, test_artifacts_dir, qcow_image_path, private_key_path,
-                artifacts_path, dest_path):
-  """Runs tast to build the new VM image.
-
-  Args:
-    test_artifacts_dir(Path): The location of test artifacts produced by the
-      build.
-    qcow_image_path(Path): The location of the qcow-format VM image.
-    private_key_path(Path): The location of the private key that can be used
-      to authenticate to the VM.
-    artifacts_path(BuildPath): The location of build output artifacts.
-    dest_path(Path): The location that the produced VM image should be copied
-      to (on the local disk).
-  """
-  with api.step.nest('invoke tast') as presentation:
-    tast_results_dir = api.path.mkdtemp(prefix='tast-results')
-    tests = api.tast_exec.run_direct_vm([_TAST_NAME], qcow_image_path,
-                                        test_artifacts_dir, private_key_path,
-                                        artifacts_path.bucket,
-                                        artifacts_path.path, tast_results_dir,
-                                        ['-var=pita.windowsLicensed=true'])
-
-    try:
-      src_path = tast_results_dir.join('tests').join(_TAST_NAME).join(
-          'PvmDefault.zip')
-      # TODO(meiring): Delete once the real process to generate a VM image is
-      # available.
-      api.step('create fake image', ['touch', src_path])
-
-      # Move VM image out of the test results directory (to avoid it getting
-      # uploaded with test logs) and rename it to its final name.
-      cmd = ['mv', src_path, dest_path]
-      api.step('rename VM image', cmd)
-      image_exists = True
-    except StepFailure:
-      # Move failed, tast did not produce VM image.
-      image_exists = False
-
-    # Parse tast results and upload logs for archival purposes
-    result = api.tast_results.get_results(tast_results_dir, 'parallels_uprev',
-                                          'first', tests)
-    presentation.links['tast_logs'] = result.log_url
-
-    api.tast_results.record_logs(_SYS_LOG_DIR)
-
-    if result.state.verdict != TaskState.VERDICT_PASSED:
-      # Tast failed or failed to reach a result.
-      failures, _ = api.tast_results.get_failures(result)
-      is_empty = result.state.verdict == TaskState.VERDICT_UNSPECIFIED
-      api.tast_results.print_results(failures, is_empty)
-
-      raise api.step.StepFailure(
-          'VM image build failed: {} failed'.format(_TAST_NAME))
-    elif not image_exists:
-      # Tast reports it has succeeded but the image could not be found.
-      raise api.step.StepFailure(
-          'VM image build failed: {} passed but image could not be found'
-          .format(_TAST_NAME))
 
 
 def commit_pin_uprev(api, properties, package, new_version_pin):
@@ -380,12 +302,11 @@ def get_upstream_version(api, properties):
     files = api.gsutil.list(
         gs_path, stdout=api.raw_io.output(),
         step_test_data=lambda: api.raw_io.test_api.stream_output(
-            'gs://chromeos-binaries/some-path/parallels-desktop-1.0.0.9000.tbz2\n'
-            'gs://chromeos-binaries/some-path/random-file.txt\n'
-            'gs://chromeos-binaries/some-path/parallels-desktop-1.0.1.812.tbz2\n'
-            'gs://chromeos-binaries/some-path/parallels-desktop-1.0.1.1098.tbz2\n'
-            'gs://chromeos-binaries/some-path/parallels-desktop-1.0.1.100.tbz2\n'
-        ))
+            'gs://chromeos-binaries/path/parallels-desktop-1.0.0.9000.tbz2\n'
+            'gs://chromeos-binaries/path/random-file.txt\n'
+            'gs://chromeos-binaries/path/parallels-desktop-1.0.1.812.tbz2\n'
+            'gs://chromeos-binaries/path/parallels-desktop-1.0.1.1098.tbz2\n'
+            'gs://chromeos-binaries/path/parallels-desktop-1.0.1.100.tbz2\n'))
     versions = []
     for filepath in files.stdout.splitlines():
       match = re.match(r'.*-([0-9]+(\.[0-9]+)+)\.tbz2', filepath)
@@ -395,12 +316,12 @@ def get_upstream_version(api, properties):
       version_parts = map(int, match.group(1).split('.'))
       versions.append(version_parts)
 
-    if len(versions) == 0:
+    if not versions:
       raise StepFailure('Upstream repository has no files matching pattern.')
 
     # Sort lexicographically, in descending order.
     versions.sort(reverse=True)
-    result = ".".join(map(str, versions[0]))
+    result = '.'.join(map(str, versions[0]))
     presentation.step_text = 'found version: {}'.format(result)
     return result
 
@@ -412,17 +333,18 @@ def get_version_pin(api, properties):
   have been checked out.
 
   Returns:
-    VersionPin: the pinned version data."""
+    VersionPin: the pinned version data.
+  """
   with api.step.nest('read pinned version file') as presentation:
     version_path = get_version_path(api, properties)
-    json = api.file.read_json(
+    version_json = api.file.read_json(
         name='VERSION-PIN', source=version_path, test_data={
             'version': '1.0.1.1000',
             'test_image': {
                 'opaque': 'data'
             }
         })
-    result = VersionPin(json['version'], json['test_image'])
+    result = VersionPin(version_json['version'], version_json['test_image'])
     presentation.step_text = 'pinned version: {}'.format(result.version)
     return result
 
@@ -434,7 +356,8 @@ def set_version_pin(api, properties, new_version):
   have been checked out.
 
   Args:
-    new_version(VersionPin): the new version pin data."""
+    new_version (VersionPin): the new version pin data.
+  """
   with api.step.nest('write pinned version file'):
     version_path = get_version_path(api, properties)
     api.file.write_json(
@@ -455,8 +378,8 @@ def is_version_after(version, previous_version):
   For example, is_version_after('1.0.3.1', '1.0.2.2') returns true.
 
   Args:
-    version(str): The version to compare.
-    previous_version(str): The previous version to compare with.
+    version (str): The version to compare.
+    previous_version (str): The previous version to compare with.
   """
   parts = map(int, version.split('.'))
   previous_parts = map(int, previous_version.split('.'))
@@ -479,13 +402,15 @@ def GenTests(api):
       'upstream_gs_bucket':
           'chromeos-binaries',
       'upstream_gs_path':
-          'HOME/bcs-pita-private/project-pita-private/app-emulation/parallels-desktop/',
+          'HOME/bcs-pita-private/project-pita-private/app-emulation/'\
+            'parallels-desktop/',
       'test_image_gs_bucket':
           'chromeos-test-assets-private',
       'test_image_gs_path':
           'tast/pita/pita',
       'version_file':
-          'src/private-overlays/chromeos-partner-overlay/app-emulation/parallels-desktop/VERSION-PIN',
+          'src/private-overlays/chromeos-partner-overlay/app-emulation/'\
+            'parallels-desktop/VERSION-PIN',
       'user_acls': ['owner@google.com:OWNER', 'reader@google.com:READ'],
       'group_acls': ['aclgroup@google.com:READ']
   }
@@ -609,100 +534,57 @@ def GenTests(api):
           _BUILD_STEP_NAME + '.upload artifacts',
           'ArtifactsService/BundleArtifacts', retcode=1))
 
-  failureJson = json.loads("""[{
-    "name": "pita.CreateFromIso.uprev",
-    "pkg": "chromiumos/tast/local/bundles/pita",
-    "additionalTime": 30000000000,
-    "desc": "Description",
-    "contacts": [
-      "someone@chromium.org"
-    ],
-    "attr": [
-      "name:pita.CreateFromIso.uprev",
-      "bundle:cros",
-      "dep:chrome"
-    ],
-    "data": null,
-    "softwareDeps": [
-      "chrome"
-    ],
-    "timeout": 300000000000,
-    "errors": [
-      {
-        "reason": "Lost SSH connection to VM"
-      }
-    ],
-    "start": "2020-01-27T15:16:15.146771555-08:00",
-    "end": "2020-01-27T15:16:33.420622341-08:00",
-    "outDir": "/tmp/vm-test-results.JxZdcJ/tests/pita.CreateFromIso.uprev",
-    "skipReason": ""
-  }]""")
-
-  # Tast fails
+  # Build image fails to schedule (infra failure)
   yield api.build_menu.test(
-      'tast-failure',
+      'build-image-schedule-failure',
       api.properties(**good_props),
       api.git.diff_check(True),
-      api.step_data(
-          _IMAGE_STEP_NAME +
-          '.invoke tast.process tast output.read results.json',
-          api.file.read_json(failureJson)),
-      api.post_check(post_process.StatusFailure),
-      api.post_check(post_process.DoesNotRun,
-                     _IMAGE_STEP_NAME + '.upload image'),
+      api.override_step_data(
+          _IMAGE_STEP_NAME + '.run build-parallels-image.schedule',
+          api.json.invalid(None), retcode=1),
+      api.post_check(post_process.StatusException),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
   )
 
-  successJson = json.loads("""[{
-    "name": "pita.CreateFromIso.uprev",
-    "pkg": "chromiumos/tast/local/bundles/pita",
-    "additionalTime": 30000000000,
-    "desc": "Description",
-    "contacts": [
-      "someone@chromium.org"
-    ],
-    "attr": [
-      "name:pita.CreateFromIso.uprev",
-      "bundle:cros",
-      "dep:chrome"
-    ],
-    "data": null,
-    "softwareDeps": [
-      "chrome"
-    ],
-    "timeout": 300000000000,
-    "errors": null,
-    "start": "2020-01-27T15:16:15.146771555-08:00",
-    "end": "2020-01-27T15:16:33.420622341-08:00",
-    "outDir": "/tmp/vm-test-results.JxZdcJ/tests/pita.CreateFromIso.uprev",
-    "skipReason": ""
-  }]""")
-
-  # Tast appears to succeed, but not VM image was produced.
+  # Build image fails
   yield api.build_menu.test(
-      'tast-no-image', api.properties(**good_props), api.git.diff_check(True),
-      api.step_data(
-          _IMAGE_STEP_NAME +
-          '.invoke tast.process tast output.read results.json',
-          api.file.read_json(successJson)),
-      api.step_data(_IMAGE_STEP_NAME + '.invoke tast.rename VM image',
-                    retcode=1), api.post_check(post_process.StatusFailure),
-      api.post_check(post_process.DoesNotRun,
-                     _IMAGE_STEP_NAME + '.upload image'),
-      api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'))
+      'build-image-collect-failure',
+      api.properties(**good_props),
+      api.git.diff_check(True),
+      api.buildbucket.simulated_collect_output([
+          api.buildbucket.try_build_message(build_id=8922054662172514000,
+                                            status='FAILURE'),
+      ], step_name=_IMAGE_STEP_NAME + '.run build-parallels-image.collect'),
+      api.post_check(post_process.StatusFailure),
+      api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+  )
 
   # Success
+  build_success = build_pb2.Build(
+      id=8922054662172514000, number=1234, builder=builder_pb2.BuilderID(
+          project='chromeos',
+          bucket='infra',
+          builder='build-parallels-image',
+      ), created_by='user:luci-scheduler@appspot.gserviceaccount.com',
+      create_time=timestamp_pb2.Timestamp(seconds=1527292217),
+      status=common_pb2.SUCCESS, output=build_pb2.Build.Output())
+  build_success.output.properties.update(
+      json_format.MessageToDict(
+          BuildParallelsImageProperties(
+              image_name='pre_pluginvm_image_1.2.3.4_20201127.zip',
+              image_size=9876543210,
+              image_sha256='aabbccddeeff0011223344556677889900',
+          )))
   yield api.build_menu.test(
       'uprev-success', api.properties(**good_props), api.git.diff_check(True),
-      api.step_data(
-          _IMAGE_STEP_NAME +
-          '.invoke tast.process tast output.read results.json',
-          api.file.read_json(successJson)),
+      api.buildbucket.simulated_collect_output(
+          [build_success],
+          step_name=_IMAGE_STEP_NAME + '.run build-parallels-image.collect'),
       api.post_check(post_process.MustRun, _BUILD_STEP_NAME + '.build images'),
       api.post_check(post_process.MustRun,
                      _BUILD_STEP_NAME + '.run ebuild tests'),
       api.post_check(post_process.MustRun,
                      _BUILD_STEP_NAME + '.upload artifacts'),
-      api.post_check(post_process.MustRun, _IMAGE_STEP_NAME + '.upload image'),
+      api.post_check(post_process.MustRun, _IMAGE_STEP_NAME),
       api.post_check(post_process.MustRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusSuccess))

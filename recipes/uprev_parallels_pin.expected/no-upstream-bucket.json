@@ -36,7 +36,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_parallels_pin.py\", line 73, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_parallels_pin.py\", line 71, in RunSteps",
       "    raise ValueError('must set upstream_gs_bucket')",
       "ValueError: must set upstream_gs_bucket"
     ]

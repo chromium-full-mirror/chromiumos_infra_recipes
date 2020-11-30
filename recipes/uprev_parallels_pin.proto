@@ -7,13 +7,6 @@ syntax = "proto3";
 package recipes.chromeos.uprev_parallels_pin;
 
 import "chromiumos/common.proto";
-import "go.chromium.org/luci/scheduler/api/scheduler/v1/triggers.proto";
-
-// A reviewer must be some user known by Gerrit. Could be an email
-// alias that is processed by GWS.
-message Reviewer {
-  string email = 1;
-}
 
 message UprevParallelsPinProperties {
   // Path to the version file to update.
