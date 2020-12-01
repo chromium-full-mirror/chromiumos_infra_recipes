@@ -31,7 +31,6 @@ def _download_test_result_files(api, remote_test_results):
   with api.step.nest('download test results'):
     for test_result in remote_test_results:
       gs_path = test_result.log_data.gs_url
-      _wait(api, gs_path)
       with api.step.nest('download {}'.format(gs_path)):
         test_result_local_path = api.path.mkdtemp(prefix='test_result')
         step = api.gsutil.download_url(gs_path,
@@ -45,27 +44,6 @@ def _download_test_result_files(api, remote_test_results):
 
   return downloaded_test_results
 
-def _wait(api, gs_path):
-  with api.step.nest('wait'):
-    try:
-      # Note: This noop step is provided only to allow a test of the failure
-      # pathway that sidesteps the exponential backoff and sleep of
-      # _wait_for_marker_file.
-      api.step('noop', ['cat', '/dev/null'])
-      with api.step.nest('poll gs'):
-        _wait_for_marker_file(api, gs_path)
-    except:
-        raise api.step.StepFailure(
-            'timed out or failed waiting offload-finished marker to appear')
-
-# With these parameters, polling will wait for (2 + 4 + 8) = 14 minutes before
-# giving up.
-@exponential_retry(retries=4, delay=datetime.timedelta(minutes=2))
-def _wait_for_marker_file(api, gs_path):
-  """Poll gs until the offload-finished marker appears for it."""
-  completed_marker = api.path.join(gs_path, '.finished_offload')
-  api.gsutil.cat(completed_marker)
-
 
 def RunSteps(api, properties):
   downloaded_test_results = _download_test_result_files(
@@ -73,8 +51,6 @@ def RunSteps(api, properties):
 
   api.breakpad.symbolicate_dump(properties.debug_symbols_archive_url,
                                 downloaded_test_results)
-
-  # TODO (guocb): add more postprocessing, e.g. gen provision events, etc.
 
 
 def GenTests(api):
@@ -102,13 +78,4 @@ def GenTests(api):
       # A download step should exist; contrast this with the never-offloaded
       # testcase below.
       api.post_check(lambda check, steps: check(dl_step in steps)),
-  )
-
-  yield api.test(
-      'never-offloaded',
-      api.properties(req),
-      api.step_data('download test results.wait.noop', retcode=1),
-      # Failure when waiting for offload means we should not attempt
-      # download.
-      api.post_check(lambda check, steps: check(dl_step not in steps)),
   )
