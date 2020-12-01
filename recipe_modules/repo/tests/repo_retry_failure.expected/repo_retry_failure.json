@@ -68,6 +68,14 @@
       "all"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
     "timeout": 900,
@@ -132,6 +140,14 @@
       "all"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo init (2)",
     "timeout": 900,
@@ -152,6 +168,14 @@
       "version"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version",
     "~followup_annotations": [
@@ -164,6 +188,14 @@
       "selfupdate"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
@@ -176,6 +208,14 @@
       "version"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
@@ -218,6 +258,14 @@
       "-delete"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.clear git locks",
     "~followup_annotations": [
@@ -245,6 +293,14 @@
       "-f"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
@@ -258,6 +314,14 @@
       "sync"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo sync",
     "~followup_annotations": [

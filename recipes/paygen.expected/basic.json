@@ -274,6 +274,14 @@
       "all"
     ],
     "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "initialization.ensure synced checkout.repo init",
     "timeout": 900,
@@ -294,6 +302,14 @@
       "version"
     ],
     "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "initialization.ensure synced checkout.repo binary update.repo version",
     "~followup_annotations": [
@@ -306,6 +322,14 @@
       "selfupdate"
     ],
     "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "initialization.ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
@@ -318,6 +342,14 @@
       "version"
     ],
     "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "initialization.ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
@@ -361,6 +393,14 @@
       "-delete"
     ],
     "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "initialization.ensure synced checkout.clear git locks",
     "~followup_annotations": [
@@ -389,6 +429,14 @@
       "-f"
     ],
     "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "initialization.ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
@@ -412,6 +460,14 @@
       "chromiumos/chromite"
     ],
     "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "initialization.ensure synced checkout.repo sync",
     "timeout": 3600,
@@ -441,6 +497,14 @@
       "chromeos/manifest-internal"
     ],
     "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "initialization.sync manifest branches.repo sync",
     "timeout": 3600,

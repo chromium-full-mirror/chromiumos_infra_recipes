@@ -82,6 +82,14 @@
       "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo init",
     "timeout": 900,
@@ -102,6 +110,14 @@
       "version"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version",
     "~followup_annotations": [
@@ -114,6 +130,14 @@
       "selfupdate"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
@@ -126,6 +150,14 @@
       "version"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
@@ -170,6 +202,14 @@
       "-delete"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.clear git locks",
     "~followup_annotations": [
@@ -266,6 +306,14 @@
       "-f"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
@@ -296,6 +344,14 @@
       "chromeos/project/puff/duffy"
     ],
     "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "ensure synced checkout.repo sync",
     "~followup_annotations": [
@@ -338,6 +394,14 @@
       "../tmp_manifest"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "sync to snapshot.repo init",
     "timeout": 900,
@@ -381,6 +445,14 @@
       "-delete"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "sync to snapshot.clear git locks",
     "~followup_annotations": [
@@ -397,6 +469,14 @@
       "8"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "sync to snapshot.repo sync",
     "~followup_annotations": [

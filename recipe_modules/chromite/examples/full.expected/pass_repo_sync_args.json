@@ -8,6 +8,14 @@
       "--groups",
       "all"
     ],
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo init",
     "timeout": 900
@@ -21,6 +29,14 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo binary update.repo version",
     "~followup_annotations": [
@@ -32,6 +48,14 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo binary update.repo selfupdate",
     "~followup_annotations": [
@@ -43,6 +67,14 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo binary update.repo version (2)",
     "~followup_annotations": [
@@ -80,6 +112,14 @@
       "-print",
       "-delete"
     ],
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "clear git locks"
   },
@@ -88,6 +128,14 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync"
     ],
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo sync"
   },

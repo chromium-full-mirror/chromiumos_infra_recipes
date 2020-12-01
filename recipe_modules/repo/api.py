@@ -88,7 +88,9 @@ class RepoApi(recipe_api.RecipeApi):
           name += ' ' + arg
           break
     kwargs.setdefault('infra_step', True)
-    return self.m.step(name, [self.repo_path] + args, **kwargs)
+    # Always run with depot_tools.on_path, since repo depends on it.
+    with self.m.depot_tools.on_path():
+      return self.m.step(name, [self.repo_path] + args, **kwargs)
 
   def _clear_git_locks(self, projects=None):
     """Removes git locks found in the repo checkout.

@@ -27,6 +27,14 @@
       "all"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo checkout.repo init",
     "timeout": 900,
@@ -47,6 +55,14 @@
       "version"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo checkout.repo binary update.repo version",
     "~followup_annotations": [
@@ -59,6 +75,14 @@
       "selfupdate"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
@@ -71,6 +95,14 @@
       "version"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
@@ -113,6 +145,14 @@
       "-delete"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo checkout.clear git locks",
     "~followup_annotations": [
@@ -127,6 +167,14 @@
       "32"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "repo checkout.repo sync",
     "~followup_annotations": [
