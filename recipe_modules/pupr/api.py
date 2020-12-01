@@ -33,6 +33,16 @@ PASSED_DRY_RUN_RE = re.compile(
     "^Patch Set \d+:\s*Dry run: This CL passed the CQ dry run")
 
 
+def get_patterns(dry_run):
+  """
+  Get appropriate tag/regexes for the CQ mode (CQ+1 or CQ+2).
+  """
+  if dry_run:
+    return (DRY_RUN_TAG, FAILED_DRY_RUN_RE, RUNNING_DRY_RUN_RE,
+            PASSED_DRY_RUN_RE)
+  return (FULL_RUN_TAG, FAILED_RE, RUNNING_RE, PASSED_RE)
+
+
 def is_failed_cl(c, dry_run=False):
   """
   Determine if the CL in question has previously failed for a full/dry run.
@@ -53,6 +63,25 @@ def is_failed_cl(c, dry_run=False):
   return False
 
 
+def is_running_cl(c, dry_run=False):
+  """
+  Determine if the CL in question is currently running.
+  Checks either for CQ+1 or CQ+2 depending on the value of dry_run.
+  """
+  run_tag, failed_re, running_re, passed_re = get_patterns(dry_run)
+
+  for m in sorted(c.messages, key=lambda m: m["date"], reverse=True):
+    if "tag" not in m or m["tag"] != run_tag:
+      continue  # pragma: nocover
+    # If the CQ run has concluded (pass or fail), not running.
+    if failed_re.match(m["message"]) or passed_re.match(m["message"]):
+      return False
+    # If we encounter a running message first, running.
+    elif running_re.match(m["message"]):
+      return True
+  return False
+
+
 def needs_retry(c, dry_run=False):
   """
     Determine if the CL in question needs a retry
@@ -61,10 +90,7 @@ def needs_retry(c, dry_run=False):
     and that the dry_run parameter has the same value as whichever is_failed
     call returned true.
   """
-  run_tag = DRY_RUN_TAG if dry_run else FULL_RUN_TAG
-  failed_re = FAILED_DRY_RUN_RE if dry_run else FAILED_RE
-  running_re = RUNNING_DRY_RUN_RE if dry_run else RUNNING_RE
-  passed_re = PASSED_DRY_RUN_RE if dry_run else PASSED_RE
+  run_tag, failed_re, running_re, passed_re = get_patterns(dry_run)
 
   for m in sorted(c.messages, key=lambda m: m["date"], reverse=True):
     if "tag" not in m or m["tag"] != run_tag:
@@ -131,6 +157,11 @@ class PuprApi(recipe_api.RecipeApi):
         else:  # Pinned CL has not failed, do not attempt any retry.
           return (None, 0)
         break
+
+    # Check to see if there is a CL (previously failed or not) currently running with CQ+2.
+    # If a CL is in the process of running, no retry will occur.
+    if filter(is_running_cl, open_cls):
+      return (None, 0)
 
     # If we haven't identified a pinned CL and the retry policy is not RETRY_PINNED_ONLY
     # (i.e it is RETRY_LATEST_OR_LATEST_PINNED) find most recent failed CL.

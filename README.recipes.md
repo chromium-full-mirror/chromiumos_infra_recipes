@@ -4355,11 +4355,11 @@ Args:
 
 APIs for PUpr.
 
-#### **class [PuprApi](/recipe_modules/pupr/api.py#86)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PuprApi](/recipe_modules/pupr/api.py#112)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for PUpr steps.
 
-&mdash; **def [identify\_retry](/recipe_modules/pupr/api.py#102)(self, retry_policy, open_cls):**
+&mdash; **def [identify\_retry](/recipe_modules/pupr/api.py#128)(self, retry_policy, open_cls):**
 
 Identify the CL to be retried based on retry_policy.
 
@@ -4371,7 +4371,7 @@ Args:
 Returns:
   (PatchSet, int): (The CL to be retried (or None if no retry), CQ label to be applied)
 
-&mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#91)(self, changes):**
+&mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#117)(self, changes):**
 
 Examine open CLs for the HASHTAG_FREEZE_RETRIES hashtag.
 
