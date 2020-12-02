@@ -191,6 +191,11 @@ class CrosSourceApi(RecipeApi):
     init_opts = init_opts or {}
     if is_staging:
       init_opts.update(STAGING_INIT_OPTS)
+      # Allow forcing the released version of repo on staging.
+      init_opts.update(
+          dict(repo_branch=None
+              ) if 'chromeos.cros_source.use_released_repo_on_staging' in
+          self.m.cros_infra_config.experiments else {})
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
     local_manifest = init_opts.get('local_manifest')
     groups = init_opts.get('groups')
