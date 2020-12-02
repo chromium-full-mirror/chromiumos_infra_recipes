@@ -36,11 +36,11 @@
       "git",
       "clone",
       "https://chrome-internal.googlesource.com/chromeos/config-internal",
+      "--depth",
+      "1",
       "[CLEANUP]/tmp_tmp_3"
     ],
-    "infra_step": true,
-    "name": "set up.git clone (3)",
-    "timeout": 180,
+    "name": "set up.clone config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

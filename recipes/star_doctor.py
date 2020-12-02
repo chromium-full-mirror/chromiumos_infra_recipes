@@ -54,7 +54,12 @@ def RunSteps(api, properties):
     ss_dir = _get_clone(api, SUITE_SCHEDULER_URL)
     # We don't really need the full clone yet. But, it is assumed that configs
     # will need to be regenerated here at some point.
-    config_internal_dir = _get_clone(api, CONFIG_INTERNAL_URL)
+    config_internal_dir = api.path.mkdtemp()
+    api.step('clone config-internal', [
+        'git', 'clone', CONFIG_INTERNAL_URL, '--depth', '1', config_internal_dir
+    ])
+    # https://crbug.com/1154700 caused regular git clone to fail here.
+    # config_internal_dir = _get_clone(api, CONFIG_INTERNAL_URL)
 
   remote_config_files = properties.remote_config_files
   # If remote_config_files is not specified, build them based on the ge_bucket
