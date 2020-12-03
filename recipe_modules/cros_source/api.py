@@ -34,10 +34,15 @@ class CrosSourceApi(RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosSourceApi, self).__init__(*args, **kwargs)
+    self._snapshot_cas = (
+        properties.snapshot_cas
+        if properties.HasField('snapshot_cas') else None)
+    # TODO(b/156557792): remove isolate support after migration
     self._snapshot_isolate = (
         properties.snapshot_isolate
         if properties.HasField('snapshot_isolate') else None)
-    self._is_source_dirty = bool(self._snapshot_isolate)
+    self._is_source_dirty = bool(self._snapshot_isolate) or bool(
+        self._snapshot_cas)
     self._enable_custom_overlays = properties.enable_custom_overlays
     self._make_manifest_changes_active = properties.make_manifest_changes_active
     # The currently active branch of the manifest.  Empty unless we switched
@@ -113,6 +118,11 @@ class CrosSourceApi(RecipeApi):
     checkout and any modifications made by the build.
     """
     return self.m.src_state.workspace_path
+
+  @property
+  def snapshot_cas_digest(self):
+    """Returns the snapshot digest in use or None."""
+    return (self._snapshot_cas.digest if self._snapshot_cas else None)
 
   @property
   def snapshot_isolated_hash(self):
@@ -865,12 +875,25 @@ class CrosSourceApi(RecipeApi):
     via an input property, that will be used. Otherwise it will fall back
     to the typical syncing to the gitiles_commit.
     """
+    if self._snapshot_cas:
+      return self._get_snapshot_from_cas()
     if self._snapshot_isolate:
       return self._get_snapshot_from_isolate()
     return self._get_snapshot_from_gitiles(gitiles_commit)
 
+  def _get_snapshot_from_cas(self):
+    """Returns the snapshot to use from cas"""
+    sc = self._snapshot_cas
+    snapshot_dir = self.m.path.mkdtemp('snapshot')
+    self.m.cas.download('download snapshot.xml from cas', digest=sc.digest,
+                        output_dir=snapshot_dir)
+    return self.m.file.read_text('read snapshot.xml',
+                                 snapshot_dir.join('snapshot.xml'),
+                                 test_data='<manifest></manifest>')
+
   def _get_snapshot_from_isolate(self):
     """Returns the snapshot to use from isolate"""
+    # TODO(b/156557792): remove isolate support after migration
     si = self._snapshot_isolate
     snapshot_dir = self.m.path.mkdtemp('snapshot')
     self.m.isolated.download('download snapshot.xml from isolate',

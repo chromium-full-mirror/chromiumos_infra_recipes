@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/cas',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/isolated',

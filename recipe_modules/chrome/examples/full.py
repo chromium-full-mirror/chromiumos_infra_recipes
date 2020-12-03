@@ -193,9 +193,18 @@ def GenTests(api):
       deps_isolate=ChromeProperties.DepsIsolate(isolated_hash='aaa',
                                                 isolate_server='aaa.com'))
   yield api.test(
-      'with-properties-custom-build',
+      'with-properties-custom-build-isolate',
       test_data(skips_chrome_prebuilt=True),
       api.properties(**{'$chromeos/chrome': chrome_isolate}),
+  )
+
+  chrome_cas = ChromeProperties(version='deadbeef',
+                                deps_cas=ChromeProperties.DepsCas(digest='aaa'))
+
+  yield api.test(
+      'with-properties-custom-build-cas',
+      test_data(skips_chrome_prebuilt=True),
+      api.properties(**{'$chromeos/chrome': chrome_cas}),
   )
 
   # TODO(crbug/1086714): _old_test_data and test cases that follow should be

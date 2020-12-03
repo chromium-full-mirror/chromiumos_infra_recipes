@@ -13,17 +13,22 @@ message CrosSourceProperties {
     string isolate_server = 2;
   }
 
+  message SnapshotCas {
+    string digest = 1;
+  }
+
   // Used to specify a custom manifest snapshot to sync to as a
   // snapshot.xml file residing in the isolate.
-  SnapshotIsolate snapshot_isolate = 2;
+  SnapshotCas snapshot_cas = 2;
+  SnapshotIsolate snapshot_isolate = 3;
 
   // Feature flag: whether to allow mounting the external or custom overlay.
-  bool enable_custom_overlays = 3;
+  bool enable_custom_overlays = 4;
 
   // Feature flag: whether to make any manifest changes active when applying
   // patches.  Without this, the patches are present in the manifest repo, but
   // the unpatched manifest is used for all repo commands (including syncing the
   // source tree).  With this, manifest changes are applied, and the source tree
   // is re-synced using the patched manifest.
-  bool make_manifest_changes_active = 4;
+  bool make_manifest_changes_active = 5;
 }

@@ -54,7 +54,9 @@ def RunSteps(api, properties):
       _ = api.cros_source.pinned_manifest
 
   # At this point should be dirty only for custom manifest cases.
-  if properties.expected_snapshot_isolated_hash:
+  if properties.expected_snapshot_cas_digest:
+    api.assertions.assertTrue(api.cros_source.is_source_dirty)
+  elif properties.expected_snapshot_isolated_hash:
     api.assertions.assertTrue(api.cros_source.is_source_dirty)
   else:
     api.assertions.assertFalse(api.cros_source.is_source_dirty)
@@ -70,9 +72,12 @@ def RunSteps(api, properties):
 
   # The test.proto default for string is empty, the api returns a None
   # when this is not set.
-  expected_hash = properties.expected_snapshot_isolated_hash or None
+  expected_isolate_hash = properties.expected_snapshot_isolated_hash or None
+  expected_cas_digest = properties.expected_snapshot_cas_digest or None
   api.assertions.assertEqual(api.cros_source.snapshot_isolated_hash,
-                             expected_hash)
+                             expected_isolate_hash)
+  api.assertions.assertEqual(api.cros_source.snapshot_cas_digest,
+                             expected_cas_digest)
   api.assertions.assertTrue(api.cros_source.is_source_dirty)
 
 
@@ -102,6 +107,7 @@ def GenTests(api):
                     api.raw_io.stream_output('commitsha1')),
       api.post_check(post_process.StatusSuccess))
 
+  # TODO(b/156557792): remove isolate test after migration
   yield api.cros_source.test(
       'with-custom-snapshot-isolate',
       api.properties(FullProperties(expected_snapshot_isolated_hash='xxx')),
@@ -110,6 +116,16 @@ def GenTests(api):
           snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
               isolated_hash='xxx',
               isolate_server='http://server.com',
+          ),
+      ))
+
+  yield api.cros_source.test(
+      'with-custom-snapshot-cas',
+      api.properties(FullProperties(expected_snapshot_cas_digest='xxx')),
+      api.post_check(post_process.StatusSuccess),
+      cros_source_properties=CrosSourceProperties(
+          snapshot_cas=CrosSourceProperties.SnapshotCas(
+              digest='xxx',
           ),
       ))
 

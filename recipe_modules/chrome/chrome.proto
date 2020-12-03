@@ -12,6 +12,10 @@ message ChromeProperties {
   // the -j## argument of gclient sync. Defaults to 72 if not set.
   int64 parallel_sync_jobs = 1;
 
+  message DepsCas {
+    string digest = 1;
+  }
+
   message DepsIsolate {
     string isolated_hash = 1;
     string isolate_server = 2;
@@ -19,8 +23,9 @@ message ChromeProperties {
 
   // Used to specify a custom DEPS file to gclient sync to as a
   // DEPS file residing in the isolate.
-  DepsIsolate deps_isolate = 2;
+  DepsCas deps_cas = 2;
+  DepsIsolate deps_isolate = 3;
 
   // Custom version to build, if any, used in gclient sync.
-  string version = 3;
+  string version = 4;
 }

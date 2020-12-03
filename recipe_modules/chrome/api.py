@@ -45,6 +45,9 @@ class ChromeApi(recipe_api.RecipeApi):
     self._parallel_sync_jobs = 4
     if properties.parallel_sync_jobs > 0:
       self._parallel_sync_jobs = properties.parallel_sync_jobs
+    self._deps_cas = (
+        properties.deps_cas if properties.HasField('deps_cas') else None)
+    # TODO(b/156557792): remove isolate support after migration
     self._deps_isolate = (
         properties.deps_isolate
         if properties.HasField('deps_isolate') else None)
@@ -69,7 +72,7 @@ class ChromeApi(recipe_api.RecipeApi):
       internal (bool): True for internal checkout.
     """
     with self.m.step.nest('sync chrome') as pres:
-      if self._version or self._deps_isolate:
+      if self._version or self._deps_isolate or self._deps_cas:
         version = self._version
       else:
         version = self._get_local_version(chroot, build_target)
@@ -87,7 +90,12 @@ class ChromeApi(recipe_api.RecipeApi):
         soln.custom_vars = {
             'checkout_src_internal': internal,
         }
-        if self._deps_isolate:
+        if self._deps_cas:
+          self.m.cas.download('download DEPS from cas', self._deps_cas.digest,
+                              chrome_root)
+          soln.deps_file = str(chrome_root) + '/DEPS'
+          self.m.file.read_text('read DEPS', soln.deps_file, test_data='DEPS')
+        elif self._deps_isolate:
           self.m.isolated.download(
               'download DEPS from isolated', self._deps_isolate.isolated_hash,
               chrome_root, isolate_server=self._deps_isolate.isolate_server)
@@ -177,7 +185,7 @@ class ChromeApi(recipe_api.RecipeApi):
 
   def has_chrome_prebuilt(self, build_target, chroot, internal=False,
                           ignore_prebuilts=False):
-    if ignore_prebuilts or self._deps_isolate:
+    if ignore_prebuilts or self._deps_isolate or self._deps_cas:
       return False
     return self.m.cros_build_api.PackageService.HasChromePrebuilt(
         HasChromePrebuiltRequest(build_target=build_target, chroot=chroot,

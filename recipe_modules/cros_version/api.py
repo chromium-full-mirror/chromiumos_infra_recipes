@@ -126,7 +126,10 @@ class CrosVersionApi(recipe_api.RecipeApi):
         # manifest and there is no snapshot footer for us to read snapshot
         # numbers from. In that case we replace this piece of the version
         # with the isolate hash.
-        version_snapshot = self.m.cros_source.snapshot_isolated_hash
+        # TODO(b/156557792): remove isolated support after migration
+        version_snapshot = (
+            self.m.cros_source.snapshot_isolated_hash or
+            self.m.cros_source.snapshot_cas_digest)
         if version_snapshot:
           read_snapshot_step.step_text = 'using snapshot isolate'
         else:

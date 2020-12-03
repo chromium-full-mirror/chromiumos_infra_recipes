@@ -4,6 +4,7 @@
 
 DEPS = [
     'recipe_engine/archive',
+    'recipe_engine/cas',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/isolated',
