@@ -2657,15 +2657,15 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#9): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_platform/api.py#177)(self):**
+&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_platform/api.py#175)(self):**
 
 Return the CTP CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#81)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#79)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -2674,7 +2674,7 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#103)(self, request):**
+&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#101)(self, request):**
 
 Execute work via `luciexe` binary for cros_test_platform
 
@@ -2687,7 +2687,7 @@ Args:
 
 Returns: ExecuteResponses.
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#92)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#90)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 

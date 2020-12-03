@@ -10,8 +10,6 @@ from recipe_engine import recipe_api
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.test_platform.steps.enumeration import \
   EnumerationRequests, EnumerationResponses
-from PB.test_platform.steps.scheduler_traffic_split import \
-  SchedulerTrafficSplitRequests, SchedulerTrafficSplitResponses
 from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
 
 # This exit code is returned by cros_test_platform runs that had an error but
