@@ -224,6 +224,8 @@ def RunSteps(api, properties):
       ]
     if properties.project_name:
       cmd += ['--project-name', properties.project_name]
+    if properties.program_name:
+      cmd += ['--program-name', properties.program_name]
 
     # Generate joined output
     api.step("Generate joined configuration", ["vpython"] + cmd)

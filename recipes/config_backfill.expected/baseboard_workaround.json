@@ -314,7 +314,9 @@
       "--hwid",
       "[START_DIR]/hwid/v3/SOME_KEY",
       "--project-name",
-      "test_project"
+      "test_project",
+      "--program-name",
+      "reef"
     ],
     "cwd": "[START_DIR]/dest",
     "name": "git transaction.Generate joined configuration",
