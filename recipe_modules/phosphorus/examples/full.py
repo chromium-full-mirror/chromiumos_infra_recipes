@@ -44,6 +44,9 @@ def RunSteps(api):
   upload_to_tko_req = UploadToTkoRequest()
   api.phosphorus.upload_to_tko(upload_to_tko_req)
 
+  with api.assertions.assertRaises(ValueError):
+    api.phosphorus.parse("")
+
   api.phosphorus.read_dut_hostname()
 
   with api.assertions.assertRaises(ValueError):
@@ -53,6 +56,7 @@ def RunSteps(api):
   api.phosphorus.load_skylab_local_state('test-id')
   api.phosphorus.save_skylab_local_state('baz-state')
   api.phosphorus.save_and_seal_skylab_local_state('qux-state')
+  _ = api.phosphorus.parse("/path/to/results")
 
 
 def GenTests(api):
@@ -75,7 +79,7 @@ def GenTests(api):
                                       SWARMING_TASK_ID='dummy-task-id',
                                       SKYLAB_DUT_ID='dummy-dut-id')) +
       api.step_data(
-          'call `phosphorus` (9).load', stdout=api.raw_io.output(
+          'call `phosphorus` (10).load', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
                       results_dir='dummy-results-dir')))),

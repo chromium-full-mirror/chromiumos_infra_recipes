@@ -14,6 +14,8 @@ from PB.test_platform.phosphorus.runtest import RunTestRequest, RunTestResponse
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSResponse
+from PB.test_platform.skylab_test_runner.result import Result
+
 
 class PhosphorusCommand(recipe_api.RecipeApi):
   """Module for issuing Phosphorus commands"""
@@ -110,6 +112,28 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       request: an UploadToTkoRequest.
     """
     self._run('upload-to-tko', request, UploadToTkoRequest)
+
+  def parse(self, results_dir):
+    """Extract test results from an results directory.
+
+    Args:
+      results_dir: a string pointing to a directory containing test results.
+
+    Returns: Result.
+    """
+    with self.m.step.nest('call `phosphorus`') as presentation:
+      if not results_dir:
+        raise ValueError('No results directory provided')
+      self._ensure_phosphorus()
+      cmd = [
+          self._cmd,
+          'parse',
+          results_dir,
+      ]
+      result = self.m.easy.stdout_jsonpb_step('parse', cmd, Result,
+                                              test_output=Result())
+      presentation.logs['response'] = [json_format.MessageToJson(result)]
+      return result
 
   def _ensure_phosphorus(self):
     """Ensure the phosphorus CLI is installed."""

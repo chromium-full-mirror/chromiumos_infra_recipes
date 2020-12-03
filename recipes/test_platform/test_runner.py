@@ -12,8 +12,6 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusProperties
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusEnvProperties
-from PB.recipe_modules.chromeos.autotest_status_parser.autotest_status_parser \
-  import AutotestStatusParserProperties
 from PB.recipes.chromeos.test_platform.test_runner import \
   TestRunnerProperties
 from PB.test_platform import phosphorus
@@ -34,7 +32,6 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'recipe_engine/uuid',
-    'autotest_status_parser',
     'cros_tags',
     'phosphorus',
     'result_flow',
@@ -252,7 +249,7 @@ def get_results(api, results_dir=""):
   """
   with api.step.nest('get test results') as step:
     with api.context(infra_steps=True):
-      return api.autotest_status_parser.parse(results_dir)
+      return api.phosphorus.parse(results_dir)
 
 
 def summarize_results(api, prejob_response, run_test_responses, result):
@@ -624,10 +621,6 @@ def GenTests(api):
                     'topic': 'foo-topic',
                 },
             }), **{
-                '$chromeos/autotest_status_parser':
-                    AutotestStatusParserProperties(
-                        version=AutotestStatusParserProperties.Version(
-                            cipd_label='asp_prod')),
                 '$chromeos/phosphorus':
                     PhosphorusProperties(
                         version=PhosphorusProperties.Version(
@@ -851,7 +844,7 @@ def GenTests(api):
       _successful_run_test_step(),
       api.step_data(
           'execution steps.original_test.get test results.'
-          'call `autotest_status_parser`.parse', stdout=api.raw_io.output(
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   Result(
                       autotest_result=Result.Autotest(test_cases=[]),
@@ -869,7 +862,7 @@ def GenTests(api):
       _successful_run_test_step(),
       api.step_data(
           'execution steps.original_test.get test results.'
-          'call `autotest_status_parser`.parse', retcode=1),
+          'call `phosphorus`.parse', retcode=1),
   )
 
   yield api.test(
@@ -882,7 +875,7 @@ def GenTests(api):
       _successful_run_test_step(),
       _successful_logs_archive_step(),
       api.step_data(
-          'execution steps.original_test.get test results.call `autotest_status_parser`.'
+          'execution steps.original_test.get test results.call `phosphorus`.'
           'parse', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   Result(

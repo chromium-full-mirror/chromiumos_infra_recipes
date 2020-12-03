@@ -164,6 +164,13 @@
     "cmd": [],
     "name": "call `phosphorus` (9)",
     "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `phosphorus` (10)",
+    "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"testId\": \"test-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
@@ -193,7 +200,7 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "name": "call `phosphorus` (9).load",
+    "name": "call `phosphorus` (10).load",
     "stdin": "{\n  \"testId\": \"test-id\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -201,7 +208,7 @@
   },
   {
     "cmd": [],
-    "name": "call `phosphorus` (10)",
+    "name": "call `phosphorus` (11)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"dutState\": \"baz-state\", @@@",
@@ -226,7 +233,7 @@
       "/dev/stdin"
     ],
     "infra_step": true,
-    "name": "call `phosphorus` (10).save",
+    "name": "call `phosphorus` (11).save",
     "stdin": "{\n  \"dutState\": \"baz-state\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"dutName\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -234,7 +241,7 @@
   },
   {
     "cmd": [],
-    "name": "call `phosphorus` (11)",
+    "name": "call `phosphorus` (12)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"dutState\": \"qux-state\", @@@",
@@ -260,8 +267,27 @@
       "/dev/stdin"
     ],
     "infra_step": true,
-    "name": "call `phosphorus` (11).save",
+    "name": "call `phosphorus` (12).save",
     "stdin": "{\n  \"dutState\": \"qux-state\", \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutId\": \"dummy-dut-id\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `phosphorus` (13)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "parse",
+      "/path/to/results"
+    ],
+    "name": "call `phosphorus` (13).parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

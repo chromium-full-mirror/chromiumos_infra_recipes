@@ -313,7 +313,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.get test results.call `autotest_status_parser`",
+    "name": "execution steps.original_test.get test results.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -321,50 +321,13 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "execution steps.original_test.get test results.call `autotest_status_parser`.ensure autotest_status_parser",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
     "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/autotest_status_parser",
-      "-ensure-file",
-      "chromiumos/infra/autotest_status_parser/${platform} asp_prod",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "execution steps.original_test.get test results.call `autotest_status_parser`.ensure autotest_status_parser.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-asp_prod--------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/autotest_status_parser/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/autotest_status_parser/autotest_status_parser",
+      "[START_DIR]/cipd/phosphorus/phosphorus",
       "parse",
       "dummy-results-dir"
     ],
     "infra_step": true,
-    "name": "execution steps.original_test.get test results.call `autotest_status_parser`.parse",
+    "name": "execution steps.original_test.get test results.call `phosphorus`.parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
