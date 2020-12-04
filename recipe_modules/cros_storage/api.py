@@ -104,16 +104,23 @@ class Image(object):
   """Base class of an image of a particular type resident in storage."""
 
   # The following image types are currently supported in this module.
-  _SUPPORTED_IMAGE_TYPES = [
-      ImageType.Value('RECOVERY'),
-      ImageType.Value('BASE'),
-      ImageType.Value('TEST'),
-      ImageType.Value('DLC'),
-  ]
+  # TODO(crbug.com/1122854): Refer via ImageType.Value, and remove aliases.
+  _SUPPORTED_IMAGE_TYPES = [1, 3, 6, 12]
+
+  _IMAGE_TYPE_TO_PATH_ATOM = {
+      1: "base",
+      3: "test",
+      6: "recovery",
+      12: "dlc",
+  }
+
+  _IMAGE_TYPE_ATOM_TO_ENUM = {
+      v: k for k, v in _IMAGE_TYPE_TO_PATH_ATOM.iteritems()
+  }
 
   # Construct regex for image types (e.g. '(base|recovery|dev|test)').
   _IMAGE_TYPES_REGEXP = ('(' + '|'.join(
-      [ImageType.Name(x).lower() for x in _SUPPORTED_IMAGE_TYPES]) + ')')
+      [_IMAGE_TYPE_TO_PATH_ATOM[x] for x in _SUPPORTED_IMAGE_TYPES]) + ')')
 
   @property
   def uri(self):
@@ -149,7 +156,7 @@ class SignedImage(Image):
         'build_target_name': self._artifact_root.build_target_name,
         'version': self._artifact_root.version,
         'key': self._key,
-        'image_type': ImageType.Name(self._image_type).lower(),
+        'image_type': self._IMAGE_TYPE_TO_PATH_ATOM[self._image_type],
     }
 
   def to_proto(self):
@@ -177,7 +184,7 @@ class SignedImage(Image):
     if not m:
       return None
     values = m.groupdict()
-    return SignedImage(ar, ImageType.Value(values['image_type'].upper()),
+    return SignedImage(ar, cls._IMAGE_TYPE_ATOM_TO_ENUM[values['image_type']],
                        values['key'])
 
   def __init__(self, artifact_root, image_type, key):
@@ -216,7 +223,7 @@ class UnsignedImage(Image):
         'build_target_name': self._artifact_root.build_target_name,
         'version': self._artifact_root.version,
         'milestone': self._milestone,
-        'image_type': ImageType.Name(self._image_type).lower(),
+        'image_type': self._IMAGE_TYPE_TO_PATH_ATOM[self._image_type],
     }
 
   @property
@@ -253,7 +260,7 @@ class UnsignedImage(Image):
     if not m:
       return None
     values = m.groupdict()
-    return UnsignedImage(ar, ImageType.Value(values['image_type'].upper()),
+    return UnsignedImage(ar, cls._IMAGE_TYPE_ATOM_TO_ENUM[values['image_type']],
                          values['milestone'])
 
   def __init__(self, artifact_root, image_type, milestone):
