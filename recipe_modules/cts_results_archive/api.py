@@ -47,13 +47,14 @@ class CTSResultsArchive(recipe_api.RecipeApi):
       instructions = result.json.output.get('instructions')
       step.logs['instructions'] = [str(instructions)]
 
-      for i, ins in enumerate(instructions):
-        # Response format
-        name = ins['name']
-        source = ins['source']
-        destination = ins['destination']
+      with self.m.step.nest('Upload prepared results') as step:
+        for i, ins in enumerate(instructions):
+          # Response format
+          name = ins['name']
+          source = ins['source']
+          destination = ins['destination']
 
-        self.m.gsutil(['cp', '-m', '-eR', source, destination])
-        url = 'https://console.cloud.google.com/storage/browser/%s' % (
-            destination[len('gs://'):],)
-        step.links['%d:%s' % (i, name)] = url
+          self.m.gsutil(['cp', '-m', '-eR', source, destination])
+          url = 'https://console.cloud.google.com/storage/browser/%s' % (
+              destination[len('gs://'):],)
+          step.links['%d:%s' % (i, name)] = url

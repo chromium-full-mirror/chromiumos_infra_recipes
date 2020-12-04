@@ -4,8 +4,7 @@
     "name": "Archive CTS results",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@instructions@[OrderedDict([('source', 'local/directory/to/upload'), ('destination', 'gs://fake-bucket/fake-folder'), ('name', 'fake-instruction')])]@@@",
-      "@@@STEP_LOG_END@instructions@@@",
-      "@@@STEP_LINK@0:fake-instruction@https://console.cloud.google.com/storage/browser/fake-bucket/fake-folder@@@"
+      "@@@STEP_LOG_END@instructions@@@"
     ]
   },
   {
@@ -34,6 +33,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Archive CTS results.Upload prepared results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@0:fake-instruction@https://console.cloud.google.com/storage/browser/fake-bucket/fake-folder@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -48,9 +55,9 @@
       "gs://fake-bucket/fake-folder"
     ],
     "infra_step": true,
-    "name": "Archive CTS results.gsutil cp",
+    "name": "Archive CTS results.Upload prepared results.gsutil cp",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
