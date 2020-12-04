@@ -14,6 +14,7 @@ from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
 import itertools
+import json
 
 TASK_STATES = ['RUNNING', 'PENDING']
 EXECUTION_HOUR_PERCENTILE = .16
@@ -247,6 +248,38 @@ class BotScalingApi(recipe_api.RecipeApi):
       if policy.policy_mode == BotPolicy.MONITORED:
         policy.scaling_restriction.bot_floor = policy.scaling_restriction.min_idle
     return bot_policy_config
+
+  def reduce_bot_policy_config_for_table(self, bot_policy_config):
+    """ Reduces bot_policy_config fields prior to sending to bb tables.
+
+    Args:
+      bot_policy_config(BotPolicyCfg): Config define Policy for
+        the RoboCrop.
+
+    Returns:
+      str, scaled down config that only includes data needed
+      for plx
+    """
+    config = jsonpb.MessageToDict(bot_policy_config)
+
+    # Create necessary fields to populate
+    reduced_config = {'botPolicies': []}
+
+    # Policy fields to fetch and send to output properties
+    # Add fields here to expand logging
+    policy_fields = ['botGroup', 'policyMode']
+
+    # Loop though bot policies and grab important fields for bb tables
+    for policy in config['botPolicies']:
+      bot_policy = {}
+
+      for field in policy_fields:
+        if field in policy.keys():
+          bot_policy[field] = policy[field]
+      reduced_config['botPolicies'].append(bot_policy)
+
+    reduced_config = json.dumps(reduced_config)
+    return reduced_config
 
   def update_gce_configs(self, robocrop_actions, configs):
     """Updates each GCE Provider config that is actionable.
