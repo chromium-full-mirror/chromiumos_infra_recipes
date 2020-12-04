@@ -18,11 +18,7 @@ _RECIPE_CIPD_PACKAGE = (
     'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes'
 )
 _GO_BINARY_CIPD_PACKAGE_PATTERN = 'chromiumos/infra/%s/linux-amd64'
-
-_GO_BINARIES = ['cros_test_platform',
-                'phosphorus',
-                'autotest_status_parser']
-
+_GO_BINARIES = ['cros_test_platform', 'phosphorus']
 _RELEASE_VERSION_TAG = 'ctp_release_version'
 
 

@@ -22,16 +22,16 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 113, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 109, in RunSteps",
       "    validate(api, instruction)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 49, in validate",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 45, in validate",
       "    (instruction.package_name, package_whitelist))",
-      "ValueError: Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/autotest_status_parser/linux-amd64']"
+      "ValueError: Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64']"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError(u\"Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/autotest_status_parser/linux-amd64']\",)"
+      "humanReason": "Uncaught Exception: ValueError(u\"Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64']\",)"
     },
     "name": "$result"
   }
