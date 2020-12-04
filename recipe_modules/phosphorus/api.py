@@ -9,6 +9,7 @@ from recipe_engine import recipe_api
 
 from PB.test_platform.skylab_local_state.load import LoadRequest, LoadResponse
 from PB.test_platform.skylab_local_state.save import SaveRequest
+from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest, FetchCrashesResponse
 from PB.test_platform.phosphorus.prejob import PrejobRequest, PrejobResponse
 from PB.test_platform.phosphorus.runtest import RunTestRequest, RunTestResponse
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
@@ -95,6 +96,15 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     """
     return self._run('run-test', request, RunTestRequest, RunTestResponse,
                      send_response=True)
+
+  def fetch_crashes(self, request):
+    """Fetch crashes via the `fetch-crashes` subcommand.
+
+    Args:
+      request: a FetchCrashesRequest.
+    """
+    return self._run('fetch-crashes', request, FetchCrashesRequest,
+                     FetchCrashesResponse, send_response=True)
 
   def upload_to_gs(self, request):
     """Upload selected test results to GS via `upload-to-gs` subcommand.

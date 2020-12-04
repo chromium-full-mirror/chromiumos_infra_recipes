@@ -15,6 +15,7 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
 from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
   PhosphorusEnvProperties
 from PB.test_platform import skylab_local_state
+from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest
 from PB.test_platform.phosphorus.prejob import PrejobRequest
 from PB.test_platform.phosphorus.runtest import RunTestRequest
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
@@ -33,6 +34,11 @@ def RunSteps(api):
     api.phosphorus.run_test(None)
   run_test_req = RunTestRequest()
   api.phosphorus.run_test(run_test_req)
+
+  with api.assertions.assertRaises(ValueError):
+    api.phosphorus.fetch_crashes(None)
+  fetch_crashes_req = FetchCrashesRequest()
+  api.phosphorus.fetch_crashes(fetch_crashes_req)
 
   with api.assertions.assertRaises(ValueError):
     api.phosphorus.upload_to_gs(None)
@@ -79,7 +85,7 @@ def GenTests(api):
                                       SWARMING_TASK_ID='dummy-task-id',
                                       SKYLAB_DUT_ID='dummy-dut-id')) +
       api.step_data(
-          'call `phosphorus` (10).load', stdout=api.raw_io.output(
+          'call `phosphorus` (12).load', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
                       results_dir='dummy-results-dir')))),

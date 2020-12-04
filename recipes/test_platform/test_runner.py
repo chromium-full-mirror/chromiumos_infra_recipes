@@ -128,6 +128,34 @@ def run_test(api, config=None, request=None, output_config=None,
     return api.phosphorus.run_test(run_test_request)
 
 
+def fetch_crashes(api, config=None, request=None, output_config=None,
+                  dut_hostname='', upload_crashes=False, use_staging=False):
+  """Fetch crashes from the DUT via TLS API.
+
+  Args:
+    * config: phosphorus.Config instance
+    * request: skylab_test_runner.Request instance.
+    * output_config: skylab_test_runner.Config.Output instance.
+    * dut_hostname: DUT hostname string.
+    * upload_crashes: Whether to upload crashes to http://crash.
+    * use_staging: If upload_crashes and use_staging are set, upload crashes to
+                   http://crash-staging instead.
+
+  Returns:
+    * phosphorus.fetchcrashes.FetchCrashes
+  """
+  with api.step.nest('fetch crashes') as step:
+    fetch_crashes_request = phosphorus.fetchcrashes.FetchCrashesRequest(
+        config=config,
+        dut_hostname=dut_hostname,
+        upload_crashes=upload_crashes,
+        use_staging=use_staging,
+    )
+    deadline = _deadline(api, request)
+    fetch_crashes_request.deadline.MergeFrom(deadline)
+    return api.phosphorus.fetch_crashes(fetch_crashes_request)
+
+
 def _with_gs_logs_keyval(keyvals, logs_gs_dir):
   # This keyval is required for stainless' test results view to link to the
   # test logs.
@@ -437,6 +465,14 @@ def _execution_steps_for_test(api, properties, phosphorus_config, dut_hostname,
           test=test,
           logs_gs_dir=logs_gs_dir,
       )
+      # Ignore fetch_crashes result for now.
+      # TODO(mutexlox): Add fields controlling whether to upload crashes
+      # (and to prod/staging) to test_platform.skylab_test_runner.Config
+      _ = fetch_crashes(api, config=phosphorus_config,
+                        request=properties.request,
+                        output_config=properties.config.output,
+                        dut_hostname=dut_hostname, upload_crashes=False,
+                        use_staging=False)
       upload_to_tko(
           api,
           config=_upload_to_tko_config(
@@ -774,6 +810,17 @@ def GenTests(api):
                 phosphorus.runtest.RunTestResponse(
                     results_dir='dummy-results-dir/subdir', state=state)))))
 
+  def _successful_fetch_crashes_step(test_id='original_test'):
+    return _fetch_crashes_step_with_state(
+        phosphorus.fetchcrashes.FetchCrashesResponse.SUCCEEDED, test_id)
+
+  def _fetch_crashes_step_with_state(state, test_id='original_test'):
+    return (api.step_data(
+        'execution steps.%s.fetch crashes.call `phosphorus`.fetch-crashes' %
+        test_id, stdout=api.raw_io.output(
+            json_format.MessageToJson(
+                phosphorus.fetchcrashes.FetchCrashesResponse(state=state)))))
+
   def _successful_logs_archive_step(test_id='original_test'):
     return api.step_data(
         'execution steps.%s.archive all test logs to Google Storage.'
@@ -797,6 +844,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
   )
 
@@ -824,6 +872,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
   ) + api.time.seed(current_time_sec)
 
@@ -835,6 +884,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
   ) + api.time.seed(current_time_sec)
 
@@ -860,12 +910,20 @@ def GenTests(api):
   )
 
   yield api.test(
+      'fetch_crashes_crash', _misc_properties(), _request_properties(),
+      _mock_load_step(), _successful_prejob_step(), _successful_run_test_step(),
+      api.step_data(
+          'execution steps.original_test.fetch crashes.call `phosphorus`.fetch-crashes',
+          retcode=1))
+
+  yield api.test(
       'upload_to_tko_crash',
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       api.step_data(
           'execution steps.original_test.upload to TKO.call `phosphorus`.upload-to-tko',
           retcode=1),
@@ -899,6 +957,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       api.step_data(
           'execution steps.original_test.get test results.'
           'call `phosphorus`.parse', stdout=api.raw_io.output(
@@ -917,6 +976,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       api.step_data(
           'execution steps.original_test.get test results.'
           'call `phosphorus`.parse', retcode=1),
@@ -930,6 +990,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       api.step_data(
           'execution steps.original_test.get test results.call `phosphorus`.'
@@ -980,7 +1041,20 @@ def GenTests(api):
       _successful_prejob_step(test_id='multi_test_2'),
       _run_test_step_with_state(phosphorus.runtest.RunTestResponse.SUCCEEDED,
                                 test_id='multi_test_2'),
+      _successful_fetch_crashes_step(test_id='multi_test_2'),
       _successful_logs_archive_step(test_id='multi_test_2'),
+  )
+
+  yield api.test(
+      'failed_fetch-crashes',
+      _set_build_id(id=42),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _fetch_crashes_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
+      _successful_logs_archive_step(),
   )
 
   yield api.test(
@@ -990,6 +1064,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
   )
 
@@ -1012,6 +1087,7 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
   )
 
@@ -1034,5 +1110,6 @@ def GenTests(api):
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
   )
