@@ -31,6 +31,10 @@ message SignImageProperties {
   // The signer branch to use
   chromiumos.SignerType signer_type = 6;
 
-  // Cr50 stamping instructions, used only for artifact_type = CR50_FIRMWARE.
+   // TODO(b:173049030) Obsolete. Cr50 stamping instructions, used only for
+   // artifact_type = CR50_FIRMWARE.
   chromiumos.Cr50Instructions cr50_instructions = 7;
+
+  // GSC stamping instructions, used only for artifact_type = GSC_FIRMWARE.
+  chromiumos.GscInstructions gsc_instructions = 8;
 }

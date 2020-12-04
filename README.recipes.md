@@ -6730,7 +6730,7 @@ Recipe for scaling bots in Chrome and Chrome OS pools.
 
 Recipe for signing ChromeOS images.
 
-&mdash; **def [RunSteps](/recipes/sign_image.py#96)(api, properties):**
+&mdash; **def [RunSteps](/recipes/sign_image.py#98)(api, properties):**
 
 Run steps.
 ### *recipes* / [sign\_paygen](/recipes/sign_paygen.py)
