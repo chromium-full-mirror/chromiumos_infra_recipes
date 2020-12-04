@@ -36,6 +36,7 @@
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess)
   * [cros_test_proctor](#recipe_modules-cros_test_proctor)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
+  * [cts_results_archive](#recipe_modules-cts_results_archive) &mdash; API to archive test results to CTS specific buckets.
   * [disk_usage](#recipe_modules-disk_usage)
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
@@ -205,6 +206,7 @@
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full)
   * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
+  * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [dut_tracker](#recipes-dut_tracker) &mdash; Recipe for the Star Doctor.
@@ -2770,6 +2772,24 @@ Returns: a Version read from the workspace.
 
 Raises:
   ValueError: if the version file had unexpected formatting.
+### *recipe_modules* / [cts\_results\_archive](/recipe_modules/cts_results_archive)
+
+[DEPS](/recipe_modules/cts_results_archive/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+API to archive test results to CTS specific buckets
+
+#### **class [CTSResultsArchive](/recipe_modules/cts_results_archive/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+API to archive test results to CTS specific buckets
+
+&mdash; **def [archive](/recipe_modules/cts_results_archive/api.py#18)(self, dir):**
+
+Archive CTS result files to CTS specific GS buckets.
+
+This module determines if any CTS results files should uploaded to the CTS
+GS buckets and archives them if required.
+
+@param dir: The results directory to process.
 ### *recipe_modules* / [disk\_usage](/recipe_modules/disk_usage)
 
 [DEPS](/recipe_modules/disk_usage/__init__.py#6): [recipe\_engine/python][recipe_engine/recipe_modules/python]
@@ -6194,6 +6214,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#22)(api, properties):**
+### *recipes* / [cts\_results\_archive:examples/full](/recipe_modules/cts_results_archive/examples/full.py)
+
+[DEPS](/recipe_modules/cts_results_archive/examples/full.py#8): [cts\_results\_archive](#recipe_modules-cts_results_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cts_results_archive/examples/full.py#14)(api):**
 ### *recipes* / [disk\_usage:examples/full](/recipe_modules/disk_usage/examples/full.py)
 
 [DEPS](/recipe_modules/disk_usage/examples/full.py#6): [disk\_usage](#recipe_modules-disk_usage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
