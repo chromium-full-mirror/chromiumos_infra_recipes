@@ -1726,7 +1726,12 @@
     "name": "build chromiumos with upreved Parallels.read pinned version file.VERSION-PIN",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@{\"test_image\": {\"opaque\": \"data\"}, \"version\": \"1.0.1.1000\"}@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@{@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@  \"test_image\": {@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@    \"opaque\": \"data\"@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@  },@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@  \"version\": \"1.0.1.1000\"@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@}@@@",
       "@@@STEP_LOG_END@VERSION-PIN@@@"
     ]
   },
@@ -1763,7 +1768,12 @@
     "name": "build chromiumos with upreved Parallels.try uprev app-emulation/parallels-desktop.read pinned version file.VERSION-PIN",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@{\"test_image\": {\"opaque\": \"data\"}, \"version\": \"1.0.1.1000\"}@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@{@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@  \"test_image\": {@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@    \"opaque\": \"data\"@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@  },@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@  \"version\": \"1.0.1.1000\"@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@}@@@",
       "@@@STEP_LOG_END@VERSION-PIN@@@"
     ]
   },
@@ -6086,7 +6096,32 @@
     "name": "build VM image.invoke tast.process tast output.read results.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@results.json@[{\"errors\": null, \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"attr\": [\"name:pita.CreateFromIso.uprev\", \"bundle:cros\", \"dep:chrome\"], \"contacts\": [\"someone@chromium.org\"], \"additionalTime\": 30000000000, \"name\": \"pita.CreateFromIso.uprev\", \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"skipReason\": \"\", \"pkg\": \"chromiumos/tast/local/bundles/pita\", \"timeout\": 300000000000, \"softwareDeps\": [\"chrome\"], \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/pita.CreateFromIso.uprev\", \"data\": null, \"desc\": \"Description\"}]@@@",
+      "@@@STEP_LOG_LINE@results.json@[@@@",
+      "@@@STEP_LOG_LINE@results.json@  {@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"errors\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"end\": \"2020-01-27T15:16:33.420622341-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"attr\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"name:pita.CreateFromIso.uprev\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:chrome\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"contacts\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"someone@chromium.org\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"additionalTime\": 30000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"name\": \"pita.CreateFromIso.uprev\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"start\": \"2020-01-27T15:16:15.146771555-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"skipReason\": \"\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"pkg\": \"chromiumos/tast/local/bundles/pita\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"timeout\": 300000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"softwareDeps\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/pita.CreateFromIso.uprev\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"data\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"desc\": \"Description\"@@@",
+      "@@@STEP_LOG_LINE@results.json@  }@@@",
+      "@@@STEP_LOG_LINE@results.json@]@@@",
       "@@@STEP_LOG_END@results.json@@@"
     ]
   },

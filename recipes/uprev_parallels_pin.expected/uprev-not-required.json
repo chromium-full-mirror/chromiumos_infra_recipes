@@ -1726,7 +1726,12 @@
     "name": "build chromiumos with upreved Parallels.read pinned version file.VERSION-PIN",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@{\"test_image\": {\"opaque\": \"data\"}, \"version\": \"1.0.1.1098\"}@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@{@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@  \"test_image\": {@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@    \"opaque\": \"data\"@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@  },@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@  \"version\": \"1.0.1.1098\"@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@}@@@",
       "@@@STEP_LOG_END@VERSION-PIN@@@"
     ]
   },
