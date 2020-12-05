@@ -33,6 +33,7 @@ DEPS = [
     'recipe_engine/time',
     'recipe_engine/uuid',
     'cros_tags',
+    'cts_results_archive',
     'phosphorus',
     'result_flow',
 ]
@@ -528,14 +529,21 @@ def execution_steps(api, properties):
             result = get_results(api, load_response.results_dir)
         finally:
           # Must complete synchronous logs upload before sealing the results
-          # directory. Once the results directory is sealed, gs_offloader may delete
-          # the result files.
+          # directory. Once the results directory is sealed, gs_offloader may
+          # delete the result files.
           result = archive_all_logs(
               api,
               phosphorus_config=phosphorus_config,
               gs_dir=logs_gs_dir,
               result=result,
           )
+
+          try:
+            api.cts_results_archive.archive(load_response.results_dir)
+          except (api.step.StepFailure,
+                  api.step.InfraFailure):  # pragma: no cover
+            # TODO(crbug.com/1154873) Stabilize step and mark critical.
+            pass
 
           with api.step.nest('save local DUT state'):
             api.phosphorus.save_and_seal_skylab_local_state(dut_state)

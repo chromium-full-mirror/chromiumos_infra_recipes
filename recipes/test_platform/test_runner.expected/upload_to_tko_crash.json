@@ -360,6 +360,68 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.original_test.Archive CTS results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@instructions@[OrderedDict([('source', 'local/directory/to/upload'), ('destination', 'gs://fake-bucket/fake-folder'), ('name', 'fake-instruction')])]@@@",
+      "@@@STEP_LOG_END@instructions@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[chromeos::cts_results_archive]/resources/prepare_uploads.py",
+      "--json-input",
+      "{\"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\"}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "execution steps.original_test.Archive CTS results.prepare uploads",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"instructions\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"destination\": \"gs://fake-bucket/fake-folder\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"fake-instruction\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"source\": \"local/directory/to/upload\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.original_test.Archive CTS results.Upload prepared results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@0:fake-instruction@https://console.cloud.google.com/storage/browser/fake-bucket/fake-folder@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-m",
+      "cp",
+      "-eR",
+      "local/directory/to/upload",
+      "gs://fake-bucket/fake-folder"
+    ],
+    "infra_step": true,
+    "name": "execution steps.original_test.Archive CTS results.Upload prepared results.gsutil cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.original_test.save local DUT state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

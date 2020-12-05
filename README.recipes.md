@@ -7040,13 +7040,13 @@ Raises:
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#27): [cros\_tags](#recipe_modules-cros_tags), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#27): [cros\_tags](#recipe_modules-cros_tags), [cts\_results\_archive](#recipe_modules-cts_results_archive), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#552)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#560)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#175)(api, phosphorus_config, gs_dir, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#176)(api, phosphorus_config, gs_dir, result):**
 
 Archive all test logs to Google Storage.
 
@@ -7059,7 +7059,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#433)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#434)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -7075,7 +7075,7 @@ Returns:
 Raises:
 * InfraFailure.
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#239)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#240)(api, results_dir=''):**
 
 Parse test results.
 
@@ -7087,7 +7087,7 @@ Returns: skylab_test_runner.Result.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [prejob](/recipes/test_platform/test_runner.py#58)(api, config=None, request=None, dut_hostname='', load_response=None, max_duration_seconds=None):**
+&mdash; **def [prejob](/recipes/test_platform/test_runner.py#59)(api, config=None, request=None, dut_hostname='', load_response=None, max_duration_seconds=None):**
 
 Run a prejob (e.g. provision) against the DUT via `autoserv`.
 
@@ -7104,7 +7104,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#402)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#403)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -7114,7 +7114,7 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#94)(api, config=None, request=None, output_config=None, dut_hostname='', test=None, logs_gs_dir=''):**
+&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#95)(api, config=None, request=None, output_config=None, dut_hostname='', test=None, logs_gs_dir=''):**
 
 Run a test against the DUT via `autoserv`.
 
@@ -7133,14 +7133,14 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#324)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#325)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#255)(api, prejob_response, run_test_responses, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#256)(api, prejob_response, run_test_responses, result):**
 
 Display test cases as recipe substeps.
 
@@ -7149,7 +7149,7 @@ Args:
   * run_test_responses: dictionary of phosphorus.runtest.RunTestResponse instances.
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#224)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#225)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 
@@ -7159,7 +7159,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#44)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#45)(api, test):**
 
 Validate the TestRunnerProperties.
 
