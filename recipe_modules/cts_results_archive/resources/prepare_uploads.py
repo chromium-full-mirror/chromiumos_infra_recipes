@@ -111,19 +111,28 @@ def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
 def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
                               apfe_gs_bucket):
   instructions = []
+
   keyval = _parse_job_keyval(dir)
   build = keyval.get('build')
   suite = keyval.get('suite')
-
   host_keyval = _parse_host_keyval(dir, keyval.get('hostname'))
   labels = urllib.unquote(host_keyval.get('labels'))
   try:
     host_model_name = re.search(r'model:(\w+)', labels).group(1)
   except AttributeError:
-    # TODO(pprabhu): Make this exception a failure.
-    logging.exception('Model: name attribute is missing in %s/host_keyval/%s.',
-                      dir, keyval.get('hostname'))
-    return
+    logging.exception('Error in parsing %s/host_keyval/%s', dir,
+                      keyval.get('hostname'))
+    host_model_name = ''
+
+  # Validate source directory is sane.
+  if not host_model_name:
+    raise ValueError('Failed to determine model')
+  if not build:
+    raise ValuError('Failed to determine build')
+  if not suite:
+    raise ValueError('Failed to determine suite')
+  if not host_keyval:
+    raise ValueError('Failed to determine DUT hostname')
 
   if not _should_upload(build, result_pattern, suite):
     # No need to upload current folder, return.
@@ -140,11 +149,10 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
     # Path: bucket/build/parent_job_id/cheets_CTS.*/job_id_timestamp/
     # or bucket/build/parent_job_id/cheets_GTS.*/job_id_timestamp/
     index = build.find('-release')
-    build_with_model_name = ''
     if index == -1:
-      logging.info('Not a release build.'
-                   'Non release build results can be skipped from offloading')
-      return
+      raise ValueError(
+          'Non-release builds should already have been excluded, got %s' %
+          build)
 
     # CTS v2 pipeline requires device info in 'board.model' format.
     # e.g. coral.robo360-release, eve.eve-release
@@ -211,9 +219,6 @@ def _should_upload(build, result_pattern, suite):
 
     @returns: Bool flag indicating whether a valid result.
     """
-  if build is None or suite is None:
-    return False
-
   # Not valid if it's not a release build.
   if not re.match(r'(?!trybot-).*-release/.*', build):
     return False
@@ -274,13 +279,11 @@ def _parse_job_keyval(job_dir):
   # The "real" job dir may be higher up in the directory tree.
   job_dir = _find_toplevel_job_dir(job_dir)
   if not job_dir:
-    return {}  # We can't find a top-level job dir with job keyvals.
-
+    raise ValueError('Failed to find job_dir from %s' % job_dir)
   keyval_path = os.path.join(job_dir, 'keyval')
-  if os.path.isfile(keyval_path):
-    return _read_keyval(keyval_path)
-  else:
-    return {}
+  if not os.path.isfile(keyval_path):
+    raise ValueError('Failed to find keyval file at %s' % keyval_path)
+  return _read_keyval(keyval_path)
 
 
 def _find_toplevel_job_dir(start_dir):
