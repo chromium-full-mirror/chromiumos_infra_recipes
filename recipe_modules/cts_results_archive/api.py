@@ -30,8 +30,9 @@ class CTSResultsArchive(recipe_api.RecipeApi):
           [
               '--json-input',
               self.m.json.input({
-                  'cts_results_gsuri': self._properties.cts_results_gsurl,
-                  'cts_apfe_gsuri': self._properties.cts_apfe_gsurl,
+                  'dir': dir,
+                  'cts_results_gsurl': self._properties.cts_results_gsurl,
+                  'cts_apfe_gsurl': self._properties.cts_apfe_gsurl,
               }),
               '--json-output',
               self.m.json.output(),

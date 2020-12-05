@@ -13,7 +13,7 @@
       "-u",
       "RECIPE_MODULE[chromeos::cts_results_archive]/resources/prepare_uploads.py",
       "--json-input",
-      "{\"cts_apfe_gsuri\": \"gs://fake/apfe\", \"cts_results_gsuri\": \"gs://fake/results\"}",
+      "{\"cts_apfe_gsurl\": \"gs://fake/apfe\", \"cts_results_gsurl\": \"gs://fake/results\", \"dir\": \"source_dir\"}",
       "--json-output",
       "/path/to/tmp/json"
     ],
