@@ -48,8 +48,8 @@
       "--",
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
-      "cp",
       "-m",
+      "cp",
       "-eR",
       "local/directory/to/upload",
       "gs://fake-bucket/fake-folder"

@@ -55,7 +55,7 @@ class CTSResultsArchive(recipe_api.RecipeApi):
           source = ins['source']
           destination = ins['destination']
 
-          self.m.gsutil(['cp', '-m', '-eR', source, destination])
+          self.m.gsutil(['-m', 'cp', '-eR', source, destination])
           url = 'https://console.cloud.google.com/storage/browser/%s' % (
               destination[len('gs://'):],)
           step.links['%d:%s' % (i, name)] = url
