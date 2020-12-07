@@ -14,6 +14,7 @@ import json
 from google.protobuf import empty_pb2
 
 from PB.chromite.api import api as meta_api
+from PB.chromite.api import android
 from PB.chromite.api import artifacts
 from PB.chromite.api import binhost
 from PB.chromite.api import depgraph
@@ -68,6 +69,9 @@ def RunSteps(api):
 
   # Check the test API.
   response_type_by_service = {
+      'AndroidService': {
+          'MarkStable': android.MarkStableResponse
+      },
       'ArtifactsService': {
           'FetchPinnedGuestImageUris': artifacts.PinnedGuestImageUriResponse,
           # As of 1.1.0, the following ArtifactsService endpoints are

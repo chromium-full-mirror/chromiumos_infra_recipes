@@ -79,6 +79,10 @@ class Stub(object):
     return functools.partial(self, attr)
 
 
+class AndroidService(Stub):
+  """Stub for AndroidService."""
+
+
 class ArtifactsService(Stub):
   """Stub for ArtifactsService."""
 

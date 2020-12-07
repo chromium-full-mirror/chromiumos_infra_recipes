@@ -2248,7 +2248,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"android_target_version\": \"android_target_version\", \"chrome_version\": \"chrome_version\", \"full_version\": \"full_version\", \"android_branch_version\": \"android_branch_version\", \"platform_version\": \"platform_version\", \"android_version\": \"android_version\", \"milestone_version\": \"milestone_version\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"android_target_version\": \"bertha\", \"chrome_version\": \"chrome_version\", \"full_version\": \"full_version\", \"android_branch_version\": \"git_rvc-arc\", \"platform_version\": \"platform_version\", \"android_version\": \"1\", \"milestone_version\": \"milestone_version\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2344,7 +2344,7 @@
     "cmd": [],
     "name": "set target_versions",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@target_versions@{\"androidBranchVersion\": \"android_branch_version\", \"androidTargetVersion\": \"android_target_version\", \"androidVersion\": \"android_version\", \"chromeVersion\": \"chrome_version\", \"fullVersion\": \"full_version\", \"milestoneVersion\": \"milestone_version\", \"platformVersion\": \"platform_version\"}@@@"
+      "@@@SET_BUILD_PROPERTY@target_versions@{\"androidBranchVersion\": \"git_rvc-arc\", \"androidTargetVersion\": \"bertha\", \"androidVersion\": \"1\", \"chromeVersion\": \"chrome_version\", \"fullVersion\": \"full_version\", \"milestoneVersion\": \"milestone_version\", \"platformVersion\": \"platform_version\"}@@@"
     ]
   },
   {

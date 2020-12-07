@@ -37,6 +37,14 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return str(self.m.path['start_dir'].join(subpath))
 
   @property
+  def android_service_responses(self):
+    """Generate responses for AndroidService."""
+    ret = {
+        'MarkStable': jsonify(status='MARK_STABLE_STATUS_SUCCESS'),
+    }
+    return ret
+
+  @property
   def artifact_service_responses(self):
     """Generate responses for ArtifactsService."""
     ret = {
@@ -210,9 +218,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     })
     responses['GetChromeVersion'] = jsonify(version='version',)
     responses['GetTargetVersions'] = jsonify(
-        android_version='android_version',
-        android_branch_version='android_branch_version',
-        android_target_version='android_target_version',
+        android_version='1',
+        android_branch_version='git_rvc-arc',
+        android_target_version='bertha',
         chrome_version='chrome_version',
         full_version='full_version',
         milestone_version='milestone_version',
@@ -336,6 +344,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
           canned response without causing infinite recursion.
     """
     result = {
+        'AndroidService': self.android_service_responses,
         'ArtifactsService': self.artifact_service_responses,
         'BinhostService': self.binhost_service_responses,
         'DependencyService': self.dependency_service_responses,
