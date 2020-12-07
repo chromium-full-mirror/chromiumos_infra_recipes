@@ -556,14 +556,6 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups.update bot policies.set bot_policy_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@bot_policy_config@\"{\\\"botPolicies\\\": [{\\\"botGroup\\\": \\\"cq\\\"}]}\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "scale bot groups.get current swarming stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

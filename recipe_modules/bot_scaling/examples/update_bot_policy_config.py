@@ -11,7 +11,6 @@ DEPS = [
 ]
 
 from PB.chromiumos.bot_scaling import BotPolicy, BotPolicyCfg
-import json
 
 
 def RunSteps(api):
@@ -30,15 +29,6 @@ def RunSteps(api):
   for policy in floor_bot_policy.bot_policies:
     api.assertions.assertEqual(policy.scaling_restriction.bot_ceiling, 150)
     api.assertions.assertEqual(policy.scaling_restriction.bot_floor, 25)
-
-  reduced_config = api.bot_scaling.reduce_bot_policy_config_for_table(
-      updated_bot_policy)
-  reduced_config = json.loads(reduced_config)
-
-  api.assertions.assertEqual(reduced_config['botPolicies'][0]['botGroup'],
-                             'cq0')
-  api.assertions.assertEqual(reduced_config['botPolicies'][0]['policyMode'],
-                             'CONFIGURED')
 
 
 def GenTests(api):
