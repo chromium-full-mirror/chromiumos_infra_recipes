@@ -400,6 +400,81 @@ def _collect_tests(request):
   return tests
 
 
+def _is_within_deadline(api, properties):
+  with api.step.nest('check request deadline') as step:
+    if properties.request.HasField('deadline'):
+      deadline = properties.request.deadline
+      current_time = api.time.time()
+      if deadline.seconds < current_time:
+        step.presentation.status = api.step.FAILURE
+        return False
+    return True
+
+
+def _execution_steps_for_test(api, properties, phosphorus_config, dut_hostname,
+                              load_response, max_duration_sec, test,
+                              logs_gs_dir, dut_state):
+
+  result = None
+  run_test_response = None
+
+  try:
+    # prejob and test failures are detected when parsing results.
+    # An exception from the steps here indicates an infrastructure
+    # failure that should be bubbled up immediately.
+    prejob_response = prejob(api, config=phosphorus_config,
+                             request=properties.request,
+                             dut_hostname=dut_hostname,
+                             load_response=load_response,
+                             max_duration_seconds=max_duration_sec)
+    if not _prejob_failed(prejob_response):
+      run_test_response = run_test(
+          api,
+          config=phosphorus_config,
+          request=properties.request,
+          output_config=properties.config.output,
+          dut_hostname=dut_hostname,
+          test=test,
+          logs_gs_dir=logs_gs_dir,
+      )
+      upload_to_tko(
+          api,
+          config=_upload_to_tko_config(
+              api,
+              phosphorus_config,
+              run_test_response,
+          ),
+      )
+
+      result = get_results(api, load_response.results_dir)
+      dut_state = result.state_update.dut_state
+    else:
+      result = get_results(api, load_response.results_dir)
+  finally:
+    # Must complete synchronous logs upload before sealing the results
+    # directory. Once the results directory is sealed, gs_offloader may delete
+    # the result files.
+    result = archive_all_logs(
+        api,
+        phosphorus_config=phosphorus_config,
+        gs_dir=logs_gs_dir,
+        result=result,
+    )
+    try:
+      api.cts_results_archive.archive(load_response.results_dir)
+    except (api.step.StepFailure, api.step.InfraFailure):  # pragma: no cover
+      # TODO(crbug.com/1154873) Stabilize step and mark critical.
+      pass
+
+    with api.step.nest('save local DUT state'):
+      api.phosphorus.save_and_seal_skylab_local_state(dut_state)
+    publish_to_result_flow(api, properties.config, properties.request,
+                           should_poll_for_completion=True)
+  set_output_properties(api, result=result)
+
+  return result, run_test_response, prejob_response
+
+
 def publish_to_result_flow(api, config, request,
                            should_poll_for_completion=False):
   """Publish build info to result_flow PubSub
@@ -448,7 +523,6 @@ def execution_steps(api, properties):
   """
   tests = _collect_tests(properties.request)
   autotest_results = {}
-  prejob_response = None
   run_test_responses = {}
 
   with api.step.nest('execution steps') as step:
@@ -486,51 +560,23 @@ def execution_steps(api, properties):
         )
 
         dut_state = _DUT_STATE_NEEDS_REPAIR
-        run_test_response = None
         max_duration_sec = (
             properties.config.harness.prejob_deadline_seconds or 24 * 60 * 60)
         result = None
 
-        try:
-          # prejob and test failures are detected when parsing results.
-          # An exception from the steps here indicates an infrastructure
-          # failure that should be bubbled up immediately.
-          prejob_response = prejob(api, config=phosphorus_config,
-                                   request=properties.request,
-                                   dut_hostname=dut_hostname,
-                                   load_response=load_response,
-                                   max_duration_seconds=max_duration_sec)
-
-          if not _prejob_failed(prejob_response):
-            run_test_response = run_test(
-                api,
-                config=phosphorus_config,
-                request=properties.request,
-                output_config=properties.config.output,
-                dut_hostname=dut_hostname,
-                test=test,
-                logs_gs_dir=logs_gs_dir,
-            )
-            upload_to_tko(
-                api,
-                config=_upload_to_tko_config(
-                    api,
-                    phosphorus_config,
-                    run_test_response,
-                ),
-            )
-
-            run_test_responses[test_id] = run_test_response
-            result = get_results(api, load_response.results_dir)
-            if result.HasField('autotest_result'):
-              autotest_results[test_id] = result.autotest_result
-            dut_state = result.state_update.dut_state
-          else:
-            result = get_results(api, load_response.results_dir)
-        finally:
-          # Must complete synchronous logs upload before sealing the results
-          # directory. Once the results directory is sealed, gs_offloader may
-          # delete the result files.
+        if _is_within_deadline(api, properties):
+          result, run_test_response, prejob_response = _execution_steps_for_test(
+              api=api, properties=properties,
+              phosphorus_config=phosphorus_config, dut_hostname=dut_hostname,
+              load_response=load_response, max_duration_sec=max_duration_sec,
+              test=test, logs_gs_dir=logs_gs_dir, dut_state=dut_state)
+          if result.HasField('autotest_result'):
+            autotest_results[test_id] = result.autotest_result
+        else:
+          prejob_response = phosphorus.prejob.PrejobResponse(
+              state=phosphorus.prejob.PrejobResponse.ABORTED)
+          result = get_results(api, load_response.results_dir)
+          run_test_response = {}
           result = archive_all_logs(
               api,
               phosphorus_config=phosphorus_config,
@@ -538,18 +584,8 @@ def execution_steps(api, properties):
               result=result,
           )
 
-          try:
-            api.cts_results_archive.archive(load_response.results_dir)
-          except (api.step.StepFailure,
-                  api.step.InfraFailure):  # pragma: no cover
-            # TODO(crbug.com/1154873) Stabilize step and mark critical.
-            pass
 
-          with api.step.nest('save local DUT state'):
-            api.phosphorus.save_and_seal_skylab_local_state(dut_state)
-          publish_to_result_flow(api, properties.config, properties.request,
-                                 should_poll_for_completion=True)
-        set_output_properties(api, result=result)
+        run_test_responses[test_id] = run_test_response
 
   for test_id, test_result in autotest_results.items():
     result.autotest_results[test_id].CopyFrom(test_result)
@@ -658,6 +694,7 @@ def GenTests(api):
     return (api.properties(
         TestRunnerProperties(request=_canned_multitest_request())))
 
+
   def _canned_test_runner_request():
     return {
         'prejob': {
@@ -680,6 +717,7 @@ def GenTests(api):
 
   def _canned_request_missing_name():
     return {'test': {'autotest': {'display_name': 'name'}}}
+
 
   def _canned_multitest_request():
     return {
@@ -763,9 +801,20 @@ def GenTests(api):
   )
 
   r_with_deadline = _canned_test_runner_request()
+  r_with_passed_deadline = _canned_test_runner_request()
   current_time_sec = 2369692800
+  test_deadline = timestamp_pb2.Timestamp(seconds=current_time_sec - 100)
   r_with_deadline['deadline'] = timestamp_pb2.Timestamp(
       seconds=current_time_sec + 55)
+  r_with_passed_deadline['deadline'] = test_deadline
+
+  yield api.test(
+      'deadline_passed',
+      _misc_properties(),
+      api.properties(TestRunnerProperties(request=r_with_passed_deadline)),
+      _mock_load_step(),
+      _successful_logs_archive_step(),
+  ) + api.time.seed(current_time_sec)
 
   yield api.test(
       'success_with_build_deadline',
