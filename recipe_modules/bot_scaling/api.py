@@ -421,17 +421,21 @@ class BotScalingApi(recipe_api.RecipeApi):
       int, the number of bots to request.
     """
     bots_requested = 0
-    if bot_policy.scaling_mode == BotPolicy.STEPPED:
-      if requested >= current_amount:
+    if requested >= current_amount:
+      if bot_policy.scaling_mode == BotPolicy.STEPPED:
         bots_requested = current_amount + min(
             (requested - current_amount),
             bot_policy.scaling_restriction.step_size)
       else:
-        bots_requested = current_amount - min(
-            (current_amount - bots_requested),
-            bot_policy.scaling_restriction.step_size)
+        bots_requested = requested
     else:
-      bots_requested = requested
+      if (bot_policy.scaling_mode == BotPolicy.STEPPED or
+          bot_policy.scaling_mode == BotPolicy.STEPPED_DECREASE):
+        bots_requested = current_amount - min(
+            (current_amount - requested),
+            bot_policy.scaling_restriction.step_size)
+      else:
+        bots_requested = requested
     return bots_requested
 
   def _calculate_estimated_savings(self, bot_policy, requested, configured,

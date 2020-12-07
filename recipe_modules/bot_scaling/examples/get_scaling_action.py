@@ -40,11 +40,13 @@ def RunSteps(api):
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
     api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 2.1568)
 
-    # Request - step size is less than configured, scaling down.
+    # Request - min(current - request, step size) is less than configured,
+    # scaling down.
     scaling_action = api.bot_scaling.get_scaling_action(40, policy, test_config)
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
-    api.assertions.assertEqual(scaling_action.bots_requested, 60)
-    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 4.8528)
+    api.assertions.assertEqual(scaling_action.bots_requested, 65)
+    api.assertions.assertAlmostEqual(scaling_action.estimated_savings,
+                                     4.583200000000001)
 
     # Request + step size is not less than configured.
     scaling_action = api.bot_scaling.get_scaling_action(70, policy, test_config)
@@ -73,6 +75,24 @@ def RunSteps(api):
                                                         ceiling_config)
     api.assertions.assertEqual(scaling_action.bots_requested, 150)
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
+
+    # BotScalingMode is set to STEPPED_DECREASE
+    policy.scaling_mode = BotPolicy.STEPPED_DECREASE
+    # BotsRequested should equal demand + min_idle.
+    scaling_action = api.bot_scaling.get_scaling_action(100, policy,
+                                                        test_config)
+    api.assertions.assertEqual(scaling_action.bots_requested, 125)
+    api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
+
+    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 1.348)
+
+    # Request - min(configured - request, step size) is less than configured,
+    # scaling down.
+    scaling_action = api.bot_scaling.get_scaling_action(40, policy, test_config)
+    api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
+    api.assertions.assertEqual(scaling_action.bots_requested, 65)
+    api.assertions.assertAlmostEqual(scaling_action.estimated_savings,
+                                     4.583200000000001)
 
     # Monitored bot group
     policy.policy_mode = BotPolicy.MONITORED
