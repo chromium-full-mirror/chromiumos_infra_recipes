@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
+    'android',
     'chrome',
     'cros_bisect',
     'cros_build_api',

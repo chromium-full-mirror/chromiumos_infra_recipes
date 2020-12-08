@@ -201,6 +201,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             if not install_packages.disable_goma:
               self.m.cros_sdk.configure_goma(chrome_root)
 
+        self.m.android.try_uprev(chroot=self.m.cros_sdk.chroot,
+                                 sysroot=self.sysroot,
+                                 patch_sets=self.m.workspace_util.patch_sets)
+
         # to use portage (or a chroot and/or sysroot) in order to fully prepare,
         # so they have to finish preparation inside the SDK.
         #
