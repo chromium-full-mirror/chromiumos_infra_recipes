@@ -1254,7 +1254,7 @@
       "@@@STEP_LOG_LINE@json.output@                \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            }, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"build_cost\": 10.0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"build_cost\": 10, @@@",
       "@@@STEP_LOG_LINE@json.output@            \"build_target\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@json.output@            }@@@",
