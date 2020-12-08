@@ -60,7 +60,7 @@ class SkylabApi(recipe_api.RecipeApi):
         properties={
             'requests': tagged_requests,
         },
-        tags=self.m.cros_tags.tags(**bb_tags),
+        tags=self.m.cros_tags.tags(**bb_tags) if bb_tags else [],
         gerrit_changes=[],
         swarming_parent_run_id=swarming_parent_run_id,
         # Disable inheriting the version from the parent builder.
