@@ -1,0 +1,218 @@
+[
+  {
+    "cmd": [],
+    "name": "get android version information",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"androidBranchVersion\": \"git_rvc-arc\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"androidTargetVersion\": \"bertha\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"androidVersion\": \"7002143\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"chromeVersion\": \"89.0.4339.0\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"fullVersion\": \"R89-13635.0.0\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"milestoneVersion\": \"89\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"platformVersion\": \"13635.0.0\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"build_target\"\n  }, \n  \"chroot\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "get android version information.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/GetTargetVersions"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "get android version information.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "get android version information.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get android version information.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check if an android uprev is required",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@chromeos-base/android-vm-rvc/android-vm-rvc-9999.ebuild caused an android uprev@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "try uprev android"
+  },
+  {
+    "cmd": [],
+    "name": "try uprev android.uprev android package android-vm-rvc",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"packageName\": \"android-vm-rvc\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"androidBuildBranch\": \"git_rvc-arc\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTargets\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ], @@@",
+      "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"7002143\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"status\": \"MARK_STABLE_STATUS_SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"packageName\": \"android-vm-rvc\", \n  \"chroot\": {}, \n  \"androidBuildBranch\": \"git_rvc-arc\", \n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ], \n  \"androidVersion\": \"7002143\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "try uprev android.uprev android package android-vm-rvc.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"packageName\": \"android-vm-rvc\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"androidBuildBranch\": \"git_rvc-arc\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTargets\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"androidVersion\": \"7002143\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.AndroidService/MarkStable"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "try uprev android.uprev android package android-vm-rvc.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "try uprev android.uprev android package android-vm-rvc.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "try uprev android.uprev android package android-vm-rvc.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
