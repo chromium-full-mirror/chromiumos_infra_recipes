@@ -1,0 +1,22 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_paygen;
+
+import "google/protobuf/duration.proto";
+
+message TestRequestOpts {
+  // Max retry attempts. Set to 0 to disable retries.
+  int64 max_retries = 1;
+
+  // Timeout for the test execution.
+  google.protobuf.Duration timeout = 2;
+}
+
+message CrosPaygenProperties {
+  // test_platform.Request override options for scheduling autoupdate tests.
+  TestRequestOpts test_request_opts = 1;
+}

@@ -42,20 +42,11 @@ def RunSteps(api):
 
   # Valid Payload types.
   delta_test_config = api.cros_paygen.create_paygen_test_config(
-      tgt_payload=unsigned_delta_payload, delta_type='OMAHA')
-  api.assertions.assertEqual(delta_test_config.suite_name, 'paygen_au_canary')
-  api.assertions.assertEqual(
-      delta_test_config.display_name,
-      'zork-release/R82-13337.0.1/paygen_au_canary/'
-      'autoupdate_EndToEndTest_paygen_au_canary_delta_13336.0.1_omaha')
+      tgt_payload=unsigned_delta_payload, delta_type='OMAHA',
+      applicable_models=['woomax'])
   full_test_config = api.cros_paygen.create_paygen_test_config(
       tgt_payload=unsigned_full_payload, delta_type='OMAHA',
       src_version='13336.0.1', src_channel='canary-channel')
-  api.assertions.assertEqual(full_test_config.suite_name, 'paygen_au_canary')
-  api.assertions.assertEqual(
-      full_test_config.display_name,
-      'zork-release/R82-13337.0.1/paygen_au_canary/'
-      'autoupdate_EndToEndTest_paygen_au_canary_full_13336.0.1_omaha')
 
   # The source payload does not exist.
   with api.assertions.assertRaises(api.step.StepFailure):
@@ -70,9 +61,20 @@ def RunSteps(api):
     api.cros_paygen.create_paygen_test_config(tgt_payload=delta_dlc_payload,
                                               delta_type='OMAHA')
 
+  # Test get_testable_models.
+  # Models is None, self._applicable_models is non-empty.
+  api.assertions.assertItemsEqual(delta_test_config._get_testable_models(),
+                                  ['woomax'])
+  # Models and self._applicable_models is non-empty.
+  api.assertions.assertItemsEqual(
+      delta_test_config._get_testable_models(['woomax', 'other']), ['woomax'])
+  # Models is non-empty, self._applicable_models is None.
+  api.assertions.assertItemsEqual(
+      full_test_config._get_testable_models(['woomax', 'other']),
+      ['woomax', 'other'])
+
 
 def GenTests(api):
-
   yield api.test(
       'basic',
       api.cros_storage.test_listing(

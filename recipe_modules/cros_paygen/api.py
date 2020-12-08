@@ -5,24 +5,30 @@
 
 """API for working with Paygen and its config."""
 
+from google.protobuf import duration_pb2
+from google.protobuf import json_format
 import json
 from copy import deepcopy
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 from os import path
 
+from PB.chromite.api import test_metadata
 from PB.chromite.api.payload import DLCImage as DLCImage_pb2
 from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
-
 import PB.chromiumos.common as common_pb2
+from PB.test_platform.request import Request
 
 DEFAULT_DELTA_TYPES = [
     'STEPPING_STONE', 'OMAHA', 'NO_DELTA', 'MILESTONE', 'FSI'
 ]
 
 PAYGEN_JSON_GS_PATH = 'gs://chromeos-build-release-console/paygen.json'
+
+QS_ACCOUNT = 'legacypool-bvt'
+LABEL_POOL = 'quota'
 
 
 class PaygenTestConfig(object):
@@ -47,6 +53,8 @@ class PaygenTestConfig(object):
   https://ci.chromium.org/b/8865978162264605344
   """
 
+  _AUTOTEST_DEFAULT_TIMEOUT = duration_pb2.Duration(seconds=7 * 60 * 60)
+  _AUTOTEST_DEFAULT_MAX_RETRIES = 5
   _AUTOTEST_TEST_NAME = 'autoupdate_EndToEndTest'
   _PAYGEN_AU_SUITE_TEMPLATE = 'paygen_au_%s'
 
@@ -55,6 +63,13 @@ class PaygenTestConfig(object):
   _DISPLAY_NAME_TEMPLATE = (
       '%(build_target_name)s-release/%(tgt_archive_basename)s/%(suite_name)s/'
       '%(test_name)s_%(unique_name_suffix)s')
+  # test_platform.software_dependency.chromeos_build
+  # (e.g. reef-release/R77-12345.0.0)
+  _CHROMEOS_BUILD_NAME_TEMPLATE = (
+      '%(build_target_name)s-release/%(tgt_archive_basename)s')
+  _REQUEST_TAG_TEMPLATE = '%(chromeos_build_name)s-%(tgt_channel)s'
+  _REQUEST_WITH_MODEL_TAG_TEMPLATE = (
+      '%(chromeos_build_name)s-%(tgt_channel)s-%(model)s')
 
   def __init__(self, build_target_name, tgt_channel, tgt_version,
                tgt_payload_uri, tgt_archive_uri, is_delta_update, delta_type,
@@ -93,55 +108,201 @@ class PaygenTestConfig(object):
     self._delta_type = delta_type
     self._applicable_models = applicable_models
 
-  @property
-  def display_name(self):
-    """The display name for the autotest invocation."""
-    return self._DISPLAY_NAME_TEMPLATE % {
+    self._chromeos_build_name = self._CHROMEOS_BUILD_NAME_TEMPLATE % {
         'build_target_name': self._build_target_name,
-        'tgt_archive_basename': self._tgt_archive_basename,
-        'suite_name': self.suite_name,
-        'test_name': self._AUTOTEST_TEST_NAME,
-        'unique_name_suffix': self._get_unique_name_suffix(),
+        'tgt_archive_basename': self._tgt_archive_basename
     }
-
-  def _get_unique_name_suffix(self):
-    """Create a unique name suffix for the test config."""
-    return self._UNIQUE_NAME_SUFFIX_TEMPLATE % {
-        'suite_name': self.suite_name,
+    self._suite_name = (
+        self._PAYGEN_AU_SUITE_TEMPLATE % self._tgt_channel.split('-')[0])
+    self._unique_name_suffix = self._UNIQUE_NAME_SUFFIX_TEMPLATE % {
+        'suite_name': self._suite_name,
         'update_type': self._update_type,
         'src_version': self._src_version,
         'delta_type': self._delta_type.lower()
     }
+    self._display_name = self._DISPLAY_NAME_TEMPLATE % {
+        'build_target_name': self._build_target_name,
+        'tgt_archive_basename': self._tgt_archive_basename,
+        'suite_name': self._suite_name,
+        'test_name': self._AUTOTEST_TEST_NAME,
+        'unique_name_suffix': self._unique_name_suffix,
+    }
 
-  @property
-  def suite_name(self):
-    """The name of the test suite."""
-    short_channel = self._tgt_channel.split('-')[0]
-    return self._PAYGEN_AU_SUITE_TEMPLATE % short_channel
+  def _get_test_plan(self):
+    """A test_platform TestPlan proto with the enumerated test request."""
+    autotest_invocation = Request.Enumeration.AutotestInvocation(
+        test=test_metadata.AutotestTest(
+            name=self._AUTOTEST_TEST_NAME, allow_retries=True, max_retries=1,
+            execution_environment=(
+                test_metadata.AutotestTest.EXECUTION_ENVIRONMENT_SERVER)),
+        test_args=self._get_test_args(),
+        display_name=self._display_name,
+    )
+    return Request.TestPlan(
+        enumeration=Request.Enumeration(
+            autotest_invocations=[autotest_invocation]))
 
-  @property
-  def test_args(self):  #pragma: nocover
+  def _get_test_args(self):
     """Test arguments with which to invoke the autotest control file."""
     template = '%s=%s'
-    arg_values = [('name', self.suite_name), ('update_type', self._update_type),
+    arg_values = [('name', self._suite_name),
+                  ('update_type', self._update_type),
                   ('source_release', self._src_version),
                   ('target_release', self._tgt_version),
                   ('target_payload_uri', self._tgt_payload_uri),
-                  ('SUITE', self.suite_name),
+                  ('SUITE', self._suite_name),
                   ('source_payload_uri', self._src_payload_uri),
                   ('source_archive_uri', self._src_artifact_uri),
                   ('payload_type', self._delta_type)]
 
     return ' '.join(template % (key, val) for key, val in arg_values)
 
+  def to_ctp_tagged_requests(self, models=None, request_opts=None):
+    """Turn self into a dict of tagged test_platform.Requests.
+
+    Creates one request per testable model or one request with no model
+    specified if self._applicable_models and models is None.
+
+    Args:
+      models (list(str)): A list of models to run paygen AU tests on.
+      request_opts (TestRequestOpts): Overrides for the test_platform.Request.
+
+    Returns:
+       A dictionary of string to test_platform.Request objects.
+    """
+    if models is None and self._applicable_models is None:
+      return self._create_tagged_request(request_opts=request_opts)
+
+    tagged_requests = {}
+    testable_models = self._get_testable_models(models)
+    for model in testable_models:
+      tagged_requests.update(
+          self._create_tagged_request(model=model, request_opts=request_opts))
+    return tagged_requests
+
+  def _get_testable_models(self, models=None):
+    """Returns a list of models for which to run AU tests on.
+
+    Testable models are:
+      * All members of models if self._applicable_models is None.
+      * All members of self._applicable_models if models is None.
+      * The intersection of models and self._applicable_models if both are
+          non-empty.
+
+    Args:
+      models (list(str)): A list of models to run paygen AU tests on.
+
+    Returns:
+      A set of testable models as defined in the description.
+    """
+    if not models:
+      return self._applicable_models
+    if not self._applicable_models:
+      return models
+    return set(models) & set(self._applicable_models)
+
+  def _create_tagged_request(self, model=None, request_opts=None):
+    """Create a tagged test_platform.Request for the given model.
+
+    Args:
+      model (str): A model to run paygen AU tests on.
+      request_opts (TestRequestOpts): Overrides for the test_platform.Request.
+
+    Returns:
+      A dictionary mapping a string to a test_platform.Request.
+    """
+    if model:
+      request_tag = self._REQUEST_WITH_MODEL_TAG_TEMPLATE % {
+          'chromeos_build_name': self._chromeos_build_name,
+          'tgt_channel': self._tgt_channel,
+          'model': model
+      }
+    else:
+      request_tag = self._REQUEST_TAG_TEMPLATE % {
+          'chromeos_build_name': self._chromeos_build_name,
+          'tgt_channel': self._tgt_channel
+      }
+    return {
+        request_tag:
+            json_format.MessageToDict(
+                Request(
+                    params=self._get_request_params(model, request_opts),
+                    test_plan=self._get_test_plan()))
+    }
+
+  def _get_request_params(self, model=None, request_opts=None):
+    """Return test_platform.Params for the given model.
+
+    Args:
+      model (str): A model to run paygen AU tests on.
+      request_opts (TestRequestOpts): Overrides for the test_platform.Request.
+
+    Returns:
+      A test_platform.Request.Params specific to the model.
+    """
+    params = Request.Params()
+    # Params which can be overriden.
+    params.time.maximum_duration.seconds = (
+        request_opts.timeout.seconds or self._AUTOTEST_DEFAULT_TIMEOUT.seconds)
+    params.retry.max = (
+        request_opts.max_retries or self._AUTOTEST_DEFAULT_MAX_RETRIES)
+    params.retry.allow = bool(params.retry.max > 0)
+
+    # Non-CTS traffic uses MANAGED_POOL_QUOTA (go/managed-pools-deprecation).
+    params.scheduling.managed_pool = Request.Params.Scheduling.MANAGED_POOL_QUOTA
+    params.scheduling.qs_account = QS_ACCOUNT
+
+    if model:
+      params.hardware_attributes.model = model
+    sw_dep = params.software_dependencies.add()
+    sw_dep.chromeos_build = self._chromeos_build_name
+    # TODO(crbug.com/1122854): Some non-unibuild boards run on a DUT with a
+    # different board label (e.g. eve-arc-r maps to eve).
+    params.software_attributes.build_target.name = self._build_target_name
+
+    params.legacy.autotest_suite = self._suite_name
+    params.metadata.test_metadata_url = self._tgt_archive_uri
+    params.metadata.debug_symbols_archive_url = self._tgt_archive_uri
+
+    params.decorations.autotest_keyvals['build'] = self._chromeos_build_name
+    params.decorations.autotest_keyvals['suite'] = self._suite_name
+    tags = self._get_test_runner_tags(model)
+    request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
+    params.decorations.tags.extend(request_tags)
+
+    return params
+
+  def _get_test_runner_tags(self, model=None):
+    """Generates test_runner build tags for the given model.
+
+    Args:
+      model (str): A model to run paygen AU tests on.
+
+    Returns:
+      A dictionary of test_runner build tags specific to the model.
+    """
+    tags = {
+        'label-pool': LABEL_POOL,
+        'build': self._chromeos_build_name,
+        'label-board': self._build_target_name,
+        'suite': self._suite_name,
+        'quota_account': QS_ACCOUNT,
+    }
+    if model:
+      tags['label-model'] = model
+    return tags
+
 
 class CrosPaygenApi(recipe_api.RecipeApi):
   """A module for CrOS-specific paygen steps."""
 
-  def __init__(self, *args, **kwargs):
+  PaygenTestConfig = PaygenTestConfig
+
+  def __init__(self, properties, *args, **kwargs):
     super(CrosPaygenApi, self).__init__(*args, **kwargs)
     self._internal_config = None
     self._paygen_json_gs_path = PAYGEN_JSON_GS_PATH
+    self._test_request_opts = properties.test_request_opts
 
   @property
   def _config(self):
@@ -374,8 +535,6 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       A PaygenTestConfig or None if no source payload exists or unsupported
       Payload provided.
     """
-    # TODO(crbug.com/1122854): Figure out how to enforce argument correctness.
-    # Currently invalid argument combinations silently return None.
     tgt_image = tgt_payload._tgt_image
     build_target_name = tgt_image._artifact_root.build_target_name
     tgt_channel = tgt_image._artifact_root.channel
@@ -424,3 +583,23 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         src_artifact_uri=src_artifact_uri, src_version=src_version,
         is_delta_update=is_delta_update, delta_type=delta_type,
         applicable_models=applicable_models)
+
+  def schedule_au_tests(self, paygen_test_configs, models=None):
+    """Schedule Paygen autoupdate (AU) tests.
+
+    Create a cros_test_platform build request to launch AU tests.
+
+    Args:
+      paygen_test_configs (list[PaygenTestConfig]): A list of PaygenTestConfigs
+        for which to schedule au_tests.
+
+    Returns:
+      The scheduled buildbucket build.
+    """
+    tagged_requests = {}
+    for ptc in paygen_test_configs:
+      tagged_requests = ptc.to_ctp_tagged_requests(models,
+                                                   self._test_request_opts)
+    if not tagged_requests:
+      return
+    return self.m.skylab.schedule_ctp_requests(tagged_requests)
