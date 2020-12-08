@@ -699,7 +699,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#95)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#442)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#443)(self, config=None):**
 
 Generate release payloads for the build.
 
@@ -738,7 +738,7 @@ This context manager sets up the workspace path.
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#432)(self, config=None):**
+&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#433)(self, config=None):**
 
 Sign the uploaded images.
 
@@ -747,15 +747,16 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#87)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#396)(self, config=None, disable_publish=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#396)(self, config=None, failing_build=False):**
 
 Upload artifacts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
-  disable_publish (bool): Whether to disable publishing artifacts.
+  failing_build (bool): whether or not the build is failing, used (in part)
+      to decide whether or not to upload artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#413)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#414)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1145,11 +1146,11 @@ Processes the coverage data for metadata.
 
 API for uploading CrOS build artifacts to Google Storage.
 
-#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#43)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#44)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#303)(self, builder_name, target, kind):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#304)(self, builder_name, target, kind):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -1164,7 +1165,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#518)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#527)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1179,7 +1180,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#552)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#561)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1194,7 +1195,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#412)(self, artifacts_info):**
+&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#419)(self, artifacts_info):**
 
 Return whether there are output artifacts.
 
@@ -1204,7 +1205,7 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#572)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#581)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1225,7 +1226,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#429)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, disable_publish=False, name=None, test_data=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#436)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, failing_build=False, name=None, test_data=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -1244,7 +1245,8 @@ Args:
   artifacts_info (ArtifactsByService): Information about artifacts.
   chroot (Chroot): chroot to use
   sysroot (Sysroot): sysroot to use
-  disable_publish (bool): whether to disable publishing of artifacts.
+  failing_build (bool): whether or not the build is failing, used (in part)
+      to decide whether or not to upload artifacts.
   name (str): The step name. Defaults to 'upload artifacts'.
   test_data (str): Some data for this step to return when running under
       simulation.  The string "@@DIR@@" is replaced with the output_dir

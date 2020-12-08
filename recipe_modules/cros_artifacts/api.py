@@ -14,6 +14,7 @@ from recipe_engine import recipe_api
 from PB.chromite.api import artifacts
 from PB.chromite.api import toolchain
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import ArtifactsByService
 
 # Legacy artifacts and their handling.
 ARTIFACTS_SERVICE = 'chromite.api.ArtifactsService'
@@ -317,7 +318,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return self._artifacts_gs_path_dict(builder_name, target, kind)['gs_path']
 
   def _publish_artifacts(self, builder_name, target, kind, artifacts_info,
-                         upload_uri, files_by_artifact, name=None):
+                         upload_uri, files_by_artifact, name=None,
+                         failing_build=False):
     """Publish the artifacts that were uploaded.
 
     Some artifacts need to also be published in a better-known place than the
@@ -343,6 +345,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       upload_uri (string): gs path were the artifacts were uploaded.
       files_by_artifact (dict{name: list[string]}): artifact file dictionary.
       name (str): The step name.  Defaults to 'publish artifacts'.
+      failing_build (bool): whether or not the build is failing, used (in part)
+          to decide whether or not to upload artifacts.
 
     Returns:
       {name: link} of gs publishing directories used.
@@ -357,7 +361,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     to_publish = []
     for service in json_format.MessageToDict(artifacts_info).values():
       for out_info in service.get('outputArtifacts', []):
-        if out_info.get('gsLocations') and out_info.get('artifactTypes'):
+        if out_info.get('gsLocations') and out_info.get('artifactTypes') and (
+            not failing_build or
+            out_info.get('publishCondition') == ArtifactsByService
+            .PublishCondition.Name(ArtifactsByService.PUBLISH_ALWAYS)):
           to_publish.append(out_info)
     if not to_publish:
       return links
@@ -428,7 +435,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
   def upload_artifacts(self, builder_name, target, kind, gs_bucket,
                        artifacts_info=None, chroot=None, sysroot=None,
-                       disable_publish=False, name=None, test_data=None):
+                       failing_build=False, name=None, test_data=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -446,7 +453,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       artifacts_info (ArtifactsByService): Information about artifacts.
       chroot (Chroot): chroot to use
       sysroot (Sysroot): sysroot to use
-      disable_publish (bool): whether to disable publishing of artifacts.
+      failing_build (bool): whether or not the build is failing, used (in part)
+          to decide whether or not to upload artifacts.
       name (str): The step name. Defaults to 'upload artifacts'.
       test_data (str): Some data for this step to return when running under
           simulation.  The string "@@DIR@@" is replaced with the output_dir
@@ -491,11 +499,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # crbug/1086630).
       #
       # Publishing artifacts is a "Push to Production" step.  As such,
-      # dry-run and failed builds must not publish artifacts.  The caller can
-      # disable publishing (for failing builds)
-      if disable_publish:
-        presentation.step_text = 'Artifact publishing disabled.'
-        return
+      # dry-run and failed builds must not publish artifacts.  However,
+      # there are some cases in which we'd like to publish artifacts for
+      # failed builds (e.g. CLANG_CRASH_DIAGNOSES). As such, we pass
+      # failing_build to _publish_artifacts and publish if the build is
+      # not failing or if ArtifactInfo.publish_conditions = PUBLISH_ALWAYS.
 
       # Builders that publish artifacts should not recycyle dry-run builds,
       # since we treat them differently here.
@@ -511,7 +519,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # artifacts.
       links = self._publish_artifacts(builder_name, target, kind,
                                       artifacts_info, upload_uri,
-                                      files_by_artifact)
+                                      files_by_artifact,
+                                      failing_build=failing_build)
       for k, v in links.items():
         presentation.links[k] = v
 

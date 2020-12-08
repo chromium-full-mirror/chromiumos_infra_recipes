@@ -18,6 +18,9 @@ message TestInputProperties {
   // Test_data for Build API call.
   string api_response = 3;
 
-  // Whether to disable publishing.
-  bool disable_publish = 4;
+  // Whether or not the build is failing.
+  bool failing_build = 4;
+
+  // Whether or not to set publish_conditions to PUBLISH_ALWAYS.
+  bool publish_always = 5;
 }

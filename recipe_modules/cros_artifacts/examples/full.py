@@ -33,7 +33,6 @@ def RunSteps(api, properties):
     api.cros_build_api.GetVersion(
         test_data=api.cros_build_api.Version.ParseVersion(
             properties.build_api_version).FormatResponse())
-
   artifacts_info = common.ArtifactsByService(
       legacy=common.ArtifactsByService.Legacy(output_artifacts=[
           common.ArtifactsByService.Legacy.ArtifactInfo(
@@ -44,7 +43,9 @@ def RunSteps(api, properties):
                   common.ArtifactsByService.Toolchain
                   .UNVERIFIED_CHROME_LLVM_ORDERFILE
               ], gs_locations=['publish_gs_location', 'pub2/{gs_path}'],
-              acl_name='public-read')
+              acl_name='public-read', publish_condition=common
+              .ArtifactsByService.PUBLISH_ALWAYS if properties
+              .publish_always else common.ArtifactsByService.PUBLISH_ON_SUCCESS)
       ]))
 
   # This verifies that we can upload artifacts, some of which get an acl
@@ -59,7 +60,7 @@ def RunSteps(api, properties):
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
-      disable_publish=properties.disable_publish,
+      failing_build=properties.failing_build,
   )
 
 
@@ -75,8 +76,15 @@ def GenTests(api):
                      'upload artifacts.publish artifacts'))
 
   yield api.test(
-      'disabled', api.properties(TestInputProperties(disable_publish=True)),
+      'failing-build', api.properties(TestInputProperties(failing_build=True)),
       api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'))
+
+  yield api.test(
+      'failing-build-publish-always',
+      api.properties(
+          TestInputProperties(failing_build=True, publish_always=True)),
+      api.post_check(post_process.MustRun,
                      'upload artifacts.publish artifacts'))
 
   yield api.test('api-1.0.0',

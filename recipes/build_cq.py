@@ -47,7 +47,7 @@ def DoRunSteps(api, config, properties):
   finally:
     try:
       api.build_menu.upload_artifacts(config,
-                                      disable_publish=not raise_upload_failure)
+                                      failing_build=not raise_upload_failure)
     except StepFailure:
       # TODO(crbug/1086630): We do not need to catch StepFailure here after
       # 2020-12-31.

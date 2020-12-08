@@ -135,7 +135,7 @@ def build_os_with_uprev(api, properties, package, upstream_version):
         publish = False
         raise
       finally:
-        api.build_menu.upload_artifacts(config, disable_publish=not publish)
+        api.build_menu.upload_artifacts(config, failing_build=not publish)
 
       with api.step.nest('get artifacts path'):
         gs_path = api.cros_artifacts.artifacts_gs_path(
