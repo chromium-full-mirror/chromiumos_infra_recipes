@@ -3,6 +3,8 @@
     "cmd": [],
     "name": "Archive CTS results",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json_input@{'cts_results_gsurl': u'gs://fake/results', 'dir': 'source_dir', 'cts_apfe_gsurl': u'gs://fake/apfe'}@@@",
+      "@@@STEP_LOG_END@json_input@@@",
       "@@@STEP_LOG_LINE@instructions@[OrderedDict([('source', 'local/directory/to/upload'), ('destination', 'gs://fake-bucket/fake-folder'), ('name', 'fake-instruction')])]@@@",
       "@@@STEP_LOG_END@instructions@@@"
     ]

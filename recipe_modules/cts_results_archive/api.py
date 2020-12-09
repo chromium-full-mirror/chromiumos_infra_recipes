@@ -24,16 +24,18 @@ class CTSResultsArchive(recipe_api.RecipeApi):
     @param dir: The results directory to process.
     """
     with self.m.step.nest('Archive CTS results') as step:
+      json_input = {
+          'dir': dir,
+          'cts_results_gsurl': self._properties.cts_results_gsurl,
+          'cts_apfe_gsurl': self._properties.cts_apfe_gsurl,
+      }
+      step.logs['json_input'] = str(json_input)
       result = self.m.python(
           'prepare uploads',
           self.resource('prepare_uploads.py'),
           [
               '--json-input',
-              self.m.json.input({
-                  'dir': dir,
-                  'cts_results_gsurl': self._properties.cts_results_gsurl,
-                  'cts_apfe_gsurl': self._properties.cts_apfe_gsurl,
-              }),
+              self.m.json.input(json_input),
               '--json-output',
               self.m.json.output(),
           ],
