@@ -19,6 +19,7 @@ from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 import PB.chromiumos.common as common_pb2
+from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from PB.test_platform.request import Request
 
 DEFAULT_DELTA_TYPES = [
@@ -115,10 +116,15 @@ class PaygenTestConfig(object):
     self._suite_name = (
         self._PAYGEN_AU_SUITE_TEMPLATE % self._tgt_channel.split('-')[0])
     self._unique_name_suffix = self._UNIQUE_NAME_SUFFIX_TEMPLATE % {
-        'suite_name': self._suite_name,
-        'update_type': self._update_type,
-        'src_version': self._src_version,
-        'delta_type': self._delta_type.lower()
+        'suite_name':
+            self._suite_name,
+        'update_type':
+            self._update_type,
+        'src_version':
+            self._src_version,
+        'delta_type':
+            PaygenOrchestratorProperties.DeltaType.Name(self._delta_type
+                                                       ).lower()
     }
     self._display_name = self._DISPLAY_NAME_TEMPLATE % {
         'build_target_name': self._build_target_name,
@@ -145,15 +151,17 @@ class PaygenTestConfig(object):
   def _get_test_args(self):
     """Test arguments with which to invoke the autotest control file."""
     template = '%s=%s'
-    arg_values = [('name', self._suite_name),
-                  ('update_type', self._update_type),
-                  ('source_release', self._src_version),
-                  ('target_release', self._tgt_version),
-                  ('target_payload_uri', self._tgt_payload_uri),
-                  ('SUITE', self._suite_name),
-                  ('source_payload_uri', self._src_payload_uri),
-                  ('source_archive_uri', self._src_artifact_uri),
-                  ('payload_type', self._delta_type)]
+    arg_values = [
+        ('name', self._suite_name), ('update_type', self._update_type),
+        ('source_release', self._src_version),
+        ('target_release', self._tgt_version),
+        ('target_payload_uri', self._tgt_payload_uri),
+        ('SUITE', self._suite_name),
+        ('source_payload_uri', self._src_payload_uri),
+        ('source_archive_uri', self._src_artifact_uri),
+        ('payload_type',
+         PaygenOrchestratorProperties.DeltaType.Name(self._delta_type))
+    ]
 
     return ' '.join(template % (key, val) for key, val in arg_values)
 

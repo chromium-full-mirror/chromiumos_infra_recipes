@@ -10,6 +10,7 @@ DEPS = [
 ]
 
 from PB.chromiumos.common import ImageType
+from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 
 
 def RunSteps(api):
@@ -42,24 +43,29 @@ def RunSteps(api):
 
   # Valid Payload types.
   delta_test_config = api.cros_paygen.create_paygen_test_config(
-      tgt_payload=unsigned_delta_payload, delta_type='OMAHA',
+      tgt_payload=unsigned_delta_payload,
+      delta_type=PaygenOrchestratorProperties.OMAHA,
       applicable_models=['woomax'])
   full_test_config = api.cros_paygen.create_paygen_test_config(
-      tgt_payload=unsigned_full_payload, delta_type='OMAHA',
-      src_version='13336.0.1', src_channel='canary-channel')
+      tgt_payload=unsigned_full_payload,
+      delta_type=PaygenOrchestratorProperties.OMAHA, src_version='13336.0.1',
+      src_channel='canary-channel')
 
   # The source payload does not exist.
   with api.assertions.assertRaises(api.step.StepFailure):
     api.cros_paygen.create_paygen_test_config(
-        tgt_payload=unsigned_delta_payload, delta_type='OMAHA')
+        tgt_payload=unsigned_delta_payload,
+        delta_type=PaygenOrchestratorProperties.OMAHA)
   # Full payload without source information.
   with api.assertions.assertRaises(api.step.StepFailure):
-    api.cros_paygen.create_paygen_test_config(tgt_payload=unsigned_full_payload,
-                                              delta_type='OMAHA')
+    api.cros_paygen.create_paygen_test_config(
+        tgt_payload=unsigned_full_payload,
+        delta_type=PaygenOrchestratorProperties.OMAHA)
   # Unsupported Payload type.
   with api.assertions.assertRaises(api.step.StepFailure):
-    api.cros_paygen.create_paygen_test_config(tgt_payload=delta_dlc_payload,
-                                              delta_type='OMAHA')
+    api.cros_paygen.create_paygen_test_config(
+        tgt_payload=delta_dlc_payload,
+        delta_type=PaygenOrchestratorProperties.OMAHA)
 
   # Test get_testable_models.
   # Models is None, self._applicable_models is non-empty.

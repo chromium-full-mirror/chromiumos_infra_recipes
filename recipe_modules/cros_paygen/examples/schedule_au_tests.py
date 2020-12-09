@@ -4,6 +4,7 @@
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
+from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from PB.recipe_modules.chromeos.cros_paygen.cros_paygen import CrosPaygenProperties
 from PB.recipe_modules.chromeos.cros_paygen.cros_paygen import TestRequestOpts
 
@@ -28,7 +29,7 @@ def RunSteps(api):
       'chromeos_13414.0.0_octopus_canary-channel_full_test.bin-def')
   src_artifact_uri = 'gs://chromeos-releases/canary-channel/octopus/13414.0.0'
   is_delta_update = True
-  delta_type = 'OMAHA'
+  delta_type = PaygenOrchestratorProperties.OMAHA
   applicable_models = ['ampton']
   paygen_test_config = api.cros_paygen.PaygenTestConfig(
       build_target_name=build_target_name, tgt_channel=tgt_channel,
