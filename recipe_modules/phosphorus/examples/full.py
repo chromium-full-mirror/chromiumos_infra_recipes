@@ -10,10 +10,6 @@ DEPS = [
     'phosphorus',
 ]
 
-from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
-  PhosphorusProperties
-from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
-  PhosphorusEnvProperties
 from PB.test_platform import skylab_local_state
 from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest
 from PB.test_platform.phosphorus.prejob import PrejobRequest
@@ -51,7 +47,7 @@ def RunSteps(api):
   api.phosphorus.upload_to_tko(upload_to_tko_req)
 
   with api.assertions.assertRaises(ValueError):
-    api.phosphorus.parse("")
+    api.phosphorus.parse('')
 
   api.phosphorus.read_dut_hostname()
 
@@ -62,31 +58,15 @@ def RunSteps(api):
   api.phosphorus.load_skylab_local_state('test-id')
   api.phosphorus.save_skylab_local_state('baz-state')
   api.phosphorus.save_and_seal_skylab_local_state('qux-state')
-  _ = api.phosphorus.parse("/path/to/results")
+  _ = api.phosphorus.parse('/path/to/results')
 
 
 def GenTests(api):
   yield api.test(
       'basic',
-      api.properties(
-          **{
-              '$chromeos/phosphorus':
-                  PhosphorusProperties(
-                      version=PhosphorusProperties.Version(
-                          cipd_label='some-cipd-label',
-                      ), config={
-                          'admin_service': 'foo-service',
-                          'cros_inventory_service': 'inv-service',
-                          'cros_ufs_service': 'ufs-service',
-                          'autotest_dir': '/path/to/autotest',
-                      }),
-          }) + api.properties.environ(
-              PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
-                                      SWARMING_TASK_ID='dummy-task-id',
-                                      SKYLAB_DUT_ID='dummy-dut-id')) +
-      api.step_data(
+      api.phosphorus.properties(dut_name='placeholder') + api.step_data(
           'call `phosphorus` (12).load', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
-                      results_dir='dummy-results-dir')))),
+                      results_dir='placeholder-results-dir')))),
   )

@@ -1,0 +1,126 @@
+[
+  {
+    "cmd": [],
+    "name": "call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"imageGsPath\": \"gs://chromeos-image-archive/eve-release/R86-13380.0.0\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"my-dut-name\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `phosphorus`.ensure phosphorus",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/phosphorus",
+      "-ensure-file",
+      "chromiumos/infra/phosphorus/${platform} some-cipd-label",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "call `phosphorus`.ensure phosphorus.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-some-cipd-label-\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/phosphorus/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "build-parallels-image-provision",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "infra_step": true,
+    "name": "call `phosphorus`.build-parallels-image-provision",
+    "stdin": "{\n  \"imageGsPath\": \"gs://chromeos-image-archive/eve-release/R86-13380.0.0\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"my-dut-name\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `phosphorus` (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"imageGsPath\": \"gs://chromeos-image-archive/eve-release/R86-13381.0.0\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"my-dut-name\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "build-parallels-image-provision",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "infra_step": true,
+    "name": "call `phosphorus` (2).build-parallels-image-provision",
+    "stdin": "{\n  \"imageGsPath\": \"gs://chromeos-image-archive/eve-release/R86-13381.0.0\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"my-dut-name\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `phosphorus` (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"my-dut-name\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "build-parallels-image-save",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "infra_step": true,
+    "name": "call `phosphorus` (3).build-parallels-image-save",
+    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"my-dut-name\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

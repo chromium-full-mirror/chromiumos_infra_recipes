@@ -36,7 +36,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/build_parallels_image.py\", line 57, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/build_parallels_image.py\", line 59, in RunSteps",
       "    raise ValueError('must set build_gs_bucket')",
       "ValueError: must set build_gs_bucket"
     ]

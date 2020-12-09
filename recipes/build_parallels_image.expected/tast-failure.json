@@ -72,14 +72,22 @@
   },
   {
     "cmd": [],
-    "name": "provision DUT.call `build-parallels-image`",
+    "name": "provision DUT.call `phosphorus`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "provision DUT.call `build-parallels-image`.ensure build-parallels-image",
+    "name": "provision DUT.call `phosphorus`.ensure phosphorus",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -89,24 +97,24 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd/build-parallels-image",
+      "[START_DIR]/cipd/phosphorus",
       "-ensure-file",
-      "chromiumos/infra/build-parallels-image/${platform} prod",
+      "chromiumos/infra/phosphorus/${platform} some-cipd-label",
       "-max-threads",
       "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "provision DUT.call `build-parallels-image`.ensure build-parallels-image.ensure_installed",
+    "name": "provision DUT.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/build-parallels-image/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-some-cipd-label-\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/phosphorus/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
@@ -116,14 +124,43 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/build-parallels-image/build-parallels-image",
-      "provision",
-      "--dut_name",
-      "dummy-dut-name",
-      "--image_gs_path",
-      "gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345"
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "build-parallels-image-save",
+      "-input_json",
+      "/dev/stdin"
     ],
-    "name": "provision DUT.call `build-parallels-image`.provision",
+    "infra_step": true,
+    "name": "provision DUT.call `phosphorus`.build-parallels-image-save",
+    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "provision DUT.call `phosphorus` (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "build-parallels-image-provision",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "infra_step": true,
+    "name": "provision DUT.call `phosphorus` (2).build-parallels-image-provision",
+    "stdin": "{\n  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -146,7 +183,7 @@
       "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
-      "dummy-dut-name",
+      "placeholder-dut-name",
       "pita.CreateFromIso.uprev"
     ],
     "name": "invoke tast.tast list",
@@ -174,7 +211,7 @@
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
       "-var=pita.windowsLicensed=true",
-      "dummy-dut-name",
+      "placeholder-dut-name",
       "pita.CreateFromIso.uprev"
     ],
     "name": "invoke tast.tast run",

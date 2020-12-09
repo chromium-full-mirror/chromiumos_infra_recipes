@@ -9,14 +9,20 @@ from recipe_engine import recipe_api
 
 from PB.test_platform.skylab_local_state.load import LoadRequest, LoadResponse
 from PB.test_platform.skylab_local_state.save import SaveRequest
-from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest, FetchCrashesResponse
+from PB.uprev.build_parallels_image.common import Config as ParallelsConfig
+from PB.uprev.build_parallels_image.provision import ProvisionRequest as \
+  ParallelsProvisionRequest
+from PB.uprev.build_parallels_image.save import SaveRequest as \
+  ParallelsSaveRequest
+
+from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest, \
+  FetchCrashesResponse
 from PB.test_platform.phosphorus.prejob import PrejobRequest, PrejobResponse
 from PB.test_platform.phosphorus.runtest import RunTestRequest, RunTestResponse
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSResponse
 from PB.test_platform.skylab_test_runner.result import Result
-
 
 
 class PhosphorusCommand(recipe_api.RecipeApi):
@@ -204,6 +210,39 @@ class PhosphorusCommand(recipe_api.RecipeApi):
                             seal_results_dir=seal_results_dir)
       self._run('save', request, SaveRequest)
 
+  def build_parallels_image_provision(self, image_gs_path):
+    """Provisions a DUT with the given Chrome OS image and Parallels DLC.
+
+    Args:
+      image_gs_path (str): The Google Storage path (prefix) where images are
+      located. For example,
+      'gs://chromeos-image-archive/eve-release/R86-13380.0.0'.
+    """
+    with self.m.context(infra_steps=True):
+      request = ParallelsProvisionRequest(
+          config=self._build_parallels_image_config(),
+          dut_name=self._dut_hostname, image_gs_path=image_gs_path)
+      self._run('build-parallels-image-provision', request,
+                ParallelsProvisionRequest)
+
+  def build_parallels_image_save(self, dut_state):
+    """Saves the given DUT state in UFS.
+
+    The state is only saved if it is safe to do so (i.e. is currently ready
+    or needs_repair).
+
+    Args:
+      dut_state (str): The new DUT state. E.g. "needs_repair" or "ready".
+    """
+    with self.m.context(infra_steps=True):
+      request = ParallelsSaveRequest(
+          config=self._build_parallels_image_config(),
+          dut_name=self._dut_hostname, dut_state=dut_state)
+      self._run('build-parallels-image-save', request, ParallelsSaveRequest)
+
+  def _build_parallels_image_config(self):
+    return ParallelsConfig(cros_ufs_service=self._config.cros_ufs_service)
+
   def _dut_hostname_from_bot_id(self, swarming_bot_id):
     """Extract the DUT hostname from the env vars.
 
@@ -213,9 +252,6 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     Raises:
       * AssertionError if the Swarming bot ID env var is missing or invalid.
     """
-    # This same 'crossk-' check is used elsewhere in recipes, so if you have
-    # reason to change it here, please search the code and update the other
-    # references too.
     expected_prefix = 'crossk-'
     assert swarming_bot_id.startswith(expected_prefix)
     return swarming_bot_id[len(expected_prefix):]

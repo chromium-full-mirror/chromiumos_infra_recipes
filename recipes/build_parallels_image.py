@@ -31,8 +31,8 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'build_menu',
-    'build_parallels_image',
     'easy',
+    'phosphorus',
     'tast_exec',
     'tast_results',
 ]
@@ -44,6 +44,8 @@ PROPERTIES = BuildParallelsImageProperties
 
 _GS_BROWSER_PREFIX = 'https://console.cloud.google.com/storage/browser'
 _SYS_LOG_DIR = '/var/log'
+_DUT_STATE_NEEDS_REPAIR = 'needs_repair'
+_DUT_STATE_READY = 'ready'
 
 _TAST_NAME = 'pita.CreateFromIso.uprev'
 
@@ -99,7 +101,11 @@ def build_vm_image(api, properties):
     presentation.links['build artifacts'] = '{}/{}/{}'.format(
         _GS_BROWSER_PREFIX, properties.build_gs_bucket,
         properties.build_gs_path)
-    api.build_parallels_image.provision('gs://{}/{}'.format(
+    # In case the following provisioning or image build operation fails,
+    # leave the DUT marked as needing repair. If the operation succeeded,
+    # we can revert it to being ready.
+    api.phosphorus.build_parallels_image_save(_DUT_STATE_NEEDS_REPAIR)
+    api.phosphorus.build_parallels_image_provision('gs://{}/{}'.format(
         properties.build_gs_bucket, properties.build_gs_path))
 
   image_dir = api.path.mkdtemp(prefix='parallels-image')
@@ -142,6 +148,10 @@ def build_vm_image(api, properties):
     presentation.links['uploaded image'] = '{}/{}/{}'.format(
         _GS_BROWSER_PREFIX, properties.test_image_gs_bucket, upload_path)
 
+  with api.step.nest('mark DUT ready') as presentation:
+    # Image build succeeded, so mark the DUT as still being in a good state.
+    api.phosphorus.build_parallels_image_save(_DUT_STATE_READY)
+
   with api.step.nest('compute image size and sha256') as presentation:
     sha256 = api.easy.stdout_step(
         'get file sha256 hash', ['sha256sum', image_path],
@@ -181,7 +191,7 @@ def invoke_tast(api, test_artifacts_dir, build_gs_bucket, build_gs_path,
   with api.step.nest('invoke tast') as presentation:
     tast_results_dir = api.path.mkdtemp(prefix='tast-results')
     tests = api.tast_exec.run_direct(
-        api.build_parallels_image.dut_name, [_TAST_NAME], test_artifacts_dir,
+        api.phosphorus.read_dut_hostname(), [_TAST_NAME], test_artifacts_dir,
         build_gs_bucket, build_gs_path, tast_results_dir,
         run_args=['-var=pita.windowsLicensed=true'])
 
@@ -240,7 +250,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'no-build_gs_bucket',
       api.properties(**props),
-      api.build_parallels_image.environment(),
+      api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
       api.post_check(post_process.StatusAnyFailure),
       api.expect_exception('ValueError'),
@@ -251,7 +261,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'no-build_gs_path',
       api.properties(**props),
-      api.build_parallels_image.environment(),
+      api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
       api.post_check(post_process.StatusAnyFailure),
       api.expect_exception('ValueError'),
@@ -262,7 +272,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'no-test_image_gs_bucket',
       api.properties(**props),
-      api.build_parallels_image.environment(),
+      api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
       api.post_check(post_process.StatusAnyFailure),
       api.expect_exception('ValueError'),
@@ -273,7 +283,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'no-test_image_gs_path',
       api.properties(**props),
-      api.build_parallels_image.environment(),
+      api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
       api.post_check(post_process.StatusAnyFailure),
       api.expect_exception('ValueError'),
@@ -284,7 +294,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'no-parallels_version',
       api.properties(**props),
-      api.build_parallels_image.environment(),
+      api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
       api.post_check(post_process.StatusAnyFailure),
       api.expect_exception('ValueError'),
@@ -323,7 +333,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'tast-failure',
       api.properties(**good_props),
-      api.build_parallels_image.environment(),
+      api.phosphorus.properties(),
       api.post_check(post_process.MustRun, 'provision DUT'),
       api.step_data('invoke tast.process tast output.read results.json',
                     api.file.read_json(failureJson)),
@@ -359,7 +369,7 @@ def GenTests(api):
   # Tast appears to succeed, but not VM image was produced.
   yield api.build_menu.test(
       'tast-no-image', api.properties(**good_props),
-      api.build_parallels_image.environment(),
+      api.phosphorus.properties(),
       api.post_check(post_process.MustRun, 'provision DUT'),
       api.step_data('invoke tast.process tast output.read results.json',
                     api.file.read_json(successJson)),
@@ -369,8 +379,7 @@ def GenTests(api):
 
   # Success
   yield api.build_menu.test(
-      'success', api.properties(**good_props),
-      api.build_parallels_image.environment(),
+      'success', api.properties(**good_props), api.phosphorus.properties(),
       api.step_data('invoke tast.process tast output.read results.json',
                     api.file.read_json(successJson)),
       api.post_check(post_process.MustRun, 'provision DUT'),
@@ -382,5 +391,5 @@ def GenTests(api):
   props = good_props.copy()
   props['test_mode'] = True
   yield api.build_menu.test('testmode', api.properties(**props),
-                            api.build_parallels_image.environment(),
+                            api.phosphorus.properties(),
                             api.post_check(post_process.StatusSuccess))

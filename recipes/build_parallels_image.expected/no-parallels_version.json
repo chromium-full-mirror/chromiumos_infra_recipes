@@ -36,7 +36,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/build_parallels_image.py\", line 65, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/build_parallels_image.py\", line 67, in RunSteps",
       "    raise ValueError('must set parallels_version')",
       "ValueError: must set parallels_version"
     ]
