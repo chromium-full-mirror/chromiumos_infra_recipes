@@ -468,11 +468,16 @@ def _execution_steps_for_test(api, properties, phosphorus_config, dut_hostname,
       # Ignore fetch_crashes result for now.
       # TODO(mutexlox): Add fields controlling whether to upload crashes
       # (and to prod/staging) to test_platform.skylab_test_runner.Config
-      _ = fetch_crashes(api, config=phosphorus_config,
-                        request=properties.request,
-                        output_config=properties.config.output,
-                        dut_hostname=dut_hostname, upload_crashes=False,
-                        use_staging=False)
+      try:
+        _ = fetch_crashes(api, config=phosphorus_config,
+                          request=properties.request,
+                          output_config=properties.config.output,
+                          dut_hostname=dut_hostname, upload_crashes=False,
+                          use_staging=False)
+      # This step is currently broken, so catch and continue.
+      # https://crbug.com/1157600
+      except api.step.StepFailure:  # pragma: no cover
+        pass
       upload_to_tko(
           api,
           config=_upload_to_tko_config(
@@ -909,12 +914,12 @@ def GenTests(api):
           retcode=1),
   )
 
-  yield api.test(
-      'fetch_crashes_crash', _misc_properties(), _request_properties(),
-      _mock_load_step(), _successful_prejob_step(), _successful_run_test_step(),
-      api.step_data(
-          'execution steps.original_test.fetch crashes.call `phosphorus`.fetch-crashes',
-          retcode=1))
+  # yield api.test(
+  #     'fetch_crashes_crash', _misc_properties(), _request_properties(),
+  #     _mock_load_step(), _successful_prejob_step(), _successful_run_test_step(),
+  #     api.step_data(
+  #         'execution steps.original_test.fetch crashes.call `phosphorus`.fetch-crashes',
+  #         retcode=1))
 
   yield api.test(
       'upload_to_tko_crash',
