@@ -136,7 +136,7 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
 
   if not _should_upload(build, result_pattern, suite):
     # No need to upload current folder, return.
-    return
+    return []
 
   parent_job_id = str(keyval['parent_job_id'])
 
