@@ -578,6 +578,23 @@ class RepoApi(recipe_api.RecipeApi):
     with self.m.step.nest('ensure synced checkout'):
       self.m.file.ensure_directory('ensure root path', root_path)
       with self.m.context(cwd=root_path, infra_steps=True):
+        init_opts = dict(init_opts or {}, projects=projects)
+        sync_opts = dict(sync_opts or {}, projects=projects)
+        manifest_name = init_opts.get('manifest_name')
+        # The same value must be passed in both sets of options.
+        assert manifest_name == sync_opts.get('manifest_name')
+        if manifest_name:
+          # Our API calls for manifest_name to be a Path, and the underlying
+          # routines need manifest_name to be a string, giving the name of the
+          # manifest relative to .repo/manifests. It must be inside of the
+          # root_path.
+          assert isinstance(manifest_name, Path)
+          assert root_path.is_parent_of(manifest_name)
+          init_opts['manifest_name'] = self.m.path.relpath(
+              manifest_name, root_path.join('.repo/manifests'))
+          sync_opts['manifest_name'] = self.m.path.relpath(
+              manifest_name, root_path.join('.repo/manifests'))
+
         for retries in range(2):
           try:
             # Remove .repo/manifests and .repo/manifests.git to avoid potential
@@ -586,20 +603,6 @@ class RepoApi(recipe_api.RecipeApi):
               self.m.file.rmtree('remove .repo/%s' % manifest_dir,
                                  root_path.join('.repo', manifest_dir))
 
-            init_opts = dict(init_opts or {}, projects=projects)
-            sync_opts = dict(sync_opts or {}, projects=projects)
-            manifest_name = init_opts.get('manifest_name')
-            # The same value must be passed in both sets of options.
-            assert manifest_name == sync_opts.get('manifest_name')
-            if manifest_name:
-              # The path must be relative to .repo/manifests, and must be inside
-              # of the root_path.
-              assert isinstance(manifest_name, Path)
-              assert root_path.is_parent_of(manifest_name)
-              init_opts['manifest_name'] = self.m.path.relpath(
-                  manifest_name, root_path.join('.repo/manifests'))
-              sync_opts['manifest_name'] = self.m.path.relpath(
-                  manifest_name, root_path.join('.repo/manifests'))
             self.init(manifest_url, **init_opts)
             self._git_clean_checkout(root_path, projects)
             self.sync(**sync_opts)

@@ -90,3 +90,25 @@ def GenTests(api):
                   manifest_name='snapshot.xml', no_tags=True,
                   optimized_fetch=True, cache_dir='/tmp/cache', retry_fetches=8,
                   verbose=True, no_manifest_update=True))))
+
+  yield api.test(
+      'with-retry',
+      api.properties(
+          ImageBuilderProperties(
+              projects=['chromiumos/config', 'chromeos/project/puff/duffy'],
+              init_opts=common.InitOpts(
+                  manifest_branch='mybranch',
+                  manifest_name='snapshot.xml',
+                  reference='/preload/chromeos',
+                  groups=['group1', 'group2'],
+                  depth=10,
+                  repo_url='http://repo_url',
+                  repo_branch='next',
+                  local_manifest=local_manifest,
+                  verbose=True,
+              ), sync_opts=common.SyncOpts(
+                  force_sync=True, detach=True, current_branch=True, jobs=99,
+                  manifest_name='snapshot.xml', no_tags=True,
+                  optimized_fetch=True, cache_dir='/tmp/cache', retry_fetches=8,
+                  verbose=True, no_manifest_update=True))),
+      api.step_data('ensure synced checkout.repo sync', retcode=1))
