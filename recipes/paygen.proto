@@ -6,9 +6,32 @@ syntax = "proto3";
 
 package recipes.chromeos.paygen;
 
+import "recipes/chromeos/paygen_orchestrator.proto";
+
 import "chromite/api/payload.proto";
+
+message AutoupdateTestConfig {
+  // The source image version (e.g. '13373.0.0'). Required if generating a full
+  // payload. Required to be empty if generating a delta payload.
+  string src_version = 1;
+
+  // The channel of the target payload (e.g. 'canary-channel'). Required if
+  // generating a full payload. Required to be empty if generating a delta
+  // payload.
+  string src_channel = 2;
+
+  // The delta types to generate for.
+  paygen_orchestrator.PaygenOrchestratorProperties.DeltaType delta_type = 3;
+
+  // A list of models that this config should run against. None indicates it can
+  // run on any build_target.
+  repeated string applicable_models = 4;
+}
 
 message PaygenProperties {
   // The paygen definition as destined for the build api.
   chromite.api.GenerationRequest request = 1;
+
+  // Which autoupdate tests to run with the generated payload.
+  repeated AutoupdateTestConfig autoupdate_test_configs = 2;
 }
