@@ -35,6 +35,10 @@ def RunSteps(api, properties):
     with api.step.nest('update bot policies') as pres:
       updated_bot_policy = api.bot_scaling.update_bot_policy_limits(
           bot_policy_config, gce_config)
+      reduced_bot_policy = api.bot_scaling.reduce_bot_policy_config_for_table(
+          updated_bot_policy)
+      api.easy.set_properties_step(
+          bot_policy_config=jsonpb.MessageToDict(reduced_bot_policy))
       pres.logs['bot_policy_config'] = jsonpb.MessageToJson(updated_bot_policy)
     with api.step.nest('get current swarming stats') as pres:
       swarming_status = api.bot_scaling.get_swarming_stats(bot_policy_config)

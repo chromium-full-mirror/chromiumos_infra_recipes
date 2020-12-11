@@ -51,6 +51,7 @@
           ]
         }
       ],
+      "policyMode": 2,
       "swarmingInstance": "chromeos-swarming.appspot.com",
       "application": "chromeos"
     }

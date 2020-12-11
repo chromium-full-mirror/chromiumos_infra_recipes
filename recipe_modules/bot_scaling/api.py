@@ -5,7 +5,7 @@
 # found in the LICENSE file.
 from collections import namedtuple
 
-from PB.chromiumos.bot_scaling import ApplicationUtilization, BotPolicy, ResourceUtilization, RoboCropAction, ScalingAction
+from PB.chromiumos.bot_scaling import ApplicationUtilization, BotPolicy, ReducedBotPolicyCfg, ResourceUtilization, RoboCropAction, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
@@ -14,6 +14,7 @@ from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
 import itertools
+import json
 
 TASK_STATES = ['RUNNING', 'PENDING']
 EXECUTION_HOUR_PERCENTILE = .16
@@ -247,6 +248,30 @@ class BotScalingApi(recipe_api.RecipeApi):
       if policy.policy_mode == BotPolicy.MONITORED:
         policy.scaling_restriction.bot_floor = policy.scaling_restriction.min_idle
     return bot_policy_config
+
+  def reduce_bot_policy_config_for_table(self, bot_policy_config):
+    """ Reduces bot_policy_config fields prior to sending to bb tables.
+
+    Args:
+      bot_policy_config(BotPolicyCfg): Config define Policy for
+        the RoboCrop.
+
+    Returns:
+      str, scaled down config that only includes data needed
+      for plx
+    """
+    config = jsonpb.MessageToDict(bot_policy_config)
+
+    # Create necessary fields to populate
+    reduced_config = []
+
+    # Loop though bot policies and grab important fields for bb tables
+    for policy in config['botPolicies']:
+      bot_policy = {}
+      bot_policy['bot_group'] = str(policy['botGroup'])
+      bot_policy['policy_mode'] = policy['policyMode']
+      reduced_config.append(bot_policy)
+    return ReducedBotPolicyCfg(bot_policies=reduced_config)
 
   def update_gce_configs(self, robocrop_actions, configs):
     """Updates each GCE Provider config that is actionable.

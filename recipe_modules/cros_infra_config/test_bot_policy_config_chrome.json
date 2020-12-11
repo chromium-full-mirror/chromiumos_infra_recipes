@@ -27,7 +27,7 @@
 					]
 				}
 			],
-			"policyMode": "CONFIGURED",
+			"policyMode": 2,
 			"lookbackHours": -1,
 			"scalingMode": "DEMAND",
 			"swarmingInstance": "chromium-swarm.appspot.com",

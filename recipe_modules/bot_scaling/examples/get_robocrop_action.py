@@ -21,7 +21,7 @@ def RunSteps(api):
       bot_policy_config, api.bot_scaling.test_api.gce_provider_config(),
       swarming_stats=swarming_stats)
   for action in robocrop_swarming_action.scaling_actions:
-    api.assertions.assertEqual(action.actionable, ScalingAction.NO)
+    api.assertions.assertEqual(action.actionable, ScalingAction.YES)
 
 
 def GenTests(api):
