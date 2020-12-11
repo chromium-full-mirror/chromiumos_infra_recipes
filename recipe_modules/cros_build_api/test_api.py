@@ -260,7 +260,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def payload_service_responses(self):
     """Generate responses for PayloadService."""
     responses = {}
-    responses['GeneratePayload'] = jsonify(success=True)
+    remote_uri = ('gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
+                  'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc')
+    responses['GeneratePayload'] = jsonify(
+        success=True, local_path='/tmp/aohiwdadoi/delta.bin',
+        remote_uri=remote_uri)
     return responses
 
   @property
@@ -389,22 +393,28 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
 
     return responses_by_service[service][method]
 
-  def set_api_return(self, step, endpoint, data='', iteration=1, retcode=0):
+  def set_api_return(self, parent_step_name, endpoint='', data='', iteration=1,
+                     retcode=0, step_name=''):
     """Set the return from a Build API call.
 
     Args:
-      step (str): Name of the step, such as 'prepare artifacts'.
-      endpoint (str): Endpoint name, such as 'ImageService/Create'
+      parent_step_name (str): Name of the parent step, such as
+        'prepare artifacts'.
+      endpoint (str): Endpoint name, such as 'ImageService/Create'. Used to
+        generate a step name.
       data (str): Build API response to return (JSON string).
       iteration (int): Which call this applies to for this step/endpoint.
       retcode (int): Return code for the Build API call.
+      step_name (str): Name of the step given to the Build API call. If provided
+        overrides the automatically generated name using the endpoint name.
 
     Returns:
       Step_data for the test.
     """
     # Calls after the first one have the iteration number appended.
-    endpoint = endpoint if iteration == 1 else '%s (%d)' % (endpoint, iteration)
+    step_name = step_name or 'call chromite.api.%s' % endpoint
+    iteration = '' if iteration == 1 else ' (%s)'
     substep = ('call build API script' if retcode else 'read output file')
     return self.step_data(
-        '%s.call chromite.api.%s.%s' % (step, endpoint, substep),
+        '%s.%s%s.%s' % (parent_step_name, step_name, iteration, substep),
         self.m.file.read_raw(content=data), retcode=retcode)
