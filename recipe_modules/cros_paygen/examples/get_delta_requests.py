@@ -33,7 +33,7 @@ def RunSteps(api, properties):
     tgts = properties.dlc_tgts
 
   reqs = api.cros_paygen.get_delta_requests(payload_cfg, srcs, tgts, 'b', True,
-                                            'mp-v2', True)
+                                            'mp-v2', False)
 
   api.assertions.assertEqual(len(properties.expected_reqs), len(reqs))
   for x, y in zip(properties.expected_reqs, reqs):
@@ -42,7 +42,7 @@ def RunSteps(api, properties):
   # Show that if generate_delta is false, there are no full deltas.
   payload_cfg['generate_delta'] = False
   no_reqs = api.cros_paygen.get_delta_requests(payload_cfg, srcs, tgts, 'b',
-                                               True, 'mp-v2', True)
+                                               True, 'mp-v2', False)
   api.assertions.assertEqual([], no_reqs)
 
 

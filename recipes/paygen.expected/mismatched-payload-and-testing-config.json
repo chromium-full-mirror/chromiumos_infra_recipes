@@ -854,7 +854,34 @@
     "name": "doing paygen.making single payload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"verify\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"srcUnsignedImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"version\": \"13425.90.0\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"channel\": \"stable\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"imageType\": \"TEST\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"milestone\": \"86\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"tgtUnsignedImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"version\": \"13425.90.0\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"channel\": \"stable\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"imageType\": \"TEST\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"milestone\": \"86\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"remote_uri\": \"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\", \"local_path\": \"/tmp/aohiwdadoi/delta.bin\", \"success\": true}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -868,14 +895,41 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{}",
+      "{\n  \"verify\": true, \n  \"bucket\": \"b\", \n  \"srcUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      }, \n      \"version\": \"13425.90.0\", \n      \"bucket\": \"b\", \n      \"channel\": \"stable\"\n    }, \n    \"imageType\": \"TEST\", \n    \"milestone\": \"86\"\n  }, \n  \"tgtUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      }, \n      \"version\": \"13425.90.0\", \n      \"bucket\": \"b\", \n      \"channel\": \"stable\"\n    }, \n    \"imageType\": \"TEST\", \n    \"milestone\": \"86\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
     "name": "doing paygen.making single payload.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"verify\": true, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"srcUnsignedImage\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"build\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"version\": \"13425.90.0\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"channel\": \"stable\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"imageType\": \"TEST\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"milestone\": \"86\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"tgtUnsignedImage\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"build\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"version\": \"13425.90.0\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"channel\": \"stable\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"imageType\": \"TEST\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"milestone\": \"86\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
   },
@@ -929,6 +983,13 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "testing paygen",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -1131,6 +1192,103 @@
   },
   {
     "cmd": [],
+    "name": "clean up SDK chroot.Invalidating SDK due to dirty state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SdkService/Delete"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[START_DIR]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1193,6 +1351,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "source version and channel must be specified for FullPayload AU tests"
+    },
     "name": "$result"
   }
 ]

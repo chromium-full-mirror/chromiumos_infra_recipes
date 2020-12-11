@@ -18,7 +18,7 @@ PROPERTIES = GetRequestTestInputProperties
 
 def RunSteps(api, properties):
   reqs = api.cros_paygen.get_n2n_requests(properties.unsigned_tgts, 'b', True,
-                                          True)
+                                          False)
   for x, y in zip(properties.expected_reqs, reqs):
     api.assertions.assertEqual(x, y)
 

@@ -118,7 +118,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           bucket='b',
           verify=True,
           keyset='mp-v2',
-          dryrun=True,
+          dryrun=False,
       )
   ]
 
@@ -129,7 +129,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           bucket='b',
           verify=True,
           keyset='mp-v2',
-          dryrun=True,
+          dryrun=False,
       )
   ]
 
@@ -140,7 +140,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           bucket='b',
           verify=True,
           keyset='',
-          dryrun=True,
+          dryrun=False,
       )
   ]
 
@@ -184,7 +184,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           bucket='b',
           verify=True,
           keyset='',
-          dryrun=True,
+          dryrun=False,
       )
   ]
 
