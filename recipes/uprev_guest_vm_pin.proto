@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipes.chromeos.uprev_guest_vm_pin;
 
+import "chromiumos/builder_config.proto";
+
 message UprevGuestVmPinProperties {
   // Path to the version file to update.
   // Required
@@ -24,6 +26,9 @@ message UprevGuestVmPinProperties {
   // are in the format expected by `gsutil acl`. e.g
   // username@google.com:OWNER
   repeated string group_acls = 4;
+
+  // Which builder to source images from.
+  chromiumos.BuilderConfig.Id.Type builder_type = 5;
 }
 
 message VmBoardImage {

@@ -459,11 +459,11 @@
   },
   {
     "cmd": [],
-    "name": "get latest postsubmit build version"
+    "name": "get latest build version"
   },
   {
     "cmd": [],
-    "name": "get latest postsubmit build version.query-tatl",
+    "name": "get latest build version.query-tatl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -477,18 +477,18 @@
       "-json",
       "-nopage",
       "-n",
-      "4",
+      "1000",
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tatl-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tatl-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-30T12:00:00Z\"}, \"status\": \"SUCCESS\"}"
     ],
     "infra_step": true,
-    "name": "get latest postsubmit build version.query-tatl.buildbucket.search",
+    "name": "get latest build version.query-tatl.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}, \"id\": \"1\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}, \"id\": \"2\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/master\"}}, \"id\": \"1\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/master\"}}, \"id\": \"2\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@"
@@ -496,7 +496,7 @@
   },
   {
     "cmd": [],
-    "name": "get latest postsubmit build version.query-tael",
+    "name": "get latest build version.query-tael",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -510,556 +510,21 @@
       "-json",
       "-nopage",
       "-n",
-      "4",
+      "1000",
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tael-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tael-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-30T12:00:00Z\"}, \"status\": \"SUCCESS\"}"
     ],
     "infra_step": true,
-    "name": "get latest postsubmit build version.query-tael.buildbucket.search",
+    "name": "get latest build version.query-tael.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}, \"id\": \"1\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}, \"id\": \"2\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/master\"}}, \"id\": \"1\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/master\"}}, \"id\": \"2\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "try uprev version file"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "80.1.2.9.0",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
-    ],
-    "infra_step": true,
-    "name": "try uprev version file.version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@80.1.2.9.0@@@",
-      "@@@STEP_LOG_END@VERSION-PIN@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "try uprev version file.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit uprev"
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "--show-toplevel"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "infra_step": true,
-    "name": "commit uprev.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "commit uprev.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "start",
-      "uprev-guest-vm",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "commit uprev.repo start",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "infra_step": true,
-    "name": "commit uprev.git add",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "termina-dlc: updating version pin to latest - 80.1.2.9.0",
-      "[CLEANUP]/commit_msg_tmp_1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "infra_step": true,
-    "name": "commit uprev.write commit message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@termina-dlc: updating version pin to latest - 80.1.2.9.0@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "infra_step": true,
-    "name": "commit uprev.git commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "copy images to destination bucket"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "gs://chromeos-image-archive/postsubmit-tatl/R80-1.2.9.0-9.0/image.zip",
-      "./"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "infra_step": true,
-    "name": "copy images to destination bucket.gsutil download",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_1/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_1/image\", \"safe_mode\": true}",
-      "--json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "name": "copy images to destination bucket.unzip image archive",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "name": "copy images to destination bucket.archive base guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-base\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "name": "copy images to destination bucket.archive test guest VM",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-test\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "*.tbz",
-      "gs://termina-component-testing/uprev-test/amd64/80.1.2.9.0/"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_1",
-    "infra_step": true,
-    "name": "copy images to destination bucket.gsutil upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/80.1.2.9.0/@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "copy images to destination bucket.set image permissions on destination",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "acl",
-      "ch",
-      "-r",
-      "-u",
-      "tony.stark@google.com:OWNER",
-      "-u",
-      "bighead@google.com:READ",
-      "-g",
-      "koolkids@google.com:READ",
-      "gs://termina-component-testing/uprev-test/amd64/80.1.2.9.0/"
-    ],
-    "infra_step": true,
-    "name": "copy images to destination bucket.set image permissions on destination.gsutil acl",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "gs://chromeos-image-archive/postsubmit-tael/R80-1.2.9.0-9.0/image.zip",
-      "./"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
-    "infra_step": true,
-    "name": "copy images to destination bucket.gsutil download (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_2/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_2/image\", \"safe_mode\": true}",
-      "--json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
-    "name": "copy images to destination bucket.unzip image archive (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
-    "name": "copy images to destination bucket.archive base guest VM (2)",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
-    "name": "copy images to destination bucket.archive test guest VM (2)",
-    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "*.tbz",
-      "gs://termina-component-testing/uprev-test/arm/80.1.2.9.0/"
-    ],
-    "cwd": "[CLEANUP]/archive-staging_tmp_2",
-    "infra_step": true,
-    "name": "copy images to destination bucket.gsutil upload (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/80.1.2.9.0/@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "copy images to destination bucket.set image permissions on destination (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "acl",
-      "ch",
-      "-r",
-      "-u",
-      "tony.stark@google.com:OWNER",
-      "-u",
-      "bighead@google.com:READ",
-      "-g",
-      "koolkids@google.com:READ",
-      "gs://termina-component-testing/uprev-test/arm/80.1.2.9.0/"
-    ],
-    "infra_step": true,
-    "name": "copy images to destination bucket.set image permissions on destination (2).gsutil acl",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate CL"
-  },
-  {
-    "cmd": [],
-    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--topic",
-      "termina-dlc",
-      "--send-mail"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate CL.set labels on CL 1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "generate CL.set labels on CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "infra_step": true,
-    "name": "generate CL.set labels on CL 1.git rebase",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
-    "infra_step": true,
-    "name": "generate CL.set labels on CL 1.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1086,6 +551,1169 @@
     "name": "clean up overlayfs mounts.unmount overlay workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master"
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.mount overlay chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/upperdir/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.mount overlay chromiumos.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/workdir/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.mount overlay chromiumos.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.mount overlay chromiumos.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
+      "overlay",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.mount overlay chromiumos.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.auto",
+      "0"
+    ],
+    "cwd": "[CLEANUP]",
+    "infra_step": true,
+    "name": "upreving pin for branch master.git config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.packRefs",
+      "false"
+    ],
+    "cwd": "[CLEANUP]",
+    "infra_step": true,
+    "name": "upreving pin for branch master.git config (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.ensure synced checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.ensure synced checkout.ensure root path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CACHE]/chromiumos/.repo/manifests"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "upreving pin for branch master.ensure synced checkout.remove .repo/manifests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CACHE]/chromiumos/.repo/manifests.git"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "upreving pin for branch master.ensure synced checkout.remove .repo/manifests.git",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--groups",
+      "all",
+      "--verbose"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.ensure synced checkout.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "upreving pin for branch master.ensure synced checkout.clear repo locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.ensure synced checkout.clear git locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.ensure synced checkout.ensure clean checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "clean",
+      "-d",
+      "-f"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.ensure synced checkout.ensure clean checkout.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "8",
+      "--no-tags",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8",
+      "--verbose"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.ensure synced checkout.repo sync",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "name": "upreving pin for branch master.sync chromeos/manifest-internal branches",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.mount overlay workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/upperdir/workspace"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.mount overlay workspace.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/workdir/workspace"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.mount overlay workspace.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.mount overlay workspace.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "overlay",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.mount overlay workspace.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.checkout branch master",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.checkout branch master.set manifest_branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"master\"@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--groups",
+      "all",
+      "--manifest-branch",
+      "master",
+      "--verbose"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.checkout branch master.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "upreving pin for branch master.checkout branch master.clear repo locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.checkout branch master.clear git locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--jobs",
+      "8",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8",
+      "--verbose"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.checkout branch master.repo sync",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.checkout branch master.ensure manifest is pinned",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@pinned-manifest.xml@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.checkout branch master.ensure manifest is pinned.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.checkout branch master.ensure manifest is pinned.repo manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.try uprev version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "80.1.2.9.0",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.try uprev version file.version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@80.1.2.9.0@@@",
+      "@@@STEP_LOG_END@VERSION-PIN@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.try uprev version file.diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.commit uprev",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "infra_step": true,
+    "name": "upreving pin for branch master.commit uprev.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.commit uprev.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "uprev-guest-vm-master",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.commit uprev.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "infra_step": true,
+    "name": "upreving pin for branch master.commit uprev.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "termina-dlc: updating version pin to latest - 80.1.2.9.0\n\nCL generated by job https://cr-buildbucket.appspot.com/build/0",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "infra_step": true,
+    "name": "upreving pin for branch master.commit uprev.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@termina-dlc: updating version pin to latest - 80.1.2.9.0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@CL generated by job https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "infra_step": true,
+    "name": "upreving pin for branch master.commit uprev.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.copy images to destination bucket",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/postsubmit-tatl/R80-1.2.9.0-9.0/image.zip",
+      "./"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
+    "infra_step": true,
+    "name": "upreving pin for branch master.copy images to destination bucket.gsutil download",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
+      "--json-input",
+      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_1/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_1/image\", \"safe_mode\": true}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
+    "name": "upreving pin for branch master.copy images to destination bucket.unzip image archive",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
+    "name": "upreving pin for branch master.copy images to destination bucket.archive base guest VM",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-base\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
+    "name": "upreving pin for branch master.copy images to destination bucket.archive test guest VM",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_1/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_1/image/guest-vm-test\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "*.tbz",
+      "gs://termina-component-testing/uprev-test/amd64/80.1.2.9.0/"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_1",
+    "infra_step": true,
+    "name": "upreving pin for branch master.copy images to destination bucket.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/80.1.2.9.0/@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.copy images to destination bucket.set image permissions on destination for tatl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "acl",
+      "ch",
+      "-r",
+      "-u",
+      "tony.stark@google.com:OWNER",
+      "-u",
+      "bighead@google.com:READ",
+      "-g",
+      "koolkids@google.com:READ",
+      "gs://termina-component-testing/uprev-test/amd64/80.1.2.9.0/"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.copy images to destination bucket.set image permissions on destination for tatl.gsutil acl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/postsubmit-tael/R80-1.2.9.0-9.0/image.zip",
+      "./"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "infra_step": true,
+    "name": "upreving pin for branch master.copy images to destination bucket.gsutil download (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
+      "--json-input",
+      "{\"archive_file\": \"[CLEANUP]/archive-staging_tmp_2/image.zip\", \"include_files\": [], \"output\": \"[CLEANUP]/archive-staging_tmp_2/image\", \"safe_mode\": true}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "name": "upreving pin for branch master.copy images to destination bucket.unzip image archive (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "name": "upreving pin for branch master.copy images to destination bucket.archive base guest VM (2)",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-base.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-base\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/archive.py"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "name": "upreving pin for branch master.copy images to destination bucket.archive test guest VM (2)",
+    "stdin": "{\"archive_type\": \"tbz\", \"entries\": [{\"path\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\", \"type\": \"dir\"}], \"output\": \"[CLEANUP]/archive-staging_tmp_2/guest-vm-test.tbz\", \"root\": \"[CLEANUP]/archive-staging_tmp_2/image/guest-vm-test\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "*.tbz",
+      "gs://termina-component-testing/uprev-test/arm/80.1.2.9.0/"
+    ],
+    "cwd": "[CLEANUP]/archive-staging_tmp_2",
+    "infra_step": true,
+    "name": "upreving pin for branch master.copy images to destination bucket.gsutil upload (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/80.1.2.9.0/@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.copy images to destination bucket.set image permissions on destination for tael",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "acl",
+      "ch",
+      "-r",
+      "-u",
+      "tony.stark@google.com:OWNER",
+      "-u",
+      "bighead@google.com:READ",
+      "-g",
+      "koolkids@google.com:READ",
+      "gs://termina-component-testing/uprev-test/arm/80.1.2.9.0/"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.copy images to destination bucket.set image permissions on destination for tael.gsutil acl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.generate CL",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--topic",
+      "termina-dlc",
+      "--send-mail"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "upreving pin for branch master.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "upreving pin for branch master.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.generate CL.set labels on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch master.generate CL.set labels on CL 1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "infra_step": true,
+    "name": "upreving pin for branch master.generate CL.set labels on CL 1.git rebase",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "infra_step": true,
+    "name": "upreving pin for branch master.generate CL.set labels on CL 1.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.clean up overlayfs mounts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.clean up overlayfs mounts.unmount overlay chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "upreving pin for branch master.clean up overlayfs mounts.unmount overlay workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

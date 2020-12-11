@@ -16,14 +16,14 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 222, in RunSteps",
       "    _validate_properties(properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 94, in _validate_properties",
-      "    raise ValueError('must set version_file')",
-      "ValueError: must set version_file"
+      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 100, in _validate_properties",
+      "    raise ValueError('unknown builder_type: ' + str(properties.builder_type))",
+      "ValueError: unknown builder_type: 123"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('must set version_file',)"
+      "humanReason": "Uncaught Exception: ValueError('unknown builder_type: 123',)"
     },
     "name": "$result"
   }
