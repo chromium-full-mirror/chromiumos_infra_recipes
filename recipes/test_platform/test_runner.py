@@ -478,6 +478,7 @@ def _execution_steps_for_test(api, properties, phosphorus_config, dut_hostname,
       # https://crbug.com/1157600
       except api.step.StepFailure:  # pragma: no cover
         pass
+
       upload_to_tko(
           api,
           config=_upload_to_tko_config(
@@ -486,7 +487,6 @@ def _execution_steps_for_test(api, properties, phosphorus_config, dut_hostname,
               run_test_response,
           ),
       )
-
       result = get_results(api, load_response.results_dir)
       dut_state = result.state_update.dut_state
     else:
@@ -501,11 +501,7 @@ def _execution_steps_for_test(api, properties, phosphorus_config, dut_hostname,
         gs_dir=logs_gs_dir,
         result=result,
     )
-    try:
-      api.cts_results_archive.archive(load_response.results_dir)
-    except (api.step.StepFailure, api.step.InfraFailure):  # pragma: no cover
-      # TODO(crbug.com/1154873) Stabilize step and mark critical.
-      pass
+    api.cts_results_archive.archive(load_response.results_dir)
 
     with api.step.nest('save local DUT state'):
       api.phosphorus.save_and_seal_skylab_local_state(dut_state)
