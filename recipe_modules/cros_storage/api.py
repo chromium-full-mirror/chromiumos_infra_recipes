@@ -377,7 +377,7 @@ class FullPayload(Payload):
                           r'(?P<signed_ext>(.+)?)')
 
   @classmethod
-  def parse_uri(cls, uri):
+  def parse_uri(cls, uri, milestone=None):
     """Construct a FullPayload from a provided uri, or return None."""
     ar = ArtifactRoot.parse_uri(uri)
     if not ar:
@@ -391,7 +391,7 @@ class FullPayload(Payload):
                               key=values['key'])
     elif values['signed_ext'] == '':
       tgt_image = UnsignedImage(ar, image_type=ImageType.Value('TEST'),
-                                milestone=None)
+                                milestone=milestone)
     # Filter out .json and .log files.
     else:
       return None
@@ -439,7 +439,7 @@ class DeltaPayload(Payload):
                            r'(?P<signed_ext>(.+)?)')
 
   @classmethod
-  def parse_uri(cls, uri):
+  def parse_uri(cls, uri, milestone=None):
     """Construct a DeltaPayload from a provided uri, or return None."""
     tgt_ar = ArtifactRoot.parse_uri(uri)
     if not tgt_ar:
@@ -459,9 +459,9 @@ class DeltaPayload(Payload):
                               key=values['key'])
     elif values['signed_ext'] == '':
       tgt_image = UnsignedImage(tgt_ar, image_type=ImageType.Value('TEST'),
-                                milestone=None)
+                                milestone=milestone)
       src_image = UnsignedImage(src_ar, image_type=ImageType.Value('TEST'),
-                                milestone=None)
+                                milestone=milestone)
     # Filter out .json and .log files.
     else:
       return None
