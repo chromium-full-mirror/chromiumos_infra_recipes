@@ -413,7 +413,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     """
     # Calls after the first one have the iteration number appended.
     step_name = step_name or 'call chromite.api.%s' % endpoint
-    iteration = '' if iteration == 1 else ' (%s)'
+    iteration = '' if iteration == 1 else ' (%d)' % iteration
     substep = ('call build API script' if retcode else 'read output file')
     return self.step_data(
         '%s.%s%s.%s' % (parent_step_name, step_name, iteration, substep),
