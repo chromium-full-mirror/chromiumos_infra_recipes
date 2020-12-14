@@ -304,7 +304,8 @@ class CrosBuildApiApi(RecipeApi):
 
       # Write the input proto JSON to a temp file (which is how it's passed to
       # the build API) and record it to the step logs for debugging.
-      input_json = json_format.MessageToJson(input_proto)
+      input_json = json_format.MessageToJson(input_proto,
+                                             use_integers_for_enums=True)
       self.m.file.write_raw('write input file', input_path, input_json)
       presentation.logs['request'] = [input_json]
       presentation.logs['response'] = ['{}']

@@ -1050,7 +1050,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"overlayType\": \"OVERLAYTYPE_BOTH\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"}]}@@@",
@@ -1065,7 +1065,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"overlayType\": \"OVERLAYTYPE_BOTH\"\n}",
+      "{\n  \"overlayType\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1074,7 +1074,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"overlayType\": \"OVERLAYTYPE_BOTH\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -2481,7 +2481,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"overlayType\": \"OVERLAYTYPE_BOTH\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"}]}@@@",
@@ -2496,7 +2496,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"overlayType\": \"OVERLAYTYPE_BOTH\"\n}",
+      "{\n  \"overlayType\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2505,7 +2505,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"overlayType\": \"OVERLAYTYPE_BOTH\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -4761,7 +4761,7 @@
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"gomaConfig\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"gomaDir\": \"[START_DIR]/cipd/goma\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"gomaApproach\": \"DEFAULT\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"gomaApproach\": 1, @@@",
       "@@@STEP_LOG_LINE@request@    \"logDir\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
@@ -4795,7 +4795,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    }\n  ], \n  \"flags\": {\n    \"useGoma\": true\n  }, \n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\", \n    \"gomaApproach\": \"DEFAULT\", \n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    }, \n    \"statsFile\": \"stats.binaryproto\", \n    \"counterzFile\": \"counterz.binaryproto\", \n    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\"\n  }, \n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\", \n      \"packageName\": \"autotest-all\"\n    }\n  ], \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }, \n    \"path\": \"/build/amd64-generic\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    }\n  ], \n  \"flags\": {\n    \"useGoma\": true\n  }, \n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\", \n    \"gomaApproach\": 1, \n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    }, \n    \"statsFile\": \"stats.binaryproto\", \n    \"counterzFile\": \"counterz.binaryproto\", \n    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\"\n  }, \n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\", \n      \"packageName\": \"autotest-all\"\n    }\n  ], \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }, \n    \"path\": \"/build/amd64-generic\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4818,7 +4818,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"gomaConfig\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"gomaDir\": \"[START_DIR]/cipd/goma\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"gomaApproach\": \"DEFAULT\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"gomaApproach\": 1, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"logDir\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
@@ -4990,7 +4990,7 @@
     "name": "run autotest vm tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"testHarness\": \"AUTOTEST\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"testHarness\": 2, @@@",
       "@@@STEP_LOG_LINE@request@  \"vmTests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"pattern\": \"example.Pass\"@@@",
@@ -4998,7 +4998,7 @@
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"vmPath\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/test-artifacts_tmp_1/image/chromiumos_qemu_image.bin\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
@@ -5010,7 +5010,7 @@
       "@@@STEP_LOG_LINE@request@  \"sshOptions\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"privateKeyPath\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/test-artifacts_tmp_1/image/id_rsa\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -5027,7 +5027,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"testHarness\": \"AUTOTEST\", \n  \"vmTests\": [\n    {\n      \"pattern\": \"example.Pass\"\n    }\n  ], \n  \"vmPath\": {\n    \"path\": \"[CLEANUP]/test-artifacts_tmp_1/image/chromiumos_qemu_image.bin\", \n    \"location\": \"OUTSIDE\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"sshOptions\": {\n    \"privateKeyPath\": {\n      \"path\": \"[CLEANUP]/test-artifacts_tmp_1/image/id_rsa\", \n      \"location\": \"OUTSIDE\"\n    }\n  }\n}",
+      "{\n  \"testHarness\": 2, \n  \"vmTests\": [\n    {\n      \"pattern\": \"example.Pass\"\n    }\n  ], \n  \"vmPath\": {\n    \"path\": \"[CLEANUP]/test-artifacts_tmp_1/image/chromiumos_qemu_image.bin\", \n    \"location\": 2\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"sshOptions\": {\n    \"privateKeyPath\": {\n      \"path\": \"[CLEANUP]/test-artifacts_tmp_1/image/id_rsa\", \n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_19/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -5036,7 +5036,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"testHarness\": \"AUTOTEST\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"testHarness\": 2, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"vmTests\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"pattern\": \"example.Pass\"@@@",
@@ -5044,7 +5044,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"vmPath\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CLEANUP]/test-artifacts_tmp_1/image/chromiumos_qemu_image.bin\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"location\": 2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
@@ -5056,7 +5056,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@  \"sshOptions\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"privateKeyPath\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"[CLEANUP]/test-artifacts_tmp_1/image/id_rsa\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"location\": 2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
