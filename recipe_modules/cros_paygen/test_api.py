@@ -21,6 +21,7 @@ from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 import PB.chromiumos.common as common_pb2
 from PB.chromiumos.common import BuildTarget as BuildTarget_pb2
+from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipe_modules.chromeos.cros_paygen.examples.test import GetRequestTestInputProperties
 
 
@@ -177,7 +178,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
       )
   ]
 
-  EXAMPLE_GEN_REQUEST_N2N = [
+  EXAMPLE_GEN_REQUEST_DELTA_N2N = [
       GenerationRequest_pb2(
           src_unsigned_image=UNSIGNED_TGT,
           tgt_unsigned_image=UNSIGNED_TGT,
@@ -187,6 +188,95 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           dryrun=False,
       )
   ]
+
+  EXAMPLE_GEN_REQUESTS = [
+      EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+      EXAMPLE_GEN_REQUEST_DELTA_SIGNED[0],
+      EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED[0],
+      EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+      EXAMPLE_GEN_REQUEST_FULL_SIGNED[0],
+      EXAMPLE_GEN_REQUEST_FULL_UNSIGNED[0],
+      EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
+  ]
+
+  EXAMPLE_TEST_REQUEST_DELTA_OMAHA = AutoupdateTestConfig(
+      delta_type='OMAHA',
+      applicable_models=[
+          "astronaut",
+          "nasher360",
+          "blue",
+          "bruce",
+          "lava",
+          "whitetip",
+          "santa",
+          "blacktip360",
+          "blacktiplte",
+          "babymega",
+          "robo",
+          "nasher",
+          "blacktip",
+          "robo360",
+          "rabbid",
+          "babytiger",
+          "epaulette",
+      ],
+  )
+
+  EXAMPLE_TEST_REQUEST_DELTA_OMAHA = AutoupdateTestConfig(
+      delta_type='OMAHA',
+      applicable_models=[
+          "astronaut",
+          "nasher360",
+          "blue",
+          "bruce",
+          "lava",
+          "whitetip",
+          "santa",
+          "blacktip360",
+          "blacktiplte",
+          "babymega",
+          "robo",
+          "nasher",
+          "blacktip",
+          "robo360",
+          "rabbid",
+          "babytiger",
+          "epaulette",
+      ],
+  )
+
+  EXAMPLE_TEST_REQUEST_FULL_N2N = AutoupdateTestConfig(
+      src_version=UNSIGNED_TGT.build.version,
+      src_channel=UNSIGNED_TGT.build.channel,
+      delta_type='N2N',
+  )
+
+  EXAMPLE_TEST_REQUEST_FULL_OMAHA = AutoupdateTestConfig(
+      src_version='13421.89.0',
+      src_channel='stable-channel',
+      delta_type='OMAHA',
+      applicable_models=[
+          "astronaut",
+          "nasher360",
+          "blue",
+          "bruce",
+          "lava",
+          "whitetip",
+          "santa",
+          "blacktip360",
+          "blacktiplte",
+          "babymega",
+          "robo",
+          "nasher",
+          "blacktip",
+          "robo360",
+          "rabbid",
+          "babytiger",
+          "epaulette",
+      ],
+  )
+
+  EXAMPLE_TEST_REQUEST_DELTA_N2N = AutoupdateTestConfig(delta_type='N2N')
 
   BASIC_TEST_PROPS = {
       'payload_cfg': EXAMPLE_SINGLE_PAYGEN_CONFIG,

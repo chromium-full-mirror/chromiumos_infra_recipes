@@ -24,7 +24,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import post_process
 
 DEPS = [
-    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -154,19 +153,15 @@ def RunSteps(api, properties):
       pres.step_text = '%s payloads found.' % len(cbr)
 
   # Schedule child builders.
-  br = [
-      api.buildbucket.schedule_request(bucket='packaging', builder='paygen',
-                                       properties={'request': MessageToDict(x)})
-      for x in cbr
-  ]
+  res = api.cros_paygen.run_paygen_builders(
+      cbr, configured_payloads, properties.delta_payload_test_override,
+      properties.full_payload_test_override)
 
-  res = api.buildbucket.run(br, timeout=PAYGEN_CHILDREN_TIMEOUT_SEC,
-                            step_name='running children')
 
   with api.step.nest('results') as pres:
     suc = [x for x in res if x.status == common_pb2.SUCCESS]
     fail = [x for x in res if x.status != common_pb2.SUCCESS]
-    pres.step_text = '%s of %s passed' % (len(suc), len(br))
+    pres.step_text = '%s of %s passed' % (len(suc), (len(suc) + len(fail)))
 
   # Launch AU tests if configured, don't wait for them.
 

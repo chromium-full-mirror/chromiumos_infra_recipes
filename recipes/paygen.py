@@ -113,7 +113,8 @@ def GenTests(api):
   yield api.test(
       'no-testing',
       api.properties(
-          PaygenProperties(request=api.cros_paygen.EXAMPLE_GEN_REQUEST_N2N[0])),
+          PaygenProperties(
+              request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N[0])),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
@@ -123,7 +124,7 @@ def GenTests(api):
       'with-testing',
       api.properties(
           PaygenProperties(
-              request=api.cros_paygen.EXAMPLE_GEN_REQUEST_N2N[0],
+              request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
               autoupdate_test_configs=[
                   AutoupdateTestConfig(
                       src_version='123', src_channel='canary-channel',
@@ -151,7 +152,7 @@ def GenTests(api):
       'mismatched-payload-and-testing-config',
       api.properties(
           PaygenProperties(
-              request=api.cros_paygen.EXAMPLE_GEN_REQUEST_N2N[0],
+              request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
               autoupdate_test_configs=[
                   AutoupdateTestConfig(
                       delta_type=PaygenOrchestratorProperties.OMAHA,

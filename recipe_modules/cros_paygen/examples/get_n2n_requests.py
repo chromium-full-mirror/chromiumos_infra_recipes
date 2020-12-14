@@ -28,6 +28,6 @@ def GenTests(api):
       'basic',
       api.cros_paygen.props(api.properties,
                             GetRequestTestInputProperties.UNSIGNED,
-                            api.cros_paygen.EXAMPLE_GEN_REQUEST_N2N,
+                            api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N,
                             **api.cros_paygen.BASIC_TEST_PROPS),
       api.post_check(post_process.StatusSuccess))

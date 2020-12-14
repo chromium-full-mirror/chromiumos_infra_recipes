@@ -6,9 +6,10 @@
 """API for working with Paygen and its config."""
 
 from google.protobuf import duration_pb2
-from google.protobuf import json_format
-import json
+from google.protobuf.json_format import MessageToDict
+from collections import namedtuple
 from copy import deepcopy
+import json
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 from os import path
@@ -19,6 +20,7 @@ from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 import PB.chromiumos.common as common_pb2
+from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from PB.test_platform.request import Request
 
@@ -30,6 +32,13 @@ PAYGEN_JSON_GS_PATH = 'gs://chromeos-build-release-console/paygen.json'
 
 QS_ACCOUNT = 'legacypool-bvt'
 LABEL_POOL = 'quota'
+
+PAYGEN_CHILDREN_TIMEOUT_SEC = 60 * 60 * 6
+
+CategorizedGenerationRequests = namedtuple('CategorizedGenerationRequests', [
+    'full_test_payload_requests', 'delta_test_payload_requests',
+    'non_test_payload_requests'
+])
 
 
 class PaygenTestConfig(object):
@@ -232,7 +241,7 @@ class PaygenTestConfig(object):
       }
     return {
         request_tag:
-            json_format.MessageToDict(
+            MessageToDict(
                 Request(
                     params=self._get_request_params(model, request_opts),
                     test_plan=self._get_test_plan()))
@@ -522,6 +531,198 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     # this at the moment. We maybe revist this philosophy generally as we
     # approach launching this.
     return reqs
+
+  def run_paygen_builders(
+      self, gen_reqs, configured_payloads,
+      delta_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG,
+      full_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
+    """Launch paygen builders to generate payloads and run configured tests.
+
+    Args:
+      gen_reqs (list[GenerationRequest]): The GenerationRequests for which to
+        find tests and schedule.
+      configured_payloads (list[dict]): Configs for the payloads we are
+        generating and testing.
+      delta_payload_test_override (PayloadTestsOverride): Whether to override
+        the configured delta payload testing policy.
+      full_payload_test_override (PayloadTestsOverride): Whether to override the
+        configured full payload testing policy.
+
+    Returns:
+      A list of completed builds.
+    """
+    sorted_gen_reqs = self._categorize_generation_requests(gen_reqs)
+
+    # Create non-test payload buildbucket requests.
+    cbr = [
+        self._create_bb_schedule_request(x)
+        for x in sorted_gen_reqs.non_test_payload_requests
+    ]
+    # Create full test payload buildbucket requests.
+    cbr.extend(
+        self._schedule_full_test_payloads(
+            sorted_gen_reqs.full_test_payload_requests, configured_payloads,
+            full_payload_test_override))
+    # Create delta test payload buildbucket requests.
+    cbr.extend(
+        self._schedule_delta_test_payloads(
+            sorted_gen_reqs.delta_test_payload_requests, configured_payloads,
+            delta_payload_test_override))
+    # Run the buildbucket requests and return the build results.
+    return self.m.buildbucket.run(cbr, timeout=PAYGEN_CHILDREN_TIMEOUT_SEC,
+                                  step_name='running children')
+
+  def _schedule_delta_test_payloads(
+      self, gen_reqs, configured_payloads,
+      test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
+    """Create bb requests to generate delta test payloads and launch tests.
+
+    Args:
+      gen_reqs (list[GenerationRequest]): The delta test payload
+        GenerationRequests for which to find tests and schedule.
+      configured_payloads (list[dict]): Configs for the payloads we are
+        generating and testing.
+      test_override (PayloadTestsOverride): Whether to override the configured
+        delta payload testing policy.
+
+    Returns:
+      A list[ScheduleBuildRequest] for the delta test payloads.
+    """
+    # If FORCE_NO_TESTS create schedule requests with only GenerationRequests.
+    if (test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS):
+      return [self._create_bb_schedule_request(gen_req) for gen_req in gen_reqs]
+
+    always_test_delta = (
+        test_override == PaygenOrchestratorProperties.FORCE_TESTS)
+
+    schedule_requests = []
+    for gen_req in gen_reqs:
+      test_reqs = []
+      # Get N2N test.
+      if gen_req.tgt_unsigned_image == gen_req.src_unsigned_image:
+        test_reqs.append(
+            AutoupdateTestConfig(delta_type=PaygenOrchestratorProperties.N2N))
+      # Match configs to the given GenerationRequest.
+      cfgs = [
+          cfg for cfg in configured_payloads if
+          (cfg['channel'] == gen_req.tgt_unsigned_image.build.channel and
+           cfg['chrome_os_version'] == gen_req.src_unsigned_image.build.version)
+      ]
+      # Get tests from matched configured payloads.
+      for cfg in cfgs:
+        if cfg['delta_payload_tests'] or always_test_delta:
+          test_reqs.append(
+              AutoupdateTestConfig(
+                  delta_type=PaygenOrchestratorProperties.DeltaType.Value(
+                      cfg['delta_type']),
+                  applicable_models=cfg.get('applicable_models')))
+      schedule_requests.append(
+          self._create_bb_schedule_request(gen_req, test_reqs))
+    return schedule_requests
+
+  def _schedule_full_test_payloads(
+      self, gen_reqs, configured_payloads,
+      test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
+    """Create bb requests to generate full test payloads and launch tests.
+
+    Args:
+      gen_reqs (list[GenerationRequest]): The full test payload
+        GenerationRequests for which to find tests and schedule.
+      configured_payloads (list[dict]): Configs for the payloads we are
+        generating and testing.
+      test_override (PayloadTestsOverride): Whether to override the configured
+        full payload testing policy.
+
+    Returns:
+      A list[ScheduleBuildRequest] for the full test payloads.
+    """
+    # If FORCE_NO_TESTS create schedule requests with only GenerationRequests.
+    if (test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS):
+      return [self._create_bb_schedule_request(gen_req) for gen_req in gen_reqs]
+
+    always_test_full = (
+        test_override == PaygenOrchestratorProperties.FORCE_TESTS)
+
+    schedule_requests = []
+    for gen_req in gen_reqs:
+      test_reqs = []
+      # Get N2N test.
+      test_reqs = [
+          AutoupdateTestConfig(
+              src_version=gen_req.tgt_unsigned_image.build.version,
+              src_channel=gen_req.tgt_unsigned_image.build.channel,
+              delta_type=PaygenOrchestratorProperties.N2N)
+      ]
+      # Match configs to the given GenerationRequest.
+      cfgs = [
+          cfg for cfg in configured_payloads
+          if cfg['channel'] == gen_req.tgt_unsigned_image.build.channel
+      ]
+      # Get tests from matched configured payloads.
+      for cfg in cfgs:
+        if cfg['full_payload_tests'] or always_test_full:
+          test_reqs.append(
+              AutoupdateTestConfig(
+                  src_version=cfg['chrome_os_version'],
+                  src_channel=cfg['channel'] + '-channel',
+                  delta_type=PaygenOrchestratorProperties.DeltaType.Value(
+                      cfg['delta_type']),
+                  applicable_models=cfg.get('applicable_models')))
+      schedule_requests.append(
+          self._create_bb_schedule_request(gen_req, test_reqs))
+    return schedule_requests
+
+  def _categorize_generation_requests(self, gen_reqs):
+    """Categorize the test payloads generation requests.
+
+    Categorizes into three buckets: full test payloads, delta test payloads, and
+    non-test payloads (all others).
+
+    Args:
+      gen_reqs (list[GenerationRequest]): The GenerationRequests to sort.
+
+    Returns:
+      Namedtuple CategorizedGenerationRequests.
+     """
+    full_test_reqs = []
+    delta_test_reqs = []
+    non_test_reqs = []
+
+    for req in gen_reqs:
+      if (req.WhichOneof('src_image_oneof') == 'src_unsigned_image' and
+          req.src_unsigned_image.image_type == common_pb2.ImageType.Value(
+              'TEST')):
+        delta_test_reqs.append(req)
+      elif (req.WhichOneof('tgt_image_oneof') == 'tgt_unsigned_image' and
+            req.tgt_unsigned_image.image_type == common_pb2.ImageType.Value(
+                'TEST')):
+        full_test_reqs.append(req)
+      else:
+        non_test_reqs.append(req)
+    return CategorizedGenerationRequests(full_test_reqs, delta_test_reqs,
+                                         non_test_reqs)
+
+  def _create_bb_schedule_request(self, generation_request, test_requests=None):
+    """Create a ScheduleBuildRequest for a Paygen builder.
+
+    Args:
+      generation_request (GenerationRequest): Request to generate the desired
+        payload.
+      test_requests ([AutoupdateTestConfigs]): A list of tests to perform with
+        the generated payload.
+
+    Returns:
+      A ScheduleBuildRequest for a Paygen builder.
+    """
+    test_requests = test_requests or []
+    return self.m.buildbucket.schedule_request(
+        bucket='packaging', builder='paygen', properties={
+            'request':
+                MessageToDict(generation_request),
+            'autoupdate_test_configs': [
+                MessageToDict(x) for x in test_requests or {}
+            ]
+        })
 
   def create_paygen_test_config(self, tgt_payload, delta_type, src_version=None,
                                 src_channel=None, applicable_models=None):

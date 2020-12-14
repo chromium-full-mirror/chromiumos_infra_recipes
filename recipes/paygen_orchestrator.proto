@@ -25,6 +25,7 @@ message PaygenOrchestratorProperties {
     MILESTONE = 3;
     OMAHA = 4;
     STEPPING_STONE = 5;
+    N2N = 6;
   }
 
   // The delta types to generate for, empty for all.
