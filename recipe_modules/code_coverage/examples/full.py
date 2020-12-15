@@ -48,8 +48,14 @@ def GenTests(api):
       'code-coverage-cq-not-supported',
       api.post_check(post_process.MustRun,
                      'run ebuild tests.process code coverage data'),
-      api.post_process(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation), cq=True,
-      builder='sarien-code-coverage-cq', input_properties={
+      # Old service should not run, It does not support gerrit.
+      api.post_check(
+          post_process.DoesNotRun,
+          'run ebuild tests.process code coverage data.converting metadata for test coverage'
+      ),
+      api.post_process(post_process.DropExpectation),
+      cq=True,
+      builder='sarien-code-coverage-cq',
+      input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True)
       })

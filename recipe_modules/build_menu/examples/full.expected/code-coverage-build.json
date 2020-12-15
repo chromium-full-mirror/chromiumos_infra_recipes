@@ -4001,6 +4001,161 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "glob",
+      "[CACHE]/cros_chroot/build/amd64-generic/build/coverage_data",
+      "**/coverage.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.find coverage files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@glob@[CACHE]/cros_chroot/build/amd64-generic/build/coverage_data/coverage.json@@@",
+      "@@@STEP_LOG_END@glob@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "RECIPE_MODULE[chromeos::code_coverage]/resources/constants.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.read constants",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@constants.json@{@@@",
+      "@@@STEP_LOG_LINE@constants.json@  \"chromiumos/platform2\": [@@@",
+      "@@@STEP_LOG_LINE@constants.json@    {@@@",
+      "@@@STEP_LOG_LINE@constants.json@      \"prefix\": \"base-[^/]*/base\",@@@",
+      "@@@STEP_LOG_LINE@constants.json@      \"src_path\": \"base\"@@@",
+      "@@@STEP_LOG_LINE@constants.json@    }@@@",
+      "@@@STEP_LOG_LINE@constants.json@  ]@@@",
+      "@@@STEP_LOG_LINE@constants.json@}@@@",
+      "@@@STEP_LOG_END@constants.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/cros_chroot/build/amd64-generic/build/coverage_data/coverage.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.read coverage data from [CACHE]/cros_chroot/build/amd64-generic/build/coverage_data/coverage.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@coverage.json@{@@@",
+      "@@@STEP_LOG_LINE@coverage.json@  \"data\": [@@@",
+      "@@@STEP_LOG_LINE@coverage.json@    {@@@",
+      "@@@STEP_LOG_LINE@coverage.json@      \"files\": [@@@",
+      "@@@STEP_LOG_LINE@coverage.json@        {@@@",
+      "@@@STEP_LOG_LINE@coverage.json@          \"filename\": \"/build/amd64-generic/base-0/base/test.cc\"@@@",
+      "@@@STEP_LOG_LINE@coverage.json@        }@@@",
+      "@@@STEP_LOG_LINE@coverage.json@      ]@@@",
+      "@@@STEP_LOG_LINE@coverage.json@    }@@@",
+      "@@@STEP_LOG_LINE@coverage.json@  ],@@@",
+      "@@@STEP_LOG_LINE@coverage.json@  \"type\": \"coverage\",@@@",
+      "@@@STEP_LOG_LINE@coverage.json@  \"version\": \"0.0\"@@@",
+      "@@@STEP_LOG_LINE@coverage.json@}@@@",
+      "@@@STEP_LOG_END@coverage.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"data\": [{\"files\": [{\"filename\": \"/src/platform2/base/test.cc\"}]}], \"type\": \"coverage\", \"version\": \"0.0\"}",
+      "[CLEANUP]/code-coverage-zoss_tmp_1/coverage.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.write processed coverage json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@coverage.json@{\"data\": [{\"files\": [{\"filename\": \"/src/platform2/base/test.cc\"}]}], \"type\": \"coverage\", \"version\": \"0.0\"}@@@",
+      "@@@STEP_LOG_END@coverage.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.gitiles-fetch-ref",
+    "stdin": "{\"branch\": {\"branch\": \"master\", \"host\": \"chromium\", \"project\": \"chromiumos/codesearch\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"abcd1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "context",
+      "--",
+      "RECIPE_MODULE[chromeos::code_coverage]/resources/vomfass_llvm_cloud_uploader",
+      "--vomfass_service_addr",
+      "bifrost-vomfassupdateservice-c2p.googleapis.com",
+      "--timeout",
+      "10m",
+      "--host",
+      "chromium",
+      "--project",
+      "chromiumos/codesearch",
+      "--commit_id",
+      "abcd1234",
+      "--ref",
+      "refs/heads/master",
+      "--uploader_name",
+      "sarien-code-coverage-postsubmit",
+      "--uploader_id",
+      "abcd1234_8945511751514863184",
+      "--llvm_json_file",
+      "[CLEANUP]/code-coverage-zoss_tmp_1/coverage.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.absolute coverage upload for [CLEANUP]/code-coverage-zoss_tmp_1/coverage.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
