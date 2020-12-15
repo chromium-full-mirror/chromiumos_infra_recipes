@@ -232,7 +232,7 @@ def execute(api, requests):
     requests: ExecutionRequests payload.
   """
   with api.step.nest('execute'):
-    return api.cros_test_platform.execute_luciexe(requests)
+    return api.cros_test_platform.skylab_execute(requests)
 
 
 def _execute_requests(api, requests, enumerations, config):
@@ -575,7 +575,7 @@ def _empty_enumerate_response(api):
 
 
 def _generic_passing_execute_response(api):
-  return api.cros_test_platform.set_execute_luciexe_response(
+  return api.cros_test_platform.set_skylab_execute_response(
       'execute',
       ExecuteResponses(
           tagged_responses={
@@ -719,7 +719,7 @@ def GenTests(api):
           CrosTestPlatformProperties(
               request=_test_request('foo'), config=_test_config('foo'))) +  #
       _generic_enumerate_response(api) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
@@ -749,7 +749,7 @@ def GenTests(api):
           CrosTestPlatformProperties(
               request=_test_request('foo'), config=_test_config('foo'))) +  #
       _generic_enumerate_response(api) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
@@ -778,7 +778,7 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
          _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -813,7 +813,7 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
          _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(tagged_responses={}),
          ))
@@ -823,7 +823,7 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
          _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -859,7 +859,7 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
          _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -895,7 +895,7 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
          _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -932,7 +932,7 @@ def GenTests(api):
           CrosTestPlatformProperties(
               request=_test_request('foo'), config=_test_config('foo'))) +  #
       _generic_enumerate_response(api) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
@@ -967,7 +967,7 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
          _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -993,7 +993,7 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
          _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1018,7 +1018,7 @@ def GenTests(api):
              CrosTestPlatformProperties(
                  request=_test_request('foo'), config=_test_config('foo'))) +  #
          _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1062,7 +1062,7 @@ def GenTests(api):
     }
   }''',
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1095,7 +1095,7 @@ def GenTests(api):
     }
   }''',
          ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
+         api.cros_test_platform.set_skylab_execute_response(
              'execute',
              ExecuteResponses(
                  tagged_responses={
@@ -1150,7 +1150,7 @@ def GenTests(api):
     }
   }''',
       ) +  #
-      api.cros_test_platform.set_execute_luciexe_response(
+      api.cros_test_platform.set_skylab_execute_response(
           'execute',
           ExecuteResponses(
               tagged_responses={
