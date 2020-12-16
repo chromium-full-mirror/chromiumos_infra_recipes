@@ -5468,14 +5468,6 @@
   },
   {
     "cmd": [],
-    "name": "sign images"
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads"
-  },
-  {
-    "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"

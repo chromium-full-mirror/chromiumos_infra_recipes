@@ -63,6 +63,12 @@ def RunSteps(api, properties):
       failing_build=properties.failing_build,
   )
 
+  api.cros_artifacts.push_image(
+      chroot=common.Chroot(path='/path/to/chroot'),
+      gs_image_dir="gs://chromeos-image-archive/atlas-release/R89-13604.0.0",
+      sysroot=sysroot.Sysroot(build_target=common.BuildTarget(name='atlas')),
+      dryrun=True)
+
 
 def GenTests(api):
   yield api.test(

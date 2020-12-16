@@ -652,14 +652,14 @@ Returns:
 
 API providing a menu for build steps
 
-#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by image builders.
 
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#289)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#291)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -676,7 +676,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#332)(self, config=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#334)(self, config=None):**
 
 Build the image and run ebuild tests.
 
@@ -688,15 +688,15 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#63)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#65)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#91)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#93)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#67)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#69)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#71)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#73)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#99)(self, is_staging=None, missing_ok=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#101)(self, is_staging=None, missing_ok=False):**
 
 Initial setup steps for the builder.
 
@@ -712,24 +712,34 @@ Args:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#95)(self):**
+&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#97)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#443)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#435)(self, config=None):**
 
 Generate release payloads for the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#79)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#81)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#75)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#77)(self):**
 
-&mdash; **def [initialize](/recipe_modules/build_menu/api.py#58)(self):**
+&mdash; **def [initialize](/recipe_modules/build_menu/api.py#60)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#83)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#85)(self):**
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#200)(self, with_sysroot=True, packages=None):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/build_menu/api.py#445)(self, config=None):**
+
+Call the Push Image Build API endpoint for the build, which pushes
+  the image files to the appropriate bucket and prepares them for signing.
+  The actual execution of these procedures is handled in the underlying
+  script, chromite/scripts/push_image.py.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
+
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#202)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -744,7 +754,7 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#147)(self, no_chroot_timeout=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#149)(self, no_chroot_timeout=False):**
 
 Setup the workspace and chroot for the builder.
 
@@ -753,16 +763,9 @@ This context manager sets up the workspace path.
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [sign\_images](/recipe_modules/build_menu/api.py#433)(self, config=None):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#89)(self):**
 
-Sign the uploaded images.
-
-Args:
-  config (BuilderConfig): The Builder Config for the build, or None.
-
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#87)(self):**
-
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#396)(self, config=None, failing_build=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#398)(self, config=None, failing_build=False):**
 
 Upload artifacts from the build.
 
@@ -771,7 +774,7 @@ Args:
   failing_build (bool): whether or not the build is failing, used (in part)
       to decide whether or not to upload artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#414)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#416)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1142,11 +1145,11 @@ Temp dir is created on first access to this property.
 
 API for uploading CrOS build artifacts to Google Storage.
 
-#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#44)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#304)(self, builder_name, target, kind):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#306)(self, builder_name, target, kind):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -1161,7 +1164,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#527)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#529)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1176,7 +1179,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#561)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#563)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1191,7 +1194,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#419)(self, artifacts_info):**
+&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#421)(self, artifacts_info):**
 
 Return whether there are output artifacts.
 
@@ -1201,7 +1204,7 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#581)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#583)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1222,7 +1225,20 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#436)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, failing_build=False, name=None, test_data=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#695)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
+
+Call the PushImage build API endpoint.
+
+Args:
+  chroot (Chroot): The chroot to use, or None if not yet created.
+  gs_image_dir (string): The source directory (a gs path) to push from.
+  sysroot (Sysroot): The sysroot (build target) to use.
+  profile (Profile): The profile to use, or None.
+  sign_types (list(ImageType)): The sign types to use, or None.
+
+  For more context on this parameters, see chromite/scripts/pushimage.py.
+
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#438)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, failing_build=False, name=None, test_data=None):**
 
 Bundle and upload the given artifacts for the given build target.
 

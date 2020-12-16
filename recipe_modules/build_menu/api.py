@@ -16,9 +16,11 @@ from recipe_engine.recipe_api import StepFailure
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.test import BuildTargetUnitTestRequest
+from PB.chromiumos.common import IMAGE_TYPE_RECOVERY, IMAGE_TYPE_ACCESSORY_RWSIG
 from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import Profile
+from PB.chromite.api.sysroot import Sysroot
 
 
 class BuildMenuApi(recipe_api.RecipeApi):
@@ -430,16 +432,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
           artifacts.prebuilts_gs_bucket,
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
-  def sign_images(self, config=None):
-    """Sign the uploaded images.
-
-    Args:
-      config (BuilderConfig): The Builder Config for the build, or None.
-    """
-    with self.m.step.nest('sign images'):
-      # TODO: implement me!
-      pass
-
   def generate_payloads(self, config=None):
     """Generate release payloads for the build.
 
@@ -449,3 +441,28 @@ class BuildMenuApi(recipe_api.RecipeApi):
     with self.m.step.nest('generate payloads'):
       # TODO: implement me!
       pass
+
+  def push_and_sign_images(self, config=None):
+    """Call the Push Image Build API endpoint for the build, which pushes
+      the image files to the appropriate bucket and prepares them for signing.
+      The actual execution of these procedures is handled in the underlying
+      script, chromite/scripts/push_image.py.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+    """
+    config = config or self.config_or_default
+
+    with self.m.step.nest('push images'):
+      gs_image_dir = "gs://{bucket}/{target}-release/{version}".format(
+          **{
+              'bucket': config.artifacts.artifacts_gs_bucket,
+              'target': self.build_target.name,
+              'version': self.m.cros_version.read_workspace_version()
+          })
+      sysroot = Sysroot(build_target=self.build_target)
+      # TODO: Add config support for sign types
+      sign_types = [IMAGE_TYPE_RECOVERY, IMAGE_TYPE_ACCESSORY_RWSIG]
+      return self.m.cros_artifacts.push_image(
+          self.chroot, gs_image_dir, sysroot, sign_types=sign_types,
+          dest_bucket='gs://chromeos-throw-away-bucket')

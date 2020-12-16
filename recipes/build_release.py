@@ -37,8 +37,6 @@ def DoRunSteps(api, config, properties):
     if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
       if api.build_menu.build_and_test_images(config):
         api.build_menu.upload_prebuilts(config)
-        api.build_menu.sign_images(config)
-        api.build_menu.generate_payloads(config)
   except StepFailure:
     raise_upload_failure = False
     raise
@@ -51,6 +49,9 @@ def DoRunSteps(api, config, properties):
       # 2020-12-31.
       if raise_upload_failure:
         raise
+
+  api.build_menu.push_and_sign_images(config)
+  api.build_menu.generate_payloads(config)
 
 
 def GenTests(api):

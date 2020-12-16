@@ -13,7 +13,9 @@ from recipe_engine import recipe_api
 
 from PB.chromite.api import artifacts
 from PB.chromite.api import toolchain
+from PB.chromite.api.image import PushImageRequest, PushImageResponse
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos import common as common_pb
 from PB.chromiumos.common import ArtifactsByService
 
 # Legacy artifacts and their handling.
@@ -689,3 +691,27 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           result = res
 
     return result
+
+  def push_image(self, chroot, gs_image_dir, sysroot, dryrun=False,
+                 profile=None, sign_types=None, dest_bucket=None):
+    """Call the PushImage build API endpoint.
+
+      Args:
+        chroot (Chroot): The chroot to use, or None if not yet created.
+        gs_image_dir (string): The source directory (a gs path) to push from.
+        sysroot (Sysroot): The sysroot (build target) to use.
+        profile (Profile): The profile to use, or None.
+        sign_types (list(ImageType)): The sign types to use, or None.
+
+        For more context on this parameters, see chromite/scripts/pushimage.py.
+      """
+    request = PushImageRequest(
+        chroot=chroot,
+        gs_image_dir=gs_image_dir,
+        sysroot=sysroot,
+        dryrun=dryrun,
+        profile=profile,
+        sign_types=sign_types,
+        dest_bucket=dest_bucket,
+    )
+    self.m.cros_build_api.ImageService.PushImage(request, test_output_data='{}')
