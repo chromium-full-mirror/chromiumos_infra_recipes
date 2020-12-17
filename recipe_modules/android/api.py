@@ -25,6 +25,7 @@ ANDROID_PROJECT = 'chromeos/overlays/project-cheets-private'
 # TODO(boleynsu): find a clean way to avoid indexing by a tuple
 ANDROID_PACKAGE = {
     ('git_pi-arc', 'cheets'): 'android-container-pi',
+    ('git_pi-arc-m86', 'cheets'): 'android-container-pi',
     ('git_rvc-arc', 'bertha'): 'android-vm-rvc',
     ('git_master-arc-dev', 'bertha'): 'android-vm-master'
 }

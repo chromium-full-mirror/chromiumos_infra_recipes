@@ -406,9 +406,9 @@ Args:
 
 [DEPS](/recipe_modules/android/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [AndroidApi](/recipe_modules/android/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AndroidApi](/recipe_modules/android/api.py#37)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [requires\_uprev](/recipe_modules/android/api.py#38)(self, chroot, sysroot, patch_sets):**
+&mdash; **def [requires\_uprev](/recipe_modules/android/api.py#39)(self, chroot, sysroot, patch_sets):**
 
 Check if an android uprev is required.
 
@@ -422,7 +422,7 @@ Returns:
   Returns None if uprev is not required.
   Returns (android_version, android_branch, android_package), otherwise.
 
-&mdash; **def [try\_uprev](/recipe_modules/android/api.py#83)(self, chroot, sysroot, patch_sets):**
+&mdash; **def [try\_uprev](/recipe_modules/android/api.py#84)(self, chroot, sysroot, patch_sets):**
 
 Try to uprev android
 
