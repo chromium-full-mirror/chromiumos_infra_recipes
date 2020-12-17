@@ -480,6 +480,38 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/infra/config/project_config/all_programs_config.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "find config repos.reading DLM config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@{@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@  \"programs\": [@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@    {@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@      \"deviceProjects\": [@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@        {@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@          \"repo\": {@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@            \"name\": \"chromeos/project/galaxy/milkyway\"@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@          }@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@        }@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@      ]@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@    }@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@  ]@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@}@@@",
+      "@@@STEP_LOG_END@all_programs_config.json@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "--regex",
@@ -554,48 +586,6 @@
   },
   {
     "cmd": [],
-    "name": "Do replicate_public_config and create CL.chromeos/program/galaxy",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[START_DIR]/chromiumos_workspace/src/project_public/program/galaxy/sw_build_config"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "Do replicate_public_config and create CL.chromeos/program/galaxy.remove dest dir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copytree",
-      "[START_DIR]/chromiumos_workspace/src/program/galaxy/public_sw_build_config",
-      "[START_DIR]/chromiumos_workspace/src/project_public/program/galaxy/sw_build_config"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "Do replicate_public_config and create CL.chromeos/program/galaxy.copy public config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "Do replicate_public_config and create CL.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -652,30 +642,6 @@
   {
     "cmd": [],
     "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.find input config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_TEXT@generated/config.jsonproto@@@",
-      "@@@STEP_SUMMARY_TEXT@(does not exist)@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.find input config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@generated/config.jsonproto@@@",

@@ -238,12 +238,6 @@ _ACTIONS = [
 ]
 
 
-def _get_config_projects(api):
-  """Returns a list of ProjectInfos for all config repos."""
-  return api.repo.project_infos(
-      regexes=['chromeos/program', 'chromeos/project'])
-
-
 def _create_cl(api, commit_info, branch_name):
   """Creates a CL based on commit_info.
 
@@ -265,13 +259,37 @@ def _create_cl(api, commit_info, branch_name):
 
 
 def RunSteps(api):
+
+  def _get_config_projects():
+    """Returns a list of ProjectInfos for all config repos."""
+
+    # load all the repos defined in the DLM config.
+    all_program_configs = api.file.read_json(
+        "reading DLM config",
+        api.context.cwd.join(
+            "infra/config/project_config/all_programs_config.json"))
+
+    names = set()
+    for program in all_program_configs.get("programs", []):
+      for project in program.get("deviceProjects", []):
+        name = project.get("repo", {}).get("name")
+        if name:
+          names.add(name)
+
+    project_infos = api.repo.project_infos(
+        regexes=['chromeos/program', 'chromeos/project'])
+
+    # filter out any projects not defined in DLM to avoid problems with
+    # cancelled/removed projects who's repos haven't been deleted yet.
+    return [info for info in project_infos if info.name in names]
+
   with api.cros_source.checkout_overlays_context(), \
     api.context(cwd=api.cros_source.workspace_path):
 
     api.cros_source.ensure_synced_cache()
 
     with api.step.nest('find config repos'):
-      config_projects = _get_config_projects(api)
+      config_projects = _get_config_projects()
 
     # One action failing should not block all later actions from running. Thus,
     # catch StepFailures from each action and raise them later.
@@ -300,6 +318,20 @@ def RunSteps(api):
 
 def GenTests(api):
 
+  def config_dlm_step_data(api):
+    return api.step_data(
+        'find config repos.reading DLM config',
+        api.file.read_json({
+            "programs": [{
+                "deviceProjects": [{
+                    "repo": {
+                        "name": "chromeos/project/galaxy/milkyway"
+                    }
+                },]
+            }]
+        }),
+    )
+
   def config_repos_step_data(api):
     """Returns StepData for the find config repos call."""
     return api.step_data(
@@ -316,6 +348,7 @@ def GenTests(api):
   yield api.test(
       'basic',
       config_repos_step_data(api),
+      config_dlm_step_data(api),
       api.git.diff_check(True),
       api.post_process(
           post_process.StepCommandContains,
@@ -331,6 +364,7 @@ def GenTests(api):
   yield api.test(
       'failed_actions',
       config_repos_step_data(api),
+      config_dlm_step_data(api),
       api.step_data(
           'Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config',
           retcode=1),
@@ -364,6 +398,7 @@ def GenTests(api):
   yield api.test(
       'flattening_basic',
       config_repos_step_data(api),
+      config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
       api.git.diff_check(True),
       api.post_process(
@@ -379,6 +414,7 @@ def GenTests(api):
   yield api.test(
       'no_flattening_changes',
       config_repos_step_data(api),
+      config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
@@ -397,6 +433,7 @@ def GenTests(api):
   yield api.test(
       'flattening_error',
       config_repos_step_data(api),
+      config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
       api.step_data(
           'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.generate flat payload',
@@ -410,6 +447,7 @@ def GenTests(api):
   yield api.test(
       'no_input_files',
       config_repos_step_data(api),
+      config_dlm_step_data(api),
       api.post_process(
           StepSummaryEquals,
           'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.find input config',
@@ -420,6 +458,7 @@ def GenTests(api):
   yield api.test(
       'copy_internal_basic',
       config_repos_step_data(api),
+      config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
@@ -432,6 +471,7 @@ def GenTests(api):
   yield api.test(
       'copy_internal_no_diff',
       config_repos_step_data(api),
+      config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(False),
@@ -444,6 +484,7 @@ def GenTests(api):
   yield api.test(
       'copy_internal_error',
       config_repos_step_data(api),
+      config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
