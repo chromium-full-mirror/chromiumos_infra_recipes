@@ -227,14 +227,14 @@ class CrosSourceApi(RecipeApi):
       # present, so don't bother.
       if not groups:
         with self.m.step.nest('sync manifest branches'):
-          sync_opts.update(
-              current_branch=False, projects=sorted(
-                  set([
-                      self.m.src_state.build_manifest.project,
-                      self.m.src_state.external_manifest.project
-                  ])))
-          with self.m.context(cwd=cache_path):
-            self.m.repo.sync(**sync_opts)
+          for man in sorted(
+              set([
+                  self.m.src_state.build_manifest,
+                  self.m.src_state.external_manifest
+              ]), key=lambda x: x.url):
+            with self.m.context(cwd=cache_path.join(man.relpath)):
+              self.m.step('sync {} branches'.format(man.project),
+                          ['git', 'remote', 'update'])
 
   def checkout_manifests(self, commit=None, is_staging=False,
                          checkout_external=False, test_footers=None):
