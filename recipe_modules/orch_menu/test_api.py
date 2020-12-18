@@ -76,11 +76,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     follow_on_orch = kwargs.pop('follow_on_orch', None)
     follow_on_timeout = kwargs.pop('follow_on_timeout', False)
 
-    # TODO(crbug/1108925): Drop the experiment and make it the default, after
-    # final verification.
-    kwargs.setdefault('experiments',
-                      ['chromeos.orch_menu.collect_after_hw_test'])
-
     cq = kwargs.get('cq')
     default_props = {
         '$chromeos/orch_menu':

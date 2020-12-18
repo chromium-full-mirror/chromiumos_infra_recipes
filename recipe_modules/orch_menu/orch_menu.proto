@@ -35,5 +35,6 @@ message OrchMenuProperties {
 
   // Feature flag: Whether to defer COLLECT_AFTER_HW_TEST builders to after HW
   // testing.
-  bool collect_after_hw_test = 5;
+  // bool collect_after_hw_test = 5;
+  reserved 5;
 }

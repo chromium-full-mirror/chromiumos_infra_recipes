@@ -99,17 +99,10 @@ class OrchMenuApi(RecipeApi):
     # Our properties: OrchMenuProperties ($chromeos/orch_menu).
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
-    # TODO(crbug/1108925): Drop the experiment and make it the default, after
-    # final verification.
-    self._collect_after = properties.collect_after_hw_test
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
     self.m.buildbucket.host = self.m.buildbucket.HOST_PROD_BEEFY
-    # TODO(crbug/1108925): Drop the experiment and make it the default, after
-    # final verification.
-    self._collect_after |= ('chromeos.orch_menu.collect_after_hw_test' in
-                            self.m.cros_infra_config.experiments)
 
   @property
   def config(self):
@@ -478,12 +471,7 @@ class OrchMenuApi(RecipeApi):
       # TODO(crbug/991996): Refactor: use something other than string manip.
       child_spec = child_targets_dict.get(builder_name.rsplit('-', 1)[0])
     if child_spec:
-      ret = child_spec.collect_handling or ret
-      # TODO(crbug/1108925): Drop the experiment and make it the default, after
-      # final verification.  (The if statement that follows gets removed.)
-      if (not self._collect_after and ret == values.COLLECT_AFTER_HW_TEST):
-        ret = values.COLLECT
-      return ret
+      return child_spec.collect_handling or ret
     # Missed lookup even after fallback for *-snapshot.
     return ret
 
