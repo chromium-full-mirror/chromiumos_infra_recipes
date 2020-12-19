@@ -127,6 +127,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"message\": \"goodbye.\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"patch_set\": 3, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"new-project\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"OLD\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Different title\", @@@",

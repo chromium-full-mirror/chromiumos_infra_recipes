@@ -347,6 +347,7 @@
   * [test_util:examples/full](#recipes-test_util_examples_full)
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties)
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
+  * [tricium](#recipes-tricium) &mdash; Recipe for running tricium on CLs.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
@@ -6590,7 +6591,7 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 
 [DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#88)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#89)(api):**
 ### *recipes* / [gerrit:examples/get\_change\_description](/recipe_modules/gerrit/examples/get_change_description.py)
 
 [DEPS](/recipe_modules/gerrit/examples/get_change_description.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -7449,6 +7450,13 @@ The steps specific to VM testing are:
 &mdash; **def [DoRunSteps](/recipes/test_vm.py#57)(api, properties):**
 
 &mdash; **def [RunSteps](/recipes/test_vm.py#47)(api, properties):**
+### *recipes* / [tricium](/recipes/tricium.py)
+
+[DEPS](/recipes/tricium.py#11): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
+
+Recipe for running tricium on CLs.
+
+&mdash; **def [RunSteps](/recipes/tricium.py#31)(api):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
 [DEPS](/recipes/uprev_guest_vm_pin.py#26): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7625,6 +7633,7 @@ Basic tests for the urls recipe module.
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/b9d95cda0b959f6935e8330db85ab3ee76c01684/README.recipes.md#recipe_modules-step
 [recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/b9d95cda0b959f6935e8330db85ab3ee76c01684/README.recipes.md#recipe_modules-swarming
 [recipe_engine/recipe_modules/time]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/b9d95cda0b959f6935e8330db85ab3ee76c01684/README.recipes.md#recipe_modules-time
+[recipe_engine/recipe_modules/tricium]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/b9d95cda0b959f6935e8330db85ab3ee76c01684/README.recipes.md#recipe_modules-tricium
 [recipe_engine/recipe_modules/url]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/b9d95cda0b959f6935e8330db85ab3ee76c01684/README.recipes.md#recipe_modules-url
 [recipe_engine/recipe_modules/uuid]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/b9d95cda0b959f6935e8330db85ab3ee76c01684/README.recipes.md#recipe_modules-uuid
 [recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/b9d95cda0b959f6935e8330db85ab3ee76c01684/recipe_engine/recipe_api.py#856

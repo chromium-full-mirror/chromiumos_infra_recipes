@@ -34,6 +34,7 @@ def _get_values_dict(api):
               submitted='2017-02-02 13:11:20.000000000',
               change_id='Ideadbeef',
               current_revision='f000' * 10,
+              patch_set=1,
               project='chromium/src',
               has_review_started=False,
               branch=api.src_state.default_branch,
@@ -59,6 +60,7 @@ def _get_values_dict(api):
               submitted='2020-08-02 12:12:22.000000000',
               change_id='Ib767aac2',
               current_revision='b000' * 10,
+              patch_set=3,
               project='new-project',
               has_review_started=True,
               branch='release',
@@ -79,7 +81,6 @@ def _get_values_dict(api):
               _display_id='example.com:2',
               _display_url='https://example.com/c/2',
               _short_host='example.com',
-              _patch_set=3,
               _host='example.com',
           )
   }
@@ -102,7 +103,7 @@ def RunSteps(api):
     api.assertions.assertEqual(patch.git_fetch_ref, values['ref'])
     api.assertions.assertEqual(patch.short_host, values['_short_host'])
     api.assertions.assertEqual(patch.display_id, values['_display_id'])
-    api.assertions.assertEqual(patch.patch_set, values['_patch_set'])
+    api.assertions.assertEqual(patch.patch_set, values['patch_set'])
     api.assertions.assertEqual(patch.display_url, values['_display_url'])
     api.assertions.assertEqual(patch.created, values['created'])
     api.assertions.assertEqual(patch.updated, values['updated'])

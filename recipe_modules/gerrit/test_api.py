@@ -31,6 +31,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'messages': values.get('messages', []),
         'current_revision': values.get('current_revision', 'f000' * 10),
     }
+    if 'patch_set' in values:
+      resp['info']['patch_set'] = values['patch_set']
     ref = values.get(
         'ref', 'refs/changes/%s/%d/%d' % (
             ('%02d' % request['change_number'])[-2:],
