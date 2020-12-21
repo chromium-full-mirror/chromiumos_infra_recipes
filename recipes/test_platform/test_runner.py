@@ -151,8 +151,13 @@ def fetch_crashes(api, config=None, request=None, output_config=None,
         upload_crashes=upload_crashes,
         use_staging=use_staging,
     )
+    # Allow at most 30 minutes for this step.
+    max_duration_seconds = 60 * 30
+    fetch_crashes_request.deadline.seconds = (
+        api.time.ms_since_epoch() / 1000 + max_duration_seconds)
     deadline = _deadline(api, request)
-    fetch_crashes_request.deadline.MergeFrom(deadline)
+    if deadline.seconds < fetch_crashes_request.deadline.seconds:
+      fetch_crashes_request.deadline.MergeFrom(deadline)
     return api.phosphorus.fetch_crashes(fetch_crashes_request)
 
 
