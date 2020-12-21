@@ -33,6 +33,7 @@ def _get_values_dict(api):
               updated='2017-02-01 13:11:20.000000000',
               submitted='2017-02-02 13:11:20.000000000',
               change_id='Ideadbeef',
+              current_revision='f000' * 10,
               project='chromium/src',
               has_review_started=False,
               branch=api.src_state.default_branch,
@@ -57,6 +58,7 @@ def _get_values_dict(api):
               updated='2020-08-02 12:12:22.000000000',
               submitted='2020-08-02 12:12:22.000000000',
               change_id='Ib767aac2',
+              current_revision='b000' * 10,
               project='new-project',
               has_review_started=True,
               branch='release',
@@ -107,6 +109,8 @@ def RunSteps(api):
     api.assertions.assertEqual(patch.submitted, values['submitted'])
     api.assertions.assertEqual(patch.hashtags, values['hashtags'])
     api.assertions.assertEqual(patch.messages, values['messages'])
+    api.assertions.assertEqual(patch.current_revision,
+                               values['current_revision'])
     for fname in values['files']:
       api.assertions.assertIn(fname, patch.file_infos)
     api.assertions.assertEqual(patch.commit_info,

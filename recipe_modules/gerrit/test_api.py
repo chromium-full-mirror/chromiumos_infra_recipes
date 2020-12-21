@@ -29,6 +29,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'subject': values.get('subject', 'Change title'),
         'hashtags': values.get('hashtags', []),
         'messages': values.get('messages', []),
+        'current_revision': values.get('current_revision', 'f000' * 10),
     }
     ref = values.get(
         'ref', 'refs/changes/%s/%d/%d' % (

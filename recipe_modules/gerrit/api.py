@@ -57,6 +57,11 @@ class PatchSet(object):
     return self._change_info['project']
 
   @property
+  def current_revision(self):
+    """Returns the PatchSet current_revision."""
+    return self._change_info['current_revision']
+
+  @property
   def branch(self):
     """Returns the PatchSet branch."""
     return self._change_info['branch']

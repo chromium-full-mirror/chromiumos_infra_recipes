@@ -907,6 +907,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
