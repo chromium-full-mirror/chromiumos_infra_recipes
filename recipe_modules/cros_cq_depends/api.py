@@ -8,6 +8,7 @@ import re
 from collections import namedtuple
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 PRIVATE_HOST = 'chrome-internal'
 PUBLIC_HOST = 'chromium'
@@ -111,42 +112,12 @@ class CrosCqDependsApi(RecipeApi):
       if len(deps) == 0:
         return
 
-      # TODO(b/170388096): Refactor this to call self.m.gerrit.fetch_patch_sets.
       # Query Gerrit for each one of those deps to turn the CL number into a git
       # change ref.
-      json_data = {
-          'changes': [{
-              'host': dep.host,
-              'change_number': int(dep.cl_number),
-              'patch_set': -1
-          } for dep in deps]
-      }
-      test_data = {
-          'changes': [
-              {
-                  'info': {
-                      # This project name corresponds to a repo test_data project.
-                      'project': 'project-c',
-                      'branch': self.m.src_state.default_branch,
-                      'current_revision': 'deadbeef',
-                  },
-              },
-              {
-                  'info': {
-                      # Imitates a project outside the chromiumos checkout.
-                      'project': 'not-a-project',
-                      'branch': self.m.src_state.default_branch,
-                      'current_revision': 'deadbeef',
-                  },
-              },
-              {
-                  'change_number': 1234,
-                  'info': None,
-              },
-          ]
-      }
-      gerrit_results = self.m.support.call('gerrit-fetch-changes', json_data,
-                                           test_output_data=test_data)
+      changes = [
+          GerritChange(host=dep.host, change=int(dep.cl_number)) for dep in deps
+      ]
+      gerrit_results = self.m.gerrit.fetch_patch_sets(changes)
 
       # Log dep fulfilment in human-readable format as well
       dep_local_log = pres.logs.setdefault('dep local', [])
@@ -155,19 +126,13 @@ class CrosCqDependsApi(RecipeApi):
 
       # Ensure each change is in the local checkout.
       missing_depends = []
-      missing_gerrit_info = False
-      for change in gerrit_results['changes']:
-        if change.get('info') is None:
-          dep_local_log.append('gerrit query failure for cl %s' %
-                               change.get('change_number'))
-          missing_gerrit_info = True
-          continue
-        project = change['info']['project']
-        branch = change['info']['branch']
-        rev = change['info']['current_revision']
+      for change in gerrit_results:
+        project = change.project
+        branch = change.branch
+        rev = change.current_revision
         if project not in project_names:
           dep_local_log.append('change %s in non-Chrome OS repo %s' %
-                               (change.get('change_number'), project))
+                               (change.change_id, project))
           continue
 
         paths = self.m.cros_source.find_project_paths(project, branch,
@@ -198,9 +163,6 @@ class CrosCqDependsApi(RecipeApi):
         self.m.easy.set_properties_step(missing_depends=missing_depends)
         if not self._allow_missing_depends:
           raise StepFailure('\n'.join(missing_depends))
-
-      if missing_gerrit_info:
-        pres.status = self.m.step.WARNING
 
       # All deps satisfied
       pres.step_text = 'cq-depend checked'

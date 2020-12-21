@@ -10,11 +10,14 @@ DEPS = [
     'recipe_engine/raw_io',
     'cros_source',
     'cros_cq_depends',
+    'gerrit',
     'repo',
+    'src_state',
 ]
 
 import json
 from recipe_engine import post_process
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 
 def RunSteps(api):
@@ -37,12 +40,41 @@ def GenTests(api):
     data = json.loads(steps[name].stdin)
     return check(cl_num in [x['change_number'] for x in data['changes']])
 
+  changes = [
+      GerritChange(change=1, host='chromium-review.googlesource.com'),
+      GerritChange(change=2, host='chromium-review.googlesource.com'),
+      GerritChange(change=3, host='chromium-review.googlesource.com'),
+  ]
+
+  value_dict = {
+      1: {
+          # This project name corresponds to a repo test_data project.
+          'change_id': '1',
+          'project': 'project-c',
+          'branch': api.src_state.default_branch,
+          'current_revision': 'deadbeef',
+      },
+      2: {
+          # Imitates a project outside the chromiumos checkout.
+          'change_id': '2',
+          'project': 'not-a-project',
+          'branch': api.src_state.default_branch,
+          'current_revision': 'deadbeef',
+      },
+      3: {
+          # Malformed response.
+          'change_id': '3',
+      }
+  }
+
   yield api.test(
       'has_simple_dep',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
           stdout=api.raw_io.output(
               'deadbeef\x1ECq-Depend: chromium:12345\x00')),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
                     retcode=0),
       api.post_check(verify_dep_fetched, 2, 12345),
@@ -56,6 +88,8 @@ def GenTests(api):
           stdout=api.raw_io.output('deadbeef\x1ECq-Depend: chromium:12345,'
                                    'chromium:IAmNotAnInteger,'
                                    'chrome-internal:67890\x00')),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
                     retcode=0),
       api.post_check(verify_dep_fetched, 2, 12345),
@@ -70,6 +104,8 @@ def GenTests(api):
           stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
                                    'chromium:IAmNotAnInteger,'
                                    'chrome-internal:67890\x00')),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
                     retcode=128),
       api.post_check(verify_dep_fetched, 2, 12345),
@@ -84,6 +120,8 @@ def GenTests(api):
           stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
                                    'chromium:IAmNotAnInteger,'
                                    'chrome-internal:67890\x00')),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
                     retcode=128),
       api.post_check(verify_dep_fetched, 2, 12345),
@@ -102,6 +140,8 @@ def GenTests(api):
           stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
                                    'chromium:IAmNotAnInteger,'
                                    'chrome-internal:67890\x00')),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).repo forall (2)',
           stdout=api.raw_io.output('c|src/c|cros|refs/heads/other-branch'

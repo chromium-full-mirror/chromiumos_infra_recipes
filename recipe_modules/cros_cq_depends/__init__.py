@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_source',
     'easy',
+    'gerrit',
     'git',
     'repo',
     'src_state',
