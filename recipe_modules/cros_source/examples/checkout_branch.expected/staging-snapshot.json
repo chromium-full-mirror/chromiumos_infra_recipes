@@ -239,7 +239,8 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
-      "all"
+      "all",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -422,7 +423,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -470,7 +472,8 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "staging-snapshot"
+      "staging-snapshot",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -547,7 +550,8 @@
       "8",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {

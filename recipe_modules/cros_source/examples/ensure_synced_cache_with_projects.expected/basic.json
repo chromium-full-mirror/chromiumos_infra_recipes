@@ -239,7 +239,8 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
-      "all"
+      "all",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -425,6 +426,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--verbose",
       "chromiumos/config"
     ],
     "cwd": "[CACHE]/chromiumos",

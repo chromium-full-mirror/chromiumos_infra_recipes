@@ -230,7 +230,8 @@
       "--groups",
       "all",
       "--groups",
-      "partner-config"
+      "partner-config",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -480,7 +481,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {

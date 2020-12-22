@@ -264,7 +264,8 @@
       "all",
       "--repo-branch",
       "main",
-      "--no-repo-verify"
+      "--no-repo-verify",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -447,7 +448,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -602,7 +604,8 @@
       "snapshot",
       "--repo-branch",
       "main",
-      "--no-repo-verify"
+      "--no-repo-verify",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -718,7 +721,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -824,7 +828,8 @@
       "--groups",
       "all",
       "--manifest-name",
-      "../tmp_manifest"
+      "../tmp_manifest",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -899,7 +904,8 @@
       "--detach",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -999,7 +1005,8 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "master"
+      "master",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {

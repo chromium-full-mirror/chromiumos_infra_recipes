@@ -86,7 +86,8 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "release-R88-13597.B"
+      "release-R88-13597.B",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -273,6 +274,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--verbose",
       "chromeos/manifest-internal",
       "chromiumos/manifest"
     ],

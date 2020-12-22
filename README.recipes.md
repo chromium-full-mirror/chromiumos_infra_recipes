@@ -4545,7 +4545,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 A module for interacting with the repo tool.
 
-&mdash; **def [abandon](/recipe_modules/repo/api.py#278)(self, branch, projects=None):**
+&mdash; **def [abandon](/recipe_modules/repo/api.py#280)(self, branch, projects=None):**
 
 Abandon the branch in the given projects, or all projects if not set.
 
@@ -4553,7 +4553,7 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#459)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#461)(self, from_manifest_str, to_manifest_str):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -4569,7 +4569,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#514)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#516)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -4577,7 +4577,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#421)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#423)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -4595,7 +4595,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#363)(self, projects=None, regexes=None, test_data=None, step_name=None):**
+&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#365)(self, projects=None, regexes=None, test_data=None, step_name=None):**
 
 Ensure that we know the revision info for all projects.
 
@@ -4613,7 +4613,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#565)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#567)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -4648,7 +4648,7 @@ Args:
 
 &mdash; **def [initialize](/recipe_modules/repo/api.py#51)(self):**
 
-&mdash; **def [manifest](/recipe_modules/repo/api.py#390)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#392)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
 Uses repo to create a manifest and returns it as a string.
 
@@ -4665,11 +4665,11 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#559)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#561)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#348)(self, project=None):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#350)(self, project=None):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -4680,7 +4680,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#292)(self, projects=None, regexes=None, test_data=None):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#294)(self, projects=None, regexes=None, test_data=None):**
 
 Uses 'repo forall' to gather project information.
 
@@ -4701,7 +4701,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#54)(self):**
 
-&mdash; **def [start](/recipe_modules/repo/api.py#264)(self, branch, projects=None):**
+&mdash; **def [start](/recipe_modules/repo/api.py#266)(self, branch, projects=None):**
 
 Start a new branch in the given projects, or all projects if not set.
 
@@ -4709,7 +4709,7 @@ Args:
   branch (str): The new branch name.
   projects (list[str]): The projects for which to start a branch.
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#195)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=False, no_manifest_update=False):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#196)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=False, no_manifest_update=False):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -4728,7 +4728,7 @@ Args:
   * verbose (bool): Whether to produce verbose output.
   * no_manifest_update (bool): Whether to disable updating the manifest.
 
-&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#245)(self, manifest_url, manifest_data, \*\*kwargs):**
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#247)(self, manifest_url, manifest_data, \*\*kwargs):**
 
 Sync to the given manifest file data.
 

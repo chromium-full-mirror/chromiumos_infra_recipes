@@ -273,7 +273,8 @@
       "--groups",
       "all",
       "--groups",
-      "group1,group2"
+      "group1,group2",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "env_suffixes": {
@@ -523,7 +524,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "env_suffixes": {

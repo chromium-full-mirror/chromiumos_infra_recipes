@@ -24,7 +24,8 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
-      "all"
+      "all",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
     "env_suffixes": {
@@ -164,7 +165,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--jobs",
-      "32"
+      "32",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_cache_tmp_1",
     "env_suffixes": {

@@ -20,7 +20,8 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "BRANCH"
+      "BRANCH",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -164,7 +165,8 @@
       "8",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
