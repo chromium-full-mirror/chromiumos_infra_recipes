@@ -295,6 +295,14 @@ def RunSteps(api, properties):
                                             ('branch', info.branch_name),
                                             ('status', 'merged'),
                                             ('-age', '30d')]))
+              # TODO(crbug/1161078): Remove after 2/1/21 (COIL issue)
+              if info.branch_name == 'main':
+                merged_changes.extend(
+                    api.gerrit.query_changes(host_url, [('topic', topic),
+                                                        ('project', info.name),
+                                                        ('branch', 'master'),
+                                                        ('status', 'merged'),
+                                                        ('-age', '30d')]))
             if merged_changes:
               presentation.logs['merged CLs'] = [
                   api.gerrit.parse_gerrit_change_url(cl)
@@ -307,6 +315,9 @@ def RunSteps(api, properties):
               list.sort(merged_ci, key=lambda ci: ci.submitted, reverse=True)
               mrm = merged_ci[0] if merged_ci else None
               presentation.logs['most recent merged cl'] = [mrm.display_id]
+            else:
+              presentation.step_text = 'no merged CLs found'
+              presentation.status = api.step.WARNING
 
     outdated_cls, abandoned_cls = [], []
     if mrm:
@@ -353,8 +364,9 @@ def RunSteps(api, properties):
           open_ci = api.gerrit.fetch_patch_sets(open_changes,
                                                 include_messages=True)
           # Filter out outdated CLs, sort by recency
-          open_ci = sorted([ci for ci in open_ci if ci.created > mrm.submitted],
-                           key=lambda ci: ci.created, reverse=True)
+          if mrm:
+            open_ci = [ci for ci in open_ci if ci.created > mrm.submitted]
+          open_ci = sorted(open_ci, key=lambda ci: ci.created, reverse=True)
 
           if not api.pupr.retries_frozen(open_ci):
             retry_ci, cq_label = api.pupr.identify_retry(
@@ -828,4 +840,29 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
           value_dict),
+  )
+
+  yield api.test(
+      'no-merged-changes-warning',
+      _props(),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.post_check(
+          post_process.StepWarning,
+          'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)'
+      ),
+  )
+
+  # TODO(crbug/1161078): Remove after 2/1/21 (COIL issue)
+  yield api.test(
+      'coil-test',
+      _props(),
+      api.repo.project_infos_step_data(
+          'commit uprev', data=[
+              dict(project='overlay'),
+              dict(project='private-overlay', remote='cros-internal',
+                   upstream='main')
+          ]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
   )

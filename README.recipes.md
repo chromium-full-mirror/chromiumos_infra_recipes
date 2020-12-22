@@ -6513,7 +6513,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [RunSteps](/recipes/generator.py#77)(api, properties):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#479)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#491)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
