@@ -193,7 +193,11 @@
       "file*"
     ],
     "infra_step": true,
-    "name": "git log"
+    "name": "git log",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001emessage\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
+    ]
   },
   {
     "cmd": [

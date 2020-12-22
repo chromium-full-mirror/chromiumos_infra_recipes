@@ -486,7 +486,9 @@
     "infra_step": true,
     "name": "ensure manifest cq-depend fulfilled (2).git log",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@stdout@deadbeef\u001eCq-Depend:chromium:12345,chromium:IAmNotAnInteger,chrome-internal:67890\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
     ]
   },
   {

@@ -416,6 +416,7 @@ class GitApi(recipe_api.RecipeApi):
         cmd, stdout=self.m.raw_io.output(),
         test_stdout='%s\x1Emessage\x00' % self.test_api.test_commit_id)
     stdout = step_data.stdout.strip().rstrip('\x00')
+    self.m.step.active_result.presentation.logs['stdout'] = [step_data.stdout]
 
     commits = []
     if stdout:

@@ -1450,7 +1450,9 @@
     "infra_step": true,
     "name": "ensure manifest cq-depend fulfilled.git log",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001emessage\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
     ]
   },
   {
@@ -1476,7 +1478,9 @@
     "infra_step": true,
     "name": "record new gerrit changes.NAME.git log",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001emessage\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
     ]
   },
   {
