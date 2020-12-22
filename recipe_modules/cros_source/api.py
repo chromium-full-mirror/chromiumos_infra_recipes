@@ -419,10 +419,9 @@ class CrosSourceApi(RecipeApi):
                                        init_opts=init_opts, sync_opts=sync_opts,
                                        projects=projects)
     # Sync all branches of the internal manifest, so that we can find branches.
-    with self.m.step.nest('sync manifest branches'):
-      sync_opts.update(current_branch=False, projects=[manifest.project])
-      with self.m.context(cwd=self.cache_path):
-        self.m.repo.sync(**sync_opts)
+    with self.m.context(cwd=self.cache_path.join(manifest.relpath)):
+      self.m.step('sync {} branches'.format(manifest.project),
+                  ['git', 'remote', 'update'])
 
   @contextlib.contextmanager
   def checkout_overlays_context(self):

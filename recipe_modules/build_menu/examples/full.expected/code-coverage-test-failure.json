@@ -681,38 +681,13 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "sync manifest branches"
-  },
-  {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--force-sync",
-      "--detach",
-      "--jobs",
-      "8",
-      "--no-tags",
-      "--optimized-fetch",
-      "--retry-fetches",
-      "8",
-      "chromeos/manifest-internal"
+      "git",
+      "remote",
+      "update"
     ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync manifest branches.repo sync",
-    "timeout": 3600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "name": "sync chromeos/manifest-internal branches"
   },
   {
     "cmd": [],
