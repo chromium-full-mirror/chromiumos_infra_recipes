@@ -337,6 +337,7 @@
       "manifest",
       "-r"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"

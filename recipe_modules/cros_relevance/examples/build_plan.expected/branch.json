@@ -1,0 +1,377 @@
+[
+  {
+    "cmd": [],
+    "name": "checkout branch BRANCH"
+  },
+  {
+    "cmd": [],
+    "name": "checkout branch BRANCH.set manifest_branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"BRANCH\"@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--groups",
+      "all",
+      "--manifest-branch",
+      "BRANCH",
+      "--verbose"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout branch BRANCH.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout branch BRANCH.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout branch BRANCH.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout branch BRANCH.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout branch BRANCH.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "checkout branch BRANCH.clear repo locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout branch BRANCH.clear git locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--jobs",
+      "8",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8",
+      "--verbose"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout branch BRANCH.repo sync",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout branch BRANCH.ensure manifest is pinned",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@pinned-manifest.xml@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout branch BRANCH.ensure manifest is pinned.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout branch BRANCH.ensure manifest is pinned.repo manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "plan builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 relevant, 0 irrelevant builder configs@@@",
+      "@@@STEP_LOG_LINE@planner_input@gerrit_changes {@@@",
+      "@@@STEP_LOG_LINE@planner_input@  serialized_proto: \"\\030{\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@}@@@",
+      "@@@STEP_LOG_LINE@planner_input@gerrit_changes {@@@",
+      "@@@STEP_LOG_LINE@planner_input@  serialized_proto: \"\\030\\310\\003\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@}@@@",
+      "@@@STEP_LOG_LINE@planner_input@manifest_commit: \"hello\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@builder_configs {@@@",
+      "@@@STEP_LOG_LINE@planner_input@  id {@@@",
+      "@@@STEP_LOG_LINE@planner_input@    name: \"my little builder\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@  }@@@",
+      "@@@STEP_LOG_LINE@planner_input@  general {@@@",
+      "@@@STEP_LOG_LINE@planner_input@    run_when {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      mode: ALWAYS_RUN@@@",
+      "@@@STEP_LOG_LINE@planner_input@    }@@@",
+      "@@@STEP_LOG_LINE@planner_input@  }@@@",
+      "@@@STEP_LOG_LINE@planner_input@}@@@",
+      "@@@STEP_LOG_LINE@planner_input@gitiles_commit {@@@",
+      "@@@STEP_LOG_LINE@planner_input@  serialized_proto: \"\\032\\005hello\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@}@@@",
+      "@@@STEP_LOG_END@planner_input@@@",
+      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"my little builder\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_LOG_END@planner_output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "plan builds.ensure binaries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/test_planner",
+      "-ensure-file",
+      "chromiumos/infra/test_planner latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "plan builds.ensure binaries.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_planner\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n\u0004\n\u0002\u0018{\n\u0005\n\u0003\u0018\ufffd\u0003\u0012\u0005hello\u001a\u001b\n\u0013\n\u0011my little builder\u0012\u0004\u001a\u0002\b\u0001\"\t\n\u0007\u001a\u0005hello",
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "plan builds.write input binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0004@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0018{@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0005@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\u0003\u0012\u0005hello\u001a\u001b@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0013@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0011my little builder\u0012\u0004\u001a\u0002\b\u0001\"\t@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0007\u001a\u0005hello@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/build_plan_generator",
+      "generate-plan",
+      "--input_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_1/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto",
+      "--manifest_file",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/default.xml"
+    ],
+    "infra_step": true,
+    "name": "plan builds.run planner",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build-plan-_tmp_1/output.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "plan builds.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

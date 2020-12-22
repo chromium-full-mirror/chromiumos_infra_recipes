@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_source',
-    'repo',
     'easy',
+    'repo',
+    'src_state',
 ]

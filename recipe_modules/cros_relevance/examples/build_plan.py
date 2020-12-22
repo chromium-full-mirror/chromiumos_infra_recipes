@@ -7,6 +7,8 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_relevance',
+    'cros_source',
+    'src_state',
 ]
 
 from PB.chromiumos.builder_config import BuilderConfig
@@ -32,6 +34,9 @@ def RunSteps(api, properties):
                   mode=BuilderConfig.General.RunWhen.ALWAYS_RUN,
               )))
   ]
+  if properties.manifest_branch:
+    api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
+                                    properties.manifest_branch)
   builders = api.cros_relevance.get_necessary_builders(
       bc, gc, bbcommon_pb2.GitilesCommit(id='hello'),
       test_builder_ids=properties.test_builder_ids)
@@ -55,3 +60,14 @@ def GenTests(api):
       ]), api.properties(BuildPlanTest(expected_builders=[
           'other-builder',
       ])))
+
+  yield api.test(
+      'branch',
+      api.properties(
+          BuildPlanTest(manifest_branch='BRANCH',
+                        test_builder_ids=[BuilderConfig.Id(name=_BUILDER_NAME)],
+                        expected_builders=[_BUILDER_NAME])),
+      #api.post_check(
+      #    post_process.MustRun,
+      #    'pointless build check.depgraph relevance check.run check'),
+  )

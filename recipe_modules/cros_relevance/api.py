@@ -87,6 +87,16 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           '--output_binary_pb',
           output_bin_file,
       ]
+      # We don't have the entire source tree checked out, so we cannot create a
+      # pinned manifest at this point.  Use default.xml, which is either a link
+      # to snapshot.xml, or to the full (unpinned) manifest.
+      if self.m.cros_source.manifest_branch:
+        presentation.step_text = 'running on manifest branch'
+        cmd.extend([
+            '--manifest_file',
+            self.m.src_state.build_manifest.path.join('default.xml')
+        ])
+
       self.m.step('run planner', cmd, infra_step=True)
 
       test_resp = GenerateBuildPlanResponse(

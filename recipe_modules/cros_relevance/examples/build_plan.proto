@@ -14,4 +14,7 @@ message BuildPlanTest {
 
   // The expected return from get_necessary_builders
   repeated string expected_builders = 2;
+
+  // Any manifest branch to checkout.
+  string manifest_branch = 3;
 }

@@ -66,9 +66,10 @@ class CrosSourceApi(RecipeApi):
   @property
   def pinned_manifest(self):
     """Return the pinned manifest for this build."""
-    self._pinned_manifest = (
-        self._pinned_manifest or self.m.repo.manifest(pinned=True))
-    return self._pinned_manifest
+    with self.m.context(cwd=self.workspace_path):
+      self._pinned_manifest = (
+          self._pinned_manifest or self.m.repo.manifest(pinned=True))
+      return self._pinned_manifest
 
   @property
   def branch_manifest_file(self):
