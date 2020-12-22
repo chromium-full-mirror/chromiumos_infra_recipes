@@ -420,37 +420,7 @@
   },
   {
     "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CACHE]/led",
-      "-ensure-file",
-      "infra/tools/luci/led/${platform} latest",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "name": "analyze and launch builders.analyze and launch staging-Annealing.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/led/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "get-build",
       "1"
     ],
@@ -490,7 +460,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "edit",
       "-p",
       "dry_run=true"
@@ -554,7 +524,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "edit-recipe-bundle"
     ],
     "cwd": "[CLEANUP]/recipes/src",
@@ -607,7 +577,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "edit-system",
       "-p",
       "20"
@@ -662,7 +632,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "edit",
       "-name",
       "staging-Annealing 1"
@@ -718,7 +688,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "launch"
     ],
     "cwd": "[CLEANUP]/recipes/src",
@@ -770,7 +740,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "get-build",
       "2"
     ],
@@ -810,7 +780,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "edit",
       "-p",
       "dry_run=true"
@@ -853,7 +823,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "edit",
       "-d",
       "bot_size=large"
@@ -899,7 +869,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "edit-recipe-bundle"
     ],
     "cwd": "[CLEANUP]/recipes/src",
@@ -946,7 +916,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "edit-system",
       "-p",
       "20"
@@ -995,7 +965,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "edit",
       "-name",
       "staging-release-triggerer 2"
@@ -1045,7 +1015,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/led/led",
+      "led",
       "launch"
     ],
     "cwd": "[CLEANUP]/recipes/src",
