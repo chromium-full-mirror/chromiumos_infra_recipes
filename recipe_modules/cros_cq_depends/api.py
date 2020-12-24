@@ -74,8 +74,10 @@ class CrosCqDependsApi(RecipeApi):
         host = PRIVATE_HOST
         change_num = dep[len(private_prefix):]
       if host and change_num.isdigit():
-        dep_log.append('%s:%s' % (host, change_num))
-        valid_deps.append(Dep(host, change_num))
+        # Only include each change once in the list.
+        if Dep(host, change_num) not in valid_deps:
+          dep_log.append('%s:%s' % (host, change_num))
+          valid_deps.append(Dep(host, change_num))
       else:
         dep_log.append('invalid dep: %s' % dep)
     if len(valid_deps) == 0:
@@ -155,7 +157,7 @@ class CrosCqDependsApi(RecipeApi):
               # Dep is satisfied locally
               dep_local_log.append('%s found at %s on branch %s' %
                                    (rev, path, branch))
-        else:
+        if not paths:
           dep_local_log.append('Failed to find project paths')
           continue
 

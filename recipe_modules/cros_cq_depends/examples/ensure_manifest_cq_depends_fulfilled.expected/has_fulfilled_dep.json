@@ -471,7 +471,6 @@
       "@@@STEP_LOG_LINE@gather cq-depend@chrome-internal:67890@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
       "@@@STEP_LOG_LINE@dep local@deadbeef found at src/project-c on branch master@@@",
-      "@@@STEP_LOG_LINE@dep local@Failed to find project paths@@@",
       "@@@STEP_LOG_LINE@dep local@change 2 in non-Chrome OS repo not-a-project@@@",
       "@@@STEP_LOG_END@dep local@@@"
     ]

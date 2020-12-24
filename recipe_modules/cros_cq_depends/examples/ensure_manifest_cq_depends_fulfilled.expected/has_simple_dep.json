@@ -469,7 +469,6 @@
       "@@@STEP_LOG_LINE@gather cq-depend@chromium:12345@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
       "@@@STEP_LOG_LINE@dep local@deadbeef found at src/project-c on branch master@@@",
-      "@@@STEP_LOG_LINE@dep local@Failed to find project paths@@@",
       "@@@STEP_LOG_END@dep local@@@"
     ]
   },
