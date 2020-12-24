@@ -487,13 +487,12 @@
   {
     "cmd": [
       "git",
-      "log",
-      "FETCH_HEAD~1..FETCH_HEAD",
-      "--pretty=%H"
+      "rev-parse",
+      "FETCH_HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "git log"
+    "name": "git rev-parse"
   },
   {
     "cmd": [],
@@ -783,14 +782,14 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/deadbeef00000000000000000000000000000000/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/deadbeefdeadbeefdeadbeefdeadbeefdeadbeef/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
       "200,404"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "recreating older run.sync to snapshot.fetch deadbeef00000000000000000000000000000000:snapshot.xml",
+    "name": "recreating older run.sync to snapshot.fetch deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -954,7 +953,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "deadbeef00000000000000000000000000000000:"
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -982,7 +981,7 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "deadbeef00000000000000000000000000000000",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
       "--key",
       "Cr-External-Snapshot"
     ],
@@ -1429,6 +1428,25 @@
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "diff remote and local manifest.git show",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check reachability"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "FROM_REV",
+      "TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "check reachability.git merge-base",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

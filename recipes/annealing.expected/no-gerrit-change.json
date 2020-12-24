@@ -960,6 +960,25 @@
   },
   {
     "cmd": [],
+    "name": "check reachability"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "FROM_REV",
+      "TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "check reachability.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "ensure manifest cq-depend fulfilled",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@diff manifest@NAME upreved from FROM_REV to TO_REV@@@",

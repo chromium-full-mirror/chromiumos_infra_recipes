@@ -25,6 +25,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.annealing import AnnealingProperties
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 from recipe_engine import util
 
 DEPS = [
@@ -58,6 +59,7 @@ PROPERTIES = AnnealingProperties
 def RunSteps(api, properties):
   # If we're configured not to publish uprev's run as staging.
   is_staging = not properties.publish_uprevs
+  workspace_path = api.src_state.workspace_path
 
   commit = api.src_state.gitiles_commit
   prior_internal = prior_external = None
@@ -84,20 +86,20 @@ def RunSteps(api, properties):
         commit.host = commit.host or api.src_state.internal_manifest.host
         commit.project = commit.project or internal_manifest.project
         commit.ref = ref
-        commit.id = api.git.fetch_refs(internal_manifest.url, ref)[0]
+        commit.id = api.git.fetch_ref(internal_manifest.url, ref)
 
       if commit.id:
         with api.step.nest('recreating older run'):
           properties.dry_run = True
-          # Check out the gitiles_commit we received, and declare the prior commit
-          # in each manifest to be the prior commit. Start by forcing a checkout
-          # on the right branch.
+          # Check out the gitiles_commit we received, and declare the prior
+          # commit in each manifest to be the prior commit. Start by forcing a
+          # checkout on the right branch.
           branch = (
               commit.ref[len('refs/heads/'):]
               if commit.ref.startswith('refs/heads/') else commit.ref)
           api.cros_source.ensure_synced_cache(
-              cache_path_override=api.src_state.workspace_path,
-              is_staging=is_staging, init_opts=dict(manifest_branch=branch))
+              cache_path_override=workspace_path, is_staging=is_staging,
+              init_opts=dict(manifest_branch=branch))
           api.cros_source.sync_snapshot(commit)
           prior_internal = api.git.fetch_refs(internal_manifest.url, commit.id,
                                               count=2)[-1]
@@ -106,7 +108,7 @@ def RunSteps(api, properties):
                                              key='Cr-External-Snapshot',
                                              step_test_data=test_data)
           prior_external = footers[0] if footers else None
-          with api.context(cwd=api.src_state.workspace_path):
+          with api.context(cwd=workspace_path):
             api.repo.init(internal_manifest.url,
                           manifest_branch=internal_manifest.branch)
 
@@ -192,6 +194,21 @@ def RunSteps(api, properties):
         if len(manifest_diffs) == 0:
           return
 
+        # Make sure that we have not lost commits.  If the new revision at a
+        # path is older than the prior one, provide a clearer failure message
+        # than the one we get in cros_cq_depends.
+        # See b/176121817 and ci.chromium.org/b/8860265036779649984.
+        with api.step.nest('check reachability'):
+          downrevs = []
+          for diff in manifest_diffs:
+            with api.context(cwd=workspace_path.join(diff.path)):
+              if not api.git.is_reachable(diff.from_rev, diff.to_rev):
+                downrevs.append('{}: {} is not an ancestor of {}'.format(
+                    diff.path, diff.from_rev, diff.to_rev))
+
+          if downrevs:
+            raise StepFailure('\n'.join(downrevs))
+
         # Otherwise we need to ensure all of those diffs have fulfilled deps.
         api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
@@ -222,8 +239,7 @@ def RunSteps(api, properties):
       # from the remote uprev commits. The only two ways around it are (a)
       # run repo sync a second time, after uprevs, or (b) include the uprevs
       # in the NEXT snapshot. We choose the least wasteful option.
-      with api.step.nest('uprev packages'), api.context(
-          cwd=api.src_state.workspace_path):
+      with api.step.nest('uprev packages'), api.context(cwd=workspace_path):
         response = api.cros_sdk.uprev_packages(name='uprev ebuilds')
 
         ebuilds_by_repository = collections.defaultdict(list)
@@ -696,4 +712,27 @@ def GenTests(api):
       'missing-required-properties',
       api.properties(AnnealingProperties()),
       api.expect_exception('ValueError'),
+  )
+
+  yield api.test(
+      'downrev',
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.step_data('check reachability.git merge-base', retcode=1),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000001'),
+      api.post_check(post_process.StatusFailure),
   )

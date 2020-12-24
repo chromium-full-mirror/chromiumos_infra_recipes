@@ -80,7 +80,7 @@ class GitApi(recipe_api.RecipeApi):
       * path (str|Path): The file path to check for changes.
 
     Returns:
-      bool: True if the file changed from HEAD (or didn't exists), False
+      bool: True if the file changed from HEAD (or doesn't exist), False
           otherwise.
     """
     # Both `ls-files` and `diff-index` appear to be needed here. They return:
@@ -427,16 +427,17 @@ class GitApi(recipe_api.RecipeApi):
         commits.append(self.Commit(ref.strip('\n'), message))
     return commits
 
-  def is_reachable(self, revision):
+  def is_reachable(self, revision, head='HEAD'):
     """Check if the given revision is reachable from HEAD.
 
     Args:
       revision (str): A git revision to search for.
+      head (str): The starting revision.  Default: HEAD.
 
     Returns:
-      bool: True if the revision can be reached from HEAD.
+      bool: True if the revision can be reached from (is an ancestor of) |head|.
     """
-    cmd = ['merge-base', '--is-ancestor', revision, 'HEAD']
+    cmd = ['merge-base', '--is-ancestor', revision, head]
     return self._step(cmd, ok_ret=(0, 1, 128)).retcode == 0
 
   def show_file(self, rev, path, test_contents=None):
