@@ -470,8 +470,8 @@
       "@@@STEP_LOG_LINE@gather cq-depend@invalid dep: chromium:IAmNotAnInteger@@@",
       "@@@STEP_LOG_LINE@gather cq-depend@chrome-internal:67890@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
-      "@@@STEP_LOG_LINE@dep local@Unsatisfied dep: deadbeef does not exist at src/project-c on branch master@@@",
-      "@@@STEP_LOG_LINE@dep local@change 2 in non-Chrome OS repo not-a-project@@@",
+      "@@@STEP_LOG_LINE@dep local@Unsatisfied dep: deadbeef does not exist at src/project-c on branch master (chromium:1)@@@",
+      "@@@STEP_LOG_LINE@dep local@change chromium:2 in non-Chrome OS repo not-a-project@@@",
       "@@@STEP_LOG_END@dep local@@@"
     ]
   },
@@ -748,7 +748,7 @@
     "name": "ensure manifest cq-depend fulfilled (2).set missing_depends",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@missing_depends@[\"Unsatisfied dep: deadbeef does not exist at src/project-c on branch master\"]@@@"
+      "@@@SET_BUILD_PROPERTY@missing_depends@[\"Unsatisfied dep: deadbeef does not exist at src/project-c on branch master (chromium:1)\"]@@@"
     ]
   },
   {

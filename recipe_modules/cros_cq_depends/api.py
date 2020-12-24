@@ -132,9 +132,10 @@ class CrosCqDependsApi(RecipeApi):
         project = change.project
         branch = change.branch
         rev = change.current_revision
+        display_id = change.display_id
         if project not in project_names:
           dep_local_log.append('change %s in non-Chrome OS repo %s' %
-                               (change.change_id, project))
+                               (display_id, project))
           continue
 
         paths = self.m.cros_source.find_project_paths(project, branch,
@@ -148,17 +149,17 @@ class CrosCqDependsApi(RecipeApi):
             # we can do about it.
             if not self.m.git.is_reachable(rev):
               message = (
-                  'Unsatisfied dep: %s does not exist at %s on branch %s' %
-                  (rev, path, branch))
+                  'Unsatisfied dep: %s does not exist at %s on branch %s (%s)' %
+                  (rev, path, branch, display_id))
               dep_local_log.append(message)
               missing_depends.append(message)
 
             else:
               # Dep is satisfied locally
-              dep_local_log.append('%s found at %s on branch %s' %
-                                   (rev, path, branch))
+              dep_local_log.append('%s found at %s on branch %s (%s)' %
+                                   (rev, path, branch, display_id))
         if not paths:
-          dep_local_log.append('Failed to find project paths')
+          dep_local_log.append('Failed to find project paths (%s)' % display_id)
           continue
 
       if missing_depends:
