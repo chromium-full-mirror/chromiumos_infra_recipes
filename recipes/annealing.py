@@ -71,9 +71,13 @@ def RunSteps(api, properties):
     external_manifest = api.src_state.external_manifest
     external_full = external_manifest.path.join('full.xml')
 
-    with api.context(cwd=internal_manifest.path):
-      api.cros_source.ensure_synced_cache(is_staging=is_staging)
+    # Do this before anything else.  Most notably, if it is called while in
+    # internal_manifest.path, HEAD stops tracking the lowerdir in the overlayfs,
+    # which means we fail when the cache updates manifest-internal.  See
+    # crbug/1148052.
+    api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
+    with api.context(cwd=internal_manifest.path):
       if api.cq.state != api.cq.INACTIVE and not commit.id:
         # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
         ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)
