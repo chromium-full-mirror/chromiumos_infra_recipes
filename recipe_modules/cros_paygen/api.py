@@ -277,7 +277,6 @@ class PaygenTestConfig(object):
     # different board label (e.g. eve-arc-r maps to eve).
     params.software_attributes.build_target.name = self._build_target_name
 
-    params.legacy.autotest_suite = self._suite_name
     params.metadata.test_metadata_url = self._tgt_archive_uri
     params.metadata.debug_symbols_archive_url = self._tgt_archive_uri
 

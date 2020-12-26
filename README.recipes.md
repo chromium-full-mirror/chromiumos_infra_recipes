@@ -1900,11 +1900,11 @@ bisection using the configuration of another builder.
 
 API for working with Paygen and its config.
 
-#### **class [CrosPaygenApi](/recipe_modules/cros_paygen/api.py#313)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPaygenApi](/recipe_modules/cros_paygen/api.py#312)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific paygen steps.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#727)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#726)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -1924,9 +1924,9 @@ Returns:
   A PaygenTestConfig or None if no source payload exists or unsupported
   Payload provided.
 
-&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/cros_paygen/api.py#356)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/cros_paygen/api.py#355)(self):**
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_paygen/api.py#360)(self, builder_name, \*\*kwargs):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_paygen/api.py#359)(self, builder_name, \*\*kwargs):**
 
 Return the configs matching the query or [].
 
@@ -1960,7 +1960,7 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_delta\_requests](/recipe_modules/cros_paygen/api.py#428)(self, payload_def, src_artifacts, tgt_artifacts, bucket, verify, keyset, dryrun):**
+&mdash; **def [get\_delta\_requests](/recipe_modules/cros_paygen/api.py#427)(self, payload_def, src_artifacts, tgt_artifacts, bucket, verify, keyset, dryrun):**
 
 Examine def, source, and target and return list(GenerationRequests).
 
@@ -1981,7 +1981,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#495)(self, tgt_artifacts, bucket, verify, keyset, dryrun):**
+&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#494)(self, tgt_artifacts, bucket, verify, keyset, dryrun):**
 
 Get the configured full requests for a set of artifacts.
 
@@ -1995,7 +1995,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_n2n\_requests](/recipe_modules/cros_paygen/api.py#402)(self, tgt_artifacts, bucket, verify, dryrun):**
+&mdash; **def [get\_n2n\_requests](/recipe_modules/cros_paygen/api.py#401)(self, tgt_artifacts, bucket, verify, dryrun):**
 
 Generate a N2N testing payloads.
 
@@ -2012,7 +2012,7 @@ Args:
 Returns:
   A list[GenerationRequest] or [].
 
-&mdash; **def [run\_paygen\_builders](/recipe_modules/cros_paygen/api.py#535)(self, gen_reqs, configured_payloads, delta_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG, full_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):**
+&mdash; **def [run\_paygen\_builders](/recipe_modules/cros_paygen/api.py#534)(self, gen_reqs, configured_payloads, delta_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG, full_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):**
 
 Launch paygen builders to generate payloads and run configured tests.
 
@@ -2029,7 +2029,7 @@ Args:
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#796)(self, paygen_test_configs, models=None):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#795)(self, paygen_test_configs, models=None):**
 
 Schedule Paygen autoupdate (AU) tests.
 
