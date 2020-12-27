@@ -90,7 +90,6 @@ class SkylabApi(recipe_api.RecipeApi):
         req = Request()
         req.params.hardware_attributes.model = ''
         req.params.time.maximum_duration.seconds = timeout.seconds
-        req.params.migrations.enable_synchronous_offload = True
         image_path = uht.unit.common.build_payload.artifacts_gs_path
         gs_url = ('gs://' + uht.unit.common.build_payload.artifacts_gs_bucket +
                   '/' + uht.unit.common.build_payload.artifacts_gs_path)
