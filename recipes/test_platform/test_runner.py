@@ -471,17 +471,22 @@ def _execution_steps_for_test(api, properties, phosphorus_config, dut_hostname,
           test=test,
           logs_gs_dir=logs_gs_dir,
       )
-      # Ignore fetch_crashes result for now.
-      # TODO(mutexlox): Add fields controlling whether to upload crashes
-      # (and to prod/staging) to test_platform.skylab_test_runner.Config
+      # TODO(crbug.com/1107005) Once this step is proved stable, stop ignoring
+      # errors.
+      # TODO(crbug.com/1107005) Add links to UI for the uploaded crashes, using
+      # the response from fetch_crashes().
       try:
-        _ = fetch_crashes(api, config=phosphorus_config,
-                          request=properties.request,
-                          output_config=properties.config.output,
-                          dut_hostname=dut_hostname, upload_crashes=False,
-                          use_staging=False)
-      # This step is currently broken, so catch and continue.
-      # https://crbug.com/1157600
+        _ = fetch_crashes(
+            api,
+            config=phosphorus_config,
+            request=properties.request,
+            output_config=properties.config.output,
+            dut_hostname=dut_hostname,
+            upload_crashes=properties.request.execution_param.upload_crashes,
+            # TODO(crbug.com/1156826) Delete this flag in favor of setting the
+            # crash server via Config payload.
+            use_staging=False,
+        )
       except api.step.StepFailure:  # pragma: no cover
         pass
 
