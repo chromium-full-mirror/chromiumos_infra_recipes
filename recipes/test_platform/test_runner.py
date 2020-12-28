@@ -379,10 +379,11 @@ def _get_phosphorus_config(recipe_config, load_response):
   """
   subdir = os.path.join(load_response.results_dir, "autoserv_test")
   return phosphorus.common.Config(
-      log_data_upload_step=recipe_config.log_data_upload_step,
       bot=phosphorus.common.BotEnvironment(
           autotest_dir=recipe_config.harness.autotest_dir,
       ),
+      fetch_crashes_step=recipe_config.fetch_crashes_step,
+      log_data_upload_step=recipe_config.log_data_upload_step,
       task=phosphorus.common.TaskEnvironment(
           results_dir=load_response.results_dir,
           ssp_base_image_name=recipe_config.harness.ssp_base_image_name,
