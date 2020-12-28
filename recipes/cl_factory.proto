@@ -6,6 +6,7 @@ syntax = "proto3";
 
 package recipes.chromeos.cl_factory;
 
+// NEXT ID: 12
 message ClFactoryProperties {
   // Regex specifying repos to operate on. The matching is the same
   // as in `repo forall --regex regexes...`, for example,
@@ -34,6 +35,10 @@ message ClFactoryProperties {
   // Whether you want to force a full repo sync. Typically a targeted
   // sync of only the involved repos per repo_regexes should suffice.
   bool full_repo_sync = 6;
+
+  // Manifest branch to checkout and upload changes for. If not specified, ToT
+  // is used.
+  string manifest_branch = 11;
 
   // Message defining string replacements to perform.
   message ReplaceString {

@@ -50,6 +50,7 @@ DEPS = [
     'gerrit',
     'git',
     'repo',
+    'src_state',
 ]
 
 _CHROMIOUS_CONFIG_PROJECT = 'chromiumos/config'
@@ -91,6 +92,10 @@ def RunSteps(api, properties):
         init_opts=dict(verbose=True), sync_opts=dict(verbose=True),
         cache_path_override=api.cros_source.workspace_path,
         projects=sync_projects)
+
+    if properties.manifest_branch:
+      api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
+                                      properties.manifest_branch)
 
     with api.step.nest('cherry-pick gerrit changes') as pres:
       if gerrit_changes:
@@ -472,6 +477,7 @@ TEST=CQ
               ccs=['bob@google.com', 'martin@google.com'],
               hashtags=['refactor-audio-config'],
               message_template=message_template,
+              manifest_branch='release-R12-34567.B',
           )),
       api.post_check(post_process.StatusSuccess),
   )
