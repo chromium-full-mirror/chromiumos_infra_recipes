@@ -45,6 +45,7 @@ PRIVATE_BASEBOARD_REPO = CROS_INTERNAL + '/overlays/baseboard-{program}-private'
 # Source and destination config files
 SRC_CONFIG = 'generated/config.jsonproto'
 DST_CONFIG = 'generated/joined.jsonproto'
+DST_IMPORTED = 'generated/imported.jsonproto'
 
 JOIN_SCRIPT_PATH = 'payload_utils/join_config_payloads.py'
 
@@ -203,10 +204,8 @@ def RunSteps(api, properties):
     # Mock existence of source path for tests
     api.path.mock_add_paths(api.context.cwd.join(SRC_CONFIG))
 
-    # Merge hwid and yaml files with any generated config that we have
-    cmd = [cros_config_path.join(JOIN_SCRIPT_PATH), '--output', DST_CONFIG]
-    if api.path.exists(api.context.cwd.join(SRC_CONFIG)):
-      cmd += ['--config-bundle', SRC_CONFIG]
+    # Merge backfilled data into a ConfigBundle payload
+    cmd = [cros_config_path.join(JOIN_SCRIPT_PATH)]
     if properties.HasField('public_yaml'):
       cmd += [
           '--public-model',
@@ -227,8 +226,19 @@ def RunSteps(api, properties):
     if properties.program_name:
       cmd += ['--program-name', properties.program_name]
 
-    # Generate joined output
-    api.step("Generate joined configuration", ["vpython"] + cmd)
+    # Generate imported file which is just the backfilled data
+    api.step("Generate imported configuration",
+             ["vpython"] + cmd + ['--output', DST_IMPORTED])
+    api.git.add([DST_IMPORTED])
+
+    # TODO(crbug.com/1154322): remove merged configuration generation once
+    # the merge functionality is available, just call gen_config instead.
+    # Generate output joined with existing starlark config
+    if api.path.exists(api.context.cwd.join(SRC_CONFIG)):
+      cmd += ['--config-bundle', SRC_CONFIG]
+
+    api.step("Generate joined configuration",
+             ["vpython"] + cmd + ['--output', DST_CONFIG])
     api.git.add([DST_CONFIG])
 
     # Commit changes (if any)

@@ -238,10 +238,6 @@
     "cmd": [
       "vpython",
       "[START_DIR]/config/payload_utils/join_config_payloads.py",
-      "--output",
-      "generated/joined.jsonproto",
-      "--config-bundle",
-      "generated/config.jsonproto",
       "--public-model",
       "[START_DIR]/public/some/model.yaml",
       "--private-model",
@@ -251,7 +247,47 @@
       "--project-name",
       "test_project",
       "--program-name",
-      "test_program"
+      "test_program",
+      "--output",
+      "generated/imported.jsonproto"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "name": "git transaction.Generate imported configuration",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "generated/imported.jsonproto"
+    ],
+    "cwd": "[START_DIR]/dest",
+    "infra_step": true,
+    "name": "git transaction.git add (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[START_DIR]/config/payload_utils/join_config_payloads.py",
+      "--public-model",
+      "[START_DIR]/public/some/model.yaml",
+      "--private-model",
+      "[START_DIR]/private/some/model.yaml",
+      "--hwid",
+      "[START_DIR]/hwid/v3/SOME_KEY",
+      "--project-name",
+      "test_project",
+      "--program-name",
+      "test_program",
+      "--config-bundle",
+      "generated/config.jsonproto",
+      "--output",
+      "generated/joined.jsonproto"
     ],
     "cwd": "[START_DIR]/dest",
     "name": "git transaction.Generate joined configuration",
@@ -267,7 +303,7 @@
     ],
     "cwd": "[START_DIR]/dest",
     "infra_step": true,
-    "name": "git transaction.git add (4)",
+    "name": "git transaction.git add (5)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
