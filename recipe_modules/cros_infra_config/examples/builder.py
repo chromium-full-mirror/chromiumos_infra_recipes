@@ -143,6 +143,18 @@ def GenTests(api):
           }))
 
   yield api.test(
+      'follow_gitiles_commit_ref-main',
+      builder(
+          build_target='grunt', builder='grunt-postsubmit',
+          git_ref='refs/heads/main',
+          expected_gitiles_commit=common_pb2.GitilesCommit(
+              host=i_manifest.host, project=i_manifest.project,
+              ref=i_manifest.ref, id='%s-HEAD-SHA' % i_manifest.branch),
+          input_properties={
+              '$chromeos/cros_infra_config': dict(honor_gitiles_commit_ref=True)
+          }))
+
+  yield api.test(
       'public_has_no_commit_and_no_changes',
       api.properties(
           **{

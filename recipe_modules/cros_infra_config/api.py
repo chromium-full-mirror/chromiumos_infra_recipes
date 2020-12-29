@@ -394,7 +394,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     if (commit.ref and self._properties.honor_gitiles_commit_ref and
         not self._has_valid_commit(None, commit, manifest)):
       commit = manifest.as_gitiles_commit_proto
-      commit.ref = original_commit.ref
+      # TODO(crbug/1152875): Once manifest-internal migrates to main, this is
+      # not needed.  Meanwhile, if the original ref matches the external
+      # manifest (which has moved), then use the manifest ref from the active
+      # manifest.
+      if original_commit.ref != self.m.src_state.external_manifest.ref:
+        commit.ref = original_commit.ref
 
     # If we have a config, and the given commit is invalid, try the one from the
     # builder config.
