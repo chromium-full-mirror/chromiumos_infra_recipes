@@ -133,11 +133,14 @@ class BotCostApi(RecipeApi):
 
   def _get_child_builds(self):
     """Get the child builders for this orchestrator."""
+    # We only really care about id and output.properties.bot_cost, but
+    # buildbucket wants to give builder and status as well, so ask for them.
+    fields = frozenset({'id', 'builder', 'status', 'output'})
     predicate = builds_service_pb2.BuildPredicate(
         tags=self.m.buildbucket.tags(
             parent_buildbucket_id=str(self.m.buildbucket.build.id)))
     predicate.builder.project = self.m.buildbucket.build.builder.project
-    return self.m.buildbucket.search(predicate)
+    return self.m.buildbucket.search(predicate, fields=fields)
 
   def _get_child_builds_cost(self, child_builds, parent_step):
     """Get the cost of building child images during this cq run.
@@ -162,13 +165,10 @@ class BotCostApi(RecipeApi):
 
     orch_build_id = self.m.buildbucket.build.id
     for build in child_builds:
-      for tag in build.tags:
-        if (tag.key == 'parent_buildbucket_id' and
-            int(tag.value) == orch_build_id):
-          if 'build_cost' in build.output.properties:
-            total_child_build_cost += build.output.properties['build_cost']
-          else:
-            child_builds_missing_cost.append(str(build.id))
+      if 'build_cost' in build.output.properties:
+        total_child_build_cost += build.output.properties['build_cost']
+      else:
+        child_builds_missing_cost.append(str(build.id))
 
     if child_builds_missing_cost:
       parent_step.logs[
