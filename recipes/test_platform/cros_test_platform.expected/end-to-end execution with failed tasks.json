@@ -403,10 +403,10 @@
     "name": "summarize.default task results.failed all attempts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(log)   foo-failed@logs://bar/baz@@@",
-      "@@@STEP_LINK@(task)  foo-failed@foo://bar/baz@@@",
-      "@@@STEP_LINK@(log)   foo-failed attempt #1@logs://bar/baz1@@@",
-      "@@@STEP_LINK@(task)  foo-failed attempt #1@foo://bar/baz1@@@",
+      "@@@STEP_LINK@1. (log)   foo-failed@logs://bar/baz@@@",
+      "@@@STEP_LINK@1. (task)  foo-failed@foo://bar/baz@@@",
+      "@@@STEP_LINK@2. (log)   foo-failed attempt #1@logs://bar/baz1@@@",
+      "@@@STEP_LINK@2. (task)  foo-failed attempt #1@foo://bar/baz1@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

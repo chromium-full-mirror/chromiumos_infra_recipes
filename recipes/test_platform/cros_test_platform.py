@@ -509,7 +509,7 @@ def _emit_links(step, task_results):
   # TODO(akeshet): Correctly handle link emission in the case of multiple
   # task results with the same name. This will involve a proto change that
   # includes attempt number in the result.
-  for t in task_results:
+  for i, t in enumerate(task_results, 1):
     if t.state.life_cycle not in [
         TaskState.LIFE_CYCLE_COMPLETED, TaskState.LIFE_CYCLE_RUNNING
     ]:
@@ -528,8 +528,8 @@ def _emit_links(step, task_results):
       suffix = ' attempt #%s' % str(t.attempt)
       if t.state.verdict in _PASSED_VERDICTS:
         suffix = suffix + ' passed on retry'
-    step.links['(log)   ' + t.name + suffix] = t.log_url
-    step.links['(task)  ' + t.name + suffix] = t.task_url
+    step.links[str(i) + '. (log)   ' + t.name + suffix] = t.log_url
+    step.links[str(i) + '. (task)  ' + t.name + suffix] = t.task_url
 
 
 def _test_scheduling():
@@ -845,6 +845,41 @@ def GenTests(api):
                                      log_url='logs://bar/baz1',
                                      name='foo-failed',
                                      attempt=1,
+                                     state=TaskState(
+                                         verdict="VERDICT_FAILED",
+                                         life_cycle='LIFE_CYCLE_COMPLETED'),
+                                 ),
+                             ],
+                         )
+                 }),
+         ))
+
+  yield (api.test('end-to-end execution with tests with duplicate names') +  #
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=_test_request('foo'), config=_test_config('foo'))) +  #
+         _generic_enumerate_response(api) +  #
+         api.cros_test_platform.set_skylab_execute_response(
+             'execute',
+             ExecuteResponses(
+                 tagged_responses={
+                     'default':
+                         ExecuteResponse(
+                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                             verdict='VERDICT_FAILED'),
+                             task_results=[
+                                 ExecuteResponse.TaskResult(
+                                     task_url='foo://bar/baz',
+                                     log_url='logs://bar/baz',
+                                     name='foo-failed',
+                                     state=TaskState(
+                                         verdict="VERDICT_FAILED",
+                                         life_cycle='LIFE_CYCLE_COMPLETED'),
+                                 ),
+                                 ExecuteResponse.TaskResult(
+                                     task_url='foo://bar/baz1',
+                                     log_url='logs://bar/baz1',
+                                     name='foo-failed',
                                      state=TaskState(
                                          verdict="VERDICT_FAILED",
                                          life_cycle='LIFE_CYCLE_COMPLETED'),

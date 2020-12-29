@@ -397,8 +397,8 @@
     "name": "summarize.default task results.passed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(log)   foo-retried attempt #1 passed on retry@logs://bar/baz1@@@",
-      "@@@STEP_LINK@(task)  foo-retried attempt #1 passed on retry@foo://bar/baz1@@@"
+      "@@@STEP_LINK@1. (log)   foo-retried attempt #1 passed on retry@logs://bar/baz1@@@",
+      "@@@STEP_LINK@1. (task)  foo-retried attempt #1 passed on retry@foo://bar/baz1@@@"
     ]
   },
   {
@@ -406,8 +406,8 @@
     "name": "summarize.default task results.flaked",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(log)   foo-retried@logs://bar/baz@@@",
-      "@@@STEP_LINK@(task)  foo-retried@foo://bar/baz@@@"
+      "@@@STEP_LINK@1. (log)   foo-retried@logs://bar/baz@@@",
+      "@@@STEP_LINK@1. (task)  foo-retried@foo://bar/baz@@@"
     ]
   },
   {
