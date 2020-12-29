@@ -3248,7 +3248,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#567)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#568)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -3256,7 +3256,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#500)(self, gerrit_change, comment):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#501)(self, gerrit_change, comment):**
 
 Add a comment to the given Gerrit change.
 
@@ -3312,7 +3312,7 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#521)(self, gerrit_change):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#522)(self, gerrit_change):**
 
 Get the description of the given Gerrit change.
 
@@ -3356,7 +3356,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#581)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#582)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -3369,7 +3369,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#543)(self, gerrit_change, description):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#544)(self, gerrit_change, description):**
 
 Set the description of the given Gerrit change.
 

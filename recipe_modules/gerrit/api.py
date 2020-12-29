@@ -491,7 +491,8 @@ class GerritApi(RecipeApi):
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         # Rebase before pushing so Gerrit does not complain there was no change.
-        rebase_branch = branch = "%s/master" % project_info.remote if rebase_from_remote else None
+        rebase_branch = branch = "%s/%s" % (
+            project_info.remote, branch) if rebase_from_remote else None
         self.m.git.rebase(force=True, branch=rebase_branch)
         self.m.git.push(project_info.remote, refspec)
 
