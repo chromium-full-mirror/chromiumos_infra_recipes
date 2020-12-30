@@ -193,8 +193,7 @@ def GenTests(api):
           api.raw_io.stream_output('HEAD detached at 99caf97f\n'
                                    'nothing to commit, working tree clean\n'),
           retcode=1), cq=True, git_repo=api.src_state.internal_manifest.url,
-      cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True), gerrit_changes=changes)
+      gerrit_changes=changes)
 
   yield api.cros_source.test(
       'commit-failure-full.xml', api.post_check(post_process.StatusAnyFailure),
@@ -206,17 +205,15 @@ def GenTests(api):
           'patch manifest.chromiumos/manifest: apply gerrit patch sets',
           data=[_project_data(api.src_state.external_manifest)]),
       api.step_data('patch manifest.git commit',
-                    api.raw_io.stream_output('Commit failed\n'), retcode=1),
-      cq=True, git_repo=api.src_state.internal_manifest.url,
-      cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True), gerrit_changes=changes)
+                    api.raw_io.stream_output('Commit failed\n'),
+                    retcode=1), cq=True,
+      git_repo=api.src_state.internal_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
       'manifest-no-changes', api.post_check(post_process.StatusSuccess),
       cq=True, git_repo=api.src_state.internal_manifest.url, gerrit_changes=[
           GerritChange(host='host', project='project', change=555, patchset=3)
-      ], cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True))
+      ])
 
   yield api.cros_source.test(
       'manifest-changes-active-internal',
@@ -227,9 +224,7 @@ def GenTests(api):
       api.repo.project_infos_step_data(
           'patch manifest.chromiumos/manifest: apply gerrit patch sets',
           data=[_project_data(api.src_state.external_manifest)]), cq=True,
-      git_repo=api.src_state.internal_manifest.url,
-      cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True), gerrit_changes=changes)
+      git_repo=api.src_state.internal_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
       'manifest-changes-active-external',
@@ -238,8 +233,6 @@ def GenTests(api):
       api.repo.project_infos_step_data(
           'patch manifest.chromiumos/manifest: apply gerrit patch sets',
           data=[_project_data(api.src_state.external_manifest)]), cq=True,
-      cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True),
       git_repo=api.src_state.external_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
@@ -248,8 +241,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'patch manifest.restore manifest patches.branch main'),
       api.post_check(post_process.StatusSuccess), cq=True,
-      cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True),
       git_repo=api.src_state.internal_manifest.url,
       gerrit_changes=[_manifest_change(api.src_state.internal_manifest)])
 
@@ -267,8 +258,6 @@ def GenTests(api):
               _project_data(api.src_state.internal_manifest,
                             branch_override='refs/heads/other')
           ]), api.post_check(post_process.StatusSuccess), cq=True,
-      cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True),
       git_repo=api.src_state.internal_manifest.url,
       gerrit_changes=[_manifest_change(api.src_state.internal_manifest)])
 
@@ -276,8 +265,6 @@ def GenTests(api):
       'manifest-changes-multi-branch',
       _gerrit_return(changes, values_dict={556: dict(branch='other')}),
       api.post_check(post_process.StatusAnyFailure), cq=True,
-      cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True),
       git_repo=api.src_state.external_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
@@ -290,15 +277,11 @@ def GenTests(api):
                           'full.xml': dict(status='M', size_delta=0, size=0)
                       })
           }), api.post_check(post_process.StatusAnyFailure), cq=True,
-      cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True),
       git_repo=api.src_state.external_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
       'manifest-changes-external-not-changed',
       _gerrit_return(changes, values_dict={555: dict(branch='main')}),
       api.post_check(post_process.StatusSuccess), cq=True,
-      cros_source_properties=CrosSourceProperties(
-          make_manifest_changes_active=True),
       git_repo=api.src_state.external_manifest.url,
       gerrit_changes=[_manifest_change(api.src_state.internal_manifest)])

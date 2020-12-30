@@ -44,7 +44,6 @@ class CrosSourceApi(RecipeApi):
     self._is_source_dirty = bool(self._snapshot_isolate) or bool(
         self._snapshot_cas)
     self._enable_custom_overlays = properties.enable_custom_overlays
-    self._make_manifest_changes_active = properties.make_manifest_changes_active
     # The currently active branch of the manifest.  Empty unless we switched
     # branches.
     self._manifest_branch = ''
@@ -58,9 +57,6 @@ class CrosSourceApi(RecipeApi):
     """Initialization that follows all module loading."""
     self._enable_custom_overlays |= (
         'chromeos.cros_source.enable_custom_overlays' in
-        self.m.cros_infra_config.experiments)
-    self._make_manifest_changes_active |= (
-        'chromeos.cros_source.make_manifest_changes_active' in
         self.m.cros_infra_config.experiments)
 
   @property
@@ -492,8 +488,7 @@ class CrosSourceApi(RecipeApi):
         gerrit_changes, include_commit_info=include_commit_info,
         include_files=include_files, test_output_data=test_output_data)
 
-    if self._make_manifest_changes_active:
-      self._apply_manifest_patch_sets(patch_sets)
+    self._apply_manifest_patch_sets(patch_sets)
 
     return self._apply_gerrit_patch_sets(
         patch_sets, ignore_missing_projects=ignore_missing_projects)

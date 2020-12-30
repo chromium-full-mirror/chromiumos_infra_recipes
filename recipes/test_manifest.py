@@ -42,11 +42,6 @@ def RunSteps(api, properties):
 
     api.cros_source.ensure_synced_cache()
 
-    # TODO(crbug/1110753): Once  $chromeos/cros_source.manifest_changes_active
-    # is the default, applying the changes will switch us to the correct branch
-    # of the manifest.  Until then, we will ignore the branch and test against
-    # ToT, which is OK, since the builder is not a verifier on any other
-    # branches.
     with api.step.nest('cherry-pick gerrit changes'):
       commits = api.cros_source.apply_gerrit_changes(gerrit_changes)
 
@@ -97,26 +92,22 @@ def GenTests(api):
       post_process.DoesNotRun,
       'test branch_util for chromeos/manifest-internal')
 
-  def _runtest(name, *args, **kwargs):
-    props = {'$chromeos/cros_source': dict(make_manifest_changes_active=True)}
-    return api.test(name, api.properties(**props), *args, **kwargs)
+  yield api.test('without-gerrit-changes')
 
-  yield _runtest('without-gerrit-changes')
-
-  yield _runtest(
+  yield api.test(
       'with-manifest-changes',
       api.buildbucket.try_build(project='chromiumos/manifest'),
       api.path.exists(api.path['start_dir'].join(
           'chromiumos_workspace/src/chromiumos/manifest/default.xml')),
       *common_args)
 
-  yield _runtest(
+  yield api.test(
       'with-manifest-internal-changes',
       api.buildbucket.try_build(project='chromeos/manifest-internal'),
       api.properties(test_branch_projects=['chromeos/manifest-internal']),
       internal_exists, tests_internal, *common_args)
 
-  yield _runtest(
+  yield api.test(
       'with-manifest-internal-changes-no-cros-branch',
       api.buildbucket.try_build(project='chromeos/manifest-internal'),
       api.properties(test_branch_projects=['no-tests']), internal_exists,

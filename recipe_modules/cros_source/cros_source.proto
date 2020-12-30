@@ -24,11 +24,4 @@ message CrosSourceProperties {
 
   // Feature flag: whether to allow mounting the external or custom overlay.
   bool enable_custom_overlays = 4;
-
-  // Feature flag: whether to make any manifest changes active when applying
-  // patches.  Without this, the patches are present in the manifest repo, but
-  // the unpatched manifest is used for all repo commands (including syncing the
-  // source tree).  With this, manifest changes are applied, and the source tree
-  // is re-synced using the patched manifest.
-  bool make_manifest_changes_active = 5;
 }
