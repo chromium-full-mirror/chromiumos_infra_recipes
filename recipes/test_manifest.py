@@ -97,22 +97,26 @@ def GenTests(api):
       post_process.DoesNotRun,
       'test branch_util for chromeos/manifest-internal')
 
-  yield api.test('without-gerrit-changes')
+  def _runtest(name, *args, **kwargs):
+    props = {'$chromeos/cros_source': dict(make_manifest_changes_active=True)}
+    return api.test(name, api.properties(**props), *args, **kwargs)
 
-  yield api.test(
+  yield _runtest('without-gerrit-changes')
+
+  yield _runtest(
       'with-manifest-changes',
       api.buildbucket.try_build(project='chromiumos/manifest'),
       api.path.exists(api.path['start_dir'].join(
           'chromiumos_workspace/src/chromiumos/manifest/default.xml')),
       *common_args)
 
-  yield api.test(
+  yield _runtest(
       'with-manifest-internal-changes',
       api.buildbucket.try_build(project='chromeos/manifest-internal'),
       api.properties(test_branch_projects=['chromeos/manifest-internal']),
       internal_exists, tests_internal, *common_args)
 
-  yield api.test(
+  yield _runtest(
       'with-manifest-internal-changes-no-cros-branch',
       api.buildbucket.try_build(project='chromeos/manifest-internal'),
       api.properties(test_branch_projects=['no-tests']), internal_exists,

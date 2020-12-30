@@ -3,6 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.cros_source.cros_source import (
+    CrosSourceProperties)
+
 from recipe_engine import recipe_test_api
 
 
@@ -28,7 +31,9 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
       (TestData) the build with cros_source properties included.
     """
     kwargs = kwargs or {}
-    cros_source_properties = kwargs.pop('cros_source_properties', {})
+    cros_source_properties = kwargs.pop('cros_source_properties',
+                                        CrosSourceProperties())
+    cros_source_properties.make_manifest_changes_active = True
     kwargs.setdefault('revision', '2d72510e447ab60a9728aeea2362d8be2cbd7789')
     kwargs.setdefault('git_repo', self.m.src_state.internal_manifest.url)
     kwargs.setdefault('cq', True)

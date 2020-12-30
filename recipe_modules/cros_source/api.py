@@ -483,9 +483,9 @@ class CrosSourceApi(RecipeApi):
     Returns:
       List[ProjectCommit]: A list of commits from cherry-picked patch sets.
     """
-    # If make_manifest_changes_active is set, we need files_info for the
-    # changes.
-    include_files |= self._make_manifest_changes_active
+    # We need files_info for the changes, so that we can make manifest changes
+    # active.
+    include_files = True
     self._is_source_dirty = True
 
     patch_sets = self.m.gerrit.fetch_patch_sets(

@@ -970,7 +970,7 @@
     ],
     "infra_step": true,
     "name": "gerrit-fetch-changes",
-    "stdin": "{\"changes\": [], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
+    "stdin": "{\"changes\": [], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",

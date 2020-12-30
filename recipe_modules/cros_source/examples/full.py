@@ -98,14 +98,18 @@ def GenTests(api):
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
                     api.raw_io.stream_output('commitsha1 commitsha2')),
-      api.post_check(post_process.StatusFailure))
+      api.post_check(post_process.StatusFailure), gerrit_changes=[
+          GerritChange(host='host', project='project', change=555, patchset=3)
+      ])
 
   yield api.cros_source.test(
       'cherry-picks',
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
                     api.raw_io.stream_output('commitsha1')),
-      api.post_check(post_process.StatusSuccess))
+      api.post_check(post_process.StatusSuccess), gerrit_changes=[
+          GerritChange(host='host', project='project', change=555, patchset=3)
+      ])
 
   # TODO(b/156557792): remove isolate test after migration
   yield api.cros_source.test(
