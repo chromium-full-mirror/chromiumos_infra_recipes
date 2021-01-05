@@ -239,7 +239,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                                             response.failed_packages)
 
   def build_images(self, image_types, builder_path, disable_rootfs_verification,
-                   disk_layout, timeout_sec=45 * 60, build_test_data=None,
+                   disk_layout, timeout_sec=60 * 60, build_test_data=None,
                    test_test_data=None, name=None):
     """Build and validate images.
 
