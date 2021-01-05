@@ -325,6 +325,13 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.original_test.fetch crashes.ensure all crashes were fetched",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.original_test.archive all test logs to Google Storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

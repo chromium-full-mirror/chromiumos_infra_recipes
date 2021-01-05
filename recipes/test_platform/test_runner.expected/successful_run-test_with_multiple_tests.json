@@ -394,6 +394,13 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.multi_test_2.fetch crashes.ensure all crashes were fetched",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.multi_test_2.upload to TKO",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

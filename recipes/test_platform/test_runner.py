@@ -158,7 +158,22 @@ def fetch_crashes(api, config=None, request=None, output_config=None,
     deadline = _deadline(api, request)
     if deadline.seconds < fetch_crashes_request.deadline.seconds:
       fetch_crashes_request.deadline.MergeFrom(deadline)
-    return api.phosphorus.fetch_crashes(fetch_crashes_request)
+    fetch_crashes_response = api.phosphorus.fetch_crashes(fetch_crashes_request)
+
+    # Evaluate the results of fetch_crashes to determine if any crashes are
+    # missed. This sub-step will have a try/except around it for a while,
+    # because we want to use it monitor health and do not expect fetch-crashes
+    # to get 100% of crashes right away.
+    try:
+      with api.step.nest('ensure all crashes were fetched') as step:
+        if len(fetch_crashes_response.crashes_rtd_only) != 0:
+          raise api.step.StepFailure(
+              "Missing %d crashes" %
+              len(fetch_crashes_response.crashes_rtd_only))
+    except api.step.StepFailure:  # pragma: no cover
+      pass
+
+    return fetch_crashes_response
 
 
 def _with_gs_logs_keyval(keyvals, logs_gs_dir):
@@ -827,11 +842,13 @@ def GenTests(api):
         phosphorus.fetchcrashes.FetchCrashesResponse.SUCCEEDED, test_id)
 
   def _fetch_crashes_step_with_state(state, test_id='original_test'):
+    return _fetch_crashes_step_with_proto(
+        phosphorus.fetchcrashes.FetchCrashesResponse(state=state), test_id)
+
+  def _fetch_crashes_step_with_proto(proto, test_id='original_test'):
     return (api.step_data(
         'execution steps.%s.fetch crashes.call `phosphorus`.fetch-crashes' %
-        test_id, stdout=api.raw_io.output(
-            json_format.MessageToJson(
-                phosphorus.fetchcrashes.FetchCrashesResponse(state=state)))))
+        test_id, stdout=api.raw_io.output(json_format.MessageToJson(proto))))
 
   def _successful_logs_archive_step(test_id='original_test'):
     return api.step_data(
@@ -1066,6 +1083,21 @@ def GenTests(api):
       _successful_prejob_step(),
       _successful_run_test_step(),
       _fetch_crashes_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
+      _successful_logs_archive_step(),
+  )
+
+  fetch_crashes_proto = phosphorus.fetchcrashes.FetchCrashesResponse(
+      state=phosphorus.runtest.RunTestResponse.SUCCEEDED,
+      crashes_rtd_only=["foobar.meta"])
+  yield api.test(
+      'successful_fetch-crashes-with-missed-crashes',
+      _set_build_id(id=42),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _fetch_crashes_step_with_proto(fetch_crashes_proto),
       _successful_logs_archive_step(),
   )
 

@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "execution steps"
+    "name": "execution steps",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -84,7 +87,8 @@
     "cmd": [],
     "name": "execution steps.original_test",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -345,7 +349,8 @@
     "cmd": [],
     "name": "execution steps.original_test.fetch crashes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -370,7 +375,10 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"state\": \"FAILED\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"crashesRtdOnly\": [@@@",
+      "@@@STEP_LOG_LINE@response@    \"foobar.meta\"@@@",
+      "@@@STEP_LOG_LINE@response@  ], @@@",
+      "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -394,7 +402,8 @@
     "cmd": [],
     "name": "execution steps.original_test.fetch crashes.ensure all crashes were fetched",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
