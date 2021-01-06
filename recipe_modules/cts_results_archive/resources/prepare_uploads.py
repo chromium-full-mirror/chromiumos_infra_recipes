@@ -13,6 +13,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tarfile
 import urllib
 
 D = '[0-9][0-9]'
