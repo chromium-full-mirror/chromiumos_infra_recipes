@@ -105,6 +105,7 @@
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [brancher](#recipes-brancher) &mdash; Recipe for creating a new ChromeOS branch.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
+  * [build_borealis_rootfs](#recipes-build_borealis_rootfs) &mdash; Recipe for building a Borealis rootfs image.
   * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
   * [build_firmware](#recipes-build_firmware) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) &mdash; Recipe for generating artifacts for Informational builders.
@@ -5858,6 +5859,15 @@ Recipe for creating a new ChromeOS branch.
 [DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/breakpad/examples/full.py#19)(api):**
+### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
+
+[DEPS](/recipes/build_borealis_rootfs.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for building a Borealis rootfs image.
+
+&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#23)(api):**
+
+&mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#17)(api):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
 [DEPS](/recipes/build_cq.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
