@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "validate Skylab tool version"
+  },
+  {
+    "cmd": [],
     "name": "lease DUT for 2 hr 3 min"
   },
   {

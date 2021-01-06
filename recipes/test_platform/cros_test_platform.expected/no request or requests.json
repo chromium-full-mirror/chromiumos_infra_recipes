@@ -62,13 +62,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "validate request",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
     "failure": {
       "failure": {},
       "humanReason": "Must set exactly one of \"request\" and \"requests\" in input properties (found [])"

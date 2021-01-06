@@ -63,20 +63,34 @@
   },
   {
     "cmd": [],
-    "name": "validate request"
+    "name": "input validation"
   },
   {
     "cmd": [],
-    "name": "validate request.validate timeouts",
+    "name": "input validation.service version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "validate request.validate scheduling parameters",
+    "name": "input validation.request",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "input validation.request.validate timeouts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "input validation.request.validate scheduling parameters",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -180,11 +194,11 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 277, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 296, in RunSteps",
       "    api, _execute_requests(api, requests, enumerations, properties.config))",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 248, in _execute_requests",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 267, in _execute_requests",
       "    _ensure_all_requests_enumerated(requests, enumerations)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 263, in _ensure_all_requests_enumerated",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 282, in _ensure_all_requests_enumerated",
       "    raise ValueError('No enumerations for requests tagged %s' % missing)",
       "ValueError: No enumerations for requests tagged set(['default'])"
     ]

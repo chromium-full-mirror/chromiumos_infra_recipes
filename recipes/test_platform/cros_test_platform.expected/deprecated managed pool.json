@@ -63,23 +63,38 @@
   },
   {
     "cmd": [],
-    "name": "validate request",
+    "name": "input validation",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "validate request.validate timeouts",
+    "name": "input validation.service version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "validate request.validate scheduling parameters",
+    "name": "input validation.request",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "input validation.request.validate timeouts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "input validation.request.validate scheduling parameters",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@default@Pool MANAGED_POOL_BVT not supported. See go/managed-pools-deprecation@@@",
       "@@@STEP_LOG_END@default@@@",
       "@@@STEP_FAILURE@@@"

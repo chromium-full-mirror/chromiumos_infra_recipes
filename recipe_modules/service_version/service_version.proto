@@ -1,0 +1,15 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.service_version;
+
+import "test_platform/service_version.proto";
+
+message ServiceVersionProperties {
+    // Denotes the version of the calling service. Used to ensure that users
+    // launching Test Platform builders are doing so with up-to-date services.
+    .test_platform.ServiceVersion version = 1;
+}

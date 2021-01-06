@@ -16,7 +16,10 @@ from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
   CrosTestPostprocessRequest
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
   TestResult as PostProcessTestResult
+from PB.recipe_modules.chromeos.service_version.service_version import \
+  ServiceVersionProperties
 from PB.test_platform import result_flow as result_flow_pb2
+from PB.test_platform import service_version as service_version_pb
 from PB.test_platform.steps.enumeration import \
   EnumerationRequest, EnumerationRequests
 from PB.test_platform.steps.enumeration import \
@@ -50,6 +53,7 @@ DEPS = [
     'result_flow',
     'cros_tags',
     'cros_test_platform',
+    'service_version',
 ]
 
 # Each CIPD package instance of cros_test_platform that has been promoted to
@@ -82,16 +86,31 @@ def validated_requests(api, properties):
 
   Returns: Struct containing requests.
   """
-  validation_errors = []
-  with api.step.nest('validate request') as step:
-    requests = _get_requests_from_properties(api, properties)
+  requests = _get_requests_from_properties(api, properties)
+  with api.step.nest('input validation'):
+    with api.step.nest('service version'):
+      # We want to add service version validation for every CTP build, but
+      # so far skylab CLI is the only launcher of CTP builds that includes
+      # its service version in the request.
+      if _client_is_skylab_cli(requests):
+        api.service_version.validate_skylab_version()
 
-    validation_errors.append(_validate_timeouts(api, requests))
-    validation_errors.append(_validate_scheduling_params(api, requests))
-  if any(validation_errors):
-    raise api.step.StepFailure('request validation failed')
+    validation_errors = []
+    with api.step.nest('request'):
+      validation_errors.append(_validate_timeouts(api, requests))
+      validation_errors.append(_validate_scheduling_params(api, requests))
+    if any(validation_errors):
+      raise api.step.StepFailure('request validation failed')
 
   return requests
+
+
+def _client_is_skylab_cli(requests):
+  # We only need to check one request to see if the whole build was
+  # launched from the skylab CLI.
+  first_request = requests.values()[0]
+  request_tags = first_request.params.decorations.tags
+  return any("skylab-tool" in tag for tag in request_tags)
 
 
 def _validate_timeouts(api, requests):
@@ -658,6 +677,29 @@ def GenTests(api):
                              priority=120,
                              managed_pool='MANAGED_POOL_BVT',
                          ))))))
+
+  # A skylab CLI-launched build without a valid service version should cause build failure.
+  yield (api.test('skylab-tool-launched build with invalid service version') +
+         api.properties(
+             CrosTestPlatformProperties(
+                 request=Request(
+                     params=Request.Params(
+                         decorations=Request.Params.Decorations(
+                             tags=["skylab-tool:create-test"]))))))
+
+  yield (
+      api.test('skylab-tool-launched build with valid service version') +
+      api.properties(
+          CrosTestPlatformProperties(
+              request=Request(
+                  params=Request.Params(
+                      decorations=Request.Params.Decorations(
+                          tags=["skylab-tool:create-test"])))),  #
+          **{
+              '$chromeos/service_version':
+                  ServiceVersionProperties(
+                      version=service_version_pb.ServiceVersion(skylab_tool=1)),
+          }))
 
   # Config set the result flow pubsub project and topic should push build ID.
   yield (

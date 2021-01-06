@@ -63,20 +63,34 @@
   },
   {
     "cmd": [],
-    "name": "validate request"
+    "name": "input validation"
   },
   {
     "cmd": [],
-    "name": "validate request.validate timeouts",
+    "name": "input validation.service version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "validate request.validate scheduling parameters",
+    "name": "input validation.request",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "input validation.request.validate timeouts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "input validation.request.validate scheduling parameters",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

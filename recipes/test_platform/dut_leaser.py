@@ -7,7 +7,8 @@ from time import localtime, strftime
 from PB.recipes.chromeos.test_platform.dut_leaser import DutLeaserProperties
 from PB.recipe_modules.chromeos.phosphorus.phosphorus import PhosphorusProperties
 from PB.recipe_modules.chromeos.phosphorus.phosphorus import PhosphorusEnvProperties
-from PB.test_platform import skylab_local_state
+from PB.recipe_modules.chromeos.service_version.service_version import ServiceVersionProperties
+from PB.test_platform import skylab_local_state, service_version
 
 from google.protobuf import json_format
 
@@ -17,6 +18,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'phosphorus',
+    'service_version',
 ]
 
 PROPERTIES = DutLeaserProperties
@@ -28,6 +30,7 @@ _DUT_LEASER_TEST_ID = 'dut-leaser'
 
 def RunSteps(api, properties):
   lease_end_seconds = api.time.time() + 60 * properties.lease_length_minutes
+  api.service_version.validate_skylab_version()
   with api.step.nest('lease DUT for %s hr %s min' %
                      (properties.lease_length_minutes // 60,
                       properties.lease_length_minutes % 60)):
@@ -56,7 +59,11 @@ def GenTests(api):
                               'cros_inventory_service': 'inv-service',
                               'cros_ufs_service': 'ufs-service',
                               'autotest_dir': '/path/to/autotest',
-                          })
+                          }),
+              '$chromeos/service_version':
+                  ServiceVersionProperties(
+                      version=service_version.ServiceVersion(skylab_tool=1),
+                  ),
           }) +  #
       api.properties.environ(
           PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
@@ -69,3 +76,24 @@ def GenTests(api):
                   skylab_local_state.load.LoadResponse(
                       results_dir='dummy-results-dir')))),
   ) + api.time.seed(4321)
+
+  yield api.test(
+      'invalid service version',
+      api.properties(
+          DutLeaserProperties(
+              lease_length_minutes=123,
+          ), **{
+              '$chromeos/phosphorus':
+                  PhosphorusProperties(
+                      version=PhosphorusProperties.Version(
+                          cipd_label='phosphorus_prod'), config={
+                              'admin_service': 'foo-service',
+                              'cros_inventory_service': 'inv-service',
+                              'cros_ufs_service': 'ufs-service',
+                              'autotest_dir': '/path/to/autotest',
+                          })
+          }) +  #
+      api.properties.environ(
+          PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
+                                  SWARMING_TASK_ID='dummy-task-id',
+                                  SKYLAB_DUT_ID='dummy-dut-id')))
