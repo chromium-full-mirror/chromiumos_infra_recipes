@@ -1,16 +1,9 @@
 [
   {
     "cmd": [],
-    "name": "validate Skylab tool version",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "validate Skylab tool version"
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "outdated skylab tool version; please update your local skylab CLI via `skylab update`."
-    },
     "name": "$result"
   }
 ]
