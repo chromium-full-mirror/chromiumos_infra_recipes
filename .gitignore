@@ -3,7 +3,7 @@
 *~
 /.env
 /.recipe_deps/
-/.vscode/settings.json
+/.vscode/*
 /bundle/
 support/cipd-bin
 .idea/

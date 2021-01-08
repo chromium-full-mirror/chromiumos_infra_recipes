@@ -80,6 +80,24 @@ enum RetryClPolicy {
   RETRY_LATEST_PINNED = 2;
 }
 
+// Ref to use for scheduled retries.
+// Pupr runs more often than necessary to look for failed CLs to retry.
+// This ref points to the repository containing retry-able CLs, i.e.
+// the repository containing the .ebuild files that are updated on uprev.
+message RetryRef {
+  // Remote, e.g. "cros" or "cros-internal".
+  string remote = 1;
+
+  // Project name, e.g. "chromiumos/overlays/chromiumos-overlay"
+  string name = 2;
+
+  // Ref, e.g. "refs/heads/main".
+  string ref = 3;
+
+  // Project path, e.g. "src/third_party/chromiumos-overlay"
+  string path = 4;
+}
+
 message BranchPolicy {
   // The first BranchPolicy in the list to match the tag will be the one used.
   //
@@ -146,4 +164,7 @@ message GeneratorProperties {
   // are used, on the default (usually 'snapshot') branch.
   // The lack of branch_policies disables checking out a branch.
   repeated BranchPolicy branch_policies = 11;
+
+  // Ref to use for scheduled retries.
+  RetryRef retry_ref = 12;
 }

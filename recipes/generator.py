@@ -22,23 +22,10 @@ from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.recipes.chromeos.generator import (
-    SendToCqPolicy,
-    DO_NOTHING,
-    DRY_RUN,
-    FULL_RUN,
-    ABANDON,
-    OutdatedClsPolicy,
-    OUTDATED_DO_NOTHING,
-    OUTDATED_LEAVE_COMMENT,
-    OUTDATED_ABANDON,
-    RetryClPolicy,
-    NO_RETRY,
-    RETRY_LATEST_OR_LATEST_PINNED,
-    RETRY_LATEST_PINNED,
-    BranchPolicy,
-    Reviewer,
-    GeneratorProperties,
-)
+    SendToCqPolicy, DO_NOTHING, DRY_RUN, FULL_RUN, ABANDON, OutdatedClsPolicy,
+    OUTDATED_DO_NOTHING, OUTDATED_LEAVE_COMMENT, OUTDATED_ABANDON,
+    RetryClPolicy, NO_RETRY, RETRY_LATEST_OR_LATEST_PINNED, RETRY_LATEST_PINNED,
+    BranchPolicy, Reviewer, GeneratorProperties, RetryRef)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
     GitilesTrigger, Trigger, WebUITrigger)
@@ -97,14 +84,17 @@ def RunSteps(api, properties):
 
     presentation.step_text = 'all properties good'
 
+  uprev_run = True
   triggers = properties.triggers or api.scheduler.triggers
   with api.step.nest('validate triggers') as presentation:
     if not triggers:
-      raise StepFailure('found no scheduler triggers')
-
-    for trigger in triggers:
-      if not trigger.HasField('gitiles'):
-        raise StepFailure('found non-gitiles trigger: %r', trigger)
+      uprev_run = False
+      triggers = [Trigger(gitiles=GitilesTrigger(ref=properties.retry_ref.ref))]
+      presentation.step_text = 'no triggers, only evaluating existing CLs'
+    else:
+      for trigger in triggers:
+        if not trigger.HasField('gitiles'):
+          raise StepFailure('found non-gitiles trigger: %r', trigger)
 
     presentation.step_text = 'found {} good triggers'.format(len(triggers))
     presentation.logs['list of triggers'] = map(MessageToJson, triggers)
@@ -170,40 +160,6 @@ def RunSteps(api, properties):
       with api.context(cwd=workspace_path):
         api.cros_sdk.create_chroot(use_image=False)
 
-    with api.step.nest('try uprev {}'.format(cpv)) as presentation:
-      request = UprevVersionedPackageRequest(
-          chroot=api.cros_sdk.chroot,
-          package_info=package,
-          versions=[
-              UprevVersionedPackageRequest.GitRef(
-                  repository=urlparse.urlparse(trigger.gitiles.repo).path,
-                  ref=trigger.gitiles.ref, revision=trigger.gitiles.revision)
-              for trigger in triggers
-          ],
-          build_targets=properties.build_targets,
-      )
-      response = api.cros_build_api.PackageService.UprevVersionedPackage(
-          request, name='uprev versioned package')
-
-      if not response.responses:
-        presentation.step_text = 'no new versions for {}'.format(cpv)
-        return
-
-      valid_responses = []
-      with api.step.nest('verify updates'):
-        # only act on files that are actually modified
-        for uprev_resp in response.responses:
-          if response_has_changes(api, uprev_resp):
-            valid_responses.append(uprev_resp)
-
-      if not valid_responses:
-        presentation.step_text = (
-            'skipping uprev for {}. no modified files'.format(cpv))
-        return
-
-      presentation.logs['uprev versions'] = [
-          response.version for response in valid_responses
-      ]
     Ebuilds = namedtuple('Ebuilds', 'path version')
 
     topic = policy.topic or cpv
@@ -212,57 +168,26 @@ def RunSteps(api, properties):
     outdated_cls_policy = policy.outdated_cls_policy
     retry_cl_policy = policy.retry_cl_policy or NO_RETRY
 
-    with api.step.nest('commit uprev'):
-      # Flatten the list of modified files, and get the project info for them.
-      modified_ebuilds = []
-      for uprev_resp in valid_responses:
-        modified_ebuilds.extend(
-            Ebuilds(path=ebuild.path, version=uprev_resp.version)
-            for ebuild in uprev_resp.modified_ebuilds)
-      with api.context(cwd=workspace_path):
-        ebuilds_by_pinfo = defaultdict(list)
-        infos = api.repo.project_infos(projects=[
-            api.path.dirname(ebuild.path) for ebuild in modified_ebuilds
-        ])
-        for ebuild, info in zip(modified_ebuilds, infos):
-          ebuilds_by_pinfo[info].append(ebuild)
-
-        # Checkout git branches via repo so they track correctly.  Create them
-        # by path instead of project name, because they may be checked out
-        # multiple times.
-        api.repo.start('pupr',
-                       projects=[info.path for info in ebuilds_by_pinfo.keys()])
-
-      # For each repository, make the CL.
-      for info, ebuilds in ebuilds_by_pinfo.items():
-        name = api.path.basename(info.path)
-        root = workspace_path.join(info.path)
-        versions = ', '.join(sorted(set([e.version for e in ebuilds])))
-        commit_lines = [
-            '{}: Automatic uprev to {}.'.format(package.package_name, versions),
-            '',
-            'Generated by PUpr, see {} for job details.'.format(
-                api.buildbucket.build_url()),
-            '',
-            'BUG=None',
-            'TEST=CQ',
-            '',
-            'Cq-Cl-Tag: pupr:{}'.format(topic),
-        ]
-        if api.src_state.gerrit_changes:
-          commit_lines.append('Cq-Depend: {}'.format(','.join(
-              '{}:{}'.format(
-                  x.host.split('.', 1)[0].replace('-review', ''), x.change)
-              for x in api.src_state.gerrit_changes)))
-        commit_message = '\n'.join(commit_lines) + '\n'
-
-        with api.step.nest('commit in {}'.format(name)), api.context(cwd=root):
-          api.git.add([e.path for e in ebuilds])
-          api.git.commit(commit_message)
+    if uprev_run:
+      ebuilds_by_pinfo = _do_uprev(api, properties, workspace_path, triggers,
+                                   package, cpv, topic, Ebuilds)
+      if ebuilds_by_pinfo is None:
+        return
 
     pinfos_by_remote = defaultdict(list)
-    for info in sorted(ebuilds_by_pinfo.keys()):
-      pinfos_by_remote[info.remote].append(info)
+    if uprev_run:
+      for info in sorted(ebuilds_by_pinfo.keys()):
+        pinfos_by_remote[info.remote].append(info)
+    else:
+      pinfos_by_remote[properties.retry_ref.remote] = [
+          api.repo.ProjectInfo(
+              remote=properties.retry_ref.remote,
+              name=properties.retry_ref.name,
+              branch=properties.retry_ref.ref,
+              rrev=properties.retry_ref.ref,
+              path=properties.retry_ref.path,
+          )
+      ]
 
     with api.step.nest('find open uprev CLs'):
       open_changes = []
@@ -387,67 +312,9 @@ def RunSteps(api, properties):
                     api.gerrit.set_change_labels_remote(retry_cl,
                                                         retry_ci.git_fetch_ref,
                                                         labels)
-
-    with api.step.nest('generate CLs'):
-      changes = []
-      for info in sorted(ebuilds_by_pinfo.keys()):
-        changes.append(
-            api.gerrit.create_change(
-                info.path,
-                reviewers=[reviewer.email for reviewer in policy.reviewers],
-                topic=topic,
-            ))
-
-    if changes:
-      with api.step.nest('cq-depend generated CLs'):
-        cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
-        for change, cq_depend in zip(changes, cq_depends):
-          with api.step.nest('set cq-depend for {} CL'.format(change.project)):
-            description = api.gerrit.get_change_description(change)
-            description = '{}\n{}\n'.format(description, cq_depend)
-            api.gerrit.set_change_description(change, description)
-
-    with api.step.nest('update CL labels'):
-      for change in changes:
-        # First post explanatory message.
-        message_lines = [
-            'Found {} open CL(s) for Gerrit topic {}:'.format(
-                len(open_changes), topic),
-            '\n'.join(map(api.gerrit.parse_gerrit_change_url, open_changes)),
-            'Send-to-cq policy for this case is {}.'.format(
-                SendToCqPolicy.Name(send_to_cq_policy))
-        ]
-
-        message_lines.append({
-            DRY_RUN: 'Therefore, marking CL as CQ+1',
-            FULL_RUN: 'Therefore, marking CL as CQ+2',
-            ABANDON: 'Therefore, abandoning the CL',
-        }.get(
-            send_to_cq_policy,
-            'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
-            'Reviewers may also want to abandon the open CL(s).',
-        ))
-
-        message = '\n'.join(message_lines)
-        if send_to_cq_policy == ABANDON:
-          api.gerrit.abandon_change(change, message=message)
-        else:
-          api.gerrit.add_change_comment(change, message)
-
-        # Then set labels.
-        labels = {
-            DRY_RUN: {
-                api.gerrit.Label.BOT_COMMIT: 1,
-                api.gerrit.Label.COMMIT_QUEUE: 1,
-            },
-            FULL_RUN: {
-                api.gerrit.Label.BOT_COMMIT: 1,
-                api.gerrit.Label.COMMIT_QUEUE: 2,
-            },
-        }.get(send_to_cq_policy)
-
-        if labels is not None:
-          api.gerrit.set_change_labels(change, labels)
+    if uprev_run:
+      _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
+                        existing_cls)
 
 
 def _get_policy(api, trigger, policies):
@@ -496,6 +363,169 @@ def response_has_changes(api, response):
       if api.git.diff_check(path):
         return True
   return False
+
+
+def _do_uprev(api, properties, workspace_path, triggers, package, cpv, topic,
+              Ebuilds):
+  """Try the uprev for the given package. If successful, commit the uprev.
+
+  Returns:
+    (dict): ebuilds_by_pinfo. If None, pupr should return immediately.
+  """
+  with api.step.nest('try uprev {}'.format(cpv)) as presentation:
+    request = UprevVersionedPackageRequest(
+        chroot=api.cros_sdk.chroot,
+        package_info=package,
+        versions=[
+            UprevVersionedPackageRequest.GitRef(
+                repository=urlparse.urlparse(trigger.gitiles.repo).path,
+                ref=trigger.gitiles.ref, revision=trigger.gitiles.revision)
+            for trigger in triggers
+        ],
+        build_targets=properties.build_targets,
+    )
+    response = api.cros_build_api.PackageService.UprevVersionedPackage(
+        request, name='uprev versioned package')
+
+    if not response.responses:
+      presentation.step_text = 'no new versions for {}'.format(cpv)
+      return None
+
+    valid_responses = []
+    with api.step.nest('verify updates'):
+      # only act on files that are actually modified
+      for uprev_resp in response.responses:
+        if response_has_changes(api, uprev_resp):
+          valid_responses.append(uprev_resp)
+
+    if not valid_responses:
+      presentation.step_text = (
+          'skipping uprev for {}. no modified files'.format(cpv))
+      return None
+
+    presentation.logs['uprev versions'] = [
+        response.version for response in valid_responses
+    ]
+
+  with api.step.nest('commit uprev'):
+    # Flatten the list of modified files, and get the project info for them.
+    modified_ebuilds = []
+    for uprev_resp in valid_responses:
+      modified_ebuilds.extend(
+          Ebuilds(path=ebuild.path, version=uprev_resp.version)
+          for ebuild in uprev_resp.modified_ebuilds)
+    with api.context(cwd=workspace_path):
+      ebuilds_by_pinfo = defaultdict(list)
+      infos = api.repo.project_infos(projects=[
+          api.path.dirname(ebuild.path) for ebuild in modified_ebuilds
+      ])
+      for ebuild, info in zip(modified_ebuilds, infos):
+        ebuilds_by_pinfo[info].append(ebuild)
+
+      # Checkout git branches via repo so they track correctly.  Create them
+      # by path instead of project name, because they may be checked out
+      # multiple times.
+      api.repo.start('pupr',
+                     projects=[info.path for info in ebuilds_by_pinfo.keys()])
+
+    # For each repository, make the CL.
+    for info, ebuilds in ebuilds_by_pinfo.items():
+      name = api.path.basename(info.path)
+      root = workspace_path.join(info.path)
+      versions = ', '.join(sorted(set([e.version for e in ebuilds])))
+      commit_lines = [
+          '{}: Automatic uprev to {}.'.format(package.package_name, versions),
+          '',
+          'Generated by PUpr, see {} for job details.'.format(
+              api.buildbucket.build_url()),
+          '',
+          'BUG=None',
+          'TEST=CQ',
+          '',
+          'Cq-Cl-Tag: pupr:{}'.format(topic),
+      ]
+      if api.src_state.gerrit_changes:
+        commit_lines.append('Cq-Depend: {}'.format(','.join(
+            '{}:{}'.format(
+                x.host.split('.', 1)[0].replace('-review', ''), x.change)
+            for x in api.src_state.gerrit_changes)))
+      commit_message = '\n'.join(commit_lines) + '\n'
+
+      with api.step.nest('commit in {}'.format(name)), api.context(cwd=root):
+        api.git.add([e.path for e in ebuilds])
+        api.git.commit(commit_message)
+
+  return ebuilds_by_pinfo
+
+
+def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
+                      existing_cls):
+  """Create appropriate CLs for the uprevs.
+  """
+  send_to_cq_policy = (
+      policy.existing_cls_policy
+      if existing_cls else policy.no_existing_cls_policy)
+
+  with api.step.nest('generate CLs'):
+    changes = []
+    for info in sorted(ebuilds_by_pinfo.keys()):
+      changes.append(
+          api.gerrit.create_change(
+              info.path,
+              reviewers=[reviewer.email for reviewer in policy.reviewers],
+              topic=topic,
+          ))
+
+  if changes:
+    with api.step.nest('cq-depend generated CLs'):
+      cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
+      for change, cq_depend in zip(changes, cq_depends):
+        with api.step.nest('set cq-depend for {} CL'.format(change.project)):
+          description = api.gerrit.get_change_description(change)
+          description = '{}\n{}\n'.format(description, cq_depend)
+          api.gerrit.set_change_description(change, description)
+
+  with api.step.nest('update CL labels'):
+    for change in changes:
+      # First post explanatory message.
+      message_lines = [
+          'Found {} open CL(s) for Gerrit topic {}:'.format(
+              len(open_changes), topic),
+          '\n'.join(map(api.gerrit.parse_gerrit_change_url, open_changes)),
+          'Send-to-cq policy for this case is {}.'.format(
+              SendToCqPolicy.Name(send_to_cq_policy))
+      ]
+
+      message_lines.append({
+          DRY_RUN: 'Therefore, marking CL as CQ+1',
+          FULL_RUN: 'Therefore, marking CL as CQ+2',
+          ABANDON: 'Therefore, abandoning the CL',
+      }.get(
+          send_to_cq_policy,
+          'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
+          'Reviewers may also want to abandon the open CL(s).',
+      ))
+
+      message = '\n'.join(message_lines)
+      if send_to_cq_policy == ABANDON:
+        api.gerrit.abandon_change(change, message=message)
+      else:
+        api.gerrit.add_change_comment(change, message)
+
+      # Then set labels.
+      labels = {
+          DRY_RUN: {
+              api.gerrit.Label.BOT_COMMIT: 1,
+              api.gerrit.Label.COMMIT_QUEUE: 1,
+          },
+          FULL_RUN: {
+              api.gerrit.Label.BOT_COMMIT: 1,
+              api.gerrit.Label.COMMIT_QUEUE: 2,
+          },
+      }.get(send_to_cq_policy)
+
+      if labels is not None:
+        api.gerrit.set_change_labels(change, labels)
 
 
 def GenTests(api):
@@ -622,14 +652,6 @@ def GenTests(api):
   yield api.test(
       'blank-reviewer',
       _props(branch_policies=[_policy(reviewers=[{}])]),
-      api.post_check(post_process.StatusAnyFailure),
-      api.git.diff_check(True),
-  )
-
-  yield api.test(
-      'no-triggers',
-      _props(),
-      api.scheduler(triggers=[]),
       api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
   )
@@ -840,6 +862,30 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
           value_dict),
+  )
+
+  retry_ref = RetryRef(
+      remote='cros',
+      path='src/third_party/chromiumos-overlay',
+      name='chromiumos/overlays/chromiumos-overlay',
+      ref='refs/heads/main',
+  )
+
+  yield api.test(
+      'no-triggers',
+      _props(
+          branch_policies=[
+              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                      existing_cls_policy=DRY_RUN,
+                      no_existing_cls_policy=DRY_RUN)
+          ], retry_ref=retry_ref),
+      api.scheduler(triggers=[]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
+          value_dict),
+      api.post_check(post_process.MustRun,
+                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
   )
 
   yield api.test(

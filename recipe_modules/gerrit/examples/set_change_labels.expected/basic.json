@@ -90,6 +90,7 @@
       "--short",
       "HEAD"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "git symbolic-ref"
   },
@@ -100,6 +101,7 @@
       "cros",
       "refs/change/78/12345678/3"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "git fetch",
     "timeout": 60
@@ -110,6 +112,7 @@
       "checkout",
       "FETCH_HEAD"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "git checkout"
   },
@@ -180,6 +183,7 @@
       "checkout",
       "master"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "git checkout (2)"
   },

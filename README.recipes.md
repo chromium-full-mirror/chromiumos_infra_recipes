@@ -3269,7 +3269,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#568)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#565)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -3277,7 +3277,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#501)(self, gerrit_change, comment):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#498)(self, gerrit_change, comment):**
 
 Add a comment to the given Gerrit change.
 
@@ -3333,7 +3333,7 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#522)(self, gerrit_change):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#519)(self, gerrit_change):**
 
 Get the description of the given Gerrit change.
 
@@ -3377,7 +3377,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#582)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#579)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -3390,7 +3390,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#544)(self, gerrit_change, description):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#541)(self, gerrit_change, description):**
 
 Set the description of the given Gerrit change.
 
@@ -3399,7 +3399,7 @@ Args:
   description (str): The new description, in full. Be sure this still
       includes the Change-Id and other essential metadata.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#454)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#451)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
 
@@ -6545,7 +6545,7 @@ An experimental recipe for running GCE tests.
 &mdash; **def [RunSteps](/recipe_modules/gcloud/examples/full.py#11)(api):**
 ### *recipes* / [generator](/recipes/generator.py)
 
-[DEPS](/recipes/generator.py#48): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/generator.py#35): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the PUpr generator.
 
@@ -6555,9 +6555,9 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#77)(api, properties):**
+&mdash; **def [RunSteps](/recipes/generator.py#64)(api, properties):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#491)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#358)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
