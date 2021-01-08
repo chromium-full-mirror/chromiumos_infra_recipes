@@ -7268,9 +7268,9 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#659)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#660)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#224)(api, phosphorus_config, gs_dir, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#225)(api, phosphorus_config, gs_dir, result):**
 
 Archive all test logs to Google Storage.
 
@@ -7283,7 +7283,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#572)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#573)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -7299,7 +7299,7 @@ Returns:
 Raises:
 * InfraFailure.
 
-&mdash; **def [fetch\_crashes](/recipes/test_platform/test_runner.py#131)(api, config=None, request=None, output_config=None, dut_hostname='', upload_crashes=False, use_staging=False):**
+&mdash; **def [fetch\_crashes](/recipes/test_platform/test_runner.py#132)(api, config=None, request=None, output_config=None, dut_hostname='', upload_crashes=False, use_staging=False):**
 
 Fetch crashes from the DUT via TLS API.
 
@@ -7315,7 +7315,7 @@ Args:
 Returns:
   * phosphorus.fetchcrashes.FetchCrashes
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#288)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#289)(api, results_dir=''):**
 
 Parse test results.
 
@@ -7344,7 +7344,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#541)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#542)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -7354,7 +7354,7 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#95)(api, config=None, request=None, output_config=None, dut_hostname='', test=None, logs_gs_dir=''):**
+&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#96)(api, config=None, request=None, output_config=None, dut_hostname='', test=None, logs_gs_dir=''):**
 
 Run a test against the DUT via `autoserv`.
 
@@ -7373,14 +7373,14 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#373)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#374)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#304)(api, prejob_response, run_test_responses, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#305)(api, prejob_response, run_test_responses, result):**
 
 Display test cases as recipe substeps.
 
@@ -7389,7 +7389,7 @@ Args:
   * run_test_responses: dictionary of phosphorus.runtest.RunTestResponse instances.
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#273)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#274)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 
