@@ -101,6 +101,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "input validation.request.software dependencies",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "request validation failed"

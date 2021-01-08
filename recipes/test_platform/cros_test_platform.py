@@ -99,6 +99,7 @@ def validated_requests(api, properties):
     with api.step.nest('request'):
       validation_errors.append(_validate_timeouts(api, requests))
       validation_errors.append(_validate_scheduling_params(api, requests))
+      validation_errors.append(_validate_software_dependencies(api, requests))
     if any(validation_errors):
       raise api.step.StepFailure('request validation failed')
 
@@ -111,6 +112,36 @@ def _client_is_skylab_cli(requests):
   first_request = requests.values()[0]
   request_tags = first_request.params.decorations.tags
   return any("skylab-tool" in tag for tag in request_tags)
+
+
+def _validate_software_dependencies(api, requests):
+  """Validate the software dependencies are internally consistent.
+
+  Returns: True if requests are valid, False otherwise.
+  """
+  validation_error = False
+  with api.step.nest('software dependencies') as step:
+    for t, r in requests.iteritems():
+      errs = _invalid_software_dependencies(r.params.software_dependencies)
+      if errs:
+        step.presentation.logs[t] = [
+            'Errors in software_dependencies: %s' % ', '.join(errs)
+        ]
+        validation_error = True
+  return validation_error
+
+
+def _invalid_software_dependencies(deps):
+  """Return a list of validation errors for provided software_dependencies."""
+  errs = []
+  seen = set()
+  for dep_oneof in deps:
+    dep = dep_oneof.WhichOneof('dep')
+    if dep in seen:
+      errs.append('has duplicate %s' % dep)
+    seen.add(dep)
+  # Only report duplicates once for each kind.
+  return list(set(errs))
 
 
 def _validate_timeouts(api, requests):
@@ -555,14 +586,31 @@ def _test_scheduling():
   return Request.Params.Scheduling(qs_account='foo-qs-account')
 
 
+def _default_software_dependencies():
+  return [
+      Request.Params.SoftwareDependency(
+          chromeos_build="single-build",
+      ),
+      Request.Params.SoftwareDependency(
+          ro_firmware_build="single-ro-firmware",
+      ),
+      Request.Params.SoftwareDependency(
+          rw_firmware_build="single-rw-firmware",
+      ),
+  ]
+
+
 def _test_request(tag, scheduling=_test_scheduling()):
   return Request(
       params=Request.Params(
           hardware_attributes=Request.Params.HardwareAttributes(
-              model='%s-model' % tag), metadata=Request.Params.Metadata(
-                  test_metadata_url='%s-metadata-url' % tag,
-                  debug_symbols_archive_url='%s-metadata-url' % tag),
-          scheduling=scheduling),
+              model='%s-model' % tag),
+          metadata=Request.Params.Metadata(
+              test_metadata_url='%s-metadata-url' % tag,
+              debug_symbols_archive_url='%s-metadata-url' % tag),
+          scheduling=scheduling,
+          software_dependencies=_default_software_dependencies(),
+      ),
       test_plan=Request.TestPlan(suite=[Request.Suite(name='%s-suite' % tag)]),
   )
 
@@ -700,6 +748,35 @@ def GenTests(api):
                   ServiceVersionProperties(
                       version=service_version_pb.ServiceVersion(skylab_tool=1)),
           }))
+
+  yield (api.test('Duplicate software dependencies') + api.properties(
+      CrosTestPlatformProperties(
+          request=Request(
+              params=Request.Params(
+                  scheduling=Request.Params.Scheduling(
+                      qs_account='foo-qs-account'),
+                  software_dependencies=[
+                      Request.Params.SoftwareDependency(
+                          chromeos_build="duplicate-build",
+                      ),
+                      Request.Params.SoftwareDependency(
+                          chromeos_build="duplicate-build",
+                      ),
+                      Request.Params.SoftwareDependency(
+                          ro_firmware_build="single-ro-firmware",
+                      ),
+                      Request.Params.SoftwareDependency(
+                          rw_firmware_build="duplicate-rw-firmware",
+                      ),
+                      Request.Params.SoftwareDependency(
+                          rw_firmware_build="duplicate-rw-firmware-diff-value",
+                      ),
+                  ],
+              ),
+          ),
+      ),
+  ))
+
 
   # Config set the result flow pubsub project and topic should push build ID.
   yield (

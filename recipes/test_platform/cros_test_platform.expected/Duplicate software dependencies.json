@@ -79,8 +79,7 @@
     "cmd": [],
     "name": "input validation.request",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -94,17 +93,16 @@
     "cmd": [],
     "name": "input validation.request.validate scheduling parameters",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@default@Exactly one of priority and qs_account must be set. Found none.@@@",
-      "@@@STEP_LOG_END@default@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
     "name": "input validation.request.software dependencies",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@default@Errors in software_dependencies: has duplicate chromeos_build, has duplicate rw_firmware_build@@@",
+      "@@@STEP_LOG_END@default@@@"
     ]
   },
   {
