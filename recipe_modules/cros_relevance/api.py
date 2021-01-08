@@ -27,6 +27,10 @@ from recipe_engine import recipe_api
 class CrosRelevanceApi(recipe_api.RecipeApi):
   """A module for determining if a build is unnecessary."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super(CrosRelevanceApi, self).__init__(*args, **kwargs)
+    self._test_planner_cipd_ref = properties.test_planner_cipd_ref or "latest"
+
   def initialize(self):
     """Initializes the module."""
     self._pointless_build_checker_path = None
@@ -371,7 +375,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
 
           pkgs = self.m.cipd.EnsureFile()
-          pkgs.add_package('chromiumos/infra/test_planner', 'latest')
+          pkgs.add_package('chromiumos/infra/test_planner',
+                           self._test_planner_cipd_ref)
           self.m.cipd.ensure(cipd_dir, pkgs)
 
           self._pointless_build_checker_path = (

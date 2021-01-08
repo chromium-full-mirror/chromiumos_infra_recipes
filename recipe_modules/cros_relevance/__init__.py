@@ -16,3 +16,8 @@ DEPS = [
     'repo',
     'src_state',
 ]
+
+from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import (
+    CrosRelevanceProperties)
+
+PROPERTIES = CrosRelevanceProperties

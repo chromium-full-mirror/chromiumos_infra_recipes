@@ -1,0 +1,12 @@
+// Copyright 2020 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_relevance;
+
+message CrosRelevanceProperties {
+    // Cipd ref to use for test planner. Defaults to "latest".
+    string test_planner_cipd_ref = 1;
+}
