@@ -24,6 +24,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/raw_io',
     'cros_source',
@@ -33,13 +34,17 @@ DEPS = [
     'repo',
 ]
 
+from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties as cpp_pb2
+
+PROPERTIES = cpp_pb2
+
 # Represents a commit that should be made as the result of an action.
 #
 # Fields:
 #  project_path (str): Path to the repo to commit to.
 #  message (str): Commit message.
-#
-CommitInfo = namedtuple('CommitInfo', ['project_path', 'message'])
+#  files (list[paths]): Files to add to commit, if empty will add project_path.
+CommitInfo = namedtuple('CommitInfo', ['project_path', 'message', 'files'])
 
 # Represents the config for a data ingestion/aggregation task.
 #
@@ -56,7 +61,7 @@ IngestConfig = namedtuple(
 )
 
 
-def _replicate_public_config(api, project_infos):
+def _replicate_public_config(api, properties, project_infos):
   """Replicates any public configs in project repos into a public repo.
 
   Args:
@@ -86,10 +91,10 @@ def _replicate_public_config(api, project_infos):
         api.file.rmtree('remove dest dir', dest_path)
         api.file.copytree('copy public config', public_config_path, dest_path)
 
-  return [CommitInfo(public_repo_path, 'Update with filtered configs.')]
+  return [CommitInfo(public_repo_path, 'Update with filtered configs.', [])]
 
 
-def _flatten_configs(api, project_infos):
+def _flatten_configs(api, properties, project_infos):
   flatten_script = api.context.cwd.join(
       'src/config/payload_utils/flatten_config_payload.py')
 
@@ -151,7 +156,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatt
   return []
 
 
-def _copy_to_internal(api, project_infos):
+def _copy_to_internal(api, properties, project_infos):
   """Aggregate config messages and copy them to config-internal
 
   This provides a single centralized location from which services can read all
@@ -229,16 +234,72 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/aggre
   return []
 
 
-# A list of functions to run on config repos. Each action should take a
-# RecipesApi and list of ProjectInfos as args and return a list of CommitInfos.
-_ACTIONS = [
-    _replicate_public_config,
-    _flatten_configs,
-    _copy_to_internal,
-]
+def _regenerate_suite_scheduler_configs(api, properties, project_infos):
+  """Run Suite Scheduler configuration's ./generate and commit the results.
+
+  This action runs the generate function in src/config-internal/test and commits
+  the results.
+
+  Args:
+    project_infos: ignored, but accepted. See notes on _ACTIONS.
+  """
+  config_project_info = api.repo.project_info("chromeos/config-internal")
+
+  config_internal = api.context.cwd.join('src/config-internal')
+  cfg_int_ss = config_internal.join('test/suite_scheduler')
+
+  regenerated_files = [
+      cfg_int_ss.join('generated/suite_scheduler.cfg'),
+      cfg_int_ss.join('generated/lab_config.cfg'),
+      cfg_int_ss.join('generated/lab_config.ini'),
+      cfg_int_ss.join('generated/suite_scheduler.ini'),
+  ]
+
+  message = '''Updating Suite Scheduler's generated rules.
+
+Cr-Build-Url: %s
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
+                           'config_postsubmit/regenerate_suite_scheduler')
+
+  with api.step.nest("regenerating suite scheduler configs") as presentation, \
+      api.context(cfg_int_ss):
+    try:
+      api.repo.start("regen", projects=[config_project_info.name])
+      api.step('run regenerate_configs.sh', ['./regenerate_configs.sh'])
+
+      with api.step.nest('diffing to find changes'):
+        nothing_changed = not any(
+            [api.git.diff_check(x) for x in regenerated_files])
+        if nothing_changed:
+          presentation.step_text = 'no changes'
+          return []
+
+      cl_config = properties.cl_configs[cpp_pb2.ActionTypes.Name(
+          cpp_pb2.REGENERATE_SUITE_SCHEDULER)]
+
+      return [
+          CommitInfo(config_internal,
+                     'Updating Suite Schedulers generated rules.',
+                     regenerated_files)
+      ]
+    except StepFailure:
+      presentation.status = 'FAILURE'  # swallow StepFailure and keep going
+      return []
 
 
-def _create_cl(api, commit_info, branch_name):
+# A dictionary of CL configurations -> their functions which run on config repos.
+#
+# Each action should take a RecipesApi and list of ProjectInfos as args and
+# optionally return a list of CommitInfos.
+_ACTIONS = {
+    cpp_pb2.REPLICATE_PUBLIC_CONFIG: _replicate_public_config,
+    cpp_pb2.FLATTEN_CONFIGS: _flatten_configs,
+    cpp_pb2.COPY_TO_INTERNAL: _copy_to_internal,
+    cpp_pb2.REGENERATE_SUITE_SCHEDULER: _regenerate_suite_scheduler_configs,
+}
+
+
+def _create_cl(api, properties, commit_info, branch_name, cl_config):
   """Creates a CL based on commit_info.
 
   Args:
@@ -246,19 +307,31 @@ def _create_cl(api, commit_info, branch_name):
     commit_info (CommitInfo): A CommitInfo object describing how to create the
       commit.
     branch_name (str): Name of the branch to create the commit on.
+    cl_config (ActionCLConfig_pb2): CL parameters & configuration.
+
+    Returns:
+      GerritChange: The newly created change.
   """
   with api.context(cwd=commit_info.project_path):
     if api.git.diff_check(commit_info.project_path):
       api.repo.start(branch_name, projects=[commit_info.project_path])
-      api.git.add([commit_info.project_path])
+
+      # If given a list of files, use that to add, otherwise add the while
+      # project.
+      if commit_info.files:
+        api.git.add(commit_info.files)
+      else:
+        api.git.add([commit_info.project_path])
       api.git.commit(commit_info.message)
+      # TODO(crbug.com/1092530): Add autosubmit option to gerrit api and cfg.
+      return api.gerrit.create_change(project=commit_info.project_path,
+                                      reviewers=cl_config.reviewers,
+                                      ccs=cl_config.ccs,
+                                      hashtags=cl_config.hashtags,
+                                      topic=cl_config.topic)
 
-      # TODO(crbug.com/1092530): Add reviewers and / or automatically
-      # submit changes once this is tested.
-      api.gerrit.create_change(project=commit_info.project_path)
 
-
-def RunSteps(api):
+def RunSteps(api, properties):
 
   def _get_config_projects():
     """Returns a list of ProjectInfos for all config repos."""
@@ -295,17 +368,20 @@ def RunSteps(api):
     # catch StepFailures from each action and raise them later.
     #
     # Note that an action failing should stop the CL from being created (i.e. a
-    # failed action might create an invalid CL), and thus api.step.defer_results
+    # failed action might create an invalid CL), and thus
+    # api.step.defer_results
     # cannot be used.
     step_failures = []
-    for action in _ACTIONS:
+    for cl_config_type, action in _ACTIONS.items():
+      cl_config = properties.cl_configs[cpp_pb2.ActionTypes.Name(
+          cl_config_type)]
       # Use the name of the fn. to create step names, branch names, etc.
       action_name = action.__name__.strip('_')
-      with api.step.nest('Do {} and create CL'.format(action_name)):
+      with api.step.nest('Do {} and create CL'.format(action_name)) as pres:
         try:
-          commit_infos = action(api, config_projects)
+          commit_infos = action(api, properties, config_projects)
           for commit_info in commit_infos:
-            _create_cl(api, commit_info, action_name)
+            _create_cl(api, properties, commit_info, action_name, cl_config)
         except StepFailure as e:
           step_failures.append(e)
 
@@ -317,6 +393,19 @@ def RunSteps(api):
 
 
 def GenTests(api):
+
+  def default_properties():
+    aclc = cpp_pb2.ActionCLConfig(reviewers='test1@google.com',
+                                  ccs=['test2@google.com', 'test3@google.com'],
+                                  topic='test topic', hashtags=['ht1', 'ht2'])
+    return api.properties(
+        cpp_pb2(
+            cl_configs={
+                "REGENERATE_SUITE_SCHEDULER": aclc,
+                "FLATTEN_CONFIGS": aclc,
+                "COPY_TO_INTERNAL": aclc,
+                "REPLICATE_PUBLIC_CONFIG": aclc,
+            }))
 
   def config_dlm_step_data(api):
     return api.step_data(
@@ -347,6 +436,7 @@ def GenTests(api):
 
   yield api.test(
       'basic',
+      default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
       api.git.diff_check(True),
@@ -363,6 +453,7 @@ def GenTests(api):
 
   yield api.test(
       'failed_actions',
+      default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
       api.step_data(
@@ -397,6 +488,7 @@ def GenTests(api):
 
   yield api.test(
       'flattening_basic',
+      default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
@@ -413,6 +505,7 @@ def GenTests(api):
 
   yield api.test(
       'no_flattening_changes',
+      default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
@@ -432,6 +525,7 @@ def GenTests(api):
 
   yield api.test(
       'flattening_error',
+      default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
@@ -446,6 +540,7 @@ def GenTests(api):
 
   yield api.test(
       'no_input_files',
+      default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
       api.post_process(
@@ -457,6 +552,7 @@ def GenTests(api):
   # import to internal config stage tests
   yield api.test(
       'copy_internal_basic',
+      default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
@@ -470,6 +566,7 @@ def GenTests(api):
 
   yield api.test(
       'copy_internal_no_diff',
+      default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
@@ -483,6 +580,7 @@ def GenTests(api):
 
   yield api.test(
       'copy_internal_error',
+      default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
@@ -491,4 +589,21 @@ def GenTests(api):
       api.step_data(
           'Do copy_to_internal and create CL.aggregating configs.git transaction.merge flattened configs to config-internal',
           retcode=1),
+  )
+
+  yield api.test(
+      'regenerate_suite_scheduler_configs_error',
+      default_properties(),
+      config_repos_step_data(api),
+      config_dlm_step_data(api),
+      mock_payloads("config.jsonproto"),
+      mock_payloads("flattened.jsonproto"),
+      api.git.diff_check(True),
+      api.step_data(
+          'Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.run regenerate_configs.sh',
+          retcode=1),
+      api.post_process(
+          post_process.DoesNotRun,
+          'Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes',
+      ),
   )
