@@ -4,6 +4,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 from collections import namedtuple
+from datetime import timedelta, time
 
 from PB.chromiumos.bot_scaling import ApplicationUtilization, BotPolicy, ReducedBotPolicyCfg, ResourceUtilization, RoboCropAction, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -80,6 +81,13 @@ class BotScalingApi(recipe_api.RecipeApi):
 
     # Check whether a bot policy is set as configured, otherwise set to NO.
     if bot_policy.policy_mode != BotPolicy.CONFIGURED:
+      actionable = ScalingAction.NO
+
+    # TODO crbug.com/1143932: ceiling and floor is -1 when resizing on mtv
+    # workday is scheduled and this current robocrop run is not within mtv
+    # daytime work hours. Remove when the chromium.tests pool (Chrome) is
+    # ready for Robocrop
+    if bot_policy.scaling_restriction.bot_ceiling == -1 and bot_policy.scaling_restriction.bot_floor == -1:
       actionable = ScalingAction.NO
 
     scaling_action = ScalingAction(
@@ -226,13 +234,47 @@ class BotScalingApi(recipe_api.RecipeApi):
       policy_count += config.current_amount
     return policy_count
 
-  def update_bot_policy_limits(self, bot_policy_config, configs):
+  def _is_in_weekday_daytime_robocrop_window(self):
+    """Weekday daytime is defined as Monday-Friday 8 AM - 7 PM,
+    but robocrop changes should stop at 6:55 PM to avoid race conditions with
+    the scheduled gce config changes at 7 PM.
+
+    See resize_on_mtv_workday() in chrome-internal.googlesource.com/infradata/config.git/+/refs/heads/master/starlark/common/envs/chrome.star
+    """
+    utc_now = self.m.time.utcnow()
+    pst_now = utc_now - timedelta(hours=8)
+    current_time = time(hour=pst_now.hour, minute=pst_now.minute)
+
+    window_start = time(hour=8, minute=0)
+    window_end = time(hour=18, minute=55)
+
+    return pst_now.isoweekday() in range(
+        1, 6) and window_start <= current_time < window_end
+
+  def _get_scheduled_weekday_daytime_min_max(self, config):
+    schedules = config.amount.change
+    utc_now = self.m.time.utcnow()
+    pst_now = utc_now - timedelta(hours=8)
+
+    for schedule in schedules:
+      # Weekday daytime schedules always start at 8:00
+      # See resize_on_mtv_workday() in chrome-internal.googlesource.com/infradata/config.git/+/refs/heads/master/starlark/common/envs/chrome.star
+      if schedule.start.time != '8:00':
+        continue
+
+      # Don't need to check if schedule.start.day matches current day, since
+      # the daytime Mon-Fri schedules are all the same
+      return schedule.min, schedule.max
+
+  def update_bot_policy_limits(self, bot_policy_config, configs,
+                               application='ChromeOS'):
     """Sums the min and max bot numbers per bot policy.
 
     Args:
       bot_policy_config(BotPolicyCfg): Config define Policy for
         the RoboCrop.
       config_map(dict|Config): Map of GCE Config to prefix
+      application(str): buildbucket input property
 
     Returns:
       BotPolicy, updated to reflect ScalingRestriction values.
@@ -243,8 +285,22 @@ class BotScalingApi(recipe_api.RecipeApi):
       policy.scaling_restriction.bot_floor = 0
       for restriction in policy.region_restrictions:
         config = config_map.get(restriction.prefix, Config())
-        policy.scaling_restriction.bot_ceiling += config.amount.max
-        policy.scaling_restriction.bot_floor += config.amount.min
+        # TODO crbug.com/1143932: Remove scheduled resize change logic when
+        # the chromium.tests pool (Chrome) is ready for Robocrop
+        if application == 'Chrome' and config.amount.change:
+          # Change bot_ceiling and bot_floor to -1 to indicate that no gce config
+          # changes should be made for this policy by robocrop.
+          if not self._is_in_weekday_daytime_robocrop_window():
+            policy.scaling_restriction.bot_ceiling = -1
+            policy.scaling_restriction.bot_floor = -1
+            break
+          scheduled_min, scheduled_max = self._get_scheduled_weekday_daytime_min_max(
+              config)
+          policy.scaling_restriction.bot_ceiling += scheduled_max
+          policy.scaling_restriction.bot_floor += scheduled_min
+        else:
+          policy.scaling_restriction.bot_ceiling += config.amount.max
+          policy.scaling_restriction.bot_floor += config.amount.min
       if policy.policy_mode == BotPolicy.MONITORED:
         policy.scaling_restriction.bot_floor = policy.scaling_restriction.min_idle
     return bot_policy_config
@@ -476,6 +532,12 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       float, the estimated bot group savings per execution.
     """
+    # TODO crbug.com/1143932: ceiling and floor is -1 when resizing on mtv
+    # workday is scheduled and this current robocrop run is not within mtv
+    # daytime work hours. Remove when the chromium.tests pool (Chrome) is
+    # ready for Robocrop
+    if bot_policy.scaling_restriction.bot_ceiling == -1 and bot_policy.scaling_restriction.bot_floor == -1:
+      return 0.0
     bot_base = configured if (actionable == ScalingAction.NO) else requested
     return (bot_policy.scaling_restriction.bot_ceiling - bot_base) * (
         bot_policy.bot_type.hourly_cost * EXECUTION_HOUR_PERCENTILE)

@@ -8,5 +8,6 @@ DEPS = [
     'gce_provider',
     'recipe_engine/buildbucket',
     'recipe_engine/step',
+    'recipe_engine/time',
     'swarming_cli',
 ]

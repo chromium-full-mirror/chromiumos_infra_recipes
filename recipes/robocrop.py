@@ -34,7 +34,7 @@ def RunSteps(api, properties):
       pres.logs['gce_config'] = jsonpb.MessageToJson(gce_config)
     with api.step.nest('update bot policies') as pres:
       updated_bot_policy = api.bot_scaling.update_bot_policy_limits(
-          bot_policy_config, gce_config)
+          bot_policy_config, gce_config, application=application)
       reduced_bot_policy = api.bot_scaling.reduce_bot_policy_config_for_table(
           updated_bot_policy)
       api.easy.set_properties_step(
