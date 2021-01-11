@@ -4,8 +4,12 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/properties',
     'cros_test_plan',
 ]
+
+from recipe_engine import post_process
 
 
 def RunSteps(api):
@@ -16,4 +20,20 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.post_check(post_process.StepCommandContains,
+                     'ensure test_planner.ensure_installed',
+                     ['chromiumos/infra/test_planner latest']),
+  )
+
+  yield api.test(
+      'with-ref',
+      api.properties(
+          **{"$chromeos/cros_test_plan": {
+              "test_planner_cipd_ref": "foo"
+          }}),
+      api.post_check(post_process.StepCommandContains,
+                     'ensure test_planner.ensure_installed',
+                     ['chromiumos/infra/test_planner foo']),
+  )

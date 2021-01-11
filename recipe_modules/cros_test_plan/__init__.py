@@ -12,3 +12,8 @@ DEPS = [
     'cros_source',
     'repo',
 ]
+
+from PB.recipe_modules.chromeos.cros_test_plan.cros_test_plan import (
+    CrosTestPlanProperties)
+
+PROPERTIES = CrosTestPlanProperties

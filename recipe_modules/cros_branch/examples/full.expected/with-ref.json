@@ -1,0 +1,101 @@
+[
+  {
+    "cmd": [],
+    "name": "ensure branch_util"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/test_planner",
+      "-ensure-file",
+      "chromiumos/infra/test_planner foo",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "ensure branch_util.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-foo-------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_planner\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/branch_util",
+      "create",
+      "--file",
+      "[CLEANUP]/manifests-_tmp_1/download.xml",
+      "--release",
+      "-j",
+      "8"
+    ],
+    "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/branch_util",
+      "create",
+      "--file",
+      "[CLEANUP]/manifests-_tmp_1/download.xml",
+      "--release",
+      "--force",
+      "--push",
+      "-j",
+      "8"
+    ],
+    "name": "create branch from http://chromium.org/manifest.xml"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/branch_util",
+      "create",
+      "--file",
+      "[CLEANUP]/manifests-_tmp_1/download.xml",
+      "--custom",
+      "mybranch",
+      "--descriptor",
+      "nami",
+      "-j",
+      "8"
+    ],
+    "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml (2)"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/branch_util",
+      "rename",
+      "my_branch",
+      "branch_new_name",
+      "-j",
+      "8"
+    ],
+    "name": "rename branch my_branch to branch_new_name"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/branch_util",
+      "delete",
+      "my_branch",
+      "-j",
+      "8"
+    ],
+    "name": "delete branch my_branch"
+  },
+  {
+    "name": "$result"
+  }
+]

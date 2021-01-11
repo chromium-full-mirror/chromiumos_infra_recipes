@@ -16,6 +16,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.recipe_modules.chromeos.cros_relevance.examples.build_plan import (
     BuildPlanTest)
+from recipe_engine import post_process
 
 PROPERTIES = BuildPlanTest
 _BUILDER_NAME = 'my little builder'
@@ -44,7 +45,23 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.post_check(post_process.StepCommandContains,
+                     'plan builds.ensure binaries.ensure_installed',
+                     ['chromiumos/infra/test_planner latest']),
+  )
+
+  yield api.test(
+      'with-ref',
+      api.properties(
+          **{"$chromeos/cros_relevance": {
+              "test_planner_cipd_ref": "foo"
+          }}),
+      api.post_check(post_process.StepCommandContains,
+                     'plan builds.ensure binaries.ensure_installed',
+                     ['chromiumos/infra/test_planner foo']),
+  )
 
   yield api.test(
       'my-little-builder',

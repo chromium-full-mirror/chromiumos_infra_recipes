@@ -8,3 +8,8 @@ DEPS = [
     'recipe_engine/step',
     'depot_tools/depot_tools',
 ]
+
+from PB.recipe_modules.chromeos.cros_branch.cros_branch import (
+    CrosBranchProperties)
+
+PROPERTIES = CrosBranchProperties

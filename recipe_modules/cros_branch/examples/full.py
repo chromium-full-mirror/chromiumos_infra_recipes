@@ -3,11 +3,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine import post_process
 from PB.chromiumos.branch import Branch
+from PB.recipe_modules.chromeos.cros_branch.cros_branch import (
+    CrosBranchProperties)
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'cros_branch',
 ]
@@ -34,4 +38,20 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.post_check(post_process.StepCommandContains,
+                     'ensure branch_util.ensure_installed',
+                     ['chromiumos/infra/test_planner latest']),
+  )
+
+  yield api.test(
+      'with-ref',
+      api.properties(
+          **{"$chromeos/cros_branch": {
+              "test_planner_cipd_ref": "foo"
+          }}),
+      api.post_check(post_process.StepCommandContains,
+                     'ensure branch_util.ensure_installed',
+                     ['chromiumos/infra/test_planner foo']),
+  )

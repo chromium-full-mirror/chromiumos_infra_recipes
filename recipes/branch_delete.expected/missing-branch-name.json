@@ -9,7 +9,7 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[chromeos]/recipes/branch_delete.py\", line 26, in RunSteps",
       "    force=properties.force)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_branch/api.py\", line 122, in delete",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_branch/api.py\", line 127, in delete",
       "    raise ValueError('Branch name is required.')",
       "ValueError: Branch name is required."
     ]

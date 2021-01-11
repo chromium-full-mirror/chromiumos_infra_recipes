@@ -12,6 +12,11 @@ from PB.chromiumos.branch import Branch
 class CrosBranchApi(recipe_api.RecipeApi):
   """A module for calling cros branch."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super(CrosBranchApi, self).__init__(*args, **kwargs)
+    self._test_planner_cipd_ref = (
+        properties.test_planner_cipd_ref.encode('utf-8') or "latest")
+
   def initialize(self):
     self._branch_util_path = None
 
@@ -134,7 +139,8 @@ class CrosBranchApi(recipe_api.RecipeApi):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
 
         pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package('chromiumos/infra/test_planner', 'latest')
+        pkgs.add_package('chromiumos/infra/test_planner',
+                         self._test_planner_cipd_ref)
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._branch_util_path = cipd_dir.join('branch_util')

@@ -29,7 +29,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosRelevanceApi, self).__init__(*args, **kwargs)
-    self._test_planner_cipd_ref = properties.test_planner_cipd_ref or "latest"
+    self._test_planner_cipd_ref = (
+        properties.test_planner_cipd_ref.encode('utf-8') or "latest")
 
   def initialize(self):
     """Initializes the module."""
