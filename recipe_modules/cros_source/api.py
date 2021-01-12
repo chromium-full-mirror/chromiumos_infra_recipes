@@ -185,11 +185,15 @@ class CrosSourceApi(RecipeApi):
       self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
                              persist=True)
       self.m.path.mock_add_paths(self.cache_path.join('.repo'))
-      self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
-      self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
 
     cache_path = cache_path_override or self.cache_path
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
+    # Only mount the workspace overlay if we are syncing directly to it.
+    # This prevents code from accidently trashing their view of the source tree
+    # by touching it before we sync the cache and create the overlayfs
+    if cache_path == self.workspace_path:
+      self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
+      self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
 
     gitiles_commit = gitiles_commit or self.m.src_state.gitiles_commit
     gitiles_commit = (
@@ -232,6 +236,11 @@ class CrosSourceApi(RecipeApi):
             with self.m.context(cwd=cache_path.join(man.relpath)):
               self.m.step('sync {} branches'.format(man.project),
                           ['git', 'remote', 'update'])
+
+    # Finally, create the workspace overlay.
+    if cache_path != self.workspace_path:
+      self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
+      self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
 
   def checkout_manifests(self, commit=None, is_staging=False,
                          checkout_external=False, test_footers=None):
@@ -428,9 +437,9 @@ class CrosSourceApi(RecipeApi):
         self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
                                persist=True)
         self.m.path.mock_add_paths(self.cache_path.join('.repo'))
-        self.m.overlayfs.mount('workspace', self.cache_path,
-                               self.workspace_path)
-        self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
+        # Explicitly do not mount the workspace overlay at this time, to prevent
+        # recipes from accidentally trashing their view of the source tree by
+        # accessing it before ensure_synced_cache() is called.
       yield
 
   def find_project_paths(self, project, branch, empty_ok=False):

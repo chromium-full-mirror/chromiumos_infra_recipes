@@ -98,6 +98,28 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.auto",
+      "0"
+    ],
+    "infra_step": true,
+    "name": "git config"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.packRefs",
+      "false"
+    ],
+    "infra_step": true,
+    "name": "git config (2)"
+  },
+  {
     "cmd": [],
     "name": "mount overlay workspace"
   },
@@ -172,28 +194,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
-  },
-  {
-    "cmd": [
-      "git",
-      "config",
-      "--global",
-      "gc.auto",
-      "0"
-    ],
-    "infra_step": true,
-    "name": "git config"
-  },
-  {
-    "cmd": [
-      "git",
-      "config",
-      "--global",
-      "gc.packRefs",
-      "false"
-    ],
-    "infra_step": true,
-    "name": "git config (2)"
   },
   {
     "cmd": [],
