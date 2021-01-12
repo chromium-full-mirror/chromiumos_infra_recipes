@@ -103,7 +103,7 @@ def RunSteps(api, properties):
   cpv = api.naming.get_package_title(package)
 
   with api.cros_source.checkout_overlays_context(), \
-      api.cros_sdk.cleanup_context(checkout_path=workspace_path):
+      api.cros_sdk.cleanup_context():
     api.cros_source.ensure_synced_cache()
 
     # Check out the appropriate branch, and use the appropriate policy.

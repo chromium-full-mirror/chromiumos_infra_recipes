@@ -106,57 +106,60 @@ def RunSteps(api, properties):
     _validate_properties(properties)
     presentation.step_text = 'all properties good'
 
-  with api.step.nest('get latest postsubmit build version'):
-    version_build_map = {}
-    vm_property_map = {}
-
-    # For each vm board image. Find the 4 latest successful builds. This
-    # approximately covers a day of postsubmit runs.
-    for vm_board_image in properties.vm_board_images:
-      board = vm_board_image.board
-      vm_property_map[board] = vm_board_image
-
-      builder_name = '{}-postsubmit'.format(vm_board_image.board)
-      board_builds = {}
-
-      with api.step.nest('query-{}'.format(board)):
-        board_builds[board] = api.buildbucket.search(
-            predicate=bb_service.BuildPredicate(
-                builder=bb_builder.BuilderID(
-                    project='chromeos',
-                    bucket='postsubmit',
-                    builder=builder_name,
-                ), status=bb_common.SUCCESS), limit=4)
-
-      if not board_builds[board]:
-        raise StepFailure(
-            'unable to find latest build for {}'.format(builder_name))
-
-      # For each successful build, use the version number as a key and
-      # add the build to the version map.
-      for build in board_builds[board]:
-        version = build.output.properties['chromeos_version']
-        if version not in version_build_map:
-          version_build_map[version] = {board: build}
-
-        version_build_map[version][board] = build
-
-    # Find the highest common version for all the VMs.
-    build_index = '0'
-    sanitized_common_version = '0'
-    for version, builds in version_build_map.items():
-      sanitized_version = _sanitize_version_number(version)
-      if len(builds) == len(properties.vm_board_images) and _version_comparator(
-          sanitized_version, sanitized_common_version):
-        sanitized_common_version = sanitized_version
-        build_index = version
-
-    # If no common version can be found, raise an error.
-    if sanitized_common_version == '0':
-      raise StepFailure('unable to find common build to uprev for all boards')
-
   with api.cros_source.checkout_overlays_context():
+    # Sync the cache before we do anything that might touch the workspace.
     api.cros_source.ensure_synced_cache()
+
+    with api.step.nest('get latest postsubmit build version'):
+      version_build_map = {}
+      vm_property_map = {}
+
+      # For each vm board image. Find the 4 latest successful builds. This
+      # approximately covers a day of postsubmit runs.
+      for vm_board_image in properties.vm_board_images:
+        board = vm_board_image.board
+        vm_property_map[board] = vm_board_image
+
+        builder_name = '{}-postsubmit'.format(vm_board_image.board)
+        board_builds = {}
+
+        with api.step.nest('query-{}'.format(board)):
+          board_builds[board] = api.buildbucket.search(
+              predicate=bb_service.BuildPredicate(
+                  builder=bb_builder.BuilderID(
+                      project='chromeos',
+                      bucket='postsubmit',
+                      builder=builder_name,
+                  ), status=bb_common.SUCCESS), limit=4)
+
+        if not board_builds[board]:
+          raise StepFailure(
+              'unable to find latest build for {}'.format(builder_name))
+
+        # For each successful build, use the version number as a key and
+        # add the build to the version map.
+        for build in board_builds[board]:
+          version = build.output.properties['chromeos_version']
+          if version not in version_build_map:
+            version_build_map[version] = {board: build}
+
+          version_build_map[version][board] = build
+
+      # Find the highest common version for all the VMs.
+      build_index = '0'
+      sanitized_common_version = '0'
+      for version, builds in version_build_map.items():
+        sanitized_version = _sanitize_version_number(version)
+        if len(builds) == len(
+            properties.vm_board_images) and _version_comparator(
+                sanitized_version, sanitized_common_version):
+          sanitized_common_version = sanitized_version
+          build_index = version
+
+      # If no common version can be found, raise an error.
+      if sanitized_common_version == '0':
+        raise StepFailure('unable to find common build to uprev for all boards')
+
     version_path = api.cros_source.workspace_path.join(properties.version_file)
     package_path = api.path.dirname(version_path)
     package = api.path.basename(package_path)

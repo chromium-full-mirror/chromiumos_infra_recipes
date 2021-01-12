@@ -83,11 +83,12 @@ def RunSteps(api, properties):
   # and thus skipping the standard cache avoids a costly time sink of deleting
   # unused repos.
   with api.context(infra_steps=True), \
+      api.workspace_util.setup_workspace(), \
       api.workspace_util.sync_to_manifest_groups(
           properties.manifest_groups,
           local_manifest=local_manifest,
           cache_path_override=api.src_state.workspace_path,
-          manifest_branch=properties.manifest_branch,):
+          manifest_branch=properties.manifest_branch):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
                                      fail_not_applicable=True)
 

@@ -28,10 +28,7 @@ DEPS = [
 
 def RunSteps(api):
   with api.cros_source.checkout_overlays_context(), \
-      api.cros_sdk.cleanup_context(
-          checkout_path=api.cros_source.workspace_path), \
-      api.context(
-          cwd=api.cros_source.workspace_path.join('manifest-internal')):
+      api.cros_sdk.cleanup_context():
 
     api.cros_source.ensure_synced_cache()
     api.cros_sdk.create_chroot(version=None, use_image=False, timeout_sec=None)

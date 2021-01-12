@@ -297,30 +297,6 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos/overlays/baseboard-foo-private",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "repo forall",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@some/project|project|project|refs/heads/main|@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
       "git",
       "config",
       "--global",
@@ -515,7 +491,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "some/project",
+      "chromeos/overlays/baseboard-foo-private",
       "--ignore-missing",
       "-j",
       "32",
@@ -555,7 +531,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "some/project",
+      "chromeos/overlays/baseboard-foo-private",
       "--ignore-missing",
       "-j",
       "32",
@@ -595,7 +571,7 @@
       "--retry-fetches",
       "8",
       "--verbose",
-      "some/project"
+      "chromeos/overlays/baseboard-foo-private"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -639,6 +615,30 @@
     "name": "sync manifest branches.sync chromiumos/manifest branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromeos/overlays/baseboard-foo-private",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "repo forall",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@some/project|project|project|refs/heads/main|@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

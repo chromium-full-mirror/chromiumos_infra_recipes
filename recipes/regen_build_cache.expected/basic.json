@@ -181,7 +181,6 @@
       "gc.auto",
       "0"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "git config"
   },
@@ -193,7 +192,6 @@
       "gc.packRefs",
       "false"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "git config (2)"
   },
@@ -213,7 +211,6 @@
       "0777",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "ensure synced checkout.ensure root path",
     "~followup_annotations": [
@@ -494,7 +491,6 @@
       "u=rwx,g=rx,o=rx,-t",
       "[CACHE]/cros_chroot"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "init sdk.changing permissions of [CACHE]/cros_chroot",
     "~followup_annotations": [
@@ -512,7 +508,6 @@
       "[CACHE]/cros_chroot/sdk_cache_version.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "init sdk.read sdk cache version json",
     "~followup_annotations": [
@@ -551,7 +546,6 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"flags\": {\n    \"noReplace\": true, \n    \"noUseImage\": true\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.write input file",
     "~followup_annotations": [
@@ -579,7 +573,6 @@
       "debug",
       "chromite.api.SdkService/Create"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -601,7 +594,6 @@
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -664,7 +656,6 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -696,7 +687,6 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -723,7 +713,6 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -751,7 +740,6 @@
       "{\"manifest_branch\": \"\", \"version\": 1}",
       "[CLEANUP]/sdk_cache_version.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "init sdk.write sdk cache version file",
     "~followup_annotations": [
@@ -767,7 +755,6 @@
       "[CLEANUP]/sdk_cache_version.json",
       "[CACHE]/cros_chroot/sdk_cache_version.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "init sdk.move sdk cache version file into place",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -792,7 +779,6 @@
       "0777",
       "[START_DIR]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "init sdk.link chroot in chromiumos_workspace.ensure chromiumos_workspace",
     "~followup_annotations": [
@@ -810,7 +796,6 @@
       "[CACHE]/cros_chroot",
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "init sdk.link chroot in chromiumos_workspace.link chromiumos_workspace to chroot",
     "~followup_annotations": [
@@ -848,7 +833,6 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"flags\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.write input file",
     "~followup_annotations": [
@@ -873,7 +857,6 @@
       "debug",
       "chromite.api.SdkService/Update"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -895,7 +878,6 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"
@@ -951,7 +933,6 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "PATH": [
         "[START_DIR]/chromiumos_workspace/chromite/bin"

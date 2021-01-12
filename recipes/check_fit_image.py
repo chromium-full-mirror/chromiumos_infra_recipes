@@ -124,18 +124,18 @@ def RunSteps(api, properties):
     Return:
       map of name => path indicating where each project is synced"""
 
-    gc_projects = list(set([gc.project for gc in gerrit_changes]))
-
-    # Figure out what projects to sync
-    project_infos = api.repo.project_infos(
-        [gc.project for gc in gerrit_changes])
-    projects = list(set([p.name for p in project_infos]))
+    projects = list(set([gc.project for gc in gerrit_changes]))
 
     verbose = dict(verbose=True)
     api.cros_source.ensure_synced_cache(
         init_opts=verbose, sync_opts=verbose,
         cache_path_override=api.cros_source.workspace_path, projects=projects)
 
+    # Figure out what paths those are.
+    project_infos = api.repo.project_infos(projects)
+
+    # Note: This returns the path for all of the projects with changes,
+    # regardless of the branch that is checked out at that path.
     return {p.name: p.path for p in project_infos}
 
   api.cros_infra_config.configure_builder()

@@ -392,40 +392,40 @@ def RunSteps(api, properties):
     # cancelled/removed projects who's repos haven't been deleted yet.
     return [info for info in project_infos if info.name in names]
 
-  with api.cros_source.checkout_overlays_context(), \
-    api.context(cwd=api.cros_source.workspace_path):
-
+  with api.cros_source.checkout_overlays_context():
     api.cros_source.ensure_synced_cache()
 
-    with api.step.nest('find config repos'):
-      config_projects = _get_config_projects()
+    with api.context(cwd=api.cros_source.workspace_path):
 
-    # One action failing should not block all later actions from running. Thus,
-    # catch StepFailures from each action and raise them later.
-    #
-    # Note that an action failing should stop the CL from being created (i.e. a
-    # failed action might create an invalid CL), and thus
-    # api.step.defer_results
-    # cannot be used.
-    step_failures = []
-    for cl_config_type, action in _ACTIONS.items():
-      cl_config = properties.cl_configs[cpp_pb2.ActionTypes.Name(
-          cl_config_type)]
-      # Use the name of the fn. to create step names, branch names, etc.
-      action_name = action.__name__.strip('_')
-      with api.step.nest('Do {} and create CL'.format(action_name)) as pres:
-        try:
-          commit_infos = action(api, properties, config_projects)
-          for commit_info in commit_infos:
-            _create_cl(api, properties, commit_info, action_name, cl_config)
-        except StepFailure as e:
-          step_failures.append(e)
+      with api.step.nest('find config repos'):
+        config_projects = _get_config_projects()
 
-    # If there were any step failures, raise now.
-    if step_failures:
-      msg = '{} steps failed:'.format(len(step_failures))
-      msg += ', '.join((f.reason or f.name) for f in step_failures)
-      raise StepFailure(msg)
+      # One action failing should not block all later actions from running. Thus,
+      # catch StepFailures from each action and raise them later.
+      #
+      # Note that an action failing should stop the CL from being created (i.e. a
+      # failed action might create an invalid CL), and thus
+      # api.step.defer_results
+      # cannot be used.
+      step_failures = []
+      for cl_config_type, action in _ACTIONS.items():
+        cl_config = properties.cl_configs[cpp_pb2.ActionTypes.Name(
+            cl_config_type)]
+        # Use the name of the fn. to create step names, branch names, etc.
+        action_name = action.__name__.strip('_')
+        with api.step.nest('Do {} and create CL'.format(action_name)) as pres:
+          try:
+            commit_infos = action(api, properties, config_projects)
+            for commit_info in commit_infos:
+              _create_cl(api, properties, commit_info, action_name, cl_config)
+          except StepFailure as e:
+            step_failures.append(e)
+
+      # If there were any step failures, raise now.
+      if step_failures:
+        msg = '{} steps failed:'.format(len(step_failures))
+        msg += ', '.join((f.reason or f.name) for f in step_failures)
+        raise StepFailure(msg)
 
 
 def GenTests(api):

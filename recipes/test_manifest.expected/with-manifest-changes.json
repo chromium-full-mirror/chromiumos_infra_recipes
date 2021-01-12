@@ -303,7 +303,6 @@
       "gc.auto",
       "0"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "git config"
   },
@@ -315,7 +314,6 @@
       "gc.packRefs",
       "false"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "git config (2)"
   },
@@ -335,7 +333,6 @@
       "0777",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.ensure root path",
     "~followup_annotations": [

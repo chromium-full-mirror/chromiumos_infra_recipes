@@ -365,6 +365,9 @@ class CrosSdkApi(RecipeApi):
   def cleanup_context(self, checkout_path=None):
     """Returns a context that cleans the SDK chroot named cache.
 
+    This may be called before cros_source.ensure_synced_cache, since it yields
+    immediately, and only accesses checkout_path during cleanup.
+
     Args:
       checkout_path (Path): Path to source checkout.  Default:
           cros_source.workspace_path.

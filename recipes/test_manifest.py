@@ -20,6 +20,8 @@ DEPS = [
     'src_state',
 ]
 
+import contextlib
+
 from recipe_engine import post_process
 from PB.recipes.chromeos.test_manifest import TestManifestProperties
 from PB.chromiumos.branch import Branch
@@ -32,15 +34,20 @@ def RunSteps(api, properties):
       api.src_state.internal_manifest.project
   ]
 
-  # This will set up api.src_state properties for us.
-  api.cros_infra_config.configure_builder(api.src_state.gitiles_commit)
+  @contextlib.contextmanager
+  def _setup():
+    """Set up the various contexts, and sync source."""
+    # This will set up api.src_state properties for us.
+    api.cros_infra_config.configure_builder(api.src_state.gitiles_commit)
 
-  with api.cros_source.checkout_overlays_context(), api.context(
-      cwd=api.cros_source.workspace_path):
+    with api.cros_source.checkout_overlays_context():
+      api.cros_source.ensure_synced_cache()
+      with api.context(cwd=api.src_state.workspace_path):
+        yield
+
+  with _setup():
     gitiles_commit = api.src_state.gitiles_commit
     gerrit_changes = api.src_state.gerrit_changes
-
-    api.cros_source.ensure_synced_cache()
 
     with api.step.nest('cherry-pick gerrit changes'):
       commits = api.cros_source.apply_gerrit_changes(gerrit_changes)

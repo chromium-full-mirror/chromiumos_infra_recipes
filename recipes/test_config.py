@@ -21,14 +21,15 @@ def RunSteps(api):
   gerrit_changes = build.input.gerrit_changes
 
   with api.cros_source.checkout_overlays_context():
+    api.cros_source.ensure_synced_cache()
     with api.context(cwd=api.cros_source.workspace_path):
-      api.cros_source.ensure_synced_cache()
       if gerrit_changes:
         with api.step.nest('cherry-pick gerrit changes'):
           api.cros_source.apply_gerrit_changes(gerrit_changes)
 
       projects = api.repo.project_infos(projects=['chromiumos/chromite'])
-      assert len(projects) == 1, 'expected one proto repo, got: %r' % projects
+      assert len(
+          projects) == 1, 'expected one chromite repo, got: %r' % projects
       project = projects[0]
 
     project_path = api.cros_source.workspace_path.join(project.path)
