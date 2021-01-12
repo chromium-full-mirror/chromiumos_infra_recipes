@@ -548,8 +548,7 @@
     "cmd": [],
     "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no changes@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -595,6 +594,208 @@
     "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes.diff check (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do regenerate_suite_scheduler_configs and create CL.diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "regenerate_suite_scheduler_configs",
+      "[START_DIR]/chromiumos_workspace/src/config-internal"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Do regenerate_suite_scheduler_configs and create CL.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/suite_scheduler.cfg",
+      "[START_DIR]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/lab_config.cfg",
+      "[START_DIR]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/lab_config.ini",
+      "[START_DIR]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/suite_scheduler.ini"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do regenerate_suite_scheduler_configs and create CL.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Updating Suite Schedulers generated rules.",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do regenerate_suite_scheduler_configs and create CL.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Updating Suite Schedulers generated rules.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do regenerate_suite_scheduler_configs and create CL.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do regenerate_suite_scheduler_configs and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/config-internal",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/config-internal",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Do regenerate_suite_scheduler_configs and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/config-internal.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/config-internal|src/[START_DIR]/chromiumos_workspace/src/config-internal|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--topic",
+      "test topic",
+      "--reviewers",
+      "t",
+      "--reviewers",
+      "e",
+      "--reviewers",
+      "s",
+      "--reviewers",
+      "t",
+      "--reviewers",
+      "1",
+      "--reviewers",
+      "@",
+      "--reviewers",
+      "g",
+      "--reviewers",
+      "o",
+      "--reviewers",
+      "o",
+      "--reviewers",
+      "g",
+      "--reviewers",
+      "l",
+      "--reviewers",
+      "e",
+      "--reviewers",
+      ".",
+      "--reviewers",
+      "c",
+      "--reviewers",
+      "o",
+      "--reviewers",
+      "m",
+      "--cc",
+      "test2@google.com",
+      "--cc",
+      "test3@google.com",
+      "--hashtag",
+      "ht1",
+      "--hashtag",
+      "ht2",
+      "--send-mail"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/config-internal",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "Do regenerate_suite_scheduler_configs and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/config-internal.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/config-internal",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "Do regenerate_suite_scheduler_configs and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/config-internal.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -665,8 +866,7 @@
     "cmd": [],
     "name": "Do copy_to_internal and create CL.aggregating configs.git transaction",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -708,8 +908,7 @@
     "cmd": [],
     "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_SUMMARY_TEXT@No changes to commit@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -720,10 +919,70 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes.diff check (2)",
+    "cmd": [
+      "git",
+      "add",
+      "generated/flattened.jsonproto",
+      "generated/configs.jsonproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Automerging and importing config changes.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_postsubmit/aggregate",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Automerging and importing config changes.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: config_postsubmit/aggregate@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "cros",
+      "HEAD:refs/heads/master"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -780,8 +1039,203 @@
     ]
   },
   {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "replicate_public_config",
+      "[START_DIR]/chromiumos_workspace/src/project_public"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Do replicate_public_config and create CL.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/src/project_public"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "infra_step": true,
+    "name": "Do replicate_public_config and create CL.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Update with filtered configs.",
+      "[CLEANUP]/commit_msg_tmp_3"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "infra_step": true,
+    "name": "Do replicate_public_config and create CL.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Update with filtered configs.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_3"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "infra_step": true,
+    "name": "Do replicate_public_config and create CL.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
-    "name": "Do regenerate_test_plan and create CL"
+    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/project_public",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project_public|src/[START_DIR]/chromiumos_workspace/src/project_public|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--topic",
+      "test topic",
+      "--reviewers",
+      "t",
+      "--reviewers",
+      "e",
+      "--reviewers",
+      "s",
+      "--reviewers",
+      "t",
+      "--reviewers",
+      "1",
+      "--reviewers",
+      "@",
+      "--reviewers",
+      "g",
+      "--reviewers",
+      "o",
+      "--reviewers",
+      "o",
+      "--reviewers",
+      "g",
+      "--reviewers",
+      "l",
+      "--reviewers",
+      "e",
+      "--reviewers",
+      ".",
+      "--reviewers",
+      "c",
+      "--reviewers",
+      "o",
+      "--reviewers",
+      "m",
+      "--cc",
+      "test2@google.com",
+      "--cc",
+      "test3@google.com",
+      "--hashtag",
+      "ht1",
+      "--hashtag",
+      "ht2",
+      "--send-mail"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project_public",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project_public",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do regenerate_test_plan and create CL",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [
@@ -813,7 +1267,7 @@
     "name": "Do regenerate_test_plan and create CL.regenerating test plans",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no changes@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -823,21 +1277,8 @@
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal/test",
     "name": "Do regenerate_test_plan and create CL.regenerating test plans.run generate",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do regenerate_test_plan and create CL.regenerating test plans.diffing to find changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do regenerate_test_plan and create CL.regenerating test plans.diffing to find changes.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

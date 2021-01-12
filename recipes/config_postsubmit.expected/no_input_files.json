@@ -554,28 +554,6 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "start",
-      "regen",
-      "chromeos/config-internal"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal/test/suite_scheduler",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.repo start",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "./regenerate_configs.sh"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal/test/suite_scheduler",
@@ -1001,6 +979,96 @@
     "name": "Do replicate_public_config and create CL.diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do regenerate_test_plan and create CL"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromeos/config-internal",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Do regenerate_test_plan and create CL.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/config-internal|src/chromeos/config-internal|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do regenerate_test_plan and create CL.regenerating test plans",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no changes@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "./generate"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal/test",
+    "name": "Do regenerate_test_plan and create CL.regenerating test plans.run generate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do regenerate_test_plan and create CL.regenerating test plans.diffing to find changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do regenerate_test_plan and create CL.regenerating test plans.diffing to find changes.diff check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[START_DIR]/chromiumos_workspace/src/config-internal/test/generated"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal/test",
+    "infra_step": true,
+    "name": "Do regenerate_test_plan and create CL.regenerating test plans.diffing to find changes.diff check.git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "[START_DIR]/chromiumos_workspace/src/config-internal/test/generated"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal/test",
+    "infra_step": true,
+    "name": "Do regenerate_test_plan and create CL.regenerating test plans.diffing to find changes.diff check.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

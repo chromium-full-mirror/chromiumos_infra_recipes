@@ -21,6 +21,9 @@ message ConfigPostsubmitProperties {
 
         // The replicate public config action type.
         REPLICATE_PUBLIC_CONFIG = 3;
+
+        // Regenerate the test plan.
+        REGENERATE_TEST_PLAN = 4;
     }
 
   message ActionCLConfig {

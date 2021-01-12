@@ -243,7 +243,7 @@ def _regenerate_suite_scheduler_configs(api, properties, project_infos):
   Args:
     project_infos: ignored, but accepted. See notes on _ACTIONS.
   """
-  config_project_info = api.repo.project_info("chromeos/config-internal")
+  config_project_info = api.repo.project_info('chromeos/config-internal')
 
   config_internal = api.context.cwd.join('src/config-internal')
   cfg_int_ss = config_internal.join('test/suite_scheduler')
@@ -261,10 +261,9 @@ Cr-Build-Url: %s
 Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
                            'config_postsubmit/regenerate_suite_scheduler')
 
-  with api.step.nest("regenerating suite scheduler configs") as presentation, \
+  with api.step.nest('regenerating suite scheduler configs') as presentation, \
       api.context(cfg_int_ss):
     try:
-      api.repo.start("regen", projects=[config_project_info.name])
       api.step('run regenerate_configs.sh', ['./regenerate_configs.sh'])
 
       with api.step.nest('diffing to find changes'):
@@ -287,6 +286,42 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
       return []
 
 
+def _regenerate_test_plan(api, properties, project_infos):
+  """Run test configurations ./generate and ./generate_test_plan_summary.
+
+  This action runs the generate function in src/config-internal/test and commits
+  the results.
+
+  Args:
+    project_infos: ignored, but accepted. See notes on _ACTIONS.
+  """
+  config_project_info = api.repo.project_info('chromeos/config-internal')
+  config_internal_test = api.context.cwd.join('src/config-internal/test')
+  config_internal_test_gen = config_internal_test.join('generated')
+  message = '''Updating generated test plans.
+
+Cr-Build-Url: %s
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
+                           'config_postsubmit/regenerate_test_plan')
+
+  with api.step.nest('regenerating test plans') as presentation, \
+      api.context(config_internal_test):
+    try:
+      api.step('run generate', ['./generate'])
+      with api.step.nest('diffing to find changes'):
+        if not api.git.diff_check(config_internal_test_gen):
+          presentation.step_text = 'no changes'
+          return []
+
+      cl_config = properties.cl_configs[cpp_pb2.ActionTypes.Name(
+          cpp_pb2.REGENERATE_TEST_PLAN)]
+
+      return [CommitInfo(config_internal_test_gen, 'Updating test plan.', [])]
+    except StepFailure:
+      presentation.status = 'FAILURE'  # swallow StepFailure and keep going
+      return []
+
+
 # A dictionary of CL configurations -> their functions which run on config repos.
 #
 # Each action should take a RecipesApi and list of ProjectInfos as args and
@@ -296,6 +331,7 @@ _ACTIONS = {
     cpp_pb2.FLATTEN_CONFIGS: _flatten_configs,
     cpp_pb2.COPY_TO_INTERNAL: _copy_to_internal,
     cpp_pb2.REGENERATE_SUITE_SCHEDULER: _regenerate_suite_scheduler_configs,
+    cpp_pb2.REGENERATE_TEST_PLAN: _regenerate_test_plan,
 }
 
 
@@ -405,6 +441,7 @@ def GenTests(api):
                 "FLATTEN_CONFIGS": aclc,
                 "COPY_TO_INTERNAL": aclc,
                 "REPLICATE_PUBLIC_CONFIG": aclc,
+                "REGENERATE_TEST_PLAN": aclc,
             }))
 
   def config_dlm_step_data(api):
@@ -605,5 +642,22 @@ def GenTests(api):
       api.post_process(
           post_process.DoesNotRun,
           'Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes',
+      ),
+  )
+
+  yield api.test(
+      'regenerate_test_plan_error',
+      default_properties(),
+      config_repos_step_data(api),
+      config_dlm_step_data(api),
+      mock_payloads("config.jsonproto"),
+      mock_payloads("flattened.jsonproto"),
+      api.git.diff_check(True),
+      api.step_data(
+          'Do regenerate_test_plan and create CL.regenerating test plans.run generate',
+          retcode=1),
+      api.post_process(
+          post_process.DoesNotRun,
+          'Do regenerate_test_plan and create CL.regenerating test plans.diffing to find changes',
       ),
   )
