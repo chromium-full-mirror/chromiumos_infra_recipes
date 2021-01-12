@@ -1032,10 +1032,6 @@
   },
   {
     "cmd": [],
-    "name": "act on outdated CLs with policy: OUTDATED_DO_NOTHING"
-  },
-  {
-    "cmd": [],
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED"
   },
   {

@@ -84,11 +84,11 @@ def RunSteps(api, properties):
 
     presentation.step_text = 'all properties good'
 
-  uprev_run = True
+  retry_only_run = False
   triggers = properties.triggers or api.scheduler.triggers
   with api.step.nest('validate triggers') as presentation:
     if not triggers:
-      uprev_run = False
+      retry_only_run = True
       triggers = [Trigger(gitiles=GitilesTrigger(ref=properties.retry_ref.ref))]
       presentation.step_text = 'no triggers, only evaluating existing CLs'
     else:
@@ -168,14 +168,14 @@ def RunSteps(api, properties):
     outdated_cls_policy = policy.outdated_cls_policy
     retry_cl_policy = policy.retry_cl_policy or NO_RETRY
 
-    if uprev_run:
+    if not retry_only_run:
       ebuilds_by_pinfo = _do_uprev(api, properties, workspace_path, triggers,
                                    package, cpv, topic, Ebuilds)
       if ebuilds_by_pinfo is None:
         return
 
     pinfos_by_remote = defaultdict(list)
-    if uprev_run:
+    if not retry_only_run:
       for info in sorted(ebuilds_by_pinfo.keys()):
         pinfos_by_remote[info.remote].append(info)
     else:
@@ -254,7 +254,7 @@ def RunSteps(api, properties):
             ci.display_id for ci in outdated_cls
         ]
 
-    if outdated_cls:
+    if outdated_cls and not retry_only_run:
       with api.step.nest('act on outdated CLs with policy: {}'.format(
           OutdatedClsPolicy.Name(outdated_cls_policy))) as pres:
         for outdated_cl in outdated_cls:
@@ -312,7 +312,7 @@ def RunSteps(api, properties):
                     api.gerrit.set_change_labels_remote(retry_cl,
                                                         retry_ci.git_fetch_ref,
                                                         labels)
-    if uprev_run:
+    if not retry_only_run:
       _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
                         existing_cls)
 
