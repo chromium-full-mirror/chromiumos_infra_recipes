@@ -52,6 +52,7 @@ class CrosSourceApi(RecipeApi):
     # (Path) either manifest-internal/snapshot.xml, or (unpinned) manifest.xml.
     self._branch_manifest_file = None
     self._applied_patches = defaultdict(list)
+    self._have_overlayfs_cleanup_context = False
 
   def initialize(self):
     """Initialization that follows all module loading."""
@@ -166,13 +167,17 @@ class CrosSourceApi(RecipeApi):
       * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
       * cache_path_override (Path): Path to sync into. If None, the cache_path
-      property is used.
+        property is used.
       * is_staging (bool): Flag to indicate canary staging environment
       * projects (List[str]): Projects to limit the sync to, or None to sync
-      all projects.
+        all projects.
       * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
       current value.
     """
+    # Make sure that there is an active overlayfs.cleanup_context.
+    # See crbug.com/1165775.
+    assert self._have_overlayfs_cleanup_context, 'no overlayfs cleanup context'
+
     # There are a few things we want to make sure are set globally for git.
     # Do them here to help protect the named cache from corruption due to
     # off-branch objects being removed.
@@ -437,6 +442,7 @@ class CrosSourceApi(RecipeApi):
       mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
     """
     with self.m.overlayfs.cleanup_context():
+      self._have_overlayfs_cleanup_context = True
       if not self._enable_custom_overlays and mount_cache:
         self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
                                persist=True)
@@ -445,6 +451,7 @@ class CrosSourceApi(RecipeApi):
         # recipes from accidentally trashing their view of the source tree by
         # accessing it before ensure_synced_cache() is called.
       yield
+    self._have_overlayfs_cleanup_context = False
 
   def find_project_paths(self, project, branch, empty_ok=False):
     """Find the source paths for a given project in the workspace.

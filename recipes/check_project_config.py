@@ -83,7 +83,6 @@ def RunSteps(api, properties):
   # and thus skipping the standard cache avoids a costly time sink of deleting
   # unused repos.
   with api.context(infra_steps=True), \
-      api.workspace_util.setup_workspace(), \
       api.workspace_util.sync_to_manifest_groups(
           properties.manifest_groups,
           local_manifest=local_manifest,

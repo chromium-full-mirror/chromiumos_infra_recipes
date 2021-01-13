@@ -20,7 +20,8 @@ PROPERTIES = MismatchArgsProperties
 
 
 def RunSteps(api, properties):
-  with api.assertions.assertRaises(ValueError):
+  with api.cros_source.checkout_overlays_context(), \
+      api.assertions.assertRaises(ValueError):
     api.cros_source.ensure_synced_cache(
         manifest_url=properties.manifest_url,
         cache_path_override=api.path['cache'].join(

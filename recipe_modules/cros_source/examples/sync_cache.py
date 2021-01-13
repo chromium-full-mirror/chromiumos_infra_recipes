@@ -19,10 +19,12 @@ PROPERTIES = SyncCacheProperties
 
 
 def RunSteps(api, properties):
-  api.cros_source.ensure_synced_cache(
-      manifest_url=properties.manifest_url,
-      cache_path_override=api.path['cache'].join(properties.cache_path_override)
-      if properties.cache_path_override else None)
+  path = None
+  if properties.cache_path_override:
+    path = api.path['cache'].join(properties.cache_path_override)
+  with api.cros_source.checkout_overlays_context():
+    api.cros_source.ensure_synced_cache(manifest_url=properties.manifest_url,
+                                        cache_path_override=path)
 
 
 def GenTests(api):
