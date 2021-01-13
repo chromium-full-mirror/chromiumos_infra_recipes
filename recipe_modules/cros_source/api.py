@@ -430,10 +430,14 @@ class CrosSourceApi(RecipeApi):
                   ['git', 'remote', 'update'])
 
   @contextlib.contextmanager
-  def checkout_overlays_context(self):
-    """Returns a context where overlays can be mounted."""
+  def checkout_overlays_context(self, mount_cache=True):
+    """Returns a context where overlays can be mounted.
+
+    Args:
+      mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
+    """
     with self.m.overlayfs.cleanup_context():
-      if not self._enable_custom_overlays:
+      if not self._enable_custom_overlays and mount_cache:
         self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
                                persist=True)
         self.m.path.mock_add_paths(self.cache_path.join('.repo'))
