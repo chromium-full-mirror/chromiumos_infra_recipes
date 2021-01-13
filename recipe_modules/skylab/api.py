@@ -13,6 +13,7 @@ from recipe_engine import recipe_api
 import structs
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.lab import license as license_pb2
 from PB.test_platform.skylab_tool.result import WaitTasksResult
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
@@ -102,6 +103,7 @@ class SkylabApi(recipe_api.RecipeApi):
         req.params.software_attributes.build_target.name = uht.hw_test.skylab_board
         suite_to_create = req.test_plan.suite.add()
         suite_to_create.name = uht.hw_test.suite
+        self._set_license_labels(req, uht.hw_test.licenses)
 
         tags = self._get_ctp_tags(uht.hw_test, uht.unit, image_path)
         request_tags = [
@@ -135,6 +137,12 @@ class SkylabApi(recipe_api.RecipeApi):
     else:
       scheduling.unmanaged_pool = pool_name
     return
+
+  def _set_license_labels(self, request, licenses):
+    """Set params on request for licenses."""
+    for lic in licenses:
+      dimension = "label-license:" + license_pb2.LicenseType.Name(lic)
+      request.params.freeform_attributes.swarming_dimensions.append(dimension)
 
   def create_recipe(self, test, unit, timeout, name=None,
                     async_suite_run=False):
