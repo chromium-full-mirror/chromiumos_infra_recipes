@@ -359,12 +359,17 @@ def _create_cl(api, properties, commit_info, branch_name, cl_config):
       else:
         api.git.add([commit_info.project_path])
       api.git.commit(commit_info.message)
-      # TODO(crbug.com/1092530): Add autosubmit option to gerrit api and cfg.
-      return api.gerrit.create_change(project=commit_info.project_path,
-                                      reviewers=cl_config.reviewers,
-                                      ccs=cl_config.ccs,
-                                      hashtags=cl_config.hashtags,
-                                      topic=cl_config.topic)
+      change = api.gerrit.create_change(project=commit_info.project_path,
+                                        reviewers=cl_config.reviewers,
+                                        ccs=cl_config.ccs,
+                                        hashtags=cl_config.hashtags,
+                                        topic=cl_config.topic)
+      if change and cl_config.send_to_cq:
+        with api.step.nest('send to CQ'):
+          api.gerrit.set_change_labels(change, {
+              api.gerrit.Label.BOT_COMMIT: 1,
+              api.gerrit.Label.COMMIT_QUEUE: 2,
+          })
 
 
 def RunSteps(api, properties):
@@ -432,8 +437,9 @@ def GenTests(api):
 
   def default_properties():
     aclc = cpp_pb2.ActionCLConfig(reviewers='test1@google.com',
-                                  ccs=['test2@google.com', 'test3@google.com'],
-                                  topic='test topic', hashtags=['ht1', 'ht2'])
+                                  ccs=['test2@google.com',
+                                       'test3@google.com'], topic='test topic',
+                                  hashtags=['ht1', 'ht2'], send_to_cq=True)
     return api.properties(
         cpp_pb2(
             cl_configs={

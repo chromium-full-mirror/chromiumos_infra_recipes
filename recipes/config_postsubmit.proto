@@ -38,6 +38,9 @@ message ConfigPostsubmitProperties {
 
     // Hashtags to add to the created CLs.
     repeated string hashtags = 4;
+
+    // Should the CLs created be sent to CQ (+2) immediately?
+    bool send_to_cq = 5;
   }
 
   // Map from ActionType string representation to ActionCLConfig.
