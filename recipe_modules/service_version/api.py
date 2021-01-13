@@ -19,8 +19,10 @@ class ServiceVersionCommand(recipe_api.RecipeApi):
     """Validate that the caller's skylab tool version number is up-to-date.
     """
     with self.m.step.nest('validate Skylab tool version'):
-      is_valid = self._version and self._version.skylab_tool >= _MINIMUM_SKYLAB_VERSION
-      if not is_valid:
-        raise self.m.step.StepFailure(
-            'outdated skylab tool version; please update your local skylab CLI via `skylab update`.'
-        )
+      pass
+      # TODO(crbug.com/1137410): Un-comment this code.
+      # is_valid = self._version and self._version.skylab_tool >= _MINIMUM_SKYLAB_VERSION
+      # if not is_valid:
+      #   raise self.m.step.StepFailure(
+      #       'outdated skylab tool version; please update your local skylab CLI via `skylab update`.'
+      #   )
