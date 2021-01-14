@@ -176,13 +176,7 @@
     "cmd": [],
     "name": "validate triggers",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 1 good triggers@@@",
-      "@@@STEP_LOG_LINE@list of triggers@{@@@",
-      "@@@STEP_LOG_LINE@list of triggers@  \"gitiles\": {@@@",
-      "@@@STEP_LOG_LINE@list of triggers@    \"ref\": \"refs/heads/main\"@@@",
-      "@@@STEP_LOG_LINE@list of triggers@  }@@@",
-      "@@@STEP_LOG_LINE@list of triggers@}@@@",
-      "@@@STEP_LOG_END@list of triggers@@@"
+      "@@@STEP_TEXT@has cron trigger, runnning in retry-only mode@@@"
     ]
   },
   {

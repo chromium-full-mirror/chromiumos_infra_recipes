@@ -104,8 +104,8 @@ def RunSteps(api, properties):
         if not trigger.HasField('gitiles'):
           raise StepFailure('found non-gitiles trigger: %r', trigger)
 
-    presentation.step_text = 'found {} good triggers'.format(len(triggers))
-    presentation.logs['list of triggers'] = map(MessageToJson, triggers)
+      presentation.step_text = 'found {} good triggers'.format(len(triggers))
+      presentation.logs['list of triggers'] = map(MessageToJson, triggers)
 
   package = properties.package_info
   cpv = api.naming.get_package_title(package)
