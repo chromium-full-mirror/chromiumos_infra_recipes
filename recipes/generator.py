@@ -28,7 +28,7 @@ from PB.recipes.chromeos.generator import (
     BranchPolicy, Reviewer, GeneratorProperties, RetryRef)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
-    GitilesTrigger, Trigger, WebUITrigger)
+    CronTrigger, GitilesTrigger, Trigger, WebUITrigger)
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
 
@@ -88,9 +88,17 @@ def RunSteps(api, properties):
   triggers = properties.triggers or api.scheduler.triggers
   with api.step.nest('validate triggers') as presentation:
     if not triggers:
+      raise StepFailure('found no scheduler triggers')
+
+    has_cron_trigger = False
+    for trigger in triggers:
+      if trigger.HasField('cron'):
+        has_cron_trigger = True
+        break
+    if has_cron_trigger:
       retry_only_run = True
       triggers = [Trigger(gitiles=GitilesTrigger(ref=properties.retry_ref.ref))]
-      presentation.step_text = 'no triggers, only evaluating existing CLs'
+      presentation.step_text = 'has cron trigger, runnning in retry-only mode'
     else:
       for trigger in triggers:
         if not trigger.HasField('gitiles'):
@@ -873,13 +881,21 @@ def GenTests(api):
 
   yield api.test(
       'no-triggers',
+      _props(),
+      api.scheduler(triggers=[]),
+      api.post_check(post_process.StatusAnyFailure),
+      api.git.diff_check(True),
+  )
+
+  yield api.test(
+      'cron-trigger',
       _props(
           branch_policies=[
               _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
                       existing_cls_policy=DRY_RUN,
                       no_existing_cls_policy=DRY_RUN)
           ], retry_ref=retry_ref),
-      api.scheduler(triggers=[]),
+      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
