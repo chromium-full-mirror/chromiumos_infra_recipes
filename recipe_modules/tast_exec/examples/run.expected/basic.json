@@ -223,7 +223,7 @@
       "!informational"
     ],
     "name": "first tast iteration.tast run",
-    "timeout": 2700,
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -672,7 +672,7 @@
       "arc.Boot"
     ],
     "name": "second tast iteration.tast run",
-    "timeout": 2700,
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1123,7 +1123,7 @@
       "!informational"
     ],
     "name": "tast run",
-    "timeout": 2700
+    "timeout": 3600
   },
   {
     "cmd": [
@@ -1336,7 +1336,7 @@
       "example.Pass"
     ],
     "name": "tast run (2)",
-    "timeout": 2700
+    "timeout": 3600
   },
   {
     "cmd": [

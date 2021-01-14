@@ -304,7 +304,7 @@ class TastExecApi(RecipeApi):
         keyfile_args + \
         extra_args + \
         [dut_name] + \
-        list(expressions), ok_ret='any', timeout=45 * 60)
+        list(expressions), ok_ret='any', timeout=60 * 60)
 
   @exponential_retry(retries=2)
   def _launch_vm(self, qcow_image_path, kvm_pid_file, kvm_monitor_file,
