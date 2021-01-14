@@ -1186,7 +1186,7 @@
       "--short",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.git symbolic-ref",
     "~followup_annotations": [
@@ -1200,7 +1200,7 @@
       "cros",
       "refs/change/foo"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.git fetch",
     "timeout": 60,
@@ -1214,7 +1214,7 @@
       "checkout",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.git checkout",
     "~followup_annotations": [
@@ -1289,7 +1289,7 @@
       "checkout",
       "master"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.git checkout (2)",
     "~followup_annotations": [

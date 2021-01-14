@@ -437,16 +437,16 @@ class GerritApi(RecipeApi):
     with self.m.context(cwd=self.m.src_state.workspace_path):
       project_info = self.m.repo.project_info(gerrit_change.project)
 
-      with self.m.git.head_context():
-        # Fetch the the given Gerrit change.
-        self.m.git.fetch(project_info.remote, [fetch_ref], timeout_sec=60)
-        # Temporarily checkout the fetched ref.
-        self.m.git.checkout("FETCH_HEAD")
+    with self.m.git.head_context():
+      # Fetch the the given Gerrit change.
+      self.m.git.fetch(project_info.remote, [fetch_ref], timeout_sec=60)
+      # Temporarily checkout the fetched ref.
+      self.m.git.checkout("FETCH_HEAD")
 
-        ref = self._set_change_labels(gerrit_change, labels,
-                                      rebase_from_remote=True)
+      ref = self._set_change_labels(gerrit_change, labels,
+                                    rebase_from_remote=True)
 
-        return ref
+      return ref
 
   def set_change_labels(self, gerrit_change, labels):
     """Set the given labels for the given Gerrit change.
