@@ -487,6 +487,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "chromium/src",
       "--ignore-missing",
       "-j",
       "32",
@@ -526,6 +527,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "chromium/src",
       "--ignore-missing",
       "-j",
       "32",
@@ -564,7 +566,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--verbose"
+      "--verbose",
+      "chromium/src"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -669,191 +672,12 @@
   },
   {
     "cmd": [],
-    "name": "sync to snapshot"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
-      "--format",
-      "text",
-      "--accept-statuses",
-      "200,404"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "sync to snapshot.fetch snapshot-HEAD-SHA:snapshot.xml",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.write manifest",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@tmp_manifest@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
-      "--manifest-name",
-      "../tmp_manifest",
-      "--verbose"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync to snapshot.repo init",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "sync to snapshot.clear repo locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".",
-      "-type",
-      "f",
-      "-path",
-      "./.git/*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync to snapshot.clear git locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--detach",
-      "--optimized-fetch",
-      "--retry-fetches",
-      "8",
-      "--verbose"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync to snapshot.repo sync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync to snapshot.ensure manifest is pinned",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync to snapshot.ensure manifest is pinned.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "cherry-pick gerrit changes"
   },
   {
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
@@ -1036,7 +860,6 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "get CL 1 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
@@ -1101,7 +924,6 @@
       "0777",
       "[START_DIR]/chromiumos_workspace/src/chromium/src/tricium/data"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure tricium data dir"
   },
@@ -1116,7 +938,6 @@
       "{\n  \"files\": [\n    {\n      \"path\": \"bar.sh\"\n    }, \n    {\n      \"path\": \"foo.ebuild\"\n    }\n  ], \n  \"commitMessage\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"\n}",
       "[START_DIR]/chromiumos_workspace/src/chromium/src/tricium/data/files.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "write files.json",
     "~followup_annotations": [
@@ -1156,7 +977,6 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "ShellcheckPortage.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1205,7 +1025,6 @@
       "0777",
       "[CLEANUP]/ShellcheckPortage/out/tricium/data"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ShellcheckPortage.ensure tricium data dir",
     "~followup_annotations": [
@@ -1223,7 +1042,6 @@
       "[CLEANUP]/ShellcheckPortage/out/tricium/data/results.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ShellcheckPortage.read results",
     "~followup_annotations": [
@@ -1254,7 +1072,6 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "Shellcheck.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1302,7 +1119,6 @@
       "0777",
       "[CLEANUP]/Shellcheck/out/tricium/data"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "Shellcheck.ensure tricium data dir",
     "~followup_annotations": [
@@ -1320,7 +1136,6 @@
       "[CLEANUP]/Shellcheck/out/tricium/data/results.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "Shellcheck.read results",
     "~followup_annotations": [
@@ -1351,7 +1166,6 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "name": "Spellchecker.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1396,7 +1210,6 @@
       "0777",
       "[CLEANUP]/Spellchecker/out/tricium/data"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "Spellchecker.ensure tricium data dir",
     "~followup_annotations": [
@@ -1414,7 +1227,6 @@
       "[CLEANUP]/Spellchecker/out/tricium/data/results.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "Spellchecker.read results",
     "~followup_annotations": [
@@ -1433,7 +1245,6 @@
       "rmtree",
       "[START_DIR]/chromiumos_workspace/src/chromium/src/tricium"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "clean up tricium data dir"
   },

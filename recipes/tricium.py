@@ -93,17 +93,15 @@ def _FullCheckout(api):
       api.tricium.analyzers.SPELLCHECKER,
   ]
 
-  # TODO(crbug/1039875): Update this to only checkout the required repos, as
-  # well as any that are listed as dependencies by the repos being tested,
-  # rather than doing a full checkout every time.
-  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context(), \
-      api.workspace_util.sync_to_commit(staging=is_staging):
+  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
+    api.cros_source.ensure_synced_cache(projects=[commit.project])
     api.workspace_util.apply_changes()
     workpath = api.workspace_util.workspace_path
 
     with api.step.nest('get project info'):
-      project_info = api.repo.project_info(commit.project)
-      project_path = workpath.join(project_info.path)
+      with api.context(cwd=workpath):
+        project_info = api.repo.project_info(commit.project)
+        project_path = workpath.join(project_info.path)
 
     commit_message = api.gerrit.get_change_description(commit)
     files = patch_set.file_infos.keys()
