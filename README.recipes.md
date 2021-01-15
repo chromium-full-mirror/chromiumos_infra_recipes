@@ -663,7 +663,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#291)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#304)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -680,7 +680,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#334)(self, config=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#347)(self, config=None):**
 
 Build the image and run ebuild tests.
 
@@ -692,15 +692,15 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#65)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#66)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#93)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#105)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#69)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#70)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#73)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#74)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#101)(self, is_staging=None, missing_ok=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#113)(self, is_staging=None, missing_ok=False):**
 
 Initial setup steps for the builder.
 
@@ -716,24 +716,24 @@ Args:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#97)(self):**
+&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#109)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#435)(self, config=None):**
+&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#448)(self, config=None):**
 
 Generate release payloads for the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#81)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#82)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#77)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#78)(self):**
 
-&mdash; **def [initialize](/recipe_modules/build_menu/api.py#60)(self):**
+&mdash; **def [initialize](/recipe_modules/build_menu/api.py#61)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#85)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#86)(self):**
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/build_menu/api.py#445)(self, config=None):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/build_menu/api.py#458)(self, config=None):**
 
 Call the Push Image Build API endpoint for the build, which pushes
   the image files to the appropriate bucket and prepares them for signing.
@@ -743,7 +743,7 @@ Call the Push Image Build API endpoint for the build, which pushes
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#202)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#214)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -758,7 +758,7 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#149)(self, no_chroot_timeout=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#161)(self, no_chroot_timeout=False):**
 
 Setup the workspace and chroot for the builder.
 
@@ -767,9 +767,18 @@ This context manager sets up the workspace path.
 Returns:
   (bool): Whether the build is relevant.
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#89)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#90)(self):**
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#398)(self, config=None, failing_build=False):**
+&emsp; **@property**<br>&mdash; **def [target\_versions](/recipe_modules/build_menu/api.py#94)(self):**
+
+Get the current GetTargetVersionsResponse.
+
+Only set after setup_sysroot_and_determine_relevance().
+
+Returns:
+  (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
+
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#411)(self, config=None, failing_build=False):**
 
 Upload artifacts from the build.
 
@@ -778,7 +787,7 @@ Args:
   failing_build (bool): whether or not the build is failing, used (in part)
       to decide whether or not to upload artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#416)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#429)(self, config=None):**
 
 Upload prebuilts from the build.
 

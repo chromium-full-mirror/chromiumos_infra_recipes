@@ -40,6 +40,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     super(BuildMenuApi, self).__init__(*args, **kwargs)
     self._chroot_created = False
     self._dep_graph = None
+    self._target_versions = None
     # Our properties: BuildMenuProperties ($chromeos/build_menu).
     # TODO(crbug/1099259): Inherit missing properties from the recipe.
     if not props.build_target.name:
@@ -89,6 +90,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
   @property
   def sysroot(self):
     return self.m.sysroot_util.sysroot
+
+  @property
+  def target_versions(self):
+    """Get the current GetTargetVersionsResponse.
+
+    Only set after setup_sysroot_and_determine_relevance().
+
+    Returns:
+      (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
+    """
+    return self._target_versions
 
   @property
   def chroot(self):
@@ -231,12 +243,13 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
       # Set the target_versions output property, and upload metatdata.
       # This requires a sysroot for at least the package versions.
+      self._target_versions = self.m.cros_build_api.PackageService.GetTargetVersions(
+          GetTargetVersionsRequest(
+              chroot=self.m.cros_sdk.chroot, build_target=self.build_target,
+              packages=config.build.install_packages.packages))
+
       target_versions = json_format.MessageToDict(
-          self.m.cros_build_api.PackageService.GetTargetVersions(
-              GetTargetVersionsRequest(
-                  chroot=self.m.cros_sdk.chroot, build_target=self.build_target,
-                  packages=config.build.install_packages.packages)),
-          including_default_value_fields=True)
+          self.target_versions, including_default_value_fields=True)
       self.m.easy.set_properties_step(target_versions=target_versions)
       if self.m.cros_artifacts.has_output_artifacts(artifacts.artifacts_info):
         self.m.metadata_json.add_version_entries(target_versions)
