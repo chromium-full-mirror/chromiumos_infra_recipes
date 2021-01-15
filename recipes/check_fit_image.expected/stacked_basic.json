@@ -245,86 +245,6 @@
   },
   {
     "cmd": [],
-    "name": "mount overlay workspace"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/upperdir/workspace"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "mount overlay workspace.create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/workdir/workspace"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "mount overlay workspace.create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "mount overlay workspace.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
-      "overlay",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "mount overlay workspace.mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "ensure synced checkout"
   },
   {
@@ -337,9 +257,8 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.ensure root path",
     "~followup_annotations": [
@@ -354,9 +273,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/.repo/manifests"
+      "[CACHE]/chromiumos/.repo/manifests"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests",
     "~followup_annotations": [
@@ -371,9 +290,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/.repo/manifests.git"
+      "[CACHE]/chromiumos/.repo/manifests.git"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests.git",
     "~followup_annotations": [
@@ -390,7 +309,7 @@
       "all",
       "--verbose"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -418,7 +337,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -438,7 +357,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -458,7 +377,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -484,7 +403,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "name": "ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -511,7 +430,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -549,7 +468,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -583,7 +502,7 @@
       "chromeos/overlays/baseboard-foo-private",
       "chromeos/overlays/baseboard-baz-private"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -600,29 +519,86 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "sync manifest branches"
-  },
-  {
     "cmd": [
       "git",
       "remote",
       "update"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "sync manifest branches.sync chromeos/manifest-internal branches",
+    "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "name": "sync chromeos/manifest-internal branches"
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay workspace"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/upperdir/workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
-      "git",
-      "remote",
-      "update"
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/workdir/workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
-    "name": "sync manifest branches.sync chromiumos/manifest branches",
+    "infra_step": true,
+    "name": "mount overlay workspace.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "overlay",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

@@ -74,7 +74,7 @@ def parse_versions_file(step_name, api, path):
     """Return true if a string is composed entirely of one character"""
     return string and all([c == char for c in string])
 
-  contents = api.file.read_text(step_name, path).split("\n")
+  contents = api.file.read_text(step_name, path).splitlines()
 
   # Seek to end of FIT header output, this is denoted by a line of hyphens
   offset = 0
@@ -128,11 +128,14 @@ def RunSteps(api, properties):
 
     verbose = dict(verbose=True)
     api.cros_source.ensure_synced_cache(
-        init_opts=verbose, sync_opts=verbose,
-        cache_path_override=api.cros_source.workspace_path, projects=projects)
+        init_opts=verbose,
+        sync_opts=verbose,
+        projects=projects,
+    )
 
     # Figure out what paths those are.
-    project_infos = api.repo.project_infos(projects)
+    with api.context(cwd=api.cros_source.workspace_path):
+      project_infos = api.repo.project_infos(projects)
 
     # Note: This returns the path for all of the projects with changes,
     # regardless of the branch that is checked out at that path.
@@ -140,112 +143,119 @@ def RunSteps(api, properties):
 
   api.cros_infra_config.configure_builder()
 
-  with api.cros_source.checkout_overlays_context(), \
-       api.context(cwd=api.cros_source.workspace_path):
-
-    # Get input gerrit info and fetch actual patch sets
+  with api.cros_source.checkout_overlays_context():
+    # sync down projects
     gerrit_changes = api.src_state.gerrit_changes
-
-    # Sync and patch projects
     project_paths = _sync_projects(gerrit_changes)
-    commits = api.cros_source.apply_gerrit_changes(
-        gerrit_changes,
-        include_files=True,
-    )
 
-    # Iterate changes, if the change is one of the repos we're watching, check it
-    configured_repos = {
-        config.repo: config.ref_path for config in properties.configs
-    }
+    with api.context(cwd=api.cros_source.workspace_path):
+      # patch projects
+      commits = api.cros_source.apply_gerrit_changes(
+          gerrit_changes,
+          include_files=True,
+      )
 
-    for cnt, commit in enumerate(commits):
-      project = commit.patch_set.project
+      # Iterate changes, if the change is one of the repos we're watching, check it
+      configured_repos = {
+          config.repo: config.ref_path for config in properties.configs
+      }
 
-      if project in configured_repos:
-        if not project in project_paths:
-          _quit("project '%s' not found in project info!")
+      for cnt, commit in enumerate(commits):
+        project = commit.patch_set.project
 
-        with api.step.nest("checking change %d" % (cnt+1)) as presentation,\
-             api.context(cwd=api.context.cwd.join(project_paths[project])):
+        if project in configured_repos:
+          if not project in project_paths:
+            _quit("project '%s' not found in project info!")
 
-          # Make sure that changed files are consistent, if we change a
-          # -versions.txt, we better have made a change to the associated binary
-          txt_files = set()
-          bin_files = set()
-          for fname in commit.patch_set.file_infos:
-            if fnmatch.fnmatch(
-                api.path.basename(fname), "fitimage-*-versions.txt"):
-              txt_files.add(fname)
+          with api.step.nest("checking change %d" % (cnt+1)) as presentation,\
+               api.context(cwd=api.context.cwd.join(project_paths[project])):
 
-            if fnmatch.fnmatch(api.path.basename(fname), "fitimage-*.bin"):
-              bin_files.add(fname)
+            # Make sure that changed files are consistent, if we change a
+            # -versions.txt, we better have made a change to the associated binary
+            txt_files = set()
+            bin_files = set()
+            for fname in commit.patch_set.file_infos:
+              if fnmatch.fnmatch(
+                  api.path.basename(fname), "fitimage-*-versions.txt"):
+                txt_files.add(fname)
 
-          for fname in txt_files:
-            if not fname.replace("-versions.txt", ".bin") in bin_files:
-              _comment_and_quit(
-                  "Changed '%s' but no change in binary blob" % fname,
-              )
+              if fnmatch.fnmatch(api.path.basename(fname), "fitimage-*.bin"):
+                bin_files.add(fname)
 
-          for fname in bin_files:
-            if not fname.replace(".bin", "-versions.txt") in txt_files:
-              _comment_and_quit(
-                  "Changed '%s' but no change in versions file" % fname,
-              )
+            for fname in txt_files:
+              if not fname.replace("-versions.txt", ".bin") in bin_files:
+                _comment_and_quit(
+                    "Changed '%s' but no change in binary blob" % fname,
+                )
 
-          if not txt_files:
-            presentation.step_summary_text = "No FIT image changes found, quitting"
-            continue
+            for fname in bin_files:
+              if not fname.replace(".bin", "-versions.txt") in txt_files:
+                _comment_and_quit(
+                    "Changed '%s' but no change in versions file" % fname,
+                )
 
-          # Read reference file
-          ref_version, ref_hashes = parse_versions_file(
-              "read reference file",
-              api,
-              api.context.cwd.join(configured_repos[project]),
-          )
+            if not txt_files:
+              presentation.step_summary_text = "No FIT image changes found, quitting"
+              continue
 
-          # Check that hashes in modified versions file match reference file
-          errors = defaultdict(list)
-          for verfile in txt_files:
-            with api.step.nest("checking %s" % verfile):
-              version, hashes = parse_versions_file(
-                  "read modified file",
-                  api,
-                  api.context.cwd.join(verfile),
-              )
+            # Read reference file
+            ref_version, ref_hashes = parse_versions_file(
+                "read reference file",
+                api,
+                api.context.cwd.join(configured_repos[project]),
+            )
 
-              with api.step.nest("check that FIT versions match"):
-                if version != ref_version:
-                  errors[verfile].append(
-                      "FIT tool versions don't match (ref: %s  ours: %s)" %
-                      (version, ref_version))
+            # Check that hashes in modified versions file match reference file
+            errors = defaultdict(list)
+            for verfile in txt_files:
+              with api.step.nest("checking %s" % verfile):
+                version, hashes = parse_versions_file(
+                    "read modified file",
+                    api,
+                    api.context.cwd.join(verfile),
+                )
 
-              with api.step.nest("check that hashes match reference file"):
-                for blobname, sha256 in hashes.items():
-                  if blobname not in ref_hashes:
+                with api.step.nest("check that FIT versions match"):
+                  if version != ref_version:
                     errors[verfile].append(
-                        "file '%s' not in reference versions file" % blobname)
-                  elif ref_hashes[blobname] != sha256:
-                    errors[verfile].append(
-                        "hash for '%s' doesn't match ('%s... != '%s...')" %
-                        (blobname, sha256[:8], ref_hashes[blobname][:8]))
+                        "FIT tool versions don't match (ref: %s  ours: %s)" %
+                        (version, ref_version))
 
-          # Format error message if needed
-          if errors:
-            message = "Error(s) occurred when checking FIT image versions:"
+                with api.step.nest("check that hashes match reference file"):
+                  for blobname, sha256 in hashes.items():
+                    if blobname not in ref_hashes:
+                      errors[verfile].append(
+                          "file '%s' not in reference versions file" % blobname)
+                    elif ref_hashes[blobname] != sha256:
+                      errors[verfile].append(
+                          "hash for '%s' doesn't match ('%s... != '%s...')" %
+                          (blobname, sha256[:8], ref_hashes[blobname][:8]))
 
-            for fname, errlist in errors.items():
-              message += "\n"
-              message += "  %s:" % fname
-              for line in errlist:
-                message += "    " + line + "\n"
+            # Format error message if needed
+            if errors:
+              message = "Error(s) occurred when checking FIT image versions:"
 
-            _comment_and_quit(message)
+              for fname, errlist in errors.items():
+                message += "\n"
+                message += "  %s:" % fname
+                for line in errlist:
+                  message += "    " + line + "\n"
+
+              _comment_and_quit(message)
 
   # success
 
 
 def mock_fit_header(version):
-  """Mock the header from the FIT tool with given version"""
+  """Mock the header from the FIT tool with given version
+
+  Args:
+    version (str): version string to put in FIT header
+
+  Return:
+    version file contents as string
+
+  """
   return \
 """
 ===============================================================================
