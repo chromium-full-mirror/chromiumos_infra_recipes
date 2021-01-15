@@ -83,7 +83,7 @@
       "gc.auto",
       "0"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]",
     "infra_step": true,
     "name": "git config"
   },
@@ -95,7 +95,7 @@
       "gc.packRefs",
       "false"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]",
     "infra_step": true,
     "name": "git config (2)"
   },

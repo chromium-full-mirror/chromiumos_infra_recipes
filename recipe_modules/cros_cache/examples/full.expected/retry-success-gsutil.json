@@ -83,7 +83,7 @@
       "gc.auto",
       "0"
     ],
-    "cwd": "[CLEANUP]/temp_cache_tmp_1",
+    "cwd": "[CLEANUP]",
     "infra_step": true,
     "name": "git config"
   },
@@ -95,7 +95,7 @@
       "gc.packRefs",
       "false"
     ],
-    "cwd": "[CLEANUP]/temp_cache_tmp_1",
+    "cwd": "[CLEANUP]",
     "infra_step": true,
     "name": "git config (2)"
   },

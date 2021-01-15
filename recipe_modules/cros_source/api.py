@@ -53,6 +53,7 @@ class CrosSourceApi(RecipeApi):
     self._branch_manifest_file = None
     self._applied_patches = defaultdict(list)
     self._have_overlayfs_cleanup_context = False
+    self._workspace_mounted = False
 
   def initialize(self):
     """Initialization that follows all module loading."""
@@ -178,13 +179,14 @@ class CrosSourceApi(RecipeApi):
     # See crbug.com/1165775.
     assert self._have_overlayfs_cleanup_context, 'no overlayfs cleanup context'
 
-    # There are a few things we want to make sure are set globally for git.
-    # Do them here to help protect the named cache from corruption due to
-    # off-branch objects being removed.
-    # Disable automatic garbage collection.  See https://crbug.com/1137935.
-    self.m.git.set_global_config(['gc.auto', '0'])
-    # Disable packRefs before doing merges. See https://crbug.com/1057878.
-    self.m.git.set_global_config(['gc.packRefs', 'false'])
+    with self.m.context(cwd=self.m.path['cleanup']):
+      # There are a few things we want to make sure are set globally for git.
+      # Do them here to help protect the named cache from corruption due to
+      # off-branch objects being removed.
+      # Disable automatic garbage collection.  See https://crbug.com/1137935.
+      self.m.git.set_global_config(['gc.auto', '0'])
+      # Disable packRefs before doing merges. See https://crbug.com/1057878.
+      self.m.git.set_global_config(['gc.packRefs', 'false'])
 
     if self._enable_custom_overlays:
       self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
@@ -196,9 +198,10 @@ class CrosSourceApi(RecipeApi):
     # Only mount the workspace overlay if we are syncing directly to it.
     # This prevents code from accidently trashing their view of the source tree
     # by touching it before we sync the cache and create the overlayfs
-    if cache_path == self.workspace_path:
+    if cache_path == self.workspace_path and not self._workspace_mounted:
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
       self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
+      self._workspace_mounted = True
 
     gitiles_commit = gitiles_commit or self.m.src_state.gitiles_commit
     gitiles_commit = (
@@ -246,6 +249,7 @@ class CrosSourceApi(RecipeApi):
     if cache_path != self.workspace_path:
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
       self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
+      self._workspace_mounted = True
 
   def checkout_manifests(self, commit=None, is_staging=False,
                          checkout_external=False, test_footers=None):

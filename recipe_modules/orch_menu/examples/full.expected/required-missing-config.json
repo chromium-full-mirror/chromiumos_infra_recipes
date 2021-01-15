@@ -244,6 +244,7 @@
       "gc.auto",
       "0"
     ],
+    "cwd": "[CLEANUP]",
     "infra_step": true,
     "name": "set up orchestrator.git config",
     "~followup_annotations": [
@@ -258,6 +259,7 @@
       "gc.packRefs",
       "false"
     ],
+    "cwd": "[CLEANUP]",
     "infra_step": true,
     "name": "set up orchestrator.git config (2)",
     "~followup_annotations": [

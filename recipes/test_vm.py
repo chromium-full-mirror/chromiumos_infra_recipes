@@ -59,47 +59,45 @@ def DoRunSteps(api, properties):
   # values.  In the event that a config _IS_ present, let that win.
   config = api.build_menu.config_or_default
 
-  with api.build_menu.setup_workspace_and_chroot():
-    with api.step.nest('download vm image'):
-      test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
-      test_image_zip = test_artifacts_dir.join('image.zip')
-      test_image_dir = test_artifacts_dir.join('image')
-      api.gsutil.download(
-          properties.build_payload.artifacts_gs_bucket,
-          os.path.join(properties.build_payload.artifacts_gs_path, 'image.zip'),
-          test_image_zip, name='download image bundle from GS')
-      api.archive.extract('unzip image bundle', test_image_zip, test_image_dir,
-                          include_files=[VM_IMAGE_NAME, PRIVATE_KEY_NAME])
-      vm_image_path = str(test_image_dir.join(VM_IMAGE_NAME))
-      private_key_path = str(test_image_dir.join(PRIVATE_KEY_NAME))
+  with api.step.nest('download vm image'):
+    test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
+    test_image_zip = test_artifacts_dir.join('image.zip')
+    test_image_dir = test_artifacts_dir.join('image')
+    api.gsutil.download(
+        properties.build_payload.artifacts_gs_bucket,
+        os.path.join(properties.build_payload.artifacts_gs_path, 'image.zip'),
+        test_image_zip, name='download image bundle from GS')
+    api.archive.extract('unzip image bundle', test_image_zip, test_image_dir,
+                        include_files=[VM_IMAGE_NAME, PRIVATE_KEY_NAME])
+    vm_image_path = str(test_image_dir.join(VM_IMAGE_NAME))
+    private_key_path = str(test_image_dir.join(PRIVATE_KEY_NAME))
 
-    # Autotest assumes all the files it needs exist in the sysroot.
-    # Rather than hack the prebuilts into the sysroot, just rebuild.
-    # TODO(evanhernandez): Find a way to stop doing this. It's wasteful.
-    if properties.test_harness == VmTestRequest.AUTOTEST:
-      with api.step.nest('build autotest packages') as bap_pres:
+  # Autotest assumes all the files it needs exist in the sysroot.
+  # Rather than hack the prebuilts into the sysroot, just rebuild.
+  # TODO(evanhernandez): Find a way to stop doing this. It's wasteful.
+  if properties.test_harness == VmTestRequest.AUTOTEST:
+    with api.step.nest('build autotest packages') as bap_pres:
 
-        packages = [
-            PackageInfo(category='chromeos-base', package_name='autotest-all')
-        ]
-        api.build_menu.setup_sysroot_and_determine_relevance(packages=packages)
-        api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
+      packages = [
+          PackageInfo(category='chromeos-base', package_name='autotest-all')
+      ]
+      api.build_menu.setup_sysroot_and_determine_relevance(packages=packages)
+      api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
 
-    # TODO(evanhernandez): Read and present the test results.
-    test_harness_name = VmTestRequest.TestHarness.Name(properties.test_harness)
-    api.cros_build_api.TestService.VmTest(
-        VmTestRequest(
-            build_target=api.build_menu.build_target,
-            chroot=api.cros_sdk.chroot, vm_path=Path(path=vm_image_path,
-                                                     location=Path.OUTSIDE),
-            ssh_options=VmTestRequest.SshOptions(
-                private_key_path=Path(path=private_key_path,
-                                      location=Path.OUTSIDE)),
-            test_harness=properties.test_harness, vm_tests=[
-                VmTestRequest.VmTest(pattern=exp)
-                for exp in properties.expressions
-            ]), name='run %s vm tests' % test_harness_name.lower(),
-        timeout=90 * 60)
+  # TODO(evanhernandez): Read and present the test results.
+  test_harness_name = VmTestRequest.TestHarness.Name(properties.test_harness)
+  api.cros_build_api.TestService.VmTest(
+      VmTestRequest(
+          build_target=api.build_menu.build_target, chroot=api.cros_sdk.chroot,
+          vm_path=Path(path=vm_image_path, location=Path.OUTSIDE),
+          ssh_options=VmTestRequest.SshOptions(
+              private_key_path=Path(path=private_key_path,
+                                    location=Path.OUTSIDE)),
+          test_harness=properties.test_harness, vm_tests=[
+              VmTestRequest.VmTest(pattern=exp)
+              for exp in properties.expressions
+          ]), name='run %s vm tests' % test_harness_name.lower(),
+      timeout=90 * 60)
 
 
 def GenTests(api):

@@ -304,6 +304,7 @@
       "gc.auto",
       "0"
     ],
+    "cwd": "[CLEANUP]",
     "infra_step": true,
     "name": "git config"
   },
@@ -315,6 +316,7 @@
       "gc.packRefs",
       "false"
     ],
+    "cwd": "[CLEANUP]",
     "infra_step": true,
     "name": "git config (2)"
   },
