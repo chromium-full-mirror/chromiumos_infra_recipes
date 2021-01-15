@@ -735,7 +735,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#86)(self):**
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/build_menu/api.py#458)(self, config=None):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/build_menu/api.py#479)(self, config=None):**
 
 Call the Push Image Build API endpoint for the build, which pushes
   the image files to the appropriate bucket and prepares them for signing.

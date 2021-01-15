@@ -451,9 +451,30 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
     """
-    with self.m.step.nest('generate payloads'):
-      # TODO: implement me!
-      pass
+    builder = 'staging-paygen-orchestrator' if self.is_staging else 'paygen-orchestrator'
+    bucket = 'staging' if self.is_staging else 'packaging'
+
+    with self.m.step.nest('generate payloads') as presentation:
+      #TODO(crbug.com/1122854): Source from config instead.
+      paygen_properties = {
+          'builder_name': self.build_target.name,
+          "target_chromeos_version": self.target_versions.platform_version,
+          "milestone": self.target_versions.milestone_version,
+          'delta_types': ["OMAHA"],
+          'channels': ["DEV", "CANARY"],
+          'au_testing_models': [],
+          'src_bucket': self.config.artifacts.artifacts_gs_bucket,
+          'dest_bucket': 'gs://chromeos-throw-away-bucket',
+          'keyset': 'coral-premp',
+          'dryrun': 'false',
+          "delta_payload_test_override": "RESPECT_CONFIG",
+          "full_payload_test_override": "RESPECT_CONFIG",
+      }
+      request = self.m.buildbucket.schedule_request(
+          builder='paygen-orchestrator', bucket='packaging',
+          properties=paygen_properties)
+      self.m.buildbucket.run([request], timeout=60 * 60 * 7,
+                             step_name='running paygen orchestrator')
 
   def push_and_sign_images(self, config=None):
     """Call the Push Image Build API endpoint for the build, which pushes
