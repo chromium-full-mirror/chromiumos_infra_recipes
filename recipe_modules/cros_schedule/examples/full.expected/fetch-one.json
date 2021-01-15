@@ -1,0 +1,19 @@
+[
+  {
+    "cmd": [],
+    "name": "fetch chromiumdash schedule"
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone=88&n=1"
+    ],
+    "name": "fetch chromiumdash schedule.curl fetch_milestone_schedule",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

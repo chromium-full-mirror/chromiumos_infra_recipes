@@ -1,0 +1,26 @@
+[
+  {
+    "cmd": [],
+    "name": "fetch chromiumdash schedule",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone=88&n=2"
+    ],
+    "name": "fetch chromiumdash schedule.curl fetch_milestone_schedule",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "fetch schedule did not return expected number of mstones"
+    },
+    "name": "$result"
+  }
+]
