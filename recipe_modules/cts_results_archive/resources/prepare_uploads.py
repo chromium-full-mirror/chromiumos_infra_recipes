@@ -93,12 +93,15 @@ def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
                                TIMESTAMP_PATTERN)
     gts_v2_path = os.path.join(test_dir, 'cheets_GTS*', 'results', '*',
                                TIMESTAMP_PATTERN)
+    sts_v2_path = os.path.join(test_dir, 'cheets_STS_*', 'results', '*',
+                               TIMESTAMP_PATTERN)
     for result_path, result_pattern in [
         (cts_path, CTS_RESULT_PATTERN),
         (cts_path, CTS_COMPRESSED_RESULT_PATTERN),
         (cts_v2_path, CTS_V2_RESULT_PATTERN),
         (cts_v2_path, CTS_V2_COMPRESSED_RESULT_PATTERN),
-        (gts_v2_path, CTS_V2_RESULT_PATTERN)
+        (gts_v2_path, CTS_V2_RESULT_PATTERN),
+        (sts_v2_path, CTS_V2_RESULT_PATTERN)
     ]:
       for path in glob.glob(result_path):
         instructions += _prepare_uploads_for_test(test_dir, path,
