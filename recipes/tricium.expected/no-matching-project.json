@@ -190,14 +190,13 @@
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"refs/heads/master\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"1\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2020-10-22 18:54:00.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"patch_set\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
@@ -206,11 +205,23 @@
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bar.sh\": {}, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"foo.ebuild\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/change/foo\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -820,7 +831,11 @@
   },
   {
     "cmd": [],
-    "name": "get project info"
+    "name": "get project info",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Project for branch master not found.@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [
@@ -844,418 +859,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros-internal|refs/heads/foo|refs/heads/foo@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros-internal|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "get CL 1 description",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@description text@a quick description@@@",
-      "@@@STEP_LOG_LINE@description text@@@@",
-      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromium/src/+/1/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
-    ],
-    "infra_step": true,
-    "name": "get CL 1 description.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src/tricium/data"
-    ],
-    "infra_step": true,
-    "name": "ensure tricium data dir"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"files\": [\n    {\n      \"path\": \"bar.sh\"\n    }, \n    {\n      \"path\": \"foo.ebuild\"\n    }\n  ], \n  \"commitMessage\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"\n}",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src/tricium/data/files.json"
-    ],
-    "infra_step": true,
-    "name": "write files.json",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@files.json@{@@@",
-      "@@@STEP_LOG_LINE@files.json@  \"files\": [@@@",
-      "@@@STEP_LOG_LINE@files.json@    {@@@",
-      "@@@STEP_LOG_LINE@files.json@      \"path\": \"bar.sh\"@@@",
-      "@@@STEP_LOG_LINE@files.json@    }, @@@",
-      "@@@STEP_LOG_LINE@files.json@    {@@@",
-      "@@@STEP_LOG_LINE@files.json@      \"path\": \"foo.ebuild\"@@@",
-      "@@@STEP_LOG_LINE@files.json@    }@@@",
-      "@@@STEP_LOG_LINE@files.json@  ], @@@",
-      "@@@STEP_LOG_LINE@files.json@  \"commitMessage\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@files.json@}@@@",
-      "@@@STEP_LOG_END@files.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "ShellcheckPortage",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@0 comment(s)@@@",
-      "@@@STEP_LOG_LINE@result@{}@@@",
-      "@@@STEP_LOG_END@result@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CLEANUP]/ShellcheckPortage/package",
-      "-ensure-file",
-      "infra/tricium/function/shellcheck live",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "name": "ShellcheckPortage.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-live------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tricium/function/shellcheck\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/ShellcheckPortage/package/shellcheck_tricium",
-      "-input",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src",
-      "-output",
-      "[CLEANUP]/ShellcheckPortage/out",
-      "--path_filters=*.ebuild,*.eclass",
-      "--exclude=SC2148",
-      "--shell=bash",
-      "--enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces"
-    ],
-    "cwd": "[CLEANUP]/ShellcheckPortage/package",
-    "name": "ShellcheckPortage.run analyzer",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/ShellcheckPortage/package/shellcheck_tricium -input [START_DIR]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/ShellcheckPortage/out --path_filters=*.ebuild,*.eclass --exclude=SC2148 --shell=bash --enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces@@@",
-      "@@@STEP_LOG_END@cmd@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/ShellcheckPortage/out/tricium/data"
-    ],
-    "infra_step": true,
-    "name": "ShellcheckPortage.ensure tricium data dir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/ShellcheckPortage/out/tricium/data/results.json",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "ShellcheckPortage.read results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@results.json@{\"comments\":[]}@@@",
-      "@@@STEP_LOG_END@results.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Shellcheck",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@0 comment(s)@@@",
-      "@@@STEP_LOG_LINE@result@{}@@@",
-      "@@@STEP_LOG_END@result@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CLEANUP]/Shellcheck/package",
-      "-ensure-file",
-      "infra/tricium/function/shellcheck live",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "name": "Shellcheck.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-live------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tricium/function/shellcheck\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/Shellcheck/package/shellcheck_tricium",
-      "-input",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src",
-      "-output",
-      "[CLEANUP]/Shellcheck/out",
-      "--path_filters=*.sh",
-      "--exclude=SC1091,SC3043",
-      "--enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces,quote-safe-variables"
-    ],
-    "cwd": "[CLEANUP]/Shellcheck/package",
-    "name": "Shellcheck.run analyzer",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/Shellcheck/package/shellcheck_tricium -input [START_DIR]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/Shellcheck/out --path_filters=*.sh --exclude=SC1091,SC3043 --enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces,quote-safe-variables@@@",
-      "@@@STEP_LOG_END@cmd@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/Shellcheck/out/tricium/data"
-    ],
-    "infra_step": true,
-    "name": "Shellcheck.ensure tricium data dir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/Shellcheck/out/tricium/data/results.json",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "Shellcheck.read results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@results.json@{\"comments\":[]}@@@",
-      "@@@STEP_LOG_END@results.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Spellchecker",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@0 comment(s)@@@",
-      "@@@STEP_LOG_LINE@result@{}@@@",
-      "@@@STEP_LOG_END@result@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CLEANUP]/Spellchecker/package",
-      "-ensure-file",
-      "infra/tricium/function/spellchecker live",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "name": "Spellchecker.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-live------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tricium/function/spellchecker\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/Spellchecker/package/spellchecker",
-      "-input",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src",
-      "-output",
-      "[CLEANUP]/Spellchecker/out"
-    ],
-    "cwd": "[CLEANUP]/Spellchecker/package",
-    "name": "Spellchecker.run analyzer",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/Spellchecker/package/spellchecker -input [START_DIR]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/Spellchecker/out@@@",
-      "@@@STEP_LOG_END@cmd@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/Spellchecker/out/tricium/data"
-    ],
-    "infra_step": true,
-    "name": "Spellchecker.ensure tricium data dir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/Spellchecker/out/tricium/data/results.json",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "Spellchecker.read results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@results.json@{\"comments\":[]}@@@",
-      "@@@STEP_LOG_END@results.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src/tricium"
-    ],
-    "infra_step": true,
-    "name": "clean up tricium data dir"
-  },
-  {
-    "cmd": [],
-    "name": "write results",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@tricium@\"{}\"@@@"
     ]
   },
   {

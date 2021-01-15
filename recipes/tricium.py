@@ -98,10 +98,20 @@ def _FullCheckout(api):
     api.workspace_util.apply_changes()
     workpath = api.workspace_util.workspace_path
 
-    with api.step.nest('get project info'):
+    with api.step.nest('get project info') as presentation:
       with api.context(cwd=workpath):
-        project_info = api.repo.project_info(commit.project)
-        project_path = workpath.join(project_info.path)
+        project_infos = api.repo.project_infos([commit.project])
+        project_path = None
+        for project in project_infos:
+          if api.git.extract_branch(project.branch,
+                                    project.branch) == api.git.extract_branch(
+                                        patch_set.branch, patch_set.branch):
+            project_path = workpath.join(project.path)
+        if not project_path:
+          presentation.status = api.step.FAILURE
+          presentation.step_text = 'Project for branch {} not found.'.format(
+              patch_set.branch)
+          return
 
     commit_message = api.gerrit.get_change_description(commit)
     files = patch_set.file_infos.keys()
@@ -127,6 +137,7 @@ def GenTests(api):
       1: {
           'change_id': '1',
           'created': '2020-10-22 18:54:00.000000000',
+          'branch': 'refs/heads/master',
           'revision_info': {
               'ref': 'refs/change/foo',
               'files': {
@@ -152,7 +163,19 @@ def GenTests(api):
   yield api.test(
       'success', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
-          'get project info',
-          data=[dict(project='chromium/src', remote='cros-internal')]),
+          'get project info', data=[
+              dict(project='chromium/src', remote='cros-internal',
+                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
+              dict(project='chromium/src', remote='cros-internal',
+                   rrev='refs/heads/master'),
+          ]),
       api.gerrit.set_gerrit_fetch_changes_response('select patchset', changes,
                                                    value_dict))
+
+  yield api.test(
+      'no-matching-project', test_builder(gerrit_changes=changes),
+      api.repo.project_infos_step_data(
+          'get project info', data=[
+              dict(project='chromium/src', remote='cros-internal',
+                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
+          ]), api.post_check(post_process.StepFailure, 'get project info'))
