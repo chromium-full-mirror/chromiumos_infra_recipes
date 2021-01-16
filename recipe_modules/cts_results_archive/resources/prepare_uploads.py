@@ -190,7 +190,8 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
       # tgz to gz middle conversion is not needed.
       try:
         with tarfile.open(test_result_file, 'r:gz') as tar_file:
-          tar_file.extract(CTS_COMPRESSED_RESULT_TYPES[result_pattern])
+          tar_file.extract(CTS_COMPRESSED_RESULT_TYPES[result_pattern],
+                           path=path)
           test_result_file = os.path.join(
               path, CTS_COMPRESSED_RESULT_TYPES[result_pattern])
       except tarfile.ReadError as error:
