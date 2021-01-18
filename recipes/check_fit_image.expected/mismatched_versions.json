@@ -898,7 +898,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Error(s) occurred when checking FIT image versions:\n  fitimage-test-versions.txt:    FIT tool versions don't match (ref: 14.1.2.3  ours: 14.1.2.2)\n    hash for 'pchc.bin' doesn't match ('2f93215a... != 'aea20cd7...')\n"
+      "humanReason": "Error(s) occurred when checking FIT image versions:\n  fitimage-test-versions.txt:    FIT tool versions don't match (ref: 14.1.2.3  ours: 14.1.2.2)\n    hash for 'pchc.bin' doesn't match ('aea20cd7... != '2f93215a...')\n"
     },
     "name": "$result"
   }

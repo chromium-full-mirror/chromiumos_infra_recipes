@@ -5911,7 +5911,7 @@ Check that any binary blobs in a commit come from a valid FIT version
 
 &mdash; **def [RunSteps](/recipes/check_fit_image.py#107)(api, properties):**
 
-&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#249)(version):**
+&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#250)(version):**
 
 Mock the header from the FIT tool with given version
 
@@ -5921,13 +5921,14 @@ Args:
 Return:
   version file contents as string
 
-&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#275)(version='14.0.40.1206', hashes=None):**
+&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#276)(version='14.0.40.1206', hashes=None, delete=None):**
 
 Mock version file contents
 
 Args:
   version (str): optional version string to put in FIT header
   hashes (dict): file => sha256 values to override/add to file
+  delete ([str]): list of keys to remove from the file (default none)
 
 Return:
   version file contents as string

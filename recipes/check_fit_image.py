@@ -222,14 +222,15 @@ def RunSteps(api, properties):
                         (version, ref_version))
 
                 with api.step.nest("check that hashes match reference file"):
-                  for blobname, sha256 in hashes.items():
-                    if blobname not in ref_hashes:
+                  for blobname, sha256 in ref_hashes.items():
+                    if blobname not in hashes:
                       errors[verfile].append(
-                          "file '%s' not in reference versions file" % blobname)
-                    elif ref_hashes[blobname] != sha256:
+                          "file '%s' from reference not in '%s'" %
+                          (blobname, verfile))
+                    elif hashes[blobname] != sha256:
                       errors[verfile].append(
                           "hash for '%s' doesn't match ('%s... != '%s...')" %
-                          (blobname, sha256[:8], ref_hashes[blobname][:8]))
+                          (blobname, sha256[:8], hashes[blobname][:8]))
 
             # Format error message if needed
             if errors:
@@ -272,12 +273,13 @@ Program terminated.
 """ % version
 
 
-def mock_version_file(version="14.0.40.1206", hashes=None):
+def mock_version_file(version="14.0.40.1206", hashes=None, delete=None):
   """Mock version file contents
 
   Args:
     version (str): optional version string to put in FIT header
     hashes (dict): file => sha256 values to override/add to file
+    delete ([str]): list of keys to remove from the file (default none)
 
   Return:
     version file contents as string
@@ -301,6 +303,10 @@ def mock_version_file(version="14.0.40.1206", hashes=None):
           "09dfa9ee3f4ab4fcc8b86f71d5a10b1ac7118127a2f4f55695add1d631a80315",
   }
   file_hashes.update(hashes or {})
+
+  if delete:
+    for key in delete:
+      del file_hashes[key]
 
   for fname, sha256 in file_hashes.items():
     contents += "%s  %s\n" % (sha256, fname)
@@ -489,20 +495,17 @@ def GenTests(api):
                        "FIT tool versions don't match"),
   )
 
-  # Fail if a given filename isn't in the reference file
+  # Fail if versions file is missing any of the files from the reference
   yield api.test(
-      "file_not_in_reference",
+      "reference_file_missing",
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
-      mock_modified_file(
-          1, "fitimage-test-versions.txt",
-          mock_version_file(
-              hashes={
-                  "some_file":
-                      "99081120082572661c06113483d122c80ae0aed8c05e304ad4141a7a84a4b0df"
-              })),
+      mock_modified_file(1, "fitimage-test-versions.txt",
+                         mock_version_file(
+                             delete=["pchc.bin"],
+                         )),
       api.post_process(post_process.ResultReasonRE,
-                       "not in reference versions file"),
+                       "file 'pchc.bin' from reference not in"),
   )
 
   # Define set of changes to simulate stacked CLs

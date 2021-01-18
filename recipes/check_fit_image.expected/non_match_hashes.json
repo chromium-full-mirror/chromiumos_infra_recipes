@@ -898,7 +898,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Error(s) occurred when checking FIT image versions:\n  fitimage-test-versions.txt:    hash for 'pchc.bin' doesn't match ('647f0526... != 'aea20cd7...')\n"
+      "humanReason": "Error(s) occurred when checking FIT image versions:\n  fitimage-test-versions.txt:    hash for 'pchc.bin' doesn't match ('aea20cd7... != '647f0526...')\n"
     },
     "name": "$result"
   }
