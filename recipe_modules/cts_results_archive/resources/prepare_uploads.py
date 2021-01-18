@@ -115,7 +115,6 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
 
   keyval = _parse_job_keyval(dir)
   build = keyval.get('build')
-  suite = keyval.get('suite')
   host_keyval = _parse_host_keyval(dir, keyval.get('hostname'))
   labels = urllib.unquote(host_keyval.get('labels'))
   try:
@@ -129,13 +128,11 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
   if not host_model_name:
     raise ValueError('Failed to determine model')
   if not build:
-    raise ValuError('Failed to determine build')
-  if not suite:
-    raise ValueError('Failed to determine suite')
+    raise ValueError('Failed to determine build')
   if not host_keyval:
     raise ValueError('Failed to determine DUT hostname')
 
-  if not _should_upload(build, result_pattern, suite):
+  if not _should_upload(build):
     # No need to upload current folder, return.
     return []
 
@@ -212,27 +209,15 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
   return instructions
 
 
-def _should_upload(build, result_pattern, suite):
+def _should_upload(build):
   """Check if the result should be uploaded to CTS/GTS buckets.
 
     @param build: Builder name.
-    @param result_pattern: XML result file pattern.
-    @param suite: Test suite name.
 
     @returns: Bool flag indicating whether a valid result.
     """
   # Not valid if it's not a release build.
   if not re.match(r'(?!trybot-).*-release/.*', build):
-    return False
-
-  # Not valid if it's cts result but not 'arc-cts*' or 'test_that_wrapper'
-  # suite.
-  result_patterns = [CTS_RESULT_PATTERN, CTS_V2_RESULT_PATTERN]
-  if result_pattern in result_patterns and not (
-      suite.startswith('arc-cts') or suite.startswith('arc-gts') or
-      suite.startswith('bvt-arc') or suite.startswith('bvt-perbuild') or
-      suite.startswith('cros_test_platform') or
-      suite.startswith('test_that_wrapper')):
     return False
 
   return True
