@@ -34,9 +34,7 @@ class PatchSet(object):
     self.host = change['host']
     self._change_info = change['info']
     self._rev_info = change['revision_info']
-    # TODO(crbug/1146603): Consider changing to change['revision_info']['_number'].
-    # change['patch_set'] appears to always be set to 0.
-    self._patch_set = change['patch_set']
+    self._patch_set = self._rev_info.get('_number', 0)
 
   @property
   def short_host(self):
@@ -273,6 +271,27 @@ class GerritApi(RecipeApi):
       ]
       raise StepFailure('missing gerrit patch(es)')
     return patch_sets
+
+  def fetch_patch_set_from_change(self, change, test_output_data=None):
+    """Fetch and return PatchSet associated with the given GerritChange.
+
+    Assumes that change.patchset is set (which is not always the case).
+    The step fails if the specific patch set is not found.
+
+    Args:
+      gerrit_changes (GerritChange): Buildbucket GerritChange to fetch.
+      test_output_data (dict): Test output for gerrit-fetch-changes.
+
+    Returns:
+      PatchSet: The corresponding PatchSet.
+    """
+    patch_sets = self.fetch_patch_sets([change],
+                                       test_output_data=test_output_data)
+    patch_sets = list(
+        filter(lambda x: x.patch_set == change.patchset, patch_sets))
+    if not patch_sets:
+      raise StepFailure('missing gerrit patch')
+    return patch_sets[0]
 
   def parse_gerrit_change(self, gerrit_change_url):
     """Parse GerritChange proto from a gerrit change URL.

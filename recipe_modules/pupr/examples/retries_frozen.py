@@ -23,7 +23,8 @@ def RunSteps(api):
       api.gerrit.PatchSet(
           collections.defaultdict(str, {
               "change_number": k,
-              "info": v
+              "info": v,
+              "revision_info": {},
           })) for k, v in change_info.items()
   ]
   api.assertions.assertTrue(api.pupr.retries_frozen(open_cls))

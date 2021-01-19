@@ -59,6 +59,7 @@ def _FullCheckout(api):
       return
 
   commit = api.src_state.gerrit_changes[0]
+
   patch_set = None
   with api.step.nest('select patchset') as presentation:
     patch_sets = api.gerrit.fetch_patch_sets([commit], include_files=True)
@@ -139,13 +140,13 @@ def GenTests(api):
           'created': '2020-10-22 18:54:00.000000000',
           'branch': 'refs/heads/master',
           'revision_info': {
+              '_number': 1,
               'ref': 'refs/change/foo',
               'files': {
                   "foo.ebuild": {},
                   "bar.sh": {},
               }
           },
-          'patch_set': 1,
       },
   }
 

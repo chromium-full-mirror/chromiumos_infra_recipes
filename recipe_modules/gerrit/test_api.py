@@ -41,6 +41,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         ))
     resp['revision_info'] = values.get(
         'revision_info', {
+            '_number':
+                int(request.get('patch_set', 0)),
             'commit': {
                 'message':
                     values.get('message',
@@ -73,6 +75,10 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
                                         values_dict=None):
     """Set the response from gerrit-fetch-changes.
 
+    Note: this will only set the response for the first call to
+    gerrit-fetch-changes with the given step_name. This method will
+    overwrite any data provided in a recipe via test_output_data.
+
     Args:
       step_name (str): name of the step calling gerrit.fetch_patch_sets.
       changes (list[GerritChange]): The list of changes which will be found.
@@ -82,12 +88,10 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       (StepTestData) test data instance for the test.
     """
-    req = []
     resp = []
     for change in changes:
       request = dict(host=change.host, change_number=change.change,
                      patch_set=change.patchset)
-      req.append(request)
       values = dict(project=change.project) if change.project else {}
       values.update(values_dict.get(change.change, {}))
       resp.append(self.test_response(request, change, values))

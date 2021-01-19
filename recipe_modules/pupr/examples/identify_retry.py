@@ -19,6 +19,14 @@ from PB.recipes.chromeos.generator import (
 )
 
 
+def patch_set_from_dict(api, changes):
+  return [
+      api.gerrit.PatchSet(
+          collections.defaultdict(str, dict(revision_info={}, **change)))
+      for change in changes
+  ]
+
+
 def RunSteps(api):
   api.assertions.assertEqual(api.pupr.identify_retry(NO_RETRY, [])[0], None)
 
@@ -86,10 +94,7 @@ def RunSteps(api):
           }],
       }
   }]
-  open_cls = [
-      api.gerrit.PatchSet(collections.defaultdict(str, change))
-      for change in changes
-  ]
+  open_cls = patch_set_from_dict(api, changes)
   # Latest CL. Failed CQ+2 CL should be chosen over failed/running CQ+1 CLs.
   cl, cq_label = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED,
                                          open_cls)
@@ -133,10 +138,7 @@ def RunSteps(api):
           }],
       }
   }]
-  open_cls = [
-      api.gerrit.PatchSet(collections.defaultdict(str, change))
-      for change in changes
-  ]
+  open_cls = patch_set_from_dict(api, changes)
   # Pinned CL should be selected despite the presence of a more recent failed CL.
   cl, cq_label = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED,
                                          open_cls)
@@ -165,10 +167,7 @@ def RunSteps(api):
           }],
       }
   }]
-  open_cls = [
-      api.gerrit.PatchSet(collections.defaultdict(str, change))
-      for change in changes
-  ]
+  open_cls = patch_set_from_dict(api, changes)
   # Most recent failed CL is currently running, no retry.
   api.assertions.assertEqual(
       api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, open_cls),
@@ -188,10 +187,8 @@ def RunSteps(api):
           }],
       }
   }]
-  open_cls = [
-      api.gerrit.PatchSet(collections.defaultdict(str, change))
-      for change in changes
-  ]
+  open_cls = patch_set_from_dict(api, changes)
+
   # Pinned CL never failed, no retry.
   api.assertions.assertEqual(
       api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, open_cls),
@@ -220,10 +217,8 @@ def RunSteps(api):
           }],
       }
   }]
-  open_cls = [
-      api.gerrit.PatchSet(collections.defaultdict(str, change))
-      for change in changes
-  ]
+  open_cls = patch_set_from_dict(api, changes)
+
   # Latest Dry Run CL.
   cl, cq_label = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED,
                                          open_cls)
@@ -255,10 +250,7 @@ def RunSteps(api):
           }],
       }
   }]
-  open_cls = [
-      api.gerrit.PatchSet(collections.defaultdict(str, change))
-      for change in changes
-  ]
+  open_cls = patch_set_from_dict(api, changes)
   # Latest Dry Run CL has passed the dry run, do not retry.
   api.assertions.assertEqual(
       api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED, open_cls),
@@ -299,10 +291,7 @@ def RunSteps(api):
           }],
       }
   }]
-  open_cls = [
-      api.gerrit.PatchSet(collections.defaultdict(str, change))
-      for change in changes
-  ]
+  open_cls = patch_set_from_dict(api, changes)
   # Pinned Dry Run CL should be chosen over failed full run CL..
   cl, cq_label = api.pupr.identify_retry(RETRY_LATEST_OR_LATEST_PINNED,
                                          open_cls)
@@ -339,10 +328,8 @@ def RunSteps(api):
           }],
       }
   }]
-  open_cls = [
-      api.gerrit.PatchSet(collections.defaultdict(str, change))
-      for change in changes
-  ]
+
+  open_cls = patch_set_from_dict(api, changes)
   # Even though there's a failed CQ+2 CL, there's a more recent CL that is
   # /currently/ running with CQ+2, so no retry should take place.
   api.assertions.assertEqual(

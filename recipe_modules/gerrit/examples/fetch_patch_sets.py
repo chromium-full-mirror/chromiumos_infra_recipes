@@ -89,7 +89,7 @@ def _get_values_dict(api):
 def RunSteps(api):
   # TODO(evanhernandez): These tests could use some work.
 
-  with api.step.nest(step_name):
+  with api.step.nest('test fetch_patch_sets'):
     patches = api.gerrit.fetch_patch_sets(changes)
   api.assertions.assertEqual(len(patches), len(changes))
 
@@ -121,6 +121,28 @@ def RunSteps(api):
         GerritChange(host=patch.host, change=patch.change_id,
                      project=patch.project, patchset=patch.patch_set))
 
+  with api.step.nest('test fetch_patch_sets_from_change'):
+    for change, patch in zip(changes, patches):
+      patch_set = api.gerrit.fetch_patch_set_from_change(change)
+      values = values_dict.get(patch.change_id,
+                               values_dict.get(-patch.change_id))
+      api.assertions.assertEqual(patch.project, values['project'])
+      api.assertions.assertEqual(patch.branch, values['branch'])
+      api.assertions.assertEqual(patch.subject, values['subject'])
+      api.assertions.assertEqual(patch.git_fetch_url, values['url'])
+      api.assertions.assertEqual(patch.git_fetch_ref, values['ref'])
+      api.assertions.assertEqual(patch.short_host, values['_short_host'])
+      api.assertions.assertEqual(patch.display_id, values['_display_id'])
+      api.assertions.assertEqual(patch.patch_set, values['patch_set'])
+      api.assertions.assertEqual(patch.display_url, values['_display_url'])
+      api.assertions.assertEqual(patch.created, values['created'])
+      api.assertions.assertEqual(patch.updated, values['updated'])
+      api.assertions.assertEqual(patch.submitted, values['submitted'])
+      api.assertions.assertEqual(patch.hashtags, values['hashtags'])
+      api.assertions.assertEqual(patch.messages, values['messages'])
+      api.assertions.assertEqual(patch.current_revision,
+                                 values['current_revision'])
+
   patch = patches[0]
   # Missing FetchInfo.
   del patch._rev_info['fetch']
@@ -135,11 +157,27 @@ def RunSteps(api):
   except api.step.StepFailure:
     pass
 
+  # Missing result
+  try:
+    with api.step.nest('test fetch_patch_sets_from_change missing'):
+      # Fetch for wrong patchset. Should raise an error.
+      change = GerritChange(host='google.com', change=2, patchset=4)
+      api.gerrit.fetch_patch_set_from_change(change)
+  except api.step.StepFailure as e:
+    pass
+
   api.gerrit.test_api.test_patch_set()
 
 
 def GenTests(api):
   yield api.test(
       'basic',
-      api.gerrit.set_gerrit_fetch_changes_response(step_name, changes,
-                                                   _get_values_dict(api)))
+      api.gerrit.set_gerrit_fetch_changes_response('test fetch_patch_sets',
+                                                   changes,
+                                                   _get_values_dict(api)),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'test fetch_patch_sets_from_change', changes, _get_values_dict(api)),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'test fetch_patch_sets_from_change missing', changes,
+          _get_values_dict(api)),
+  )

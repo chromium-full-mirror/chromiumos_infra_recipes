@@ -78,6 +78,11 @@ def RunSteps(api):
       api.git.extract_branch('refs/heads/something', 'whatever'), 'something')
   api.assertions.assertEqual(
       api.git.extract_branch('refs/tags/something', 'whatever'), 'whatever')
+  api.assertions.assertEqual(
+      api.git.get_branch_refspec('something'), 'refs/heads/something')
+  api.assertions.assertEqual(
+      api.git.get_branch_refspec('refs/heads/something'),
+      'refs/heads/something')
 
   api.assertions.assertEqual(api.git.is_merge_commit(commit_id), False)
 

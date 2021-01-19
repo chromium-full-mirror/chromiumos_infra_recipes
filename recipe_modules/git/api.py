@@ -542,6 +542,18 @@ class GitApi(recipe_api.RecipeApi):
     else:
       return default
 
+  def get_branch_refspec(self, branch):
+    """Creates the full refspec for a branch.
+
+    Returns a refspec of the form refs/heads/{branch}.
+
+    Args:
+      * branch (str): branch to split the branch from.
+    """
+    if branch.startswith('refs/heads/'):
+      return branch
+    return 'refs/heads/' + branch
+
   def get_parents(self, commit_id, test_contents=None):
     """Runs `get log` to determine the parents of a git commit.
 
