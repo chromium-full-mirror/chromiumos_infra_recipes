@@ -185,9 +185,9 @@
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"refs/heads/release-R89-13729.B\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2020-10-22 18:54:00.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
@@ -201,28 +201,52 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bar.sh\": {}, @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"foo.ebuild\": {}@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/change/foo\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set src_state.gitiles_commit"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
+    ],
+    "infra_step": true,
+    "name": "set src_state.gitiles_commit.gitiles-fetch-ref",
+    "stdin": "{\"branch\": {\"branch\": \"release-R89-13729.B\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set src_state.gitiles_commit.update src_state.gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set src_state.gitiles_commit.update src_state.gitiles_commit.set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/release-R89-13729.B\"}@@@"
     ]
   },
   {
@@ -982,7 +1006,7 @@
     "cmd": [],
     "name": "get project info",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Project for branch master not found.@@@",
+      "@@@STEP_TEXT@Project for branch refs/heads/release-R89-13729.B not found.@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -1007,6 +1031,7 @@
     "name": "get project info.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros-internal|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros-internal|refs/heads/foo|refs/heads/foo@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]

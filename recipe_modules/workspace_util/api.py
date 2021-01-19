@@ -59,7 +59,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       yield
 
   @contextlib.contextmanager
-  def sync_to_commit(self, commit=None, staging=False):
+  def sync_to_commit(self, commit=None, staging=False, projects=None):
     """Sync the source tree.
 
     This context manager syncs the workspace path.
@@ -68,6 +68,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
           saved in cros_infra_config.configure_builder().
       staging (bool): Whether this is a staging build.  Default: False.
+      projects (List[str]): Project names or paths to return info for. Defaults
+        to all projects.
     """
     assert self.m.cros_infra_config.is_configured, 'builder not configured'
     commit = commit or self.m.src_state.gitiles_commit
@@ -79,10 +81,10 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
         self.m.cros_source.workspace_path)
     self.m.cros_source.ensure_synced_cache(
         manifest_url=manifest_url, is_staging=staging, gitiles_commit=commit,
-        cache_path_override=cache_path_override)
+        cache_path_override=cache_path_override, projects=projects)
 
     with self.m.context(cwd=self.m.cros_source.workspace_path):
-      self.m.cros_source.sync_snapshot(commit, manifest_url)
+      self.m.cros_source.sync_snapshot(commit, manifest_url, projects=projects)
       yield
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',

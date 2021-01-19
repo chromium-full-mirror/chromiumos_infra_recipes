@@ -260,7 +260,8 @@ class RepoApi(recipe_api.RecipeApi):
 
     repo_manifests_path = repo_root.join('.repo', 'manifests')
     manifest_relpath = self.m.path.relpath(manifest_path, repo_manifests_path)
-    self.init(manifest_url, manifest_name=manifest_relpath)
+    init_opts = {"projects": kwargs.get("projects", None)}
+    self.init(manifest_url, manifest_name=manifest_relpath, **init_opts)
     self.sync(**kwargs)
 
   def start(self, branch, projects=None):

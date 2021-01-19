@@ -21,6 +21,7 @@ DEPS = [
     'cros_source',
     'gerrit',
     'git',
+    'gitiles',
     'repo',
     'src_state',
     'workspace_util',
@@ -59,12 +60,29 @@ def _FullCheckout(api):
       return
 
   commit = api.src_state.gerrit_changes[0]
+  patch_set = api.gerrit.fetch_patch_set_from_change(commit, include_files=True)
 
-  patch_set = None
-  with api.step.nest('select patchset') as presentation:
-    patch_sets = api.gerrit.fetch_patch_sets([commit], include_files=True)
-    patch_sets = filter(lambda x: x.patch_set == commit.patchset, patch_sets)
-    patch_set = list(patch_sets)[0]
+  # If the change is on what looks like a valid branch, use that for the checkout.
+  # TODO(crbug/1168841): Move this code to a more appropriate home.
+  if not api.buildbucket.gitiles_commit.ref:
+    branch = api.git.extract_branch(patch_set.branch, patch_set.branch)
+    for branch_prefix in ["release-", "factory-", "firmware-", "stabilize-"]:
+      if branch.startswith(branch_prefix):
+        # Override gitiles_commit to use the appropriate ref/id.
+        with api.step.nest('set src_state.gitiles_commit'):
+          gitiles_commit = api.src_state.gitiles_commit
+          test_data = dict(
+              branch=dict(revision='%s-HEAD-SHA' %
+                          gitiles_commit.ref.split('/')[-1]))
+          gitiles_id = api.gitiles.fetch_revision(
+              gitiles_commit.host, gitiles_commit.project,
+              api.git.get_branch_refspec(patch_set.branch),
+              test_output_data=test_data)
+
+          api.src_state.gitiles_commit = GitilesCommit(
+              host=gitiles_commit.host, project=gitiles_commit.project,
+              ref=api.git.get_branch_refspec(patch_set.branch), id=gitiles_id)
+          break
 
   analyzers = [
       api.tricium.LegacyAnalyzer(
@@ -94,8 +112,8 @@ def _FullCheckout(api):
       api.tricium.analyzers.SPELLCHECKER,
   ]
 
-  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
-    api.cros_source.ensure_synced_cache(projects=[commit.project])
+  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context(), \
+      api.workspace_util.sync_to_commit(staging=is_staging, projects=[commit.project]):
     api.workspace_util.apply_changes()
     workpath = api.workspace_util.workspace_path
 
@@ -138,7 +156,7 @@ def GenTests(api):
       1: {
           'change_id': '1',
           'created': '2020-10-22 18:54:00.000000000',
-          'branch': 'refs/heads/master',
+          'branch': 'refs/heads/main',
           'revision_info': {
               '_number': 1,
               'ref': 'refs/change/foo',
@@ -166,12 +184,11 @@ def GenTests(api):
       api.repo.project_infos_step_data(
           'get project info', data=[
               dict(project='chromium/src', remote='cros-internal',
-                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
+                   rrev='refs/heads/main', upstream='refs/heads/main'),
               dict(project='chromium/src', remote='cros-internal',
-                   rrev='refs/heads/master'),
+                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
           ]),
-      api.gerrit.set_gerrit_fetch_changes_response('select patchset', changes,
-                                                   value_dict))
+      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict))
 
   yield api.test(
       'no-matching-project', test_builder(gerrit_changes=changes),
@@ -180,3 +197,30 @@ def GenTests(api):
               dict(project='chromium/src', remote='cros-internal',
                    rrev='refs/heads/foo', upstream='refs/heads/foo'),
           ]), api.post_check(post_process.StepFailure, 'get project info'))
+
+  value_dict = {
+      1: {
+          'change_id': '1',
+          'created': '2020-10-22 18:54:00.000000000',
+          'branch': 'refs/heads/release-R89-13729.B',
+          'revision_info': {
+              '_number': 1,
+              'ref': 'refs/change/foo',
+              'files': {
+                  "foo.ebuild": {},
+                  "bar.sh": {},
+              }
+          },
+      },
+  }
+
+  yield api.test(
+      'success-release-branch', test_builder(gerrit_changes=changes),
+      api.repo.project_infos_step_data(
+          'get project info', data=[
+              dict(project='chromium/src', remote='cros-internal',
+                   rrev='refs/heads/main', upstream='refs/heads/main'),
+              dict(project='chromium/src', remote='cros-internal',
+                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
+          ]),
+      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict))

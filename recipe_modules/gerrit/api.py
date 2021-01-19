@@ -272,7 +272,8 @@ class GerritApi(RecipeApi):
       raise StepFailure('missing gerrit patch(es)')
     return patch_sets
 
-  def fetch_patch_set_from_change(self, change, test_output_data=None):
+  def fetch_patch_set_from_change(self, change, include_files=False,
+                                  test_output_data=None):
     """Fetch and return PatchSet associated with the given GerritChange.
 
     Assumes that change.patchset is set (which is not always the case).
@@ -280,12 +281,13 @@ class GerritApi(RecipeApi):
 
     Args:
       gerrit_changes (GerritChange): Buildbucket GerritChange to fetch.
+      include_files (bool): If True, include information about changed files.
       test_output_data (dict): Test output for gerrit-fetch-changes.
 
     Returns:
       PatchSet: The corresponding PatchSet.
     """
-    patch_sets = self.fetch_patch_sets([change],
+    patch_sets = self.fetch_patch_sets([change], include_files=include_files,
                                        test_output_data=test_output_data)
     patch_sets = list(
         filter(lambda x: x.patch_set == change.patchset, patch_sets))

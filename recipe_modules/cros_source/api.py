@@ -355,8 +355,8 @@ class CrosSourceApi(RecipeApi):
           self.m.git.checkout(ext_commit.id, force=True)
       return ext_commit
 
-  def checkout_branch(self, manifest_url, manifest_branch, init_opts=None,
-                      sync_opts=None, step_name=None):
+  def checkout_branch(self, manifest_url, manifest_branch, projects=None,
+                      init_opts=None, sync_opts=None, step_name=None):
     """Check out a branch of the current manifest.
 
     Note: If there are changes applied when this is called, repo will try to
@@ -366,6 +366,8 @@ class CrosSourceApi(RecipeApi):
       * manifest_url (str): The manifest url.
       * manifest_branch (str): The branch to check out, such as
           'release-R86-13421.B'
+      * projects (List[str]): Projects to limit the sync to, or None to sync
+        all projects.
       * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
       * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
       * step_name (str): Name for the step, or None for default.
@@ -382,14 +384,20 @@ class CrosSourceApi(RecipeApi):
       my_init_opts = {}
       my_init_opts.update(init_opts or {})
       my_init_opts['manifest_branch'] = manifest_branch
+      my_init_opts['projects'] = projects
       self.m.repo.init(manifest_url, **my_init_opts)
 
       my_sync_opts = dict(**DEFAULT_CHECKOUT_SYNC_OPTS)
       my_sync_opts.update(sync_opts or {})
+      my_sync_opts['projects'] = projects
       self.m.repo.sync(**my_sync_opts)
       self._manifest_branch = manifest_branch
-      # The source is not dirty, we're just on a different branch.
-      self.m.repo.ensure_pinned_manifest(projects=my_sync_opts.get('projects'))
+
+      # TODO(crbug/1168649): Create partial manifest if projects is not None.
+      if not projects:
+        # The source is not dirty, we're just on a different branch.
+        self.m.repo.ensure_pinned_manifest(
+            projects=my_sync_opts.get('projects'))
 
   def fetch_snapshot_shas(self, count=7 * 24 * 2):
     """Return snapshot SHAs for the manifest.
@@ -879,17 +887,21 @@ class CrosSourceApi(RecipeApi):
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
     with self.m.step.nest('sync to snapshot'), self.m.context(
         cwd=self.workspace_path):
-      snapshot_xml = self._get_snapshot(gitiles_commit)
+      projects = kwargs.get('projects', None)
+      snapshot_xml = self._get_snapshot(gitiles_commit, projects=projects)
       sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8)
       sync_opts.update(kwargs)
       self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
                                 **sync_opts)
-      # Get the pinned manifest from repo.  If that returns None, then we
-      # already have the pinned manifest in snapshot_xml.
-      self._pinned_manifest = (
-          self.m.repo.ensure_pinned_manifest(test_data='') or snapshot_xml)
+      # TODO(crbug/1168649): Create partial manifest if projects is not None.
+      if not projects:
+        # Get the pinned manifest from repo.  If that returns None, then we
+        # already have the pinned manifest in snapshot_xml.
+        self._pinned_manifest = (
+            self.m.repo.ensure_pinned_manifest(projects=projects, test_data='')
+            or snapshot_xml)
 
-  def _get_snapshot(self, gitiles_commit):
+  def _get_snapshot(self, gitiles_commit, projects=None):
     """Returns the snapshot to use.
 
     Returns the snapshot to use. If a custom snapshot has been provided
@@ -903,7 +915,7 @@ class CrosSourceApi(RecipeApi):
       return self._get_snapshot_from_cas()
     if self._snapshot_isolate:
       return self._get_snapshot_from_isolate()
-    return self._get_snapshot_from_gitiles(gitiles_commit)
+    return self._get_snapshot_from_gitiles(gitiles_commit, projects=projects)
 
   def _get_snapshot_from_cas(self):
     """Returns the snapshot to use from cas"""
@@ -929,8 +941,14 @@ class CrosSourceApi(RecipeApi):
                                  snapshot_dir.join('snapshot.xml'),
                                  test_data='<manifest></manifest>')
 
-  def _get_snapshot_from_gitiles(self, gitiles_commit):
-    """Returns the snapshot to use from gitiles."""
+  def _get_snapshot_from_gitiles(self, gitiles_commit, projects=None):
+    """Returns the snapshot to use from gitiles.
+
+    Args:
+    gitiles_commit (GitilesCommit): Commit to use.
+    projects (List[str]): Projects to use if a sync is necessary,
+      or None to sync all projects.
+    """
     gitiles_url = 'https://%s/%s' % (gitiles_commit.host,
                                      gitiles_commit.project)
 
@@ -948,7 +966,7 @@ class CrosSourceApi(RecipeApi):
     # branch of the appropriate manifest and generate the manifest.
     manifest = self.m.src_state.gitiles_commit_to_manifest(gitiles_commit)
     with self.m.context(cwd=manifest.path):
-      self.checkout_branch(manifest.url, gitiles_commit.ref)
+      self.checkout_branch(manifest.url, gitiles_commit.ref, projects=projects)
       self.m.git.fetch(manifest.remote, [gitiles_commit.id])
       self.m.git.checkout(gitiles_commit.id, force=True)
       snapshot_path = manifest.path.join('snapshot.xml')
