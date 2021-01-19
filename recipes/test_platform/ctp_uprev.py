@@ -15,8 +15,7 @@ DEPS = [
 PROPERTIES = ctp_uprev.Properties
 
 _RECIPE_CIPD_PACKAGE = (
-    'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes'
-)
+    'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes')
 _GO_BINARY_CIPD_PACKAGE_PATTERN = 'chromiumos/infra/%s/linux-amd64'
 _GO_BINARIES = ['cros_test_platform', 'phosphorus']
 _RELEASE_VERSION_TAG = 'ctp_release_version'
@@ -33,16 +32,16 @@ def validate(api, instruction):
   """
   with api.step.nest('validate instructions %s' % instruction):
     if not instruction.ref:
-      raise ValueError(
-          'No ref to update for package %s' % instruction.package_name)
+      raise ValueError('No ref to update for package %s' %
+                       instruction.package_name)
     if not instruction.version:
-      raise ValueError(
-          'No new version provided for package %s' % instruction.package_name)
+      raise ValueError('No new version provided for package %s' %
+                       instruction.package_name)
     package_whitelist = _package_whitelist()
     if not instruction.package_name in package_whitelist:
       raise ValueError(
-         'Invalid package %s - only the following packages are allowed: %s' %
-         (instruction.package_name, package_whitelist))
+          'Invalid package %s - only the following packages are allowed: %s' %
+          (instruction.package_name, package_whitelist))
 
 
 def _package_whitelist():
@@ -87,15 +86,15 @@ def uprev_package(api, instruction, package_tags={}):
     A StepFailure if the CIPD tool call fails.
   """
   release_version = 'ctp_' + api.time.utcnow().isoformat()
-  with api.step.nest('uprev the "%s" ref of the "%s" package to "%s"' %
+  with api.step.nest(
+      'uprev the "%s" ref of the "%s" package to "%s"' %
       (instruction.ref, instruction.package_name, instruction.version)):
     for tag_key, tag_value in package_tags.items():
       api.cipd.set_tag(instruction.package_name, instruction.version,
                        {tag_key: tag_value})
-    instance_id = api.cipd.set_ref(
-        instruction.package_name,
-        instruction.version,
-        [instruction.ref]).instance_id
+    instance_id = api.cipd.set_ref(instruction.package_name,
+                                   instruction.version,
+                                   [instruction.ref]).instance_id
     return ctp_uprev.PackageInstance(package_name=instruction.package_name,
                                      id=instance_id)
 
@@ -107,8 +106,8 @@ def RunSteps(api, properties):
   for instruction in properties.config.instructions:
     with api.step.nest('package %s' % instruction.package_name):
       validate(api, instruction)
-      properties.response.old_versions.extend([
-          get_current_instance(api, instruction)])
+      properties.response.old_versions.extend(
+          [get_current_instance(api, instruction)])
       properties.response.new_versions.extend(
           [uprev_package(api, instruction, package_tags)])
 
@@ -173,11 +172,9 @@ def GenTests(api):
       'invalid package',
       api.properties(
           ctp_uprev.Properties(
-              config=ctp_uprev.Config(
-                  instructions=[
-                      ctp_uprev.Instruction(
-                          package_name='invalid-package',
-                          ref='foo-ref',
-                          version='foo-version')]))),
+              config=ctp_uprev.Config(instructions=[
+                  ctp_uprev.Instruction(package_name='invalid-package',
+                                        ref='foo-ref', version='foo-version')
+              ]))),
       api.expect_exception("ValueError"),
   )
