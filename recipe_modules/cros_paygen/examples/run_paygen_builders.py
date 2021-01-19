@@ -13,6 +13,10 @@ from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 
 
 def RunSteps(api):
+  # Test timeout settings (includes individual runs and orch).
+  api.assertions.assertEqual(7 * 60 * 60,
+                             api.cros_paygen.paygen_orchestrator_timeout_sec)
+
   gen_requests = api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS
   configured_payloads = [
       json.loads(api.cros_paygen.test_api.EXAMPLE_SINGLE_PAYGEN_CONFIG)

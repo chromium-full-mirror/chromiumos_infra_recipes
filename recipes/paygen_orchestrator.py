@@ -37,9 +37,6 @@ DEPS = [
 
 PROPERTIES = PaygenOrchestratorProperties
 
-PAYGEN_CHILDREN_TIMEOUT_SEC = 60 * 60 * 6
-
-
 # TODO(crbug.com/1122854): These are ugly, we should write a cros_channel module to handle.
 def _long_channel_name(channel_enum_val):
   """Takes the integer enum value and outputs suffix'd string form."""

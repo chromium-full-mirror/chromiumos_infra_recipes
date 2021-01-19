@@ -33,8 +33,6 @@ PAYGEN_JSON_GS_PATH = 'gs://chromeos-build-release-console/paygen.json'
 QS_ACCOUNT = 'legacypool-bvt'
 LABEL_POOL = 'quota'
 
-PAYGEN_CHILDREN_TIMEOUT_SEC = 60 * 60 * 6
-
 CategorizedGenerationRequests = namedtuple('CategorizedGenerationRequests', [
     'full_test_payload_requests', 'delta_test_payload_requests',
     'non_test_payload_requests'
@@ -321,6 +319,22 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     self._test_request_opts = properties.test_request_opts
 
   @property
+  def paygen_children_timeout_sec(self):
+    """Get the currently configured paygen timeout in seconds."""
+    return 6 * 60 * 60
+
+  @property
+  def paygen_orchestrator_timeout_sec(self):
+    """Get the currently configured paygen orchestrator timeout in seconds.
+
+    This contains the duration expected for paygen children.
+
+    Returns
+      The int max number of seconds the paygen orchestrator should take.
+    """
+    return self.paygen_children_timeout_sec + 1 * 60 * 60
+
+  @property
   def _config(self):
     """Lazily loaded copy of the entire configuration in paygen.json."""
     if not self._internal_config:
@@ -568,7 +582,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             sorted_gen_reqs.delta_test_payload_requests, configured_payloads,
             delta_payload_test_override))
     # Run the buildbucket requests and return the build results.
-    return self.m.buildbucket.run(cbr, timeout=PAYGEN_CHILDREN_TIMEOUT_SEC,
+    return self.m.buildbucket.run(cbr, timeout=self.paygen_children_timeout_sec,
                                   step_name='running children')
 
   def _schedule_delta_test_payloads(

@@ -473,8 +473,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
       request = self.m.buildbucket.schedule_request(
           builder='paygen-orchestrator', bucket='packaging',
           properties=paygen_properties)
-      self.m.buildbucket.run([request], timeout=60 * 60 * 7,
-                             step_name='running paygen orchestrator')
+      self.m.buildbucket.run(
+          [request], timeout=self.m.cros_paygen.paygen_orchestrator_timeout_sec,
+          step_name='running paygen orchestrator')
 
   def push_and_sign_images(self, config=None):
     """Call the Push Image Build API endpoint for the build, which pushes
