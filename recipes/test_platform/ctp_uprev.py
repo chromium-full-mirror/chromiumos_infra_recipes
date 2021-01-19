@@ -37,14 +37,14 @@ def validate(api, instruction):
     if not instruction.version:
       raise ValueError('No new version provided for package %s' %
                        instruction.package_name)
-    package_whitelist = _package_whitelist()
-    if not instruction.package_name in package_whitelist:
+    package_passlist = _package_passlist()
+    if not instruction.package_name in package_passlist:
       raise ValueError(
           'Invalid package %s - only the following packages are allowed: %s' %
-          (instruction.package_name, package_whitelist))
+          (instruction.package_name, package_passlist))
 
 
-def _package_whitelist():
+def _package_passlist():
   """Get the current version of the ref.
 
   Returns:

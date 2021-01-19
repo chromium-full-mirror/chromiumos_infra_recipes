@@ -22,10 +22,10 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 109, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 108, in RunSteps",
       "    validate(api, instruction)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 40, in validate",
-      "    'No new version provided for package %s' % instruction.package_name)",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 39, in validate",
+      "    instruction.package_name)",
       "ValueError: No new version provided for package chromiumos/infra/phosphorus/linux-amd64"
     ]
   },
