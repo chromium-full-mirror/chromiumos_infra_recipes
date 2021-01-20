@@ -53,6 +53,15 @@
   {
     "cmd": [
       "git",
+      "remote",
+      "update"
+    ],
+    "infra_step": true,
+    "name": "sync branches"
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
       "--force",
       "main"

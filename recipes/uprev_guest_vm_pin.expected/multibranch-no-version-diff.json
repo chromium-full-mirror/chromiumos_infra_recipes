@@ -379,6 +379,7 @@
       "update"
     ],
     "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "infra_step": true,
     "name": "sync chromeos/manifest-internal branches"
   },
   {
@@ -893,6 +894,7 @@
       "update"
     ],
     "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.sync chromeos/manifest-internal branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1541,6 +1543,7 @@
       "update"
     ],
     "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.sync chromeos/manifest-internal branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

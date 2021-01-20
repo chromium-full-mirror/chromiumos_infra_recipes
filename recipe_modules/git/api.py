@@ -218,6 +218,16 @@ class GitApi(recipe_api.RecipeApi):
                            test_stdout='%s\n' % self.test_api.test_commit_id)
     return step_data.stdout.strip()
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(minutes=1))
+  def remote_update(self, step_name, timeout_sec=None):
+    """Runs 'git remote update'.
+
+    Args:
+      * step_name (str): Name of the step to display.
+      * timeout_sec (int): Timeout in seconds.
+    """
+    self._step(['remote', 'update'], name=step_name, timeout=timeout_sec)
+
   def checkout(self, commit, force=False):
     """Runs 'git checkout'.
 

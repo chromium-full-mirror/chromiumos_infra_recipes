@@ -600,6 +600,7 @@
       "update"
     ],
     "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "infra_step": true,
     "name": "sync chromeos/manifest-internal branches"
   },
   {

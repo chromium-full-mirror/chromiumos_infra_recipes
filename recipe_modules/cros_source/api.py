@@ -242,8 +242,8 @@ class CrosSourceApi(RecipeApi):
                   self.m.src_state.external_manifest
               ]), key=lambda x: x.url):
             with self.m.context(cwd=cache_path.join(man.relpath)):
-              self.m.step('sync {} branches'.format(man.project),
-                          ['git', 'remote', 'update'])
+              step_name = 'sync {} branches'.format(man.project)
+              self.m.git.remote_update(step_name=step_name)
 
     # Finally, create the workspace overlay.
     if cache_path != self.workspace_path:
@@ -435,8 +435,8 @@ class CrosSourceApi(RecipeApi):
                                        projects=projects)
     # Sync all branches of the internal manifest, so that we can find branches.
     with self.m.context(cwd=self.cache_path.join(manifest.relpath)):
-      self.m.step('sync {} branches'.format(manifest.project),
-                  ['git', 'remote', 'update'])
+      step_name = 'sync {} branches'.format(manifest.project)
+      self.m.git.remote_update(step_name=step_name)
 
   @contextlib.contextmanager
   def checkout_overlays_context(self, mount_cache=True):

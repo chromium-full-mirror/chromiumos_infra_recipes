@@ -379,6 +379,7 @@
       "update"
     ],
     "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "infra_step": true,
     "name": "sync chromeos/manifest-internal branches"
   },
   {
@@ -875,6 +876,7 @@
       "update"
     ],
     "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "infra_step": true,
     "name": "upreving pin for branch master.sync chromeos/manifest-internal branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

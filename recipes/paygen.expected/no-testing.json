@@ -410,6 +410,7 @@
       "update"
     ],
     "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "infra_step": true,
     "name": "initialization.sync chromeos/manifest-internal branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

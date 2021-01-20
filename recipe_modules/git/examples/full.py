@@ -24,6 +24,7 @@ def RunSteps(api):
   api.git.fetch('remote')
   api.assertions.assertEqual(
       api.git.fetch_ref('remote', 'refs/heads/branch'), commit_id)
+  api.git.remote_update('sync branches')
   api.git.checkout('main', force=True)
   api.assertions.assertEqual(api.git.remote_head(remote), 'refs/heads/main')
   api.assertions.assertEqual(api.git.remote_head(remote, test_stdout=''), None)

@@ -376,6 +376,7 @@
       "update"
     ],
     "cwd": "[CACHE]/chromiumos-external/manifest-internal",
+    "infra_step": true,
     "name": "sync manifest branches.sync chromeos/manifest-internal branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -388,6 +389,7 @@
       "update"
     ],
     "cwd": "[CACHE]/chromiumos-external/manifest",
+    "infra_step": true,
     "name": "sync manifest branches.sync chromiumos/manifest branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
