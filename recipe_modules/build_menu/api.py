@@ -446,10 +446,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
   def generate_payloads(self, config=None):
-    """Generate release payloads for the build.
+    """Launch the generation of release payloads for the build.
+
+    This is nonblocking, will launch and return the id for the paygen
+    orchestrator.
 
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
+
+    Returns:
+      The int build id for the launched orchestrator.
     """
     builder = 'staging-paygen-orchestrator' if self.is_staging else 'paygen-orchestrator'
     bucket = 'staging' if self.is_staging else 'packaging'
@@ -458,22 +464,22 @@ class BuildMenuApi(recipe_api.RecipeApi):
       #TODO(crbug.com/1122854): Source from config instead.
       paygen_properties = {
           'builder_name': self.build_target.name,
-          "target_chromeos_version": self.target_versions.platform_version,
+          'target_chromeos_version': self.target_versions.platform_version,
           "milestone": self.target_versions.milestone_version,
           'delta_types': ["OMAHA"],
           'channels': ["DEV", "CANARY"],
           'au_testing_models': [],
-          'src_bucket': self.config.artifacts.artifacts_gs_bucket,
-          'dest_bucket': 'gs://chromeos-throw-away-bucket',
+          'src_bucket': 'chromeos-throw-away-bucket',
+          'dest_bucket': 'chromeos-throw-away-bucket',
           'keyset': 'coral-premp',
           'dryrun': 'false',
-          "delta_payload_test_override": "RESPECT_CONFIG",
-          "full_payload_test_override": "RESPECT_CONFIG",
+          'delta_payload_test_override': 'RESPECT_CONFIG',
+          'full_payload_test_override': 'RESPECT_CONFIG',
       }
       request = self.m.buildbucket.schedule_request(
           builder='paygen-orchestrator', bucket='packaging',
           properties=paygen_properties)
-      self.m.buildbucket.run(
+      return self.m.buildbucket.run(
           [request], timeout=self.m.cros_paygen.paygen_orchestrator_timeout_sec,
           step_name='running paygen orchestrator')
 
@@ -493,7 +499,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           **{
               'bucket': config.artifacts.artifacts_gs_bucket,
               'target': self.build_target.name,
-              'version': self.m.cros_version.read_workspace_version()
+              'version': self.m.cros_version.read_workspace_version(),
           })
       sysroot = Sysroot(build_target=self.build_target)
       # TODO: Add config support for sign types

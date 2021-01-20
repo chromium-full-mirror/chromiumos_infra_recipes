@@ -722,10 +722,16 @@ Returns:
 
 &mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#448)(self, config=None):**
 
-Generate release payloads for the build.
+Launch the generation of release payloads for the build.
+
+This is nonblocking, will launch and return the id for the paygen
+orchestrator.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
+
+Returns:
+  The int build id for the launched orchestrator.
 
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#82)(self):**
 
@@ -735,7 +741,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#86)(self):**
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/build_menu/api.py#480)(self, config=None):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/build_menu/api.py#486)(self, config=None):**
 
 Call the Push Image Build API endpoint for the build, which pushes
   the image files to the appropriate bucket and prepares them for signing.
