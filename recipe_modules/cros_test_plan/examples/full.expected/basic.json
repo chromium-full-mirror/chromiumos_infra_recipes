@@ -1377,6 +1377,37 @@
   },
   {
     "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config",
+      "[CLEANUP]/lts-configs_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "generate test plan.git clone",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/lts-configs_tmp_1/testingconfig/generated/target_test_requirements_lts.binaryproto",
+      "[CLEANUP]/lts-configs_tmp_1/testingconfig/generated/target_test_requirements.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "generate test plan.copy LTS config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "[START_DIR]/cipd/test_planner/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
@@ -1384,7 +1415,9 @@
       "--output_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
       "--manifest_file",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
+      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml",
+      "--local_config_dir",
+      "[CLEANUP]/lts-configs_tmp_1"
     ],
     "infra_step": true,
     "name": "generate test plan.call test_planner",

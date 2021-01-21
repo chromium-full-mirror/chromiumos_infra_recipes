@@ -9,6 +9,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'cros_test_plan',
 ]
 
@@ -19,4 +20,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.buildbucket.ci_build(project='chromeos', bucket='cq',
+                               builder='lts-cq-orchestrator'))

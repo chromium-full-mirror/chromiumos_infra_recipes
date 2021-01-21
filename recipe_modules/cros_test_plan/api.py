@@ -16,6 +16,9 @@ from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 
 
+INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
+
+
 class CrosTestPlanApi(recipe_api.RecipeApi):
   """A module for generating and parsing test plans."""
 
@@ -70,6 +73,20 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       # We already have a local copy of the manifest.  Use it, rather than
       # fetching it from the network.
       cmd.extend(['--manifest_file', self.m.cros_source.branch_manifest_file])
+
+      # This is a very hacky way of reading in LTS specific testing configs.
+      # Delete once rubik has a better way of specifying separate testing
+      # config per branch.
+      if self.m.buildbucket.build.builder.builder == 'lts-cq-orchestrator':
+        config_path = self.m.path.mkdtemp(prefix='lts-configs')
+        self.m.git.clone(INFRA_CONFIG_URL, target_path=config_path,
+                         timeout_sec=3 * 60)
+        testingconfig_path = config_path.join('testingconfig').join('generated')
+        self.m.file.copy(
+            'copy LTS config',
+            testingconfig_path.join('target_test_requirements_lts.binaryproto'),
+            testingconfig_path.join('target_test_requirements.binaryproto'))
+        cmd.extend(['--local_config_dir', config_path])
 
       self.m.step('call test_planner', cmd, infra_step=True)
 
