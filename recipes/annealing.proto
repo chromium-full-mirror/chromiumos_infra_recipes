@@ -47,6 +47,15 @@ message AnnealingProperties {
   // TODO(crbug/1148052): remove this logic.
   // Whether to disable "prior_commit" logic.
   bool use_ref_not_id = 6;
+
+  // TODO(crbug/1169277): Remove this property once the code is fixed to allow
+  // moving a pinned git repo backwards.
+  // List of project paths to ignore downrevs, to work around crbug/1169277.
+  // If specified, downrevs on these paths will be ignored during "check
+  // reachability".  This should only be used to manually launch Annealing in
+  // order to fix breakage caused by a pin-change that downrevs a pinned git
+  // repository.
+  repeated string ignore_downrev_paths = 7;
 }
 
 // Annealing determines what Gerrit changes have landed since its last run,

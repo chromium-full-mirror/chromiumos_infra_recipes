@@ -198,11 +198,15 @@ def RunSteps(api, properties):
         # path is older than the prior one, provide a clearer failure message
         # than the one we get in cros_cq_depends.
         # See b/176121817 and ci.chromium.org/b/8860265036779649984.
+        # TODO(crbug/1169277): If the change is in a pinned entry in the
+        # manifest, ignore the downrev.  Once that is happening, drop
+        # properties.ignore_downrev_paths.
         with api.step.nest('check reachability'):
           downrevs = []
           for diff in manifest_diffs:
             with api.context(cwd=workspace_path.join(diff.path)):
-              if not api.git.is_reachable(diff.from_rev, diff.to_rev):
+              if (not api.git.is_reachable(diff.from_rev, diff.to_rev) and
+                  diff.path not in properties.ignore_downrev_paths):
                 downrevs.append('{}: {} is not an ancestor of {}'.format(
                     diff.path, diff.from_rev, diff.to_rev))
 
@@ -735,4 +739,32 @@ def GenTests(api):
       api.git_footers.step_data(
           'fetch previous snapshot identifier.read git footers', '1000001'),
       api.post_check(post_process.StatusFailure),
+  )
+
+  yield api.test(
+      'crbug-1169277-ignored-downrev',
+      api.properties(
+          AnnealingProperties(manifest_ref='snapshot',
+                              ignore_downrev_paths=['NAME'])),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.step_data('check reachability.git merge-base', retcode=1),
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''),
+      api.git_footers.step_data(
+          'fetch previous snapshot identifier.read git footers', '1000000'),
+      api.post_check(post_process.MustRun, 'record new gerrit changes'),
+      api.post_check(post_process.MustRun, 'publish internal snapshot'),
   )
