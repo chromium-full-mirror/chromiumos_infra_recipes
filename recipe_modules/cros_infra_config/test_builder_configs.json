@@ -108,7 +108,7 @@
         "applyGerritChanges": true,
         "installPackages": {
           "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"          
+          "dependencies": "ALL_DEPENDENCIES"
         },
         "useFlags": [
           {
@@ -139,7 +139,7 @@
         "manifest": "PUBLIC"
       },
       "artifacts": {
-        "prebuilts": "NONE", 
+        "prebuilts": "NONE",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -499,7 +499,7 @@
         "ebuildsRunSpec": "RUN",
         "dependencies": "ALL_DEPENDENCIES"
       }
-    },    
+    },
     {
       "id": {
         "name": "bisecting-orchestrator",
@@ -1379,7 +1379,7 @@
           {
             "name": "arm64-generic-cq",
             "collectHandling": "COLLECT"
-          },          
+          },
           {
             "name": "arm-generic-pointless-cq",
             "collectHandling": "COLLECT"

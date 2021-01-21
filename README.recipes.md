@@ -26,6 +26,7 @@
   * [cros_infra_config](#recipe_modules-cros_infra_config)
   * [cros_paygen](#recipe_modules-cros_paygen) &mdash; API for working with Paygen and its config.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
+  * [cros_release](#recipe_modules-cros_release) &mdash; An API for providing release related operations (e.
   * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_schedule](#recipe_modules-cros_schedule) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
@@ -116,7 +117,7 @@
   * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
   * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds)
   * [build_postsubmit](#recipes-build_postsubmit) &mdash; Recipe for building a BuildTarget image for Postsubmit.
-  * [build_release](#recipes-build_release) &mdash; Recipe for building a BuildTarget image for release.
+  * [build_release](#recipes-build_release) &mdash; Recipe for building images for release.
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
@@ -190,6 +191,8 @@
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
+  * [cros_release:examples/full](#recipes-cros_release_examples_full)
+  * [cros_release:tests/util](#recipes-cros_release_tests_util)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
   * [cros_relevance:examples/package_dependencies](#recipes-cros_relevance_examples_package_dependencies)
   * [cros_relevance:examples/pointless](#recipes-cros_relevance_examples_pointless)
@@ -720,19 +723,6 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#109)(self):**
 
-&mdash; **def [generate\_payloads](/recipe_modules/build_menu/api.py#448)(self, config=None):**
-
-Launch the generation of release payloads for the build.
-
-This is nonblocking, will launch and return the id for the paygen
-orchestrator.
-
-Args:
-  config (BuilderConfig): The Builder Config for the build, or None.
-
-Returns:
-  The int build id for the launched orchestrator.
-
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#82)(self):**
 
 &emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#78)(self):**
@@ -740,16 +730,6 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#61)(self):**
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#86)(self):**
-
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/build_menu/api.py#486)(self, config=None):**
-
-Call the Push Image Build API endpoint for the build, which pushes
-  the image files to the appropriate bucket and prepares them for signing.
-  The actual execution of these procedures is handled in the underlying
-  script, chromite/scripts/push_image.py.
-
-Args:
-  config (BuilderConfig): The Builder Config for the build, or None.
 
 &mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#214)(self, with_sysroot=True, packages=None):**
 
@@ -2133,6 +2113,41 @@ Args:
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
   gs_bucket (str): Google storage bucket to upload prebuilts to.
   private (bool): Whether or not the target prebuilts are private.
+### *recipe_modules* / [cros\_release](/recipe_modules/cros_release)
+
+[DEPS](/recipe_modules/cros_release/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_version](#recipe_modules-cros_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+An API for providing release related operations (e.g. paygen, signing).
+
+#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&emsp; **@staticmethod**<br>&mdash; **def [massage\_channels](/recipe_modules/cros_release/api.py#41)(channels):**
+
+Takes an array of common_pb2.Channel & validates & strings them.
+
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#101)(self):**
+
+Call the Push Image Build API endpoint for the build.
+
+This pushes the image files to the appropriate bucket and prepares them
+for signing. The actual execution of these procedures is handled in the
+underlying script, chromite/scripts/push_image.py. Must be used in the
+context of a build.
+
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#60)(self):**
+
+Schedule the generation of release payloads using the context of a build.
+
+This is nonblocking, will launch and return the id for the paygen
+orchestrator. It assumes its being ran after a local build has been made.
+
+Args:
+  build_target_name (str): The builder target name.
+  target_chromeos_version (str): The target chromeos version (e.g. '13337.0.1').
+  milestone (int): The milestone number.
+
+Returns:
+  The int build id for the launched orchestrator.
 ### *recipe_modules* / [cros\_relevance](/recipe_modules/cros_relevance)
 
 [DEPS](/recipe_modules/cros_relevance/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5920,13 +5935,13 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#20)(api, properties):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
+[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util)
 
-Recipe for building a BuildTarget image for release.
+Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#26)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#27)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#21)(api, properties):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
@@ -6389,6 +6404,16 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_prebuilts/tests/upload_cq.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#18)(api):**
+### *recipes* / [cros\_release:examples/full](/recipe_modules/cros_release/examples/full.py)
+
+[DEPS](/recipe_modules/cros_release/examples/full.py#6): [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util)
+
+&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#12)(api):**
+### *recipes* / [cros\_release:tests/util](/recipe_modules/cros_release/tests/util.py)
+
+[DEPS](/recipe_modules/cros_release/tests/util.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#17)(api):**
 ### *recipes* / [cros\_relevance:examples/build\_plan](/recipe_modules/cros_relevance/examples/build_plan.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

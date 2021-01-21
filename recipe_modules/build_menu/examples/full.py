@@ -49,8 +49,6 @@ def DoRunSteps(api, properties):
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
       api.build_menu.upload_artifacts()
-      api.build_menu.generate_payloads()
-      api.build_menu.push_and_sign_images()
 
     # Sometimes these are RepeatedCompositeFieldContainter, sometimes they are
     # list.  Cast them.

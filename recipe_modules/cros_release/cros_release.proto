@@ -1,0 +1,37 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_release;
+
+import "chromiumos/common.proto";
+
+message CrosReleaseProperties {
+
+  // The bucket where should push images to (e.g. 'chromeos-releases').
+  string release_bucket = 1;
+
+  // The channels to consider when pushing and signing the image.
+  repeated chromiumos.Channel channels = 2;
+
+  // The signing key name.
+  string keyset = 3;
+
+  // The types of images to sign for.
+  repeated chromiumos.ImageType sign_types = 4;
+
+  // Check that no password is present for chronos user.
+  bool ensure_no_password = 5;
+
+  // Will firmware updates be done in this image.
+  bool firmware_update = 6;
+
+  // Only dryun build, do not push or sign images to release bucket.
+  // This also ignores paygen_dryrun, as the step is never reached.
+  bool dryrun = 7;
+
+  // Only dryrun creation of playloads, don't place.
+  bool paygen_dryrun = 8;
+}

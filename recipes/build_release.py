@@ -3,10 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for building a BuildTarget image for release."""
+"""Recipe for building images for release."""
 
 DEPS = [
     'build_menu',
+    'cros_release',
     'test_util',
 ]
 
@@ -50,8 +51,8 @@ def DoRunSteps(api, config, properties):
       if raise_upload_failure:
         raise
 
-  api.build_menu.push_and_sign_images(config)
-  api.build_menu.generate_payloads(config)
+  api.cros_release.push_and_sign_images()
+  api.cros_release.schedule_payload_generation()
 
 
 def GenTests(api):
