@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.android.examples;
 
-import "chromiumos/common.proto";
-
 message TestProperties {
   // Whether the patchsets cause an uprev.
   bool changes = 1;

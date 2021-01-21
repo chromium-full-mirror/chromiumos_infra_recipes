@@ -6,7 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.orch_menu.tests;
 
-import "google/protobuf/wrappers.proto";
 import "chromiumos/builder_config.proto";
 import "chromiumos/common.proto";
 

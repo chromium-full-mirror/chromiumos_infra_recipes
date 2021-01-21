@@ -6,7 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.git.examples;
 
-import "chromiumos/common.proto";
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
 message FetchProperties {

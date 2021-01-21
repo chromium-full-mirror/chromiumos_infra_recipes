@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.bot_cost.examples;
 
-import "chromiumos/common.proto";
-
 message TestProperties {
   // name for the test and step.
   string name = 1;

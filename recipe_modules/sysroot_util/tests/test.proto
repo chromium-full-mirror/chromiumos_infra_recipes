@@ -6,7 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.sysroot_util.tests;
 
-import "go.chromium.org/luci/buildbucket/proto/common.proto";
 import "chromite/api/artifacts.proto";
 
 message TestInputProperties {

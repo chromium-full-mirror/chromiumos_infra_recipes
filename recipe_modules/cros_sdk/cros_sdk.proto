@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_sdk;
 
-import "chromiumos/common.proto";
-
 message CrosSdkProperties {
   // Whether to force toolchain_cls=False in build_api calls.
   // This is used to verify that the SDK is compatible with the toolchain CL

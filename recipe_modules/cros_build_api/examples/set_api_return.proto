@@ -6,9 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_build_api.examples;
 
-import "chromiumos/common.proto";
-import "google/protobuf/wrappers.proto";
-
 message SetReturnProperties {
   // Expect an assertion.
   bool expect_assertion = 1;

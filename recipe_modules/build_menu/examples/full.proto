@@ -6,7 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.build_menu.examples;
 
-import "go.chromium.org/luci/buildbucket/proto/common.proto";
 import "chromiumos/common.proto";
 
 message FullProperties {
