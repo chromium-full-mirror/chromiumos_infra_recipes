@@ -188,10 +188,12 @@ def GenTests(api):
           **{'$chromeos/chrome': ChromeProperties(parallel_sync_jobs=42)}),
   )
 
+  # TODO(b/156557792): remove isolate test after migration
   chrome_isolate = ChromeProperties(
-      version='deadbeef',
+      version='deadbeef', allow_deps_isolate=True,
       deps_isolate=ChromeProperties.DepsIsolate(isolated_hash='aaa',
                                                 isolate_server='aaa.com'))
+  # TODO(b/156557792): remove isolate test after migration
   yield api.test(
       'with-properties-custom-build-isolate',
       test_data(skips_chrome_prebuilt=True),

@@ -6,6 +6,7 @@
 import re
 
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api import packages
 from PB.chromite.api.packages import BuildsChromeRequest
@@ -51,6 +52,7 @@ class ChromeApi(recipe_api.RecipeApi):
     self._deps_isolate = (
         properties.deps_isolate
         if properties.HasField('deps_isolate') else None)
+    self._allow_deps_isolate = properties.allow_deps_isolate
     self._version = properties.version
 
   def _get_local_version(self, chroot, build_target):
@@ -72,6 +74,9 @@ class ChromeApi(recipe_api.RecipeApi):
       internal (bool): True for internal checkout.
     """
     with self.m.step.nest('sync chrome') as pres:
+      if self._deps_isolate and not self._allow_deps_isolate:  # pragma: nocover
+        raise StepFailure('isolate is no longer supported: crbug.com/1150957')
+
       if self._version or self._deps_isolate or self._deps_cas:
         version = self._version
       else:
@@ -148,7 +153,7 @@ class ChromeApi(recipe_api.RecipeApi):
                             sync_cmd, infra_step=True,
                             timeout=self.test_api.gclient_sync_timeout_seconds)
               break
-          except recipe_api.StepFailure as ex:
+          except StepFailure as ex:
             if (ex.had_timeout and
                 retries < self.test_api.gclient_sync_max_retries - 1):
               self.m.file.rmcontents('clean up root path and retry',
@@ -185,6 +190,9 @@ class ChromeApi(recipe_api.RecipeApi):
 
   def has_chrome_prebuilt(self, build_target, chroot, internal=False,
                           ignore_prebuilts=False):
+    if self._deps_isolate and not self._allow_deps_isolate:  # pragma: nocover
+      raise StepFailure('isolate is no longer supported: crbug.com/1150957')
+
     if ignore_prebuilts or self._deps_isolate or self._deps_cas:
       return False
     return self.m.cros_build_api.PackageService.HasChromePrebuilt(

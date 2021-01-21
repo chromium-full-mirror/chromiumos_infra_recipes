@@ -41,6 +41,7 @@ class CrosSourceApi(RecipeApi):
     self._snapshot_isolate = (
         properties.snapshot_isolate
         if properties.HasField('snapshot_isolate') else None)
+    self._allow_snapshot_isolate = properties.allow_snapshot_isolate
     self._is_source_dirty = bool(self._snapshot_isolate) or bool(
         self._snapshot_cas)
     self._enable_custom_overlays = properties.enable_custom_overlays
@@ -128,6 +129,7 @@ class CrosSourceApi(RecipeApi):
     """Returns the snapshot isolate hash in use or None."""
     return (self._snapshot_isolate.isolated_hash
             if self._snapshot_isolate else None)
+
 
   def _validate_args(self, manifest_url, local_manifest, groups, cache_path,
                      manifest_branch):
@@ -894,6 +896,9 @@ class CrosSourceApi(RecipeApi):
     via an input property, that will be used. Otherwise it will fall back
     to the typical syncing to the gitiles_commit.
     """
+    if self._snapshot_isolate and not self._allow_snapshot_isolate:
+      raise StepFailure('isolate is no longer supported: crbug.com/1150957')
+
     if self._snapshot_cas:
       return self._get_snapshot_from_cas()
     if self._snapshot_isolate:
@@ -913,6 +918,7 @@ class CrosSourceApi(RecipeApi):
   def _get_snapshot_from_isolate(self):
     """Returns the snapshot to use from isolate"""
     # TODO(b/156557792): remove isolate support after migration
+    assert self._allow_snapshot_isolate
     si = self._snapshot_isolate
     snapshot_dir = self.m.path.mkdtemp('snapshot')
     self.m.isolated.download('download snapshot.xml from isolate',

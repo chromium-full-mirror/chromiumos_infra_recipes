@@ -24,4 +24,9 @@ message CrosSourceProperties {
 
   // Feature flag: whether to allow mounting the external or custom overlay.
   bool enable_custom_overlays = 4;
+
+  // By default, isolate usage is disallowed, since that is being turned down
+  // 2021 Q1.  This re-enables the use, which may no longer work.
+  // See crbug.com/1150957.
+  bool allow_snapshot_isolate = 5;
 }

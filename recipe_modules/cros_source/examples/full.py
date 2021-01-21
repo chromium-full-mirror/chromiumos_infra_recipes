@@ -113,10 +113,23 @@ def GenTests(api):
 
   # TODO(b/156557792): remove isolate test after migration
   yield api.cros_source.test(
+      'disallowed-custom-snapshot-isolate',
+      api.properties(FullProperties(expected_snapshot_isolated_hash='xxx')),
+      api.post_check(post_process.StatusAnyFailure),
+      cros_source_properties=CrosSourceProperties(
+          snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
+              isolated_hash='xxx',
+              isolate_server='http://server.com',
+          ),
+      ))
+
+  # TODO(b/156557792): remove isolate test after migration
+  yield api.cros_source.test(
       'with-custom-snapshot-isolate',
       api.properties(FullProperties(expected_snapshot_isolated_hash='xxx')),
       api.post_check(post_process.StatusSuccess),
       cros_source_properties=CrosSourceProperties(
+          allow_snapshot_isolate=True,
           snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
               isolated_hash='xxx',
               isolate_server='http://server.com',
