@@ -14,4 +14,8 @@ message CodeCoverageProperties {
   // The Chrome OS project that holds the code that coverage is being generated
   // for. The project should be visible on https://chromium.googlesource.com/.
   string project = 2;
+
+  // The branch that the code coverage is being generated for.
+  // This almost always will be refs/heads/main and can be left blank.
+  string branch = 3;
 }

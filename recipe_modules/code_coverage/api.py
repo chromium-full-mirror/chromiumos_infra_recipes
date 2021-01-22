@@ -11,10 +11,10 @@ import re
 
 DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
 DEFAULT_CODE_PROJECT = 'chromiumos/platform2'
+DEFAULT_CODE_BRANCH = 'refs/heads/main'
 
 PUBLIC_CODE_HOST = 'chromium'
 CODESEARCH_PROJECT = 'chromiumos/codesearch'
-BRANCH = 'refs/heads/master'
 
 
 class CodeCoverageApi(recipe_api.RecipeApi):
@@ -30,7 +30,9 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     self._gs_bucket = props.gs_bucket or DEFAULT_BUCKET_NAME
     # The project that contains the code this coverage data is being generated for.
     self._project = props.project or DEFAULT_CODE_PROJECT
-    # The commit id of BRANCH for the project.
+    # The branch this coverage data is being generated for.
+    self._branch = props.branch or DEFAULT_CODE_BRANCH
+    # The commit id of branch for the project.
     self._commit_id = None
     # Temp dir for zoss
     self._zoss_dir = None
@@ -72,7 +74,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     result.presentation.properties[
         'gitiles_commit_host'] = PUBLIC_CODE_HOST + '.googlesource.com'
     result.presentation.properties['gitiles_commit_project'] = self._project
-    result.presentation.properties['gitiles_commit_ref'] = BRANCH
+    result.presentation.properties['gitiles_commit_ref'] = self._branch
     result.presentation.properties['gitiles_commit_id'] = self._commit_id
 
   def process_coverage_data(self, build_target):
@@ -80,10 +82,12 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     with self.m.step.nest('process code coverage data'):
       try:
         self._commit_id = self.m.gitiles.fetch_revision(PUBLIC_CODE_HOST,
-                                                        self._project, BRANCH)
-        self._generate_and_upload_metadata(build_target)
-        with self.m.step.nest('clean and upload coverage to ZOSS'):
+                                                        self._project,
+                                                        self._branch)
+        with self.m.step.nest('upload coverage to ZOSS'):
           self._upload_to_zoss(build_target)
+        with self.m.step.nest('upload coverage to chromium coverage'):
+          self._generate_and_upload_metadata(build_target)
       except StepFailure:
         self.m.step.active_result.presentation.properties[
             'process_coverage_data_failure'] = True
@@ -117,7 +121,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         '--checkout-dir',
         self.m.cros_source.workspace_path,
         '--project-dir',
-        self.m.cros_source.find_project_paths(self._project, BRANCH)[0],
+        self.m.cros_source.find_project_paths(self._project, self._branch)[0],
         '--output-dir',
         self.metadata_dir,
         '--constants-file',
@@ -208,7 +212,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
     # ZOSS always submits coverage data to the codesearch project.
     codesearch_commit_id = self.m.gitiles.fetch_revision(
-        PUBLIC_CODE_HOST, CODESEARCH_PROJECT, BRANCH)
+        PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
     build = self.m.buildbucket.build
     self.m.step('absolute coverage upload for {}'.format(out_file), [
         'luci-auth',
@@ -226,7 +230,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         '--commit_id',
         codesearch_commit_id,
         '--ref',
-        BRANCH,
+        self._branch,
         '--uploader_name',
         build.builder.builder,
         '--uploader_id',

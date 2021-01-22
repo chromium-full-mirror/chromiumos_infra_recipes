@@ -3892,81 +3892,8 @@
     ]
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromiumos/platform2",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "run ebuild tests.process code coverage data.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/platform2|src/chromiumos/platform2|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[chromeos::code_coverage]/resources/convert_coverage_metadata_from_llvm.py",
-      "--chroot-dir",
-      "[CACHE]/cros_chroot",
-      "--checkout-dir",
-      "[START_DIR]/chromiumos_workspace",
-      "--project-dir",
-      "src/chromiumos/platform2",
-      "--output-dir",
-      "[CLEANUP]/code-coverage_tmp_1",
-      "--constants-file",
-      "RECIPE_MODULE[chromeos::code_coverage]/resources/constants.json",
-      "--build-target",
-      "amd64-generic",
-      "--project-name",
-      "chromiumos/platform2"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "run ebuild tests.process code coverage data.converting metadata for test coverage",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "cp",
-      "-r",
-      "[CLEANUP]/code-coverage_tmp_1",
-      "gs://cros-code-coverage-data/postsubmit/chromium.googlesource.com/project-a/2d72510e447ab60a9728aeea2362d8be2cbd7789/postsubmit/sarien-code-coverage-postsubmit/8945511751514863184/metadata"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "run ebuild tests.process code coverage data.gsutil upload coverage metadata",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@metadata report@https://storage.cloud.google.com/cros-code-coverage-data/postsubmit/chromium.googlesource.com/project-a/2d72510e447ab60a9728aeea2362d8be2cbd7789/postsubmit/sarien-code-coverage-postsubmit/8945511751514863184/metadata/index.html@@@"
-    ]
-  },
-  {
     "cmd": [],
-    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS",
+    "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3984,7 +3911,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.find coverage files",
+    "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS.find coverage files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@glob@[CACHE]/cros_chroot/build/amd64-generic/build/coverage_data/coverage.json@@@",
@@ -4004,7 +3931,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.read constants",
+    "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS.read constants",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@constants.json@{@@@",
@@ -4031,7 +3958,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.read coverage data from [CACHE]/cros_chroot/build/amd64-generic/build/coverage_data/coverage.json",
+    "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS.read coverage data from [CACHE]/cros_chroot/build/amd64-generic/build/coverage_data/coverage.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@coverage.json@{@@@",
@@ -4063,7 +3990,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.write processed coverage json",
+    "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS.write processed coverage json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@coverage.json@{\"data\": [{\"files\": [{\"filename\": \"/src/platform2/base/test.cc\"}]}], \"type\": \"coverage\", \"version\": \"0.0\"}@@@",
@@ -4076,7 +4003,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.gitiles-fetch-ref",
+    "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS.gitiles-fetch-ref",
     "stdin": "{\"branch\": {\"branch\": \"master\", \"host\": \"chromium\", \"project\": \"chromiumos/codesearch\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -4114,9 +4041,89 @@
       "[CLEANUP]/code-coverage-zoss_tmp_1/coverage.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "run ebuild tests.process code coverage data.clean and upload coverage to ZOSS.absolute coverage upload for [CLEANUP]/code-coverage-zoss_tmp_1/coverage.json",
+    "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS.absolute coverage upload for [CLEANUP]/code-coverage-zoss_tmp_1/coverage.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run ebuild tests.process code coverage data.upload coverage to chromium coverage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/platform2",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "run ebuild tests.process code coverage data.upload coverage to chromium coverage.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/platform2|src/chromiumos/platform2|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[chromeos::code_coverage]/resources/convert_coverage_metadata_from_llvm.py",
+      "--chroot-dir",
+      "[CACHE]/cros_chroot",
+      "--checkout-dir",
+      "[START_DIR]/chromiumos_workspace",
+      "--project-dir",
+      "src/chromiumos/platform2",
+      "--output-dir",
+      "[CLEANUP]/code-coverage_tmp_1",
+      "--constants-file",
+      "RECIPE_MODULE[chromeos::code_coverage]/resources/constants.json",
+      "--build-target",
+      "amd64-generic",
+      "--project-name",
+      "chromiumos/platform2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "run ebuild tests.process code coverage data.upload coverage to chromium coverage.converting metadata for test coverage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "[CLEANUP]/code-coverage_tmp_1",
+      "gs://cros-code-coverage-data/postsubmit/chromium.googlesource.com/project-a/2d72510e447ab60a9728aeea2362d8be2cbd7789/postsubmit/sarien-code-coverage-postsubmit/8945511751514863184/metadata"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "run ebuild tests.process code coverage data.upload coverage to chromium coverage.gsutil upload coverage metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@metadata report@https://storage.cloud.google.com/cros-code-coverage-data/postsubmit/chromium.googlesource.com/project-a/2d72510e447ab60a9728aeea2362d8be2cbd7789/postsubmit/sarien-code-coverage-postsubmit/8945511751514863184/metadata/index.html@@@"
     ]
   },
   {

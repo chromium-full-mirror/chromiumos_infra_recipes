@@ -1128,17 +1128,17 @@ Args:
 
 This module contains apis to generate code coverage data.
 
-&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#38)(self):**
+&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#40)(self):**
 
 A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#78)(self, build_target):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#80)(self, build_target):**
 
 Processes the coverage data for metadata.
 
-&emsp; **@property**<br>&mdash; **def [zoss\_dir](/recipe_modules/code_coverage/api.py#48)(self):**
+&emsp; **@property**<br>&mdash; **def [zoss\_dir](/recipe_modules/code_coverage/api.py#50)(self):**
 
 A temporary directory for the zoss coverage data.
 

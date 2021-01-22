@@ -17,12 +17,20 @@
       "prefix": "tmp/portage/chromeos-base/arc-setup-[^/]*/work/arc-setup-[^/]*/arc/setup"
     },
     {
+      "src_path": "arc/vm/boot_notification_server",
+      "prefix": "tmp/portage/chromeos-base/arcvm-boot-notification-server-[^/]*/work/arcvm-boot-notification-server-[^/]*/arc/vm/boot_notification_server"
+    },
+    {
       "src_path": "attestation",
       "prefix": "tmp/portage/chromeos-base/attestation-[^/]*/work/attestation-[^/]*/attestation"
     },
     {
       "src_path": "authpolicy",
       "prefix": "tmp/portage/chromeos-base/authpolicy-[^/]*/work/authpolicy-[^/]*/authpolicy"
+    },
+    {
+      "src_path": "biod",
+      "prefix": "tmp/portage/chromeos-base/biod-[^/]*/work/biod-[^/]*/biod"
     },
     {
       "src_path": "biod/biod_proxy",
@@ -41,6 +49,18 @@
       "prefix": "tmp/portage/chromeos-base/buffet-[^/]*/work/buffet-[^/]*/buffet"
     },
     {
+      "src_path": "camera",
+      "prefix": "tmp/portage/media-libs/cros-camera-hal-usb-[^/]*/work/cros-camera-hal-usb-[^/]*/camera"
+    },
+    {
+      "src_path": "camera",
+      "prefix": "tmp/portage/chromeos-base/cros-camera-libcamera_common-[^/]*/work/cros-camera-libcamera_common-[^/]*/camera"
+    },
+    {
+      "src_path": "camera",
+      "prefix": "tmp/portage/chromeos-base/cros-camera-libcbm-[^/]*/work/cros-camera-libcbm-[^/]*/camera"
+    },
+    {
       "src_path": "cfm-dfu-notification",
       "prefix": "tmp/portage/chromeos-base/cfm-dfu-notification-[^/]*/work/cfm-dfu-notification-[^/]*/platform2/cfm-dfu-notification"
     },
@@ -53,16 +73,8 @@
       "prefix": "tmp/portage/chromeos-base/chromeos-dbus-bindings-[^/]*/work/chromeos-dbus-bindings-[^/]*/chromeos-dbus-bindings"
     },
     {
-      "src_path": "image-burner",
-      "prefix": "tmp/portage/chromeos-base/chromeos-imageburner-[^/]*/work/chromeos-imageburner-[^/]*/image-burner"
-    },
-    {
-      "src_path": "init",
-      "prefix": "tmp/portage/chromeos-base/chromeos-init-[^/]*/work/chromeos-init-[^/]*/init"
-    },
-    {
-      "src_path": "installer",
-      "prefix": "tmp/portage/chromeos-base/chromeos-installer-[^/]*/work/chromeos-installer-[^/]*/installer"
+      "src_path": "codelab",
+      "prefix": "tmp/portage/chromeos-base/codelab-[^/]*/work/codelab-[^/]*/platform2/codelab"
     },
     {
       "src_path": "crash-reporter",
@@ -129,12 +141,28 @@
       "prefix": "tmp/portage/chromeos-base/hardware_verifier-[^/]*/work/hardware_verifier-[^/]*/hardware_verifier"
     },
     {
+      "src_path": "hermes",
+      "prefix": "tmp/portage/chromeos-base/hermes-[^/]*/work/hermes-[^/]*/hermes"
+    },
+    {
       "src_path": "hwsec-test-utils",
       "prefix": "tmp/portage/chromeos-base/hwsec-test-utils-[^/]*/work/hwsec-test-utils-[^/]*/hwsec-test-utils"
     },
     {
+      "src_path": "image-burner",
+      "prefix": "tmp/portage/chromeos-base/chromeos-imageburner-[^/]*/work/chromeos-imageburner-[^/]*/image-burner"
+    },
+    {
       "src_path": "imageloader",
       "prefix": "tmp/portage/chromeos-base/imageloader-[^/]*/work/imageloader-[^/]*/imageloader"
+    },
+    {
+      "src_path": "init",
+      "prefix": "tmp/portage/chromeos-base/chromeos-init-[^/]*/work/chromeos-init-[^/]*/init"
+    },
+    {
+      "src_path": "installer",
+      "prefix": "tmp/portage/chromeos-base/chromeos-installer-[^/]*/work/chromeos-installer-[^/]*/installer"
     },
     {
       "src_path": "ippusb_manager",
@@ -177,6 +205,10 @@
       "prefix": "tmp/portage/chromeos-base/libtpmcrypto-[^/]*/work/libtpmcrypto-[^/]*/libtpmcrypto"
     },
     {
+      "src_path": "arc/vm/libvda",
+      "prefix": "tmp/portage/chromeos-base/libvda-[^/]*/work/libvda-[^/]*/arc/vm/libvda"
+    },
+    {
       "src_path": "lorgnette",
       "prefix": "tmp/portage/chromeos-base/lorgnette-[^/]*/work/lorgnette-[^/]*/lorgnette"
     },
@@ -199,6 +231,10 @@
     {
       "src_path": "ml",
       "prefix": "tmp/portage/chromeos-base/ml-[^/]*/work/ml-[^/]*/platform2/ml"
+    },
+    {
+      "src_path": "ml",
+      "prefix": "tmp/portage/chromeos-base/ml-cmdline-[^/]*/work/ml-cmdline-[^/]*/platform2/ml"
     },
     {
       "src_path": "ml_benchmark",
@@ -255,6 +291,10 @@
     {
       "src_path": "sealed_storage",
       "prefix": "tmp/portage/chromeos-base/sealed_storage-[^/]*/work/sealed_storage-[^/]*/sealed_storage"
+    },
+    {
+      "src_path": "shill/cli",
+      "prefix": "tmp/portage/chromeos-base/shill-cli-[^/]*/work/shill-cli-[^/]*/shill/cli"
     },
     {
       "src_path": "shill",
@@ -315,6 +355,10 @@
     {
       "src_path": "vpn-manager",
       "prefix": "tmp/portage/chromeos-base/vpn-manager-[^/]*/work/vpn-manager-[^/]*/vpn-manager"
+    },
+    {
+      "src_path": "webserver",
+      "prefix": "tmp/portage/chromeos-base/webserver-[^/]*/work/webserver-[^/]*/webserver"
     }
   ]
 }
