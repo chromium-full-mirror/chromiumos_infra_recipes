@@ -122,7 +122,7 @@
       "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts\":{\"legacy\":{\"artifacts\":[{\"paths\":[\"[CLEANUP]/artifacts_tmp_1/foo\",\"[CLEANUP]/artifacts_tmp_1/bar\"],\"artifactType\":\"EBUILD_LOGS\"}]}}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"legacy\": {\"artifacts\": [{\"artifact_type\": \"EBUILD_LOGS\", \"paths\": [\"[START_DIR]/log.tar.gz\"]}]}, \"toolchain\": {\"artifacts\": [{\"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \"paths\": [\"[START_DIR]/orderfile\"]}]}}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -324,7 +324,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"foo\", \"bar\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-postsubmit/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-postsubmit/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -420,8 +420,7 @@
       "-m",
       "----",
       "cp",
-      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/foo",
-      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/bar",
+      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/log.tar.gz",
       "gs://publish_gs_bucket/"
     ],
     "infra_step": true,
@@ -442,8 +441,7 @@
       "-m",
       "----",
       "cp",
-      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/foo",
-      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/bar",
+      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/log.tar.gz",
       "gs://publish_gs_bucket/"
     ],
     "infra_step": true,
@@ -464,8 +462,7 @@
       "-m",
       "----",
       "cp",
-      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/foo",
-      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/bar",
+      "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/log.tar.gz",
       "gs://publish_gs_bucket/"
     ],
     "infra_step": true,
