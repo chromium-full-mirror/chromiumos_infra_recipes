@@ -25,7 +25,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.annealing import AnnealingProperties
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_api import StepWarning
 from recipe_engine import util
 
 DEPS = [
@@ -201,7 +201,7 @@ def RunSteps(api, properties):
         # TODO(crbug/1169277): If the change is in a pinned entry in the
         # manifest, ignore the downrev.  Once that is happening, drop
         # properties.ignore_downrev_paths.
-        with api.step.nest('check reachability'):
+        with api.step.nest('check reachability') as reach_pres:
           downrevs = []
           for diff in manifest_diffs:
             with api.context(cwd=workspace_path.join(diff.path)):
@@ -211,7 +211,17 @@ def RunSteps(api, properties):
                     diff.path, diff.from_rev, diff.to_rev))
 
           if downrevs:
-            raise StepFailure('\n'.join(downrevs))
+            # TODO(crbug/1169277): Add code to distinguish these cases, and make
+            # the error only apply to case #1.
+            # There are 3 cases that can lead to an unreachable prior version:
+            # 1. Commits were lost from the git repo.  (bug).
+            # 2. A pinned-entry in the manifest has a change that reverts an
+            #    uprev in that repo.  (not a bug)
+            # 3. A manifest entry changes branches. (not a bug)
+            # Of the set, #1 is generally the least likely to occur, so this is
+            # a warning (which is ignored by LUCI/Milo) for now.
+            reach_pres.logs['downrevs'] = downrevs
+            reach_pres.step_text = 'some downrevs occurred'
 
         # Otherwise we need to ensure all of those diffs have fulfilled deps.
         api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
@@ -718,6 +728,7 @@ def GenTests(api):
       api.expect_exception('ValueError'),
   )
 
+  # TODO(crbug/1169277) this will become multiple tests.
   yield api.test(
       'downrev',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
@@ -737,8 +748,12 @@ def GenTests(api):
           )),
       api.step_data('check reachability.git merge-base', retcode=1),
       api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''),
+      api.git_footers.step_data(
           'fetch previous snapshot identifier.read git footers', '1000001'),
-      api.post_check(post_process.StatusFailure),
+      api.post_check(post_process.MustRun, 'record new gerrit changes'),
+      api.post_check(post_process.MustRun, 'publish internal snapshot'),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -764,7 +779,8 @@ def GenTests(api):
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.git_footers.step_data(
-          'fetch previous snapshot identifier.read git footers', '1000000'),
+          'fetch previous snapshot identifier.read git footers', '1000001'),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
+      api.post_check(post_process.StatusSuccess),
   )
