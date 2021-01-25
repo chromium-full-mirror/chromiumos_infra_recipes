@@ -400,6 +400,7 @@ def _get_phosphorus_config(recipe_config, load_response):
       ),
       fetch_crashes_step=recipe_config.fetch_crashes_step,
       log_data_upload_step=recipe_config.log_data_upload_step,
+      prejob_step=recipe_config.prejob_step,
       task=phosphorus.common.TaskEnvironment(
           results_dir=load_response.results_dir,
           ssp_base_image_name=recipe_config.harness.ssp_base_image_name,
