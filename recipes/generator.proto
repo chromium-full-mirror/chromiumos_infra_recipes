@@ -102,12 +102,32 @@ message BranchPolicy {
   // The first BranchPolicy in the list to match the tag will be the one used.
   //
   // For this BranchPolicy to match:
-  // - re.match(pattern) must match, and
+  // - re.match(pattern) must match the gitiles trigger reference, and
   // - re.sub(pattern, repl) must produce ${RESULT} of:
   //   - such that `git ls-remote ${INTENRAL_MANIFEST} ${RESULT}` returns
   //   exactly one reference, which will be used.
   //   - if ${RESULT} returns more than one reference, StepFailure is raised.
   //   - if ${RESULT} returns no references, the policy is skipped.
+  //
+  // Note that the gitiles trigger will use a reference from the
+  // repository that triggered the generator run, while the result of
+  // re.sub(pattern, repl) must be the name of a branch in the
+  // internal manifest repo. This conversion is necessary to allow
+  // generators to take triggers from repos that are not owned by
+  // Chrome OS, and from new tags.
+  //
+  // However, even if you are triggering from a Chrome OS repo and
+  // attempting an uprev on the same manifest branch, these can have
+  // different names. For example, the Linux kernel repo is checked
+  // out multiple times, so each manifest branch actually has multiple
+  // kernel repo branches associated with it. You should check the
+  // policy for reference names for your specific repo carefully.
+  //
+  // TODO(crbug/1126855): Delete this paragraph once transition is finished.
+  // In particular, while the master -> main conversion is ongoing,
+  // some Chrome OS repositories will have a mismatch between the
+  // names of the primary manifest branch and the primary repository
+  // branch.
   //
   // To generically specify a mapping for Chrome version to Chrome OS release
   // branch, such that 'refs/tags/86.0.4240.33' maps to 'release-R86-13421.B',
