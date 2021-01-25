@@ -159,7 +159,7 @@
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"first\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
@@ -188,7 +188,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"first\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -207,12 +207,12 @@
       "    _ensure_all_requests_enumerated(requests, enumerations)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/cros_test_platform.py\", line 313, in _ensure_all_requests_enumerated",
       "    raise ValueError('No enumerations for requests tagged %s' % missing)",
-      "ValueError: No enumerations for requests tagged set(['default'])"
+      "ValueError: No enumerations for requests tagged set([u'first'])"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError(\"No enumerations for requests tagged set(['default'])\",)"
+      "humanReason": "Uncaught Exception: ValueError(\"No enumerations for requests tagged set([u'first'])\",)"
     },
     "name": "$result"
   }

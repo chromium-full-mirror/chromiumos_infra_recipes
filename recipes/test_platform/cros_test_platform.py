@@ -407,17 +407,16 @@ def summarize(api, enumerations, responses):
 
 
 def _get_requests_from_properties(api, properties):
-  requests_found_in_props = {}
-  if properties.requests:
-    requests_found_in_props['requests'] = properties.requests
   if properties.HasField('request'):
-    requests_found_in_props['request'] = {'default': properties.request}
-
-  if not requests_found_in_props or len(requests_found_in_props) > 1:
     raise api.step.StepFailure(
-        'Must set exactly one of "request" and "requests" in input properties (found %s)'
-        % requests_found_in_props.keys())
-  return requests_found_in_props.values()[0]
+        'This request was made using an outdated version of the skylab tool. '
+        'Please `skylab update` and try again. If you\'re stuck on this, '
+        'please see http://go/skylab-cli')
+  if not properties.requests:
+    raise api.step.StepFailure(
+        'Must set "requests" in input properties (found %s)' %
+        properties.requests)
+  return properties.requests
 
 
 #######################
@@ -672,10 +671,10 @@ def GenTests(api):
     return api.buildbucket.build(build_pb2.Build(id=id, tags=bb_tags))
 
   # Missing request and requests should cause a recipe crash
-  yield (api.test('no request or requests'))
+  yield (api.test('no requests'))
 
-  # Setting both request and requests should cause a recipe crash
-  yield (api.test('both request and requests') +  #
+  # Setting request should cause a recipe crash
+  yield (api.test('has deprecated request') +  #
          api.properties(
              CrosTestPlatformProperties(
                  request=Request(),
@@ -686,13 +685,16 @@ def GenTests(api):
   yield (api.test('timeout too long') +  #
          api.properties(
              CrosTestPlatformProperties(
-                 request=Request(
-                     params=Request.Params(
-                         scheduling=Request.Params.Scheduling(
-                             priority=100), time=Request.Params.Time(
-                                 maximum_duration=duration_pb2.Duration(
-                                     seconds=3600))),
-                 ))))
+                 requests={
+                     'first':
+                         Request(
+                             params=Request.Params(
+                                 scheduling=Request.Params.Scheduling(
+                                     priority=100), time=Request.Params.Time(
+                                         maximum_duration=duration_pb2.Duration(
+                                             seconds=3600))),
+                         )
+                 })))
 
   yield (api.test('neither priority and qs_account set') +  #
          api.properties(CrosTestPlatformProperties(request=Request())))
@@ -701,48 +703,65 @@ def GenTests(api):
   yield (api.test('priority out of range') +  #
          api.properties(
              CrosTestPlatformProperties(
-                 request=Request(
-                     params=Request.Params(
-                         scheduling=Request.Params.Scheduling(priority=300)),
-                 ))))
+                 requests={
+                     'first':
+                         Request(
+                             params=Request.Params(
+                                 scheduling=Request.Params.Scheduling(
+                                     priority=300)),
+                         )
+                 })))
 
   # Request setting both priority and qs_account should cause build failure.
-  yield (api.test('both priority and qs_account set') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=Request(
-                     params=Request.Params(
-                         scheduling=Request.Params.Scheduling(
-                             priority=100, qs_account='foo-qs-account')),
-                 ))))
+  yield (
+      api.test('both priority and qs_account set') +  #
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'first':
+                      Request(
+                          params=Request.Params(
+                              scheduling=Request.Params.Scheduling(
+                                  priority=100, qs_account='foo-qs-account')),
+                      )
+              })))
 
   yield (api.test('deprecated managed pool') +  #
          api.properties(
              CrosTestPlatformProperties(
-                 request=Request(
-                     params=Request.Params(
-                         scheduling=Request.Params.Scheduling(
-                             priority=120,
-                             managed_pool='MANAGED_POOL_BVT',
-                         ))))))
+                 requests={
+                     'first':
+                         Request(
+                             params=Request.Params(
+                                 scheduling=Request.Params.Scheduling(
+                                     priority=120,
+                                     managed_pool='MANAGED_POOL_BVT',
+                                 )))
+                 })))
 
   # A skylab CLI-launched build without a valid service version should cause build failure.
   yield (api.test('skylab-tool-launched build with invalid service version') +
          api.properties(
              CrosTestPlatformProperties(
-                 request=Request(
-                     params=Request.Params(
-                         decorations=Request.Params.Decorations(
-                             tags=["skylab-tool:create-test"]))))))
+                 requests={
+                     'first':
+                         Request(
+                             params=Request.Params(
+                                 decorations=Request.Params.Decorations(
+                                     tags=["skylab-tool:create-test"])))
+                 })))
 
   yield (
       api.test('skylab-tool-launched build with valid service version') +
       api.properties(
           CrosTestPlatformProperties(
-              request=Request(
-                  params=Request.Params(
-                      decorations=Request.Params.Decorations(
-                          tags=["skylab-tool:create-test"])))),  #
+              requests={
+                  'first':
+                      Request(
+                          params=Request.Params(
+                              decorations=Request.Params.Decorations(
+                                  tags=["skylab-tool:create-test"])))
+              }),  #
           **{
               '$chromeos/service_version':
                   ServiceVersionProperties(
@@ -751,29 +770,32 @@ def GenTests(api):
 
   yield (api.test('Duplicate software dependencies') + api.properties(
       CrosTestPlatformProperties(
-          request=Request(
-              params=Request.Params(
-                  scheduling=Request.Params.Scheduling(
-                      qs_account='foo-qs-account'),
-                  software_dependencies=[
-                      Request.Params.SoftwareDependency(
-                          chromeos_build="duplicate-build",
+          requests={
+              'first':
+                  Request(
+                      params=Request.Params(
+                          scheduling=Request.Params.Scheduling(
+                              qs_account='foo-qs-account'),
+                          software_dependencies=[
+                              Request.Params.SoftwareDependency(
+                                  chromeos_build="duplicate-build",
+                              ),
+                              Request.Params.SoftwareDependency(
+                                  chromeos_build="duplicate-build",
+                              ),
+                              Request.Params.SoftwareDependency(
+                                  ro_firmware_build="single-ro-firmware",
+                              ),
+                              Request.Params.SoftwareDependency(
+                                  rw_firmware_build="duplicate-rw-firmware",
+                              ),
+                              Request.Params.SoftwareDependency(
+                                  rw_firmware_build="duplicate-rw-firmware-diff-value",
+                              ),
+                          ],
                       ),
-                      Request.Params.SoftwareDependency(
-                          chromeos_build="duplicate-build",
-                      ),
-                      Request.Params.SoftwareDependency(
-                          ro_firmware_build="single-ro-firmware",
-                      ),
-                      Request.Params.SoftwareDependency(
-                          rw_firmware_build="duplicate-rw-firmware",
-                      ),
-                      Request.Params.SoftwareDependency(
-                          rw_firmware_build="duplicate-rw-firmware-diff-value",
-                      ),
-                  ],
-              ),
-          ),
+                  )
+          },
       ),
   ))
 
@@ -784,7 +806,7 @@ def GenTests(api):
       _set_build_id(id=42, tags={'parent_buildbucket_id': '1234'}) +  #
       api.properties(
           CrosTestPlatformProperties(
-              request=_test_request('default'),
+              requests={'default': _test_request('default')},
               config=Config(
                   pubsub=Config.PubSub(project='foo-proj', topic='foo-topic')),
           )) +  #
@@ -803,7 +825,7 @@ def GenTests(api):
       api.buildbucket.build(build_pb2.Build(id=0)) +  #
       api.properties(
           CrosTestPlatformProperties(
-              request=_test_request('default'),
+              requests={'default': _test_request('default')},
               config=Config(
                   pubsub=Config.PubSub(project='foo-proj', topic='foo-topic')),
           )) +  #
@@ -815,7 +837,7 @@ def GenTests(api):
          api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
          api.properties(
              CrosTestPlatformProperties(
-                 request=_test_request('default'),
+                 requests={'default': _test_request('default')},
                  config=Config(pubsub=Config.PubSub(project='foo-proj')))) +  #
          _generic_enumerate_response(api) +  #
          _generic_passing_execute_response(api))
@@ -825,7 +847,7 @@ def GenTests(api):
          api.buildbucket.build(build_pb2.Build(id=8874582904031090640)) +  #
          api.properties(
              CrosTestPlatformProperties(
-                 request=_test_request('default'),
+                 requests={'default': _test_request('default')},
                  config=Config(pubsub=Config.PubSub(topic='foo-topic')))) +  #
          _generic_enumerate_response(api) +  #
          _generic_passing_execute_response(api))
@@ -835,8 +857,8 @@ def GenTests(api):
       api.test('end-to-end skylab execution with ctp release version tagging')
       +  #
       api.properties(
-          CrosTestPlatformProperties(
-              request=_test_request('foo'), config=_test_config('foo'))) +  #
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
       _generic_enumerate_response(api) +  #
       api.cros_test_platform.set_execute_luciexe_response(
           'execute',
@@ -865,8 +887,8 @@ def GenTests(api):
       api.test('end-to-end skylab execution with no ctp release version found')
       +  #
       api.properties(
-          CrosTestPlatformProperties(
-              request=_test_request('foo'), config=_test_config('foo'))) +  #
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
       _generic_enumerate_response(api) +  #
       api.cros_test_platform.set_execute_luciexe_response(
           'execute',
@@ -885,206 +907,213 @@ def GenTests(api):
               'chromiumos/infra/cros_test_platform/${platform}',
               version='latest', test_data_tags=['random-key:random-value'])))
 
-  yield (api.test('end-to-end execution with passed tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         _generic_passing_execute_response(api))
+  yield (
+      api.test('end-to-end execution with passed tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      _generic_passing_execute_response(api))
 
-  yield (api.test('end-to-end execution with passed and skipped tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_PASSED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-passed',
-                                     state=TaskState(
-                                         verdict="VERDICT_PASSED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz1',
-                                     log_url='logs://bar/baz1',
-                                     name='foo-skipped',
-                                     state=TaskState(
-                                         verdict="VERDICT_NO_VERDICT",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                 }),
-         ))
+  yield (
+      api.test('end-to-end execution with passed and skipped tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_PASSED'),
+                          task_results=[
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz',
+                                  log_url='logs://bar/baz',
+                                  name='foo-passed',
+                                  state=TaskState(
+                                      verdict="VERDICT_PASSED",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz1',
+                                  log_url='logs://bar/baz1',
+                                  name='foo-skipped',
+                                  state=TaskState(
+                                      verdict="VERDICT_NO_VERDICT",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                          ],
+                      )
+              }),
+      ))
 
-  yield (api.test('end-to-end execution with empty response') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(tagged_responses={}),
-         ))
+  yield (
+      api.test('end-to-end execution with empty response') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(tagged_responses={}),
+      ))
 
-  yield (api.test('end-to-end execution with failed tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_FAILED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-failed',
-                                     state=TaskState(
-                                         verdict="VERDICT_FAILED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz1',
-                                     log_url='logs://bar/baz1',
-                                     name='foo-failed',
-                                     attempt=1,
-                                     state=TaskState(
-                                         verdict="VERDICT_FAILED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                 }),
-         ))
+  yield (
+      api.test('end-to-end execution with failed tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_FAILED'),
+                          task_results=[
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz',
+                                  log_url='logs://bar/baz',
+                                  name='foo-failed',
+                                  state=TaskState(
+                                      verdict="VERDICT_FAILED",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz1',
+                                  log_url='logs://bar/baz1',
+                                  name='foo-failed',
+                                  attempt=1,
+                                  state=TaskState(
+                                      verdict="VERDICT_FAILED",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                          ],
+                      )
+              }),
+      ))
 
-  yield (api.test('end-to-end execution with tests with duplicate names') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_FAILED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-failed',
-                                     state=TaskState(
-                                         verdict="VERDICT_FAILED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz1',
-                                     log_url='logs://bar/baz1',
-                                     name='foo-failed',
-                                     state=TaskState(
-                                         verdict="VERDICT_FAILED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                 }),
-         ))
+  yield (
+      api.test('end-to-end execution with tests with duplicate names') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_FAILED'),
+                          task_results=[
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz',
+                                  log_url='logs://bar/baz',
+                                  name='foo-failed',
+                                  state=TaskState(
+                                      verdict="VERDICT_FAILED",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz1',
+                                  log_url='logs://bar/baz1',
+                                  name='foo-failed',
+                                  state=TaskState(
+                                      verdict="VERDICT_FAILED",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                          ],
+                      )
+              }),
+      ))
 
-  yield (api.test('end-to-end execution with failed then passed tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_PASSED_ON_RETRY'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-retried',
-                                     state=TaskState(
-                                         verdict="VERDICT_FAILED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz1',
-                                     log_url='logs://bar/baz1',
-                                     name='foo-retried',
-                                     attempt=1,
-                                     state=TaskState(
-                                         verdict="VERDICT_PASSED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                 }),
-         ))
+  yield (
+      api.test('end-to-end execution with failed then passed tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_PASSED_ON_RETRY'),
+                          task_results=[
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz',
+                                  log_url='logs://bar/baz',
+                                  name='foo-retried',
+                                  state=TaskState(
+                                      verdict="VERDICT_FAILED",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz1',
+                                  log_url='logs://bar/baz1',
+                                  name='foo-retried',
+                                  attempt=1,
+                                  state=TaskState(
+                                      verdict="VERDICT_PASSED",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                          ],
+                      )
+              }),
+      ))
 
-  yield (api.test('end-to-end execution with retried tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_PASSED_ON_RETRY'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz',
-                                     log_url='logs://bar/baz',
-                                     name='foo-retried',
-                                     state=TaskState(
-                                         verdict="VERDICT_FAILED",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                                 ExecuteResponse.TaskResult(
-                                     task_url='foo://bar/baz1',
-                                     log_url='logs://bar/baz1',
-                                     name='foo-retried',
-                                     attempt=1,
-                                     state=TaskState(
-                                         verdict="VERDICT_PASSED_ON_RETRY",
-                                         life_cycle='LIFE_CYCLE_COMPLETED'),
-                                 ),
-                             ],
-                         )
-                 }),
-         ))
+  yield (
+      api.test('end-to-end execution with retried tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_PASSED_ON_RETRY'),
+                          task_results=[
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz',
+                                  log_url='logs://bar/baz',
+                                  name='foo-retried',
+                                  state=TaskState(
+                                      verdict="VERDICT_FAILED",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz1',
+                                  log_url='logs://bar/baz1',
+                                  name='foo-retried',
+                                  attempt=1,
+                                  state=TaskState(
+                                      verdict="VERDICT_PASSED_ON_RETRY",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                          ],
+                      )
+              }),
+      ))
 
   yield (
       api.test('end-to-end execution with rejected tasks') +  #
       api.properties(
-          CrosTestPlatformProperties(
-              request=_test_request('foo'), config=_test_config('foo'))) +  #
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
       _generic_enumerate_response(api) +  #
       api.cros_test_platform.set_execute_luciexe_response(
           'execute',
@@ -1116,97 +1145,102 @@ def GenTests(api):
               }),
       ))
 
-  yield (api.test('end-to-end execution with pending tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_PENDING',
-                                             verdict='VERDICT_FAILED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url=None,
-                                     log_url=None,
-                                     name='foo-pending',
-                                     state=TaskState(
-                                         life_cycle="LIFE_CYCLE_PENDING"),
-                                 ),
-                             ],
-                         )
-                 }),
-         ))
+  yield (
+      api.test('end-to-end execution with pending tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_PENDING',
+                                          verdict='VERDICT_FAILED'),
+                          task_results=[
+                              ExecuteResponse.TaskResult(
+                                  task_url=None,
+                                  log_url=None,
+                                  name='foo-pending',
+                                  state=TaskState(
+                                      life_cycle="LIFE_CYCLE_PENDING"),
+                              ),
+                          ],
+                      )
+              }),
+      ))
 
-  yield (api.test('end-to-end execution with cancelled tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_CANCELLED',
-                                             verdict='VERDICT_FAILED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url=None,
-                                     log_url=None,
-                                     name='foo-cancelled',
-                                     state=TaskState(
-                                         life_cycle="LIFE_CYCLE_CANCELLED"),
-                                 ),
-                             ],
-                         )
-                 }),
-         ))
-  yield (api.test('end-to-end execution with aborted tasks') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _generic_enumerate_response(api) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_ABORTED',
-                                             verdict='VERDICT_FAILED'),
-                             task_results=[
-                                 ExecuteResponse.TaskResult(
-                                     task_url=None,
-                                     log_url=None,
-                                     name='foo-aborted',
-                                     state=TaskState(
-                                         life_cycle="LIFE_CYCLE_ABORTED"),
-                                 ),
-                             ],
-                         )
-                 }),
-         ))
+  yield (
+      api.test('end-to-end execution with cancelled tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_CANCELLED',
+                                          verdict='VERDICT_FAILED'),
+                          task_results=[
+                              ExecuteResponse.TaskResult(
+                                  task_url=None,
+                                  log_url=None,
+                                  name='foo-cancelled',
+                                  state=TaskState(
+                                      life_cycle="LIFE_CYCLE_CANCELLED"),
+                              ),
+                          ],
+                      )
+              }),
+      ))
+  yield (
+      api.test('end-to-end execution with aborted tasks') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _generic_enumerate_response(api) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_ABORTED',
+                                          verdict='VERDICT_FAILED'),
+                          task_results=[
+                              ExecuteResponse.TaskResult(
+                                  task_url=None,
+                                  log_url=None,
+                                  name='foo-aborted',
+                                  state=TaskState(
+                                      life_cycle="LIFE_CYCLE_ABORTED"),
+                              ),
+                          ],
+                      )
+              }),
+      ))
 
-  yield (api.test('empty enumeration') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         _empty_enumerate_response(api) +  #
-         api.expect_exception('ValueError'))
+  yield (
+      api.test('empty enumeration') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'first': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      _empty_enumerate_response(api) +  #
+      api.expect_exception('ValueError'))
 
-  yield (api.test('enumeration error') +  #
-         api.properties(
-             CrosTestPlatformProperties(
-                 request=_test_request('foo'), config=_test_config('foo'))) +  #
-         api.cros_test_platform.set_enumerate_response_json(
-             'enumerate tests',
-             '''
+  yield (
+      api.test('enumeration error') +  #
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))) +  #
+      api.cros_test_platform.set_enumerate_response_json(
+          'enumerate tests',
+          '''
   {
     "tagged_responses": {
       "default": {
@@ -1215,17 +1249,17 @@ def GenTests(api):
       }
     }
   }''',
-         ) +  #
-         api.cros_test_platform.set_execute_luciexe_response(
-             'execute',
-             ExecuteResponses(
-                 tagged_responses={
-                     'default':
-                         ExecuteResponse(
-                             state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                             verdict='VERDICT_PASSED'))
-                 }),
-         ))
+      ) +  #
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_PASSED'))
+              }),
+      ))
 
   yield (api.test('execution with two failed invocations') +  #
          api.properties(

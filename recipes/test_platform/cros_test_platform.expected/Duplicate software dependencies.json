@@ -101,8 +101,8 @@
     "name": "input validation.request.software dependencies",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@default@Errors in software_dependencies: has duplicate chromeos_build, has duplicate rw_firmware_build@@@",
-      "@@@STEP_LOG_END@default@@@"
+      "@@@STEP_LOG_LINE@first@Errors in software_dependencies: has duplicate chromeos_build, has duplicate rw_firmware_build@@@",
+      "@@@STEP_LOG_END@first@@@"
     ]
   },
   {

@@ -102,8 +102,8 @@
     "name": "input validation.request.validate scheduling parameters",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@default@Exactly one of priority and qs_account must be set. Found none.@@@",
-      "@@@STEP_LOG_END@default@@@",
+      "@@@STEP_LOG_LINE@first@Exactly one of priority and qs_account must be set. Found none.@@@",
+      "@@@STEP_LOG_END@first@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

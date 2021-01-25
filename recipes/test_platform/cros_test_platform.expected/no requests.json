@@ -64,7 +64,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Must set exactly one of \"request\" and \"requests\" in input properties (found ['requests', 'request'])"
+      "humanReason": "Must set \"requests\" in input properties (found {})"
     },
     "name": "$result"
   }

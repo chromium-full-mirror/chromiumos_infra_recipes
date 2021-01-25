@@ -88,8 +88,8 @@
     "name": "input validation.request.validate timeouts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@default@Timeout (1:00:00) is larger than maximum timeout (0:00:00)@@@",
-      "@@@STEP_LOG_END@default@@@",
+      "@@@STEP_LOG_LINE@first@Timeout (1:00:00) is larger than maximum timeout (0:00:00)@@@",
+      "@@@STEP_LOG_END@first@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
