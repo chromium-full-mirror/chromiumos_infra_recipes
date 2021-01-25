@@ -231,11 +231,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     files_by_artifact = {}
     for service in json_format.MessageToDict(resp.artifacts).values():
       for paths in service.get('artifacts', []):
-        # TODO(crbug/1034529): Once crrev.com/c/2645379 has landed, paths will
-        # be a list of Paths, rather than strings.
         files_by_artifact[paths['artifactType']] = [
-            self.m.path.relpath(f['path'] if isinstance(f, dict) else f,
-                                outpath) for f in paths['paths']
+            self.m.path.relpath(f['path'], outpath) for f in paths['paths']
         ]
 
     return files_by_artifact

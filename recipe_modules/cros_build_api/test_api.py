@@ -11,8 +11,6 @@ import json
 from recipe_engine import recipe_test_api
 from .api import CrosBuildApiApi
 
-from PB.chromiumos.common import UploadedArtifactsByService
-
 
 def jsonify(**kwargs):
   """Return the kwargs as a json string."""
@@ -56,11 +54,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             ]),
     }
 
-    def _uploaded_path(name):
-      # Handle the transition of ArtifactPaths.paths
-      desc = UploadedArtifactsByService.Legacy.ArtifactPaths.DESCRIPTOR
-      msg_type = desc.fields_by_name['paths'].message_type
-      return dict(path=name, location=2) if msg_type else name
+    _uploaded_path = lambda name: dict(path=self.path(name), location=2)
 
     # Endpoints added in 1.1.0
     ret.update({
@@ -71,10 +65,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                 artifacts=dict(
                     legacy=dict(artifacts=[
                         dict(artifact_type="EBUILD_LOGS",
-                             paths=[_uploaded_path(self.path('log.tar.gz'))])
+                             paths=[_uploaded_path('log.tar.gz')])
                     ]), toolchain=dict(artifacts=[
                         dict(artifact_type="UNVERIFIED_CHROME_LLVM_ORDERFILE",
-                             paths=[_uploaded_path(self.path('orderfile'))])
+                             paths=[_uploaded_path('orderfile')])
                     ]))),
     })
     # Legacy, deprecated as of 1.1.0

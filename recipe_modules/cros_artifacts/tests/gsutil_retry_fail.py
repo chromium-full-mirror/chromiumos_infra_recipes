@@ -6,13 +6,12 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/step',
     'cros_artifacts',
-    'cros_build_api',
 ]
 
 from PB.chromite.api import sysroot
 
+from recipe_engine.recipe_api import StepFailure
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 
@@ -20,13 +19,10 @@ from PB.chromiumos.builder_config import BuilderConfig
 def RunSteps(api):
   target = common.BuildTarget()
   target.name = 'target'
-  # TODO(crbug/1034529): Restore the more accurate version once
-  # crrev.com/c/2645379 has landed.
-  responses = api.cros_build_api.test_api.artifact_service_responses
   api.assertions.assertRaises(
-      api.step.StepFailure, api.cros_artifacts.upload_artifacts,
-      'target-postsubmit', target, BuilderConfig.Id.POSTSUBMIT,
-      'artifacts_gs_bucket', artifacts_info=common.ArtifactsByService(
+      StepFailure, api.cros_artifacts.upload_artifacts, 'target-postsubmit',
+      target, BuilderConfig.Id.POSTSUBMIT, 'artifacts_gs_bucket',
+      artifacts_info=common.ArtifactsByService(
           legacy=dict(output_artifacts=[
               dict(
                   artifact_types=[common.ArtifactsByService.Legacy.EBUILD_LOGS],
@@ -34,7 +30,9 @@ def RunSteps(api):
           ])), chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/board',
                               build_target=common.BuildTarget(name='board')),
-      test_data=responses['BundleArtifacts'])
+      test_data='{"artifacts":{"legacy":{"artifacts":[{"paths":['
+      '{"path":"@@DIR@@/foo","location":2},{"path":"@@DIR@@/bar","location":2}'
+      '],"artifactType":"EBUILD_LOGS"}]}}}')
 
 
 def attempt_download_file(api, attempt):
