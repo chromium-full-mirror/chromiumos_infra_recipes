@@ -293,6 +293,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "chromiumos/chromite",
+      "chromeos/infra/config",
       "--ignore-missing",
       "-j",
       "32",
@@ -333,6 +334,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "chromiumos/chromite",
+      "chromeos/infra/config",
       "--ignore-missing",
       "-j",
       "32",
@@ -372,7 +374,8 @@
       "--retry-fetches",
       "8",
       "--verbose",
-      "chromiumos/chromite"
+      "chromiumos/chromite",
+      "chromeos/infra/config"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -475,6 +478,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "validate release_branch"
   },
   {
     "cmd": [],

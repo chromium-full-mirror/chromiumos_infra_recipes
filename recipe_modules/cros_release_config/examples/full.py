@@ -10,11 +10,11 @@ DEPS = [
 ]
 from recipe_engine import post_process
 
-EXPECTED_WRITE = """
+EXPECTED_LEGACY_WRITE_TEMPLATE = """
   ...
   # Start of RELEASES
   RELEASES = [
-      ('release-foo.B',
+      ('{}',
        ['grunt-android-pi-pre-flight-branch'],
        '',
        [],
@@ -39,12 +39,38 @@ EXPECTED_WRITE = """
   ...
 """
 
+EXPECTED_WRITE_TEMPLATE = """builders {
+  milestone {
+    number: 1
+    branch_name: "release-bar.B"
+  }
+  build_schedule: "0 8 * * *"
+}
+builders {
+  milestone {
+    number: 2
+    branch_name: "release-baz.B"
+  }
+  build_schedule: "0 9 * * *"
+}
+builders {
+  milestone {
+    number: %d
+    branch_name: "%s"
+  }
+  build_schedule: "0 0 * * *"
+}
+"""
+
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import (
     CrosReleaseConfigProperties)
+from PB.recipe_modules.chromeos.cros_release_config.examples.full import TestProperties
+
+PROPERTIES = TestProperties
 
 
-def RunSteps(api):
-  api.cros_release_config.update_config("release-foo.B")
+def RunSteps(api, properties):
+  api.cros_release_config.update_config(properties.release_branch)
 
 
 def GenTests(api):
@@ -52,14 +78,31 @@ def GenTests(api):
       'basic',
       api.properties(
           **{
+              'release_branch':
+                  'release-R01-00001.B',
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(reviewers=["jackneus@google.com"])
           }),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update legacy config.write config/chromeos_config.py',
+          [EXPECTED_LEGACY_WRITE_TEMPLATE.format("release-R01-00001.B")]),
       api.post_process(post_process.StepCommandContains,
-                       'update legacy config.write config/chromeos_config.py',
-                       [EXPECTED_WRITE]))
+                       'update config.write release/release_builders.textpb',
+                       [EXPECTED_WRITE_TEMPLATE % (1, "release-R01-00001.B")]))
+
+  yield api.test(
+      'bad-branch',
+      api.properties(**{
+          'release_branch': 'release-foo.B',
+      }),
+      api.post_check(post_process.StepFailure, 'validate release_branch'),
+  )
 
   yield api.test(
       'no-reviewers',
+      api.properties(**{
+          'release_branch': 'release-R01-00001.B',
+      }),
       api.post_check(post_process.StepFailure, 'validate reviewers'),
   )

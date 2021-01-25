@@ -23,6 +23,10 @@
   },
   {
     "cmd": [],
+    "name": "validate release_branch"
+  },
+  {
+    "cmd": [],
     "name": "validate reviewers"
   },
   {
@@ -34,6 +38,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "chromiumos/chromite",
+      "chromeos/infra/config",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -51,6 +56,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/infra/config|src/chromeos/infra/config|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -84,7 +90,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\n  ...\n  # Start of RELEASES\n  RELEASES = [\n      ('release-foo.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n\n      ('release-R89-13729.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n\n      ('release-R88-13597.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n  ]\n  # End of RELEASES\n  ...\n",
+      "\n  ...\n  # Start of RELEASES\n  RELEASES = [\n      ('release-R01-00001.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n\n      ('release-R89-13729.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n\n      ('release-R88-13597.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n  ]\n  # End of RELEASES\n  ...\n",
       "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite/config/chromeos_config.py"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
@@ -96,7 +102,7 @@
       "@@@STEP_LOG_LINE@chromeos_config.py@  ...@@@",
       "@@@STEP_LOG_LINE@chromeos_config.py@  # Start of RELEASES@@@",
       "@@@STEP_LOG_LINE@chromeos_config.py@  RELEASES = [@@@",
-      "@@@STEP_LOG_LINE@chromeos_config.py@      ('release-foo.B',@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@      ('release-R01-00001.B',@@@",
       "@@@STEP_LOG_LINE@chromeos_config.py@       ['grunt-android-pi-pre-flight-branch'],@@@",
       "@@@STEP_LOG_LINE@chromeos_config.py@       '',@@@",
       "@@@STEP_LOG_LINE@chromeos_config.py@       [],@@@",
@@ -124,6 +130,83 @@
   },
   {
     "cmd": [],
+    "name": "update config"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config/release/release_builders.textpb",
+      "/path/to/tmp/tpb"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "update config.read release/release_builders.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-bar.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  build_schedule: \"0 8 * * *\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 2@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-baz.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  build_schedule: \"0 9 * * *\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_END@release_builders.textpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "builders {\n  milestone {\n    number: 1\n    branch_name: \"release-bar.B\"\n  }\n  build_schedule: \"0 8 * * *\"\n}\nbuilders {\n  milestone {\n    number: 2\n    branch_name: \"release-baz.B\"\n  }\n  build_schedule: \"0 9 * * *\"\n}\nbuilders {\n  milestone {\n    number: 1\n    branch_name: \"release-R01-00001.B\"\n  }\n  build_schedule: \"0 0 * * *\"\n}\n",
+      "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config/release/release_builders.textpb"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "update config.write release/release_builders.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-bar.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  build_schedule: \"0 8 * * *\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 2@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-baz.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  build_schedule: \"0 9 * * *\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R01-00001.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  build_schedule: \"0 0 * * *\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_END@release_builders.textpb@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "create CLs"
   },
   {
@@ -131,7 +214,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "brancher",
-      "chromiumos/chromite"
+      "chromiumos/chromite",
+      "chromeos/infra/config"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -176,7 +260,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Update config to include release-foo.B\n\nGenerated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=None\n",
+      "Update config to include release-R01-00001.B\n\nGenerated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=None\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
@@ -184,7 +268,7 @@
     "name": "create CLs.commit in chromiumos/chromite.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update config to include release-foo.B@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update config to include release-R01-00001.B@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
@@ -209,16 +293,9 @@
   },
   {
     "cmd": [],
-    "name": "create CLs.upload CL",
+    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create CLs.upload CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
@@ -240,9 +317,9 @@
       ]
     },
     "infra_step": true,
-    "name": "create CLs.upload CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.repo forall",
+    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/master|refs/heads/master@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -268,9 +345,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create CLs.upload CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.git_cl upload",
+    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -292,9 +369,151 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create CLs.upload CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.git_cl status",
+    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.git_cl status",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CLs.commit in chromeos/infra/config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "release/release_builders.textpb"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "create CLs.commit in chromeos/infra/config.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Update config to include release-R01-00001.B\n\nGenerated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=None\n",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "create CLs.commit in chromeos/infra/config.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Update config to include release-R01-00001.B@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Generated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@BUG=None@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@TEST=None@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "create CLs.commit in chromeos/infra/config.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromeos/infra/config.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--reviewers",
+      "jackneus@google.com",
+      "--send-mail"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromeos/infra/config.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromeos/infra/config.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
