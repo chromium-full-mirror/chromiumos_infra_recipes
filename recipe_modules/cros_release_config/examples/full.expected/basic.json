@@ -1,0 +1,303 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.ensure chroot directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate reviewers"
+  },
+  {
+    "cmd": [],
+    "name": "get project info"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "get project info.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update legacy config"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite/config/chromeos_config.py",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "infra_step": true,
+    "name": "update legacy config.read config/chromeos_config.py",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n  ...\n  # Start of RELEASES\n  RELEASES = [\n      ('release-foo.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n\n      ('release-R89-13729.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n\n      ('release-R88-13597.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n  ]\n  # End of RELEASES\n  ...\n",
+      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite/config/chromeos_config.py"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "infra_step": true,
+    "name": "update legacy config.write config/chromeos_config.py",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@  ...@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@  # Start of RELEASES@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@  RELEASES = [@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@      ('release-foo.B',@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       ['grunt-android-pi-pre-flight-branch'],@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       '',@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       [],@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       [],@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       config_lib.LUCI_BUILDER_LEGACY_RELEASE),@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@      ('release-R89-13729.B',@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       ['grunt-android-pi-pre-flight-branch'],@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       '',@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       [],@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       [],@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       config_lib.LUCI_BUILDER_LEGACY_RELEASE),@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@      ('release-R88-13597.B',@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       ['grunt-android-pi-pre-flight-branch'],@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       '',@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       [],@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       [],@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@       config_lib.LUCI_BUILDER_LEGACY_RELEASE),@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@  ]@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@  # End of RELEASES@@@",
+      "@@@STEP_LOG_LINE@chromeos_config.py@  ...@@@",
+      "@@@STEP_LOG_END@chromeos_config.py@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CLs"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "brancher",
+      "chromiumos/chromite"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create CLs.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CLs.commit in chromiumos/chromite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "config/chromeos_config.py"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "infra_step": true,
+    "name": "create CLs.commit in chromiumos/chromite.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Update config to include release-foo.B\n\nGenerated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=None\n",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "infra_step": true,
+    "name": "create CLs.commit in chromiumos/chromite.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update config to include release-foo.B@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@BUG=None@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@TEST=None@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "infra_step": true,
+    "name": "create CLs.commit in chromiumos/chromite.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CLs.upload CL",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CLs.upload CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create CLs.upload CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--reviewers",
+      "jackneus@google.com",
+      "--send-mail"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create CLs.upload CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create CLs.upload CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

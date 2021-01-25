@@ -1,0 +1,18 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_release_config;
+
+import "chromiumos/common.proto";
+
+message CrosReleaseConfigProperties {
+  // Reviewers (emails) for config CLs.
+  repeated string reviewers = 1;
+
+  // CCs (emails) for config CLs.
+  repeated string ccs = 2;
+
+}

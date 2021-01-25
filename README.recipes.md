@@ -27,6 +27,7 @@
   * [cros_paygen](#recipe_modules-cros_paygen) &mdash; API for working with Paygen and its config.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
   * [cros_release](#recipe_modules-cros_release) &mdash; An API for providing release related operations (e.
+  * [cros_release_config](#recipe_modules-cros_release_config) &mdash; An API for managing release config.
   * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_schedule](#recipe_modules-cros_schedule) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
@@ -101,6 +102,7 @@
   * [branch_create](#recipes-branch_create) &mdash; Creates a branch using `cros branch create`.
   * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
   * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
+  * [brancher](#recipes-brancher) &mdash; Recipe for creating a new ChromeOS branch.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
   * [build_firmware](#recipes-build_firmware) &mdash; Recipe that builds and tests firmware.
@@ -193,6 +195,7 @@
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
   * [cros_release:examples/full](#recipes-cros_release_examples_full)
   * [cros_release:tests/util](#recipes-cros_release_tests_util)
+  * [cros_release_config:examples/full](#recipes-cros_release_config_examples_full)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
   * [cros_relevance:examples/package_dependencies](#recipes-cros_relevance_examples_package_dependencies)
   * [cros_relevance:examples/pointless](#recipes-cros_relevance_examples_pointless)
@@ -2148,6 +2151,23 @@ Args:
 
 Returns:
   The int build id for the launched orchestrator.
+### *recipe_modules* / [cros\_release\_config](/recipe_modules/cros_release_config)
+
+[DEPS](/recipe_modules/cros_release_config/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+An API for managing release config.
+
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#45)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#54)(self, release_branch):**
+
+Creates CLs updating appropriate config files to include new release branch.
+
+While Rubik is being turned-up, this endpoint modifies both the legacy config in chromite
+as well as the Rubik starlark config in infra/config.
+
+Args:
+release_branch (str): Release branch, typically of the form "release-R89-13729.B".
 ### *recipe_modules* / [cros\_relevance](/recipe_modules/cros_relevance)
 
 [DEPS](/recipe_modules/cros_relevance/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5795,6 +5815,13 @@ Deletes a branch using `cros branch delete`.
 Renames a branch using `cros branch rename`.
 
 &mdash; **def [RunSteps](/recipes/branch_rename.py#21)(api, properties):**
+### *recipes* / [brancher](/recipes/brancher.py)
+
+[DEPS](/recipes/brancher.py#8): [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util)
+
+Recipe for creating a new ChromeOS branch.
+
+&mdash; **def [RunSteps](/recipes/brancher.py#16)(api):**
 ### *recipes* / [breakpad:examples/full](/recipe_modules/breakpad/examples/full.py)
 
 [DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -6414,6 +6441,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_release/tests/util.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#17)(api):**
+### *recipes* / [cros\_release\_config:examples/full](/recipe_modules/cros_release_config/examples/full.py)
+
+[DEPS](/recipe_modules/cros_release_config/examples/full.py#6): [cros\_release\_config](#recipe_modules-cros_release_config), [repo](#recipe_modules-repo), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#46)(api):**
 ### *recipes* / [cros\_relevance:examples/build\_plan](/recipe_modules/cros_relevance/examples/build_plan.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
