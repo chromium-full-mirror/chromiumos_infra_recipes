@@ -388,10 +388,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
                       code_coverage=self._test_with_code_coverage,
                       empty_sysroot=unit_tests.empty_sysroot,
                       testable_packages_optional=testable_packages_optional)),
-              # Allow 2.5 hours for this step because the change associated with
-              # https://bugs.chromium.org/p/chromium/issues/detail?id=1095661#c76
-              # dumps additional debug at 2 hours.
-              timeout=150 * 60,
+              # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.
+              timeout=3 * 60 * 60,
               response_lambda=self.m.cros_build_api.failed_pkg_names)
           self.m.failures.set_failed_packages(presentation,
                                               response.failed_packages)

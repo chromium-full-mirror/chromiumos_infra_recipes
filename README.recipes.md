@@ -766,7 +766,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#411)(self, config=None, failing_build=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#409)(self, config=None, failing_build=False):**
 
 Upload artifacts from the build.
 
@@ -775,7 +775,7 @@ Args:
   failing_build (bool): whether or not the build is failing, used (in part)
       to decide whether or not to upload artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#429)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#427)(self, config=None):**
 
 Upload prebuilts from the build.
 
