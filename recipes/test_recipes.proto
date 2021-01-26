@@ -7,6 +7,17 @@ syntax = "proto3";
 package recipes.chromeos.test_recipes;
 
 message TestRecipesProperties {
+  message Verifier {
+    // The name of the builder
+    string name = 1;
+
+    // Whether the builder is critical.
+    bool critical = 2;
+
+    // Whether to always launch the builder.
+    bool always_launch = 3;
+  }
+
   // A list of builders to test the CL on. Only builders in the
   // staging environment should be used.  These builders will only be launched
   // if the CL modifies the recipe, or one of its dependencies.
@@ -14,4 +25,8 @@ message TestRecipesProperties {
 
   // A list of builders to always test the CL with.
   repeated string always_launch_builders = 2;
+
+  // Verifier used to test recipes.  If set, this overrides builders and
+  // always_launch_builders.
+  repeated Verifier verifiers = 3;
 }

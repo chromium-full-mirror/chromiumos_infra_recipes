@@ -1163,7 +1163,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"1\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"fake-task-id\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
@@ -1177,7 +1177,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"namespace\": \"default-gzip\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -1192,7 +1192,7 @@
     "name": "analyze swarming results",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 tasks failed, 0 succeeded@@@",
-      "@@@STEP_LINK@[FAILED] A swarming task@https://chromium-swarm.appspot.com/task?id=1@@@",
+      "@@@STEP_LINK@[FAILED] A swarming task@https://chromium-swarm.appspot.com/task?id=fake-task-id@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

@@ -25,8 +25,11 @@ DEPS = [
     'recipe_analyze',
 ]
 
+from collections import OrderedDict
 import contextlib
 import re
+
+from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -44,6 +47,23 @@ PROJECT = 'chromeos'
 # Bucket to test in. Only the staging environment should be used.
 BUCKET = 'staging'
 
+
+def _verifier(name, critical=False, always_launch=False):
+  """Return a TestRecipesProperties.Verifier."""
+  return TestRecipesProperties.Verifier(name=name, critical=critical,
+                                        always_launch=always_launch)
+
+
+# Default verifiers.
+DEFAULT_VERIFIERS = [
+    _verifier(name='staging-Annealing', critical=True),
+    _verifier(name='staging-amd64-generic-postsubmit', critical=True),
+    _verifier(name='staging-chromite-postsubmit', critical=True),
+    _verifier(name='staging-test-manifest', critical=True),
+    _verifier(name='staging-staging-release-triggerer', critical=True,
+              always_launch=True),
+]
+
 # Note: infra/config overrides this by specifying the input property.
 DEFAULT_BUILDERS = [
     'staging-Annealing', 'staging-amd64-generic-postsubmit',
@@ -51,7 +71,7 @@ DEFAULT_BUILDERS = [
 ]
 
 # Default builders to *ALWAYS* launch.
-ALWAYS_DEFAULT = ['staging-release-triggerer']
+DEFAULT_ALWAYS = ['staging-release-triggerer']
 
 # URL for the ChromeOS CI recipes repo.
 RECIPE_REPO_HOST = 'chromium.googlesource.com'
@@ -210,9 +230,9 @@ def _launch_builders(api, test_builders, always_launch_builders, head):
           tag = buildbucket.bbagent_args.build.tags.add()
           tag.key = "test_recipes_task_id"
           tag.value = my_id
-          result = led_result.then('edit-recipe-bundle').then(
-              'edit-system', '-p', '20').then('edit', '-name',
-                                              name).then('launch').launch_result
+          led_result = led_result.then('edit-recipe-bundle').then(
+              'edit-system', '-p', '20').then('edit', '-name', name)
+          result = led_result.then('launch').launch_result
           url = 'https://{}/task?id={}'.format(result.swarming_hostname,
                                                result.task_id)
           launch_pres.links[builder] = url
@@ -339,18 +359,30 @@ def _analyze_swarming_results(api, swarming_results, led_results):
 
 def RunSteps(api, properties):
   api.step.nest('set up')
-  builders = properties.builders or DEFAULT_BUILDERS
-  always_launch_builders = properties.always_launch_builders or ALWAYS_DEFAULT
+  verifiers = properties.verifiers or DEFAULT_VERIFIERS
+  # TODO(crbug/1170835): drop properties.builders and
+  # properties.always_launch_builders and drop this block of code.
+  if True:
+    verifiers = properties.verifiers or [
+        _verifier(name=x, critical=True)
+        for x in properties.builders or DEFAULT_BUILDERS
+    ] + [
+        _verifier(name=x, critical=True, always_launch=True)
+        for x in properties.always_launch_builders or DEFAULT_ALWAYS
+    ]
+  verifier_dict = OrderedDict({v.name: v for v in verifiers})
 
-  for builder in builders:
-    if 'staging' not in builder:
+  for verifier in verifiers:
+    if not verifier.name.startswith('staging-'):
       raise ValueError(
           'only staging builders can be used (builder {} not valid)'.format(
-              builder))
+              verifier.name))
 
   if not api.buildbucket.build.input.gerrit_changes:
     raise ValueError('gerrit_changes required as input.')
 
+  builders = [v.name for v in verifiers if not v.always_launch]
+  always_launch_builders = [v.name for v in verifiers if v.always_launch]
   non_skipped_builders = _get_non_skipped_builders(api, builders)
 
   with _checkout_recipes_repo(api):
@@ -476,7 +508,7 @@ def GenTests(api):
     return api.step_data(
         'collect results.collect swarming tasks',
         api.swarming.collect([
-            api.swarming.task_result(id='1', name="A swarming task",
+            api.swarming.task_result(id='fake-task-id', name="A swarming task",
                                      failure=True)
         ]))
 
@@ -631,7 +663,9 @@ def GenTests(api):
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
       # swarming TaskResults contain a failed task.
-      collect_results_failed_test_data())
+      collect_results_failed_test_data(),
+      api.post_check(post_process.StatusFailure),
+  )
 
   yield api.test(
       'invalid_skip_builder_footer',
