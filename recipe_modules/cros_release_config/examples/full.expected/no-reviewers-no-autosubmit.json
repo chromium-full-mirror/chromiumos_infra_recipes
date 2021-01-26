@@ -27,7 +27,7 @@
   },
   {
     "cmd": [],
-    "name": "validate reviewers",
+    "name": "validate CL settings",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]

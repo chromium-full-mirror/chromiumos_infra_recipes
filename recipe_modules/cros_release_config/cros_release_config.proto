@@ -8,11 +8,18 @@ package recipe_modules.chromeos.cros_release_config;
 
 import "chromiumos/common.proto";
 
+message Email {
+  // Email address, e.g. "foo@google.com".
+  string email = 1;
+}
+
 message CrosReleaseConfigProperties {
-  // Reviewers (emails) for config CLs.
-  repeated string reviewers = 1;
+  // Reviewers for config CLs.
+  repeated Email reviewers = 1;
 
-  // CCs (emails) for config CLs.
-  repeated string ccs = 2;
+  // CCs for config CLs.
+  repeated Email ccs = 2;
 
+  // Whether or not to auto-submit CLs.
+  bool auto_submit = 3;
 }

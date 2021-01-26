@@ -53,12 +53,16 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     super(CrosReleaseConfigApi, self).__init__(**kwargs)
     self._reviewers = properties.reviewers
     self._ccs = properties.ccs
+    self._auto_submit = properties.auto_submit
 
   def _extract_milestone(self, release_branch):
     res = re.search(r'release-R(\d+)-\d+.B', release_branch)
     if res:
       return int(res.group(1))
     return None
+
+  def _get_emails(self, people):
+    return list(map(lambda k: k.email, people))
 
   def _get_builder_schedule(self, existing_builders):
     """Get a builder schedule for a new builder (in the form of a crontab).
@@ -104,11 +108,10 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         presentation.step_next = "bad release_branch"
         return
 
-    # TODO(b/177487002): Add support for auto-submit.
-    with self.m.step.nest('validate reviewers') as presentation:
-      if not self._reviewers:
+    with self.m.step.nest('validate CL settings') as presentation:
+      if not self._reviewers and not self._auto_submit:
         presentation.status = self.m.step.FAILURE
-        presentation.step_next = "no reviewers specified"
+        presentation.step_next = "no reviewers specified and auto submit is false"
         return
 
     with self.m.step.nest('get project info') as presentation:
@@ -184,4 +187,12 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
             else:
               continue  # pragma: nocover
             self.m.git.commit(commit_message)
-          self.m.gerrit.create_change(proj_path, reviewers=self._reviewers)
+          change = self.m.gerrit.create_change(
+              proj_path, reviewers=self._get_emails(self._reviewers),
+              ccs=self._get_emails(self._ccs))
+          if self._auto_submit:
+            self.m.gerrit.set_change_labels(
+                change, {
+                    self.m.gerrit.Label.BOT_COMMIT: 1,
+                    self.m.gerrit.Label.COMMIT_QUEUE: 2,
+                })

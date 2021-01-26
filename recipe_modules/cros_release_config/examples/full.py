@@ -63,7 +63,7 @@ builders {
 """
 
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import (
-    CrosReleaseConfigProperties)
+    Email, CrosReleaseConfigProperties)
 from PB.recipe_modules.chromeos.cros_release_config.examples.full import TestProperties
 
 PROPERTIES = TestProperties
@@ -81,7 +81,9 @@ def GenTests(api):
               'release_branch':
                   'release-R01-00001.B',
               '$chromeos/cros_release_config':
-                  CrosReleaseConfigProperties(reviewers=["jackneus@google.com"])
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email="jackneus@google.com")],
+                      ccs=[Email(email="engeg@google.com")])
           }),
       api.post_process(
           post_process.StepCommandContains,
@@ -100,9 +102,20 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no-reviewers',
+      'no-reviewers-no-autosubmit',
       api.properties(**{
           'release_branch': 'release-R01-00001.B',
       }),
-      api.post_check(post_process.StepFailure, 'validate reviewers'),
+      api.post_check(post_process.StepFailure, 'validate CL settings'),
+  )
+
+  yield api.test(
+      'auto-submit',
+      api.properties(
+          **{
+              'release_branch':
+                  'release-R01-00001.B',
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(auto_submit=True),
+          }),
   )

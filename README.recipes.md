@@ -2159,7 +2159,7 @@ An API for managing release config.
 
 #### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#85)(self, release_branch):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#89)(self, release_branch):**
 
 Creates CLs updating appropriate config files to include new release branch.
 
