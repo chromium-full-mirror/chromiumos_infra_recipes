@@ -6812,11 +6812,11 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#12)(api):**
 ### *recipes* / [git\_footers:examples/full](/recipe_modules/git_footers/examples/full.py)
 
-[DEPS](/recipe_modules/git_footers/examples/full.py#12): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/git_footers/examples/full.py#13): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 Test git_footers calls.
 
-&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#21)(api, invalid_cr_commit_position):**
+&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#22)(api, invalid_cr_commit_position):**
 ### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
 
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

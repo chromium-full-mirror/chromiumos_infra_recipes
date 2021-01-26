@@ -102,6 +102,8 @@ class GitFootersApi(recipe_api.RecipeApi):
                       self.test_api.step_test_data_factory('101'))
     output = self(ref, '--position-num', **kwargs)
     if not output:
+      # While we would like to fail here, if we are running on an unpinned
+      # manifest, we may not find a position.  See crbug/1170601.
       return 1
 
     assert len(output) == 1, 'expected exactly one Cr-Commit-Position footer'
