@@ -189,7 +189,7 @@ class SkylabApi(recipe_api.RecipeApi):
           self._ctp_builder,
           bucket='testplatform',
           properties={
-              'request': request_dict,
+              'requests': {'default': request_dict},
           },
           tags=self.m.cros_tags.tags(**tags),
           gerrit_changes=[],
