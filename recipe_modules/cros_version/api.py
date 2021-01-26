@@ -97,6 +97,10 @@ class Version(object):
 class CrosVersionApi(recipe_api.RecipeApi):
   """A module for steps that manipulate Chrome OS versions."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super(CrosVersionApi, self).__init__(*args, **kwargs)
+    self._remove_snapshot_from_version = properties.remove_snapshot_from_version
+
   Version = Version
 
   def read_workspace_version(self):
@@ -121,25 +125,28 @@ class CrosVersionApi(recipe_api.RecipeApi):
                            regex.pattern)
         version_args[k] = int(m.group(1))
 
-      with self.m.step.nest('read snapshot') as read_snapshot_step:
-        # If there is a snapshot isolate we are running against a custom
-        # manifest and there is no snapshot footer for us to read snapshot
-        # numbers from. In that case we replace this piece of the version
-        # with the isolate hash.
-        # TODO(b/156557792): remove isolated support after migration
-        version_snapshot = (
-            self.m.cros_source.snapshot_isolated_hash or
-            self.m.cros_source.snapshot_cas_digest)
-        if version_snapshot:
-          read_snapshot_step.step_text = 'using snapshot isolate'
-        else:
-          manifest_path = self.m.src_state.build_manifest.path
-          manifest_url = self.m.src_state.build_manifest.url
-          with self.m.context(cwd=manifest_path):
-            snapshot = self.m.src_state.gitiles_commit.id
-            self.m.git.fetch_ref(manifest_url, snapshot)
-            version_snapshot = self.m.git_footers.position_num(snapshot)
-        version_args['snapshot'] = version_snapshot
+      # This option exists because release builders need to publish artifacts
+      # to specific paths (which do not include a -$snapshot suffix on the version).
+      if not self._remove_snapshot_from_version:
+        with self.m.step.nest('read snapshot') as read_snapshot_step:
+          # If there is a snapshot isolate we are running against a custom
+          # manifest and there is no snapshot footer for us to read snapshot
+          # numbers from. In that case we replace this piece of the version
+          # with the isolate hash.
+          # TODO(b/156557792): remove isolated support after migration
+          version_snapshot = (
+              self.m.cros_source.snapshot_isolated_hash or
+              self.m.cros_source.snapshot_cas_digest)
+          if version_snapshot:
+            read_snapshot_step.step_text = 'using snapshot isolate'
+          else:
+            manifest_path = self.m.src_state.build_manifest.path
+            manifest_url = self.m.src_state.build_manifest.url
+            with self.m.context(cwd=manifest_path):
+              snapshot = self.m.src_state.gitiles_commit.id
+              self.m.git.fetch_ref(manifest_url, snapshot)
+              version_snapshot = self.m.git_footers.position_num(snapshot)
+          version_args['snapshot'] = version_snapshot
 
       version = Version(**version_args)
       presentation.step_text = 'found version: %s' % version

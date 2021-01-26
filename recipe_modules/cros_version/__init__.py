@@ -14,3 +14,8 @@ DEPS = [
     'git_footers',
     'src_state',
 ]
+
+from PB.recipe_modules.chromeos.cros_version.cros_version import (
+    CrosVersionProperties)
+
+PROPERTIES = CrosVersionProperties
