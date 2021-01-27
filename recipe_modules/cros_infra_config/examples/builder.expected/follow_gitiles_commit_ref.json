@@ -194,6 +194,14 @@
   },
   {
     "cmd": [],
+    "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"BRANCH-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/BRANCH\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "configure builder.update src_state.build_manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

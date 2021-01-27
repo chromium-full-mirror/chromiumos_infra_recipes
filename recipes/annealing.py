@@ -240,10 +240,9 @@ def RunSteps(api, properties):
                      ("Cr-Snapshot-Identifier", str(snapshot_identifier))],
             dry_run=properties.dry_run)
 
-        # Set output.properties.commit.
+        # Set output.properties.commit, this will also set the commit as the
+        # build output.
         api.src_state.gitiles_commit = internal_snapshot_commit
-        # Use new snapshot commit as the build output
-        api.buildbucket.set_output_gitiles_commit(internal_snapshot_commit)
 
       if jobs and not properties.dry_run:
         _schedule_triggered_builds(api, internal_snapshot_commit, jobs)

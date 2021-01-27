@@ -159,6 +159,8 @@ class SrcStateApi(recipe_api.RecipeApi):
         step.presentation.properties['commit'] = MessageToDict(gitiles_commit or
                                                                GitilesCommit())
         self._gitiles_commit = gitiles_commit
+        if gitiles_commit:
+          self.m.buildbucket.set_output_gitiles_commit(gitiles_commit)
 
   @property
   def gerrit_changes(self):

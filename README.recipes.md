@@ -5053,7 +5053,7 @@ Provides immutable information about the Chrome OS external manifest.
 Returns:
   (ManifestProject): information about the external manifest.
 
-&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#177)(self, gerrit_changes):**
+&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#179)(self, gerrit_changes):**
 
 Set the gerrit_changes that will be used for the build.
 
