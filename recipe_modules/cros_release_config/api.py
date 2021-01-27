@@ -44,6 +44,26 @@ LEGACY_CONFIG_TEST_DATA = """
   ...
 """
 
+TEST_DATA = ReleaseBuilders(builders=[
+    ReleaseBuilder(
+        milestone=ReleaseBuilder.Milestone(branch_name='main', number=-1),
+        build_schedule="0 1 * * *"),
+    ReleaseBuilder(
+        milestone=ReleaseBuilder.Milestone(branch_name='release-R01-00001.B',
+                                           number=1),
+        build_schedule="0 8 * * *"),
+    ReleaseBuilder(
+        milestone=ReleaseBuilder.Milestone(branch_name='release-R02-00002.B',
+                                           number=2),
+        build_schedule="0 9 * * *"),
+    ReleaseBuilder(
+        milestone=ReleaseBuilder.Milestone(branch_name='release-R03-00003.B',
+                                           number=3),
+        build_schedule="0 10 * * *"),
+])
+
+RELEASE_BRANCH_REGEX = r'release-R(\d+)-\d+.B'
+
 
 class CrosReleaseConfigApi(recipe_api.RecipeApi):
   LEGACY_CONFIG_PROJECT = "chromiumos/chromite"
@@ -54,9 +74,10 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     self._reviewers = properties.reviewers
     self._ccs = properties.ccs
     self._auto_submit = properties.auto_submit
+    self._keep_n_milestones = properties.keep_n_milestones
 
   def _extract_milestone(self, release_branch):
-    res = re.search(r'release-R(\d+)-\d+.B', release_branch)
+    res = re.search(RELEASE_BRANCH_REGEX, release_branch)
     if res:
       return int(res.group(1))
     return None
@@ -85,6 +106,32 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         schedule = '0 %d * * *' % hour
         break
     return schedule
+
+  def _prune_builders(self, builders):
+    """ Prune the list of builders.
+
+    Prunes down to keep_n_milestones builders for release branches.
+    ToT, LTS, or other builders are not counted.
+
+    Args:
+    builders (ReleaseBuilders): existing release builders.
+    """
+    if not self._keep_n_milestones:
+      return builders
+
+    to_keep = []
+    true_release_builders = []
+
+    for builder in builders.builders:
+      if re.match(RELEASE_BRANCH_REGEX, builder.milestone.branch_name):
+        true_release_builders.append(builder)
+      else:
+        to_keep.append(builder)
+
+    to_keep.extend(
+        sorted(true_release_builders, key=lambda k: k.milestone.number,
+               reverse=True)[:self._keep_n_milestones])
+    return ReleaseBuilders(builders=to_keep)
 
   def update_config(self, release_branch):
     """Creates CLs updating appropriate config files to include new release branch.
@@ -140,18 +187,10 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       with self.m.context(cwd=config_path):
         file_path = config_path.join(CONFIG)
 
-        release_builders = self.m.file.read_proto(
-            'read {}'.format(CONFIG), file_path, ReleaseBuilders, 'TEXTPB',
-            test_proto=ReleaseBuilders(builders=[
-                ReleaseBuilder(
-                    milestone=ReleaseBuilder.Milestone(
-                        branch_name='release-bar.B', number=1),
-                    build_schedule="0 8 * * *"),
-                ReleaseBuilder(
-                    milestone=ReleaseBuilder.Milestone(
-                        branch_name='release-baz.B', number=2),
-                    build_schedule="0 9 * * *"),
-            ]))
+        release_builders = self.m.file.read_proto('read {}'.format(CONFIG),
+                                                  file_path, ReleaseBuilders,
+                                                  'TEXTPB',
+                                                  test_proto=TEST_DATA)
         # Append new builder for specified branch.
         new_builder = ReleaseBuilder(
             milestone=ReleaseBuilder.Milestone(branch_name=release_branch,
@@ -159,6 +198,8 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
             build_schedule=self._get_builder_schedule(release_builders))
         release_builders = ReleaseBuilders(
             builders=list(release_builders.builders) + [new_builder])
+        # TODO(b/177487002): Add pruning support for legacy config.
+        release_builders = self._prune_builders(release_builders)
         self.m.file.write_proto('write {}'.format(CONFIG), file_path,
                                 release_builders, 'TEXTPB')
 

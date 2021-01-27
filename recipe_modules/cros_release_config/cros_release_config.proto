@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_release_config;
 
-import "chromiumos/common.proto";
-
 message Email {
   // Email address, e.g. "foo@google.com".
   string email = 1;
@@ -22,4 +20,10 @@ message CrosReleaseConfigProperties {
 
   // Whether or not to auto-submit CLs.
   bool auto_submit = 3;
+
+  // How many milestones to maintain release builders for.
+  // If set and a newly added builder exceeds this number,
+  // the builders for the release branches will be pruned in
+  // ascending order of milestone number.
+  int32 keep_n_milestones = 4;
 }

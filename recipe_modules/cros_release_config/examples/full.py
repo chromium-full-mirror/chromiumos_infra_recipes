@@ -41,17 +41,31 @@ EXPECTED_LEGACY_WRITE_TEMPLATE = """
 
 EXPECTED_WRITE_TEMPLATE = """builders {
   milestone {
+    number: -1
+    branch_name: "main"
+  }
+  build_schedule: "0 1 * * *"
+}
+builders {
+  milestone {
     number: 1
-    branch_name: "release-bar.B"
+    branch_name: "release-R01-00001.B"
   }
   build_schedule: "0 8 * * *"
 }
 builders {
   milestone {
     number: 2
-    branch_name: "release-baz.B"
+    branch_name: "release-R02-00002.B"
   }
   build_schedule: "0 9 * * *"
+}
+builders {
+  milestone {
+    number: 3
+    branch_name: "release-R03-00003.B"
+  }
+  build_schedule: "0 10 * * *"
 }
 builders {
   milestone {
@@ -59,6 +73,36 @@ builders {
     branch_name: "%s"
   }
   build_schedule: "0 0 * * *"
+}
+"""
+
+EXPECTED_WRITE_PRUNED_TEMPLATE = """builders {
+  milestone {
+    number: -1
+    branch_name: "main"
+  }
+  build_schedule: "0 1 * * *"
+}
+builders {
+  milestone {
+    number: %d
+    branch_name: "%s"
+  }
+  build_schedule: "0 0 * * *"
+}
+builders {
+  milestone {
+    number: 3
+    branch_name: "release-R03-00003.B"
+  }
+  build_schedule: "0 10 * * *"
+}
+builders {
+  milestone {
+    number: 2
+    branch_name: "release-R02-00002.B"
+  }
+  build_schedule: "0 9 * * *"
 }
 """
 
@@ -74,24 +118,26 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
+  branch = 'release-R04-00004.B'
+  branch_milestone = 4
+
   yield api.test(
       'basic',
       api.properties(
           **{
               'release_branch':
-                  'release-R01-00001.B',
+                  branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(
                       reviewers=[Email(email="jackneus@google.com")],
                       ccs=[Email(email="engeg@google.com")])
           }),
-      api.post_process(
-          post_process.StepCommandContains,
-          'update legacy config.write config/chromeos_config.py',
-          [EXPECTED_LEGACY_WRITE_TEMPLATE.format("release-R01-00001.B")]),
+      api.post_process(post_process.StepCommandContains,
+                       'update legacy config.write config/chromeos_config.py',
+                       [EXPECTED_LEGACY_WRITE_TEMPLATE.format(branch)]),
       api.post_process(post_process.StepCommandContains,
                        'update config.write release/release_builders.textpb',
-                       [EXPECTED_WRITE_TEMPLATE % (1, "release-R01-00001.B")]))
+                       [EXPECTED_WRITE_TEMPLATE % (branch_milestone, branch)]))
 
   yield api.test(
       'bad-branch',
@@ -104,7 +150,7 @@ def GenTests(api):
   yield api.test(
       'no-reviewers-no-autosubmit',
       api.properties(**{
-          'release_branch': 'release-R01-00001.B',
+          'release_branch': branch,
       }),
       api.post_check(post_process.StepFailure, 'validate CL settings'),
   )
@@ -114,8 +160,23 @@ def GenTests(api):
       api.properties(
           **{
               'release_branch':
-                  'release-R01-00001.B',
+                  branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(auto_submit=True),
           }),
   )
+
+  yield api.test(
+      'prune',
+      api.properties(
+          **{
+              'release_branch':
+                  branch,
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(auto_submit=True,
+                                              keep_n_milestones=3),
+          }),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update config.write release/release_builders.textpb',
+          [EXPECTED_WRITE_PRUNED_TEMPLATE % (branch_milestone, branch)]))
