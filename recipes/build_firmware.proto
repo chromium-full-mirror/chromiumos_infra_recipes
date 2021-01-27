@@ -11,4 +11,8 @@ import "chromite/api/firmware.proto";
 message BuildFirmwareProperties {
   // Firmware location.  See chromite.api.firmware.
   chromite.api.FwLocation firmware_location = 1;
+
+  // Whether upload_artifacts works for this builder.
+  // TODO(b:177907747): Remove this.
+  bool working_artifacts = 2;
 }

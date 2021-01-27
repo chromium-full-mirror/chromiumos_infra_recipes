@@ -13,6 +13,7 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api import artifacts
+from PB.chromite.api import firmware
 from PB.chromite.api import toolchain
 from PB.chromite.api.image import PushImageRequest, PushImageResponse
 from PB.chromiumos.builder_config import BuilderConfig
@@ -173,6 +174,35 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ret[artifact_name] = artifact_files
     return ret
 
+  def _bundle_firmware(self, chroot, path, artifact_info):
+    """Bundle toolchain artifacts.
+
+    Batch handler for toolchain artifact types.
+
+    Args:
+      chroot (Chroot): The chroot to use.
+      sysroot (Sysroot): The sysroot to use.
+      path (Path): Path to write bundled artifacts to.
+      artifact_info (ArtifactsByService.Firmware): firmware artifact info.
+
+    Returns:
+      dict(artifact_name: list(artifact paths)).  Paths are absolute.
+    """
+    ret = {}
+    if self.m.cros_build_api.has_endpoint(self.m.cros_build_api.FirmwareService,
+                                          'BundleFirmwareArtifacts'):
+      req = firmware.BundleFirmwareArtifactsRequest(
+          chroot=chroot, result_path=self._result_path(path),
+          artifacts=artifact_info)
+      resp = self.m.cros_build_api.FirmwareService.BundleFirmwareArtifacts(
+          req, infra_step=True)
+      for art_info in resp.artifacts.artifacts:
+        artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(
+            art_info.artifact_type)
+        artifact_files = [art.path for art in art_info.paths]
+        ret[artifact_name] = artifact_files
+    return ret
+
   def _bundle_artifacts(self, chroot, sysroot, artifacts_info, outpath,
                         test_data=None):
     """Defer to the build API to bundle the given artifact.
@@ -192,13 +222,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     # TODO(crbug/1034529): The migration path has us calling both legacy and
     # ArtifactsService/Get, and merging the results. Eventually, the legacy
-    # endpoints will be gone from all release branches, and we will be able to
-    # remove the calls completely.
+    # endpoints will be gone from all release branches that we need to support,
+    # and we can remove the calls completely.
     #
     # The Build API will only return artifacts for a given artifact_type in one
     # of the endpoints, never both.
-    ret = self._bundle_artifacts_legacy(chroot, sysroot, artifacts_info,
-                                        outpath)
+    ret = self._bundle_artifacts_individually(chroot, sysroot, artifacts_info,
+                                              outpath)
     ret.update(
         self._bundle_artifacts_by_service(chroot, sysroot, artifacts_info,
                                           outpath, test_data))
@@ -254,8 +284,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     return files_by_artifact
 
-  def _bundle_artifacts_legacy(self, chroot, sysroot, artifacts_info, outpath):
-    """Defer to the build API (version 1.0.0) to bundle the given artifact.
+  def _bundle_artifacts_individually(self, chroot, sysroot, artifacts_info,
+                                     outpath):
+    """Call the per-artifact_type bundle functions.
+
+    These are transitioning to ArtifactsService/BundleArtifacts (and
+    _bundle_artifacts_by_service above), but will need to remain while any
+    branches need that support.
 
     Args:
       chroot (Chroot): chroot to use
@@ -272,12 +307,18 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       for art_info in getattr(service, 'output_artifacts', []):
         if service.DESCRIPTOR.name == 'Toolchain':
           funcs[self._bundle_toolchain].extend(art_info.artifact_types)
-        else:
+        elif service.DESCRIPTOR.name != 'Firmware':
           # If it's not Toolchain, then it's legacy.  1.0.0 only supports those
           # two services having artifacts.
           funcs[self._bundle_legacy_artifacts].extend(art_info.artifact_types)
 
     files = {}
+
+    # Handle BundleFirmwareArtifacts separately.
+    if artifacts_info.firmware.output_artifacts:
+      files.update(
+          self._bundle_firmware(chroot, outpath, artifacts_info.firmware))
+
     try:
       # Sorting is done here only to give us consistency in the expected.json
       # for our tests.

@@ -31,7 +31,8 @@ def RunSteps(api, properties):
       legacy=common.ArtifactsByService.Legacy(output_artifacts=[
           common.ArtifactsByService.Legacy.ArtifactInfo(
               artifact_types=[common.ArtifactsByService.Legacy.EBUILD_LOGS])
-      ]), toolchain=common.ArtifactsByService.Toolchain(output_artifacts=[
+      ]),
+      toolchain=common.ArtifactsByService.Toolchain(output_artifacts=[
           common.ArtifactsByService.Toolchain.ArtifactInfo(
               artifact_types=[
                   common.ArtifactsByService.Toolchain
@@ -40,7 +41,15 @@ def RunSteps(api, properties):
               acl_name='public-read', publish_condition=common
               .ArtifactsByService.PUBLISH_ALWAYS if properties
               .publish_always else common.ArtifactsByService.PUBLISH_ON_SUCCESS)
-      ]))
+      ]),
+      firmware=common.ArtifactsByService.Firmware(output_artifacts=[
+          common.ArtifactsByService.Firmware.ArtifactInfo(
+              artifact_types=[
+                  common.ArtifactsByService.Firmware.FIRMWARE_TARBALL,
+                  common.ArtifactsByService.Firmware.FIRMWARE_TARBALL_INFO,
+              ], acl_name='public-read')
+      ]),
+  )
 
   # This verifies that we can upload artifacts, some of which get an acl
   # applied.  Legacy and Toolchain artifacts get us coverage of both paths in
