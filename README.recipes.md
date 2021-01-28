@@ -39,6 +39,7 @@
   * [cros_test_platform](#recipe_modules-cros_test_platform)
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess)
   * [cros_test_proctor](#recipe_modules-cros_test_proctor)
+  * [cros_test_runner](#recipe_modules-cros_test_runner)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [cts_results_archive](#recipe_modules-cts_results_archive) &mdash; API to archive test results to CTS specific buckets.
   * [disk_usage](#recipe_modules-disk_usage)
@@ -221,6 +222,7 @@
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full)
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full)
   * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full)
+  * [cros_test_runner:examples/full](#recipes-cros_test_runner_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full)
@@ -2945,6 +2947,26 @@ Args:
 
 Returns
   list[failures.Failure]: failures encountered running tests
+### *recipe_modules* / [cros\_test\_runner](/recipe_modules/cros_test_runner)
+
+[DEPS](/recipe_modules/cros_test_runner/__init__.py#8): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [CrosTestRunnerCommand](/recipe_modules/cros_test_runner/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for issuing cros_test_runner commands
+
+&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_runner/api.py#91)(self):**
+
+Return the CTP CIPD package version (e.g. prod/staging/latest).
+
+&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_runner/api.py#22)(self, request):**
+
+Execute work via cros_test_runner luciexe binary.
+
+Args:
+  request: a RunTestsRequest.
+
+Returns: RunTestsResponse.
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6580,6 +6602,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_test_proctor/examples/full.py#22): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#43)(api, need_tests_builds_serialized):**
+### *recipes* / [cros\_test\_runner:examples/full](/recipe_modules/cros_test_runner/examples/full.py)
+
+[DEPS](/recipe_modules/cros_test_runner/examples/full.py#6): [cros\_test\_runner](#recipe_modules-cros_test_runner), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_runner/examples/full.py#18)(api):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -7423,13 +7450,13 @@ Raises:
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#27): [cros\_tags](#recipe_modules-cros_tags), [cts\_results\_archive](#recipe_modules-cts_results_archive), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#28): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#669)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#677)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#225)(api, phosphorus_config, gs_dir, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#227)(api, phosphorus_config, gs_dir, result):**
 
 Archive all test logs to Google Storage.
 
@@ -7442,7 +7469,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#575)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#577)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -7458,7 +7485,7 @@ Returns:
 Raises:
 * InfraFailure.
 
-&mdash; **def [fetch\_crashes](/recipes/test_platform/test_runner.py#132)(api, config=None, request=None, output_config=None, dut_hostname='', upload_crashes=False, use_staging=False):**
+&mdash; **def [fetch\_crashes](/recipes/test_platform/test_runner.py#134)(api, config=None, request=None, output_config=None, dut_hostname='', upload_crashes=False, use_staging=False):**
 
 Fetch crashes from the DUT via TLS API.
 
@@ -7474,7 +7501,7 @@ Args:
 Returns:
   * phosphorus.fetchcrashes.FetchCrashes
 
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#289)(api, results_dir=''):**
+&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#291)(api, results_dir=''):**
 
 Parse test results.
 
@@ -7486,7 +7513,7 @@ Returns: skylab_test_runner.Result.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [prejob](/recipes/test_platform/test_runner.py#59)(api, config=None, request=None, dut_hostname='', load_response=None, max_duration_seconds=None):**
+&mdash; **def [prejob](/recipes/test_platform/test_runner.py#61)(api, config=None, request=None, dut_hostname='', load_response=None, max_duration_seconds=None):**
 
 Run a prejob (e.g. provision) against the DUT via `autoserv`.
 
@@ -7503,7 +7530,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#544)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#546)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -7513,7 +7540,7 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#96)(api, config=None, request=None, output_config=None, dut_hostname='', test=None, logs_gs_dir=''):**
+&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#98)(api, config=None, request=None, output_config=None, dut_hostname='', test=None, logs_gs_dir=''):**
 
 Run a test against the DUT via `autoserv`.
 
@@ -7532,14 +7559,14 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#375)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#377)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#305)(api, prejob_response, run_test_responses, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#307)(api, prejob_response, run_test_responses, result):**
 
 Display test cases as recipe substeps.
 
@@ -7548,7 +7575,7 @@ Args:
   * run_test_responses: dictionary of phosphorus.runtest.RunTestResponse instances.
   * result: skylab_test_runner.Result instance.
 
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#274)(api, config=None):**
+&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#276)(api, config=None):**
 
 Upload test results to TKO via `tko/parse`.
 
@@ -7558,7 +7585,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#45)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#47)(api, test):**
 
 Validate the TestRunnerProperties.
 

@@ -18,6 +18,7 @@ from PB.test_platform import phosphorus
 from PB.test_platform import skylab_local_state
 from PB.test_platform.skylab_test_runner.result import Result
 from PB.test_platform.skylab_test_runner.request import Request
+from PB.test_platform.skylab_test_runner.steps.test_execution import RunTestsRequest, RunTestsResponse
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
@@ -33,6 +34,7 @@ DEPS = [
     'recipe_engine/time',
     'recipe_engine/uuid',
     'cros_tags',
+    'cros_test_runner',
     'cts_results_archive',
     'phosphorus',
     'result_flow',
@@ -590,6 +592,12 @@ def execution_steps(api, properties):
   tests = _collect_tests(properties.request)
   autotest_results = {}
   run_test_responses = {}
+
+  # Experimental code path for using the new test_runner binary.
+  # Leave this commented out until it's ready. It's just here for easy led
+  # use at this point.
+  # api.cros_test_runner.execute_luciexe(
+  #     RunTestsRequest(request=properties.request, config=properties.config))
 
   with api.step.nest('inputs') as step:
     step.presentation.logs['request'] = json_format.MessageToJson(
