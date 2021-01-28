@@ -1,10 +1,43 @@
 [
   {
     "cmd": [],
-    "name": "execution steps",
+    "name": "inputs",
     "~followup_annotations": [
-      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/12345@@@"
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"test\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotest\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"keyvals\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"key1\": \"value1\"@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"testArgs\": \"foo=bar\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"displayName\": \"fancy_name\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"dummy_name\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"isClientTest\": true@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"parentBuildId\": \"12345\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"prejob\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"provisionableLabels\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"label1\": \"value1\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@  \"output\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"logDataGsRoot\": \"gs://chromeos-test-logs/common-env\"@@@",
+      "@@@STEP_LOG_LINE@config@  }, @@@",
+      "@@@STEP_LOG_LINE@config@  \"resultFlowPubsub\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@config@  }@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@",
+      "@@@STEP_LINK@parent CTP@https://cr-buildbucket.appspot.com/build/12345@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps"
   },
   {
     "cmd": [],

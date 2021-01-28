@@ -1,6 +1,39 @@
 [
   {
     "cmd": [],
+    "name": "inputs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"test\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotest\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"displayName\": \"name\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@  \"output\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"logDataGsRoot\": \"gs://chromeos-test-logs/common-env\"@@@",
+      "@@@STEP_LOG_LINE@config@  }, @@@",
+      "@@@STEP_LOG_LINE@config@  \"harness\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"prejobDeadlineSeconds\": \"3600\"@@@",
+      "@@@STEP_LOG_LINE@config@  }, @@@",
+      "@@@STEP_LOG_LINE@config@  \"resultFlowPubsub\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@config@  }, @@@",
+      "@@@STEP_LOG_LINE@config@  \"lab\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"crosInventoryService\": \"inv-service\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"adminService\": \"foo-service\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@config@  }@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
@@ -38,9 +71,9 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 663, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 670, in RunSteps",
       "    prejob_response, run_test_responses, result = execution_steps(api, properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 612, in execution_steps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 619, in execution_steps",
       "    validate_request(api, test)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 56, in validate_request",
       "    raise ValueError(\"Test name must be specified\")",

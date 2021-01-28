@@ -324,6 +324,7 @@ def summarize_results(api, prejob_response, run_test_responses, result):
       with api.step.nest(test_id):
         for tc in ar.test_cases:
           with api.step.nest(tc.name) as step:
+
             if tc.verdict != Result.Autotest.TestCase.VERDICT_PASS:
               step.presentation.status = api.step.FAILURE
             if tc.human_readable_summary:
@@ -590,14 +591,20 @@ def execution_steps(api, properties):
   autotest_results = {}
   run_test_responses = {}
 
-  with api.step.nest('execution steps') as step:
+  with api.step.nest('inputs') as step:
+    step.presentation.logs['request'] = json_format.MessageToJson(
+        properties.request)
+    step.presentation.logs['config'] = json_format.MessageToJson(
+        properties.config)
     build = api.buildbucket.build
     # Use parent_build_id rather than the related parent_buildbucket_id tag,
     # since that doesn't seem to work here. https://crbug.com/1171511
     if properties.request.parent_build_id:
-      step.links['parent link'] = (
+      step.links['parent CTP'] = (
           api.buildbucket.build_url(
               build_id=properties.request.parent_build_id))
+
+  with api.step.nest('execution steps') as step:
     publish_to_result_flow(api, properties.config, properties.request)
     dut_hostname = api.phosphorus.read_dut_hostname()
 
