@@ -87,7 +87,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "outdated skylab tool version; please update your local skylab CLI via `skylab update`."
+      "humanReason": "this build was launched with an outdated version of the skylab tool. Please update via `skylab update` and try again."
     },
     "name": "$result"
   }

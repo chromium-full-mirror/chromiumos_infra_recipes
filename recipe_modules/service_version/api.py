@@ -22,5 +22,5 @@ class ServiceVersionCommand(recipe_api.RecipeApi):
       is_valid = self._version and self._version.skylab_tool >= _MINIMUM_SKYLAB_VERSION
       if not is_valid:
         raise self.m.step.StepFailure(
-            'outdated skylab tool version; please update your local skylab CLI via `skylab update`.'
-        )
+            'this build was launched with an outdated version of the skylab '
+            'tool. Please update via `skylab update` and try again.')
