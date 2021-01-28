@@ -592,11 +592,12 @@ def execution_steps(api, properties):
 
   with api.step.nest('execution steps') as step:
     build = api.buildbucket.build
-    # Providing link to parent if parent tag exists.
-    parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
-    if parent:
+    # Use parent_build_id rather than the related parent_buildbucket_id tag,
+    # since that doesn't seem to work here. https://crbug.com/1171511
+    if properties.request.parent_build_id:
       step.links['parent link'] = (
-          api.buildbucket.build_url(build_id=parent[0]))
+          api.buildbucket.build_url(
+              build_id=properties.request.parent_build_id))
     publish_to_result_flow(api, properties.config, properties.request)
     dut_hostname = api.phosphorus.read_dut_hostname()
 
@@ -777,7 +778,8 @@ def GenTests(api):
                 'is_client_test': True,
                 'display_name': 'fancy_name'
             }
-        }
+        },
+        'parent_build_id': 12345,
     }
 
   def _canned_request_missing_name():
@@ -869,7 +871,7 @@ def GenTests(api):
 
   yield api.test(
       'success',
-      _set_build_id(id=42, tags={'parent_buildbucket_id': '1234'}),
+      _set_build_id(id=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),

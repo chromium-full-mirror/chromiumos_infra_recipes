@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "execution steps"
+    "name": "execution steps",
+    "~followup_annotations": [
+      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/12345@@@"
+    ]
   },
   {
     "cmd": [],
