@@ -105,6 +105,9 @@ def RunSteps(api):
       'FirmwareService': {
           'BuildAllTotFirmware': firmware.BuildAllTotFirmwareResponse,
           'TestAllTotFirmware': firmware.TestAllTotFirmwareResponse,
+          'BuildAllFirmware': firmware.BuildAllFirmwareResponse,
+          'TestAllFirmware': firmware.TestAllFirmwareResponse,
+          'BundleFirmwareArtifacts': firmware.BundleFirmwareArtifactsResponse,
       },
       'ImageService': {
           'Create': image.CreateImageResult,

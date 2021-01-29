@@ -161,13 +161,37 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   @property
   def firmware_service_responses(self):
     """Generate responses for FirmwareService."""
-    responses = {}
-    responses['BuildAllTotFirmware'] = jsonify(
-        # TODO(b/172268309): Provide sample data.
-    )
-    responses['TestAllTotFirmware'] = jsonify(
-        # TODO(b/172268309): Provide sample data.
-    )
+    _uploaded_path = lambda name: dict(path=self.path(name), location=2)
+
+    responses = {
+        'BuildAllTotFirmware':
+            jsonify(
+                # TODO(b/172268309): Provide sample data.
+            ),
+        'TestAllTotFirmware':
+            jsonify(
+                # TODO(b/172268309): Provide sample data.
+            ),
+        'BuildAllFirmware':
+            jsonify(
+                # TODO(b/177907747): Provide sample data.
+            ),
+        'TestAllFirmware':
+            jsonify(
+                # TODO(b/177907747): Provide sample data.
+            ),
+        'BundleFirmwareArtifacts':
+            jsonify(
+                artifacts=dict(artifacts=[
+                    dict(artifact_type="FIRMWARE_TARBALL",
+                         location="PLATFORM_EC",
+                         paths=[_uploaded_path('from_source.tar.bz2')]),
+                    dict(artifact_type="FIRMWARE_TARBALL_INFO",
+                         location="PLATFORM_EC",
+                         paths=[_uploaded_path('fw_metadata.json')])
+                ]),
+            )
+    }
     return responses
 
   @property
