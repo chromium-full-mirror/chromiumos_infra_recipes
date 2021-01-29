@@ -5,8 +5,11 @@
 
 """An API for managing release config."""
 
-from recipe_engine import recipe_api
+from collections import namedtuple
 import re
+
+from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.common import ReleaseBuilder, ReleaseBuilders
 
@@ -20,28 +23,6 @@ LEGACY_RELEASE_BLOCK_TEMPLATE = """
        [],
        [],
        config_lib.LUCI_BUILDER_LEGACY_RELEASE),
-"""
-
-LEGACY_CONFIG_TEST_DATA = """
-  ...
-  # Start of RELEASES
-  RELEASES = [
-      ('release-R89-13729.B',
-       ['grunt-android-pi-pre-flight-branch'],
-       '',
-       [],
-       [],
-       config_lib.LUCI_BUILDER_LEGACY_RELEASE),
-
-      ('release-R88-13597.B',
-       ['grunt-android-pi-pre-flight-branch'],
-       '',
-       [],
-       [],
-       config_lib.LUCI_BUILDER_LEGACY_RELEASE),
-  ]
-  # End of RELEASES
-  ...
 """
 
 TEST_DATA = ReleaseBuilders(builders=[
@@ -133,14 +114,91 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
                reverse=True)[:self._keep_n_milestones])
     return ReleaseBuilders(builders=to_keep)
 
-  def update_config(self, release_branch):
-    """Creates CLs updating appropriate config files to include new release branch.
+  def _prune_legacy_config(self, file_contents):
+    """ Prune the list of builders in legacy config.
 
-    While Rubik is being turned-up, this endpoint modifies both the legacy config in chromite
-    as well as the Rubik starlark config in infra/config.
+    Prunes down to keep_n_milestones builders for release branches.
+    Builders preceded by a '# BOT-TAG:NO_PRUNE' comment will not be counted
+    towards the quota, nor will non-release branches (e.g. main).
 
     Args:
-    release_branch (str): Release branch, typically of the form "release-R89-13729.B".
+    file_contents (string): Legacy config file contents.
+    """
+    if not self._keep_n_milestones:
+      return file_contents
+
+    with self.m.step.nest("prune legacy config"):
+      LEGACY_REGEX = r'# BOT-TAG:RELEASES_START.*\n'\
+        r'(?P<releases>(\n|.)*)# BOT-TAG:RELEASES_END'
+      res = re.search(LEGACY_REGEX, file_contents)
+      if not res:
+        raise StepFailure("malformated legacy config")
+
+      # Isolate 'RELEASES = [' section.
+      legacy_block = res.group('releases').strip()
+      if not legacy_block.startswith(
+          "RELEASES = [") or not legacy_block.endswith("]"):
+        raise StepFailure("malformated legacy config")
+
+      builder_block = legacy_block[len("RELEASES = ["):-1].strip()
+      builders = map(lambda x: x, builder_block.split("),"))
+      # Filter out empty strings.
+      builders = filter(lambda x: x, builders)
+      # Add back ), to end of blocks.
+      builders = list(map(lambda x: x + "),", builders))
+
+      def get_builder_info(builder_text):
+        # This regex collects any leading comments as well as the branch name
+        # (which should be the first item in the tuple).
+        BRANCH_NAME_REGEX = r'(?P<cmts>(#.*\s*)*)\s*\n*\(\'(?P<branch>.*)\''
+        res = re.search(BRANCH_NAME_REGEX, builder_text)
+        if not res:
+          return None
+        comment_block = (res.group('cmts') or "").strip()
+        comments = list(map(lambda x: x.strip(), comment_block.split('\n')))
+        BuilderInfo = namedtuple('BuilderInfo',
+                                 ['comments', 'branch_name', 'milestone'])
+        branch_name = res.group('branch')
+        milestone = -1
+        if re.match(RELEASE_BRANCH_REGEX, branch_name):
+          milestone = self._extract_milestone(branch_name)
+        # e.g. (['# foo', '# BOT-TAG:NO_PRUNE'], 'release-R88-13597.B', 88)
+        return BuilderInfo(comments=comments, branch_name=branch_name,
+                           milestone=milestone)
+
+      pruneable = []
+      builder_info = {}
+      for builder in builders:
+        info = get_builder_info(builder)
+        if not info:
+          raise StepFailure("malformated legacy config")
+        builder_info[builder] = info
+        if info.milestone > 0 and "# BOT-TAG:NO_PRUNE" not in info.comments:
+          pruneable.append(builder)
+
+      if len(pruneable) <= self._keep_n_milestones:
+        return file_contents
+
+      pruneable = sorted(pruneable, key=lambda b: builder_info[b].milestone)
+      # Prune appopriate number of builders in ascending order of milestone.
+      for i in range(len(pruneable) - self._keep_n_milestones):
+        new_legacy_block = legacy_block.replace(pruneable[i], '')
+        file_contents = file_contents.replace(legacy_block, new_legacy_block)
+        legacy_block = new_legacy_block
+      # Clean up leading newlines in case we pruned the leading block.
+      file_contents = re.sub(r'RELEASES = \[(\s*\n)*', 'RELEASES = [\n',
+                             file_contents)
+
+      return file_contents
+
+  def update_config(self, release_branch):
+    """Creates CLs updating config file to include new release branch.
+
+    While Rubik is being turned-up, this endpoint modifies both the legacy
+    config in chromite as well as the Rubik starlark config in infra/config.
+
+    Args:
+    release_branch (str): Release branch, e.g. "release-R89-13729.B".
 
     """
     workpath = self.m.cros_source.workspace_path
@@ -148,20 +206,16 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     projects = [self.LEGACY_CONFIG_PROJECT, self.CONFIG_PROJECT]
     project_path = {}
 
-    with self.m.step.nest('validate release_branch') as presentation:
+    with self.m.step.nest('validate release_branch'):
       milestone = self._extract_milestone(release_branch)
       if not milestone:
-        presentation.status = self.m.step.FAILURE
-        presentation.step_next = "bad release_branch"
-        return
+        raise StepFailure("bad release_branch")
 
-    with self.m.step.nest('validate CL settings') as presentation:
+    with self.m.step.nest('validate CL settings'):
       if not self._reviewers and not self._auto_submit:
-        presentation.status = self.m.step.FAILURE
-        presentation.step_next = "no reviewers specified and auto submit is false"
-        return
+        raise StepFailure("no reviewers specified and auto submit is false")
 
-    with self.m.step.nest('get project info') as presentation:
+    with self.m.step.nest('get project info'):
       with self.m.context(cwd=workpath):
         project_infos = self.m.repo.project_infos(projects=projects)
         for project in project_infos:
@@ -172,13 +226,13 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       with self.m.context(cwd=legacy_path):
         file_path = legacy_path.join(LEGACY_CONFIG)
         contents = self.m.file.read_raw('read {}'.format(LEGACY_CONFIG),
-                                        file_path,
-                                        test_data=LEGACY_CONFIG_TEST_DATA)
+                                        file_path)
 
         p = re.compile(r'RELEASES = \[\n')
         contents = p.sub(
             "RELEASES = [{}\n".format(
                 LEGACY_RELEASE_BLOCK_TEMPLATE.format(release_branch)), contents)
+        contents = self._prune_legacy_config(contents)
         self.m.file.write_raw('write {}'.format(LEGACY_CONFIG), file_path,
                               contents)
 

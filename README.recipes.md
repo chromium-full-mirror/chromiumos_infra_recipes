@@ -2159,17 +2159,17 @@ Returns:
 
 An API for managing release config.
 
-#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#68)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#49)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#136)(self, release_branch):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#194)(self, release_branch):**
 
-Creates CLs updating appropriate config files to include new release branch.
+Creates CLs updating config file to include new release branch.
 
-While Rubik is being turned-up, this endpoint modifies both the legacy config in chromite
-as well as the Rubik starlark config in infra/config.
+While Rubik is being turned-up, this endpoint modifies both the legacy
+config in chromite as well as the Rubik starlark config in infra/config.
 
 Args:
-release_branch (str): Release branch, typically of the form "release-R89-13729.B".
+release_branch (str): Release branch, e.g. "release-R89-13729.B".
 ### *recipe_modules* / [cros\_relevance](/recipe_modules/cros_relevance)
 
 [DEPS](/recipe_modules/cros_relevance/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6474,9 +6474,13 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#17)(api):**
 ### *recipes* / [cros\_release\_config:examples/full](/recipe_modules/cros_release_config/examples/full.py)
 
-[DEPS](/recipe_modules/cros_release_config/examples/full.py#6): [cros\_release\_config](#recipe_modules-cros_release_config), [repo](#recipe_modules-repo), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_release_config/examples/full.py#6): [cros\_release\_config](#recipe_modules-cros_release_config), [repo](#recipe_modules-repo), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#116)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#160)(api, properties):**
+
+&mdash; **def [construct\_legacy\_config](/recipe_modules/cros_release_config/examples/full.py#15)(\*blocks):**
+
+&mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#81)(\*blocks):**
 ### *recipes* / [cros\_relevance:examples/build\_plan](/recipe_modules/cros_relevance/examples/build_plan.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

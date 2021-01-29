@@ -29,6 +29,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "bad release_branch"
+    },
     "name": "$result"
   }
 ]
