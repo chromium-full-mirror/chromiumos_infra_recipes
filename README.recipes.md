@@ -1153,11 +1153,11 @@ Temp dir is created on first access to this property.
 
 API for uploading CrOS build artifacts to Google Storage.
 
-#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#306)(self, builder_name, target, kind):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#327)(self, builder_name, target, kind):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -1172,7 +1172,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#530)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#551)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1187,7 +1187,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#564)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#585)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1202,7 +1202,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#421)(self, artifacts_info):**
+&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#442)(self, artifacts_info):**
 
 Return whether there are output artifacts.
 
@@ -1212,7 +1212,7 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#584)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#605)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1233,7 +1233,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#696)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#717)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
 
 Call the PushImage build API endpoint.
 
@@ -1246,7 +1246,7 @@ Args:
 
   For more context on this parameters, see chromite/scripts/pushimage.py.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#438)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, failing_build=False, name=None, test_data=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#459)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, failing_build=False, name=None, test_data=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -5875,9 +5875,9 @@ Recipe for building a Borealis rootfs image.
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#27)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#31)(api, config, _properties):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#24)(api, properties):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
 
 [DEPS](/recipes/build_firmware.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)
@@ -5999,27 +5999,27 @@ Args:
 
 Recipe for building a BuildTarget image for Postsubmit.
 
-&mdash; **def [DoRunSteps](/recipes/build_postsubmit.py#26)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_postsubmit.py#30)(api, config, _properties):**
 
-&mdash; **def [RunSteps](/recipes/build_postsubmit.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_postsubmit.py#24)(api, properties):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
 [DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util)
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#27)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#31)(api, config, _properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#25)(api, properties):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
 
 Recipe for building a BuildTarget image.
 
-&mdash; **def [DoRunSteps](/recipes/build_target.py#27)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_target.py#31)(api, config, _properties):**
 
-&mdash; **def [RunSteps](/recipes/build_target.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_target.py#24)(api, properties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

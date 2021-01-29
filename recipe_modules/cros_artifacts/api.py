@@ -10,6 +10,7 @@ import collections
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api import artifacts
 from PB.chromite.api import toolchain
@@ -61,9 +62,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         'with the current build config.' %
         BuilderConfig.Artifacts.ArtifactTypes.Name(artifact))
     name = _LEGACY_ENDPOINTS_BY_ARTIFACT[artifact]
-    return (getattr(self.m.cros_build_api.ArtifactsService, name)
-            if self.m.cros_build_api.has_endpoint(
-                self.m.cros_build_api.ArtifactsService, name) else None)
+    service = self.m.cros_build_api.ArtifactsService
+    return (getattr(service, name) if self.m.cros_build_api.has_endpoint(
+        service, name) else None)
 
   def _bundle_legacy_artifacts(self, chroot, sysroot, path, artifact_types,
                                _artifact_profile_info):
@@ -189,15 +190,33 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       dict(str: list[str]): Artifact name, list of artifact file paths
           relative to |outpath|.
     """
-    if self.m.cros_build_api.is_at_least_version(1, 1, 0):
-      return self._bundle_artifacts_110(chroot, sysroot, artifacts_info,
-                                        outpath, test_data)
-    else:
-      return self._bundle_artifacts_100(chroot, sysroot, artifacts_info,
-                                        outpath)
+    # TODO(crbug/1034529): Remove the is_at_least_version call.
+    # Leave this here to make the review easier.  This is removed in the
+    # follow-on CL
+    self.m.cros_build_api.is_at_least_version(1, 1, 0)
 
-  def _bundle_artifacts_110(self, chroot, sysroot, artifacts_info, outpath,
-                            test_data):
+    # TODO(crbug/1034529): The migration path has us calling both legacy and
+    # ArtifactsService/Get, and merging the results. Eventually, the legacy
+    # endpoints will be gone from all release branches, and we will be able to
+    # remove the calls completely.
+    #
+    # The Build API will only return artifacts for a given artifact_type in one
+    # of the endpoints, never both.
+    ret = self._bundle_artifacts_legacy(chroot, sysroot, artifacts_info,
+                                        outpath)
+    ret.update(
+        self._bundle_artifacts_by_service(chroot, sysroot, artifacts_info,
+                                          outpath, test_data))
+    return ret
+
+  @staticmethod
+  def _result_path(path, location=common_pb.Path.OUTSIDE):
+    """Construct a common_pb.ResultPath."""
+    return common_pb.ResultPath(
+        path=common_pb.Path(path=str(path), location=location))
+
+  def _bundle_artifacts_by_service(self, chroot, sysroot, artifacts_info,
+                                   outpath, test_data):
     """Defer to the build API to bundle the given artifact.
 
     Args:
@@ -213,15 +232,18 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       dict(str: list[str]): Artifact name, list of artifact file paths
           relative to |outpath|.
     """
-    outdir = str(outpath)
-    req = artifacts.BundleArtifactsRequest(chroot=chroot, sysroot=sysroot,
-                                           artifact_info=artifacts_info,
-                                           output_dir=outdir)
+    service = self.m.cros_build_api.ArtifactsService
+    if not self.m.cros_build_api.has_endpoint(service, 'Get'):
+      return {}
 
-    test_data = None if not test_data else test_data.replace('@@DIR@@', outdir)
+    req = artifacts.GetRequest(chroot=chroot, sysroot=sysroot,
+                               artifact_info=artifacts_info,
+                               result_path=self._result_path(outpath))
+
+    test_data = None if not test_data else test_data.replace(
+        '@@DIR@@', str(outpath))
     try:
-      resp = self.m.cros_build_api.ArtifactsService.BundleArtifacts(
-          req, infra_step=True, test_output_data=test_data)
+      resp = service.Get(req, infra_step=True, test_output_data=test_data)
     except Exception as e:  # pragma: nocover
       self.m.disk_usage.track(step_name='track disk usage', depth=2,
                               dir=self.m.path['cache'])
@@ -237,7 +259,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     return files_by_artifact
 
-  def _bundle_artifacts_100(self, chroot, sysroot, artifacts_info, outpath):
+  def _bundle_artifacts_legacy(self, chroot, sysroot, artifacts_info, outpath):
     """Defer to the build API (version 1.0.0) to bundle the given artifact.
 
     Args:
@@ -260,7 +282,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           # two services having artifacts.
           funcs[self._bundle_legacy_artifacts].extend(art_info.artifact_types)
 
-    outdir = str(outpath)
     files = {}
     try:
       # Sorting is done here only to give us consistency in the expected.json

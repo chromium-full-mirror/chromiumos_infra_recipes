@@ -47,20 +47,16 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   @property
   def artifact_service_responses(self):
     """Generate responses for ArtifactsService."""
+    _uploaded_path = lambda name: dict(path=self.path(name), location=2)
+
     ret = {
         'FetchPinnedGuestImageUris':
             jsonify(pinned_images=[
                 dict(filename='filename', uri='https://example.com/filename')
             ]),
-    }
-
-    _uploaded_path = lambda name: dict(path=self.path(name), location=2)
-
-    # Endpoints added in 1.1.0
-    ret.update({
         'PrepareForBuild':
             jsonify(build_relevance="UNKNOWN"),
-        'BundleArtifacts':
+        'Get':
             jsonify(
                 artifacts=dict(
                     legacy=dict(artifacts=[
@@ -70,8 +66,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                         dict(artifact_type="UNVERIFIED_CHROME_LLVM_ORDERFILE",
                              paths=[_uploaded_path('orderfile')])
                     ]))),
-    })
-    # Legacy, deprecated as of 1.1.0
+    }
+    # Legacy, migrating to Get.
     bundle_response = jsonify(artifacts=[{
         'path': self.path('tmp/artifact.tar.gz')
     }])

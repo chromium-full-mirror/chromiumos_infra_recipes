@@ -74,8 +74,9 @@ def RunSteps(api):
       },
       'ArtifactsService': {
           'FetchPinnedGuestImageUris': artifacts.PinnedGuestImageUriResponse,
-          # As of 1.1.0, the following ArtifactsService endpoints are
-          # deprecated.
+          'PrepareForBuild': artifacts.PrepareForBuildResponse,
+          'Get': artifacts.GetResponse,
+          # TODO(crbug/1034529): All of the following are migrating to Get.
           'BundleImageZip': artifacts.BundleResponse,
           'BundleTestUpdatePayloads': artifacts.BundleResponse,
           'BundleAutotestFiles': artifacts.BundleResponse,
@@ -157,13 +158,6 @@ def RunSteps(api):
       }
   }
 
-  # If needed, add the endpoints introduced in API verison 1.1.0.
-  if api.cros_build_api.version >= api.cros_build_api.Version(1, 1, 0):
-    response_type_by_service['ArtifactsService'].update({
-        'PrepareForBuild': artifacts.PrepareForBuildResponse,
-        'BundleArtifacts': artifacts.BundleArtifactsResponse,
-    })
-
   responses_by_service = api.cros_build_api.test_api.responses_by_service()
   for service, responses_by_method in responses_by_service.items():
     for method, response_json in responses_by_method.items():
@@ -172,7 +166,7 @@ def RunSteps(api):
 
       # Check we can create a valid response proto.
       response_type = response_type_by_service[service][method]
-      response_proto = response_type(**json.loads(response_json))
+      _ = response_type(**json.loads(response_json))
 
   api.assertions.assertRaises(KeyError,
                               api.cros_build_api.test_api.response_for_endpoint,

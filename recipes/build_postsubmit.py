@@ -14,6 +14,10 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 
+# TODO(crbug/1099259): Drop our properties.
+# Our properties are processed and used by both the build_menu module, as well
+# as various downstream dashboards and other consumers of buildbucket output
+# properties.  They are not used directly within the recipe.
 PROPERTIES = BuildTargetProperties
 
 
@@ -23,7 +27,7 @@ def RunSteps(api, properties):
     return DoRunSteps(api, config, properties)
 
 
-def DoRunSteps(api, config, properties):
+def DoRunSteps(api, config, _properties):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   packages = env_info.packages
 
@@ -83,8 +87,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.build_menu.set_build_api_return('upload artifacts',
-                                          'ArtifactsService/BundleArtifacts',
-                                          retcode=1))
+                                          'ArtifactsService/Get', retcode=1))
 
   # Postsubmit build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
@@ -98,8 +101,7 @@ def GenTests(api):
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       api.build_menu.set_build_api_return('upload artifacts',
-                                          'ArtifactsService/BundleArtifacts',
-                                          retcode=1))
+                                          'ArtifactsService/Get', retcode=1))
 
   yield api.build_menu.test(
       'run-exit-install', api.post_check(post_process.DoesNotRun,

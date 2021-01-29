@@ -27,12 +27,6 @@ def RunSteps(api, properties):
   target = common.BuildTarget()
   target.name = 'target'
 
-  # This should not be needed in general, and is used here only to exercise both
-  # the 1.1.0 and 1.0.0.artifacts handling paths.
-  if properties.build_api_version:
-    api.cros_build_api.GetVersion(
-        test_data=api.cros_build_api.Version.ParseVersion(
-            properties.build_api_version).FormatResponse())
   artifacts_info = common.ArtifactsByService(
       legacy=common.ArtifactsByService.Legacy(output_artifacts=[
           common.ArtifactsByService.Legacy.ArtifactInfo(
@@ -93,5 +87,5 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'upload artifacts.publish artifacts'))
 
-  yield api.test('api-1.0.0',
-                 api.properties(TestInputProperties(build_api_version='1.0.0')))
+  yield api.test('no ArtifactsService/Get',
+                 api.cros_build_api.remove_endpoints(['ArtifactsService/Get']))

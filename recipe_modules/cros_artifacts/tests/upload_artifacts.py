@@ -32,5 +32,4 @@ def GenTests(api):
       api.post_check(lambda check, steps: check('upload artifacts.gsutil rsync'
                                                 not in steps)),
       api.cros_build_api.set_api_return('upload artifacts',
-                                        'ArtifactsService/BundleArtifacts',
-                                        '{}'))
+                                        'ArtifactsService/Get', '{}'))
