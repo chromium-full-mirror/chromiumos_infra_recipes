@@ -190,11 +190,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       dict(str: list[str]): Artifact name, list of artifact file paths
           relative to |outpath|.
     """
-    # TODO(crbug/1034529): Remove the is_at_least_version call.
-    # Leave this here to make the review easier.  This is removed in the
-    # follow-on CL
-    self.m.cros_build_api.is_at_least_version(1, 1, 0)
-
     # TODO(crbug/1034529): The migration path has us calling both legacy and
     # ArtifactsService/Get, and merging the results. Eventually, the legacy
     # endpoints will be gone from all release branches, and we will be able to
