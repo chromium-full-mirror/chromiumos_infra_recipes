@@ -6,6 +6,7 @@
 """An API for managing release config."""
 
 from collections import namedtuple
+from datetime import datetime
 import re
 
 from recipe_engine import recipe_api
@@ -41,6 +42,11 @@ TEST_DATA = ReleaseBuilders(builders=[
         milestone=ReleaseBuilder.Milestone(branch_name='release-R03-00003.B',
                                            number=3),
         build_schedule="0 10 * * *"),
+    ReleaseBuilder(
+        milestone=ReleaseBuilder.Milestone(branch_name='release-R40-00040.B',
+                                           number=40),
+        build_schedule="0 11 * * *", expiration_date=ReleaseBuilder.Date(
+            value='2100-01-01')),
 ])
 
 RELEASE_BRANCH_REGEX = r'release-R(\d+)-\d+.B'
@@ -65,6 +71,19 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
 
   def _get_emails(self, people):
     return list(map(lambda k: k.email, people))
+
+  def _get_builder_expiration_date(self, builder):
+    """Get the expiration date for the builder.
+
+    Returns none if the expiration date is not set or is malformatted.
+
+    Args:
+    builder (ReleaseBuilder): builder in question
+    """
+    try:
+      return datetime.strptime(builder.expiration_date.value, "%Y-%m-%d")
+    except ValueError:
+      return None
 
   def _get_builder_schedule(self, existing_builders):
     """Get a builder schedule for a new builder (in the form of a crontab).
@@ -104,7 +123,15 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     true_release_builders = []
 
     for builder in builders.builders:
-      if re.match(RELEASE_BRANCH_REGEX, builder.milestone.branch_name):
+      pinned_by_date = False
+      # Could potentially use the expiration dates in proto config as a source
+      # of truth for the equivalent builder configs in legacy, and remove the
+      # need for '# BOT-TAG:NO_PRUNE`.
+      expiration_date = self._get_builder_expiration_date(builder)
+      if expiration_date:
+        pinned_by_date = expiration_date > datetime.now()
+      if re.match(RELEASE_BRANCH_REGEX,
+                  builder.milestone.branch_name) and not pinned_by_date:
         true_release_builders.append(builder)
       else:
         to_keep.append(builder)

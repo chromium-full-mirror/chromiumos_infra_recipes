@@ -2159,9 +2159,9 @@ Returns:
 
 An API for managing release config.
 
-#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#49)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#55)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#194)(self, release_branch):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#221)(self, release_branch):**
 
 Creates CLs updating config file to include new release branch.
 
@@ -6476,7 +6476,7 @@ returns a list of repos to make commits to.
 
 [DEPS](/recipe_modules/cros_release_config/examples/full.py#6): [cros\_release\_config](#recipe_modules-cros_release_config), [repo](#recipe_modules-repo), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#160)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#172)(api, properties):**
 
 &mdash; **def [construct\_legacy\_config](/recipe_modules/cros_release_config/examples/full.py#15)(\*blocks):**
 

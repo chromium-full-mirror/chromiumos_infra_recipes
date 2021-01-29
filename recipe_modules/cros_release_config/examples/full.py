@@ -127,6 +127,18 @@ BLOCK_NEW = """builders {
 }
 """
 
+BLOCK_EXPIRATION = """builders {
+  milestone {
+    number: 40
+    branch_name: "release-R40-00040.B"
+  }
+  build_schedule: "0 11 * * *"
+  expiration_date {
+    value: "2100-01-01"
+  }
+}
+"""
+
 EXPECTED_WRITE_PRUNED_TEMPLATE = """builders {
   milestone {
     number: -1
@@ -193,7 +205,7 @@ def GenTests(api):
       api.post_process(
           post_process.StepCommandContains,
           'update config.write release/release_builders.textpb', [
-              expected_config(MAIN_BLOCK, BLOCK_NEW %
+              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION, BLOCK_NEW %
                               (branch_milestone, branch), BLOCK_3, BLOCK_2,
                               BLOCK_1)
           ]))
@@ -248,7 +260,7 @@ def GenTests(api):
       api.post_process(
           post_process.StepCommandContains,
           'update config.write release/release_builders.textpb', [
-              expected_config(MAIN_BLOCK, BLOCK_NEW %
+              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION, BLOCK_NEW %
                               (branch_milestone, branch), BLOCK_3)
           ]))
 
