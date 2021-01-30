@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/file',
     'chrome',
+    'cros_build_api',
 ]
 
 from PB.chromiumos.common import Chroot
@@ -33,10 +34,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  content = '{"methods": [{"method": "chromite.api.PackageService/Other"}]}'
-
   yield api.test(
       'basic',
-      api.step_data('call chromite.api.MethodService/Get.read output file',
-                    api.file.read_raw(content=content)),
+      api.cros_build_api.remove_endpoints(['PackageService/HasPrebuilt']),
   )

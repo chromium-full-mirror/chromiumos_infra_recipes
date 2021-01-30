@@ -411,7 +411,7 @@ class CrosBuildApiApi(RecipeApi):
     # Next make sure that the proto defs exist for the method.
     try:
       service_name, _ = _verify_proto_endpoint(stub, method)
-    except:
+    except KeyError:
       return False
 
     # Lastly, check that the build API side implements the endpoint.
@@ -420,4 +420,8 @@ class CrosBuildApiApi(RecipeApi):
       response = self.MethodService.Get(meta_api.MethodGetRequest())
       self._endpoints = [m.method for m in response.methods]
 
-    return "%s/%s" % (service_name, method) in self._endpoints
+    wanted = "%s/%s" % (service_name, method)
+    remove_endpoints = {}
+    if self._test_data.enabled:
+      remove_endpoints = self._test_data.get('remove_endpoints', {})
+    return wanted in self._endpoints and wanted not in remove_endpoints

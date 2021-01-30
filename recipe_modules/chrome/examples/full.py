@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'chrome',
+    'cros_build_api',
     'gerrit',
 ]
 
@@ -142,10 +143,7 @@ def GenTests(api):
 
     ret = api.properties(props)
     if props.disable_needs_chrome:
-      ret += api_response(
-          'MethodService/Get',
-          jsonify(
-              methods=[dict(method='chromite.api.PackageService/HasPrebuilt')]))
+      ret += api.cros_build_api.remove_endpoints('PackageService/HasPrebuilt')
       ret += api_response('PackageService/BuildsChrome',
                           jsonify(builds_chrome=needs_chrome))
       if needs_chrome:

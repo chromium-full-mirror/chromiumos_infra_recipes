@@ -421,3 +421,17 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return self.step_data(
         '%s.%s%s.%s' % (parent_step_name, step_name, iteration, substep),
         self.m.file.read_raw(content=data), retcode=retcode)
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def remove_endpoints(value):
+    """Remove the given endpoints from the API.
+
+    Args:
+      value (set, dict, or list): endpoints to remove.  For example:
+         ['ArtifactsService/Get']
+
+    Returns:
+      (mod_test_data) to pass to api.test.
+    """
+    return set('chromite.api.{}'.format(x).decode('utf-8') for x in value)
