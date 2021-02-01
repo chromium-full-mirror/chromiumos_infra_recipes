@@ -106,7 +106,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     underlying script, chromite/scripts/push_image.py. Must be used in the
     context of a build.
     """
-    version = self.m.cros_version.read_workspace_version().platform_version
+    version = str(self.m.cros_version.read_workspace_version())
     with self.m.step.nest('push images'):
       gs_image_dir = "gs://{bucket}/{target}-release/{version}".format(
           **{
