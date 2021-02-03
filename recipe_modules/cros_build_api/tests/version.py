@@ -37,4 +37,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic', api.cros_build_api.call_version_service(True))

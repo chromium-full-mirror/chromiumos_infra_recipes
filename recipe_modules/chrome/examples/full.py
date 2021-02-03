@@ -144,7 +144,7 @@ def GenTests(api):
     ret = api.properties(props)
     if props.disable_needs_chrome:
       ret += api.cros_build_api.remove_endpoints(
-          'PackageService/NeedsChromeSource')
+          ['PackageService/NeedsChromeSource'])
       ret += api_response('PackageService/BuildsChrome',
                           jsonify(builds_chrome=needs_chrome))
       if needs_chrome:

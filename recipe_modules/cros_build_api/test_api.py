@@ -445,6 +445,21 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
 
   @recipe_test_api.mod_test_data
   @staticmethod
+  def call_version_service(value):
+    """Whether to call VersionService/Get in testing.
+
+    Args:
+      value (bool): if True, call VersionService/Get during testing.  If false,
+      just use test_data or the default test answer, without calling the test
+      method.
+
+    Returns:
+      (mod_test_data) to pass to api.test.
+    """
+    return value
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
   def remove_endpoints(value):
     """Remove the given endpoints from the API.
 
@@ -455,4 +470,5 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       (mod_test_data) to pass to api.test.
     """
+    assert not isinstance(value, str), 'endpoint must not be type str'
     return set('chromite.api.{}'.format(x).decode('utf-8') for x in value)

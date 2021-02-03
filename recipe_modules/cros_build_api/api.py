@@ -200,12 +200,41 @@ class CrosBuildApiApi(RecipeApi):
     super(CrosBuildApiApi, self).__init__(*args, **kwargs)
     self._capture_stdout_stderr = properties.capture_stdout_stderr
     self._log_level = properties.log_level or 'debug'
-    self._endpoints = None
+    self._api_endpoints = None
     self._version = None
 
   @property
+  def _endpoints(self):
+    """Endpoints for internal use."""
+    if not self._api_endpoints:
+      # Initialize the endpoint list, if this is the first call to the Build
+      # API.  If we are testing, just grab the answer from test_api, rather than
+      # creating the extra steps in expectations files.  This should help reduce
+      # the churn in expectations files.
+      test_data = json_format.Parse(
+          self.test_api.method_service_responses['Get'],
+          meta_api.MethodGetResponse())
+      response = (
+          test_data if self._test_data.enabled else self.MethodService.Get(
+              meta_api.MethodGetRequest()))
+      self._api_endpoints = [m.method for m in response.methods]
+    return self._api_endpoints
+
+  @property
   def version(self):
-    return self._version or self.GetVersion()
+    if not self._version:
+      # Get the Build API version.  If we are testing, just grab the answer from
+      # test_api, rather than creating extra steps in the expectations files.
+      # This should help reduce churn in expectations files.
+      test_data = json_format.Parse(
+          self.test_api.version_service_responses['Get'],
+          meta_api.VersionGetResponse())
+      response = (
+          test_data if self._test_data.enabled else self.VersionService.Get(
+              meta_api.VersionGetRequest()))
+      version = response.version
+      self._version = self.Version(version.major, version.minor, version.bug)
+    return self._version
 
   def is_at_least_version(self, major=1, minor=0, bug=0):
     """Is the Build API at least |major|.|minor|.|bug|.
@@ -228,11 +257,16 @@ class CrosBuildApiApi(RecipeApi):
     Returns:
       CrosBuildApi.Version, the version of the Build API.
     """
-    version_resp = self('chromite.api.VersionService/Get',
-                        meta_api.VersionGetRequest(),
-                        meta_api.VersionGetResponse.DESCRIPTOR, infra_step=True,
-                        test_output_data=test_data)
-    version = version_resp.version
+    if (self._test_data.enabled and
+        not self._test_data.get('call_version_service', False)):
+      test_data = json_format.Parse(test_data or '{}',
+                                    meta_api.VersionGetResponse()).version
+      version = test_data or self.version
+    else:
+      version = self('chromite.api.VersionService/Get',
+                     meta_api.VersionGetRequest(),
+                     meta_api.VersionGetResponse.DESCRIPTOR, infra_step=True,
+                     test_output_data=test_data).version
     self._version = self.Version(version.major, version.minor, version.bug)
     return self._version
 
@@ -294,6 +328,13 @@ class CrosBuildApiApi(RecipeApi):
     Returns:
       google.protobuf: The parsed response proto.
     """
+    # Fetch the endpoint list on the first call, rather than first call to
+    # has_endpoint. This should reduce the expectations churn as has_endpoint
+    # calls are added.  Avoid recusion though.
+    if (not self._api_endpoints and
+        endpoint != 'chromite.api.MethodService/Get'):
+      _ = self._endpoints
+
     response_lambda = response_lambda or (lambda op: '')
 
     with self.m.step.nest(name or 'call %s' % endpoint) as presentation:
@@ -414,12 +455,8 @@ class CrosBuildApiApi(RecipeApi):
     except KeyError:
       return False
 
-    # Lastly, check that the build API side implements the endpoint.
-    # The list of endpoints is lazily cached here.
-    if not self._endpoints:
-      response = self.MethodService.Get(meta_api.MethodGetRequest())
-      self._endpoints = [m.method for m in response.methods]
-
+    # Lastly, check that the build API side implements the endpoint, and that
+    # testing has not told us to remove the endpoint.
     wanted = "%s/%s" % (service_name, method)
     remove_endpoints = {}
     if self._test_data.enabled:
