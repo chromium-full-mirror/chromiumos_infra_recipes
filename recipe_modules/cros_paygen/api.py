@@ -25,7 +25,8 @@ from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from PB.test_platform.request import Request
 
 DEFAULT_DELTA_TYPES = [
-    'STEPPING_STONE', 'OMAHA', 'NO_DELTA', 'MILESTONE', 'FSI'
+    common_pb2.STEPPING_STONE, common_pb2.OMAHA, common_pb2.NO_DELTA,
+    common_pb2.MILESTONE, common_pb2.FSI
 ]
 
 PAYGEN_JSON_GS_PATH = 'gs://chromeos-build-release-console/paygen.json'
@@ -123,15 +124,10 @@ class PaygenTestConfig(object):
     self._suite_name = (
         self._PAYGEN_AU_SUITE_TEMPLATE % self._tgt_channel.split('-')[0])
     self._unique_name_suffix = self._UNIQUE_NAME_SUFFIX_TEMPLATE % {
-        'suite_name':
-            self._suite_name,
-        'update_type':
-            self._update_type,
-        'src_version':
-            self._src_version,
-        'delta_type':
-            PaygenOrchestratorProperties.DeltaType.Name(self._delta_type
-                                                       ).lower()
+        'suite_name': self._suite_name,
+        'update_type': self._update_type,
+        'src_version': self._src_version,
+        'delta_type': common_pb2.DeltaType.Name(self._delta_type).lower()
     }
     self._display_name = self._DISPLAY_NAME_TEMPLATE % {
         'build_target_name': self._build_target_name,
@@ -158,17 +154,15 @@ class PaygenTestConfig(object):
   def _get_test_args(self):
     """Test arguments with which to invoke the autotest control file."""
     template = '%s=%s'
-    arg_values = [
-        ('name', self._suite_name), ('update_type', self._update_type),
-        ('source_release', self._src_version),
-        ('target_release', self._tgt_version),
-        ('target_payload_uri', self._tgt_payload_uri),
-        ('SUITE', self._suite_name),
-        ('source_payload_uri', self._src_payload_uri),
-        ('source_archive_uri', self._src_artifact_uri),
-        ('payload_type',
-         PaygenOrchestratorProperties.DeltaType.Name(self._delta_type))
-    ]
+    arg_values = [('name', self._suite_name),
+                  ('update_type', self._update_type),
+                  ('source_release', self._src_version),
+                  ('target_release', self._tgt_version),
+                  ('target_payload_uri', self._tgt_payload_uri),
+                  ('SUITE', self._suite_name),
+                  ('source_payload_uri', self._src_payload_uri),
+                  ('source_archive_uri', self._src_artifact_uri),
+                  ('payload_type', common_pb2.DeltaType.Name(self._delta_type))]
 
     return ' '.join(template % (key, val) for key, val in arg_values)
 
@@ -613,8 +607,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       test_reqs = []
       # Get N2N test.
       if gen_req.tgt_unsigned_image == gen_req.src_unsigned_image:
-        test_reqs.append(
-            AutoupdateTestConfig(delta_type=PaygenOrchestratorProperties.N2N))
+        test_reqs.append(AutoupdateTestConfig(delta_type=common_pb2.N2N))
       # Match configs to the given GenerationRequest.
       cfgs = [
           cfg for cfg in configured_payloads if
@@ -626,8 +619,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         if cfg['delta_payload_tests'] or always_test_delta:
           test_reqs.append(
               AutoupdateTestConfig(
-                  delta_type=PaygenOrchestratorProperties.DeltaType.Value(
-                      cfg['delta_type']),
+                  delta_type=common_pb2.DeltaType.Value(cfg['delta_type']),
                   applicable_models=cfg.get('applicable_models')))
       schedule_requests.append(
           self._create_bb_schedule_request(gen_req, test_reqs))
@@ -664,7 +656,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           AutoupdateTestConfig(
               src_version=gen_req.tgt_unsigned_image.build.version,
               src_channel=gen_req.tgt_unsigned_image.build.channel,
-              delta_type=PaygenOrchestratorProperties.N2N)
+              delta_type=common_pb2.N2N)
       ]
       # Match configs to the given GenerationRequest.
       cfgs = [
@@ -678,8 +670,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
               AutoupdateTestConfig(
                   src_version=cfg['chrome_os_version'],
                   src_channel=cfg['channel'] + '-channel',
-                  delta_type=PaygenOrchestratorProperties.DeltaType.Value(
-                      cfg['delta_type']),
+                  delta_type=common_pb2.DeltaType.Value(cfg['delta_type']),
                   applicable_models=cfg.get('applicable_models')))
       schedule_requests.append(
           self._create_bb_schedule_request(gen_req, test_reqs))

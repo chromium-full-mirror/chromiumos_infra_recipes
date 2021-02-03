@@ -18,6 +18,7 @@ from PB.chromite.api.payload import Build
 from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage
 from PB.chromite.api.payload import UnsignedImage
+from PB.chromiumos.common import DeltaType
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
@@ -36,6 +37,7 @@ DEPS = [
 ]
 
 PROPERTIES = PaygenOrchestratorProperties
+
 
 # TODO(crbug.com/1122854): These are ugly, we should write a cros_channel module to handle.
 def _long_channel_name(channel_enum_val):
@@ -62,8 +64,10 @@ def RunSteps(api, properties):
     configured_payloads = []
     for delta_type, channel in itertools.product(delta_types,
                                                  properties.channels):
+
+      # TODO(1122854): We should have channel enum from common.
       delta_t_str, channel_str = (
-          PaygenOrchestratorProperties.DeltaType.Name(delta_type),
+          DeltaType.Name(delta_type),
           PaygenOrchestratorProperties.Channel.Name(channel))
 
       cfg = api.cros_paygen.get_builder_config(properties.builder_name,
@@ -153,7 +157,6 @@ def RunSteps(api, properties):
   res = api.cros_paygen.run_paygen_builders(
       cbr, configured_payloads, properties.delta_payload_test_override,
       properties.full_payload_test_override)
-
 
   with api.step.nest('results') as pres:
     suc = [x for x in res if x.status == common_pb2.SUCCESS]

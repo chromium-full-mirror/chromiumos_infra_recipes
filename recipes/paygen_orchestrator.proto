@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipes.chromeos.paygen_orchestrator;
 
+import "chromiumos/common.proto";
+
 message PaygenOrchestratorProperties {
   // Builder name corresponding to paygen.json's convention.
   // See: gs://chromeos-build-release-console/paygen.json
@@ -18,18 +20,8 @@ message PaygenOrchestratorProperties {
   // The milestone to filter on. 0 (default) implies all milestones.
   string milestone = 3;
 
-  enum DeltaType {
-    DELTA_UNKNOWN = 0;
-    NO_DELTA = 1;
-    FSI = 2;
-    MILESTONE = 3;
-    OMAHA = 4;
-    STEPPING_STONE = 5;
-    N2N = 6;
-  }
-
   // The delta types to generate for, empty for all.
-  repeated DeltaType delta_types = 4;
+  repeated chromiumos.DeltaType delta_types = 4;
 
   // TODO(crbug.com/1122854): Replace these with the common definition.
   enum Channel {

@@ -21,6 +21,7 @@ DEPS = [
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
 
+import PB.chromiumos.common as common_pb2
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen import PaygenProperties
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
@@ -100,9 +101,8 @@ def GenTests(api):
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               autoupdate_test_configs=[
-                  AutoupdateTestConfig(
-                      delta_type=PaygenOrchestratorProperties.OMAHA,
-                      applicable_models=['woomax'])
+                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                       applicable_models=['woomax'])
               ])),
       generate_payload_response(api),
       api.post_check(post_process.MustRun, 'doing paygen'),
@@ -126,14 +126,14 @@ def GenTests(api):
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
               autoupdate_test_configs=[
-                  AutoupdateTestConfig(
-                      src_version='123', src_channel='canary-channel',
-                      delta_type=PaygenOrchestratorProperties.OMAHA,
-                      applicable_models=['woomax']),
-                  AutoupdateTestConfig(
-                      src_version='123', src_channel='canary-channel',
-                      delta_type=PaygenOrchestratorProperties.OMAHA,
-                      applicable_models=['other']),
+                  AutoupdateTestConfig(src_version='123',
+                                       src_channel='canary-channel',
+                                       delta_type=common_pb2.OMAHA,
+                                       applicable_models=['woomax']),
+                  AutoupdateTestConfig(src_version='123',
+                                       src_channel='canary-channel',
+                                       delta_type=common_pb2.OMAHA,
+                                       applicable_models=['other']),
               ])),
       api.cros_storage.test_listing(
           'testing paygen.discover gs artifacts.gsutil list',
@@ -154,9 +154,8 @@ def GenTests(api):
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
               autoupdate_test_configs=[
-                  AutoupdateTestConfig(
-                      delta_type=PaygenOrchestratorProperties.OMAHA,
-                      applicable_models=['woomax'])
+                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                       applicable_models=['woomax'])
               ])),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
@@ -169,9 +168,8 @@ def GenTests(api):
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
               autoupdate_test_configs=[
-                  AutoupdateTestConfig(
-                      delta_type=PaygenOrchestratorProperties.OMAHA,
-                      applicable_models=['woomax'])
+                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                       applicable_models=['woomax'])
               ])),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,

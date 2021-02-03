@@ -10,7 +10,7 @@ DEPS = [
 
 from recipe_engine import post_process
 
-from PB.chromiumos import common
+import PB.chromiumos.common as common_pb2
 
 from PB.recipe_modules.chromeos.cros_paygen.examples.test import TestPaygenProperties
 
@@ -24,9 +24,11 @@ def RunSteps(api, properties):
               builder_name=properties.builder_name,
               delta_type=properties.delta_type)), properties.expected_length)
 
-  api.assertions.assertEqual(
-      api.cros_paygen.default_delta_types,
-      ['STEPPING_STONE', 'OMAHA', 'NO_DELTA', 'MILESTONE', 'FSI'])
+  api.assertions.assertEqual(api.cros_paygen.default_delta_types, [
+      common_pb2.STEPPING_STONE, common_pb2.OMAHA, common_pb2.NO_DELTA,
+      common_pb2.MILESTONE, common_pb2.FSI
+  ])
+
 
 def GenTests(api):
   good_json, bad_json, not_json = map(api.cros_paygen.test_paygen,
