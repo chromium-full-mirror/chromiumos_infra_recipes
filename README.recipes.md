@@ -1926,7 +1926,7 @@ This is used by findit, which has a single builder that performs
 bisection using the configuration of another builder.
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
 
-[DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_storage](#recipe_modules-cros_storage), [cros\_version](#recipe_modules-cros_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_storage](#recipe_modules-cros_storage), [cros\_version](#recipe_modules-cros_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with Paygen and its config.
 
@@ -1934,7 +1934,7 @@ API for working with Paygen and its config.
 
 A module for CrOS-specific paygen steps.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#731)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#732)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -2072,7 +2072,7 @@ Args:
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#800)(self, paygen_test_configs, models=None):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#801)(self, paygen_test_configs, models=None):**
 
 Schedule Paygen autoupdate (AU) tests.
 

@@ -719,8 +719,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       A ScheduleBuildRequest for a Paygen builder.
     """
     test_requests = test_requests or []
+    bucket = 'staging' if self.m.cros_infra_config.is_staging else 'release'
     return self.m.buildbucket.schedule_request(
-        bucket='packaging', builder='paygen', properties={
+        bucket=bucket, builder='paygen', properties={
             'request':
                 MessageToDict(generation_request),
             'autoupdate_test_configs': [

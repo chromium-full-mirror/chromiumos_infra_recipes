@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'cros_infra_config',
     'cros_storage',
     'cros_version',
     'skylab',
