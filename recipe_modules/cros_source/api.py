@@ -63,6 +63,21 @@ class CrosSourceApi(RecipeApi):
         self.m.cros_infra_config.experiments)
 
   @property
+  def mirrored_manifest_files(self):
+    """Returns the names of files that are mirrored into the public manifest.
+
+    The files returned are owned by chromeos/manifest-internal, and are copied
+    into chromiumos/manifest when they are changed.
+
+    Annealing does this as part of creating the snapshot, and the various
+    builders do it when applying manifest changes.
+
+    Returns:
+      (tuple[str, ...]) names of files that we copy.
+    """
+    return ('full.xml',)
+
+  @property
   def pinned_manifest(self):
     """Return the pinned manifest for this build."""
     with self.m.context(cwd=self.workspace_path):
@@ -129,7 +144,6 @@ class CrosSourceApi(RecipeApi):
     """Returns the snapshot isolate hash in use or None."""
     return (self._snapshot_isolate.isolated_hash
             if self._snapshot_isolate else None)
-
 
   def _validate_args(self, manifest_url, local_manifest, groups, cache_path,
                      manifest_branch):
@@ -344,9 +358,10 @@ class CrosSourceApi(RecipeApi):
         # determine which revision of the external manifest corresponds to our
         # commit.  Copy full.xml into the public manifest, and leave the tree
         # dirty.
-        self.m.path.mock_add_paths(i_manifest.path.join('full.xml'))
-        self.m.file.copy('copy full.xml', i_manifest.path.join('full.xml'),
-                         e_manifest.path.join('full.xml'))
+        for path in self.mirrored_manifest_files:
+          self.m.path.mock_add_paths(i_manifest.path.join(path))
+          self.m.file.copy('copy {}'.format(path), i_manifest.path.join(path),
+                           e_manifest.path.join(path))
 
         # Generate a manifest file, and save the path.
         manifest_file = self.m.path.mkstemp(prefix='manifest')
@@ -626,17 +641,20 @@ class CrosSourceApi(RecipeApi):
       self.checkout_branch(manifests.build.url, branch,
                            sync_opts=dict(current_branch=True, detach=True))
 
-      _changes_full_xml = lambda p: any('full.xml' in x.file_infos for x in p)
+      _changes_mirrored_file = lambda p: any(
+          n in x.file_infos for x in p for n in self.mirrored_manifest_files)
 
       # If there are changes to the external copy of full.xml, that is an error.
-      if _changes_full_xml(patches.build if external else patches.extern):
-        raise StepFailure('Full.xml changes must be made in manifest-internal')
+      if _changes_mirrored_file(patches.build if external else patches.extern):
+        raise StepFailure(
+            'Changes must be made in manifest-internal: {}'.format(', '.join(
+                self.mirrored_manifest_files)))
 
-      # If patches.intern changes full.xml, then:
+      # If patches.intern changes a mirrored manifest file, then:
       # 1. We do not have the internal manifest checked out, and
-      # 2. We will need it so that we can copy full.xml over to the external
+      # 2. We will need it so that we can copy the file over to the external
       #    manifest.
-      if _changes_full_xml(patches.intern):
+      if _changes_mirrored_file(patches.intern):
         with self.m.step.nest('sync internal manifest for patching'):
           # Fetch the internal manifest into its path.  Use the (synced) cache
           # as a reference, so that we do not use the network for this.
@@ -647,13 +665,15 @@ class CrosSourceApi(RecipeApi):
           # Also, check out the correct branch of the internal manifest.
           self.m.git.checkout(i_branch)
 
-      def _copy_full_xml():
-        # Copy full.xml from internal to external manifest and commit
-        i_full = manifests.intern.path.join('full.xml')
-        e_full = manifests.extern.path.join('full.xml')
-        self.m.file.copy('copy full.xml', i_full, e_full)
+      def _copy_mirrored_files():
+        for path in self.mirrored_manifest_files:
+          # Copy the file from internal to external manifest and commit
+          i_path = manifests.intern.path.join(path)
+          e_path = manifests.extern.path.join(path)
+          self.m.file.copy('copy {}'.format(path), i_path, e_path)
+          with self.m.context(cwd=manifests.extern.path):
+            self.m.git.add([e_path])
         with self.m.context(cwd=manifests.extern.path):
-          self.m.git.add([e_full])
           res = self.m.git.commit(
               'Syncing with internal manifest.',
               stdout=self.m.raw_io.output(add_output_log=True),
@@ -666,8 +686,8 @@ class CrosSourceApi(RecipeApi):
           return True
 
       changed = self._apply_partitioned_manifest_patches(manifests, patches)
-      if _changes_full_xml(patches.intern + patches.build):
-        changed |= _copy_full_xml()
+      if _changes_mirrored_file(patches.intern + patches.build):
+        changed |= _copy_mirrored_files()
       if not changed:
         return
 

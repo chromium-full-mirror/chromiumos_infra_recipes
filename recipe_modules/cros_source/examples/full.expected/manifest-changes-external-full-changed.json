@@ -1035,7 +1035,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Full.xml changes must be made in manifest-internal"
+      "humanReason": "Changes must be made in manifest-internal: full.xml"
     },
     "name": "$result"
   }

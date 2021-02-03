@@ -71,7 +71,6 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context():
     internal_manifest = api.src_state.internal_manifest
     external_manifest = api.src_state.external_manifest
-    external_full = external_manifest.path.join('full.xml')
 
     # Do this before anything else.  Most notably, if it is called while in
     # internal_manifest.path, HEAD stops tracking the lowerdir in the overlayfs,
@@ -121,7 +120,7 @@ def RunSteps(api, properties):
         prior_external = prior_external or api.git.fetch_ref(
             external_manifest.url, manifest_ref)
 
-        # Sync manifest/full.xml with manifest-internal/full.xml
+        # Sync mirrored manifest files from manifest-internal to manifest.
         with api.step.nest('sync manifests') as presentation:
           presentation.logs['prior versions'] = [
               'internal {}: {}'.format(manifest_ref, prior_internal),
@@ -129,11 +128,14 @@ def RunSteps(api, properties):
           ]
 
           def _update_callback():
-            """Callback function for git_txn to update manifest/full.xml."""
-            api.file.copy('Copy manifest-internal/full.xml',
-                          internal_manifest.path.join('full.xml'),
-                          external_full)
-            if not api.git.diff_check(external_full):
+            """Callback function for git_txn to update mirrored files."""
+            files = api.cros_source.mirrored_manifest_files
+            external_paths = [external_manifest.path.join(p) for p in files]
+            for path in files:
+              api.file.copy('Copy manifest-internal/{}'.format(path),
+                            internal_manifest.path.join(path),
+                            external_manifest.path.join(path))
+            if not any(api.git.diff_check(f) for f in external_paths):
               return False
             if properties.dry_run or is_staging:
               presentation.logs['skip'] = ['staging/dry-run: skipping sync']
@@ -141,7 +143,7 @@ def RunSteps(api, properties):
               api.step('git reset', ['git', 'reset', '--hard'])
               return False
             commit_message = 'Syncing with internal manifest.'
-            api.git.add([external_full])
+            api.git.add(external_paths)
             api.git.commit(commit_message)
 
           if not api.git_txn.update_ref(external_manifest.url,
@@ -160,7 +162,8 @@ def RunSteps(api, properties):
         external_snapshot_ref = None
         # Generate the manifest from public repo
         snapshot_xml_extern = api.repo.manifest(
-            external_full, pinned=True, step_name='generate external manifest')
+            external_manifest.path.join('full.xml'), pinned=True,
+            step_name='generate external manifest')
 
         # Generate Cr-Snapshot-Identifer (b/171751551).
         with api.step.nest('fetch previous snapshot identifier'):
