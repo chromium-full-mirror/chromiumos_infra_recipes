@@ -149,18 +149,24 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
   if not _is_test_collector(package):
     # Path: bucket/build/parent_job_id/cheets_CTS.*/job_id_timestamp/
     # or bucket/build/parent_job_id/cheets_GTS.*/job_id_timestamp/
-    index = build.find('-release')
-    if index == -1:
+
+    # build  = veyron_minnie-kernelnext-release/R90-12345.0.0
+    builder = build.split('/')[0]
+    if !builder.endswith('-release'):
       raise ValueError(
           'Non-release builds should already have been excluded, got %s' %
           build)
 
     # CTS v2 pipeline requires device info in 'board.model' format.
-    # e.g. coral.robo360-release, eve.eve-release
-    build_with_model_name = (
-        build[:index] + '.' + host_model_name + build[index:])
+    # e.g. coral.robo-release, eve.eve-release, hatch.kohaku-kernelnext-release
+    board_name, board_variant, build_version = re.search(
+            "(\w+)(.*)/(.*)", build).groups()
 
-    cts_apfe_gs_suffix = os.path.join(build_with_model_name, parent_job_id,
+    build_name_divo_format = (
+            board_name + '.' + host_model_name + '-' + board_variant +
+            '/' + build_version)
+
+    cts_apfe_gs_suffix = os.path.join(build_name_divo_format, parent_job_id,
                                       package, job_id + '_' + timestamp)
     cts_apfe_gs_path = os.path.join(apfe_gs_bucket, cts_apfe_gs_suffix) + '/'
 
