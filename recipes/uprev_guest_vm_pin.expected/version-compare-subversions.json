@@ -1317,7 +1317,7 @@
   },
   {
     "cmd": [
-      "python3",
+      "python",
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
@@ -1438,7 +1438,7 @@
   },
   {
     "cmd": [
-      "python3",
+      "python",
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
