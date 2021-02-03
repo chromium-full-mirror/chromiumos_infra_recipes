@@ -653,6 +653,24 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/manifest-internal/_kernel_upstream.xml",
+      "[START_DIR]/chromiumos_workspace/manifest/_kernel_upstream.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git transaction.Copy manifest-internal/_kernel_upstream.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "sync manifests.git transaction.diff check",
     "~followup_annotations": [
@@ -690,6 +708,42 @@
   },
   {
     "cmd": [],
+    "name": "sync manifests.git transaction.diff check (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[START_DIR]/chromiumos_workspace/manifest/_kernel_upstream.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git transaction.diff check (2).git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "[START_DIR]/chromiumos_workspace/manifest/_kernel_upstream.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.git transaction.diff check (2).git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set dry_run",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@dry_run@false@@@"
@@ -701,7 +755,7 @@
       "manifest",
       "-r",
       "-m",
-      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
+      "[START_DIR]/chromiumos_workspace/manifest/default.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "env_suffixes": {

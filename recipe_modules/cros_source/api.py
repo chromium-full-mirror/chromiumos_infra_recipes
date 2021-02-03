@@ -75,7 +75,7 @@ class CrosSourceApi(RecipeApi):
     Returns:
       (tuple[str, ...]) names of files that we copy.
     """
-    return ('full.xml',)
+    return ('full.xml', '_kernel_upstream.xml')
 
   @property
   def pinned_manifest(self):

@@ -162,7 +162,7 @@ def RunSteps(api, properties):
         external_snapshot_ref = None
         # Generate the manifest from public repo
         snapshot_xml_extern = api.repo.manifest(
-            external_manifest.path.join('full.xml'), pinned=True,
+            external_manifest.path.join('default.xml'), pinned=True,
             step_name='generate external manifest')
 
         # Generate Cr-Snapshot-Identifer (b/171751551).
