@@ -1,2 +1,3 @@
 per-file dupit.py=nednguyen@google.com
 per-file dupit.py=vapier@chromium.org
+per-file lvfs_mirror.py=file:/recipe_modules/cros_lvfs_mirror/OWNERS

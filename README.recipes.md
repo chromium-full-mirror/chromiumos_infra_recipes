@@ -24,6 +24,7 @@
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
   * [cros_infra_config](#recipe_modules-cros_infra_config)
+  * [cros_lvfs_mirror](#recipe_modules-cros_lvfs_mirror) &mdash; API for LvfsMirror script.
   * [cros_paygen](#recipe_modules-cros_paygen) &mdash; API for working with Paygen and its config.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
   * [cros_release](#recipe_modules-cros_release) &mdash; An API for providing release related operations (e.
@@ -184,6 +185,7 @@
   * [cros_infra_config:tests/configure_builder](#recipes-cros_infra_config_tests_configure_builder)
   * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils)
+  * [cros_lvfs_mirror:examples/full](#recipes-cros_lvfs_mirror_examples_full)
   * [cros_paygen:examples/full](#recipes-cros_paygen_examples_full)
   * [cros_paygen:examples/get_delta_requests](#recipes-cros_paygen_examples_get_delta_requests)
   * [cros_paygen:examples/get_full_requests](#recipes-cros_paygen_examples_get_full_requests)
@@ -282,6 +284,7 @@
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
+  * [lvfs_mirror](#recipes-lvfs_mirror) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results)
   * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries)
   * [metadata_json:examples/default_entries](#recipes-metadata_json_examples_default_entries)
@@ -1964,6 +1967,28 @@ Get the builder group for the target builder.
 
 This is used by findit, which has a single builder that performs
 bisection using the configuration of another builder.
+### *recipe_modules* / [cros\_lvfs\_mirror](/recipe_modules/cros_lvfs_mirror)
+
+[DEPS](/recipe_modules/cros_lvfs_mirror/__init__.py#5): [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python]
+
+API for LvfsMirror script.
+
+#### **class [LvfsMirror](/recipe_modules/cros_lvfs_mirror/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for the LvfsMirror script.
+
+&mdash; **def [configure](/recipe_modules/cros_lvfs_mirror/api.py#17)(self, mirror_address):**
+
+Configure the LvfsMirror script module.
+
+Args:
+  * mirror_address: The mirror address for the LVFS repository.
+
+&emsp; **@property**<br>&mdash; **def [local\_cache](/recipe_modules/cros_lvfs_mirror/api.py#35)(self):**
+
+&emsp; **@property**<br>&mdash; **def [mirror\_address](/recipe_modules/cros_lvfs_mirror/api.py#31)(self):**
+
+&mdash; **def [run](/recipe_modules/cros_lvfs_mirror/api.py#26)(self):**
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
 
 [DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_storage](#recipe_modules-cros_storage), [cros\_version](#recipe_modules-cros_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6460,6 +6485,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_infra_config/tests/utils.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/utils.py#14)(api):**
+### *recipes* / [cros\_lvfs\_mirror:examples/full](/recipe_modules/cros_lvfs_mirror/examples/full.py)
+
+[DEPS](/recipe_modules/cros_lvfs_mirror/examples/full.py#8): [cros\_lvfs\_mirror](#recipe_modules-cros_lvfs_mirror)
+
+&mdash; **def [RunSteps](/recipe_modules/cros_lvfs_mirror/examples/full.py#13)(api):**
 ### *recipes* / [cros\_paygen:examples/full](/recipe_modules/cros_paygen/examples/full.py)
 
 [DEPS](/recipe_modules/cros_paygen/examples/full.py#5): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -7007,6 +7037,13 @@ Returns: JSON response with validation result
 Runs the presubmit for a project with checkout per local manifest.
 
 &mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#40)(api, properties):**
+### *recipes* / [lvfs\_mirror](/recipes/lvfs_mirror.py)
+
+[DEPS](/recipes/lvfs_mirror.py#8): [cros\_lvfs\_mirror](#recipe_modules-cros_lvfs_mirror)
+
+Recipe for syncing to our local cache LVFS files (https://fwupd.org/).
+
+&mdash; **def [RunSteps](/recipes/lvfs_mirror.py#13)(api):**
 ### *recipes* / [metadata\_json:examples/add\_stage\_results](/recipe_modules/metadata_json/examples/add_stage_results.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/add_stage_results.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
