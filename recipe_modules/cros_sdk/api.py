@@ -407,11 +407,15 @@ class CrosSdkApi(RecipeApi):
           SdkService.RestoreSnapshot call, or None to use the default in
           cros_build_api/test_api.py.
     """
+    SdkService = self.m.cros_build_api.SdkService
     with self.m.step.nest('creating chroot snapshot'):
-      snapshot_response = self.m.cros_build_api.SdkService.CreateSnapshot(
-          CreateSnapshotRequest(chroot=self.chroot),
-          test_output_data=create_test_data)
-      snapshot_token = snapshot_response.snapshot_token
+      if self.m.cros_build_api.has_endpoint(SdkService, 'CreateSnapshot'):
+        snapshot_response = SdkService.CreateSnapshot(
+            CreateSnapshotRequest(chroot=self.chroot),
+            test_output_data=create_test_data)
+        snapshot_token = snapshot_response.snapshot_token
+      else:
+        raise StepFailure('Build API lacks SdkService.CreateSnaphsot endpoint')
 
     try:
       yield
@@ -420,7 +424,7 @@ class CrosSdkApi(RecipeApi):
       # chroot snapshot.
       try:
         with self.m.step.nest('restoring chroot from snapshot'):
-          self.m.cros_build_api.SdkService.RestoreSnapshot(
+          SdkService.RestoreSnapshot(
               RestoreSnapshotRequest(chroot=self.chroot,
                                      snapshot_token=snapshot_token),
               test_output_data=restore_test_data)

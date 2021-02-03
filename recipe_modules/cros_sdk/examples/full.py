@@ -28,10 +28,6 @@ def RunSteps(api, properties):
 
   api.workspace_util.apply_changes(changes=properties.gerrit_changes or [])
   with api.cros_sdk.cleanup_context(checkout_path=workspace):
-    api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
-    api.assertions.assertTrue(
-        api.cros_sdk.chroot.path.endswith('test/cros_chroot'))
-
     api.assertions.assertIsNone(api.cros_sdk.goma_config())
 
     chroot = api.cros_sdk.create_chroot(version=properties.sdk_cache_version)
