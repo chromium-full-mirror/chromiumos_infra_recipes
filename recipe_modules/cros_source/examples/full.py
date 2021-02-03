@@ -60,7 +60,6 @@ def RunSteps(api, properties):
     api.assertions.assertTrue(api.cros_source.is_source_dirty)
   else:
     api.assertions.assertFalse(api.cros_source.is_source_dirty)
-
   commits = api.cros_source.apply_gerrit_changes(
       api.src_state.gerrit_changes,
       ignore_missing_projects=properties.ignore_missing_projects)
@@ -83,8 +82,13 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  yield api.cros_source.test('basic',
+  yield api.cros_source.test('basic-success',
                              api.post_check(post_process.StatusSuccess))
+
+  yield api.cros_source.test(
+      'basic-failure', api.repo.fail_repo_sync(True),
+      api.post_check(post_process.StepFailure,
+                     'sync cached directory.retry cache sync'))
 
   sync_step_name = ('sync to snapshot.fetch '
                     '2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml')
@@ -137,9 +141,21 @@ def GenTests(api):
       ))
 
   yield api.cros_source.test(
-      'with-custom-snapshot-cas',
+      'with-custom-snapshot-cas-success',
       api.properties(FullProperties(expected_snapshot_cas_digest='xxx')),
       api.post_check(post_process.StatusSuccess),
+      cros_source_properties=CrosSourceProperties(
+          snapshot_cas=CrosSourceProperties.SnapshotCas(
+              digest='xxx',
+          ),
+      ))
+
+  yield api.cros_source.test(
+      'with-custom-snapshot-cas-failure',
+      api.properties(FullProperties(expected_snapshot_cas_digest='xxx')),
+      api.repo.fail_repo_sync(True),
+      api.post_check(post_process.StepFailure,
+                     'sync cached directory.retry cache sync'),
       cros_source_properties=CrosSourceProperties(
           snapshot_cas=CrosSourceProperties.SnapshotCas(
               digest='xxx',

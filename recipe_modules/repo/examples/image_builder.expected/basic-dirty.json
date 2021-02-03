@@ -1,5 +1,52 @@
 [
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/ensure/.recipes_state.json",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "infra_step": true,
+    "name": "Read proto from [CLEANUP]/ensure/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set initial_repo_state",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"http://manifest_url\", \"state\": \"STATE_DIRTY\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"manifest_url\": \"http://manifest_url\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "[CLEANUP]/ensure/.recipes_state.json"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "infra_step": true,
+    "name": "Write proto to [CLEANUP]/ensure/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "ensure synced checkout"
   },
@@ -64,8 +111,6 @@
       "http://manifest_url",
       "--groups",
       "all",
-      "--manifest-name",
-      "../../manifest",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
@@ -241,8 +286,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
-      "--manifest-name",
-      "../../manifest",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
@@ -258,6 +301,26 @@
     "name": "ensure synced checkout.repo sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"manifest_url\": \"http://manifest_url\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "[CLEANUP]/ensure/.recipes_state.json"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "infra_step": true,
+    "name": "Write proto to [CLEANUP]/ensure/.recipes_state.json (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
   {

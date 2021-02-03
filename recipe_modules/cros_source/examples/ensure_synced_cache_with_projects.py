@@ -6,7 +6,10 @@
 DEPS = [
     'recipe_engine/context',
     'cros_source',
+    'repo',
 ]
+
+from recipe_engine import post_process
 
 
 def RunSteps(api):
@@ -16,4 +19,9 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic-success')
+
+  yield api.test(
+      'basic-failure', api.repo.fail_repo_sync(True),
+      api.post_check(post_process.StepFailure,
+                     'sync cached directory.retry cache sync'))

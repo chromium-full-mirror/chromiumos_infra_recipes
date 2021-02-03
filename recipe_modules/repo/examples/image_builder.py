@@ -13,8 +13,9 @@ DEPS = [
 ]
 
 from google.protobuf import json_format
-
+from google.protobuf.json_format import MessageToDict
 from PB.recipe_modules.chromeos.repo.examples import common
+from PB.chromiumos.repo_cache_state import RepoState
 from PB.recipe_modules.chromeos.repo.examples.image_builder import (
     ImageBuilderProperties)
 
@@ -44,6 +45,8 @@ def RunSteps(api, properties):
       manifest_name = checkout_path.join(init_opts['manifest_name'])
       init_opts['manifest_name'] = manifest_name
       sync_opts['manifest_name'] = manifest_name
+    repo_state_path = checkout_path.join('.recipes_state.json')
+    api.path.mock_add_paths(repo_state_path)
     api.repo.ensure_synced_checkout(checkout_path, manifest_url,
                                     init_opts=init_opts, sync_opts=sync_opts,
                                     projects=projects)
@@ -56,43 +59,19 @@ def RunSteps(api, properties):
                              detach=True, optimized_fetch=True, retry_fetches=8)
 
 
-def GenTests(api):
-  yield api.test('basic')
-
-  yield api.test(
-      'with-manifest-name',
+def WithManifestNameTest(api, state_name, state):
+  return api.test(
+      'with-manifest-name-{}'.format(state_name),
       api.properties(
           ImageBuilderProperties(
               init_opts=common.InitOpts(manifest_name='manifest'),
-              sync_opts=common.SyncOpts(manifest_name='manifest'))))
+              sync_opts=common.SyncOpts(manifest_name='manifest'))),
+      api.repo.repo_current_state(state))
 
-  local_manifest = common.LocalManifest(
-      repo='https://chrome-internal.googlesource.com/testproject1',
-      path='local_manifest.xml',
-  )
-  yield api.test(
-      'with-args',
-      api.properties(
-          ImageBuilderProperties(
-              projects=['chromiumos/config', 'chromeos/project/puff/duffy'],
-              init_opts=common.InitOpts(
-                  manifest_branch='mybranch',
-                  manifest_name='snapshot.xml',
-                  reference='/preload/chromeos',
-                  groups=['group1', 'group2'],
-                  depth=10,
-                  repo_url='http://repo_url',
-                  repo_branch='next',
-                  local_manifest=local_manifest,
-                  verbose=True,
-              ), sync_opts=common.SyncOpts(
-                  force_sync=True, detach=True, current_branch=True, jobs=99,
-                  manifest_name='snapshot.xml', no_tags=True,
-                  optimized_fetch=True, cache_dir='/tmp/cache', retry_fetches=8,
-                  verbose=True, no_manifest_update=True))))
 
-  yield api.test(
-      'with-retry',
+def WithArgsTest(api, state_name, state, local_manifest):
+  return api.test(
+      'with-args-{}'.format(state_name),
       api.properties(
           ImageBuilderProperties(
               projects=['chromiumos/config', 'chromeos/project/puff/duffy'],
@@ -111,4 +90,66 @@ def GenTests(api):
                   manifest_name='snapshot.xml', no_tags=True,
                   optimized_fetch=True, cache_dir='/tmp/cache', retry_fetches=8,
                   verbose=True, no_manifest_update=True))),
-      api.step_data('ensure synced checkout.repo sync', retcode=1))
+      api.repo.repo_current_state(state))
+
+
+def WithretryTest(api, state_name, state, local_manifest):
+  return api.test(
+      'with-retry-{}'.format(state_name),
+      api.properties(
+          ImageBuilderProperties(
+              projects=['chromiumos/config', 'chromeos/project/puff/duffy'],
+              init_opts=common.InitOpts(
+                  manifest_branch='mybranch',
+                  manifest_name='snapshot.xml',
+                  reference='/preload/chromeos',
+                  groups=['group1', 'group2'],
+                  depth=10,
+                  repo_url='http://repo_url',
+                  repo_branch='next',
+                  local_manifest=local_manifest,
+                  verbose=True,
+              ), sync_opts=common.SyncOpts(
+                  force_sync=True, detach=True, current_branch=True, jobs=99,
+                  manifest_name='snapshot.xml', no_tags=True,
+                  optimized_fetch=True, cache_dir='/tmp/cache', retry_fetches=8,
+                  verbose=True, no_manifest_update=True))),
+      api.repo.repo_current_state(state))
+
+
+def GenTests(api):
+  yield api.test('basic-failure', api.repo.fail_repo_sync(True))
+
+  yield api.test('basic-unspecified',
+                 api.repo.repo_current_state(RepoState.STATE_UNSPECIFIED))
+  yield api.test('basic-clean',
+                 api.repo.repo_current_state(RepoState.STATE_CLEAN))
+  yield api.test('basic-dirty',
+                 api.repo.repo_current_state(RepoState.STATE_DIRTY))
+  yield api.test('basic-recovery',
+                 api.repo.repo_current_state(RepoState.STATE_RECOVERY))
+
+  yield api.test('basic-manifest-mismatch',
+                 api.repo.repo_manifest_branch('mismatch'))
+
+  local_manifest = common.LocalManifest(
+      repo='https://chrome-internal.googlesource.com/testproject1',
+      path='local_manifest.xml',
+  )
+
+  yield WithManifestNameTest(api, 'unspecified', RepoState.STATE_UNSPECIFIED)
+  yield WithManifestNameTest(api, 'clean', RepoState.STATE_CLEAN)
+  yield WithManifestNameTest(api, 'dirty', RepoState.STATE_DIRTY)
+  yield WithManifestNameTest(api, 'recovery', RepoState.STATE_RECOVERY)
+
+  yield WithArgsTest(api, 'unspecified', RepoState.STATE_UNSPECIFIED,
+                     local_manifest)
+  yield WithArgsTest(api, 'clean', RepoState.STATE_CLEAN, local_manifest)
+  yield WithArgsTest(api, 'dirty', RepoState.STATE_DIRTY, local_manifest)
+  yield WithArgsTest(api, 'recovery', RepoState.STATE_RECOVERY, local_manifest)
+
+  yield WithretryTest(api, 'unspecified', RepoState.STATE_UNSPECIFIED,
+                      local_manifest)
+  yield WithretryTest(api, 'clean', RepoState.STATE_CLEAN, local_manifest)
+  yield WithretryTest(api, 'dirty', RepoState.STATE_DIRTY, local_manifest)
+  yield WithretryTest(api, 'recovery', RepoState.STATE_RECOVERY, local_manifest)

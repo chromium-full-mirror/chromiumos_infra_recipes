@@ -8,10 +8,14 @@ DEPS = [
     'recipe_engine/path',
 ]
 
+from PB.chromiumos.repo_cache_state import RepoState
+
 
 def RunSteps(api):
-  api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
-                                  'http://manifest_url')
+  checkout_path = api.path['cleanup'].join('ensure')
+  repo_state_path = checkout_path.join('.recipes_state.json')
+  api.path.mock_add_paths(repo_state_path)
+  api.repo.ensure_synced_checkout(checkout_path, 'http://manifest_url')
 
 
 def attempt_retry_repo(api, attempt):
@@ -28,9 +32,14 @@ def attempt_retry_repo(api, attempt):
 
 
 def GenTests(api):
-  yield api.test(
-      'repo_retry_failure',
-      attempt_retry_repo(api, 1),
-      attempt_retry_repo(api, 2),
-      attempt_retry_repo(api, 3),
-  )
+  yield api.test('repo_retry_failure_unspecified', attempt_retry_repo(api, 1),
+                 attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
+                 api.repo.repo_current_state(RepoState.STATE_UNSPECIFIED))
+
+  yield api.test('repo_retry_failure_clean', attempt_retry_repo(api, 1),
+                 attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
+                 api.repo.repo_current_state(RepoState.STATE_CLEAN))
+
+  yield api.test('repo_retry_failure_dirty', attempt_retry_repo(api, 1),
+                 attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
+                 api.repo.repo_current_state(RepoState.STATE_DIRTY))

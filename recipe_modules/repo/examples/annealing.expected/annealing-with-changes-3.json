@@ -1,0 +1,180 @@
+[
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/ensure/.recipes_state.json",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "infra_step": true,
+    "name": "Read proto from [CLEANUP]/ensure/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_RECOVERY@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set initial_repo_state",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"http://manifest_url\", \"state\": \"STATE_RECOVERY\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[START_DIR]/repo/.repo/manifests",
+    "infra_step": true,
+    "name": "git remote"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "get-url",
+      "cros-internal"
+    ],
+    "cwd": "[START_DIR]/repo/.repo/manifests",
+    "infra_step": true,
+    "name": "git remote (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/repo/.repo/manifests",
+    "infra_step": true,
+    "name": "git rev-parse"
+  },
+  {
+    "cmd": [
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/repo/.repo/manifests",
+    "infra_step": true,
+    "name": "git symbolic-ref"
+  },
+  {
+    "cmd": [],
+    "name": "set commit",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/master\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifests"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r",
+      "-m",
+      "snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync manifests.repo manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@    <manifest>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@      <project name=\"NAME\" path=\"PATH\" revision=\"TO_REV\"/>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@      <project name=\"NO_CHANGE\" revision=\"NO_CHANGE_REV\"/>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@      <project name=\"IGNORE\" revision=\"TO_REV\">@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@        <annotation name=\"snapshot-mode\" value=\"ignore-diff\"/>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@      </project>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@    </manifest>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  @@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "diff remote and local manifest"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "http://manifest_url",
+      ":"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "show",
+      "FETCH_HEAD:snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git show",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "diffmanifests",
+      "../../manifest-internal/snapshot-a.xml",
+      "../../manifest-internal/snapshot-b.xml"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "manifest diff"
+  },
+  {
+    "name": "$result"
+  }
+]

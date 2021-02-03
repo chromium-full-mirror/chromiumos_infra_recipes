@@ -26,7 +26,6 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache(manifest_url=properties.manifest_url,
                                         cache_path_override=path)
 
-
 def GenTests(api):
 
   def verify_manifest_url(check, steps, expected, name=None):
@@ -38,16 +37,19 @@ def GenTests(api):
   external_url = api.src_state.external_manifest.url
   internal_url = api.src_state.internal_manifest.url
 
-  yield api.cros_source.test('basic',
-                             api.post_check(verify_manifest_url, internal_url),
-                             api.post_check(post_process.StatusSuccess))
+  yield api.cros_source.test(
+      'basic',
+      api.post_check(verify_manifest_url, internal_url,
+                     'sync cached directory.ensure synced checkout.repo init'),
+      api.post_check(post_process.StatusSuccess))
 
   yield api.cros_source.test(
       'internal',
       api.properties(
           SyncCacheProperties(
               manifest_url=api.src_state.internal_manifest.url)),
-      api.post_check(verify_manifest_url, internal_url),
+      api.post_check(verify_manifest_url, internal_url,
+                     'sync cached directory.ensure synced checkout.repo init'),
       api.post_check(post_process.DoesNotRun, 'override manifest url'),
       api.post_check(post_process.StatusSuccess))
 

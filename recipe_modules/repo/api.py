@@ -8,10 +8,12 @@
 See: https://chromium.googlesource.com/external/repo/
 """
 
+from google.protobuf.json_format import MessageToDict
 from collections import namedtuple
 import re
 import types
 
+from PB.chromiumos.repo_cache_state import RepoState
 from recipe_engine import recipe_api
 from recipe_engine.config_types import Path
 from xml.etree import cElementTree as ElementTree
@@ -48,12 +50,23 @@ class RepoApi(recipe_api.RecipeApi):
   ProjectInfo = ProjectInfo
   LocalManifest = LocalManifest
 
+  def __init__(self, properties, *args, **kwargs):
+    super(RepoApi, self).__init__(*args, **kwargs)
+    self._disable_source_cache_health = properties.disable_source_cache_health
+
   def initialize(self):
     self._binary_updated = False
+    self._disable_source_cache_health |= (
+        'chromeos.repo.disable_source_cache_health' in
+        self.m.cros_infra_config.experiments)
 
   @property
   def repo_path(self):
     return self.m.depot_tools.repo_resource('repo')
+
+  @property
+  def disable_source_cache_health(self):
+    return self._disable_source_cache_health
 
   def _find_root(self):
     """Starting from cwd, find an ancestor with a '.repo' subdir."""
@@ -129,7 +142,7 @@ class RepoApi(recipe_api.RecipeApi):
     """Prints the current version information of repo."""
     self._step(['version'], 'repo version', infra_step=True)
 
-  def init(self, manifest_url, _kwonly=(), manifest_branch=None, reference=None,
+  def init(self, manifest_url, _kwonly=(), manifest_branch='', reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
            local_manifest=None, manifest_name=None, projects=None,
            verbose=False):
@@ -565,8 +578,78 @@ class RepoApi(recipe_api.RecipeApi):
     with self.m.context(cwd=self._find_root().join('.repo', 'manifests')):
       return self.m.git.gitiles_commit()
 
+  # Add step.nest
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
                              sync_opts=None, projects=None):
+    repo_state_path = root_path.join('.recipes_state.json')
+    manifest_branch = (init_opts.get('manifest_branch') or
+                       '') if init_opts else ''
+
+    # Get cache state
+    if self.m.path.exists(repo_state_path):
+      test_proto = None
+      if self._test_data.enabled:
+        test_proto = RepoState(
+            state=self._test_data.get('repo_current_state',
+                                      RepoState.STATE_DIRTY),
+            manifest_branch=self._test_data.get('repo_manifest_branch',
+                                                manifest_branch),
+            manifest_url=manifest_url,
+        )
+      repo_state = self.m.file.read_proto(
+          'Read proto from {}'.format(repo_state_path), repo_state_path,
+          RepoState, 'JSONPB', test_proto=test_proto)
+    else:
+      repo_state = RepoState(
+          state=(RepoState.STATE_DIRTY if self.m.path.exists(
+              root_path.join('.repo')) else RepoState.STATE_CLEAN),
+          manifest_branch=manifest_branch, manifest_url=manifest_url)
+
+    # Output initial repo state
+    self.m.easy.set_properties_step(
+        initial_repo_state=MessageToDict(repo_state))
+
+    # Add recovery fail
+    if self._test_data.enabled and self._test_data.get('fail_repo_sync', False):
+      repo_state.state = RepoState.STATE_RECOVERY
+
+    if not self._disable_source_cache_health and repo_state.state == RepoState.STATE_RECOVERY:
+      # Should only be reached if recovery error has occured.
+      # Caller will delete the cache and start over.
+      # Wrapped in feature flag
+      return False
+
+    # TODO(b/179259515): Ignore for now, adjust when tracking snapshot vs.ToT
+    # if repo_state.manifest_branch != manifest_branch:
+    #   # Raise step failure for inconsisten manifest_branch
+    #   raise recipe_api.StepFailure(
+    #       'manifest branch incorrect: expected {} got {}'.format(
+    #           manifest_branch, repo_state.manifest_branch))
+
+    # If the repo state is not STATE_CLEAN or the manifest_url has
+    # changed then the checkout is considered dirty
+    clean = (
+        repo_state.state == RepoState.STATE_CLEAN and
+        repo_state.manifest_url == manifest_url)
+
+    # Will update url them if they differ
+    repo_state.manifest_url = manifest_url
+
+    # Write current state to proto
+    self.m.file.write_proto('Write proto to {}'.format(repo_state_path),
+                            repo_state_path, repo_state, 'JSONPB')
+
+    # Clean cache if needed
+    self._sync_checkout(root_path, manifest_url, init_opts, sync_opts, projects,
+                        clean)
+    repo_state.state = RepoState.STATE_CLEAN
+
+    self.m.file.write_proto('Write proto to {}'.format(repo_state_path),
+                            repo_state_path, repo_state, 'JSONPB')
+    return True
+
+  def _sync_checkout(self, root_path, manifest_url, init_opts=None,
+                     sync_opts=None, projects=None, clean=False):
     """Ensure the given repo checkout exists and is synced.
 
     Args:
@@ -600,14 +683,18 @@ class RepoApi(recipe_api.RecipeApi):
 
         for retries in range(2):
           try:
-            # Remove .repo/manifests and .repo/manifests.git to avoid potential
-            # problems when switching to a different manifest repo or branch.
-            for manifest_dir in ('manifests', 'manifests.git'):
-              self.m.file.rmtree('remove .repo/%s' % manifest_dir,
-                                 root_path.join('.repo', manifest_dir))
+            if not clean:
+              # Remove .repo/manifests and .repo/manifests.git to avoid
+              # potential problems when switching to a different manifest
+              # repo or branch.
+              for manifest_dir in ('manifests', 'manifests.git'):
+                self.m.file.rmtree('remove .repo/%s' % manifest_dir,
+                                   root_path.join('.repo', manifest_dir))
 
-            self.init(manifest_url, **init_opts)
-            self._git_clean_checkout(root_path, projects)
+              self.init(manifest_url, **init_opts)
+              self._git_clean_checkout(root_path, projects)
+            else:
+              self.init(manifest_url, **init_opts)
             self.sync(**sync_opts)
             break
           except recipe_api.StepFailure:

@@ -14,8 +14,8 @@ DEPS = [
 ]
 
 from google.protobuf.json_format import MessageToDict
-
 from PB.recipe_modules.chromeos.repo.examples import common
+from PB.chromiumos.repo_cache_state import RepoState
 from PB.recipe_modules.chromeos.repo.examples.annealing import (
     AnnealingProperties)
 
@@ -40,9 +40,12 @@ def RunSteps(api, properties):
                               preserving_proto_field_name=True)
 
     projects = list(properties.projects)
-    api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
-                                    manifest_url, init_opts=init_opts,
-                                    sync_opts=sync_opts, projects=projects)
+    checkout_path = api.path['cleanup'].join('ensure')
+    repo_state_path = checkout_path.join('.recipes_state.json')
+    api.path.mock_add_paths(repo_state_path)
+    api.repo.ensure_synced_checkout(checkout_path, manifest_url,
+                                    init_opts=init_opts, sync_opts=sync_opts,
+                                    projects=projects)
     api.easy.set_properties_step(
         commit=MessageToDict(api.repo.manifest_gitiles_commit))
 
@@ -68,27 +71,35 @@ def RunSteps(api, properties):
         repo_root.join('manifest-internal/snapshot-b.xml'))
 
 
-def GenTests(api):
+def AnnealingTest(api, state_name, state):
+  return api.test(
+      'annealing-{}'.format(state),
+      api.properties(AnnealingProperties(manifest_file='snapshot.xml')),
+      api.repo.repo_current_state(state))
+
+
+def AnnealingLocalManifest(api, state_name, state):
   local_manifest = common.LocalManifest(
       repo='https://chrome-internal.googlesource.com/testproject1',
       path='local_manifest.xml',
   )
-
-  yield api.test(
-      'annealing',
-      api.properties(AnnealingProperties(manifest_file='snapshot.xml')))
-
-  yield api.test(
-      'annealing-local-manifest',
+  return api.test(
+      'annealing-local-manifest-{}'.format(state),
       api.properties(
           AnnealingProperties(manifest_file='snapshot.xml'),
-          init_opts=common.InitOpts(local_manifest=local_manifest)))
+          init_opts=common.InitOpts(local_manifest=local_manifest)),
+      api.repo.repo_current_state(state))
 
-  yield api.test(
-      'annealing-missing-FromXML',
+
+def AnnealingMissingFromXML(api, state_name, state):
+  return api.test(
+      'annealing-missing-FromXML-{}'.format(state),
       api.properties(AnnealingProperties(manifest_file='snapshot.xml')),
-      api.step_data('diff remote and local manifest.git show', retcode=128))
+      api.step_data('diff remote and local manifest.git show', retcode=128),
+      api.repo.repo_current_state(state))
 
+
+def AnnealingWithChanges(api, state_name, state):
   # Annealing with diffs
   from_manifest = """
     <manifest>
@@ -110,12 +121,35 @@ def GenTests(api):
       </project>
     </manifest>
   """
-  yield api.test(
-      'annealing-with-changes',
+  return api.test(
+      'annealing-with-changes-{}'.format(state),
       api.properties(
           AnnealingProperties(
               manifest_file='snapshot.xml', manifest_data=to_manifest,
               from_manifest_data=from_manifest, expected_manifest_diffs=[
                   common.ManifestDiff(name='NAME', path='PATH',
                                       from_rev='FROM_REV', to_rev='TO_REV')
-              ])))
+              ])), api.repo.repo_current_state(state))
+
+
+def GenTests(api):
+
+  yield AnnealingTest(api, 'unspecified', RepoState.STATE_UNSPECIFIED)
+  yield AnnealingTest(api, 'clean', RepoState.STATE_CLEAN)
+  yield AnnealingTest(api, 'dirty', RepoState.STATE_DIRTY)
+  yield AnnealingTest(api, 'recovery', RepoState.STATE_RECOVERY)
+
+  yield AnnealingLocalManifest(api, 'unspecified', RepoState.STATE_UNSPECIFIED)
+  yield AnnealingLocalManifest(api, 'clean', RepoState.STATE_CLEAN)
+  yield AnnealingLocalManifest(api, 'dirty', RepoState.STATE_DIRTY)
+  yield AnnealingLocalManifest(api, 'recovery', RepoState.STATE_RECOVERY)
+
+  yield AnnealingMissingFromXML(api, 'unspecified', RepoState.STATE_UNSPECIFIED)
+  yield AnnealingMissingFromXML(api, 'clean', RepoState.STATE_CLEAN)
+  yield AnnealingMissingFromXML(api, 'dirty', RepoState.STATE_DIRTY)
+  yield AnnealingMissingFromXML(api, 'recovery', RepoState.STATE_RECOVERY)
+
+  yield AnnealingWithChanges(api, 'unspecified', RepoState.STATE_UNSPECIFIED)
+  yield AnnealingWithChanges(api, 'clean', RepoState.STATE_CLEAN)
+  yield AnnealingWithChanges(api, 'dirty', RepoState.STATE_DIRTY)
+  yield AnnealingWithChanges(api, 'recovery', RepoState.STATE_RECOVERY)

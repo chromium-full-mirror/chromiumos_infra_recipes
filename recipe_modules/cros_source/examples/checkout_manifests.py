@@ -48,8 +48,15 @@ def GenTests(api):
   # The normal case for postsubmit: checkout the external manifest, so we can
   # push manifest refs.
   yield api.cros_source.test(
-      'basic', api.post_check(post_process.StatusSuccess),
+      'basic-success', api.post_check(post_process.StatusSuccess),
       api.properties(CheckoutManifestsProperties(checkout_external=True)),
+      revision=None, cq=False, git_ref=None)
+
+  yield api.cros_source.test(
+      'basic-failure',
+      api.properties(CheckoutManifestsProperties(checkout_external=True)),
+      api.repo.fail_repo_sync(True),
+      api.post_check(post_process.StepFailure, 'retry cache sync'),
       revision=None, cq=False, git_ref=None)
 
   # Running on an unpinned branch.

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package recipe_modules.chromeos.repo;
+
+message RepoProperties {
+
+    // Feature flag: toggle the source cache health feature
+    bool disable_source_cache_health = 1;
+}

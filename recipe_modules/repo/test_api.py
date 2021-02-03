@@ -79,3 +79,18 @@ class RepoTestApi(recipe_test_api.RecipeTestApi):
     name += '' if iteration == 1 else ' (%d)' % iteration
     content = self.project_infos_test_data(data)
     return self.step_data(name, stdout=self.m.raw_io.output(content))
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def repo_current_state(value):
+    return value
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def repo_manifest_branch(value):
+    return value
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def fail_repo_sync(value):
+    return value

@@ -160,6 +160,25 @@ class CrosSourceApi(RecipeApi):
       return 'INTERNAL'
     return 'CUSTOM'
 
+  def _retry_checkout_sync_verification(self, cache_path, manifest_url=None,
+                                        init_opts=None, sync_opts=None,
+                                        projects=None):
+    with self.m.step.nest('retry cache sync'):
+      # If the checkout sync failed then we'll unmount and try again.
+      self.m.overlayfs.unmount('workspace', self.workspace_path)
+      self.m.overlayfs.unmount('chromiumos', self.cache_path)
+      self.m.file.rmtree("Destroying cache at {}".format(self.cache_path),
+                         self.cache_path)
+      self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
+                             persist=True)
+      self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
+      clean = self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
+                                                 init_opts=init_opts,
+                                                 sync_opts=sync_opts,
+                                                 projects=projects)
+      if not clean:
+        raise StepFailure('Cache failed to sync')
+
   def ensure_synced_cache(self, manifest_url=None, init_opts=None,
                           sync_opts=None, cache_path_override=None,
                           is_staging=False, projects=None, gitiles_commit=None):
@@ -230,9 +249,12 @@ class CrosSourceApi(RecipeApi):
       self._sync_cached_dir(retry_fetches, projects, verbose,
                             is_staging=is_staging)
     else:
-      self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
-                                         init_opts=init_opts,
-                                         sync_opts=sync_opts, projects=projects)
+      if not self.m.repo.ensure_synced_checkout(
+          cache_path, manifest_url, init_opts=init_opts, sync_opts=sync_opts,
+          projects=projects):
+        self._retry_checkout_sync_verification(cache_path, manifest_url,
+                                               init_opts, sync_opts, projects)
+
       # Sync all branches of the build manifest, so that we can find branches.
       # If groups were specified, then the manifest project is probably not
       # present, so don't bother.
@@ -431,22 +453,26 @@ class CrosSourceApi(RecipeApi):
       verbose (bool): Whether to produce verbose output.
       is_staging (bool): Flag to indicate staging environment
     """
-    sync_path = self.cache_path
-    manifest = self.m.src_state.internal_manifest
+    with self.m.step.nest('sync cached directory'):
+      sync_path = self.cache_path
+      manifest = self.m.src_state.internal_manifest
 
-    init_opts = dict(verbose=verbose)
-    if is_staging:
-      init_opts.update(STAGING_INIT_OPTS)
-    sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, verbose=verbose,
-                     retry_fetches=retry_fetches)
+      init_opts = dict(verbose=verbose)
+      if is_staging:
+        init_opts.update(STAGING_INIT_OPTS)
+      sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, verbose=verbose,
+                       retry_fetches=retry_fetches)
+      if not self.m.repo.ensure_synced_checkout(
+          sync_path, manifest.url, init_opts=init_opts, sync_opts=sync_opts,
+          projects=projects):
+        self._retry_checkout_sync_verification(sync_path, manifest.url,
+                                               init_opts, sync_opts, projects)
 
-    self.m.repo.ensure_synced_checkout(sync_path, manifest.url,
-                                       init_opts=init_opts, sync_opts=sync_opts,
-                                       projects=projects)
-    # Sync all branches of the internal manifest, so that we can find branches.
-    with self.m.context(cwd=self.cache_path.join(manifest.relpath)):
-      step_name = 'sync {} branches'.format(manifest.project)
-      self.m.git.remote_update(step_name=step_name)
+      # Sync all branches of the internal manifest, so that we
+      # can find branches.
+      with self.m.context(cwd=self.cache_path.join(manifest.relpath)):
+        step_name = 'sync {} branches'.format(manifest.project)
+        self.m.git.remote_update(step_name=step_name)
 
   @contextlib.contextmanager
   def checkout_overlays_context(self, mount_cache=True):
@@ -523,7 +549,6 @@ class CrosSourceApi(RecipeApi):
         include_files=include_files, test_output_data=test_output_data)
 
     self._apply_manifest_patch_sets(patch_sets)
-
     return self._apply_gerrit_patch_sets(
         patch_sets, ignore_missing_projects=ignore_missing_projects)
 
@@ -703,14 +728,19 @@ class CrosSourceApi(RecipeApi):
       #
       # This also means that the build manifest directory will be reset to the
       # unpatched version, which we will fix momentarily.
-      init_opts = dict(manifest_branch=branch, manifest_name=default_file)
-      sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, manifest_name=default_file,
-                       current_branch=True, no_tags=False, retry_fetches=2,
-                       detach=False, force_sync=True, no_manifest_update=True)
-      self.m.repo.ensure_synced_checkout(self.workspace_path,
-                                         'file://%s' % new_dir,
-                                         init_opts=dict(init_opts),
-                                         sync_opts=dict(sync_opts))
+      with self.m.step.nest('get patched manifest'):
+        init_opts = dict(manifest_branch=branch, manifest_name=default_file)
+        sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, manifest_name=default_file,
+                         current_branch=True, no_tags=False, retry_fetches=2,
+                         detach=False, force_sync=True, no_manifest_update=True)
+
+        manifest_url = 'file://%s' % new_dir
+        if not self.m.repo.ensure_synced_checkout(
+            self.workspace_path, manifest_url, init_opts=dict(init_opts),
+            sync_opts=dict(sync_opts)):
+          self._retry_checkout_sync_verification(self.workspace_path,
+                                                 manifest_url, dict(init_opts),
+                                                 dict(sync_opts))
 
       # 4. Move the manifest directory (or both) back to the correct position.
       with self.m.step.nest('restore manifest patches'):
