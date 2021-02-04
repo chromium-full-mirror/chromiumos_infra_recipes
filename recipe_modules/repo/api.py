@@ -145,7 +145,7 @@ class RepoApi(recipe_api.RecipeApi):
   def init(self, manifest_url, _kwonly=(), manifest_branch='', reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
            local_manifest=None, manifest_name=None, projects=None,
-           verbose=False):
+           verbose=False, clean=True):
     """Executes 'repo init' with the given arguments.
 
     Args:
@@ -186,7 +186,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--verbose']
     self._step(cmd, timeout=15 * 60)
     self._binary_selfupdate(self.m.context.cwd)
-    self._clear_git_locks(projects)
+    if not clean:
+      self._clear_git_locks(projects)
 
     if self.m.context.cwd:
       self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))
@@ -578,7 +579,6 @@ class RepoApi(recipe_api.RecipeApi):
     with self.m.context(cwd=self._find_root().join('.repo', 'manifests')):
       return self.m.git.gitiles_commit()
 
-  # Add step.nest
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
                              sync_opts=None, projects=None):
     repo_state_path = root_path.join('.recipes_state.json')
@@ -631,6 +631,10 @@ class RepoApi(recipe_api.RecipeApi):
     clean = (
         repo_state.state == RepoState.STATE_CLEAN and
         repo_state.manifest_url == manifest_url)
+
+    # Set opt so we know if to clear locks or not during init()
+    if init_opts:
+      init_opts['clean'] = clean
 
     # Will update url them if they differ
     repo_state.manifest_url = manifest_url
