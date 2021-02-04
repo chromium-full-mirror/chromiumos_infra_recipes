@@ -1603,11 +1603,13 @@
       "[START_DIR]/chromiumos_workspace/src/chromeos/manifest-internal/default.xml",
       "--custom",
       "test-manifest",
-      "-j",
-      "8"
+      "--skip-group-check"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "test branch_util for chromeos/manifest-internal"
+    "name": "test branch_util for chromeos/manifest-internal",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+    ]
   },
   {
     "cmd": [],

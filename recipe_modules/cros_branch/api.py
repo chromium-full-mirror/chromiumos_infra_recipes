@@ -5,10 +5,14 @@
 
 """API wrapping the cros branch tool."""
 
+import re
+
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.branch import Branch
+
+BRANCH_UTIL_REGEX = r"Creating branch: (?P<branch>.*)\s*"
 
 
 class CrosBranchApi(recipe_api.RecipeApi):
@@ -36,19 +40,27 @@ class CrosBranchApi(recipe_api.RecipeApi):
       force (bool): If True, cros branch will be run with --force.
       push (bool): If True, cros branch will be run with --push.
       kwargs: Keyword arguments for recipe_engine/step.
+
+    Returns:
+      branch_name (string): The name of the created branch, or None.
     """
-    branch_args = []
+    branch_args = ['--skip-group-check']
     if force:
       branch_args.append('--force')
     if push:
       branch_args.append('--push')
-    # These recipes are always run on MEDIUM bots, which have 8 cores.
-    branch_args.extend(['-j', '8'])
 
     self._ensure_branch_util()
-    self.m.step(step_name or '%s branch' % cmd[0],
-                [self._branch_util_path] + cmd + branch_args,
-                **kwargs)
+    step_data = self.m.step(
+        step_name or '%s branch' % cmd[0],
+        [self._branch_util_path] + cmd + branch_args,
+        stdout=self.m.raw_io.output(name='branch_util stdout',
+                                    add_output_log=True), **kwargs)
+
+    res = re.search(BRANCH_UTIL_REGEX, step_data.stdout)
+    if not res:
+      return None
+    return res.group('branch')
 
   def _create(self, branch, branch_util_args, **kwargs):
     cmd = ['create'] + branch_util_args
@@ -69,7 +81,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     if branch.descriptor:
       cmd.extend(['--descriptor', branch.descriptor])
 
-    self(cmd, **kwargs)
+    return self(cmd, **kwargs)
 
   def create_from_buildspec(self, source_version, branch, **kwargs):
     """Call `cros branch create`, branching from the appropriate buildspec
@@ -82,6 +94,9 @@ class CrosBranchApi(recipe_api.RecipeApi):
       branch (chromiumos.Branch): Branch to be created.
       kwargs: Keyword arguments for recipe_engine/step.
         Accepts the same keyword arguments as __call__.
+
+    Returns:
+      branch_name (string): The name of the created branch, or None.
     """
     with self.m.step.nest('parse source_version'):
       version = self.m.cros_version.Version.from_string(source_version)
@@ -93,7 +108,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
         'create branch from buildspec manifest %s' % version.buildspec_filename)
     manifest_args = ['--buildspec-manifest', version.buildspec_filename]
 
-    self._create(branch, manifest_args, **kwargs)
+    return self._create(branch, manifest_args, **kwargs)
 
   def create_from_file(self, manifest_file, branch, manifest_src=None,
                        **kwargs):
@@ -107,12 +122,15 @@ class CrosBranchApi(recipe_api.RecipeApi):
       branch (chromiumos.Branch): Branch to be created.
       kwargs: Keyword arguments for recipe_engine/step.
         Accepts the same keyword arguments as __call__.
+
+    Returns:
+      branch_name (string): The name of the created branch, or None.
     """
     manifest_args = ['--file', manifest_file]
 
     kwargs.setdefault('step_name',
                       'create branch from manifest %s' % manifest_file)
-    self._create(branch, manifest_args, **kwargs)
+    return self._create(branch, manifest_args, **kwargs)
 
   def rename(self, branch, new_branch_name, **kwargs):
     """Call `cros branch rename` with the appropriate arguments.

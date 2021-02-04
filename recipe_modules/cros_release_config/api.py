@@ -41,7 +41,7 @@ TEST_DATA = ReleaseBuilders(builders=[
     ReleaseBuilder(
         milestone=ReleaseBuilder.Milestone(branch_name='release-R03-00003.B',
                                            number=3),
-        build_schedule="0 10 * * *"),
+        build_schedule="0 * * * *"),
     ReleaseBuilder(
         milestone=ReleaseBuilder.Milestone(branch_name='release-R40-00040.B',
                                            number=40),
@@ -98,7 +98,13 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       cron_components = b.build_schedule.split()
       if len(cron_components) == 5:
         for hour in cron_components[1].split(','):
-          used_hours.add(int(hour))
+          # We are supporting '*', so if the hour can't be parsed into an int,
+          # ignore it for our purposes.
+          try:
+            hour = int(hour)
+            used_hours.add(hour)
+          except ValueError:
+            pass
     # TODO(crbug/1122854): This will eventually be triggered by the chromeos-chrome ebuild uprev.
     schedule = '0 4 * * *'
     for hour in range(24):

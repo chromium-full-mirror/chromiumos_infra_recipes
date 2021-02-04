@@ -40,10 +40,12 @@
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release",
-      "-j",
-      "8"
+      "--skip-group-check"
     ],
-    "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml"
+    "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+    ]
   },
   {
     "cmd": [
@@ -52,12 +54,14 @@
       "--file",
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release",
+      "--skip-group-check",
       "--force",
-      "--push",
-      "-j",
-      "8"
+      "--push"
     ],
-    "name": "create branch from http://chromium.org/manifest.xml"
+    "name": "create branch from http://chromium.org/manifest.xml",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+    ]
   },
   {
     "cmd": [],
@@ -70,12 +74,18 @@
       "--buildspec-manifest",
       "89/13729.0.0.xml",
       "--release",
+      "--skip-group-check",
       "--force",
-      "--push",
-      "-j",
-      "8"
+      "--push"
     ],
-    "name": "create branch from buildspec"
+    "name": "create branch from buildspec",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@@@@",
+      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@2021/02/16 23:10:18.736295 No branch exists for version 13729.0.0. Continuing...@@@",
+      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@2021/02/16 23:10:18.744031 Creating branch: release-R89-13729.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@2021/02/16 23:10:19 Repairing manifest project chromiumos/manifest@@@",
+      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+    ]
   },
   {
     "cmd": [
@@ -87,10 +97,12 @@
       "mybranch",
       "--descriptor",
       "nami",
-      "-j",
-      "8"
+      "--skip-group-check"
     ],
-    "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml (2)"
+    "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+    ]
   },
   {
     "cmd": [
@@ -98,20 +110,24 @@
       "rename",
       "my_branch",
       "branch_new_name",
-      "-j",
-      "8"
+      "--skip-group-check"
     ],
-    "name": "rename branch my_branch to branch_new_name"
+    "name": "rename branch my_branch to branch_new_name",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+    ]
   },
   {
     "cmd": [
       "[START_DIR]/cipd/test_planner/branch_util",
       "delete",
       "my_branch",
-      "-j",
-      "8"
+      "--skip-group-check"
     ],
-    "name": "delete branch my_branch"
+    "name": "delete branch my_branch",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+    ]
   },
   {
     "name": "$result"

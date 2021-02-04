@@ -114,7 +114,7 @@ BLOCK_3 = """builders {
     number: 3
     branch_name: "release-R03-00003.B"
   }
-  build_schedule: "0 10 * * *"
+  build_schedule: "0 * * * *"
 }
 """
 

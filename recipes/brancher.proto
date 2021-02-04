@@ -1,0 +1,26 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.brancher;
+
+import "chromiumos/branch.proto";
+
+message BrancherProperties {
+  // Version to branch from.
+  // Should be of the format "R89-13729.0.0"
+  string source_version = 1;
+
+  // Branch to create.
+  // Currently, only the branch_type field will be used.
+  chromiumos.Branch branch_info = 2;
+
+  // Whether or not the branch_util should be invoked with --push.
+  // push=false == dry run
+  bool branch_util_push = 3;
+
+  // Whether or not the branch_util should be invoked with --force.
+  bool branch_util_force = 4;
+}
