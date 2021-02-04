@@ -1,5 +1,12 @@
 [
   {
+    "cmd": [],
+    "name": "parse source_version",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

@@ -57,6 +57,8 @@ def RunSteps(api, properties):
   # Test the parsing of arbitrary strings.
   v = api.cros_version.Version.from_string('134.1.2')
   api.assertions.assertEqual(v, api.cros_version.Version(None, 134, 1, 2, None))
+  v = api.cros_version.Version.from_string('R1000-134.1.2')
+  api.assertions.assertEqual(v, api.cros_version.Version(1000, 134, 1, 2, None))
   # Close but not a real version.
   v = api.cros_version.Version.from_string('1213.123.41.21')
   api.assertions.assertTrue(v == None)

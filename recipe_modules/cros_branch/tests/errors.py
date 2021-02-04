@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine.recipe_api import StepFailure
 from PB.chromiumos.branch import Branch
 
 DEPS = [
@@ -16,23 +17,27 @@ DEPS = [
 def RunSteps(api):
   download_path = api.path.mkdtemp(prefix='manifests-').join('download.xml')
 
-  with api.assertions.assertRaises(ValueError):
+  with api.assertions.assertRaises(StepFailure):
+    # Bad version string.
+    api.cros_branch.create_from_buildspec("foo", branch=None)
+
+  with api.assertions.assertRaises(StepFailure):
     api.cros_branch.create_from_file(download_path, branch=None)
-  with api.assertions.assertRaises(ValueError):
+  with api.assertions.assertRaises(StepFailure):
     api.cros_branch.create_from_file(download_path,
                                      branch=Branch(type=Branch.UNSPECIFIED))
 
-  with api.assertions.assertRaises(ValueError):
+  with api.assertions.assertRaises(StepFailure):
     api.cros_branch.create_from_file(download_path,
                                      branch=Branch(type=Branch.CUSTOM))
 
   my_branch = Branch(name='my_branch')
-  with api.assertions.assertRaises(ValueError):
+  with api.assertions.assertRaises(StepFailure):
     api.cros_branch.rename(my_branch, None)
-  with api.assertions.assertRaises(ValueError):
+  with api.assertions.assertRaises(StepFailure):
     api.cros_branch.rename(Branch(), 'my_branch')
 
-  with api.assertions.assertRaises(ValueError):
+  with api.assertions.assertRaises(StepFailure):
     api.cros_branch.delete(Branch())
 
 

@@ -22,11 +22,17 @@ CHROMEOS_VERSION_RE_MAPPING = {
 # The following regexs are evaluated greedily against strings in order to
 # extract a Version instantance. The constructor is called with the lambda
 # provided (based upon groups found).
-CHROMEOS_VERSION_STRING_RES = [
-    (re.compile(r'^(?P<build>\d+)\.(?P<branch>\d+).(?P<patch>\d)+$'),
-     lambda cls, grps: cls(None, int(grps['build']), int(grps['branch']),
-                           int(grps['patch']), None))
-]
+def int_or_none(n):
+  if n is None:
+    return None
+  return int(n)
+
+
+CHROMEOS_VERSION_STRING_RES = [(re.compile(
+    r'^(R(?P<chrome_branch>\d+)-)?(?P<build>\d+)\.(?P<branch>\d+).(?P<patch>\d)+$'
+), lambda cls, grps: cls(
+    int_or_none(grps['chrome_branch']), int(grps['build']), int(grps['branch']),
+    int(grps['patch']), None))]
 
 
 @total_ordering
@@ -44,7 +50,7 @@ class Version(object):
       version (str): The version string to parse.
         This supports the following formats:
           "13505.0.0"
-          ...
+          "R88.13505.0.0"
 
     Returns: A constructed Version, or None.
     """

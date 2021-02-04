@@ -27,6 +27,14 @@ def RunSteps(api):
       step_name="create branch from http://chromium.org/manifest.xml",
       push=True, force=True)
 
+  api.cros_branch.create_from_buildspec(
+      'R89-13729.0.0',
+      branch=Branch(type=Branch.RELEASE),
+      step_name="create branch from buildspec",
+      push=True,
+      force=True,
+  )
+
   api.cros_branch.create_from_file(
       download_path, branch=Branch(type=Branch.CUSTOM, name='mybranch',
                                    descriptor='nami'))
@@ -43,6 +51,9 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'ensure branch_util.ensure_installed',
                      ['chromiumos/infra/test_planner latest']),
+      api.post_check(
+          post_process.StepCommandContains, 'create branch from buildspec',
+          ['create', '--buildspec-manifest', '89/13729.0.0.xml', '--release']),
   )
 
   yield api.test(

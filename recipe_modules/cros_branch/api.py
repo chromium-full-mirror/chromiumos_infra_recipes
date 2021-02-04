@@ -6,6 +6,8 @@
 """API wrapping the cros branch tool."""
 
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
+
 from PB.chromiumos.branch import Branch
 
 
@@ -48,6 +50,51 @@ class CrosBranchApi(recipe_api.RecipeApi):
                 [self._branch_util_path] + cmd + branch_args,
                 **kwargs)
 
+  def _create(self, branch, branch_util_args, **kwargs):
+    cmd = ['create'] + branch_util_args
+
+    # Branch unspecified.
+    if not branch or branch.type == Branch.UNSPECIFIED:
+      raise StepFailure('Branch type is required.')
+    # Custom branch. Check for name.
+    elif branch.type == Branch.CUSTOM:
+      if branch.name:
+        cmd.extend(['--custom', branch.name])
+      else:
+        raise StepFailure('Branch name required for custom branch.')
+    # Standard branch type.
+    else:
+      cmd.append('--' + Branch.BranchType.Name(branch.type).lower())
+
+    if branch.descriptor:
+      cmd.extend(['--descriptor', branch.descriptor])
+
+    self(cmd, **kwargs)
+
+  def create_from_buildspec(self, source_version, branch, **kwargs):
+    """Call `cros branch create`, branching from the appropriate buildspec
+      manifest.
+
+    Args:
+      source_version (str): Version to branch from.
+        Must have a valid manifest in manifest-versions/buildspecs or branch_util
+        will fail.
+      branch (chromiumos.Branch): Branch to be created.
+      kwargs: Keyword arguments for recipe_engine/step.
+        Accepts the same keyword arguments as __call__.
+    """
+    with self.m.step.nest('parse source_version'):
+      version = self.m.cros_version.Version.from_string(source_version)
+      if not version:
+        raise StepFailure("invalid version: {}".format(source_version))
+
+    kwargs.setdefault(
+        'step_name',
+        'create branch from buildspec manifest %s' % version.buildspec_filename)
+    manifest_args = ['--buildspec-manifest', version.buildspec_filename]
+
+    self._create(branch, manifest_args, **kwargs)
+
   def create_from_file(self, manifest_file, branch, manifest_src=None,
                        **kwargs):
     """Call `cros branch create`, branching from the file specified in
@@ -60,31 +107,12 @@ class CrosBranchApi(recipe_api.RecipeApi):
       branch (chromiumos.Branch): Branch to be created.
       kwargs: Keyword arguments for recipe_engine/step.
         Accepts the same keyword arguments as __call__.
-
-    Returns:
-      TODO(jackneus): return branch name?
     """
-    cmd = ['create', '--file', manifest_file]
-
-    # Branch unspecified.
-    if not branch or branch.type == Branch.UNSPECIFIED:
-      raise ValueError('Branch type is required.')
-    # Custom branch. Check for name.
-    elif branch.type == Branch.CUSTOM:
-      if branch.name:
-        cmd.extend(['--custom', branch.name])
-      else:
-        raise ValueError('Branch name required for custom branch.')
-    # Standard branch type.
-    else:
-      cmd.append('--' + Branch.BranchType.Name(branch.type).lower())
-
-    if branch.descriptor:
-      cmd.extend(['--descriptor', branch.descriptor])
+    manifest_args = ['--file', manifest_file]
 
     kwargs.setdefault('step_name',
-      'create branch from manifest %s' % manifest_file)
-    self(cmd, **kwargs)
+                      'create branch from manifest %s' % manifest_file)
+    self._create(branch, manifest_args, **kwargs)
 
   def rename(self, branch, new_branch_name, **kwargs):
     """Call `cros branch rename` with the appropriate arguments.
@@ -100,12 +128,12 @@ class CrosBranchApi(recipe_api.RecipeApi):
     if branch and branch.name:
       cmd.append(branch.name)
     else:
-      raise ValueError('Branch name is required.')
+      raise StepFailure('Branch name is required.')
 
     if new_branch_name:
       cmd.append(new_branch_name)
     else:
-      raise ValueError('New branch name is required.')
+      raise StepFailure('New branch name is required.')
 
     kwargs.setdefault('step_name',
       'rename branch %s to %s' % (branch.name, new_branch_name))
@@ -124,7 +152,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     if branch and branch.name:
       cmd.append(branch.name)
     else:
-      raise ValueError('Branch name is required.')
+      raise StepFailure('Branch name is required.')
 
     kwargs.setdefault('step_name', 'delete branch %s' % branch.name)
     self(cmd, **kwargs)

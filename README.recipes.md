@@ -100,9 +100,6 @@
   * [bot_scaling:examples/update_bot_policy_config](#recipes-bot_scaling_examples_update_bot_policy_config)
   * [bot_scaling:examples/update_bot_policy_config_resize_schedule](#recipes-bot_scaling_examples_update_bot_policy_config_resize_schedule)
   * [bot_scaling:examples/update_gce_configs](#recipes-bot_scaling_examples_update_gce_configs)
-  * [branch_create](#recipes-branch_create) &mdash; Creates a branch using `cros branch create`.
-  * [branch_delete](#recipes-branch_delete) &mdash; Deletes a branch using `cros branch delete`.
-  * [branch_rename](#recipes-branch_rename) &mdash; Renames a branch using `cros branch rename`.
   * [brancher](#recipes-brancher) &mdash; Recipe for creating a new ChromeOS branch.
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [build_borealis_rootfs](#recipes-build_borealis_rootfs) &mdash; Recipe for building a Borealis rootfs image.
@@ -1374,15 +1371,15 @@ Args:
 &emsp; **@property**<br>&mdash; **def [test\_bisection\_percent](/recipe_modules/cros_bisect/api.py#31)(self):**
 ### *recipe_modules* / [cros\_branch](/recipe_modules/cros_branch)
 
-[DEPS](/recipe_modules/cros_branch/__init__.py#4): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_branch/__init__.py#4): [cros\_version](#recipe_modules-cros_version), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API wrapping the cros branch tool.
 
-#### **class [CrosBranchApi](/recipe_modules/cros_branch/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBranchApi](/recipe_modules/cros_branch/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for calling cros branch.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_branch/api.py#23)(self, cmd, step_name=None, force=False, push=False, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_branch/api.py#25)(self, cmd, step_name=None, force=False, push=False, \*\*kwargs):**
 
 Call cros branch with the given args.
 
@@ -1393,7 +1390,20 @@ Args:
   push (bool): If True, cros branch will be run with --push.
   kwargs: Keyword arguments for recipe_engine/step.
 
-&mdash; **def [create\_from\_file](/recipe_modules/cros_branch/api.py#51)(self, manifest_file, branch, manifest_src=None, \*\*kwargs):**
+&mdash; **def [create\_from\_buildspec](/recipe_modules/cros_branch/api.py#74)(self, source_version, branch, \*\*kwargs):**
+
+Call `cros branch create`, branching from the appropriate buildspec
+  manifest.
+
+Args:
+  source_version (str): Version to branch from.
+    Must have a valid manifest in manifest-versions/buildspecs or branch_util
+    will fail.
+  branch (chromiumos.Branch): Branch to be created.
+  kwargs: Keyword arguments for recipe_engine/step.
+    Accepts the same keyword arguments as __call__.
+
+&mdash; **def [create\_from\_file](/recipe_modules/cros_branch/api.py#98)(self, manifest_file, branch, manifest_src=None, \*\*kwargs):**
 
 Call `cros branch create`, branching from the file specified in
   manifest_file.
@@ -1406,10 +1416,7 @@ Args:
   kwargs: Keyword arguments for recipe_engine/step.
     Accepts the same keyword arguments as __call__.
 
-Returns:
-  TODO(jackneus): return branch name?
-
-&mdash; **def [delete](/recipe_modules/cros_branch/api.py#114)(self, branch, \*\*kwargs):**
+&mdash; **def [delete](/recipe_modules/cros_branch/api.py#142)(self, branch, \*\*kwargs):**
 
 Call `cros branch delete` with the appropriate arguments.
 
@@ -1418,9 +1425,9 @@ Args:
   kwargs: Keyword arguments for cros branch/recipe_engine/step.
     Accepts the same keyword arguments as __call__.
 
-&mdash; **def [initialize](/recipe_modules/cros_branch/api.py#20)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_branch/api.py#22)(self):**
 
-&mdash; **def [rename](/recipe_modules/cros_branch/api.py#89)(self, branch, new_branch_name, \*\*kwargs):**
+&mdash; **def [rename](/recipe_modules/cros_branch/api.py#117)(self, branch, new_branch_name, \*\*kwargs):**
 
 Call `cros branch rename` with the appropriate arguments.
 
@@ -2988,11 +2995,11 @@ Returns: None
 
 API for working with CrOS version numbers.
 
-#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#97)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#103)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#106)(self):**
+&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#112)(self):**
 
 Read the Chrome OS version from the workspace.
 
@@ -5831,27 +5838,6 @@ The annealing builders run in serial and do the following:
 [DEPS](/recipe_modules/bot_scaling/examples/update_gce_configs.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/update_gce_configs.py#18)(api):**
-### *recipes* / [branch\_create](/recipes/branch_create.py)
-
-[DEPS](/recipes/branch_create.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
-
-Creates a branch using `cros branch create`.
-
-&mdash; **def [RunSteps](/recipes/branch_create.py#26)(api, properties):**
-### *recipes* / [branch\_delete](/recipes/branch_delete.py)
-
-[DEPS](/recipes/branch_delete.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-Deletes a branch using `cros branch delete`.
-
-&mdash; **def [RunSteps](/recipes/branch_delete.py#22)(api, properties):**
-### *recipes* / [branch\_rename](/recipes/branch_rename.py)
-
-[DEPS](/recipes/branch_rename.py#11): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-Renames a branch using `cros branch rename`.
-
-&mdash; **def [RunSteps](/recipes/branch_rename.py#21)(api, properties):**
 ### *recipes* / [brancher](/recipes/brancher.py)
 
 [DEPS](/recipes/brancher.py#8): [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util)
@@ -6257,9 +6243,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_branch/examples/full.py#20)(api):**
 ### *recipes* / [cros\_branch:tests/errors](/recipe_modules/cros_branch/tests/errors.py)
 
-[DEPS](/recipe_modules/cros_branch/tests/errors.py#8): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_branch/tests/errors.py#9): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_branch/tests/errors.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_branch/tests/errors.py#17)(api):**
 ### *recipes* / [cros\_build\_api:examples/full](/recipe_modules/cros_build_api/examples/full.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

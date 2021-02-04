@@ -60,6 +60,24 @@
     "name": "create branch from http://chromium.org/manifest.xml"
   },
   {
+    "cmd": [],
+    "name": "parse source_version"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_planner/branch_util",
+      "create",
+      "--buildspec-manifest",
+      "89/13729.0.0.xml",
+      "--release",
+      "--force",
+      "--push",
+      "-j",
+      "8"
+    ],
+    "name": "create branch from buildspec"
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/test_planner/branch_util",
       "create",
