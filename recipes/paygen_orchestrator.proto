@@ -17,11 +17,8 @@ message PaygenOrchestratorProperties {
   // e.g. "13020.54.0".
   string target_chrome_os_version = 2;
 
-  // The milestone to filter on. 0 (default) implies all milestones.
-  string milestone = 3;
-
   // The delta types to generate for, empty for all.
-  repeated chromiumos.DeltaType delta_types = 4;
+  repeated chromiumos.DeltaType delta_types = 3;
 
   // TODO(crbug.com/1122854): Replace these with the common definition.
   enum Channel {
@@ -33,24 +30,24 @@ message PaygenOrchestratorProperties {
   }
 
   // The payload channels to generate for, empty requires DeltaType == NO_DELTA.
-  repeated Channel channels = 5;
+  repeated Channel channels = 4;
 
   // The models in which we've enabled AU testing. If empty we will assume
   // that the board name is the builder name (i.e. this isn't a unibuild).
-  repeated string au_testing_models = 12;
+  repeated string au_testing_models = 5;
 
   // The bucket to look for source artifacts in (e.g, chromeos-releases).
   string src_bucket = 6;
 
   // The bucket to place resulting artifacts in (e.g.
   // chromes-throw-away-bucket).
-  string dest_bucket = 11;
+  string dest_bucket = 7;
 
   // The keyset to sign with (e.g. "coral-mp-v16"), if empty do not sign.
-  string keyset = 7;
+  string keyset = 8;
 
   // Should we not upload any generated artifacts or make other mutations.
-  bool dryrun = 8;
+  bool dryrun = 9;
 
   // Enumeration on whether or not to override the configured defaults.
   enum PayloadTestsOverride {
@@ -60,8 +57,8 @@ message PaygenOrchestratorProperties {
   }
 
   // Should we override the configured delta testing policy?
-  PayloadTestsOverride delta_payload_test_override = 9;
+  PayloadTestsOverride delta_payload_test_override = 10;
 
   // Should we override the configured full testing policy?
-  PayloadTestsOverride full_payload_test_override = 10;
+  PayloadTestsOverride full_payload_test_override = 11;
 }

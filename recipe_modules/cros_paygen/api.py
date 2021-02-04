@@ -388,7 +388,6 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         "channel": "stable",
         "chrome_os_version": "13020.87.0",
         "chrome_version": "83.0.4103.119",
-        "milestone": 83,
         "generate_delta": true,
         "delta_payload_tests": true,
         "full_payload_tests": false

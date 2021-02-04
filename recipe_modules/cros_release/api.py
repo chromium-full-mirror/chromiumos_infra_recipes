@@ -80,7 +80,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       paygen_properties = {
           'builder_name': self.m.build_menu.build_target.name,
           'target_chromeos_version': version.platform_version,
-          "milestone": int(version.branch),
           'delta_types': [],
           'channels': CrosReleaseApi.massage_channels(self._channels),
           'au_testing_models': [],
