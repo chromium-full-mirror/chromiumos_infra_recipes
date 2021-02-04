@@ -77,6 +77,7 @@ def RunSteps(api):
           'PrepareForBuild': artifacts.PrepareForBuildResponse,
           'Get': artifacts.GetResponse,
           # TODO(crbug/1034529): All of the following are migrating to Get.
+          'BundleDebugSymbols': artifacts.BundleResponse,
           'BundleImageZip': artifacts.BundleResponse,
           'BundleTestUpdatePayloads': artifacts.BundleResponse,
           'BundleAutotestFiles': artifacts.BundleResponse,

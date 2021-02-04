@@ -42,6 +42,7 @@ _LEGACY_ENDPOINTS_BY_ARTIFACT = {
     BuilderConfig.Artifacts.IMAGE_ARCHIVES: 'BundleImageArchives',
     BuilderConfig.Artifacts.FPMCU_UNITTESTS: 'BundleFpmcuUnittests',
     BuilderConfig.Artifacts.GCE_TARBALL: 'BundleGceTarball',
+    BuilderConfig.Artifacts.DEBUG_SYMBOLS: 'BundleDebugSymbols',
 }
 
 

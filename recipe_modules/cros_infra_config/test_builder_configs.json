@@ -1436,7 +1436,8 @@
                   "TAST_FILES",
                   "PINNED_GUEST_IMAGES",
                   "EBUILD_LOGS",
-                  "TEST_UPDATE_PAYLOAD"
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS"
                 ]
               }
             ]

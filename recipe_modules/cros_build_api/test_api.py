@@ -84,6 +84,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'BundleImageArchives',
         'BundleFpmcuUnittests',
         'BundleGceTarball',
+        'BundleDebugSymbols',
     ]
     ret.update({endpoint: bundle_response for endpoint in bundle_endpoints})
     return ret
