@@ -171,17 +171,21 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     coverage_version = ''
     coverage_data = []
     for coverage_file in coverage_files:
-      data = self.m.file.read_json(
-          'read coverage data from {}'.format(coverage_file), coverage_file,
-          test_data={
-              'data': [{
-                  'files': [{
-                      'filename': '/build/amd64-generic/base-0/base/test.cc'
-                  }]
-              }],
-              'type': 'coverage',
-              'version': '0.0',
-          })
+      try:
+        data = self.m.file.read_json(
+            'read coverage data from {}'.format(coverage_file), coverage_file,
+            test_data={
+                'data': [{
+                    'files': [{
+                        'filename': '/build/amd64-generic/base-0/base/test.cc'
+                    }]
+                }],
+                'type': 'coverage',
+                'version': '0.0',
+            })
+      except StepFailure:
+        # Ignore bad json files.
+        continue
       coverage_type = data['type']
       coverage_version = data['version']
       for datum in data['data']:
