@@ -5819,6 +5819,14 @@
   },
   {
     "cmd": [],
+    "name": "build chromiumos with upreved Parallels.set source_sync_target",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build chromiumos with upreved Parallels.clean up overlayfs mounts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -6808,6 +6816,14 @@
     "name": "update VERSION-PIN.upload CL to gerrit.set labels on CL 1.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update VERSION-PIN.set source_sync_target",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
     ]
   },
   {

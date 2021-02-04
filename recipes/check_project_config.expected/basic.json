@@ -953,6 +953,13 @@
   },
   {
     "cmd": [],
+    "name": "set source_sync_target",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"ensure_synced_cache\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"master-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/master\"}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {

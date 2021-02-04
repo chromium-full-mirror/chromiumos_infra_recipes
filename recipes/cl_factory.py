@@ -74,6 +74,7 @@ def RunSteps(api, properties):
         cache_path_override=api.cros_source.workspace_path,
         init_opts=dict(reference=api.cros_source.cache_path, verbose=True),
         sync_opts=dict(verbose=True), projects=sync_projects)
+    api.cros_source.checkout_tip_of_tree()
 
     with api.context(cwd=api.cros_source.workspace_path):
       with api.step.nest('find gerrit change repos') as pres:

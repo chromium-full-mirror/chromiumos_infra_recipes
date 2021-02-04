@@ -50,6 +50,8 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache(is_staging=True)
+      # Either checkout tip of tree, or sync to a snapshot.
+      api.cros_source.checkout_tip_of_tree()
       api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
       _ = api.cros_source.pinned_manifest
 

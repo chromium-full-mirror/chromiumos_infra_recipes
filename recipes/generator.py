@@ -113,6 +113,7 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context(), \
       api.cros_sdk.cleanup_context():
     api.cros_source.ensure_synced_cache()
+    api.cros_source.checkout_tip_of_tree()
 
     # Check out the appropriate branch, and use the appropriate policy.
     with api.step.nest('determine branch') as pres:

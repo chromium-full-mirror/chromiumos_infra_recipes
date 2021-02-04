@@ -31,6 +31,7 @@ def RunSteps(api):
       api.cros_sdk.cleanup_context():
 
     api.cros_source.ensure_synced_cache()
+    api.cros_source.checkout_tip_of_tree()
     api.cros_sdk.create_chroot(version=None, use_image=False, timeout_sec=None)
     api.cros_sdk.update_chroot(None, None, timeout_sec=None)
 

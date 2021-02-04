@@ -132,6 +132,7 @@ def RunSteps(api, properties):
         sync_opts=verbose,
         projects=projects,
     )
+    api.cros_source.checkout_tip_of_tree()
 
     # Figure out what paths those are.
     with api.context(cwd=api.cros_source.workspace_path):

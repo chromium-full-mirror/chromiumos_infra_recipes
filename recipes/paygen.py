@@ -15,6 +15,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'cros_storage',
+    'src_state',
     'workspace_util',
 ]
 
@@ -34,7 +35,10 @@ def RunSteps(api, properties):
     with api.step.nest('initialization'):
 
       # Sync chromite only.
-      api.cros_source.ensure_synced_cache(projects=['chromiumos/chromite'])
+      api.cros_source.ensure_synced_cache(
+          projects=['chromiumos/chromite'],
+          cache_path_override=api.src_state.workspace_path,
+      )
 
       # Create chroot.
       api.cros_sdk.create_chroot(version=None, use_image=False,

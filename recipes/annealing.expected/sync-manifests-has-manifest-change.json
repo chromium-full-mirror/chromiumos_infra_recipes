@@ -1113,6 +1113,13 @@
   },
   {
     "cmd": [],
+    "name": "set source_sync_target",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"master\", \"call\": \"checkout_tip_of_tree\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {

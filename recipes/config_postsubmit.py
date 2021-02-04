@@ -399,6 +399,7 @@ def RunSteps(api, properties):
 
   with api.cros_source.checkout_overlays_context():
     api.cros_source.ensure_synced_cache()
+    api.cros_source.checkout_tip_of_tree()
 
     with api.context(cwd=api.cros_source.workspace_path):
 

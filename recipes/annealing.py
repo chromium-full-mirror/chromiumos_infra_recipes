@@ -79,6 +79,9 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
     with api.context(cwd=internal_manifest.path):
+      if api.cq.state == api.cq.INACTIVE:
+        api.cros_source.checkout_tip_of_tree()
+
       if api.cq.state != api.cq.INACTIVE and not commit.id:
         # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
         ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)

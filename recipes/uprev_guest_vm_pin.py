@@ -225,6 +225,7 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context():
     # Sync the cache before we do anything that might touch the workspace.
     api.cros_source.ensure_synced_cache()
+    api.cros_source.checkout_tip_of_tree()
 
     with api.step.nest('get latest build version'):
       vm_property_map = {}

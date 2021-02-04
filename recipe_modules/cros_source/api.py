@@ -9,6 +9,7 @@ import contextlib
 import json
 
 from collections import defaultdict, namedtuple
+from google.protobuf.json_format import MessageToDict
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine.recipe_api import RecipeApi, StepFailure
@@ -55,6 +56,9 @@ class CrosSourceApi(RecipeApi):
     self._applied_patches = defaultdict(list)
     self._have_overlayfs_cleanup_context = False
     self._workspace_mounted = False
+    # Set whenever we sync the workspace, rather than remaining on "whatever the
+    # chromiumos named cache gave us".
+    self._sync_target = {}
 
   def initialize(self):
     """Initialization that follows all module loading."""
@@ -242,6 +246,10 @@ class CrosSourceApi(RecipeApi):
     gitiles_commit = (
         gitiles_commit if gitiles_commit.host else
         self.m.src_state.internal_manifest.as_gitiles_commit_proto)
+    if cache_path == self.workspace_path:
+      self._sync_target = dict(call='ensure_synced_cache',
+                               commit=MessageToDict(gitiles_commit))
+
     init_opts = init_opts or {}
     if is_staging:
       init_opts.update(STAGING_INIT_OPTS)
@@ -300,8 +308,9 @@ class CrosSourceApi(RecipeApi):
     If |commit| is on an unpinned branch, there is no reasonable way to discern
     which revision of the external manifest is correct. The branch's copy of the
     external manifest is unbranched.  As such, the return will have an empty
-    commit id, and the external manifest source tree may be dirty (full.xml will
-    be copied from the internal manifest, but not committed.)
+    commit id, and the external manifest source tree may be dirty (mirrored
+    manifest files will be copied from the internal manifest, but not
+    committed.)
 
     Args:
       commit (GitilesCommit): The commit to use, or None for the default (from
@@ -341,6 +350,8 @@ class CrosSourceApi(RecipeApi):
     # some release branch (such as "release-R88-13597.B").
     if commit.ref != i_manifest.ref:
       self._manifest_branch = branch
+    self._sync_target = dict(call='checkout_manifests',
+                             commit=MessageToDict(commit))
     with self.m.context(cwd=i_manifest.path):
       # If we have an ID in the ref, make that HEAD.
       if commit.id:
@@ -429,12 +440,20 @@ class CrosSourceApi(RecipeApi):
       my_sync_opts['projects'] = projects
       self.m.repo.sync(**my_sync_opts)
       self._manifest_branch = manifest_branch
+      self._sync_target = dict(call='checkout_branch', branch=manifest_branch)
 
       # TODO(crbug/1168649): Create partial manifest if projects is not None.
       if not projects:
         # The source is not dirty, we're just on a different branch.
         self.m.repo.ensure_pinned_manifest(
             projects=my_sync_opts.get('projects'))
+
+  def checkout_tip_of_tree(self):
+    """Check out the tip-of-tree in the workspace."""
+    # Right now, the named cache tracks tip-of-tree, so we have nothing to do,
+    # other than setting self._sync_target.
+    self._sync_target = dict(call='checkout_tip_of_tree',
+                             branch=self.m.src_state.internal_manifest.branch)
 
   def fetch_snapshot_shas(self, count=7 * 24 * 2):
     """Return snapshot SHAs for the manifest.
@@ -505,8 +524,11 @@ class CrosSourceApi(RecipeApi):
         # Explicitly do not mount the workspace overlay at this time, to prevent
         # recipes from accidentally trashing their view of the source tree by
         # accessing it before ensure_synced_cache() is called.
-      yield
-    self._have_overlayfs_cleanup_context = False
+      try:
+        yield
+      finally:
+        self.m.easy.set_properties_step(source_sync_target=self._sync_target)
+        self._have_overlayfs_cleanup_context = False
 
   def find_project_paths(self, project, branch, empty_ok=False):
     """Find the source paths for a given project in the workspace.
@@ -780,6 +802,8 @@ class CrosSourceApi(RecipeApi):
       self._pinned_manifest = final
       pres.logs['patched-manifest.xml'] = [final]
 
+      self._sync_target = dict(call='_apply_manifest_patch_sets', branch=branch)
+
   def _partition_patches(self, patch_sets):
     """Partition the manifest patches.
 
@@ -937,6 +961,8 @@ class CrosSourceApi(RecipeApi):
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
     with self.m.step.nest('sync to snapshot'), self.m.context(
         cwd=self.workspace_path):
+      self._sync_target = dict(call='sync_snapshot',
+                               commit=MessageToDict(gitiles_commit))
       projects = kwargs.get('projects', None)
       snapshot_xml = self._get_snapshot(gitiles_commit, projects=projects)
       sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8)

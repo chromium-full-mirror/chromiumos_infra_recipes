@@ -42,6 +42,7 @@ def RunSteps(api, properties):
 
     with api.cros_source.checkout_overlays_context():
       api.cros_source.ensure_synced_cache()
+      api.cros_source.sync_snapshot(api.src_state.gitiles_commit)
       with api.context(cwd=api.src_state.workspace_path):
         yield
 

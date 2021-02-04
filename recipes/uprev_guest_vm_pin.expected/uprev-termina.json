@@ -596,6 +596,13 @@
   },
   {
     "cmd": [],
+    "name": "set source_sync_target",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"master\", \"call\": \"checkout_tip_of_tree\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up overlayfs mounts"
   },
   {
@@ -1778,6 +1785,14 @@
     "name": "upreving pin for branch master.generate CL.set labels on CL 1.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch master.set source_sync_target",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"master\", \"call\": \"checkout_branch\"}@@@"
     ]
   },
   {
