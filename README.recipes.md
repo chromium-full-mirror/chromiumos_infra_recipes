@@ -2973,18 +2973,15 @@ Returns
 
 Module for issuing cros_test_runner commands
 
-&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_runner/api.py#91)(self):**
+&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_runner/api.py#53)(self):**
 
 Return the CTP CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_runner/api.py#22)(self, request):**
+&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_runner/api.py#22)(self):**
 
 Execute work via cros_test_runner luciexe binary.
 
-Args:
-  request: a RunTestsRequest.
-
-Returns: RunTestsResponse.
+Returns: None
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6643,7 +6640,7 @@ returns a list of repos to make commits to.
 
 [DEPS](/recipe_modules/cros_test_runner/examples/full.py#6): [cros\_test\_runner](#recipe_modules-cros_test_runner), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_runner/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_runner/examples/full.py#17)(api):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -7515,7 +7512,7 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#677)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#676)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#227)(api, phosphorus_config, gs_dir, result):**
 

@@ -12,21 +12,15 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.cros_test_runner.cros_test_runner import \
   CrosTestRunnerModuleProperties
-from PB.test_platform.skylab_test_runner.steps.test_execution import RunTestsRequest, RunTestsResponse
 
 
 def RunSteps(api):
-  with api.assertions.assertRaises(ValueError):
-    api.cros_test_runner.execute_luciexe(None)
-
   api.assertions.assertEqual(api.cros_test_runner.cipd_package_version(),
                              'some-cipd-label')
 
   with api.step.nest('callsite-execute-luciexe'):
-    api.assertions.assertEqual(
-        RunTestsResponse(),
-        api.cros_test_runner.execute_luciexe(RunTestsRequest()),
-    )
+    api.cros_test_runner.execute_luciexe()
+    api.cros_test_runner._ensure_cros_test_runner()
 
 
 def GenTests(api):
@@ -40,6 +34,5 @@ def GenTests(api):
                           cipd_label='some-cipd-label',
                       ))
           }) +  #
-      api.cros_test_runner.set_execute_luciexe_response(
-          'callsite-execute-luciexe', RunTestsResponse()),
+      api.cros_test_runner.mock_luciexe_call('callsite-execute-luciexe'),
   )

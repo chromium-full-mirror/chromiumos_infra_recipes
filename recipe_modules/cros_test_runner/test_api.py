@@ -14,18 +14,15 @@ from recipe_engine import recipe_test_api
 class CrosTestRunnerTestApi(recipe_test_api.RecipeTestApi):
   """Test data for cros_test_runner api."""
 
-  def set_execute_luciexe_response(self, name, response):
-    """Set the response from CrosTestRunnerCommand.execute_luciexe().
+  def mock_luciexe_call(self, name):
+    """Mock CrosTestRunnerCommand invocation.
 
     Args:
       name: Name the step that calls CrosTestRunnerCommand.execute_luciexe()
-      response: A RunTestsResponse payload.
     """
     if name != '':
       name += '.'
-    name += 'call binary'
+    name += 'go cros_test_runner'
     return (self.step_data(
-        name + '.launch luciexe',
-        self.m.step.sub_build(build_pb2.Build(status=common_pb2.SUCCESS))) +  #
-            self.step_data(name + '.read output',
-                           self.m.file.read_proto(response)))
+        name,
+        self.m.step.sub_build(build_pb2.Build(status=common_pb2.SUCCESS))))

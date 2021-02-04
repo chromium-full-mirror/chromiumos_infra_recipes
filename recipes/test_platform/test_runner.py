@@ -596,8 +596,7 @@ def execution_steps(api, properties):
   # Experimental code path for using the new test_runner binary.
   # Leave this commented out until it's ready. It's just here for easy led
   # use at this point.
-  # api.cros_test_runner.execute_luciexe(
-  #     RunTestsRequest(request=properties.request, config=properties.config))
+  # api.cros_test_runner.execute_luciexe()
 
   with api.step.nest('inputs') as step:
     step.presentation.logs['request'] = json_format.MessageToJson(

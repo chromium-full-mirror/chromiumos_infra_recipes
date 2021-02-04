@@ -1,7 +1,14 @@
 [
   {
     "cmd": [],
-    "name": "ensure cros_test_runner"
+    "name": "callsite-execute-luciexe"
+  },
+  {
+    "cmd": [],
+    "name": "callsite-execute-luciexe.ensure cros_test_runner",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -17,9 +24,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "ensure cros_test_runner.ensure_installed",
+    "name": "callsite-execute-luciexe.ensure cros_test_runner.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -34,53 +41,10 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "call binary",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "callsite-execute-luciexe"
-  },
-  {
-    "cmd": [],
-    "name": "callsite-execute-luciexe.call binary",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@responses@{}@@@",
-      "@@@STEP_LOG_END@responses@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{}",
-      "[START_DIR]/input.json"
-    ],
-    "infra_step": true,
-    "name": "callsite-execute-luciexe.call binary.write input",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@input.json@@@"
-    ]
-  },
-  {
     "cmd": [
       "[START_DIR]/cipd/cros_test_runner/cros_test_runner",
       "--output",
-      "[CLEANUP]/tmp_tmp_1/sub_build.pb",
-      "--",
-      "-input_json",
-      "[START_DIR]/input.json",
-      "-output_json",
-      "[START_DIR]/output.json"
+      "[CLEANUP]/tmp_tmp_1/sub_build.pb"
     ],
     "env": {
       "MAC_CHROMIUM_TMPDIR": "[CLEANUP]/tmp_tmp_2",
@@ -89,34 +53,14 @@
       "TMP": "[CLEANUP]/tmp_tmp_2",
       "TMPDIR": "[CLEANUP]/tmp_tmp_2"
     },
-    "infra_step": true,
-    "name": "callsite-execute-luciexe.call binary.launch luciexe",
+    "name": "callsite-execute-luciexe.go cros_test_runner",
     "stdin": "\u0012\u00002\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",
       "@@@STEP_LOG_LINE@step.sub_build@  \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@step.sub_build@}@@@",
       "@@@STEP_LOG_END@step.sub_build@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[START_DIR]/output.json",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "callsite-execute-luciexe.call binary.read output",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@output.json@@@@",
-      "@@@STEP_LOG_END@output.json@@@"
     ]
   },
   {
