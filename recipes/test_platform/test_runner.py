@@ -593,12 +593,6 @@ def execution_steps(api, properties):
   autotest_results = {}
   run_test_responses = {}
 
-  if api.cros_test_runner.is_enabled():  # pragma: nocover
-    # Experimental code path for using the new test_runner binary rather
-    # than the normal test_runner workflow.
-    api.cros_test_runner.execute_luciexe()
-    return
-
   with api.step.nest('inputs') as step:
     step.presentation.logs['request'] = json_format.MessageToJson(
         properties.request)
@@ -675,6 +669,11 @@ def execution_steps(api, properties):
 
 
 def RunSteps(api, properties):
+  if api.cros_test_runner.is_enabled():  # pragma: nocover
+    # Experimental code path for using the new test_runner binary rather
+    # than the normal test_runner workflow.
+    api.cros_test_runner.execute_luciexe()
+    return
   prejob_response, run_test_responses, result = execution_steps(api, properties)
 
   summarize_results(api, prejob_response, run_test_responses, result)

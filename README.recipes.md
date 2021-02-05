@@ -7510,7 +7510,7 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#677)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#671)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#227)(api, phosphorus_config, gs_dir, result):**
 
