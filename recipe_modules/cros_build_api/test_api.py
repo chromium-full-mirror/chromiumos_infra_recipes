@@ -54,7 +54,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             jsonify(pinned_images=[
                 dict(filename='filename', uri='https://example.com/filename')
             ]),
-        'PrepareForBuild':
+        'BuildSetup':
             jsonify(build_relevance="UNKNOWN"),
         'Get':
             jsonify(

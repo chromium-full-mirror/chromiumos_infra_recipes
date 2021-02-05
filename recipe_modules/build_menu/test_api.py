@@ -75,9 +75,7 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
 
     ret = self.m.test_util.test_child_build(build_target, **kwargs).build
     if artifact_pointless:
-      ret += self.set_build_api_return('prepare artifacts',
-                                       'ArtifactsService/PrepareForBuild',
-                                       '{"build_relevance": "POINTLESS"}')
+      ret += self.m.cros_artifacts.set_prepare_pointless(artifact_pointless)
     if pointless:
       ret += self.set_pointless_return(True)
     # Call recipe_test_api.test().

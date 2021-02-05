@@ -61,7 +61,7 @@ def GenTests(api):
                                          **kwargs).build
     if artifact_pointless:
       ret += api.build_menu.set_build_api_return(
-          'prepare artifacts', 'ArtifactsService/PrepareForBuild',
+          'prepare artifacts', 'ArtifactsService/BuildSetup',
           '{"build_relevance": "POINTLESS"}')
     return api.test(name, ret)
 

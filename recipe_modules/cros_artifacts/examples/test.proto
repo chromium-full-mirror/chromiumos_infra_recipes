@@ -12,9 +12,6 @@ message TestInputProperties {
   // Expected relevance
   chromite.api.PrepareForBuildResponse.BuildRelevance relevance = 1;
 
-  // Override Build API version.
-  string build_api_version = 2;
-
   // Test_data for Build API call.
   string api_response = 3;
 

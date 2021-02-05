@@ -9,7 +9,7 @@ from recipe_engine import recipe_api
 
 from google.protobuf import json_format
 
-from PB.chromite.api.artifacts import PrepareForBuildResponse
+from PB.chromite.api.artifacts import BuildSetupResponse
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import CreateImageResult
 from PB.chromite.api.image import Image
@@ -44,11 +44,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       artifacts (BuilderConfig.Artifacts): Artifact Information
       force_relevance (bool): Whether to always claim relevant.
       test_data (str): test response (JSON) from the
-          ArtifactsService/PrepareForBuild call, or None.
+          ArtifactsService/BuildSetup call, or None.
       name (str): Step name to use, or None for default name.
 
     Returns:
-      (PrepareForBuildResponse): Whether the build is relevant.
+      (BuildSetupResponse): Whether the build is relevant.
     """
     # Prepare for the build.  If the build is pointless, we are done.
     resp = self.m.cros_artifacts.prepare_for_build(chroot, self.sysroot,
@@ -59,11 +59,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
     # If the build is POINTLESS, then we are done.  This can only happen if
     # all of the artifact_types for this build are handled by some
-    # PrepareForBuild endpoint, and indicate that the build is pointless.
+    # BuildSetup endpoint, and indicate that the build is pointless.
     #
-    # If there are any artifact_types with no PrepareForBuild endpoint
+    # If there are any artifact_types with no BuildSetup endpoint
     # defined, then resp will be UNKNOWN.
-    return PrepareForBuildResponse.NEEDED if force_relevance else resp
+    return BuildSetupResponse.NEEDED if force_relevance else resp
 
   def create_sysroot(self, build_target, profile=None, chroot_current=True,
                      replace=True, package_indexes=None, timeout_sec='DEFAULT',

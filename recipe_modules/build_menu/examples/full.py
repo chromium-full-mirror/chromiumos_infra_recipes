@@ -70,6 +70,9 @@ def GenTests(api):
   # Run the other tests that we only run in the module.
   yield api.build_menu.test(
       'postsubmit-build',
+      api.build_menu.set_build_api_return('prepare artifacts',
+                                          'ArtifactsService/BuildSetup',
+                                          '{"build_relevance": "UNKNOWN"}'),
       api.properties(
           FullProperties(artifact_build=True, upload_prebuilts=True)),
       input_properties={'$chromeos/build_menu': dict(artifact_build=True)})

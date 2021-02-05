@@ -11,3 +11,17 @@ class CrosArtifactsTestApi(recipe_test_api.RecipeTestApi):
 
   # Number of seconds to wait on gsutil rsync.
   gsutil_timeout_seconds = 15 * 60
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def set_prepare_pointless(artifact_pointless):
+    """Remove the given endpoints from the API.
+
+    Args:
+      artifact_pointless (bool): Whether the prepare endpoint should return
+        POINTLESS.
+
+    Returns:
+      (mod_test_data) to pass to api.test.
+    """
+    return artifact_pointless

@@ -74,7 +74,7 @@ def RunSteps(api):
       },
       'ArtifactsService': {
           'FetchPinnedGuestImageUris': artifacts.PinnedGuestImageUriResponse,
-          'PrepareForBuild': artifacts.PrepareForBuildResponse,
+          'BuildSetup': artifacts.BuildSetupResponse,
           'Get': artifacts.GetResponse,
           # TODO(crbug/1034529): All of the following are migrating to Get.
           'BundleDebugSymbols': artifacts.BundleResponse,

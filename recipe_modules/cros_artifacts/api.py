@@ -20,9 +20,6 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb
 from PB.chromiumos.common import ArtifactsByService
 
-# Legacy artifacts and their handling.
-ARTIFACTS_SERVICE = 'chromite.api.ArtifactsService'
-
 # TODO(crbug.com/1034529): Migrate these legacy artifacts to new endpoints in
 # the appropriate services.
 
@@ -115,11 +112,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       test_data (str): JSON data to use for build API calls.
 
     Returns:
-      (artifacts.PrepareForBuildResponse.build_relevance) UNKNOWN.
+      (artifacts.BuildSetupResponse.build_relevance) UNKNOWN.
     """
     # Noop statement to clean up pylint.
     test_data = test_data or None
-    return artifacts.PrepareForBuildResponse.UNKNOWN
+    return artifacts.BuildSetupResponse.UNKNOWN
 
   def _prepare_toolchain(self, chroot, sysroot, artifact_types, input_artifacts,
                          artifact_profile_info, test_data):
@@ -136,7 +133,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       test_data (str): JSON data to use for build API calls.
 
     Returns:
-      (artifacts.PrepareForBuildResponse) whether build is necessary.
+      (artifacts.BuildSetupResponse) whether build is necessary.
     """
     req = toolchain.PrepareForToolchainBuildRequest(
         chroot=chroot, sysroot=sysroot, artifact_types=artifact_types,
@@ -662,30 +659,23 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       build check applies), or POINTLESS (just exit now.)
     """
     with self.m.step.nest(name or 'prepare artifacts') as presentation:
-      if self.m.cros_build_api.is_at_least_version(1, 1, 0):
-        ret = self.m.cros_build_api.ArtifactsService.PrepareForBuild(
-            artifacts.PrepareForBuildRequest(
-                chroot=chroot, sysroot=sysroot, artifact_info=artifacts_info,
-                forced_build_relevance=forced_build_relevance), infra_step=True,
-            test_output_data=test_data).build_relevance
-      else:
-        ret = self._prepare_for_build_100(chroot, sysroot, artifacts_info,
-                                          test_data=test_data)
+      ret = self._prepare_for_build(chroot, sysroot, artifacts_info,
+                                    forced_build_relevance, test_data)
 
       self.m.easy.set_properties_step(
           artifact_prep=json_format.MessageToDict(
-              artifacts.PrepareForBuildResponse(build_relevance=ret)),
+              artifacts.BuildSetupResponse(build_relevance=ret)),
           step_name='set artifact_prep')
-      if ret == artifacts.PrepareForBuildResponse.NEEDED:
+      if ret == artifacts.BuildSetupResponse.NEEDED:
         presentation.step_text = 'Build is NEEDED'
-      elif ret == artifacts.PrepareForBuildResponse.UNKNOWN:
+      elif ret == artifacts.BuildSetupResponse.UNKNOWN:
         presentation.step_text = 'Build need is UNKNOWN'
       else:
         presentation.step_text = 'Build is POINTLESS'
     return ret
 
-  def _prepare_for_build_100(self, chroot, sysroot, artifacts_info,
-                             test_data=None):
+  def _prepare_for_build(self, chroot, sysroot, artifacts_info,
+                         forced_build_relevance, test_data):
     """Prepare the build for the given artifacts, using Build API version 1.0.0.
 
     This function calls the Build API to have it prepare to build artifacts of
@@ -695,6 +685,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       chroot (Chroot): The chroot to use, or None if not yet created.
       sysroot (Sysroot): The sysroot to use, or None if not yet created.
       artifacts_info (ArtifactsByService): artifact information.
+      forced_build_relevance (bool): Whether the builder will be ignoring the
+          response.
       test_data (str): JSON data to use for build API calls.
 
     Returns:
@@ -704,8 +696,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     # By default, artifacts will get 'UNKNOWN'.
     # EBUILD_LOGS are not relevant.
-    atype = BuilderConfig.Artifacts
-    _IGNORE_ARTIFACT_TYPES = [atype.EBUILD_LOGS]
+    _IGNORE_ARTIFACT_TYPES = [BuilderConfig.Artifacts.EBUILD_LOGS]
+
+    if (self._test_data.enabled and
+        self._test_data.get('set_prepare_pointless', False)):
+      return artifacts.BuildSetupResponse.POINTLESS
 
     funcs = collections.defaultdict(list)
     input_artifacts = []
@@ -729,11 +724,19 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                   input_artifact_type=atype,
                   input_artifact_gs_locations=in_art.gs_locations))
 
-    # If there are no prepare functions to call: Build need is UNKNOWN.
-    if not funcs:
-      return artifacts.PrepareForBuildResponse.UNKNOWN
+    result = artifacts.BuildSetupResponse.POINTLESS
+    # TODO(crbug/1034529): Eventually ArtifactsService/BuildSetup will handle
+    # everything for us.  To ease migration, call both and merge the results.
+    ArtifactsService = self.m.cros_build_api.ArtifactsService
+    if self.m.cros_build_api.has_endpoint(ArtifactsService, 'BuildSetup'):
+      req = artifacts.BuildSetupRequest(
+          chroot=chroot, sysroot=sysroot, artifact_info=artifacts_info,
+          forced_build_relevance=forced_build_relevance)
+      result = ArtifactsService.BuildSetup(
+          req, infra_step=True, test_output_data=test_data).build_relevance
+    elif not funcs:
+      return artifacts.BuildSetupResponse.UNKNOWN
 
-    result = artifacts.PrepareForBuildResponse.POINTLESS
     # Sorting is done here only to give us consistency in the expected.json
     # for our tests.
     with self.m.step.nest('call prepare funcs') as pres:
@@ -742,11 +745,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                    artifacts_info.profile_info, test_data=test_data)
         pres.logs[func.__name__] = '%s => %s' % ([
             BuilderConfig.Artifacts.ArtifactTypes.Name(x) for x in types
-        ], artifacts.PrepareForBuildResponse.BuildRelevance.Name(res))
+        ], artifacts.BuildSetupResponse.BuildRelevance.Name(res))
         # If this func says NEEDED, or the result so far is POINTLESS, then the
         # result is what this func said.
-        if (res == artifacts.PrepareForBuildResponse.NEEDED or
-            result == artifacts.PrepareForBuildResponse.POINTLESS):
+        if (res == artifacts.BuildSetupResponse.NEEDED or
+            result == artifacts.BuildSetupResponse.POINTLESS):
           result = res
 
     return result

@@ -12,7 +12,7 @@ DEPS = [
 ]
 
 from PB.chromite.api import sysroot as sysroot_pb
-from PB.chromite.api.artifacts import PrepareForBuildResponse
+from PB.chromite.api.artifacts import BuildSetupResponse
 
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
@@ -26,13 +26,6 @@ PROPERTIES = TestInputProperties
 def RunSteps(api, properties):
   target = common.BuildTarget()
   target.name = 'target'
-
-  # This should not be needed in general, and is used here only to exercise both
-  # the 1.1.0 and 1.0.0.artifacts handling paths.
-  if properties.build_api_version:
-    api.cros_build_api.GetVersion(
-        test_data=api.cros_build_api.Version.ParseVersion(
-            properties.build_api_version).FormatResponse())
 
   chroot = common.Chroot(path='/path/to/chroot')
   sysroot = sysroot_pb.Sysroot(path='/build/board', build_target=target)
@@ -66,7 +59,8 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(properties.relevance, resp)
 
   # API Version 1.0.0 has more logic in the module.
-  if not api.cros_build_api.is_at_least_version(1, 1, 0):
+  if not api.cros_build_api.has_endpoint(api.cros_build_api.ArtifactsService,
+                                         'BuildSetup'):
     # An artifact with only EBUILD_LOGS, should always return UNKNOWN.
     resp = api.cros_artifacts.prepare_for_build(
         chroot=chroot, sysroot=sysroot,
@@ -74,7 +68,7 @@ def RunSteps(api, properties):
             legacy=Legacy(output_artifacts=[
                 Legacy.ArtifactInfo(artifact_types=['EBUILD_LOGS'])
             ])), test_data=properties.api_response)
-    api.assertions.assertEqual(PrepareForBuildResponse.UNKNOWN, resp)
+    api.assertions.assertEqual(BuildSetupResponse.UNKNOWN, resp)
 
     # An artifact with no prepare service, should always return UNKNOWN
     resp = api.cros_artifacts.prepare_for_build(
@@ -83,23 +77,33 @@ def RunSteps(api, properties):
             legacy=Legacy(output_artifacts=[
                 Legacy.ArtifactInfo(artifact_types=['IMAGE_ZIP'])
             ])), test_data=properties.api_response)
-    api.assertions.assertEqual(PrepareForBuildResponse.UNKNOWN, resp)
+    api.assertions.assertEqual(BuildSetupResponse.UNKNOWN, resp)
 
     # With no output artifacts, expect UNKNOWN.
     resp = api.cros_artifacts.prepare_for_build(
         chroot=chroot, sysroot=sysroot,
         artifacts_info=common.ArtifactsByService(),
         test_data=properties.api_response)
-    api.assertions.assertEqual(PrepareForBuildResponse.UNKNOWN, resp)
+    api.assertions.assertEqual(BuildSetupResponse.UNKNOWN, resp)
 
 
 def GenTests(api):
-  for build_api_version in '1.0.0', None:
+  missing = api.cros_build_api.remove_endpoints(['ArtifactsService/BuildSetup'])
+  yield api.test(
+      'testing_pointless',
+      api.properties(
+          TestInputProperties(
+              relevance=BuildSetupResponse.POINTLESS,
+          )), api.cros_artifacts.set_prepare_pointless(True))
+
+  for state in 'no-setup', 'default':
     for resp in 'UNKNOWN', 'POINTLESS', 'NEEDED':
       yield api.test(
-          '%s_%s' % (resp.lower(), build_api_version or 'default'),
+          '%s_%s' % (resp.lower(), state),
           api.properties(
               TestInputProperties(
                   api_response='{"build_relevance": "%s"}' % resp,
-                  relevance=PrepareForBuildResponse.BuildRelevance.Value(resp),
-                  build_api_version=build_api_version)))
+                  relevance=BuildSetupResponse.BuildRelevance.Value(resp),
+              )),
+          api.cros_build_api.remove_endpoints(
+              ['ArtifactsService/BuildSetup'] if state == 'no-setup' else []))
