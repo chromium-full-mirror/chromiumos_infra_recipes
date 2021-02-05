@@ -593,10 +593,11 @@ def execution_steps(api, properties):
   autotest_results = {}
   run_test_responses = {}
 
-  # Experimental code path for using the new test_runner binary.
-  # Leave this commented out until it's ready. It's just here for easy led
-  # use at this point.
-  # api.cros_test_runner.execute_luciexe()
+  if api.cros_test_runner.is_enabled():  # pragma: nocover
+    # Experimental code path for using the new test_runner binary rather
+    # than the normal test_runner workflow.
+    api.cros_test_runner.execute_luciexe()
+    return
 
   with api.step.nest('inputs') as step:
     step.presentation.logs['request'] = json_format.MessageToJson(

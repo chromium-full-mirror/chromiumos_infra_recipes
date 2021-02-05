@@ -17,7 +17,16 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
   def __init__(self, properties, **kwargs):
     super(CrosTestRunnerCommand, self).__init__(**kwargs)
     self._cipd_dir = None
-    self._version = str(properties.version.cipd_label) or 'latest'
+    self._cipd_label = str(properties.version.cipd_label) or None
+    self._cipd_package = str(properties.version.cipd_package) or \
+        'chromiumos/infra/cros_test_runner/${platform}'
+
+  def is_enabled(self):
+    """Checks if cros_test_runner is enabled for use.
+
+    Returns: bool
+    """
+    return self._cipd_label != None
 
   def execute_luciexe(self):
     """Execute work via cros_test_runner luciexe binary.
@@ -44,12 +53,11 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'cros_test_runner')
 
         pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package('chromiumos/infra/cros_test_runner/${platform}',
-                         self._version)
+        pkgs.add_package(self._cipd_package, self._cipd_label)
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._cipd_dir = cipd_dir
 
-  def cipd_package_version(self):
+  def cipd_package_label(self):
     """Return the CTP CIPD package version (e.g. prod/staging/latest)."""
-    return self._version
+    return self._cipd_label

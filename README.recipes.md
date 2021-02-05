@@ -2980,15 +2980,21 @@ Returns
 
 Module for issuing cros_test_runner commands
 
-&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_runner/api.py#53)(self):**
+&mdash; **def [cipd\_package\_label](/recipe_modules/cros_test_runner/api.py#61)(self):**
 
 Return the CTP CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_runner/api.py#22)(self):**
+&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_runner/api.py#31)(self):**
 
 Execute work via cros_test_runner luciexe binary.
 
 Returns: None
+
+&mdash; **def [is\_enabled](/recipe_modules/cros_test_runner/api.py#24)(self):**
+
+Checks if cros_test_runner is enabled for use.
+
+Returns: bool
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7498,7 +7504,7 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#676)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#677)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#227)(api, phosphorus_config, gs_dir, result):**
 
