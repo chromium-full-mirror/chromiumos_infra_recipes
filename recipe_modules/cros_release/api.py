@@ -73,7 +73,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """
     builder = ('staging-paygen-orchestrator'
                if self.m.build_menu.is_staging else 'paygen-orchestrator')
-    bucket = 'staging' if self.m.build_menu.is_staging else 'packaging'
+    bucket = 'staging' if self.m.build_menu.is_staging else 'release'
 
     version = self.m.cros_version.read_workspace_version()
     with self.m.step.nest('generate payloads') as presentation:
@@ -91,7 +91,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'full_payload_test_override': 'RESPECT_CONFIG',
       }
       request = self.m.buildbucket.schedule_request(
-          builder='paygen-orchestrator', bucket='packaging',
+          builder='paygen-orchestrator', bucket=bucket,
           properties=paygen_properties)
       return self.m.buildbucket.run(
           [request], timeout=self.m.cros_paygen.paygen_orchestrator_timeout_sec,
