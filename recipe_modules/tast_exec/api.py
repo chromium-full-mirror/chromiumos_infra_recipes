@@ -21,6 +21,10 @@ QCOW_IMG_NAME = 'qcow2.img'
 class TastExecApi(RecipeApi):
   """A module to execute tast commands."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super(TastExecApi, self).__init__(*args, **kwargs)
+    self._exec_timeout = properties.exec_timeout or 90 * 60
+
   def download_tast(self, artifacts_gs_bucket, artifacts_gs_path,
                     test_artifacts_dir):
     """Downloads the tast executable from specified build artifacts.
@@ -304,7 +308,7 @@ class TastExecApi(RecipeApi):
         keyfile_args + \
         extra_args + \
         [dut_name] + \
-        list(expressions), ok_ret='any', timeout=60 * 60)
+        list(expressions), ok_ret='any', timeout=self._exec_timeout)
 
   @exponential_retry(retries=2)
   def _launch_vm(self, qcow_image_path, kvm_pid_file, kvm_monitor_file,

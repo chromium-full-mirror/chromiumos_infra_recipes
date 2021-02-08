@@ -12,3 +12,7 @@ DEPS = [
     'easy',
     'tast_results',
 ]
+
+from PB.recipe_modules.chromeos.tast_exec.tast_exec import (TastExecProperties)
+
+PROPERTIES = TastExecProperties

@@ -215,7 +215,7 @@
       "pita.CreateFromIso.uprev"
     ],
     "name": "invoke tast.tast run",
-    "timeout": 3600,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

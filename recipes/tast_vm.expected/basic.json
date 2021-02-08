@@ -230,7 +230,7 @@
       "expr"
     ],
     "name": "run tast tests.first tast iteration.tast run",
-    "timeout": 3600,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -683,7 +683,7 @@
       "arc.Boot"
     ],
     "name": "run tast tests.second tast iteration.tast run",
-    "timeout": 3600,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
