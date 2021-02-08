@@ -1009,7 +1009,7 @@
       "-a",
       "chromiumos.config.payload.FlatConfigList",
       "-o",
-      "generated/flattened.jsonproto",
+      "hw_design/generated/flattened.jsonproto",
       "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway/generated/flattened.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",

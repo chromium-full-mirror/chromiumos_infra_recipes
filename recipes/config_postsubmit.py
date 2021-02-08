@@ -167,14 +167,14 @@ def _copy_to_internal(api, properties, project_infos):
       IngestConfig(
           'flattened',
           'generated/flattened.jsonproto',
-          'generated/flattened.jsonproto',
+          'hw_design/generated/flattened.jsonproto',
           'chromiumos.config.payload.FlatConfigList',
           'chromiumos.config.payload.FlatConfigList',
       ),
       IngestConfig(
           'joined',
           'generated/joined.jsonproto',
-          'generated/configs.jsonproto',
+          'hw_design/generated/configs.jsonproto',
           'chromiumos.config.payload.ConfigBundle',
           'chromiumos.config.payload.ConfigBundleList',
       ),

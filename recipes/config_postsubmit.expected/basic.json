@@ -1004,7 +1004,7 @@
       "-a",
       "chromiumos.config.payload.FlatConfigList",
       "-o",
-      "generated/flattened.jsonproto"
+      "hw_design/generated/flattened.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.merge flattened configs to config-internal",
@@ -1021,7 +1021,7 @@
       "-a",
       "chromiumos.config.payload.ConfigBundleList",
       "-o",
-      "generated/configs.jsonproto"
+      "hw_design/generated/configs.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.merge joined configs to config-internal",
@@ -1047,8 +1047,8 @@
     "cmd": [
       "git",
       "add",
-      "generated/flattened.jsonproto",
-      "generated/configs.jsonproto"
+      "hw_design/generated/flattened.jsonproto",
+      "hw_design/generated/configs.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
