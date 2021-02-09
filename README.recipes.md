@@ -2147,7 +2147,7 @@ An API for providing release related operations (e.g. paygen, signing).
 
 Takes an array of common_pb2.Channel & validates & strings them.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#100)(self):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#99)(self):**
 
 Call the Push Image Build API endpoint for the build.
 

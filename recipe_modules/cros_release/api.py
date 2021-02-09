@@ -71,8 +71,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     Returns:
       The int build id for the launched orchestrator.
     """
-    builder = ('staging-paygen-orchestrator'
-               if self.m.build_menu.is_staging else 'paygen-orchestrator')
+    pg_orch_builder = ('staging-paygen-orchestrator' if
+                       self.m.build_menu.is_staging else 'paygen-orchestrator')
     bucket = 'staging' if self.m.build_menu.is_staging else 'release'
 
     version = self.m.cros_version.read_workspace_version()
@@ -91,8 +91,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'full_payload_test_override': 'RESPECT_CONFIG',
       }
       request = self.m.buildbucket.schedule_request(
-          builder='paygen-orchestrator', bucket=bucket,
-          properties=paygen_properties)
+          builder=pg_orch_builder, bucket=bucket, properties=paygen_properties)
       return self.m.buildbucket.run(
           [request], timeout=self.m.cros_paygen.paygen_orchestrator_timeout_sec,
           step_name='running paygen orchestrator')
