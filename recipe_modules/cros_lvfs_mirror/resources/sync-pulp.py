@@ -14,6 +14,7 @@ import os
 import hashlib
 import sys
 import posixpath
+import re
 
 import requests
 
@@ -26,15 +27,16 @@ except NameError:
 
 class Pulp:
 
-  def __init__(self, url):
+  def __init__(self, url, existent):
     self.url = url
+    self.existent = open(existent, "r")
     self.manifest = 'PULP_MANIFEST'
     self.useragent = os.path.basename(sys.argv[0])
     self.session = requests.Session()
 
-  def _download_file(self, fn):
+  def _download_file(self, fn, path):
 
-    url_fn = posixpath.join(self.url, os.path.basename(fn))
+    url_fn = posixpath.join(self.url, fn)
     print('Downloading {}…'.format(url_fn))
     try:
       headers = {
@@ -47,35 +49,16 @@ class Pulp:
     ) as e:
       print(str(e))
     else:
-      with open(fn, 'wb') as f:
+      with open(os.path.join(path, fn), 'wb') as f:
         f.write(rv.content)
 
-  def _sync_file(self, fn, csum, sz):
+  def _sync_file(self, fn, path, csum, sz):
 
-    # prefer SHA-256 checksum
-    if csum:
-      try:
-        with open(fn, 'rb') as f:
-          csum_fn = hashlib.sha256(f.read()).hexdigest()
-      except FileNotFoundError as _:
-        self._download_file(fn)
+    self.existent.seek(0)
+    for line in self.existent:
+      if re.search(fn, line):
         return
-      if csum_fn != csum:
-        print('{} does not match checksum {}'.format(fn, csum))
-        self._download_file(fn)
-      return
-
-    # fallback to size
-    if sz:
-      try:
-        sz_fn = os.path.getsize(fn)
-      except FileNotFoundError as _:
-        self._download_file(fn)
-        return
-      if sz_fn != sz:
-        print('{} does not match size {}: {}'.format(fn, sz, sz_fn))
-        self._download_file(fn)
-      return
+    self._download_file(fn, path)
 
   def sync(self, path):
 
@@ -105,7 +88,7 @@ class Pulp:
         fn, csum, sz = line.rsplit(",", 2)
       except ValueError as e:
         continue
-      self._sync_file(os.path.join(path, fn), csum, int(sz))
+      self._sync_file(fn, path, csum, int(sz))
 
     # success
     return 0
@@ -113,9 +96,9 @@ class Pulp:
 
 if __name__ == '__main__':
 
-  if len(sys.argv) != 3:
-    print("USAGE: URL DIR")
+  if len(sys.argv) != 4:
+    print("USAGE: URL DIR EXISTENT")
     sys.exit(2)
 
-  pulp = Pulp(url=sys.argv[1])
+  pulp = Pulp(url=sys.argv[1], existent=sys.argv[3])
   sys.exit(pulp.sync(sys.argv[2]))

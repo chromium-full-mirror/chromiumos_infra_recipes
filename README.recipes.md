@@ -1983,7 +1983,7 @@ This is used by findit, which has a single builder that performs
 bisection using the configuration of another builder.
 ### *recipe_modules* / [cros\_lvfs\_mirror](/recipe_modules/cros_lvfs_mirror)
 
-[DEPS](/recipe_modules/cros_lvfs_mirror/__init__.py#5): [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python]
+[DEPS](/recipe_modules/cros_lvfs_mirror/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 API for LvfsMirror script.
 
@@ -1991,18 +1991,20 @@ API for LvfsMirror script.
 
 A module for the LvfsMirror script.
 
-&mdash; **def [configure](/recipe_modules/cros_lvfs_mirror/api.py#17)(self, mirror_address):**
+&mdash; **def [configure](/recipe_modules/cros_lvfs_mirror/api.py#17)(self, mirror_address, gs_uri):**
 
 Configure the LvfsMirror script module.
 
 Args:
   * mirror_address: The mirror address for the LVFS repository.
 
-&emsp; **@property**<br>&mdash; **def [local\_cache](/recipe_modules/cros_lvfs_mirror/api.py#35)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_uri](/recipe_modules/cros_lvfs_mirror/api.py#65)(self):**
 
-&emsp; **@property**<br>&mdash; **def [mirror\_address](/recipe_modules/cros_lvfs_mirror/api.py#31)(self):**
+&emsp; **@property**<br>&mdash; **def [local\_cache](/recipe_modules/cros_lvfs_mirror/api.py#69)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_lvfs_mirror/api.py#26)(self):**
+&emsp; **@property**<br>&mdash; **def [mirror\_address](/recipe_modules/cros_lvfs_mirror/api.py#61)(self):**
+
+&mdash; **def [run](/recipe_modules/cros_lvfs_mirror/api.py#50)(self):**
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
 
 [DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_storage](#recipe_modules-cros_storage), [cros\_version](#recipe_modules-cros_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

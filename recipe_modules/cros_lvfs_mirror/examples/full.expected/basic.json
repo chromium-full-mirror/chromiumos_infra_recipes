@@ -18,11 +18,48 @@
     "cmd": [
       "python",
       "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "-r",
+      "uri/*.cab"
+    ],
+    "infra_step": true,
+    "name": "gsutil List files in uri"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
       "RECIPE_MODULE[chromeos::cros_lvfs_mirror]/resources/sync-pulp.py",
       "address",
-      "[CACHE]/lvfs"
+      "[CACHE]/lvfs",
+      "[CACHE]/gs.txt"
     ],
     "name": "run sync-pulp.py"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "-a",
+      "public-read",
+      "[CACHE]/lvfs",
+      "uri"
+    ],
+    "infra_step": true,
+    "name": "gsutil Sync to uri"
   },
   {
     "name": "$result"

@@ -11,9 +11,10 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.cros_lvfs_mirror.configure(mirror_address='address')
+  api.cros_lvfs_mirror.configure(mirror_address='address', gs_uri='uri')
   api.cros_lvfs_mirror.run()
   assert api.cros_lvfs_mirror.mirror_address == 'address'
+  assert api.cros_lvfs_mirror.gs_uri == 'uri'
 
 
 def GenTests(api):
