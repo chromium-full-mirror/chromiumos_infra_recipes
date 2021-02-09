@@ -1307,30 +1307,6 @@
   },
   {
     "cmd": [
-      "git",
-      "log",
-      "--format=%aE",
-      "-n",
-      "-1",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "run presubmit checks.checking src/p1.git log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "[START_DIR]/chromiumos_workspace/src/repohooks/pre-upload.py",
       "--pre-submit"
     ],
@@ -1457,30 +1433,6 @@
       ]
     },
     "name": "run presubmit checks.checking src/p2.set tracking",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "log",
-      "--format=%aE",
-      "-n",
-      "-1",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "run presubmit checks.checking src/p2.git log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

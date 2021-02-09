@@ -168,18 +168,6 @@
   {
     "cmd": [
       "git",
-      "log",
-      "--format=%aE",
-      "-n",
-      "-1",
-      "HEAD"
-    ],
-    "infra_step": true,
-    "name": "git log"
-  },
-  {
-    "cmd": [
-      "git",
       "push",
       "--dry-run",
       "--porcelain",
@@ -239,6 +227,216 @@
       "-30",
       "--",
       "file*"
+    ],
+    "infra_step": true,
+    "name": "git log",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001emessage\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "some/file/path",
+      "some/other/path"
+    ],
+    "infra_step": true,
+    "name": "git add"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "deadbeef",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git merge-base"
+  },
+  {
+    "cmd": [
+      "git",
+      "show",
+      "deadbeef:some/path"
+    ],
+    "infra_step": true,
+    "name": "git show"
+  },
+  {
+    "cmd": [
+      "git",
+      "bundle",
+      "create",
+      "[START_DIR]/bundle",
+      "HEAD^..HEAD"
+    ],
+    "infra_step": true,
+    "name": "git bundle"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "main",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git diff"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "main"
+    ],
+    "infra_step": true,
+    "name": "git diff (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only"
+    ],
+    "infra_step": true,
+    "name": "git diff (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only"
+    ],
+    "infra_step": true,
+    "name": "git diff (4)"
+  },
+  {
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "infra_step": true,
+    "name": "git status"
+  },
+  {
+    "cmd": [
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git symbolic-ref"
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "master"
+    ],
+    "infra_step": true,
+    "name": "git checkout (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      ".",
+      "snapshot",
+      "foo"
+    ],
+    "infra_step": true,
+    "name": "git ls-remote (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "infra_step": true,
+    "name": "git rebase"
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase",
+      "feature-branch"
+    ],
+    "infra_step": true,
+    "name": "git rebase (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "upstream.hammer-branch",
+      "1"
+    ],
+    "infra_step": true,
+    "name": "git config"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "infra_step": true,
+    "name": "git remote"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "get-url",
+      "cros-internal"
+    ],
+    "infra_step": true,
+    "name": "git remote (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git rev-parse (3)"
+  },
+  {
+    "cmd": [
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git symbolic-ref (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "infra_step": true,
     "name": "git log (2)",

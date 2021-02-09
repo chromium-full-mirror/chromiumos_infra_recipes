@@ -168,18 +168,6 @@
   {
     "cmd": [
       "git",
-      "log",
-      "--format=%aE",
-      "-n",
-      "-1",
-      "HEAD"
-    ],
-    "infra_step": true,
-    "name": "git log"
-  },
-  {
-    "cmd": [
-      "git",
       "push",
       "--dry-run",
       "--porcelain",
@@ -214,7 +202,7 @@
       "file*"
     ],
     "infra_step": true,
-    "name": "git log (2)",
+    "name": "git log",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001emessage\u0000@@@",
       "@@@STEP_LOG_END@stdout@@@"
@@ -424,7 +412,7 @@
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "infra_step": true,
-    "name": "git log (3)"
+    "name": "git log (2)"
   },
   {
     "name": "$result"

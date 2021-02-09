@@ -10,7 +10,6 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/properties',
-    'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'bot_cost',
@@ -26,14 +25,10 @@ DEPS = [
     'test_util',
 ]
 
-import re
-
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
 
 PROPERTIES = PresubmitTestsProperties
-
-COMMIT_BOT_REGEX = re.compile(r'.*@chromeos-bot\.iam\.gserviceaccount\.com')
 
 
 def RunSteps(api, properties):
@@ -109,18 +104,9 @@ def _FullCheckout(api, properties):
                   '%s/%s' % (info.remote, branch)
               ])
               api.path.mock_add_paths(full_path.join(properties.test_filename))
-
               if api.path.exists(full_path.join('PRESUBMIT.cfg')):
-                # By default, run 'pre-upload.py HEAD', which runs all the
-                # checks. However, commits by the commit bot may not pass all
-                # the checks, so run 'pre-upload.py --pre-submit' for those.
-                # See http://b/177017870 for details.
-                author_email = api.git.author_email('HEAD')
-                pre_upload_arg = 'HEAD'
-                if COMMIT_BOT_REGEX.match(author_email):
-                  pre_upload_arg = '--pre-submit'
                 api.step('repo presubmit', [
-                    workpath.join('src/repohooks/pre-upload.py'), pre_upload_arg
+                    workpath.join('src/repohooks/pre-upload.py'), '--pre-submit'
                 ])
               elif api.path.exists(full_path.join('PRESUBMIT.py')):
                 api.step('git cl presubmit',
