@@ -54,6 +54,15 @@ class ChromeApi(recipe_api.RecipeApi):
         if properties.HasField('deps_isolate') else None)
     self._allow_deps_isolate = properties.allow_deps_isolate
     self._version = properties.version
+    # TODO(crbug/1086714): remove once working.
+    self._call_needs_chrome_source = properties.call_needs_chrome_source
+
+  def initialize(self):
+    """Initialization that follows all module loading."""
+    # TODO(crbug/1086714): remove once working.
+    self._call_needs_chrome_source |= (
+        'chromeos.chrome.call_needs_chrome_source' in
+        self.m.cros_infra_config.experiments)
 
   def _get_local_version(self, chroot, build_target):
     """Returns chrome version from local chroot (e.g. "84.0.4109.1")."""
@@ -305,7 +314,7 @@ class ChromeApi(recipe_api.RecipeApi):
     # TODO(https://crbug.com/1086714): NeedsChromeSource is temporarily removed,
     # remove the "#pragma: nocover" when it comes back.
     # If there is a NeedChromeSource endpoint, use that.
-    if self.m.cros_build_api.has_endpoint(
+    if self._call_needs_chrome_source and self.m.cros_build_api.has_endpoint(
         self.m.cros_build_api.PackageService,
         'NeedsChromeSource'):  #pragma: nocover
       response = self.m.cros_build_api.PackageService.NeedsChromeSource(

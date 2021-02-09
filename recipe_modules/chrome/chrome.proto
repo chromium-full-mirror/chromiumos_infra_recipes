@@ -33,4 +33,8 @@ message ChromeProperties {
   // 2021 Q1.  This re-enables the use, which may no longer work.
   // See crbug.com/1150957.
   bool allow_deps_isolate = 5;
+
+  // TODO(crbug/1086714): remove feature flag when fixed.
+  // Disable NeedsChromeSource, since it causes errors.
+  bool call_needs_chrome_source = 6;
 }

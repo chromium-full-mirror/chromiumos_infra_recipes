@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/time',
     'depot_tools/depot_tools',
     'depot_tools/gclient',
+    'cros_infra_config',
     'cros_build_api',
     'easy',
     'portage',
