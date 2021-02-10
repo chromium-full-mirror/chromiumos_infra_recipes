@@ -56,22 +56,25 @@ def RunSteps(api, properties):
   if not api.buildbucket.build.input.gerrit_changes:
     raise ValueError('At least one gerrit_change must be specified.')
 
-  local_manifest = None
-  if (properties.local_manifest.repo_url and
-      properties.local_manifest.manifest_path):
-    if properties.manifest_branch:
-      raise ValueError(
-          'local_manifest cannot be specified if manifest_branch is specified')
+  local_manifests = []
+  for lm in properties.local_manifests:
+    local_manifests.append(
+        api.repo.LocalManifest(repo=lm.repo_url, path=lm.manifest_path))
 
-    local_manifest = api.repo.LocalManifest(
-        repo=properties.local_manifest.repo_url,
-        path=properties.local_manifest.manifest_path)
+  if not local_manifests and properties.local_manifest.repo_url:
+    local_manifests.append(
+        api.repo.LocalManifest(repo=properties.local_manifest.repo_url,
+                               path=properties.local_manifest.manifest_path))
+
+  if local_manifests and properties.manifest_branch:
+    raise ValueError(
+        'local_manifest cannot be specified if manifest_branch is specified')
 
   with api.context(infra_steps=True), \
       api.workspace_util.sync_to_manifest_groups(
           manifest_groups=properties.manifest_groups,
           manifest_branch=properties.manifest_branch,
-          local_manifest=local_manifest,
+          local_manifests=local_manifests,
           cache_path_override=api.src_state.workspace_path):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
                                      fail_not_applicable=True)
@@ -147,11 +150,18 @@ def GenTests(api):
           LocalManifestPresubmitProperties(
               project='chromeos',
               manifest_groups=['partner-config'],
-              local_manifest=LocalManifest(
-                  repo_url=('https://chrome-internal.googlesource.com'
-                            '/chromeos/project/testproject1'),
-                  manifest_path='local_manifest.xml',
-              ),
+              local_manifests=[
+                  LocalManifest(
+                      repo_url=('https://chrome-internal.googlesource.com'
+                                '/chromeos/project/testproject1'),
+                      manifest_path='local_manifest.xml',
+                  ),
+                  LocalManifest(
+                      repo_url=('https://chrome-internal.googlesource.com'
+                                '/chromeos/program/testprogram1'),
+                      manifest_path='local_manifest.xml',
+                  ),
+              ],
               logging_gs_prefix='testprogram-testproject/cq_logs',
               presubmit_all_files=True,
           )),

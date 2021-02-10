@@ -622,54 +622,6 @@
     ]
   },
   {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/program/testprogram1/+/HEAD/local_manifest.xml",
-      "--format",
-      "text"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "ensure synced checkout.fetch HEAD:local_manifest.xml (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "\n<manifest>\n  <remote name=\"cros-internal\"\n          fetch=\"https://chrome-internal.googlesource.com\"\n          review=\"https://chrome-internal-review.googlesource.com\" />\n  <project name=\"chromeos/private-repo1\"\n     path=\"src/private-repo1\"\n     remote=\"cros-internal\" />\n</manifest>\n    ",
-      "[START_DIR]/chromiumos_workspace/.repo/local_manifests/local_manifest_1.xml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "ensure synced checkout.write local manifest (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@<manifest>@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@  <remote name=\"cros-internal\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@          fetch=\"https://chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@          review=\"https://chrome-internal-review.googlesource.com\" />@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@  <project name=\"chromeos/private-repo1\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@     path=\"src/private-repo1\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@     remote=\"cros-internal\" />@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@</manifest>@@@",
-      "@@@STEP_LOG_LINE@local_manifest_1.xml@    @@@",
-      "@@@STEP_LOG_END@local_manifest_1.xml@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "ensure synced checkout.ensure clean checkout",
     "~followup_annotations": [
@@ -930,96 +882,35 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+      "[START_DIR]/chromiumos_workspace/src/config/generate.sh"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "infra_step": true,
-    "name": "repo forall",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos|src/chromeos|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "prepare and execute presubmit"
+    "name": "generate proto bindings"
   },
   {
     "cmd": [
-      "git",
-      "checkout",
-      "-b",
-      "__presubmit"
+      "python",
+      "-u",
+      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/checker.py",
+      "--program",
+      "[START_DIR]/chromiumos_workspace/src/program/testprogram/generated/config.binaryproto",
+      "--project",
+      "[START_DIR]/chromiumos_workspace/src/project/testproject/generated/config.binaryproto",
+      "--factory_dir",
+      "[START_DIR]/chromiumos_workspace/src/project/testproject/factory"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "infra_step": true,
-    "name": "prepare and execute presubmit.setup",
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "check constraints",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "branch",
-      "--set-upstream-to",
-      "cros/master"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "infra_step": true,
-    "name": "prepare and execute presubmit.set tracking",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "presubmit_support.py",
-      "--json_output",
-      "/path/to/tmp/json",
-      "--commit",
-      "--verbose",
-      "--recursive",
-      "--all_files"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "prepare and execute presubmit.presubmit_support",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@json.output (invalid)@@@",
-      "@@@STEP_LOG_LINE@json.output (exception)@No JSON object could be decoded@@@",
-      "@@@STEP_LOG_END@json.output (exception)@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@Test stdout from presubmit@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@Test stdout from constraint checker@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
-      "@@@STEP_LINK@stdout (GS mirror)@https://storage.cloud.google.com/testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout@@@"
+      "@@@STEP_LINK@stdout (GS mirror)@https://storage.cloud.google.com/testprogram-testproject/cq_logs/8945511751514863184/check constraints/stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "prepare and execute presubmit.write to gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "write to gs://testprogram-testproject/cq_logs/8945511751514863184/check constraints/stdout"
   },
   {
     "cmd": [
@@ -1029,23 +920,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Test stdout from presubmit",
+      "Test stdout from constraint checker",
       "[CLEANUP]/tmp_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "prepare and execute presubmit.write to gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout.write to temp file",
+    "name": "write to gs://testprogram-testproject/cq_logs/8945511751514863184/check constraints/stdout.write to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@tmp_tmp_1@Test stdout from presubmit@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@tmp_tmp_1@Test stdout from constraint checker@@@",
       "@@@STEP_LOG_END@tmp_tmp_1@@@"
     ]
   },
@@ -1059,21 +942,13 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1",
-      "gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout"
+      "gs://testprogram-testproject/cq_logs/8945511751514863184/check constraints/stdout"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "prepare and execute presubmit.write to gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout.gsutil cp",
+    "name": "write to gs://testprogram-testproject/cq_logs/8945511751514863184/check constraints/stdout.gsutil cp",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

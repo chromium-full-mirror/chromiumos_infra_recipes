@@ -34,8 +34,9 @@ def RunSteps(api, properties):
     manifest_url = init_opts.pop('manifest_url', 'http://manifest_url')
     local_manifest = init_opts.pop('local_manifest', None)
     if local_manifest:
-      init_opts['local_manifest'] = api.repo.LocalManifest(
-          local_manifest['repo'], local_manifest['path'])
+      init_opts['local_manifests'] = [
+          api.repo.LocalManifest(local_manifest['repo'], local_manifest['path'])
+      ]
     sync_opts = MessageToDict(properties.sync_opts,
                               preserving_proto_field_name=True)
 

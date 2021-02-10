@@ -155,12 +155,12 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       return changed
 
   @contextlib.contextmanager
-  def sync_to_manifest_groups(self, manifest_groups, local_manifest=None,
+  def sync_to_manifest_groups(self, manifest_groups, local_manifests=None,
                               cache_path_override=None, gitiles_commit=None,
                               manifest_branch=None):
     """Returns a context with manifest groups checked out to cwd.
 
-    The subset of repos in the external manifest + local_manifest matching
+    The subset of repos in the external manifest + local_manifests matching
     manifest_groups are synced. For example, say the external manifest contains
     repos:
 
@@ -168,7 +168,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       <project path="b" name="b" groups="g1" />
       <project path="c" name="c" groups="g2" />
 
-    and the local manifest contains repos:
+    and a local manifest contains repos:
 
       <project path="d" name="d" groups="g3" />
       <project path="e" name="e" groups="g4" />
@@ -183,8 +183,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     Args:
       manifest_groups (list[str]): List of manifest groups to checkout.
-      local_manifest (repo.LocalManifest): Local manifest to add or None if not
-          syncing a local manifest.
+      local_manifests (list[repo.LocalManifest]): A list of local manifests to
+          add or None if not syncing a local manifest.
       cache_path_override (Path): Path to sync into. If None, the default
           caching of cros_source.ensure_synced_cache is used.
       gitiles_commit (GitilesCommit): The gitiles_commit to sync to.  Default:
@@ -204,12 +204,12 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     manifest_url = self.m.src_state.external_manifest.url
 
-    if local_manifest:
-      assert not manifest_branch, 'manifest_branch and local_manifest cannot be specified at the same time'
-      init_opts['local_manifest'] = local_manifest
+    if local_manifests:
+      assert not manifest_branch, 'manifest_branch and local_manifests cannot be specified at the same time'
+      init_opts['local_manifests'] = local_manifests
 
     if manifest_branch:
-      assert not local_manifest, 'manifest_branch and local_manifest cannot be specified at the same time'
+      assert not local_manifests, 'manifest_branch and local_manifests cannot be specified at the same time'
       init_opts['manifest_branch'] = manifest_branch
       manifest_url = self.m.src_state.internal_manifest.url
 

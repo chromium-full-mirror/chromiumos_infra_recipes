@@ -144,7 +144,7 @@ class RepoApi(recipe_api.RecipeApi):
 
   def init(self, manifest_url, _kwonly=(), manifest_branch='', reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
-           local_manifest=None, manifest_name=None, projects=None,
+           local_manifests=None, manifest_name=None, projects=None,
            verbose=False, clean=True):
     """Executes 'repo init' with the given arguments.
 
@@ -156,7 +156,7 @@ class RepoApi(recipe_api.RecipeApi):
       * depth (int): Create a shallow clone of the given depth.
       * repo_url (str): URL of the repo repository.
       * repo_branch (str): Repo binary branch to use.
-      * local_manifest (LocalManifest): Local manifest to add. See
+      * local_manifests (list[LocalManifest]): Local manifests to add. See
       https://gerrit.googlesource.com/git-repo/+/HEAD/docs/manifest-format.md#local-manifests.
       * manifest_name (Path): The manifest file to use.
       * projects (List[str]): Projects of concern or None if all projects are of
@@ -192,7 +192,7 @@ class RepoApi(recipe_api.RecipeApi):
     if self.m.context.cwd:
       self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))
 
-    if local_manifest is not None:
+    if local_manifests is not None:
       # Local manifests should be installed under .repo/local_manifests/*.xml.
       # The .repo dir should be created by the above init.
       assert self.m.path.exists(self.m.context.cwd.join('.repo'))
@@ -200,12 +200,18 @@ class RepoApi(recipe_api.RecipeApi):
       self.m.file.ensure_directory(name='ensure local manifest dir',
                                    dest=local_manifest_dir)
 
-      manifest_data = self.m.gitiles.download_file(
-          local_manifest.repo, local_manifest.path, branch='HEAD',
-          step_test_data=self.test_api.local_manifest_step_test_data)
-      self.m.file.write_raw(name='write local manifest',
-                            dest=local_manifest_dir.join('local_manifest.xml'),
-                            data=manifest_data)
+      for i, local_manifest in enumerate(local_manifests):
+        manifest_data = self.m.gitiles.download_file(
+            local_manifest.repo, local_manifest.path, branch='HEAD',
+            step_test_data=self.test_api.local_manifest_step_test_data)
+        self.m.file.write_raw(
+            name='write local manifest',
+            # If there is more than one local manifest, it needs a different
+            # name.
+            dest=local_manifest_dir.join('local_manifest_{}.xml'.format(i)
+                                         if i else 'local_manifest.xml'),
+            data=manifest_data,
+        )
 
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,

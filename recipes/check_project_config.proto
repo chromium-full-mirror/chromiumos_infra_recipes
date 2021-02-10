@@ -49,7 +49,11 @@ message CheckProjectConfigProperties {
     string manifest_branch = 9;
 
     // Local manifest to add to the checkout.
-    project_mgmt.LocalManifest local_manifest = 5;
+    // Deprecated: Use local_manifests instead.
+    project_mgmt.LocalManifest local_manifest = 5 [deprecated = true];
+
+    // Local manifests to add to the checkout.
+    repeated project_mgmt.LocalManifest local_manifests = 10;
 
     // Path the "chromiumos/config" repo is checked out to in the source tree.
     string chromiumos_config_checkout_path = 2;

@@ -149,7 +149,7 @@ class CrosSourceApi(RecipeApi):
     return (self._snapshot_isolate.isolated_hash
             if self._snapshot_isolate else None)
 
-  def _validate_args(self, manifest_url, local_manifest, groups, cache_path,
+  def _validate_args(self, manifest_url, local_manifests, groups, cache_path,
                      manifest_branch):
     """Ensure the args to ensure_synced_cache are to a supported configuration.
 
@@ -160,8 +160,8 @@ class CrosSourceApi(RecipeApi):
 
     Args:
       manifest_url (str): Manifest URL for 'repo.init`.
-      local_manifest (repo.LocalManifest): Local manifest to add or None if not
-        syncing a local manifest.
+      local_manifests (list[repo.LocalManifest]): List of local manifests to
+        add or None if not syncing a local manifest.
       groups (list[str]): List of manifest groups to checkout.
       cache_path (Path): Path to sync into. If None, the cache_path
         property is used.
@@ -172,7 +172,7 @@ class CrosSourceApi(RecipeApi):
     """
     if cache_path == self.cache_path:
       if (manifest_url != self.m.src_state.internal_manifest.url or
-          local_manifest or groups or manifest_branch):
+          local_manifests or groups or manifest_branch):
         raise ValueError('Only the internal manifest on the default branch can'
                          'be synced to the chromiumos cache path.')
       return 'INTERNAL'
@@ -259,13 +259,13 @@ class CrosSourceApi(RecipeApi):
               ) if 'chromeos.cros_source.use_released_repo_on_staging' in
           self.m.cros_infra_config.experiments else {})
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
-    local_manifest = init_opts.get('local_manifest')
+    local_manifests = init_opts.get('local_manifests')
     groups = init_opts.get('groups')
     verbose = init_opts.get('verbose')
     manifest_branch = init_opts.get('manifest_branch')
     retry_fetches = sync_opts.get('retry_fetches')
 
-    configuration = self._validate_args(manifest_url, local_manifest, groups,
+    configuration = self._validate_args(manifest_url, local_manifests, groups,
                                         cache_path, manifest_branch)
     if configuration == 'INTERNAL':
       self._sync_cached_dir(retry_fetches, projects, verbose,

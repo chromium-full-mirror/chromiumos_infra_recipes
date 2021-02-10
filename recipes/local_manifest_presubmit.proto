@@ -45,7 +45,11 @@ message LocalManifestPresubmitProperties {
   string manifest_branch = 7;
 
   // Local manifest to add to the checkout, if any.
-  project_mgmt.LocalManifest local_manifest = 3;
+  // Deprecated: Use local_manifests instead.
+  project_mgmt.LocalManifest local_manifest = 3 [deprecated = true];
+
+  // Local manifests to add to the checkout.
+  repeated project_mgmt.LocalManifest local_manifests = 8;
 
   // Google Storage prefix to log output from steps to.
   //

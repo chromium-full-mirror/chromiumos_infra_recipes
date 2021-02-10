@@ -622,6 +622,54 @@
     ]
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/program/testprogram1/+/HEAD/local_manifest.xml",
+      "--format",
+      "text"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure synced checkout.fetch HEAD:local_manifest.xml (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\n<manifest>\n  <remote name=\"cros-internal\"\n          fetch=\"https://chrome-internal.googlesource.com\"\n          review=\"https://chrome-internal-review.googlesource.com\" />\n  <project name=\"chromeos/private-repo1\"\n     path=\"src/private-repo1\"\n     remote=\"cros-internal\" />\n</manifest>\n    ",
+      "[START_DIR]/chromiumos_workspace/.repo/local_manifests/local_manifest_1.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure synced checkout.write local manifest (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@<manifest>@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@  <remote name=\"cros-internal\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@          fetch=\"https://chrome-internal.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@          review=\"https://chrome-internal-review.googlesource.com\" />@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@  <project name=\"chromeos/private-repo1\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@     path=\"src/private-repo1\"@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@     remote=\"cros-internal\" />@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@</manifest>@@@",
+      "@@@STEP_LOG_LINE@local_manifest_1.xml@    @@@",
+      "@@@STEP_LOG_END@local_manifest_1.xml@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "ensure synced checkout.ensure clean checkout",
     "~followup_annotations": [

@@ -60,21 +60,21 @@ def RunSteps(api, properties):
   )):
     raise ValueError('All checkout_paths and config_paths must be specified.')
 
-  if properties.manifest_branch:
-    if (properties.local_manifest.repo_url or
-        properties.local_manifest.manifest_path):
-      raise ValueError(
-          'local_manifest cannot be specified if manifest_branch is specified')
+  local_manifests = []
+  for lm in properties.local_manifests:
+    local_manifests.append(
+        api.repo.LocalManifest(repo=lm.repo_url, path=lm.manifest_path))
 
-    local_manifest = None
-  else:
-    if not (properties.local_manifest.repo_url and
-            properties.local_manifest.manifest_path):
-      raise ValueError('local_manifest repo and path must be specified')
+  if not local_manifests and properties.local_manifest.repo_url:
+    local_manifests.append(
+        api.repo.LocalManifest(repo=properties.local_manifest.repo_url,
+                               path=properties.local_manifest.manifest_path))
 
-    local_manifest = api.repo.LocalManifest(
-        repo=properties.local_manifest.repo_url,
-        path=properties.local_manifest.manifest_path)
+  if local_manifests and properties.manifest_branch:
+    raise ValueError(
+        'local_manifest cannot be specified if manifest_branch is specified')
+  elif not local_manifests and not properties.manifest_branch:
+    raise ValueError('local_manifest repo and path must be specified')
 
   # Do work in a context with manifest groups checked out. Most steps are infra
   # steps, so make this the default. Non-infra steps specify this explicitly.
@@ -85,7 +85,7 @@ def RunSteps(api, properties):
   with api.context(infra_steps=True), \
       api.workspace_util.sync_to_manifest_groups(
           properties.manifest_groups,
-          local_manifest=local_manifest,
+          local_manifests=local_manifests,
           cache_path_override=api.src_state.workspace_path,
           manifest_branch=properties.manifest_branch):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
@@ -156,12 +156,18 @@ def GenTests(api):
     """Returns a dict of basic valid properties, updated with extra_props."""
     props = {
         'manifest_groups': ['partner-config'],
-        'local_manifest':
-            LocalManifest(
-                repo_url=('https://chrome-internal.googlesource.com'
-                          '/chromeos/project/testproject1'),
-                manifest_path='local_manifest.xml',
-            ),
+        'local_manifests': [
+            {
+                "repo_url": ('https://chrome-internal.googlesource.com'
+                             '/chromeos/project/testproject1'),
+                "manifest_path": 'local_manifest.xml',
+            },
+            {
+                "repo_url": ('https://chrome-internal.googlesource.com'
+                             '/chromeos/program/testprogram1'),
+                "manifest_path": 'local_manifest.xml',
+            },
+        ],
         'chromiumos_config_checkout_path':
             'src/config',
         'program_config_bundle_checkout_path':
@@ -231,15 +237,41 @@ def GenTests(api):
   )
 
   yield api.test(
+      'deprecated_local_manifest',
+      api.properties(**properties_dict({
+          'local_manifests': [],
+          'local_manifest': {
+              "repo_url": ('https://chrome-internal.googlesource.com'
+                           '/chromeos/project/testproject1'),
+              "manifest_path": 'local_manifest.xml',
+          },
+      })),
+      project_config_cq_build(api),
+      # The input GerritChange is in a checked out project.
+      checked_out_projects(api),
+      check_constraints_with_output(),
+      api.post_process(post_process.StepCommandContains,
+                       'ensure synced checkout.repo init',
+                       ['--groups', 'partner-config']),
+      # The change should be applied.
+      api.post_process(
+          post_process.StepCommandContains,
+          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/project1',
+              'refs/changes/56/123456/7:',
+          ],
+      ),
+  )
+
+  yield api.test(
       'manifest_branch',
-      api.properties(**properties_dict(
-          extra_props={
-              'manifest_branch': 'release-R123',
-              'local_manifest': LocalManifest(
-                  repo_url='',
-                  manifest_path='',
-              ),
-          })),
+      api.properties(**properties_dict(extra_props={
+          'manifest_branch': 'release-R123',
+          'local_manifests': [],
+      })),
       project_config_cq_build(api),
       # The input GerritChange is in a checked out project.
       checked_out_projects(api),
@@ -266,13 +298,9 @@ def GenTests(api):
 
   yield api.test(
       'local_manifest_missing',
-      api.properties(**properties_dict(
-          extra_props={
-              'local_manifest': LocalManifest(
-                  repo_url='',
-                  manifest_path='',
-              ),
-          })),
+      api.properties(**properties_dict(extra_props={
+          'local_manifests': [],
+      })),
       project_config_cq_build(api),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
