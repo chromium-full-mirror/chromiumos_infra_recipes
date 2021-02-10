@@ -56,6 +56,9 @@ message AnnealingProperties {
   // order to fix breakage caused by a pin-change that downrevs a pinned git
   // repository.
   repeated string ignore_downrev_paths = 7;
+
+  // Feature flag used to signal where to uprev. b/179496445
+  bool uprev_first = 8;
 }
 
 // Annealing determines what Gerrit changes have landed since its last run,

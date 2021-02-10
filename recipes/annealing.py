@@ -60,6 +60,7 @@ def RunSteps(api, properties):
   # If we're configured not to publish uprev's run as staging.
   is_staging = not properties.publish_uprevs
   workspace_path = api.src_state.workspace_path
+  properties.uprev_first |= 'chromeos.annealing.uprev_first' in api.cros_infra_config.experiments
 
   commit = api.src_state.gitiles_commit
   prior_internal = prior_external = None
@@ -124,34 +125,8 @@ def RunSteps(api, properties):
             external_manifest.url, manifest_ref)
 
         # Sync mirrored manifest files from manifest-internal to manifest.
-        with api.step.nest('sync manifests') as presentation:
-          presentation.logs['prior versions'] = [
-              'internal {}: {}'.format(manifest_ref, prior_internal),
-              'external {}: {}'.format(manifest_ref, prior_external),
-          ]
-
-          def _update_callback():
-            """Callback function for git_txn to update mirrored files."""
-            files = api.cros_source.mirrored_manifest_files
-            external_paths = [external_manifest.path.join(p) for p in files]
-            for path in files:
-              api.file.copy('Copy manifest-internal/{}'.format(path),
-                            internal_manifest.path.join(path),
-                            external_manifest.path.join(path))
-            if not any(api.git.diff_check(f) for f in external_paths):
-              return False
-            if properties.dry_run or is_staging:
-              presentation.logs['skip'] = ['staging/dry-run: skipping sync']
-              properties.dry_run = True
-              api.step('git reset', ['git', 'reset', '--hard'])
-              return False
-            commit_message = 'Syncing with internal manifest.'
-            api.git.add(external_paths)
-            api.git.commit(commit_message)
-
-          if not api.git_txn.update_ref(external_manifest.url,
-                                        _update_callback):
-            presentation.step_text = 'No diffs'
+        _sync_manifest(api, properties, manifest_ref, prior_internal,
+                       prior_external, internal_manifest, external_manifest)
 
         api.easy.set_properties_step(dry_run=properties.dry_run)
 
@@ -263,43 +238,79 @@ def RunSteps(api, properties):
       # from the remote uprev commits. The only two ways around it are (a)
       # run repo sync a second time, after uprevs, or (b) include the uprevs
       # in the NEXT snapshot. We choose the least wasteful option.
-      with api.step.nest('uprev packages'), api.context(cwd=workspace_path):
-        response = api.cros_sdk.uprev_packages(name='uprev ebuilds')
+      _uprev(api, properties, workspace_path)
 
-        ebuilds_by_repository = collections.defaultdict(list)
-        for ebuild in response.modified_ebuilds:
-          with api.context(
-              cwd=api.path.abs_to_path(api.path.dirname(ebuild.path))):
-            repository = api.git.repository_root()
-            ebuilds_by_repository[repository].append(ebuild.path)
 
-        with api.step.nest('commit uprevs'):
-          for repository, ebuilds in ebuilds_by_repository.iteritems():
-            with api.context(cwd=api.path.abs_to_path(repository)):
-              api.git.add(ebuilds)
-              api.git.commit('Marking set of ebuilds as stable', files=ebuilds)
+def _sync_manifest(api, properties, manifest_ref, prior_internal,
+                   prior_external, internal_manifest, external_manifest):
+  is_staging = not properties.publish_uprevs
+  with api.step.nest('sync manifests') as presentation:
+    presentation.logs['prior versions'] = [
+        'internal {}: {}'.format(manifest_ref, prior_internal),
+        'external {}: {}'.format(manifest_ref, prior_external),
+    ]
 
-        with api.step.nest('push uprevs'):
-          push = util.exponential_retry(retries=3)(api.git.push)
-          for repository, ebuilds in ebuilds_by_repository.iteritems():
-            with api.context(cwd=api.path.abs_to_path(repository)):
-              # Filter to ebuilds that exist. In particular, we need to exclude
-              # the version of the ebuild from prior to the uprev.
-              existing_ebuilds = []
-              for ebuild in ebuilds:
-                api.path.mock_add_paths(ebuild)
-                if api.path.exists(ebuild):
-                  existing_ebuilds.append(ebuild)
-              projects = api.repo.project_infos(projects=existing_ebuilds)
-              # The list of projects should be checked to see if all elements
-              # are equivalent. This check is temporarily removed because
-              # Annealing is broken, and length isn't the right thing to check.
-              # assert len(projects) == 1, \
-              #     'expected 1 project, got: %r' % projects
-              project = projects[0]
-              push(project.remote,
-                   'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
-                   dry_run=is_staging or properties.dry_run)
+    def _update_callback():
+      """Callback function for git_txn to update mirrored files."""
+      files = api.cros_source.mirrored_manifest_files
+      external_paths = [external_manifest.path.join(p) for p in files]
+      for path in files:
+        api.file.copy('Copy manifest-internal/{}'.format(path),
+                      internal_manifest.path.join(path),
+                      external_manifest.path.join(path))
+      if not any(api.git.diff_check(f) for f in external_paths):
+        return False
+      if properties.dry_run or is_staging:
+        presentation.logs['skip'] = ['staging/dry-run: skipping sync']
+        properties.dry_run = True
+        api.step('git reset', ['git', 'reset', '--hard'])
+        return False
+      commit_message = 'Syncing with internal manifest.'
+      api.git.add(external_paths)
+      api.git.commit(commit_message)
+
+    if not api.git_txn.update_ref(external_manifest.url, _update_callback):
+      presentation.step_text = 'No diffs'
+
+
+def _uprev(api, properties, workspace_path):
+  is_staging = not properties.publish_uprevs
+  with api.step.nest('uprev packages'), api.context(cwd=workspace_path):
+    response = api.cros_sdk.uprev_packages(name='uprev ebuilds')
+
+    ebuilds_by_repository = collections.defaultdict(list)
+    for ebuild in response.modified_ebuilds:
+      with api.context(cwd=api.path.abs_to_path(api.path.dirname(ebuild.path))):
+        repository = api.git.repository_root()
+        ebuilds_by_repository[repository].append(ebuild.path)
+
+    with api.step.nest('commit uprevs'):
+      for repository, ebuilds in ebuilds_by_repository.iteritems():
+        with api.context(cwd=api.path.abs_to_path(repository)):
+          api.git.add(ebuilds)
+          api.git.commit('Marking set of ebuilds as stable', files=ebuilds)
+
+    with api.step.nest('push uprevs'):
+      push = util.exponential_retry(retries=3)(api.git.push)
+      for repository, ebuilds in ebuilds_by_repository.iteritems():
+        with api.context(cwd=api.path.abs_to_path(repository)):
+          # Filter to ebuilds that exist. In particular, we need to exclude
+          # the version of the ebuild from prior to the uprev.
+          existing_ebuilds = []
+          for ebuild in ebuilds:
+            api.path.mock_add_paths(ebuild)
+            if api.path.exists(ebuild):
+              existing_ebuilds.append(ebuild)
+          projects = api.repo.project_infos(projects=existing_ebuilds)
+          # The list of projects should be checked to see if all elements
+          # are equivalent. This check is temporarily removed because
+          # Annealing is broken, and length isn't the right thing to check.
+          # assert len(projects) == 1, \
+          #     'expected 1 project, got: %r' % projects
+          project = projects[0]
+          push(project.remote,
+               'HEAD:refs/for/' + project.branch + '%notify=NONE,submit',
+               dry_run=is_staging or properties.dry_run)
 
 
 def _schedule_triggered_builds(api, commit, jobs):
