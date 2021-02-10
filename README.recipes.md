@@ -106,6 +106,7 @@
   * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
   * [build_firmware](#recipes-build_firmware) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) &mdash; Recipe for generating artifacts for Informational builders.
+  * [build_legacy_fw](#recipes-build_legacy_fw) &mdash; Recipe that builds chromeos-firmware on a firmware branch.
   * [build_menu:examples/full](#recipes-build_menu_examples_full)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
   * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph)
@@ -676,7 +677,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#304)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#340)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -693,7 +694,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#347)(self, config=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#383)(self, config=None):**
 
 Build the image and run ebuild tests.
 
@@ -713,7 +714,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#74)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#113)(self, is_staging=None, missing_ok=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#113)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None):**
 
 Initial setup steps for the builder.
 
@@ -725,6 +726,9 @@ Args:
       override auto-detection. By default, anything in the 'staging' bucket
       is considered a staging builder.
   missing_ok (bool): Whether it is OK if no config is found.
+  disable_sdk (bool): This builder will not be using the SDK at all. Only
+      for branches with broken or no Build API.
+  commit (GitilesCommit): The GitilesCommit for the build, or None.
 
 Returns:
   BuilderConfig or None, with an active context.
@@ -739,7 +743,18 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#86)(self):**
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#214)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#210)(self, no_chroot_timeout=False):**
+
+Setup the chroot for the builder.
+
+Args:
+  no_chroot_timeout (bool): whether to allow unlimited time to create the
+      chroot.
+
+Returns:
+  (bool): Whether the build is relevant.
+
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#250)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -754,11 +769,19 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#161)(self, no_chroot_timeout=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#189)(self):**
+
+Setup the workspace for the builder.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#173)(self, no_chroot_timeout=False):**
 
 Setup the workspace and chroot for the builder.
 
 This context manager sets up the workspace path.
+
+Args:
+  no_chroot_timeout (bool): whether to allow unlimited time to create the
+      chroot.
 
 Returns:
   (bool): Whether the build is relevant.
@@ -774,7 +797,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#409)(self, config=None, failing_build=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#445)(self, config=None, failing_build=False, private_bundle_func=None):**
 
 Upload artifacts from the build.
 
@@ -782,8 +805,11 @@ Args:
   config (BuilderConfig): The Builder Config for the build, or None.
   failing_build (bool): whether or not the build is failing, used (in part)
       to decide whether or not to upload artifacts.
+  private_bundle_func (func): If a private bundling method is needed (such
+      as when there is no Build API on the branch), this will be called
+      instead of the internal bundling method.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#427)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#467)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1177,7 +1203,7 @@ Args:
 Returns:
   The GS path at which artifacts should be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#585)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#589)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1192,7 +1218,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#619)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#623)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1217,7 +1243,7 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#639)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#643)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1238,7 +1264,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#757)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#761)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
 
 Call the PushImage build API endpoint.
 
@@ -1251,7 +1277,7 @@ Args:
 
   For more context on this parameters, see chromite/scripts/pushimage.py.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#493)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, failing_build=False, name=None, test_data=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#493)(self, builder_name, target, kind, gs_bucket, artifacts_info=None, chroot=None, sysroot=None, failing_build=False, name=None, test_data=None, private_bundle_func=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -1276,6 +1302,9 @@ Args:
   test_data (str): Some data for this step to return when running under
       simulation.  The string "@@DIR@@" is replaced with the output_dir
       path throughout.
+  private_bundle_func (func): If a private bundling method is needed (such
+      as when there is no Build API on the branch), this will be called
+      instead of the internal bundling method.
 ### *recipe_modules* / [cros\_bisect](/recipe_modules/cros_bisect)
 
 [DEPS](/recipe_modules/cros_bisect/__init__.py#5): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5893,6 +5922,13 @@ This recipe supports the workflow necessary to support asan, UBsan, and fuzzer
 builder profiles.
 
 &mdash; **def [RunSteps](/recipes/build_informational.py#21)(api, properties):**
+### *recipes* / [build\_legacy\_fw](/recipes/build_legacy_fw.py)
+
+[DEPS](/recipes/build_legacy_fw.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe that builds chromeos-firmware on a firmware branch.
+
+&mdash; **def [RunSteps](/recipes/build_legacy_fw.py#173)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

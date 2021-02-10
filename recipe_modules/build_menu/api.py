@@ -111,7 +111,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return self._dep_graph
 
   @contextlib.contextmanager
-  def configure_builder(self, is_staging=None, missing_ok=False):
+  def configure_builder(self, is_staging=None, missing_ok=False,
+                        disable_sdk=False, commit=None):
     """Initial setup steps for the builder.
 
     This context manager returns with all of the contexts that an image builder
@@ -122,15 +123,28 @@ class BuildMenuApi(recipe_api.RecipeApi):
           override auto-detection. By default, anything in the 'staging' bucket
           is considered a staging builder.
       missing_ok (bool): Whether it is OK if no config is found.
+      disable_sdk (bool): This builder will not be using the SDK at all. Only
+          for branches with broken or no Build API.
+      commit (GitilesCommit): The GitilesCommit for the build, or None.
 
     Returns:
       BuilderConfig or None, with an active context.
     """
+
+    @contextlib.contextmanager
+    def _maybe_context(ctx_func, *args, **kwargs):
+      if ctx_func:
+        with ctx_func(*args, **kwargs) as ret:
+          yield ret
+      else:
+        yield
+
     with self.m.bot_cost.build_cost_context():
       build = self.m.buildbucket.build
       changes = build.input.gerrit_changes
+      commit = commit or self.m.buildbucket.gitiles_commit
       config = self.m.cros_infra_config.configure_builder(
-          self.m.buildbucket.gitiles_commit, changes, is_staging=is_staging)
+          commit, changes, is_staging=is_staging)
       if (changes and config and not config.build.apply_gerrit_changes):
         raise recipe_api.StepFailure(
             'Changes provided, but builder does not apply changes')
@@ -140,19 +154,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.cros_sdk.set_use_flags(config.build.use_flags)
       if config or missing_ok:
         with self.m.workspace_util.setup_workspace(), \
-            self.m.cros_sdk.cleanup_context():
-          if config:
-            with self.m.metadata_json.context(config, self.build_target):
-              yield config
-          else:
-            # No config, and missing_ok is true.
-            yield None
+            _maybe_context(None if disable_sdk
+                           else self.m.cros_sdk.cleanup_context):
+          with _maybe_context(self.m.metadata_json.context if config else None,
+                              config, self.build_target):
+            yield config
 
           # If we have applied patches and the SDK was not validated, then we
           # need to do so before leaving the context.
-          if not self._dep_graph and self.m.workspace_util.patch_sets:
-            if self._chroot_created:
-              self._get_dep_graph([])
+          if (self._chroot_created and not self._dep_graph and
+              self.m.workspace_util.patch_sets):
+            self._get_dep_graph([])
       else:
         # No config, and missing_ok is False.
         raise recipe_api.StepFailure('Missing configuration for {}'.format(
@@ -164,9 +176,19 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     This context manager sets up the workspace path.
 
+    Args:
+      no_chroot_timeout (bool): whether to allow unlimited time to create the
+          chroot.
+
     Returns:
       (bool): Whether the build is relevant.
     """
+    with self.setup_workspace():
+      yield self.setup_chroot(no_chroot_timeout)
+
+  @contextlib.contextmanager
+  def setup_workspace(self):
+    """Setup the workspace for the builder."""
     # If we do not have a config, use an empty one.
     config = self.config_or_default
 
@@ -183,33 +205,47 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # The Chrome OS verison can be reported once the workspace is synced.
       version = self.m.cros_version.read_workspace_version()
       self.m.easy.set_properties_step(chromeos_version=str(version))
+      yield
 
-      relevance = Relevance.UNKNOWN
-      if self._artifact_build:
-        # Early check to see if the build is pointless. (No chroot nor
-        # sysroot yet.)
-        relevance = self.m.sysroot_util.update_for_artifact_build(
-            None, config.artifacts, force_relevance=self._force_relevant_build)
+  def setup_chroot(self, no_chroot_timeout=False):
+    """Setup the chroot for the builder.
 
-      if not self._artifact_build or relevance != Relevance.POINTLESS:
-        self.m.cros_sdk.uprev_packages()
-        timeout = None if config.build.sdk_update.compile_source else 'DEFAULT'
-        self.m.cros_sdk.create_chroot(
-            version=config.general.sdk_cache_version, use_image=self.is_staging,
-            timeout_sec=None if config.build.sdk_update.compile_source or
-            no_chroot_timeout else 'DEFAULT')
-        self._chroot_created = True
+    Args:
+      no_chroot_timeout (bool): whether to allow unlimited time to create the
+          chroot.
 
-        # Avoid passing empty BuildTarget message when we don't have one,
-        # e.g. chromite-cq.
-        tc_targets = [self.build_target] if self.build_target.name else None
-        tc_targets = None if self._force_empty_toolchain_targets else tc_targets
-        self.m.cros_sdk.update_chroot(
-            self.gitiles_commit, self.gerrit_changes,
-            toolchain_targets=tc_targets,
-            build_source=config.build.sdk_update.compile_source)
+    Returns:
+      (bool): Whether the build is relevant.
+    """
+    # If we do not have a config, use an empty one.
+    config = self.config_or_default
 
-      yield relevance != Relevance.POINTLESS
+    relevance = Relevance.UNKNOWN
+    if self._artifact_build:
+      # Early check to see if the build is pointless. (No chroot nor
+      # sysroot yet.)
+      relevance = self.m.sysroot_util.update_for_artifact_build(
+          None, config.artifacts, force_relevance=self._force_relevant_build)
+
+    if not self._artifact_build or relevance != Relevance.POINTLESS:
+      self.m.cros_sdk.uprev_packages()
+      timeout = None if config.build.sdk_update.compile_source else 'DEFAULT'
+      self.m.cros_sdk.create_chroot(
+          version=config.general.sdk_cache_version, use_image=self.is_staging,
+          timeout_sec=None if config.build.sdk_update.compile_source or
+          no_chroot_timeout else 'DEFAULT')
+      self._chroot_created = True
+
+      # Avoid passing empty BuildTarget message when we don't have one,
+      # e.g. chromite-cq.
+      tc_targets = [self.build_target] if self.build_target.name else None
+      tc_targets = None if self._force_empty_toolchain_targets else tc_targets
+      self.m.cros_sdk.update_chroot(
+          self.gitiles_commit, self.gerrit_changes,
+          toolchain_targets=tc_targets,
+          build_source=config.build.sdk_update.compile_source)
+
+    return relevance != Relevance.POINTLESS
 
   def setup_sysroot_and_determine_relevance(self, with_sysroot=True,
                                             packages=None):
@@ -406,13 +442,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 
-  def upload_artifacts(self, config=None, failing_build=False):
+  def upload_artifacts(self, config=None, failing_build=False,
+                       private_bundle_func=None):
     """Upload artifacts from the build.
 
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
       failing_build (bool): whether or not the build is failing, used (in part)
           to decide whether or not to upload artifacts.
+      private_bundle_func (func): If a private bundling method is needed (such
+          as when there is no Build API on the branch), this will be called
+          instead of the internal bundling method.
     """
     config = config or self.config_or_default
 
@@ -422,7 +462,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           config.id.name, self.build_target, config.id.type,
           config.artifacts.artifacts_gs_bucket, sysroot=self.sysroot,
           chroot=self.chroot, artifacts_info=config.artifacts.artifacts_info,
-          failing_build=failing_build)
+          failing_build=failing_build, private_bundle_func=private_bundle_func)
 
   def upload_prebuilts(self, config=None):
     """Upload prebuilts from the build.

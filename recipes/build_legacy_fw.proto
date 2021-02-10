@@ -1,0 +1,24 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_legacy_fw;
+
+import "chromite/api/firmware.proto";
+import "chromiumos/common.proto";
+
+message BuildLegacyFwProperties {
+  // The build target being built.
+  chromiumos.BuildTarget build_target = 1;
+
+  // Firmware location.  See chromite.api.firmware.
+  chromite.api.FwLocation firmware_location = 2;
+
+  // The manifest branch to check out.
+  string manifest_branch = 3;
+
+  // Packages to build.
+  repeated chromiumos.PackageInfo packages = 4;
+}

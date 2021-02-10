@@ -492,7 +492,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
   def upload_artifacts(self, builder_name, target, kind, gs_bucket,
                        artifacts_info=None, chroot=None, sysroot=None,
-                       failing_build=False, name=None, test_data=None):
+                       failing_build=False, name=None, test_data=None,
+                       private_bundle_func=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -516,12 +517,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       test_data (str): Some data for this step to return when running under
           simulation.  The string "@@DIR@@" is replaced with the output_dir
           path throughout.
+      private_bundle_func (func): If a private bundling method is needed (such
+          as when there is no Build API on the branch), this will be called
+          instead of the internal bundling method.
     """
     with self.m.step.nest(name or 'upload artifacts') as presentation:
       outpath = self.m.path.mkdtemp(prefix='artifacts')
-      files_by_artifact = self._bundle_artifacts(chroot, sysroot,
-                                                 artifacts_info, outpath,
-                                                 test_data)
+      func = private_bundle_func or self._bundle_artifacts
+      files_by_artifact = func(chroot, sysroot, artifacts_info, outpath,
+                               test_data)
 
       if not files_by_artifact:
         presentation.step_text = 'No artifacts found.'
