@@ -82,10 +82,29 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                     common=TestSuiteCommon(display_name='ttarget.tast.sweet'),
                     suite_name='tast-suite',
                     tast_test_expr=[
-                        TastVmTestCfg.TastTestExpr(test_expr='exampe.Pass'),
+                        TastVmTestCfg.TastTestExpr(test_expr='!informational'),
                     ],
                 ),
-            ],),)
+            ],
+        ),
+    )
+
+  @property
+  def tast_vm_informational_test_unit(self):
+    return TastVmTestUnit(
+        common=self.test_unit_common(),
+        tast_vm_test_cfg=TastVmTestCfg(
+            tast_vm_test=[
+                TastVmTestCfg.TastVmTest(
+                    common=TestSuiteCommon(display_name='ttarget.tast.sweet'),
+                    suite_name='tast-suite',
+                    tast_test_expr=[
+                        TastVmTestCfg.TastTestExpr(test_expr='informational'),
+                    ],
+                ),
+            ],
+        ),
+    )
 
   @property
   def vm_test_unit(self):
@@ -103,6 +122,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   def generate_test_plan_response(self):
     return GenerateTestPlanResponse(
         hw_test_units=[self.hw_test_unit, self.another_hw_test_unit],
-        direct_tast_vm_test_units=[self.direct_tast_vm_test_unit],
+        direct_tast_vm_test_units=[
+            self.direct_tast_vm_test_unit, self.tast_vm_informational_test_unit
+        ],
         vm_test_units=[self.vm_test_unit],
     )

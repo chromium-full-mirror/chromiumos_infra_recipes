@@ -186,9 +186,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """Returns the autotest builder name for the given build_target."""
     return build_target.name + '-autotest-vm'
 
-  def _direct_tast_vm_test(self, build_target):
-    """Returns the direct tast builder name for the given build_target."""
-    return build_target.name + '-direct-tast-vm'
+  def _tast_vm_builder(self, build_target, expressions):
+    """Returns the tast builder name for the given build_target and expressions."""
+    if '!informational' in ''.join(expressions):
+      return build_target.name + '-direct-tast-vm'
+    else:
+      return build_target.name + '-tast-vm-informational'
 
   def _schedule_tests(self, test_plan, passed_tests, timeout,
                       test_to_build_map=None, snapshot=None, dev=False):
@@ -370,19 +373,19 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           test_name = test.common.display_name
           build_target = unit.common.build_target
           test_to_build_map[test_name] = build_target.name
+          expressions = [t.test_expr for t in test.tast_test_expr]
           requests.append(
               self.m.buildbucket.schedule_request(
                   gitiles_commit=snapshot,
-                  builder=self._direct_tast_vm_test(build_target),
+                  builder=self._tast_vm_builder(build_target, expressions),
                   bucket=self._vm_bucket, critical=test.common.critical.value,
                   properties=self._with_props_for_child_build(
                       json_format.MessageToDict(
                           TastVmProperties(
                               name=test_name, build_target=build_target,
                               build_payload=unit.common.build_payload,
-                              expressions=[
-                                  t.test_expr for t in test.tast_test_expr
-                              ]))), tags=self._tags_for_child_build()))
+                              expressions=expressions))),
+                  tags=self._tags_for_child_build()))
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast vm tests',
         url_title_fn=self.m.naming.get_build_title)
