@@ -858,8 +858,14 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "Do replicate_public_config and create CL.diff check",
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "infra_step": true,
+    "name": "Do replicate_public_config and create CL.git status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1185,8 +1191,14 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "Do regenerate_test_plan and create CL.diff check",
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal/test/generated",
+    "infra_step": true,
+    "name": "Do regenerate_test_plan and create CL.git status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

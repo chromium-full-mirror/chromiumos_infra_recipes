@@ -349,10 +349,10 @@ def _create_cl(api, properties, commit_info, branch_name, cl_config):
       GerritChange: The newly created change.
   """
   with api.context(cwd=commit_info.project_path):
-    if api.git.diff_check(commit_info.project_path):
+    if api.git.get_working_dir_diff_files():
       api.repo.start(branch_name, projects=[commit_info.project_path])
 
-      # If given a list of files, use that to add, otherwise add the while
+      # If given a list of files, use that to add, otherwise add the whole
       # project.
       if commit_info.files:
         api.git.add(commit_info.files)
