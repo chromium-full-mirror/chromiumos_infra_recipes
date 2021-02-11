@@ -20,8 +20,9 @@ DEPS = [
     'test_util',
 ]
 
+from collections import defaultdict
 from contextlib import contextmanager
-from recipe_engine import post_process
+from recipe_engine.post_process import MustRun, DoesNotRun, StatusSuccess
 from recipe_engine.recipe_api import StepFailure
 
 from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
@@ -39,13 +40,20 @@ class FirmwareBuilder(object):
 
   def __init__(self, api, properties):
     self.m = api
+    # If not specified, default to building virtual/chromeos-firmware.
+    if not properties.packages:
+      pkg = properties.packages.add()
+      pkg.category = "virtual"
+      pkg.package_name = "chromeos-firmware"
+
+    # We may have been passed properties.build_target.
+    if not properties.build_targets:
+      bt = properties.build_targets.add()
+      bt.CopyFrom(properties.build_target)
+    assert len(properties.build_targets), 'No build_targets specified.'
+
     self.properties = properties
-    assert properties.build_target.name, 'build_target must be set'
-    self.board = '--board={}'.format(properties.build_target.name)
-    self._legacy_setup_board = api.path.exists(
-        api.src_state.workspace_path.join('src', 'scripts', 'setup_board'))
     self._chroot = self.m.src_state.workspace_path.join('chroot')
-    self._sysroot = self._chroot.join('build', properties.build_target.name)
     self._config = None
 
   def __call__(self, name, cmd, **kwargs):
@@ -81,36 +89,38 @@ class FirmwareBuilder(object):
     finally:
       self('delete SDK', ['--delete'])
 
-  def _setup_board(self):
-    if self._legacy_setup_board:
+  def _setup_board_and_install_packages(self, build_target):
+    board = build_target.name
+    board_arg = '--board={}'.format(board)
+    if self.m.path.exists(
+        self.m.src_state.workspace_path.join('src', 'scripts', 'setup_board')):
       cmd = [
-          './setup_board', self.board, '--accept_licenses=@CHROMEOS',
+          './setup_board', board_arg, '--accept_licenses=@CHROMEOS',
           '--skip_chroot_upgrade'
       ]
     else:
       cmd = [
-          'setup_board', self.board, '--accept-licenses=@CHROMEOS',
+          'setup_board', board_arg, '--accept-licenses=@CHROMEOS',
           '--skip-chroot-upgrade'
       ]
-    self('setup board', cmd)
+    self('setup board: {}'.format(board), cmd)
 
-  def _install_packages(self):
     # TODO(b/179154813): We probably need to include USE flags from properties
     # or builder_config.
     cmd = [
-        './build_packages', self.board, '--accept_licenses=@CHROMEOS',
+        './build_packages', board_arg, '--accept_licenses=@CHROMEOS',
         '--skip_chroot_upgrade'
     ] + [
         '{}/{}'.format(x.category, x.package_name)
         for x in self.properties.packages
     ]
-    self('install packages', cmd, infra_step=False)
+    self('install packages: {}'.format(board), cmd, infra_step=False)
 
-  def _build_firmware_archive(self, out_path):
-    with self.m.step.nest('create firmware archive') as pres:
+  def _build_firmware_archive(self, build_target, out_path):
+    with self.m.step.nest('create firmware archive'):
       # This code replicates chromite/service/artifacts.BuildFirmwareArchive.
       self.m.file.ensure_directory('create tempdir', out_path)
-      root = self._sysroot.join('firmware')
+      root = self._chroot.join('build', build_target.name, 'firmware')
 
       private_dirs = self.m.file.glob_paths(
           'glob private', root, '**/ec-private/fingerprint',
@@ -135,37 +145,42 @@ class FirmwareBuilder(object):
       self('create tarball', cmd, stdin=self.m.raw_io.input(data=file_list))
       return tarball
 
-  def _bundle_firmware(self, chroot, sysroot, artifacts_info, outpath,
-                       test_data):
+  def _bundle_firmware(self, _chroot, _sysroot, _artifacts_info, outpath,
+                       _test_data):
     """Returns a dictionary of files by artifact_type."""
     # We always provide FIRMWARE_TARBALL and FIRMWARE_TARBALL_INFO.
 
-    ret = {}
+    ret = defaultdict(list)
     # We need a directory inside of the chroot.  Use mkdtemp() to get a name, so
     # that test expectations are constant.
-    tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
-    tmpdir = self._chroot.join('tmp', self.m.path.basename(tmppath))
-    tarball = self._build_firmware_archive(tmpdir)
-    if tarball:
-      self.m.file.copy('bundle tarball', tarball,
-                       outpath.join(_FIRMWARE_TARBALL_NAME))
-      ret['FIRMWARE_TARBALL'] = [_FIRMWARE_TARBALL_NAME]
+    metadata = firmware.FirmwareArtifactInfo()
+    for build_target in self.properties.build_targets:
+      tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
+      tmpdir = self._chroot.join('tmp', self.m.path.basename(tmppath))
+      tarball = self._build_firmware_archive(build_target, tmpdir)
+      if tarball:
+        dest_name = ('{}.{}'.format(build_target.name, _FIRMWARE_TARBALL_NAME)
+                     if len(self.properties.build_targets) > 1 else
+                     _FIRMWARE_TARBALL_NAME)
+        self.m.file.copy('bundle tarball', tarball, outpath.join(dest_name))
+        ret['FIRMWARE_TARBALL'].append(dest_name)
 
-      metadata = firmware.FirmwareArtifactInfo()
-      info = metadata.objects.add()
-      info.file_name = _FIRMWARE_TARBALL_NAME
-      info.tarball_info.bcs_version = str(
-          self.m.cros_version.read_workspace_version())
+        info = metadata.objects.add()
+        info.file_name = dest_name
+        info.tarball_info.bcs_version = str(
+            self.m.cros_version.read_workspace_version())
+
+    if metadata.objects:
       self.m.file.write_proto('write firmware metadata',
                               outpath.join(_FIRMWARE_METADATA_NAME), metadata,
                               'JSONPB')
-      ret['FIRMWARE_TARBALL_INFO'] = [_FIRMWARE_METADATA_NAME]
+      ret['FIRMWARE_TARBALL_INFO'].append(_FIRMWARE_METADATA_NAME)
     return ret
 
   def run(self):
     with self._setup():
-      self._setup_board()
-      self._install_packages()
+      for bt in self.properties.build_targets:
+        self._setup_board_and_install_packages(bt)
       self.m.build_menu.upload_artifacts(
           private_bundle_func=self._bundle_firmware)
 
@@ -179,24 +194,43 @@ def GenTests(api):
   def test(name, *args, **kwargs):
     kwargs.setdefault('builder', 'fw-ec-postsubmit')
     kwargs.setdefault('revision', None)
-    kwargs.setdefault(
-        'input_properties',
-        dict(firmware_location=1, manifest_branch='firmware-board-9999.B',
-             packages=[dict(category='cat', package_name='chromeos-firmware')]))
+    input_props = dict(firmware_location=1,
+                       manifest_branch='firmware-board-9999.B')
+    input_props.update(**kwargs.get('input_properties', {}))
+    kwargs['input_properties'] = input_props
     build = api.test_util.test_child_build('target', **kwargs).build
     return api.test(name, build, *args)
 
   legacy_setup_board = api.path.exists(api.path['start_dir'].join(
       'chromiumos_workspace', 'src', 'scripts', 'setup_board'))
 
-  yield test('postsubmit')
+  yield test('postsubmit',
+             api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(StatusSuccess))
+
+  yield test('cq', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(StatusSuccess), cq=True, builder='fw-ec-cq')
+
+  yield test(
+      'two-targets',
+      api.post_check(MustRun, 'setup board: board1'),
+      api.post_check(MustRun, 'setup board: board2'),
+      api.post_check(StatusSuccess),
+      input_properties=dict(
+          build_targets=[dict(
+              name='board1'), dict(name='board2')]),
+  )
 
   yield test(
       'no-firmware',
       api.step_data('upload artifacts.create firmware archive.list files',
-                    api.file.listdir()))
+                    api.file.listdir()),
+      api.post_check(DoesNotRun, 'upload artifacts.bundle tarball'),
+      api.post_check(DoesNotRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(StatusSuccess))
 
-  yield test('cq', cq=True, builder='fw-ec-cq')
   yield test('chroot-exists',
              api.path.exists(api.src_state.workspace_path.join('chroot')))
 
