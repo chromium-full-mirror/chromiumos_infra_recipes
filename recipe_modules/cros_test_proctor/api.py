@@ -21,6 +21,8 @@ from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 
+TEST_SUMMARY_KEY = 'test_summary'
+
 
 class CrosTestProctorApi(recipe_api.RecipeApi):
 
@@ -58,6 +60,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       with self.m.step.nest('schedule tests'):
         test_plan = self._get_test_plan(need_tests_builds, gerrit_changes,
                                         snapshot)
+        self._set_test_summary(test_plan)
 
         dev = False
         if need_tests_builds:
@@ -170,6 +173,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       gerrit_changes (list[common_pb2.GerritChange]): the changes that resulted
           in the provided builds, or None.
       snapshot (GitilesCommit): Start ref of the child builds.
+
+    Returns:
+      GenerateTestPlanResponse: the test plan.
     """
     test_plan = self.m.cros_bisect.get_test_plan(builds)
     if test_plan:
@@ -436,6 +442,49 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         if test.common.critical and test.common.critical.value:
           count += 1
     return count
+
+  def _set_test_summary(self, test_plan):
+    """Saves a summary of the test plan to the build output properties.
+
+    Args:
+      test_plan (GenerateTestPlanResponse): the test plan.
+    """
+    # A summary of the test plan is saved to the build output to assist
+    # analysis of test results by dashboards with access to the buildbucket
+    # tables.
+    test_summary = (
+        self._extract_test_summary(test_plan.hw_test_units, lambda unit: unit.
+                                   hw_test_cfg, lambda cfg: cfg.hw_test) +
+        self._extract_test_summary(test_plan.vm_test_units, lambda unit: unit.
+                                   vm_test_cfg, lambda cfg: cfg.vm_test) +
+        self._extract_test_summary(
+            test_plan.direct_tast_vm_test_units, lambda unit: unit.
+            tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test))
+
+    self.m.easy.set_properties_step(**{TEST_SUMMARY_KEY: test_summary})
+
+  def _extract_test_summary(self, units, cfg_func, tests_func):
+    """Returns a summary of the tests within `units`.
+
+    Args:
+      units (list[HwTestUnit|VmTestUnit|TastVmTestUnit]): Units to count the
+          critical tests within.
+      cfg_func (lambda): Lambda function that takes a unit from units and
+          returns the *test_cfg field.
+      tests_func (lambda): Lambda function that takes the *test_cfg field and
+          returns the *test field holding the list of tests.
+
+    Returns:
+      list[dict]: A summary of tests, one item per test.
+    """
+    result = []
+    for unit in units:
+      for test in tests_func(cfg_func(unit)):
+        critical = test.common.critical and test.common.critical.value
+        # This is extensible to other fields beyond criticality if needed in
+        # future (did the test pass previously, did it pass this time, etc.).
+        result.append(dict(name=test.common.display_name, critical=critical))
+    return result
 
   def _with_props_for_child_build(self, properties):
     """Merge 'properties' and 'api.cq.props_for_child_build'.

@@ -3201,6 +3201,14 @@
   },
   {
     "cmd": [],
+    "name": "run tests.schedule tests.set test_summary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@test_summary@[{\"critical\": true, \"name\": \"htarget.hw.bvt-cq\"}, {\"critical\": true, \"name\": \"htarget.hw.bvt-inline\"}, {\"critical\": false, \"name\": \"vtarget.vm.auto\"}, {\"critical\": false, \"name\": \"ttarget.tast.sweet\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests.schedule tests.schedule hardware tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

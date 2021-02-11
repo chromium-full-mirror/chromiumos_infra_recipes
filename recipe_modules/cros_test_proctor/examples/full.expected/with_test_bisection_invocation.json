@@ -15,6 +15,14 @@
   },
   {
     "cmd": [],
+    "name": "run tests.schedule tests.set test_summary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@test_summary@[{\"critical\": true, \"name\": \"kip.hw.bvt-cq\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests.schedule tests.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
