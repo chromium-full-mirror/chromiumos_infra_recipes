@@ -98,11 +98,11 @@ class AndroidApi(recipe_api.RecipeApi):
       with self.m.step.nest('try uprev android'):
         request = MarkStableRequest(
             chroot=chroot,
-            tracking_branch='',
             package_name=android_package,
             android_build_branch=android_branch,
             android_version=android_version,
             build_targets=[sysroot.build_target],
+            skip_commit=True,
         )
         self.m.cros_build_api.AndroidService.MarkStable(
             request, name='uprev android package %s' % android_package)
