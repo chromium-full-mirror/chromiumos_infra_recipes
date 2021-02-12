@@ -23,13 +23,11 @@ def RunSteps(api):
       api.gerrit.Label.VERIFIED: 1,
   }
   ref = api.gerrit.set_change_labels(gerrit_change, labels)
-  api.assertions.assertEqual(ref,
-                             'refs/for/master%l=Code-Review+2,l=Verified+1')
+  api.assertions.assertEqual(ref, 'refs/for/main%l=Code-Review+2,l=Verified+1')
 
   ref = api.gerrit.set_change_labels_remote(gerrit_change,
                                             'refs/change/78/12345678/3', labels)
-  api.assertions.assertEqual(ref,
-                             'refs/for/master%l=Code-Review+2,l=Verified+1')
+  api.assertions.assertEqual(ref, 'refs/for/main%l=Code-Review+2,l=Verified+1')
 
 
 def GenTests(api):

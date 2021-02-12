@@ -607,7 +607,7 @@
     "name": "sync manifests.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/manifest|src/[START_DIR]/chromiumos_workspace/manifest|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/manifest|src/[START_DIR]/chromiumos_workspace/manifest|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -998,7 +998,7 @@
     "cmd": [
       "git",
       "checkout",
-      "master"
+      "main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -1081,7 +1081,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"master\", \"call\": \"checkout_tip_of_tree\"}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"main\", \"call\": \"checkout_tip_of_tree\"}@@@"
     ]
   },
   {

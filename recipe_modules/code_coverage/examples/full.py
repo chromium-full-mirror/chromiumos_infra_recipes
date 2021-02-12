@@ -26,7 +26,7 @@ def GenTests(api):
                      'process code coverage data'),
       builder='sarien-code-coverage-postsubmit', input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True),
-          '$chromeos/code_coverage': dict(branch='refs/heads/master')
+          '$chromeos/code_coverage': dict(branch='refs/heads/main')
       })
 
   yield api.build_menu.test(
@@ -43,7 +43,7 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
       builder='sarien-code-coverage-postsubmit', input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True),
-          '$chromeos/code_coverage': dict(branch='refs/heads/master')
+          '$chromeos/code_coverage': dict(branch='refs/heads/main')
       })
 
   yield api.build_menu.test(
@@ -55,7 +55,7 @@ def GenTests(api):
           retcode=1), builder='sarien-code-coverage-postsubmit',
       input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True),
-          '$chromeos/code_coverage': dict(branch='refs/heads/master')
+          '$chromeos/code_coverage': dict(branch='refs/heads/main')
       })
 
   yield api.build_menu.test(
@@ -74,5 +74,5 @@ def GenTests(api):
       builder='sarien-code-coverage-cq',
       input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True),
-          '$chromeos/code_coverage': dict(branch='refs/heads/master')
+          '$chromeos/code_coverage': dict(branch='refs/heads/main')
       })

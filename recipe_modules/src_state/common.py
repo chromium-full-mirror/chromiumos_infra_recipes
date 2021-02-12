@@ -21,8 +21,7 @@ _manifests = dict(
     external=_project_info('chromium.googlesource.com', 'chromiumos/manifest',
                            'manifest'))
 
-# TODO(crbug/1152875): track branch name of manifest-internal ToT.
-default_branch = 'master'
+default_branch = 'main'
 default_ref = 'refs/heads/{}'.format(default_branch)
 
 

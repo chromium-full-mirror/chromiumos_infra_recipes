@@ -28,7 +28,7 @@
     "name": "set labels on CL 12345678.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project|src/project|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project|src/project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -50,7 +50,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%l=Code-Review+2,l=Verified+1"
+      "HEAD:refs/for/main%l=Code-Review+2,l=Verified+1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
@@ -79,7 +79,7 @@
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@project|src/project|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project|src/project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -142,7 +142,7 @@
     "name": "set labels on CL 12345678 (2).repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project|src/project|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project|src/project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -151,7 +151,7 @@
       "git",
       "rebase",
       "--force-rebase",
-      "cros/master"
+      "cros/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
@@ -165,7 +165,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%l=Code-Review+2,l=Verified+1"
+      "HEAD:refs/for/main%l=Code-Review+2,l=Verified+1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
@@ -178,7 +178,7 @@
     "cmd": [
       "git",
       "checkout",
-      "master"
+      "main"
     ],
     "infra_step": true,
     "name": "git checkout (2)"

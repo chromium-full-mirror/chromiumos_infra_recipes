@@ -23,7 +23,7 @@
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@fake_project|src/fake_project|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@fake_project|src/fake_project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -845,7 +845,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chrome-internal-review.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"master\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
@@ -895,27 +895,25 @@
   },
   {
     "cmd": [],
-    "name": "patch manifest.set properties",
+    "name": "patch manifest.set manifest_branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@external_manifest_branch@\"main\"@@@",
-      "@@@SET_BUILD_PROPERTY@internal_manifest_branch@\"master\"@@@",
-      "@@@SET_BUILD_PROPERTY@manifest_branch@\"master\"@@@"
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"main\"@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "patch manifest.checkout branch master",
+    "name": "patch manifest.checkout branch main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "patch manifest.checkout branch master.set manifest_branch",
+    "name": "patch manifest.checkout branch main.set manifest_branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@manifest_branch@\"master\"@@@"
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"main\"@@@"
     ]
   },
   {
@@ -927,7 +925,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "master",
+      "main",
       "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -940,7 +938,7 @@
       ]
     },
     "infra_step": true,
-    "name": "patch manifest.checkout branch master.repo init",
+    "name": "patch manifest.checkout branch main.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -970,7 +968,7 @@
       ]
     },
     "infra_step": true,
-    "name": "patch manifest.checkout branch master.repo sync",
+    "name": "patch manifest.checkout branch main.repo sync",
     "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -978,7 +976,7 @@
   },
   {
     "cmd": [],
-    "name": "patch manifest.checkout branch master.ensure manifest is pinned",
+    "name": "patch manifest.checkout branch main.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
@@ -1002,12 +1000,12 @@
       ]
     },
     "infra_step": true,
-    "name": "patch manifest.checkout branch master.ensure manifest is pinned.repo forall",
+    "name": "patch manifest.checkout branch main.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1027,7 +1025,7 @@
       ]
     },
     "infra_step": true,
-    "name": "patch manifest.checkout branch master.ensure manifest is pinned.repo manifest",
+    "name": "patch manifest.checkout branch main.ensure manifest is pinned.repo manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
@@ -1062,7 +1060,7 @@
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/manifest-internal|src/chromeos/manifest-internal|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/manifest-internal|src/chromeos/manifest-internal|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1157,10 +1155,10 @@
     "cmd": [
       "git",
       "checkout",
-      "master"
+      "main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "patch manifest.push manifest.branch master",
+    "name": "patch manifest.push manifest.branch main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1173,7 +1171,7 @@
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "patch manifest.push manifest.reset master",
+    "name": "patch manifest.push manifest.reset main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1209,7 +1207,7 @@
       "push",
       "[CLEANUP]/repo-overwrite-_tmp_1",
       "+refs/remotes//*:refs/heads/*",
-      "+refs/heads/master:refs/heads/master"
+      "+refs/heads/main:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.push manifest.push",
@@ -1229,7 +1227,7 @@
     "name": "patch manifest.get patched manifest.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"master\", \"manifestUrl\": \"file://[CLEANUP]/repo-overwrite-_tmp_1\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"main\", \"manifestUrl\": \"file://[CLEANUP]/repo-overwrite-_tmp_1\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1240,7 +1238,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"master\", \n\"manifest_url\": \"file://[CLEANUP]/repo-overwrite-_tmp_1\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"file://[CLEANUP]/repo-overwrite-_tmp_1\", \n\"state\": \"STATE_DIRTY\"\n}",
       "[START_DIR]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
@@ -1248,7 +1246,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"main\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"file://[CLEANUP]/repo-overwrite-_tmp_1\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -1321,7 +1319,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "master",
+      "main",
       "--manifest-name",
       "../../manifest-internal/default.xml",
       "--verbose"
@@ -1468,7 +1466,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"master\", \n\"manifest_url\": \"file://[CLEANUP]/repo-overwrite-_tmp_1\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"file://[CLEANUP]/repo-overwrite-_tmp_1\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[START_DIR]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
@@ -1476,7 +1474,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"main\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"file://[CLEANUP]/repo-overwrite-_tmp_1\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -1492,34 +1490,9 @@
     "cmd": [
       "git",
       "checkout",
-      "master"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "patch manifest.restore manifest patches.branch master",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "reset",
-      "--hard",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "name": "patch manifest.restore manifest patches.reset master",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
       "main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.restore manifest patches.branch main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1532,8 +1505,33 @@
       "--hard",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.restore manifest patches.reset main",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "main"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "patch manifest.restore manifest patches.branch main (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "reset",
+      "--hard",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "name": "patch manifest.restore manifest patches.reset main (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

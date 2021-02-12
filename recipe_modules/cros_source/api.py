@@ -653,7 +653,8 @@ class CrosSourceApi(RecipeApi):
 
       if e_branch == i_branch:
         self.m.easy.set_properties_step(manifest_branch=branch)
-      else:
+      else:  # pragma: nocover
+        # TODO(crbug/1152875): the branches are the same now.
         self.m.easy.set_properties_step(manifest_branch=branch,
                                         external_manifest_branch=e_branch,
                                         internal_manifest_branch=i_branch)

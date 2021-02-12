@@ -3834,7 +3834,7 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "run ebuild tests.process code coverage data.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"master\", \"host\": \"chromium\", \"project\": \"chromiumos/platform2\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chromium\", \"project\": \"chromiumos/platform2\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3958,7 +3958,7 @@
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"master\", \"host\": \"chromium\", \"project\": \"chromiumos/codesearch\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chromium\", \"project\": \"chromiumos/codesearch\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3986,7 +3986,7 @@
       "--commit_id",
       "abcd1234",
       "--ref",
-      "refs/heads/master",
+      "refs/heads/main",
       "--uploader_name",
       "sarien-code-coverage-postsubmit",
       "--uploader_id",
@@ -4029,7 +4029,7 @@
     "name": "run ebuild tests.process code coverage data.upload coverage to chromium coverage.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/platform2|src/chromiumos/platform2|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/platform2|src/chromiumos/platform2|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

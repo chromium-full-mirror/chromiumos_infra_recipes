@@ -451,7 +451,7 @@
       "git",
       "push",
       "https://chrome-internal.googlesource.com/chromeos/infra/config",
-      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
@@ -715,7 +715,7 @@
       "git",
       "push",
       "https://chromium.googlesource.com/chromiumos/infra/suite_scheduler",
-      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2,l=Verified+1"
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2,l=Verified+1"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,

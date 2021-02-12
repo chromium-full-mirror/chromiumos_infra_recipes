@@ -18,7 +18,7 @@
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@galaxy|src/galaxy|cros|0123456789ABCDEFabcdef555555555555555555|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@galaxy|src/galaxy|cros|0123456789ABCDEFabcdef555555555555555555|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -45,7 +45,7 @@
     "name": "ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@galaxy|src/galaxy|cros|0123456789ABCDEFabcdef555555555555555555|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@galaxy|src/galaxy|cros|0123456789ABCDEFabcdef555555555555555555|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

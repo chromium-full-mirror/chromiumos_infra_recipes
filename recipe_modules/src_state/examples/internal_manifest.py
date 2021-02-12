@@ -30,7 +30,7 @@ def RunSteps(api):
   api.assertions.assertEqual(
       GitilesCommit(host='chrome-internal.googlesource.com',
                     project='chromeos/manifest-internal',
-                    ref='refs/heads/master'),
+                    ref='refs/heads/main'),
       internal_manifest.as_gitiles_commit_proto)
 
   api.assertions.assertNotEqual(internal_manifest,

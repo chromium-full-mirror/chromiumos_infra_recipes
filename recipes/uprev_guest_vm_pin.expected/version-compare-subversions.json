@@ -590,7 +590,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"master\", \"call\": \"checkout_tip_of_tree\"}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"main\", \"call\": \"checkout_tip_of_tree\"}@@@"
     ]
   },
   {
@@ -1201,9 +1201,9 @@
     "name": "upreving pin for branch master.checkout branch master.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1304,7 +1304,7 @@
     "name": "upreving pin for branch master.commit uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1664,7 +1664,7 @@
     "name": "upreving pin for branch master.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1748,7 +1748,7 @@
     "name": "upreving pin for branch master.generate CL.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1770,7 +1770,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/master%l=Bot-Commit+1,l=Commit-Queue+2"
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,

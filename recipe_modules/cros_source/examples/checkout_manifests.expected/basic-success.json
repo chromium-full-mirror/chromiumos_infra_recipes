@@ -179,7 +179,7 @@
     "cmd": [],
     "name": "set initial_repo_state",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"master\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"main\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -190,14 +190,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"master\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
       "[START_DIR]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
     "name": "Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"main\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -267,7 +267,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "master",
+      "main",
       "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -483,14 +483,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"master\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[START_DIR]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
     "name": "Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"main\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -574,7 +574,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"checkout_manifests\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/master\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"checkout_manifests\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}}@@@"
     ]
   },
   {

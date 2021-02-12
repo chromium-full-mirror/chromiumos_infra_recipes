@@ -55,8 +55,8 @@
     "name": "get project info.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/master|refs/heads/master@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/infra/config|src/chromeos/infra/config|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/infra/config|src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -400,7 +400,7 @@
     "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -544,7 +544,7 @@
     "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromeos/infra/config.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

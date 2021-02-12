@@ -311,7 +311,7 @@
     "cmd": [
       "git",
       "checkout",
-      "master"
+      "main"
     ],
     "infra_step": true,
     "name": "git checkout (2)"

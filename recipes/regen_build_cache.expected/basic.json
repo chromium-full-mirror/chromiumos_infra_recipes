@@ -1245,7 +1245,7 @@
     "name": "update metadata.push metadata.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/overlay|src/[START_DIR]/chromiumos/src/overlay|cros|refs/heads/master|refs/heads/master@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/overlay|src/[START_DIR]/chromiumos/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1254,7 +1254,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/refs/heads/master%notify=NONE,submit"
+      "HEAD:refs/for/refs/heads/main%notify=NONE,submit"
     ],
     "cwd": "[START_DIR]/chromiumos/src/overlay",
     "infra_step": true,
@@ -1502,7 +1502,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"master\", \"call\": \"checkout_tip_of_tree\"}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"main\", \"call\": \"checkout_tip_of_tree\"}@@@"
     ]
   },
   {

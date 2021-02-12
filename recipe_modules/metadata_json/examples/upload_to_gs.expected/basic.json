@@ -119,7 +119,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"amd64-generic-cq\", \n    \"branch\": \"master\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false\n}",
+      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"amd64-generic-cq\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false\n}",
       "[CLEANUP]/metadata_tmp_1/partial_metadata.json"
     ],
     "infra_step": true,
@@ -132,7 +132,7 @@
       "@@@STEP_LOG_LINE@partial_metadata.json@        \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    ], @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"bot-config\": \"amd64-generic-cq\", @@@",
-      "@@@STEP_LOG_LINE@partial_metadata.json@    \"branch\": \"master\", @@@",
+      "@@@STEP_LOG_LINE@partial_metadata.json@    \"branch\": \"main\", @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"build-number\": 0, @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"build_id\": 0, @@@",
       "@@@STEP_LOG_LINE@partial_metadata.json@    \"buildbucket_id\": 8945511751514863184, @@@",
