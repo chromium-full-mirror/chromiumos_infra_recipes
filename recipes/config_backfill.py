@@ -49,6 +49,9 @@ DST_IMPORTED = 'generated/imported.jsonproto'
 
 JOIN_SCRIPT_PATH = 'payload_utils/join_config_payloads.py'
 
+# path to cloud credentials
+CLOUD_CREDS_PATH = '/creds/service_accounts/service-account-chromeos.json'
+
 
 def require(cond, message):
   """Require a given condition be true or throw a ValueError."""
@@ -227,19 +230,20 @@ def RunSteps(api, properties):
       cmd += ['--program-name', properties.program_name]
 
     # Generate imported file which is just the backfilled data
-    api.step("Generate imported configuration",
-             ["vpython"] + cmd + ['--output', DST_IMPORTED])
-    api.git.add([DST_IMPORTED])
+    with api.context(env={'GOOGLE_APPLICATION_CREDENTIALS': CLOUD_CREDS_PATH}):
+      api.step("Generate imported configuration",
+               ["vpython"] + cmd + ['--output', DST_IMPORTED])
+      api.git.add([DST_IMPORTED])
 
-    # TODO(crbug.com/1154322): remove merged configuration generation once
-    # the merge functionality is available, just call gen_config instead.
-    # Generate output joined with existing starlark config
-    if api.path.exists(api.context.cwd.join(SRC_CONFIG)):
-      cmd += ['--config-bundle', SRC_CONFIG]
+      # TODO(crbug.com/1154322): remove merged configuration generation once
+      # the merge functionality is available, just call gen_config instead.
+      # Generate output joined with existing starlark config
+      if api.path.exists(api.context.cwd.join(SRC_CONFIG)):
+        cmd += ['--config-bundle', SRC_CONFIG]
 
-    api.step("Generate joined configuration",
-             ["vpython"] + cmd + ['--output', DST_CONFIG])
-    api.git.add([DST_CONFIG])
+      api.step("Generate joined configuration",
+               ["vpython"] + cmd + ['--output', DST_CONFIG])
+      api.git.add([DST_CONFIG])
 
     # Commit changes (if any)
     with api.step.nest('diffing repo to find changes') as presentation:

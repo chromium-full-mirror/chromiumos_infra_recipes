@@ -251,6 +251,9 @@
       "generated/imported.jsonproto"
     ],
     "cwd": "[START_DIR]/dest",
+    "env": {
+      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
+    },
     "name": "git transaction.Generate imported configuration",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -263,6 +266,9 @@
       "generated/imported.jsonproto"
     ],
     "cwd": "[START_DIR]/dest",
+    "env": {
+      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
+    },
     "infra_step": true,
     "name": "git transaction.git add (4)",
     "~followup_annotations": [
@@ -291,6 +297,9 @@
       "generated/joined.jsonproto"
     ],
     "cwd": "[START_DIR]/dest",
+    "env": {
+      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
+    },
     "name": "git transaction.Generate joined configuration",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -303,6 +312,9 @@
       "generated/joined.jsonproto"
     ],
     "cwd": "[START_DIR]/dest",
+    "env": {
+      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
+    },
     "infra_step": true,
     "name": "git transaction.git add (5)",
     "~followup_annotations": [
