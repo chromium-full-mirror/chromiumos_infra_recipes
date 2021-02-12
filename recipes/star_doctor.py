@@ -69,7 +69,7 @@ def RunSteps(api, properties):
     remote_config_files.add(
         bucket_name=properties.ge_bucket,
         object_name='build_config.ToT.json',
-        dest_path='goldeneye/build_config.ToT.json',
+        dest_path='release/ge_jsons/build_config.ToT.json',
     )
 
     for branch in properties.branches:
@@ -77,7 +77,7 @@ def RunSteps(api, properties):
       remote_config_files.add(
           bucket_name=properties.ge_bucket,
           object_name=branched_config,
-          dest_path='goldeneye/{}'.format(branched_config),
+          dest_path='release/ge_jsons/{}'.format(branched_config),
       )
   else:
     if properties.ge_bucket or properties.branches:

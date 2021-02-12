@@ -66,7 +66,7 @@
       "----",
       "cp",
       "gs://test_ge_bucket/build_config.ToT.json",
-      "[CLEANUP]/tmp_tmp_1/goldeneye/build_config.ToT.json"
+      "[CLEANUP]/tmp_tmp_1/release/ge_jsons/build_config.ToT.json"
     ],
     "infra_step": true,
     "name": "generate binary config.copy remote configs.gsutil download test_ge_bucket/build_config.ToT.json",
@@ -84,7 +84,7 @@
       "----",
       "cp",
       "gs://test_ge_bucket/build_config.release-R9000.json",
-      "[CLEANUP]/tmp_tmp_1/goldeneye/build_config.release-R9000.json"
+      "[CLEANUP]/tmp_tmp_1/release/ge_jsons/build_config.release-R9000.json"
     ],
     "infra_step": true,
     "name": "generate binary config.copy remote configs.gsutil download test_ge_bucket/build_config.release-R9000.json",
