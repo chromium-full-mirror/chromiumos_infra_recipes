@@ -238,6 +238,8 @@
     "cmd": [
       "vpython",
       "[START_DIR]/config/payload_utils/join_config_payloads.py",
+      "--log",
+      "DEBUG",
       "--public-model",
       "[START_DIR]/public/some/model.yaml",
       "--private-model",
@@ -274,6 +276,8 @@
     "cmd": [
       "vpython",
       "[START_DIR]/config/payload_utils/join_config_payloads.py",
+      "--log",
+      "DEBUG",
       "--public-model",
       "[START_DIR]/public/some/model.yaml",
       "--private-model",

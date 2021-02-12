@@ -205,7 +205,7 @@ def RunSteps(api, properties):
     api.path.mock_add_paths(api.context.cwd.join(SRC_CONFIG))
 
     # Merge backfilled data into a ConfigBundle payload
-    cmd = [cros_config_path.join(JOIN_SCRIPT_PATH)]
+    cmd = [cros_config_path.join(JOIN_SCRIPT_PATH), '--log', 'DEBUG']
     if properties.HasField('public_yaml'):
       cmd += [
           '--public-model',
