@@ -7,11 +7,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/dut_tracking.binaryproto",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/dut_tracking.binaryproto",
       "--format",
       "text"
     ],
-    "name": "fetch master:testingconfig/generated/dut_tracking.binaryproto",
+    "name": "fetch HEAD:testingconfig/generated/dut_tracking.binaryproto",
     "timeout": 180
   },
   {

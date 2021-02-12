@@ -77,8 +77,7 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     """
     step_name = ('read builder configs'
                  if iteration == 1 else 'read builder configs (%d)' % iteration)
-    step_name += '.fetch {}:generated/builder_configs.binaryproto'.format(
-        self.m.src_state.default_branch)
+    step_name += '.fetch HEAD:generated/builder_configs.binaryproto'
     return self.step_data(
         step_name,
         self.m.depot_gitiles.make_encoded_file(message.SerializeToString()))

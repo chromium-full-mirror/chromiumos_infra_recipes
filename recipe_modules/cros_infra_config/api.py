@@ -64,7 +64,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   def initialize(self):
     # Parse properties.config_ref
-    self._config_ref = self._config_ref or self.m.src_state.default_branch
+    self._config_ref = self._config_ref or 'HEAD'
 
     # If the builder is in the staging bucket, or has a name that begins
     # 'staging-', then assume we are in staging.

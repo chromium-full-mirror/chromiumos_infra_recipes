@@ -18,11 +18,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/infradata/config/+/master/configs/bot-scaling/generated/bot_policy.binaryproto",
+      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy.binaryproto",
       "--format",
       "text"
     ],
-    "name": "scale bot groups.read bot policies.fetch master:configs/bot-scaling/generated/bot_policy.binaryproto",
+    "name": "scale bot groups.read bot policies.fetch HEAD:configs/bot-scaling/generated/bot_policy.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

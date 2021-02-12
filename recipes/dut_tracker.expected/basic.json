@@ -11,11 +11,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/dut_tracking.binaryproto",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/dut_tracking.binaryproto",
       "--format",
       "text"
     ],
-    "name": "get config.fetch master:testingconfig/generated/dut_tracking.binaryproto",
+    "name": "get config.fetch HEAD:testingconfig/generated/dut_tracking.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

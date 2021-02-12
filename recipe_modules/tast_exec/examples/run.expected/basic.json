@@ -544,11 +544,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/master/testingconfig/generated/vm_retry.binaryproto",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/vm_retry.binaryproto",
       "--format",
       "text"
     ],
-    "name": "tests to retry.fetch master:testingconfig/generated/vm_retry.binaryproto",
+    "name": "tests to retry.fetch HEAD:testingconfig/generated/vm_retry.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
