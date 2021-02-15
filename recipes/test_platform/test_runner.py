@@ -245,7 +245,7 @@ def archive_all_logs(api, phosphorus_config, gs_dir, result):
               gs_directory=gs_dir,
           ))
       # Logs are archived even in the case of catastrophic failures.
-      # Thus, it is possible that we do not have a sane result message.
+      # Thus, it is possible that we do not have a good result message.
       if result is not None:
         result.log_data.gs_url = gs_res.gs_url
         result.log_data.stainless_url = _stainless_logs_from_gs_path(

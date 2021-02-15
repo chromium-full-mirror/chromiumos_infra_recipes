@@ -29,7 +29,7 @@ def RunSteps(api, properties):
 
   chroot = common.Chroot(path='/path/to/chroot')
   sysroot = sysroot_pb.Sysroot(path='/build/board', build_target=target)
-  # Short names to keep line lengths sane.
+  # Short names to keep line lengths reasonable.
   Legacy = common.ArtifactsByService.Legacy
   Toolchain = common.ArtifactsByService.Toolchain
 

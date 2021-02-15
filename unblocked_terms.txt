@@ -11,6 +11,4 @@ build.?cop
 dummy
 master
 \bnative
-\b(in)?sane(\b|\d)
-sanity
 slave

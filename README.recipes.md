@@ -1490,7 +1490,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
     # Set up your request proto, and then...
     api.cros_build_api.ArtifactsService.BundleFirmware(my_request_proto)
 
-The stub will perform sane validations and then call the build API command.
+The stub will perform some validation and then call the build API command.
 
 &mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#252)(self, test_data=None):**
 
@@ -5307,7 +5307,7 @@ Args:
   image_types (list[ImageType]): Image types to build.
   builder_path (str): Builder path in GS for artifacts.
   disable_rootfs_verification (bool): whether to disable rootfs verification.
-  disk_layout (str): disk_layout to set, or empty for a sane default.
+  disk_layout (str): disk_layout to set, or empty for default.
   timeout_sec (int): Step timeout (in seconds).
   build_test_data (str): test response (JSON) from the ImageService/Create
       call, or None.

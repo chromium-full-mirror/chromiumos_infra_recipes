@@ -337,7 +337,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         self._internal_config = json.loads(raw_config)
       except ValueError:
         raise StepFailure('config json could not be deserialized')
-      # Sanity check the configuration.
+      # Do some basic checks on the configuration.
       if ('delta' not in self._internal_config or
           len(self._internal_config['delta']) == 0):
         raise StepFailure('config json was not formatted correctly')

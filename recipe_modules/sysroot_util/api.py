@@ -247,7 +247,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       image_types (list[ImageType]): Image types to build.
       builder_path (str): Builder path in GS for artifacts.
       disable_rootfs_verification (bool): whether to disable rootfs verification.
-      disk_layout (str): disk_layout to set, or empty for a sane default.
+      disk_layout (str): disk_layout to set, or empty for default.
       timeout_sec (int): Step timeout (in seconds).
       build_test_data (str): test response (JSON) from the ImageService/Create
           call, or None.

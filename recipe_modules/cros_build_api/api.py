@@ -155,7 +155,7 @@ class CrosBuildApiApi(RecipeApi):
       # Set up your request proto, and then...
       api.cros_build_api.ArtifactsService.BundleFirmware(my_request_proto)
 
-  The stub will perform sane validations and then call the build API command.
+  The stub will perform some validation and then call the build API command.
   """
 
   class Version(object):

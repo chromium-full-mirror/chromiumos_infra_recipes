@@ -26,7 +26,7 @@ def RunSteps(api, properties):
 
   api.assertions.assertEqual(builder_config.id.name, builder)
 
-  # Sanity check that the jsonpb was parsed.
+  # Verify that the jsonpb was parsed.
   child_specs = builder_config.orchestrator.child_specs
   api.assertions.assertEqual(len(child_specs), len(properties.children_names))
   api.assertions.assertEqual([x.name for x in child_specs],

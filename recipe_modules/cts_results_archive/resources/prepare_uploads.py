@@ -127,7 +127,7 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
                       keyval.get('hostname'))
     host_model_name = ''
 
-  # Validate source directory is sane.
+  # Perform minimal validation of the source directory.
   if not host_model_name:
     raise ValueError('Failed to determine model')
   if not build:

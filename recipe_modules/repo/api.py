@@ -712,8 +712,8 @@ class RepoApi(recipe_api.RecipeApi):
               raise
             self.m.step('sleep 10 min, try repo again', ['sleep', '600'])
 
-      # Sanity check since `repo init` will happily reuse a repository in the
-      # cwd's ancestor directories.
+      # Verify that root_path/.repo exists, since repo will happily reuse a
+      # repository in the cwd's ancestor directories.
       assert self.m.path.exists(root_path.join('.repo')), '.repo not created!'
 
   def _binary_selfupdate(self, root_path):
