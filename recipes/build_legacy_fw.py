@@ -56,11 +56,13 @@ class FirmwareBuilder(object):
     self._chroot = self.m.src_state.workspace_path.join('chroot')
     self._config = None
 
-  def __call__(self, name, cmd, **kwargs):
+  def __call__(self, name, sdk_args=(), cmd=(), **kwargs):
     """Run cros_sdk with the given command"""
+    command = [self.m.cros_sdk.cros_sdk_path] + list(sdk_args)
+    if cmd:
+      command += ['--'] + list(cmd)
     kwargs.setdefault('infra_step', True)
-    kwargs.setdefault('wrapper', [self.m.cros_sdk.cros_sdk_path])
-    return self.m.step(name, cmd, **kwargs)
+    return self.m.step(name, command, **kwargs)
 
   @contextmanager
   def _setup(self):
@@ -83,11 +85,11 @@ class FirmwareBuilder(object):
   @contextmanager
   def _setup_chroot(self):
     try:
-      self('init SDK', ['--delete', '--create'])
-      self('update SDK', ['./update_chroot'])
+      self('init SDK', sdk_args=['--delete', '--create'])
+      self('update SDK', cmd=['./update_chroot'])
       yield
     finally:
-      self('delete SDK', ['--delete'])
+      self('delete SDK', sdk_args=['--delete'])
 
   def _setup_board_and_install_packages(self, build_target):
     board = build_target.name
@@ -103,7 +105,7 @@ class FirmwareBuilder(object):
           'setup_board', board_arg, '--accept-licenses=@CHROMEOS',
           '--skip-chroot-upgrade'
       ]
-    self('setup board: {}'.format(board), cmd)
+    self('setup board: {}'.format(board), cmd=cmd)
 
     # TODO(b/179154813): We probably need to include USE flags from properties
     # or builder_config.
@@ -114,7 +116,7 @@ class FirmwareBuilder(object):
         '{}/{}'.format(x.category, x.package_name)
         for x in self.properties.packages
     ]
-    self('install packages: {}'.format(board), cmd, infra_step=False)
+    self('install packages: {}'.format(board), cmd=cmd, infra_step=False)
 
   def _build_firmware_archive(self, build_target, out_path):
     with self.m.step.nest('create firmware archive'):
@@ -142,7 +144,7 @@ class FirmwareBuilder(object):
       # The list of files is generally too long.
       cmd += ['--null', '-T', '/dev/stdin']
       file_list = '\0'.join(self.m.path.relpath(x, root) for x in source_list)
-      self('create tarball', cmd, stdin=self.m.raw_io.input(data=file_list))
+      self('create tarball', cmd=cmd, stdin=self.m.raw_io.input(data=file_list))
       return tarball
 
   def _bundle_firmware(self, _chroot, _sysroot, _artifacts_info, outpath,

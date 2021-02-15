@@ -982,6 +982,7 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--",
       "./update_chroot"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -999,6 +1000,7 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--",
       "setup_board",
       "--board=target",
       "--accept-licenses=@CHROMEOS",
@@ -1019,6 +1021,7 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--",
       "./build_packages",
       "--board=target",
       "--accept_licenses=@CHROMEOS",
@@ -1137,6 +1140,7 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--",
       "tar",
       "cvjf",
       "/tmp/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
