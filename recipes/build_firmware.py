@@ -19,8 +19,8 @@ DEPS = [
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
-from PB.chromite.api.firmware import (BuildAllTotFirmwareRequest,
-                                      TestAllTotFirmwareRequest)
+from PB.chromite.api.firmware import (BuildAllFirmwareRequest,
+                                      TestAllFirmwareRequest)
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 
 PROPERTIES = BuildFirmwareProperties
@@ -32,11 +32,13 @@ def RunSteps(api, properties):
     service = api.cros_build_api.FirmwareService
     chroot = api.cros_sdk.chroot
     location = properties.firmware_location or config.general.firmware_location
-    service.BuildAllTotFirmware(
-        BuildAllTotFirmwareRequest(firmware_location=location, chroot=chroot),
+    service.BuildAllFirmware(
+        BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
+                                code_coverage=properties.code_coverage),
         name='build firmware')
-    service.TestAllTotFirmware(
-        TestAllTotFirmwareRequest(firmware_location=location, chroot=chroot),
+    service.TestAllFirmware(
+        TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
+                               code_coverage=properties.code_coverage),
         name='test firmware')
     if properties.working_artifacts:
       api.build_menu.upload_artifacts(config=config, failing_build=False)

@@ -1975,7 +1975,7 @@
       "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "--log-level",
       "debug",
-      "chromite.api.FirmwareService/BuildAllTotFirmware"
+      "chromite.api.FirmwareService/BuildAllFirmware"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -2069,7 +2069,7 @@
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "--log-level",
       "debug",
-      "chromite.api.FirmwareService/TestAllTotFirmware"
+      "chromite.api.FirmwareService/TestAllFirmware"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
