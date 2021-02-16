@@ -195,6 +195,12 @@ class OrchMenuApi(RecipeApi):
           raise StepFailure('Missing configuration for {}'.format(
               self.m.buildbucket.builder_name))
 
+        # If release orchestrator, full checkout and pin manifest.
+        if config and config.id.type == BuilderConfig.Id.RELEASE:
+          with self.m.workspace_util.sync_to_commit(
+              staging=self.m.cros_infra_config.is_staging):
+            self.m.cros_release.create_releasespec()
+
       if config:
         # Update the start ref to indicate we've begun processing the snapshot.
         self._push_manifest_refs(self._properties.update_manifest_refs.start)

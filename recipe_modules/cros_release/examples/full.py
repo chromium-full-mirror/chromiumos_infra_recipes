@@ -14,6 +14,7 @@ from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProp
 
 
 def RunSteps(api):
+  api.cros_release.create_releasespec()
   api.cros_release.push_and_sign_images()
   api.cros_release.schedule_payload_generation()
 

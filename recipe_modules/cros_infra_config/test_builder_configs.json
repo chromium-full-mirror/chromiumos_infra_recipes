@@ -1358,6 +1358,25 @@
     },
     {
       "id": {
+        "name": "main-release-orchestrator",
+        "branch": "main",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
+      }
+    },
+    {
+      "id": {
         "name": "cq-orchestrator",
         "branch": "master",
         "type": "CQ"

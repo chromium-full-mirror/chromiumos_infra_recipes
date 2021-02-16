@@ -25,6 +25,19 @@
   {
     "cmd": [
       "git",
+      "clone",
+      "--branch",
+      "release",
+      "--single-branch",
+      "https://mygithost.google.com/somerepo",
+      "."
+    ],
+    "infra_step": true,
+    "name": "git clone (3)"
+  },
+  {
+    "cmd": [
+      "git",
       "fetch",
       "remote"
     ],

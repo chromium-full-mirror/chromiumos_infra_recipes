@@ -93,6 +93,16 @@ def GenTests(api):
       with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
+      'release-orchestrator', data.ctp_normal,
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun,
+                     'update manifest ref refs/heads/test.git push'),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test')),
+      builder='main-release-orchestrator', with_manifest_refs=True,
+      with_history=True)
+
+  yield api.orch_menu.test(
       'branch', data.ctp_normal, api.post_check(post_process.StatusSuccess),
       api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.DoesNotRun,
