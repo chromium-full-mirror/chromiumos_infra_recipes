@@ -5,7 +5,6 @@
 
 """API for updating remote git repositories transactionally."""
 
-
 from recipe_engine import recipe_api
 
 
@@ -76,7 +75,7 @@ class GitTxnApi(recipe_api.RecipeApi):
             # See https://gerrit-review.googlesource.com/Documentation/user-upload.html#auto_merge
             dest_ref = 'refs/for/%s%%notify=NONE,submit' % dest_ref
           dest_ref = 'HEAD:%s' % dest_ref
-          self.m.git.push(remote, dest_ref, capture_stdout=True)
+          self.m.git.push(remote, dest_ref, capture_stdout=True, retry=False)
           return True
         except recipe_api.StepFailure as ex:
           # Only retry on remote 'rejected' errors.
@@ -113,6 +112,7 @@ class GitTxnApi(recipe_api.RecipeApi):
     Raises:
       TooManyAttempts: if the number of attempts exceeds |retries|.
     """
+
     def update_callback():
       self.m.file.remove('try remove existing file', dest)
       self.m.file.write_raw('write file', dest, data)

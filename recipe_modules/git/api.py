@@ -304,7 +304,7 @@ class GitApi(recipe_api.RecipeApi):
       cmd.extend(files)
     return self._step(cmd, **kwargs)
 
-  def push(self, remote, refspec, dry_run=False, capture_stdout=False):
+  def _push(self, remote, refspec, dry_run, capture_stdout):
     """Runs 'git push'.
 
     Args:
@@ -325,6 +325,26 @@ class GitApi(recipe_api.RecipeApi):
       stdout = self.m.raw_io.output(add_output_log=True)
     args += [remote, refspec]
     return self._step(args, stdout=stdout)
+
+  def push(self, remote, refspec, dry_run=False, capture_stdout=False,
+           retry=True):
+    """Runs 'git push'.
+
+    Args:
+      remote (str): The remote repository to push to.
+      refspec (str): The refspec to push.
+      dry_run (bool): If true, set --dry-run on git command.
+      capture_stdout (bool): If True, return stdout in step data.
+      retry (bool): Whether to retry.  Default: True
+
+    Returns:
+      StepData: See 'step.__call__'.
+    """
+    func = self._push
+    if retry:
+      func = exponential_retry(retries=3, delay=datetime.timedelta(seconds=2))(
+          self._push)
+    return func(remote, refspec, dry_run, capture_stdout)
 
   def current_branch(self):
     """Returns the currently checked out branch name.
