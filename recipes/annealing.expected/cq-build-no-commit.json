@@ -2106,6 +2106,7 @@
       "git",
       "push",
       "--dry-run",
+      "--porcelain",
       "cros",
       "HEAD:refs/for/refs/heads/main%notify=NONE,submit"
     ],
@@ -2113,7 +2114,8 @@
     "infra_step": true,
     "name": "uprev packages.push uprevs.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -2146,6 +2148,7 @@
       "git",
       "push",
       "--dry-run",
+      "--porcelain",
       "cros",
       "HEAD:refs/for/refs/heads/main%notify=NONE,submit"
     ],
@@ -2153,7 +2156,8 @@
     "infra_step": true,
     "name": "uprev packages.push uprevs.git push (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
