@@ -6946,8 +6946,6 @@ Test git_footers calls.
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 &mdash; **def [RunSteps](/recipe_modules/git_txn/examples/full.py#12)(api):**
-
-&mdash; **def [attempt\_git\_step](/recipe_modules/git_txn/examples/full.py#20)(api, attempt, git_subcmd, retcode=0, stdout=None):**
 ### *recipes* / [gitiles:examples/full](/recipe_modules/gitiles/examples/full.py)
 
 [DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

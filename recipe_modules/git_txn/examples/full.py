@@ -17,63 +17,45 @@ def RunSteps(api):
                                     'data', ref='ref')
 
 
-def attempt_git_step(api, attempt, git_subcmd, retcode=0, stdout=None):
-  message = 'git transaction'
-  if attempt > 1:
-    message += ' retry 1 of 1'
-  return api.step_data('%s.git %s' % (message, git_subcmd),
-                       retcode=retcode, stdout=api.raw_io.output(stdout))
-
-
 def GenTests(api):
+
+  def attempt_git_step(attempt, git_subcmd, retcode=0, stdout=None):
+    message = 'git transaction'
+    if attempt > 1:
+      message += ' retry 1 of 1'
+    return api.step_data('%s.git %s' % (message, git_subcmd), retcode=retcode,
+                         stdout=api.raw_io.output(stdout))
+
   yield api.test('basic')
 
-  yield api.test('retry_succeed') + attempt_git_step(
-      api,
-      1,
-      'push',
-      retcode=1,
-      stdout='!	HEAD:refs/fake	[remote rejected]',
-  ) + attempt_git_step(
-      api,
-      2,
-      'push',
-      stdout='deadbeef2',
-  )
+  yield api.test(
+      'retry_succeed',
+      attempt_git_step(1, 'push', retcode=1,
+                       stdout='! HEAD:refs/fake [remote rejected]'),
+      attempt_git_step(2, 'push', stdout='deadbeef2'))
 
-  yield api.test('other_failure') + attempt_git_step(
-      api,
-      1,
-      'push',
-      retcode=1,
-      stdout='!	HEAD:refs/fake	[remote failed]',
-  )
+  yield api.test(
+      'other_failure',
+      attempt_git_step(1, 'push', retcode=1,
+                       stdout='! HEAD:refs/fake [remote failed]'))
 
-  yield api.test('retry_too_many_times') + attempt_git_step(
-      api,
-      1,
-      'push',
-      retcode=1,
-      stdout='!	HEAD:refs/fake	[remote rejected]',
-  ) + attempt_git_step(
-      api,
-      2,
-      'rev-parse',
-      stdout='deadbeef2',
-  ) + attempt_git_step(
-      api,
-      2,
-      'push',
-      retcode=1,
-      stdout='!	HEAD:refs/fake	[remote rejected]',
-  )
+  yield api.test(
+      'retry_too_many_times',
+      attempt_git_step(1, 'push', retcode=1,
+                       stdout='! HEAD:refs/fake [remote rejected]'),
+      attempt_git_step(
+          2,
+          'rev-parse',
+          stdout='deadbeef2',
+      ),
+      attempt_git_step(2, 'push', retcode=1,
+                       stdout='! HEAD:refs/fake [remote rejected]'))
 
-  yield api.test('update_ref_has_diff_has_new_file') + api.step_data(
-      'git transaction (3).diff check.git ls-files',
-      retcode=1,
-  )
+  yield api.test(
+      'update_ref_has_diff_has_new_file',
+      api.step_data('git transaction (3).diff check.git ls-files', retcode=1))
 
-  yield api.test('update_ref_has_diff_has_change') + api.step_data(
-      'git transaction (3).diff check.git ls-files',
-      retcode=0,
-  ) + api.step_data('git transaction (3).diff check.git diff', retcode=1)
+  yield api.test(
+      'update_ref_has_diff_has_change',
+      api.step_data('git transaction (3).diff check.git ls-files', retcode=0),
+      api.step_data('git transaction (3).diff check.git diff', retcode=1))

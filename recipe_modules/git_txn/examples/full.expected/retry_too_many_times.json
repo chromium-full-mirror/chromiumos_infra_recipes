@@ -15,7 +15,7 @@
     "name": "git transaction.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@! HEAD:refs/fake [remote rejected]@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -73,7 +73,7 @@
     "name": "git transaction retry 1 of 1.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/fake\t[remote rejected]@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@! HEAD:refs/fake [remote rejected]@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
