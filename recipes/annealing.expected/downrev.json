@@ -1624,9 +1624,19 @@
   },
   {
     "cmd": [],
-    "name": "uprev packages.commit uprevs",
+    "name": "uprev packages.push uprevs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@Passed Uprevs@src/overlay@@@",
+      "@@@STEP_LOG_LINE@Passed Uprevs@src/private-overlay@@@",
+      "@@@STEP_LOG_END@Passed Uprevs@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.push uprevs.commit uprev changes in src/overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1637,9 +1647,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "uprev packages.commit uprevs.git add",
+    "name": "uprev packages.push uprevs.commit uprev changes in src/overlay.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1655,9 +1665,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "uprev packages.commit uprevs.write commit message",
+    "name": "uprev packages.push uprevs.commit uprev changes in src/overlay.write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Marking set of ebuilds as stable@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
@@ -1673,65 +1683,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "uprev packages.commit uprevs.git commit",
+    "name": "uprev packages.push uprevs.commit uprev changes in src/overlay.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "uprev packages.commit uprevs.git add (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "Marking set of ebuilds as stable",
-      "[CLEANUP]/commit_msg_tmp_2"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "uprev packages.commit uprevs.write commit message (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_2",
-      "--",
-      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "uprev packages.commit uprevs.git commit (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "uprev packages.push uprevs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1763,17 +1717,72 @@
     "cmd": [
       "git",
       "push",
-      "--dry-run",
       "--porcelain",
       "cros",
-      "HEAD:refs/for/refs/heads/main%notify=NONE,submit"
+      "HEAD:refs/for/main%notify=NONE,submit"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "uprev packages.push uprevs.git push",
+    "name": "uprev packages.push uprevs.git push src/overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.push uprevs.commit uprev changes in src/private-overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "uprev packages.push uprevs.commit uprev changes in src/private-overlay.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Marking set of ebuilds as stable",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "uprev packages.push uprevs.commit uprev changes in src/private-overlay.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2",
+      "--",
+      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "uprev packages.push uprevs.commit uprev changes in src/private-overlay.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1805,14 +1814,13 @@
     "cmd": [
       "git",
       "push",
-      "--dry-run",
       "--porcelain",
       "cros",
-      "HEAD:refs/for/refs/heads/main%notify=NONE,submit"
+      "HEAD:refs/for/main%notify=NONE,submit"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
-    "name": "uprev packages.push uprevs.git push (2)",
+    "name": "uprev packages.push uprevs.git push src/private-overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"

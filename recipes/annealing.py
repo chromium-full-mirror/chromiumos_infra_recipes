@@ -63,11 +63,11 @@ def RunSteps(api, properties):
   # If we're configured not to publish uprev's run as staging.
   is_staging = not properties.publish_uprevs
   workspace_path = api.src_state.workspace_path
-  properties.uprev_first |= 'chromeos.annealing.uprev_first' in api.cros_infra_config.experiments
-
+  properties.uprev_first |= (
+      'chromeos.annealing.uprev_first' in api.cros_infra_config.experiments)
   commit = api.src_state.gitiles_commit
-  prior_internal = prior_external = None
-
+  prior_internal = prior_external = diffs = None
+  dry_run = api.cq.state != api.cq.INACTIVE or properties.dry_run
   manifest_ref = properties.manifest_ref
   if not manifest_ref:
     raise ValueError('must set manifest ref')
@@ -128,8 +128,17 @@ def RunSteps(api, properties):
             external_manifest.url, manifest_ref)
 
         # Sync mirrored manifest files from manifest-internal to manifest.
-        _sync_manifest(api, properties, manifest_ref, prior_internal,
-                       prior_external, internal_manifest, external_manifest)
+        diffs = _sync_manifest(api, properties, manifest_ref, prior_internal,
+                               prior_external, internal_manifest,
+                               external_manifest)
+
+        # Uprev before snapshot generation if flag is set
+        if properties.uprev_first:
+          # One or more uprevs did not complete, end recipe and
+          # do not generate snapshot
+          if not _uprev_packages(api, properties, workspace_path, diffs,
+                                 dry_run):
+            raise StepFailure("Failed to uprev all changes")
 
         api.easy.set_properties_step(dry_run=properties.dry_run)
 
@@ -163,7 +172,7 @@ def RunSteps(api, properties):
           external_snapshot_commit = _publish_snapshot(
               api, external_manifest.url, manifest_ref, prior_external,
               external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
-              disable_gerrit=True, dry_run=properties.dry_run,
+              disable_gerrit=True, dry_run=dry_run,
               footers=[("Cr-Snapshot-Identifier", str(snapshot_identifier))])
           external_snapshot_ref = external_snapshot_commit.id
 
@@ -218,6 +227,8 @@ def RunSteps(api, properties):
         gerrit_commits, jobs = _get_gerrit_changes(api, manifest_diffs,
                                                    properties.path_triggers)
 
+      # TODO(b/179923413): remove properties check when uprev change
+      # fully rolled out
       with api.step.nest('publish internal snapshot'):
         internal_snapshot_commit = _publish_snapshot(
             api, internal_manifest.url, manifest_ref, prior_internal,
@@ -225,7 +236,7 @@ def RunSteps(api, properties):
             gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
             footers=[("Cr-External-Snapshot", external_snapshot_ref),
                      ("Cr-Snapshot-Identifier", str(snapshot_identifier))],
-            dry_run=properties.dry_run)
+            dry_run=dry_run)
 
         # Set output.properties.commit, this will also set the commit as the
         # build output.
@@ -241,11 +252,30 @@ def RunSteps(api, properties):
       # from the remote uprev commits. The only two ways around it are (a)
       # run repo sync a second time, after uprevs, or (b) include the uprevs
       # in the NEXT snapshot. We choose the least wasteful option.
-      _uprev_packages(api, properties, workspace_path)
+      # TODO(b/179503858): remove properties check when uprev change
+      # fully rolled out
+      if not properties.uprev_first:
+        _uprev_packages(api, properties, workspace_path, diffs)
 
 
 def _sync_manifest(api, properties, manifest_ref, prior_internal,
                    prior_external, internal_manifest, external_manifest):
+  """Find and push local manifest differences
+
+  Must be called with CWD=external manifest.
+
+  Args:
+      api (object):       See RunSteps documentation
+      properties:         Properties of current annealing run
+      manifest_ref:       The name of the git branch to create snapshots on
+      prior_internal:     Previous commit of internal manifest
+      prior_external:     Previous commit of external manifest
+      internal_manifest:  Information about internal manifest
+      external_manifest:  Information about external manifest
+
+  Return:
+    diff_paths(dict): Dictionary containing paths to manifest changes
+  """
   is_staging = not properties.publish_uprevs
   with api.step.nest('sync manifests') as presentation:
     presentation.logs['prior versions'] = [
@@ -271,13 +301,53 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
       commit_message = 'Syncing with internal manifest.'
       api.git.add(external_paths)
       api.git.commit(commit_message)
+      return True
 
+    # TODO(b/179502549): remove conditional logic once rollout of
+    # go/annealing-uprevs is done
+    if properties.uprev_first:
+      diff_paths = {}
+      files = api.cros_source.mirrored_manifest_files
+      external_paths = [external_manifest.path.join(p) for p in files]
+      for path in files:
+        api.file.copy('Copy manifest-internal/{}'.format(path),
+                      internal_manifest.path.join(path),
+                      external_manifest.path.join(path))
+
+      repo = api.git.repository_root()
+      diff_paths = collections.defaultdict(list)
+      for f in external_paths:
+        if api.git.diff_check(f):
+          diff_paths[repo].append(api.path.abspath(f))
+      presentation.logs["diffs"] = [str(diff_paths)]
+      return diff_paths
+
+    # TODO(b/179502549): remove conditional logic once rollout of
+    # go/annealing-uprevs is done
     if not api.git_txn.update_ref(external_manifest.url, _update_callback):
       presentation.step_text = 'No diffs'
 
+    return {}
 
-def _uprev_packages(api, properties, workspace_path):
+
+def _uprev_packages(api, properties, workspace_path, manifest_diffs,
+                    dry_run=False):
+  """Uprev any packages that contain differences
+
+    Args:
+      api (object):   See RunSteps documentation
+      properties:     Properties of current annealing run
+      workspace_path: Path to the workspace checkout
+      manifest_diffs: Manifest differences to be upreved
+      dry_run:        Dry run git push or not
+
+    Return:
+      all_uprevs_passed(bool): True if all uprevs succeeded, False if ANY failed
+  """
   is_staging = not properties.publish_uprevs
+  all_uprevs_passed = True
+  failed_uprevs = []
+  passed_uprevs = []
   with api.step.nest('uprev packages'), api.context(cwd=workspace_path):
     response = api.cros_sdk.uprev_packages(name='uprev ebuilds')
 
@@ -287,15 +357,18 @@ def _uprev_packages(api, properties, workspace_path):
         repository = api.git.repository_root()
         ebuilds_by_repository[repository].append(ebuild.path)
 
-    with api.step.nest('commit uprevs'):
-      for repository, ebuilds in ebuilds_by_repository.iteritems():
-        with api.context(cwd=api.path.abs_to_path(repository)):
-          api.git.add(ebuilds)
-          api.git.commit('Marking set of ebuilds as stable', files=ebuilds)
+    # treat manifest changes like an uprev
+    for repo, files in manifest_diffs.items():
+      ebuilds_by_repository[repo].extend(files)
 
-    with api.step.nest('push uprevs'):
-      for repository, ebuilds in ebuilds_by_repository.iteritems():
+    with api.step.nest('push uprevs') as presentation:
+      for repository, ebuilds in ebuilds_by_repository.items():
+        repo_name = api.path.relpath(repository, api.src_state.workspace_path)
         with api.context(cwd=api.path.abs_to_path(repository)):
+          with api.step.nest('commit uprev changes in {}'.format(repo_name)):
+            api.git.add(ebuilds)
+            api.git.commit('Marking set of ebuilds as stable', files=ebuilds)
+
           # Filter to ebuilds that exist. In particular, we need to exclude
           # the version of the ebuild from prior to the uprev.
           existing_ebuilds = []
@@ -310,15 +383,21 @@ def _uprev_packages(api, properties, workspace_path):
           # assert len(projects) == 1, \
           #     'expected 1 project, got: %r' % projects
           project = projects[0]
+          step_name = 'git push {}'.format(repo_name)
+          branch = project.branch_name
+          # Change name to
+          if properties.uprev_first and is_staging:
+            branch = 'staging-infra-{}'.format(branch)
 
+          refspec = 'HEAD:refs/heads/{}'.format(branch)
+          # TODO(b/179502549): remove conditional logic once rollout of
+          # go/annealing-uprevs is done
+          if not properties.uprev_first:
+            refspec = 'HEAD:refs/for/{}%notify=NONE,submit'.format(branch)
           try:
-            refspec = 'HEAD:refs/heads/{}'.format(project.branch)
-            # TODO(b/179502549): remove conditional logic once rollout of go/annealing-uprevs is done
-            if not properties.uprev_first:
-              refspec = 'HEAD:refs/for/{}%notify=NONE,submit'.format(
-                  project.branch)
-            api.git.push(project.remote, refspec, dry_run=is_staging or
-                         properties.dry_run, capture_stdout=True, retry=False)
+            api.git.push(project.remote, refspec, dry_run=dry_run,
+                         capture_stdout=True, retry=False, name=step_name)
+            passed_uprevs.append(repo_name)
           except StepFailure as ex:
             # Ignore retry logic if feature not on
             if not properties.uprev_first:
@@ -330,36 +409,77 @@ def _uprev_packages(api, properties, workspace_path):
               pass
             elif requires_fetch_first:
               # try resolving the issue three times before failing
-              with api.step.nest("retry uprev"):
-                with api.git.head_context():
-                  _uprev_retry(api, project, properties, is_staging)
+              with api.step.nest("retry uprev to {}".format(repo_name)):
+                for index in range(3):
+                  with api.git.head_context():
+                    try:
+                      _uprev_retry(api, project, dry_run, step_name, branch,
+                                   is_staging)
+                      passed_uprevs.append(repo_name)
+                      break
+                    except StepFailure as ex:
+                      if index == 2:
+                        failed_uprevs.append(repo_name)
+                        all_uprevs_passed = False
+                      else:
+                        # Works around coverage bug:
+                        # https://github.com/nedbat/coveragepy/issues/198
+                        _ = True
+                        continue
             else:
-              raise StepFailure(
-                  'Failed to push uprevs to branch {} on remote {}'.format(
-                      project.branch, project.remote))
+              failed_uprevs.append(repo_name)
+              all_uprevs_passed = False
+      # Log failures and successes
+      if not all_uprevs_passed:
+        presentation.logs['Failed Uprevs'] = failed_uprevs
+      presentation.logs['Passed Uprevs'] = passed_uprevs
+
+    return all_uprevs_passed
 
 
 def _check_push_exception(exception):
+  """Parse stdout in push exception
+
+  When the push during an uprec fails we need to parse the output to 
+  determine what out next steps will be.
+
+  Args:
+    exception(StepFailure): step failure encounted during git push
+
+  Returns:
+    no_change(bool): push failed due to no files changed
+    requires_fetch_first(bool): fetch and merge required
+  """
   no_change = requires_fetch_first = False
-  reject = r' ! \[remote rejected\]\s+HEAD.*'
   for line in exception.result.stdout.splitlines():
-    if re.match(reject, line):
-      if re.match(reject + r'\(no new changes\)$', line):
-        no_change = True
-      elif re.match(reject + r'\(fetch first\)$', line):
-        requires_fetch_first = True
+    if re.search(r'\(no new changes\)$', line):
+      no_change = True
+    elif re.match(r'remote contains work that you', line):
+      requires_fetch_first = True
   return (no_change, requires_fetch_first)
 
 
-@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))
-def _uprev_retry(api, project, properties, is_staging):
-  current_branch = api.git.current_branch()
+def _uprev_retry(api, project, dry_run, step_name, branch, is_staging):
+  """Retry the uprev push
+
+  LUCI CQ may push changes while we are upreving. This retry process will
+  attempt to bypass those collisions by fetching, merging, and then repushing
+  the uprevs.
+
+  Args:
+    api (object): See RunSteps documentation
+    dry_run:      Dry run the git push
+    step_name:    Step name overide for the git push
+    branch:       Branch name to push to
+    is_staging:   If annealing is running in staging or not
+  """
+  current_branch = api.git.current_branch() or api.git.head_commit()
   api.git.fetch(project.remote)
   api.git.checkout("FETCH_HEAD")
   api.git.merge(current_branch, "Resolve uprev conflict")
-  api.git.push(project.remote, 'HEAD:refs/heads/{}'.format(project.branch),
-               dry_run=is_staging or properties.dry_run, capture_stdout=True,
-               retry=False)
+  api.git.push(project.remote, 'HEAD:refs/heads/{}'.format(branch),
+               dry_run=dry_run, capture_stdout=True, retry=False,
+               name=step_name)
 
 
 def _schedule_triggered_builds(api, commit, jobs):
@@ -604,6 +724,32 @@ def GenTests(api):
       api.git.diff_check(True),
   )
 
+  yield api.test(
+      'uprev-manifest-changes',
+      api.properties(
+          AnnealingProperties(manifest_ref='main', publish_uprevs=True,
+                              dry_run=False, uprev_first=True)),
+      api.git.diff_check(True),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''),
+      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
+                     'Passed Uprevs',
+                     ('manifest\nsrc/overlay\nsrc/private-overlay')))
+
   # No changes in the manifest at all.
   yield api.test(
       'no-change',
@@ -694,38 +840,36 @@ def GenTests(api):
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
-      api.step_data(
-          'uprev packages.push uprevs.git push', retcode=1,
-          stdout=api.raw_io.output(
-              ' ! [remote rejected]   HEAD -> main (fetch first)')),
+      api.step_data('uprev packages.push uprevs.git push src/private-overlay',
+                    retcode=1,
+                    stdout=api.raw_io.output('remote contains work that you')),
+      api.step_data('uprev packages.push uprevs.git push src/overlay',
+                    retcode=1,
+                    stdout=api.raw_io.output('remote contains work that you')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
-  )
+      api.post_check(
+          post_process.MustRun,
+          'uprev packages.push uprevs.retry uprev to src/overlay.git '
+          'push src/overlay'),
+      api.post_check(
+          post_process.MustRun,
+          'uprev packages.push uprevs.retry uprev to src/private-overlay.git '
+          'push src/private-overlay'),
+      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
+                     'Passed Uprevs', ('src/overlay\nsrc/private-overlay')))
+
   yield api.test(
       'retry-no-change',
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
                               uprev_first=True)),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
-      api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
-      api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
-              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )),
-      api.step_data(
-          'uprev packages.push uprevs.git push', retcode=1,
+          'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
           stdout=api.raw_io.output(
               ' ! [remote rejected]   HEAD -> main (no new changes)')),
-      api.git_footers.step_data(
-          'record new gerrit changes.NAME.read git footers', ''),
+      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
+                     'Passed Uprevs', 'src/overlay'),
   )
 
   yield api.test(
@@ -733,26 +877,54 @@ def GenTests(api):
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
                               uprev_first=True)),
+      api.step_data('uprev packages.push uprevs.git push src/private-overlay',
+                    retcode=1,
+                    stdout=api.raw_io.output('remote contains work that you')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          ('uprev packages.push uprevs.retry uprev to src/private-overlay.git '
+           'push src/private-overlay'),
+          retcode=1,
+      ),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          ('uprev packages.push uprevs.retry uprev to src/private-overlay.git '
+           'push src/private-overlay (2)'),
+          retcode=1,
+      ),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
-              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )),
-      api.step_data('uprev packages.push uprevs.git push', retcode=1),
-      api.git_footers.step_data(
-          'record new gerrit changes.NAME.read git footers', ''),
+          ('uprev packages.push uprevs.retry uprev to src/private-overlay.git '
+           'push src/private-overlay (3)'),
+          retcode=1,
+      ),
       api.post_check(post_process.StepException,
-                     'uprev packages.push uprevs.git push'),
-  )
+                     'uprev packages.push uprevs.git push src/private-overlay'),
+      api.post_check(post_process.MustRun,
+                     'uprev packages.push uprevs.git push src/private-overlay'),
+      api.post_check(post_process.MustRun,
+                     'uprev packages.push uprevs.git push src/overlay'),
+      api.post_check(post_process.StepException, 'uprev packages.push uprevs'),
+      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
+                     'Failed Uprevs', 'src/private-overlay'),
+      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
+                     'Passed Uprevs', 'src/overlay'))
+
+  yield api.test(
+      'retry-unknown',
+      api.properties(
+          AnnealingProperties(manifest_ref='snapshot', dry_run=False,
+                              uprev_first=True)),
+      api.step_data('uprev packages.push uprevs.git push src/private-overlay',
+                    retcode=1),
+      api.post_check(post_process.StepException,
+                     'uprev packages.push uprevs.git push src/private-overlay'),
+      api.post_check(post_process.MustRun,
+                     'uprev packages.push uprevs.git push src/private-overlay'),
+      api.post_check(post_process.MustRun,
+                     'uprev packages.push uprevs.git push src/overlay'),
+      api.post_check(post_process.StepException, 'uprev packages.push uprevs'),
+      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
+                     'Failed Uprevs', 'src/private-overlay'),
+      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
+                     'Passed Uprevs', 'src/overlay'))
 
   yield api.test(
       'retry-feature-locked',
@@ -773,10 +945,11 @@ def GenTests(api):
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
-      api.step_data('uprev packages.push uprevs.git push', retcode=1),
+      api.step_data('uprev packages.push uprevs.git push src/private-overlay',
+                    retcode=1),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
-  )
+      api.post_check(post_process.StepException, 'uprev packages.push uprevs'))
 
   # CQ: manifest changes, but no gerrit change to go with it.
   yield api.test(
