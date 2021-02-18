@@ -55,11 +55,16 @@ class FirmwareBuilder(object):
     self.properties = properties
     self._chroot = self.m.src_state.workspace_path.join('chroot')
     self._config = None
+    self._version = None
 
   def __call__(self, name, sdk_args=(), cmd=(), **kwargs):
     """Run cros_sdk with the given command"""
     command = [self.m.cros_sdk.cros_sdk_path] + list(sdk_args)
+    # Pass in any USE flags from the builder config.
     if cmd:
+      if self._config and self._config.build.use_flags:
+        command.append('USE={}'.format(' '.join(
+            x.flag for x in self._config.build.use_flags)))
       command += ['--'] + list(cmd)
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, command, **kwargs)
@@ -80,6 +85,7 @@ class FirmwareBuilder(object):
       with self.m.build_menu.setup_workspace(), \
           self.m.context(cwd=self.m.src_state.workspace_path), \
           self.m.depot_tools.on_path(), self._setup_chroot():
+        self._version = self.m.cros_version.read_workspace_version()
         yield
 
   @contextmanager
@@ -111,8 +117,13 @@ class FirmwareBuilder(object):
     # or builder_config.
     cmd = [
         './build_packages', board_arg, '--accept_licenses=@CHROMEOS',
-        '--skip_chroot_upgrade'
-    ] + [
+        '--skip_chroot_upgrade', '--nousepkg'
+    ]
+    # --withdebugsymbols was added to build_packages in 6302.0.0
+    if self._version > self.m.cros_version.Version.from_string('6302.0.0'):
+      cmd.append('--withdebugsymbols')
+
+    cmd += [
         '{}/{}'.format(x.category, x.package_name)
         for x in self.properties.packages
     ]
@@ -169,8 +180,7 @@ class FirmwareBuilder(object):
 
         info = metadata.objects.add()
         info.file_name = dest_name
-        info.tarball_info.bcs_version = str(
-            self.m.cros_version.read_workspace_version())
+        info.tarball_info.bcs_version = str(self._version)
 
     if metadata.objects:
       self.m.file.write_proto('write firmware metadata',
@@ -194,26 +204,41 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def test(name, *args, **kwargs):
-    kwargs.setdefault('builder', 'fw-ec-postsubmit')
+    version_str = kwargs.pop('version', 'R86-13434.100.99')
+    version = api.cros_version.workspace_version(version_str)
+    kwargs.setdefault('builder', 'fw-atlas-postsubmit')
     kwargs.setdefault('revision', None)
     input_props = dict(firmware_location=1,
                        manifest_branch='firmware-board-9999.B')
     input_props.update(**kwargs.get('input_properties', {}))
     kwargs['input_properties'] = input_props
     build = api.test_util.test_child_build('target', **kwargs).build
-    return api.test(name, build, *args)
+    return api.test(name, build, version, *args)
 
   legacy_setup_board = api.path.exists(api.path['start_dir'].join(
       'chromiumos_workspace', 'src', 'scripts', 'setup_board'))
 
+  def no_withdebugsymbols(check, steps, name):
+    return check('--withdebugsymbols' not in steps[name].cmd)
+
+  def withdebugsymbols(check, steps, name):
+    return check('--withdebugsymbols' in steps[name].cmd)
+
   yield test('postsubmit',
              api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(withdebugsymbols, 'install packages: target'),
              api.post_check(StatusSuccess))
+
+  yield test('old-postsubmit',
+             api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(no_withdebugsymbols, 'install packages: target'),
+             api.post_check(StatusSuccess), version='R39-6301.202.44')
 
   yield test('cq', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
-             api.post_check(StatusSuccess), cq=True, builder='fw-ec-cq')
+             api.post_check(StatusSuccess), cq=True, builder='fw-atlas-cq')
 
   yield test(
       'two-targets',
@@ -236,4 +261,4 @@ def GenTests(api):
   yield test('chroot-exists',
              api.path.exists(api.src_state.workspace_path.join('chroot')))
 
-  yield test('old-cq', legacy_setup_board, cq=True, builder='fw-ec-cq')
+  yield test('old-cq', legacy_setup_board, cq=True, builder='fw-atlas-cq')
