@@ -36,7 +36,7 @@
         "manifest": "PUBLIC"
       },
       "artifacts": {
-        "prebuilts": "PRIVATE",
+        "prebuilts": "PUBLIC",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -287,7 +287,7 @@
         "manifest": "PUBLIC"
       },
       "artifacts": {
-        "prebuilts": "PRIVATE",
+        "prebuilts": "PUBLIC",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
