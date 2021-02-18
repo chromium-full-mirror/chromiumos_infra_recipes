@@ -3,7 +3,7 @@
     {
       "id": {
         "name": "amd64-generic-asan",
-        "branch": "master"
+        "branch": "main"
       },
       "general": {
         "manifest": "PUBLIC"
@@ -28,7 +28,7 @@
     {
       "id": {
         "name": "amd64-generic-postsubmit",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -80,7 +80,7 @@
     {
       "id": {
         "name": "amd64-generic-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -131,7 +131,7 @@
     {
       "id": {
         "name": "amd64-generic-slim-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -175,7 +175,7 @@
     {
       "id": {
         "name": "staging-amd64-generic-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -228,7 +228,7 @@
     {
       "id": {
         "name": "amd64-generic-snapshot",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -279,7 +279,7 @@
     {
       "id": {
         "name": "amd64-generic-build-exit-after-unittests",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -334,7 +334,7 @@
     {
       "id": {
         "name": "arm-generic-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -368,7 +368,7 @@
     {
       "id": {
         "name": "arm-generic-slim-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -406,7 +406,7 @@
     {
       "id": {
         "name": "arm-generic-pointless-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -440,7 +440,7 @@
     {
       "id": {
         "name": "staging-arm-generic-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -475,7 +475,7 @@
     {
       "id": {
         "name": "arm64-generic-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -503,7 +503,7 @@
     {
       "id": {
         "name": "bisecting-orchestrator",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -545,7 +545,7 @@
     {
       "id": {
         "name": "amd64-generic-bisect",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -566,7 +566,7 @@
     {
       "id": {
         "name": "arm-generic-postsubmit",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -583,7 +583,7 @@
     {
       "id": {
         "name": "arm-generic-v42-buildtest-postsubmit",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -607,7 +607,7 @@
     {
       "id": {
         "name": "atlas-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -654,7 +654,7 @@
     {
       "id": {
         "name": "atlas-slim-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -694,7 +694,7 @@
     {
       "id": {
         "name": "coral-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -751,7 +751,7 @@
     {
       "id": {
         "name": "target-baseline",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -773,7 +773,7 @@
     {
       "id": {
         "name": "grunt-postsubmit",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -795,7 +795,7 @@
     {
       "id": {
         "name": "grunt-unittest-only-postsubmit",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -817,7 +817,7 @@
     {
       "id": {
         "name": "toolchain-orchestrator",
-        "branch": "master",
+        "branch": "main",
         "type": "TOOLCHAIN"
       },
       "general": {
@@ -844,7 +844,7 @@
     {
       "id": {
         "name": "clang-tidy-toolchain",
-        "branch": "master",
+        "branch": "main",
         "type": "TOOLCHAIN"
       },
       "general": {
@@ -938,7 +938,7 @@
     {
       "id": {
         "name": "orderfile-generate-orchestrator",
-        "branch": "master",
+        "branch": "main",
         "type": "TOOLCHAIN"
       },
       "general": {
@@ -973,7 +973,7 @@
     {
       "id": {
         "name": "benchmark-afdo-process",
-        "branch": "master",
+        "branch": "main",
         "type": "TOOLCHAIN"
       },
       "general": {
@@ -1053,7 +1053,7 @@
     {
       "id": {
         "name": "atlas-llvm-next",
-        "branch": "master",
+        "branch": "main",
         "type": "TOOLCHAIN"
       },
       "general": {
@@ -1116,7 +1116,7 @@
     {
       "id": {
         "name": "orderfile-generate-toolchain",
-        "branch": "master",
+        "branch": "main",
         "type": "TOOLCHAIN"
       },
       "general": {
@@ -1219,7 +1219,7 @@
     {
       "id": {
         "name": "orderfile-verify-toolchain",
-        "branch": "master",
+        "branch": "main",
         "type": "TOOLCHAIN"
       },
       "general": {
@@ -1333,7 +1333,7 @@
     {
       "id": {
         "name": "postsubmit-orchestrator",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -1378,7 +1378,7 @@
     {
       "id": {
         "name": "cq-orchestrator",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -1416,7 +1416,7 @@
     {
       "id": {
         "name": "chromite-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -1430,7 +1430,7 @@
     {
       "id": {
         "name": "arm64-generic-kernel-v5_4-buildtest-postsubmit",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -1500,7 +1500,7 @@
     {
       "id": {
         "name": "sarien-code-coverage-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -1535,7 +1535,7 @@
     {
       "id": {
         "name": "sarien-code-coverage-postsubmit",
-        "branch": "master",
+        "branch": "main",
         "type": "POSTSUBMIT"
       },
       "general": {
@@ -1571,7 +1571,7 @@
     {
       "id": {
         "name": "cave-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "chrome": {
@@ -1603,7 +1603,7 @@
     {
       "id": {
         "name": "fw-ec-cq",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
@@ -1633,11 +1633,80 @@
     {
       "id": {
         "name": "fw-ec-postsubmit",
-        "branch": "master",
+        "branch": "main",
         "type": "CQ"
       },
       "general": {
         "firmwareLocation": "PLATFORM_EC"
+      },
+      "artifacts": {
+        "prebuilts": "PRIVATE",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuiltsGsBucket": "chromeos-prebuilt",
+        "artifactsGsBucket": "chromeos-image-archive"
+      }
+    },
+    {
+      "id": {
+        "name": "fw-atlas-cq",
+        "branch": "main",
+        "type": "CQ"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_EC"
+      },
+      "build": {
+	"applyGerritChanges": true,
+        "useFlags": [
+          {"flag": "chrome_internal"},
+          {"flag": "-cros-debug"},
+          {"flag": "chromeless_tty"}
+        ]
+      },
+      "artifacts": {
+        "prebuilts": "PRIVATE",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuiltsGsBucket": "chromeos-prebuilt",
+        "artifactsGsBucket": "chromeos-image-archive"
+      }
+    },
+    {
+      "id": {
+        "name": "fw-atlas-postsubmit",
+        "branch": "main",
+        "type": "CQ"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_EC"
+      },
+      "build": {
+        "useFlags": [
+          {"flag": "chrome_internal"},
+          {"flag": "-cros-debug"},
+          {"flag": "chromeless_tty"}
+        ]
       },
       "artifacts": {
         "prebuilts": "PRIVATE",

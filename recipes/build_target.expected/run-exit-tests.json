@@ -27,7 +27,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"amd64-generic-build-exit-after-unittests\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  branch: \"master\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  branch: \"main\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: POSTSUBMIT@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",
