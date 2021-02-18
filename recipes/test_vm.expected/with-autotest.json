@@ -23,25 +23,7 @@
   },
   {
     "cmd": [],
-    "name": "configure builder",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@config not found, assuming deleted@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.set recipes_git_revision",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.read builder configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "read builder configs"
   },
   {
     "cmd": [
@@ -56,10 +38,25 @@
       "text"
     ],
     "infra_step": true,
-    "name": "configure builder.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@config not found, assuming deleted@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.set recipes_git_revision",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
     ]
   },
   {

@@ -135,7 +135,7 @@
     ],
     "infra_step": true,
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -158,7 +158,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -166,7 +166,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -199,10 +199,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "find prebuilts.git fetch",
     "~followup_annotations": [
@@ -216,7 +216,7 @@
       "FETCH_HEAD~336..FETCH_HEAD",
       "--pretty=%H"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "find prebuilts.git log",
     "~followup_annotations": [
@@ -321,155 +321,6 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.read gs acls",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"args\": [{\"value\": \"value1\", \"arg\": \"arg1\"}, {\"value\": \"value2\", \"arg\": \"arg2\"}]}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
-    ],
-    "infra_step": true,
-    "name": "upload prebuilts.read gs acls.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.BinhostService/GetPrivatePrebuiltAclArgs"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "upload prebuilts.read gs acls.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "upload prebuilts.read gs acls.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload prebuilts.read gs acls.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload prebuilts.read gs acls.publish event",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"aclArgsRequest\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@published event@    }@@@",
-      "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"aclArgsResponse\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"args\": [@@@",
-      "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"value\": \"value1\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"arg\": \"arg1\"@@@",
-      "@@@STEP_LOG_LINE@published event@      }, @@@",
-      "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"value\": \"value2\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"arg\": \"arg2\"@@@",
-      "@@@STEP_LOG_LINE@published event@      }@@@",
-      "@@@STEP_LOG_LINE@published event@    ]@@@",
-      "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload prebuilts|read gs acls|call build API script\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
-      "@@@STEP_LOG_LINE@published event@}@@@",
-      "@@@STEP_LOG_END@published event@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload prebuilts.read gs acls.publish event.publish message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "upload prebuilts.read gs acls.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BFIRCg8KDWFtZDY0LWdlbmVyaWNaIAoOCgRhcmcxEgZ2YWx1\\nZTEKDgoEYXJnMhIGdmFsdWUy0ALQ7IDZrvG1knzaAjN1cGxvYWQgcHJlYnVpbHRzfHJlYWQgZ3Mg\\nYWNsc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "upload prebuilts.read chromeos version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -504,10 +355,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -520,7 +371,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -535,7 +386,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -557,8 +408,7 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"private\": true@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"binhosts\": [{\"package_index\": \"PackageIndex\", \"uri\": \"gs://bucket1/some/path\"}, {\"package_index\": \"PackageIndex\", \"uri\": \"gs://bucket2/diff/path\"}]}@@@",
@@ -573,8 +423,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"private\": true\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get.write input file",
@@ -583,8 +433,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"private\": true@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -593,9 +442,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.BinhostService/Get"
@@ -619,7 +468,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -660,15 +509,14 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:24.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload prebuilts|get binhosts|call chromite.api.BinhostService/Get|call build API script\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:26Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"binhostGetRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@published event@    }, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"private\": true@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
@@ -692,7 +540,7 @@
     },
     "infra_step": true,
     "name": "upload prebuilts.get binhosts.call chromite.api.BinhostService/Get.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BEITCg8KDWFtZDY0LWdlbmVyaWMQAUpQCiYKFmdzOi8vYnVj\\na2V0MS9zb21lL3BhdGgSDFBhY2thZ2VJbmRleAomChZnczovL2J1Y2tldDIvZGlmZi9wYXRoEgxQ\\nYWNrYWdlSW5kZXjQAtDsgNmu8bWSfNoCWHVwbG9hZCBwcmVidWlsdHN8Z2V0IGJpbmhvc3RzfGNh\\nbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL0dldHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BEIRCg8KDWFtZDY0LWdlbmVyaWNKUAomChZnczovL2J1Y2tl\\ndDEvc29tZS9wYXRoEgxQYWNrYWdlSW5kZXgKJgoWZ3M6Ly9idWNrZXQyL2RpZmYvcGF0aBIMUGFj\\na2FnZUluZGV40ALQ7IDZrvG1knzaAlh1cGxvYWQgcHJlYnVpbHRzfGdldCBiaW5ob3N0c3xjYWxs\\nIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9HZXR8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -783,7 +631,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"packageIndexFiles\": [\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\", \n        \"location\": 2\n      }\n    }, \n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\", \n        \"location\": 2\n      }\n    }\n  ], \n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.write input file",
@@ -816,9 +664,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.BinhostService/PrepareBinhostUploads"
@@ -842,7 +690,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -871,7 +719,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:27.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:24.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"prepareBinhostUploadsResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"uploadTargets\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
@@ -882,7 +730,7 @@
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload prebuilts|prepare binhost uploads|call chromite.api.BinhostService/PrepareBinhostUploads|call build API script\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:29Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:26Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"prepareBinhostUploadsRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
@@ -925,7 +773,7 @@
     },
     "infra_step": true,
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BGLjAQoPCg1hbWQ2NC1nZW5lcmljEmJnczovL3ByZWJ1aWx0\\nLWJ1Y2tldC9ib2FyZC9hbWQ2NC1nZW5lcmljL3Bvc3RzdWJtaXQtUjk5LTEyMzQuNTYuMC0xMDEt\\nODk0NTUxMTc1MTUxNDg2MzE4NC9wYWNrYWdlcyo1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBf\\nMS9zb21lL3BhdGgvUGFja2FnZUluZGV4EAIqNQozCi9bQ0xFQU5VUF0vYmluaG9zdHNfdG1wXzEv\\nZGlmZi9wYXRoL1BhY2thZ2VJbmRleBACaiUKF1tTVEFSVF9ESVJdL3VwbG9hZHMvZGlyEgoKCGZv\\nby50Ynoy0ALQ7IDZrvG1knzaAnV1cGxvYWQgcHJlYnVpbHRzfHByZXBhcmUgYmluaG9zdCB1cGxv\\nYWRzfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1ByZXBhcmVCaW5ob3N0VXBsb2Fk\\nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BGLjAQoPCg1hbWQ2NC1nZW5lcmljEmJnczovL3ByZWJ1aWx0\\nLWJ1Y2tldC9ib2FyZC9hbWQ2NC1nZW5lcmljL3Bvc3RzdWJtaXQtUjk5LTEyMzQuNTYuMC0xMDEt\\nODk0NTUxMTc1MTUxNDg2MzE4NC9wYWNrYWdlcyo1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBf\\nMS9zb21lL3BhdGgvUGFja2FnZUluZGV4EAIqNQozCi9bQ0xFQU5VUF0vYmluaG9zdHNfdG1wXzEv\\nZGlmZi9wYXRoL1BhY2thZ2VJbmRleBACaiUKF1tTVEFSVF9ESVJdL3VwbG9hZHMvZGlyEgoKCGZv\\nby50Ynoy0ALQ7IDZrvG1knzaAnV1cGxvYWQgcHJlYnVpbHRzfHByZXBhcmUgYmluaG9zdCB1cGxv\\nYWRzfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1ByZXBhcmVCaW5ob3N0VXBsb2Fk\\nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -989,10 +837,8 @@
       "acl",
       "ch",
       "-r",
-      "arg1",
-      "value1",
-      "arg2",
-      "value2",
+      "-u",
+      "AllUsers:R",
       "gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages"
     ],
     "infra_step": true,
@@ -1006,7 +852,7 @@
     "name": "upload prebuilts.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@prebuilts_private@true@@@",
+      "@@@SET_BUILD_PROPERTY@prebuilts_private@false@@@",
       "@@@SET_BUILD_PROPERTY@prebuilts_uri@\"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"@@@"
     ]
   },
@@ -1026,9 +872,8 @@
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"key\": 1, @@@",
-      "@@@STEP_LOG_LINE@request@  \"private\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"key\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"output_file\": \"[START_DIR]/BINHOST.conf\"}@@@",
@@ -1043,8 +888,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"key\": 1, \n  \"private\": true, \n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", \n  \"key\": 1\n}",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.write input file",
@@ -1054,9 +899,8 @@
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"key\": 1, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"private\": true, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"key\": 1@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
     ]
@@ -1065,9 +909,9 @@
     "cmd": [
       "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.BinhostService/SetBinhost"
@@ -1091,7 +935,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1120,21 +964,20 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:30.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:27.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"setBinhostRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"key\": \"POSTSUBMIT_BINHOST\", @@@",
-      "@@@STEP_LOG_LINE@published event@    \"private\": true, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"@@@",
+      "@@@STEP_LOG_LINE@published event@    \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", @@@",
+      "@@@STEP_LOG_LINE@published event@    \"key\": \"POSTSUBMIT_BINHOST\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload prebuilts|update binhost conf file|call chromite.api.BinhostService/SetBinhost|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"setBinhostResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"outputFile\": \"[START_DIR]/BINHOST.conf\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:32Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:29Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -1157,7 +1000,7 @@
     },
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIyoDE/QQQgMq17gEiBgjMgMT9BHJ5Cg8KDWFtZDY0LWdlbmVyaWMQARgBImJnczovL3ByZWJ1\\naWx0LWJ1Y2tldC9ib2FyZC9hbWQ2NC1nZW5lcmljL3Bvc3RzdWJtaXQtUjk5LTEyMzQuNTYuMC0x\\nMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9wYWNrYWdlc3oaChhbU1RBUlRfRElSXS9CSU5IT1NULmNv\\nbmbQAtDsgNmu8bWSfNoCa3VwbG9hZCBwcmVidWlsdHN8dXBkYXRlIGJpbmhvc3QgY29uZiBmaWxl\\nfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1NldEJpbmhvc3R8Y2FsbCBidWlsZCBB\\nUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BHJ3Cg8KDWFtZDY0LWdlbmVyaWMYASJiZ3M6Ly9wcmVidWls\\ndC1idWNrZXQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9wb3N0c3VibWl0LVI5OS0xMjM0LjU2LjAtMTAx\\nLTg5NDU1MTE3NTE1MTQ4NjMxODQvcGFja2FnZXN6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m\\n0ALQ7IDZrvG1knzaAmt1cGxvYWQgcHJlYnVpbHRzfHVwZGF0ZSBiaW5ob3N0IGNvbmYgZmlsZXxj\\nYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJ\\nIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1350,6 +1193,208 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.upload metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.upload metadata.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.upload metadata.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "snapshot-HEAD-SHA:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"location\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", \n  \"profile\": {\n    \"name\": \"base\"\n  }, \n  \"snapshotNumber\": 101, \n  \"snapshotSha\": \"snapshot-HEAD-SHA\"\n}\n",
+      "[CLEANUP]/metadata_tmp_2/PackageIndexInfo.json"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.write metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@{@@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@    \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  }, @@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"location\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", @@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"profile\": {@@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@    \"name\": \"base\"@@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  }, @@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotNumber\": 101, @@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotSha\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@}@@@",
+      "@@@STEP_LOG_END@PackageIndexInfo.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--key",
+      "Cr-Snapshot-Identifier"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/metadata_tmp_2/PackageIndexInfo.json",
+      "gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.gsutil cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "acl",
+      "ch",
+      "-u",
+      "AllUsers:R",
+      "gs://prebuilt-bucket/snapshot/snapshot-HEAD-SHA/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.gsutil acl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/metadata_tmp_2/PackageIndexInfo.json",
+      "gs://prebuilt-bucket/snapshot/external-id-5555/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.gsutil cp (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "acl",
+      "ch",
+      "-u",
+      "AllUsers:R",
+      "gs://prebuilt-bucket/snapshot/external-id-5555/amd64-generic/base/amd64-generic-postsubmit-8945511751514863184-postsubmit.json"
+    ],
+    "infra_step": true,
+    "name": "upload prebuilts.upload metadata.gsutil acl (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

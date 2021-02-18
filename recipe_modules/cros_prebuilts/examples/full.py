@@ -16,6 +16,9 @@ DEPS = [
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget, Profile
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+# TODO(crbug/1179353): Remove once public builders are rolled out.
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
+    CrosInfraConfigProperties)
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
     CrosPrebuiltsProperties)
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
@@ -56,10 +59,12 @@ def GenTests(api):
       expected_package_indexes.extend(data_dict[sha][target][p_name].values())
     return expected_package_indexes
 
+  # TODO(crbug/1179353): Remove switch_to_manifest after public builder rollout.
   def test_data(private=False, use_staging=False,
                 enable_snapshot_prebuilts=True, send_snapshot_prebuilts=4,
                 disable_overlay_commits=False, profile=None,
-                expected_package_indexes=None, dirty_source=False):
+                expected_package_indexes=None, dirty_source=False,
+                switch_to_external_manifest=False):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     target = 'amd64-generic'
 
@@ -68,8 +73,14 @@ def GenTests(api):
                          dirty_source)
 
     if expected_package_indexes is None:
-      expected_package_indexes = make_package_indexes(
-          gs_bucket, target, profile=profile, count=send_snapshot_prebuilts)
+      count = send_snapshot_prebuilts
+      # TODO(crbug/1179353): Remove once public builders are rolled out.
+      if (send_snapshot_prebuilts and not private and
+          switch_to_external_manifest):
+        count = 1
+      expected_package_indexes = make_package_indexes(gs_bucket, target,
+                                                      profile=profile,
+                                                      count=count)
 
     ret = api.test_util.test_child_build(target, cq=False).build
     test_props = FullProperties(
@@ -97,6 +108,10 @@ def GenTests(api):
               isolate_server='http://server.com',
           ))
 
+    # TODO(crbug/1179353): Remove once public builders are rolled out.
+    if switch_to_external_manifest:
+      props['$chromeos/cros_infra_config'] = CrosInfraConfigProperties(
+          switch_to_external_manifest=True)
     ret += api.properties(**props)
 
     ret += api.post_check(
@@ -150,3 +165,7 @@ def GenTests(api):
   # upload_target_prebuilts skipping binhost commit and metadata
   # upload.
   yield api.test('dirty-source', test_data(dirty_source=True))
+
+  # TODO(crbug/1179353): Remove once public builders are rolled out.
+  yield api.test('switch-to-external',
+                 test_data(switch_to_external_manifest=True))

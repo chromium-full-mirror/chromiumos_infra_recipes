@@ -29,6 +29,18 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts
     self._disable_overlay_commits = properties.disable_overlay_commits
 
+  def initialize(self):
+    """Initialization that follows all module loading."""
+    # TODO(crbug/1179353): remove once public builders are rolled out.
+    public = (
+        self.m.cros_infra_config.config_or_default.artifacts.prebuilts ==
+        BuilderConfig.Artifacts.PUBLIC)
+    # Only look for 1 set of prebuilts if a public builder and switch to
+    # external manifest experiment is enabled.
+    if (public and self._send_snapshot_prebuilts and
+        self.m.cros_infra_config.switch_to_external_manifest):
+      self._send_snapshot_prebuilts = 1
+
   @property
   def _build_id(self):
     """Get our build id, or swarming task_id."""
