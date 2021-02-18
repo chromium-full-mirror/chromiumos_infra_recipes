@@ -34,24 +34,27 @@ def RunSteps(api):
 def GenTests(api):
   input_proto = api.build_plan.input_proto
   existing_annealing_builds = [
-      build_pb2.Build(id=8922054662172514002, builder={
-          'builder': 'amd64-generic-postsubmit'
-      }, status=common_pb2.STARTED, input=input_proto(None, 'amd64-generic')),
-      build_pb2.Build(id=8922054662172514003, builder={
-          'builder': 'amd64-generic-postsubmit'
-      }, status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic')),
-      build_pb2.Build(id=8922054662172514005, builder={
-          'builder': 'amd64-generic-postsubmit'
-      }, status=common_pb2.SUCCESS,
+      build_pb2.Build(id=8922054662172514002,
+                      builder={'builder': 'amd64-generic-postsubmit'},
+                      status=common_pb2.STARTED,
+                      input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514003,
+                      builder={'builder': 'amd64-generic-postsubmit'},
+                      status=common_pb2.SUCCESS,
+                      input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514005,
+                      builder={'builder': 'amd64-generic-postsubmit'},
+                      status=common_pb2.SUCCESS,
                       input=dict(properties=struct_pb2.Struct())),  # no bt
-      build_pb2.Build(id=8922054662172514004, builder={
-          'builder': 'amd64-generic-postsubmit'
-      }, status=common_pb2.SCHEDULED, input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514004,
+                      builder={'builder': 'amd64-generic-postsubmit'},
+                      status=common_pb2.SCHEDULED,
+                      input=input_proto(None, 'amd64-generic')),
   ]
 
-  yield (
-      api.test('basic') + api.buildbucket.ci_build(
-          project='chromeos', bucket='postsubmit',
-          builder='postsubmit-orchestrator') +
+  yield api.test(
+      'basic',
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='postsubmit-orchestrator'),
       api.buildbucket.simulated_search_results(
           existing_annealing_builds, 'get snapshot builds.buildbucket.search'))

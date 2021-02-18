@@ -8,4 +8,8 @@ package recipe_modules.chromeos.cros_version.examples;
 
 message TestInputProperties {
   string expected_version_snapshot = 1;
+
+  string expected_version = 2;
+
+  bool remove_snapshot = 3;
 }

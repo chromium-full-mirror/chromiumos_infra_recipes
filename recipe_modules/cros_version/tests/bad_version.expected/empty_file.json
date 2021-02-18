@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "read chromeos version",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found version: R99-1234.56.0@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {

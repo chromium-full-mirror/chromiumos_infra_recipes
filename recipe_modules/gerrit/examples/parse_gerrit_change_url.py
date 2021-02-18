@@ -23,21 +23,22 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield api.test('parse-full-url') + api.properties(
-      gerrit_change=GerritChange(
-          host='chrome-internal.googlesource.com',
-          project='infra/config',
-          change=12345,
-          patchset=6,
-      ),
-      expected=(
-          'https://chrome-internal.googlesource.com/c/infra/config/+/12345/6'),
-  )
+  yield api.test(
+      'parse-full-url',
+      api.properties(
+          gerrit_change=GerritChange(
+              host='chrome-internal.googlesource.com',
+              project='infra/config',
+              change=12345,
+              patchset=6,
+          ), expected=(
+              'https://chrome-internal.googlesource.com/c/infra/config/+/12345/6'
+          )))
 
-  yield api.test('parse-partial-url') + api.properties(
-      gerrit_change=GerritChange(
-          host='chrome-internal.googlesource.com',
-          change=12345,
-      ),
-      expected='https://chrome-internal.googlesource.com/12345',
-  )
+  yield api.test(
+      'parse-partial-url',
+      api.properties(
+          gerrit_change=GerritChange(
+              host='chrome-internal.googlesource.com',
+              change=12345,
+          ), expected='https://chrome-internal.googlesource.com/12345'))

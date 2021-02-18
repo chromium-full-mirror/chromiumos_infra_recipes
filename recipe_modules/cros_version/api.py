@@ -5,10 +5,10 @@
 
 """API for working with CrOS version numbers."""
 
-from functools import total_ordering
 import re
 
 from recipe_engine import recipe_api
+from .version import Version
 
 CHROMEOS_VERSION_PATH = 'src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh'
 
@@ -18,86 +18,6 @@ CHROMEOS_VERSION_RE_MAPPING = {
     'branch': re.compile(r'\bCHROMEOS_BRANCH=(\d+)\b'),
     'patch': re.compile(r'\bCHROMEOS_PATCH=(\d+)\b'),
 }
-
-# The following regexs are evaluated greedily against strings in order to
-# extract a Version instantance. The constructor is called with the lambda
-# provided (based upon groups found).
-def int_or_none(n):
-  if n is None:
-    return None
-  return int(n)
-
-
-CHROMEOS_VERSION_STRING_RES = [(re.compile(
-    r'^(R(?P<chrome_branch>\d+)-)?(?P<build>\d+)\.(?P<branch>\d+).(?P<patch>\d)+$'
-), lambda cls, grps: cls(
-    int_or_none(grps['chrome_branch']), int(grps['build']), int(grps['branch']),
-    int(grps['patch']), None))]
-
-
-@total_ordering
-class Version(object):
-  __slots__ = ('chrome_branch', 'build', 'branch', 'patch', 'snapshot')
-
-  @classmethod
-  def from_string(cls, version_string):
-    """Construct a Version from a string.
-
-    We should extend for differing representations of the version string as
-    they become useful.
-
-    Args:
-      version (str): The version string to parse.
-        This supports the following formats:
-          "13505.0.0"
-          "R88.13505.0.0"
-
-    Returns: A constructed Version, or None.
-    """
-    for (r, l) in CHROMEOS_VERSION_STRING_RES:
-      m = re.match(r, version_string)
-      if m:
-        return l(cls, m.groupdict())
-
-  def __init__(self, chrome_branch, build, branch=0, patch=0, snapshot=None):
-    self.chrome_branch = chrome_branch
-    self.build = build
-    self.branch = branch
-    self.patch = patch
-    self.snapshot = snapshot
-
-  def __str__(self):
-    version = 'R%d-%s' % (self.chrome_branch, self.platform_version)
-    if self.snapshot is not None:
-      version += '-%s' % self.snapshot
-    return version
-
-  def __eq__(self, other):
-    """Determine if versions are equal, ignoring chrome branch or snapshot."""
-    return (self.build == other.build and self.branch == other.branch and
-            self.patch == other.patch)
-
-  def __lt__(self, other):
-    """Find lesser of two versions, ignoring chrome branch or snapshot."""
-    if self.build < other.build:
-      return True
-    if self.build > other.build:
-      return False
-    if self.branch < other.branch:
-      return True
-    if self.branch > other.branch:
-      return False
-    if self.patch < other.patch:
-      return True
-    return False
-
-  @property
-  def platform_version(self):
-    return '%d.%d.%d' % (self.build, self.branch, self.patch)
-
-  @property
-  def buildspec_filename(self):
-    return '%d/%s.xml' % (self.chrome_branch, self.platform_version)
 
 
 class CrosVersionApi(recipe_api.RecipeApi):
@@ -117,11 +37,18 @@ class CrosVersionApi(recipe_api.RecipeApi):
     Raises:
       ValueError: if the version file had unexpected formatting.
     """
+    test_data = ''
+    test_snapshot = 0
+    if self._test_data.enabled:
+      test_version_str = self._test_data.get('workspace_version',
+                                             self.test_api.test_version_str)
+      test_data = self.test_api.chromeos_version_contents(test_version_str)
+      test_version = Version.from_string(test_version_str)
+      test_snapshot = test_version.snapshot or self.test_api.test_snapshot
     with self.m.step.nest('read chromeos version') as presentation:
       version_path = self.m.src_state.workspace_path.join(CHROMEOS_VERSION_PATH)
-      contents = self.m.file.read_raw(
-          'read chromeos_version.sh', version_path,
-          test_data=self.test_api.chromeos_version_contents)
+      contents = self.m.file.read_raw('read chromeos_version.sh', version_path,
+                                      test_data=test_data)
 
       version_args = {}
       for k, regex in CHROMEOS_VERSION_RE_MAPPING.items():
@@ -151,7 +78,8 @@ class CrosVersionApi(recipe_api.RecipeApi):
             with self.m.context(cwd=manifest_path):
               snapshot = self.m.src_state.gitiles_commit.id
               self.m.git.fetch_ref(manifest_url, snapshot)
-              version_snapshot = self.m.git_footers.position_num(snapshot)
+              version_snapshot = self.m.git_footers.position_num(
+                  snapshot, test_position_num=test_snapshot)
           version_args['snapshot'] = version_snapshot
 
       version = Version(**version_args)

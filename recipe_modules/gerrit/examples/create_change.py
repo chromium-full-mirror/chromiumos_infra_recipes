@@ -19,6 +19,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic') + api.gerrit.simulated_create_change(
-      'create gerrit change for project',
-      'https://host-review.googlesource.com/c/project/+/123')
+  yield api.test(
+      'basic',
+      api.gerrit.simulated_create_change(
+          'create gerrit change for project',
+          'https://host-review.googlesource.com/c/project/+/123'))

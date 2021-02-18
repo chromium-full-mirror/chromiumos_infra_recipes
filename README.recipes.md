@@ -229,6 +229,8 @@
   * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full)
   * [cros_test_runner:examples/full](#recipes-cros_test_runner_examples_full)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
+  * [cros_version:examples/version](#recipes-cros_version_examples_version) &mdash; Tests for api.
+  * [cros_version:tests/bad_version](#recipes-cros_version_tests_bad_version)
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
@@ -3071,11 +3073,11 @@ Returns: bool
 
 API for working with CrOS version numbers.
 
-#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#103)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#112)(self):**
+&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#32)(self):**
 
 Read the Chrome OS version from the workspace.
 
@@ -6401,7 +6403,7 @@ returns a list of repos to make commits to.
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#8): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#14)(api):**
 ### *recipes* / [cros\_history:examples/get\_matching\_builds](/recipe_modules/cros_history/examples/get_matching_builds.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_matching_builds.py#10): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq]
@@ -6718,9 +6720,21 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_runner/examples/full.py#17)(api):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
-[DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#25)(api, properties):**
+### *recipes* / [cros\_version:examples/version](/recipe_modules/cros_version/examples/version.py)
+
+[DEPS](/recipe_modules/cros_version/examples/version.py#8): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+Tests for api.cros_version.Version.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/version.py#14)(api):**
+### *recipes* / [cros\_version:tests/bad\_version](/recipe_modules/cros_version/tests/bad_version.py)
+
+[DEPS](/recipe_modules/cros_version/tests/bad_version.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_version/tests/bad_version.py#13)(api):**
 ### *recipes* / [cts\_results\_archive:examples/full](/recipe_modules/cts_results_archive/examples/full.py)
 
 [DEPS](/recipe_modules/cts_results_archive/examples/full.py#8): [cts\_results\_archive](#recipe_modules-cts_results_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

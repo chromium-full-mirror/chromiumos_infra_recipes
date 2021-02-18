@@ -15,4 +15,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic') + api.step_data('a failed step', retcode=1)
+  yield api.test('basic', api.step_data('a failed step', retcode=1))
