@@ -423,7 +423,8 @@ class OrchMenuApi(RecipeApi):
           for new_build_request in new_build_requests:
             # Request new builds and add to total existing.
             existing_builds += self.m.buildbucket.schedule(
-                [new_build_request], url_title_fn=self.m.naming.get_build_title)
+                [new_build_request], url_title_fn=self.m.naming.get_build_title,
+                step_name=new_build_request.builder.builder)
             if self._properties.stagger_children_seconds:
               self.m.time.sleep(self._properties.stagger_children_seconds)
 
