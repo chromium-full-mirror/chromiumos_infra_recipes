@@ -105,18 +105,18 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     context of a build.
     """
     version = str(self.m.cros_version.read_workspace_version())
-    with self.m.step.nest('push images'):
-      gs_image_dir = "gs://{bucket}/{target}-release/{version}".format(
-          **{
-              'bucket': self.m.build_menu.config.artifacts.artifacts_gs_bucket,
-              'target': self.m.build_menu.build_target.name,
-              'version': version,
-          })
+    with self.m.step.nest('push images') as presentation:
+      gs_bucket = self.m.build_menu.config.artifacts.artifacts_gs_bucket
+      gs_path = '{target}-release/{version}'.format(
+          target=self.m.build_menu.build_target.name, version=version)
+      gs_image_dir = 'gs://{gs_bucket}/{gs_path}'.format(
+          gs_bucket=gs_bucket, gs_path=gs_path)
+      presentation.step_text = (
+          'https://console.cloud.google.com/storage/browser/{gs_bucket}/{gs_path}'
+          .format(gs_bucket=gs_bucket, gs_path=gs_path))
       sysroot = Sysroot(build_target=self.m.build_menu.build_target)
-
       # Validate sign types given.
       self._validate_sign_types(self._sign_types)
-
       return self.m.cros_artifacts.push_image(
           self.m.build_menu.chroot, gs_image_dir, sysroot,
           sign_types=self._sign_types,

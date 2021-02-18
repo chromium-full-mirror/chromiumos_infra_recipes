@@ -5954,7 +5954,10 @@
   },
   {
     "cmd": [],
-    "name": "push images"
+    "name": "push images",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-release/R99-1234.56.0-101@@@"
+    ]
   },
   {
     "cmd": [],
