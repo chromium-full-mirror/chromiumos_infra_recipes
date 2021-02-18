@@ -25,7 +25,7 @@ DEPS = [
     'recipe_analyze',
 ]
 
-from collections import OrderedDict
+from collections import namedtuple, OrderedDict
 import contextlib
 import re
 
@@ -46,6 +46,34 @@ PROPERTIES = TestRecipesProperties
 PROJECT = 'chromeos'
 # Bucket to test in. Only the staging environment should be used.
 BUCKET = 'staging'
+
+
+class VerifierRunInfo(object):
+  """All of the information about a verifier."""
+
+  def __init__(self, verifier):
+    """Collect all of the state for a verifier in one place.
+
+    Args:
+      verifier (TestRecipesProperties.Verifier): The verifier.
+    """
+    self.verifier = verifier
+    self.skipped = False
+    self.led_job = None
+    self.led_launch_result = None
+    self.swarming_result = None
+
+  @property
+  def name(self):
+    return self.verifier.name
+
+  @property
+  def critical(self):
+    return self.verifier.critical
+
+  @property
+  def always_launch(self):
+    return self.verifier.always_launch
 
 
 def _verifier(name, critical=False, always_launch=False):
@@ -162,18 +190,17 @@ def _get_last_successful_build(api, builder):
   return successful_builds[0]
 
 
-def _launch_builders(api, test_builders, always_launch_builders, head):
-  """Launch builders with recipe changes patched in.
+def _launch_verifiers(api, verifiers, head):
+  """Launch verifiers with recipe changes patched in.
 
-  Builders are only launched if the files in the patched changes affect the
-  builder's recipe, as determined by 'recipes.py analyze'. recipes.py determines
-  this by looking at 3 different files: the recipe itself, the modules it
-  depends on, and the .gitattributes file in the root of the repo.
+  Verifiers are only launched if the files in the patched changes affect the
+  verifier's recipe, as determined by 'recipes.py analyze'. recipes.py
+  determines this by looking at 3 different files: the recipe itself, the
+  modules it depends on, and the .gitattributes file in the root of the repo.
 
   Args:
     * api (object): See RunSteps documentation.
-    * test_builders (list[str]): Builders to CONDITIONALLY launch.
-    * always_launch_builders (list[str]): Builders to ALWAYS launch.
+    * verifiers (dict{name:VerifierRunInfo): Verifiers to consider.
     * head (str): The HEAD commit before applying patches.
 
   Returns:
@@ -188,10 +215,6 @@ def _launch_builders(api, test_builders, always_launch_builders, head):
       affected_files = api.git.get_diff_files(from_rev=head, to_rev='HEAD')
       affected_files_pres.logs['affected files'] = affected_files
 
-    builders = list(test_builders)
-    builders += [x for x in always_launch_builders if x not in test_builders]
-    my_id = api.swarming.task_id
-
     # TODO(crbug/1012763) small bots do not work well with led launch.
     def _bad_bot_size(led_result):
       swarm = led_result.result.buildbucket.bbagent_args.build.infra.swarming
@@ -202,7 +225,13 @@ def _launch_builders(api, test_builders, always_launch_builders, head):
           break
       return True
 
-    for builder in builders:
+    my_id = api.swarming.task_id
+    considered = 0
+    for verifier in verifiers.values():
+      if verifier.skipped:
+        continue
+      builder = verifier.name
+      considered += 1
       with api.step.nest(
           'analyze and launch {}'.format(builder)) as builder_pres:
         # Get a led result from led to extract the builder definition.
@@ -221,7 +250,7 @@ def _launch_builders(api, test_builders, always_launch_builders, head):
         if _bad_bot_size(led_result):
           led_result = led_result.then('edit', '-d', 'bot_size=large')
 
-        if (builder in always_launch_builders or
+        if (verifier.always_launch or
             api.recipe_analyze.is_recipe_affected(affected_files, recipe)):
           # Run the child task with priority=20, to put it ahead of actual
           # staging jobs.  We could run it with the dimension 'role=infra',
@@ -232,7 +261,9 @@ def _launch_builders(api, test_builders, always_launch_builders, head):
           tag.value = my_id
           led_result = led_result.then('edit-recipe-bundle').then(
               'edit-system', '-p', '20').then('edit', '-name', name)
+          verifier.led_job = led_result
           result = led_result.then('launch').launch_result
+          verifier.led_launch_result = result
           url = 'https://{}/task?id={}'.format(result.swarming_hostname,
                                                result.task_id)
           launch_pres.links[builder] = url
@@ -242,9 +273,9 @@ def _launch_builders(api, test_builders, always_launch_builders, head):
               'builder {} (recipe {}) not affected'.format(builder, recipe))
 
     launch_pres.step_text = 'launched {} / {} builders'.format(
-        len(results), len(builders))
+        len(results), considered)
 
-    return results
+    return verifiers
 
 
 def _extract_host_name(api, led_results):
@@ -271,32 +302,45 @@ def _extract_host_name(api, led_results):
     return list(host_names)[0]
 
 
-def _collect_results(api, led_results):
+def _collect_results(api, verifiers):
   """Collect results from swarming, blocking if necessary.
 
   Args:
-    * api (object): See RunSteps documentation.
-    * led_results (list[led.LedLaunchData]):
+    api (object): See RunSteps documentation.
+    verifiers (dict{name:VerifierRunInfo}): The verifiers
 
   Returns:
     A list of swarming TaskResult.
   """
-  assert led_results
+  task_data = namedtuple('_task_data', ['name', 'task_id'])
+  tasks = [
+      task_data(v.name, v.led_launch_result.task_id)
+      for v in verifiers.values()
+      if v.led_launch_result
+  ]
+  assert tasks
   with api.step.nest('collect results'):
-    with api.swarming.with_server(_extract_host_name(api, led_results)):
-      return api.swarming.collect('collect swarming tasks',
-                                  [result.task_id for result in led_results])
+    host_name = _extract_host_name(api, [
+        v.led_launch_result for v in verifiers.values() if v.led_launch_result
+    ])
+    with api.swarming.with_server(host_name):
+      results = api.swarming.collect('collect swarming tasks',
+                                     [t.task_id for t in tasks])
+      for task, result in zip(tasks, results):
+        assert task.task_id == result.id
+        verifiers[task.name].swarming_result = result
+      return verifiers
 
 
-def _get_non_skipped_builders(api, builders):
+def _update_skipped_verifiers(api, verifiers):
   """Return a subset of 'builders' that are not skipped by CL footers.
 
   Args:
     * api (object): See RunSteps documentation.
-    * builders (list[str]): A list of builders to test.
+    * verifiers (dict{name:VerifierRunInfo}): A dictionary of verifiers.
 
   Returns:
-    A list[str].
+    (dict): updated verifiers.
   """
   with api.step.nest('get non-skipped builders') as presentation:
     # TODO(crbug/1039875): tryserver.get_footer only supports one CL.  When a
@@ -304,52 +348,60 @@ def _get_non_skipped_builders(api, builders):
     # should result in an error.
     if len(api.buildbucket.build.input.gerrit_changes) > 1:
       presentation.step_text = 'multiple CLs, not skipping builders'
-      return builders
+      return verifiers
 
     skip_builders = api.tryserver.get_footer(SKIP_BUILDERS_FOOTER)
 
     for skip_builder in skip_builders:
-      if skip_builder not in builders:
-        raise ValueError(
-            ('Builder {} is specified in the {} footer, but is '
-             'not in the builders list ({})').format(skip_builder,
-                                                     SKIP_BUILDERS_FOOTER,
-                                                     builders))
+      if skip_builder not in verifiers:
+        raise ValueError(('Builder {} is specified in the {} footer, but is '
+                          'not in the builders list ({})').format(
+                              skip_builder, SKIP_BUILDERS_FOOTER,
+                              ' '.join(x.name for x in verifiers.values())))
 
-      builders.remove(skip_builder)
+      verifiers[skip_builder].skipped = True
 
+    builders = [
+        v.name
+        for v in verifiers.values()
+        if not v.skipped and not v.always_launch
+    ]
     presentation.step_text = 'Non-skipped builders: {}'.format(builders)
     presentation.logs['Skipped builders'] = skip_builders
 
-    return builders
+    return verifiers
 
 
-def _analyze_swarming_results(api, swarming_results, led_results):
+def _analyze_swarming_results(api, verifiers):
   """Raise a StepFailure if any swarming task was unsuccessful.
 
   Args:
-    * api(object): See RunSteps documentation.
-    * swarming_results (list[swarming TaskResult]): Results returned from
-      swarming.collect.
-    * led_results (list[led.LedLaunchData]):
+    api(object): See RunSteps documentation.
+    verifiers (dict{name:VerifierRunInfo}): The verifiers.
 
   Raises:
     StepFailure
   """
   with api.step.nest('analyze swarming results') as presentation:
-    host_name = _extract_host_name(api, led_results)
+    host_name = _extract_host_name(api, [
+        v.led_launch_result for v in verifiers.values() if v.led_launch_result
+    ])
     fail_count = 0
-    for result in swarming_results:
-      if not result.success:
-        fail_count += 1
-
-        url = 'https://{}/task?id={}'.format(host_name, result.id)
-        presentation.links['[FAILED] {}'.format(result.name)] = url
+    total_count = 0
+    for verifier in verifiers.values():
+      result = verifier.swarming_result
+      if result:
+        total_count += 1
+        if not result.success:
+          if verifier.critical:
+            fail_count += 1
+          url = 'https://{}/task?id={}'.format(host_name, result.id)
+          presentation.links['[FAILED] {}{}'.format(
+              result.name, '' if verifier.critical else '(non-critical)')] = url
 
     if fail_count:
       presentation.step_text = '{} tasks failed, {} succeeded'.format(
-          fail_count,
-          len(swarming_results) - fail_count)
+          fail_count, total_count - fail_count)
       presentation.status = api.step.FAILURE
 
       raise StepFailure('{} tasks failed'.format(fail_count))
@@ -359,20 +411,21 @@ def _analyze_swarming_results(api, swarming_results, led_results):
 
 def RunSteps(api, properties):
   api.step.nest('set up')
-  verifiers = properties.verifiers or DEFAULT_VERIFIERS
+  verifier_list = properties.verifiers or DEFAULT_VERIFIERS
   # TODO(crbug/1170835): drop properties.builders and
   # properties.always_launch_builders and drop this block of code.
   if True:
-    verifiers = properties.verifiers or [
+    verifier_list = properties.verifiers or [
         _verifier(name=x, critical=True)
         for x in properties.builders or DEFAULT_BUILDERS
     ] + [
         _verifier(name=x, critical=True, always_launch=True)
         for x in properties.always_launch_builders or DEFAULT_ALWAYS
     ]
-  verifier_dict = OrderedDict({v.name: v for v in verifiers})
+  verifier_list = verifier_list or DEFAULT_VERIFIERS
+  verifiers = OrderedDict(((v.name, VerifierRunInfo(v)) for v in verifier_list))
 
-  for verifier in verifiers:
+  for verifier in verifiers.values():
     if not verifier.name.startswith('staging-'):
       raise ValueError(
           'only staging builders can be used (builder {} not valid)'.format(
@@ -381,19 +434,16 @@ def RunSteps(api, properties):
   if not api.buildbucket.build.input.gerrit_changes:
     raise ValueError('gerrit_changes required as input.')
 
-  builders = [v.name for v in verifiers if not v.always_launch]
-  always_launch_builders = [v.name for v in verifiers if v.always_launch]
-  non_skipped_builders = _get_non_skipped_builders(api, builders)
+  verifiers = _update_skipped_verifiers(api, verifiers)
 
   with _checkout_recipes_repo(api):
     head = api.git.head_commit()
     _apply_gerrit_changes(api)
-    led_results = _launch_builders(api, non_skipped_builders,
-                                   always_launch_builders, head)
+    _launch_verifiers(api, verifiers, head)
 
-  if led_results:
-    swarming_results = _collect_results(api, led_results)
-    _analyze_swarming_results(api, swarming_results, led_results)
+  if any(v.led_launch_result for v in verifiers.values()):
+    _collect_results(api, verifiers)
+    _analyze_swarming_results(api, verifiers)
 
 
 def GenTests(api):
@@ -451,7 +501,7 @@ def GenTests(api):
                         if skipped_builders else {}))
     return ret
 
-  def _mock_edit(job, cmd, cwd):
+  def _mock_edit(job, cmd, _cwd):
     """Handler for `led edit -d` (set task_dimension).
 
     We use this to mock setting the bot_size in the recipe.
