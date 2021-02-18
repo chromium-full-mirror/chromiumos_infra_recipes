@@ -61,14 +61,9 @@ def RunSteps(api, properties):
     local_manifests.append(
         api.repo.LocalManifest(repo=lm.repo_url, path=lm.manifest_path))
 
-  if not local_manifests and properties.local_manifest.repo_url:
-    local_manifests.append(
-        api.repo.LocalManifest(repo=properties.local_manifest.repo_url,
-                               path=properties.local_manifest.manifest_path))
-
   if local_manifests and properties.manifest_branch:
     raise ValueError(
-        'local_manifest cannot be specified if manifest_branch is specified')
+        'local_manifests cannot be specified if manifest_branch is specified')
 
   with api.context(infra_steps=True), \
       api.workspace_util.sync_to_manifest_groups(
@@ -231,11 +226,13 @@ def GenTests(api):
           LocalManifestPresubmitProperties(
               project='chromeos',
               manifest_groups=['partner-config'],
-              local_manifest=LocalManifest(
-                  repo_url=('https://chrome-internal.googlesource.com'
-                            '/chromeos/project/testproject1'),
-                  manifest_path='local_manifest.xml',
-              ),
+              local_manifests=[
+                  LocalManifest(
+                      repo_url=('https://chrome-internal.googlesource.com'
+                                '/chromeos/project/testproject1'),
+                      manifest_path='local_manifest.xml',
+                  )
+              ],
               manifest_branch='release-R123',
           ),
       ),
@@ -243,7 +240,7 @@ def GenTests(api):
       api.expect_exception('ValueError'),
       api.post_process(
           post_process.ResultReasonRE,
-          ('.*local_manifest cannot be specified if manifest_branch is specified.*'
+          ('.*local_manifests cannot be specified if manifest_branch is specified.*'
           ),
       ),
       api.post_process(post_process.DropExpectation),
@@ -260,11 +257,13 @@ def GenTests(api):
           LocalManifestPresubmitProperties(
               project='chromeos',
               manifest_groups=['partner-config'],
-              local_manifest=LocalManifest(
-                  repo_url=('https://chrome-internal.googlesource.com'
-                            '/chromeos/project/testproject1'),
-                  manifest_path='local_manifest.xml',
-              ),
+              local_manifests=[
+                  LocalManifest(
+                      repo_url=('https://chrome-internal.googlesource.com'
+                                '/chromeos/project/testproject1'),
+                      manifest_path='local_manifest.xml',
+                  )
+              ],
           )),
       project_config_cq_build(api, extra_changes=[extra_change]),
       checked_out_projects(api),

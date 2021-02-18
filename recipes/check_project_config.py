@@ -65,16 +65,11 @@ def RunSteps(api, properties):
     local_manifests.append(
         api.repo.LocalManifest(repo=lm.repo_url, path=lm.manifest_path))
 
-  if not local_manifests and properties.local_manifest.repo_url:
-    local_manifests.append(
-        api.repo.LocalManifest(repo=properties.local_manifest.repo_url,
-                               path=properties.local_manifest.manifest_path))
-
   if local_manifests and properties.manifest_branch:
     raise ValueError(
-        'local_manifest cannot be specified if manifest_branch is specified')
+        'local_manifests cannot be specified if manifest_branch is specified')
   elif not local_manifests and not properties.manifest_branch:
-    raise ValueError('local_manifest repo and path must be specified')
+    raise ValueError('local_manifests must be specified')
 
   # Do work in a context with manifest groups checked out. Most steps are infra
   # steps, so make this the default. Non-infra steps specify this explicitly.
@@ -237,36 +232,6 @@ def GenTests(api):
   )
 
   yield api.test(
-      'deprecated_local_manifest',
-      api.properties(**properties_dict({
-          'local_manifests': [],
-          'local_manifest': {
-              "repo_url": ('https://chrome-internal.googlesource.com'
-                           '/chromeos/project/testproject1'),
-              "manifest_path": 'local_manifest.xml',
-          },
-      })),
-      project_config_cq_build(api),
-      # The input GerritChange is in a checked out project.
-      checked_out_projects(api),
-      check_constraints_with_output(),
-      api.post_process(post_process.StepCommandContains,
-                       'ensure synced checkout.repo init',
-                       ['--groups', 'partner-config']),
-      # The change should be applied.
-      api.post_process(
-          post_process.StepCommandContains,
-          'cherry-pick gerrit changes.apply gerrit patch sets.git fetch',
-          [
-              'git',
-              'fetch',
-              'https://chrome-internal.googlesource.com/project1',
-              'refs/changes/56/123456/7:',
-          ],
-      ),
-  )
-
-  yield api.test(
       'manifest_branch',
       api.properties(**properties_dict(extra_props={
           'manifest_branch': 'release-R123',
@@ -304,7 +269,7 @@ def GenTests(api):
       project_config_cq_build(api),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
-                       ('.*local_manifest repo and path must be specified.*')),
+                       ('.*local_manifests must be specified.*')),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -316,7 +281,7 @@ def GenTests(api):
       project_config_cq_build(api),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE, (
-          '.*local_manifest cannot be specified if manifest_branch is specified.*'
+          '.*local_manifests cannot be specified if manifest_branch is specified.*'
       )),
       api.post_process(post_process.DropExpectation),
   )

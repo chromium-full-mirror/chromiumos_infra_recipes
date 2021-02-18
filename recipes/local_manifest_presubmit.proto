@@ -44,10 +44,6 @@ message LocalManifestPresubmitProperties {
   // are on branches, some are not.
   string manifest_branch = 7;
 
-  // Local manifest to add to the checkout, if any.
-  // Deprecated: Use local_manifests instead.
-  project_mgmt.LocalManifest local_manifest = 3 [deprecated = true];
-
   // Local manifests to add to the checkout.
   repeated project_mgmt.LocalManifest local_manifests = 8;
 

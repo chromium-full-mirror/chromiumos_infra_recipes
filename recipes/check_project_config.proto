@@ -48,10 +48,6 @@ message CheckProjectConfigProperties {
     // are on branches, some are not.
     string manifest_branch = 9;
 
-    // Local manifest to add to the checkout.
-    // Deprecated: Use local_manifests instead.
-    project_mgmt.LocalManifest local_manifest = 5 [deprecated = true];
-
     // Local manifests to add to the checkout.
     repeated project_mgmt.LocalManifest local_manifests = 10;
 
