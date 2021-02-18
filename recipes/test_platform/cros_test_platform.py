@@ -563,9 +563,9 @@ def _emit_links(step, task_results):
         TaskState.LIFE_CYCLE_COMPLETED, TaskState.LIFE_CYCLE_RUNNING
     ]:
       # Log the task dimensions for any rejected tasks.
-      if t.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED and t.rejected_task_dimensions:
+      if t.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED and t.rejected_dimensions:
         step.logs['rejected dimensions for ' + t.name] = str(
-            t.rejected_task_dimensions)
+            t.rejected_dimensions)
 
       if t.task_url:
         step.links['(task)  ' + t.name] = t.task_url
@@ -1131,10 +1131,14 @@ def GenTests(api):
                                   log_url='logs://bar/baz', name='foo',
                                   state=TaskState(
                                       life_cycle="LIFE_CYCLE_REJECTED"),
-                                  rejected_task_dimensions={
-                                      'dim1': 'val1',
-                                      'dim2': 'val2',
-                                  }),
+                                  rejected_dimensions=[
+                                      ExecuteResponse.TaskResult
+                                      .RejectedTaskDimension(
+                                          key='dim1', value='val1'),
+                                      ExecuteResponse.TaskResult
+                                      .RejectedTaskDimension(
+                                          key='dim2', value='val2'),
+                                  ]),
                               ExecuteResponse.TaskResult(
                                   name='baz',
                                   state=TaskState(
