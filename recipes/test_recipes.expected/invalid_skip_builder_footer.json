@@ -119,9 +119,9 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 437, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 436, in RunSteps",
       "    verifiers = _update_skipped_verifiers(api, verifiers)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 360, in _update_skipped_verifiers",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 363, in _update_skipped_verifiers",
       "    ' '.join(x.name for x in verifiers.values())))",
       "ValueError: Builder other-builder is specified in the Test-Recipes-Skip-Builder footer, but is not in the builders list (staging-Annealing staging-chromite-postsubmit staging-release-triggerer)"
     ]

@@ -216,8 +216,7 @@ def _launch_verifiers(api, verifiers, head):
       affected_files_pres.logs['affected files'] = affected_files
 
     # TODO(crbug/1012763) small bots do not work well with led launch.
-    def _bad_bot_size(led_result):
-      swarm = led_result.result.buildbucket.bbagent_args.build.infra.swarming
+    def _bad_bot_size(swarm):
       for d in swarm.task_dimensions:
         if d.key == "bot_size":
           if d.value and d.value != "small":
@@ -227,7 +226,7 @@ def _launch_verifiers(api, verifiers, head):
 
     my_id = api.swarming.task_id
     considered = 0
-    for verifier in verifiers.values():
+    for idx, verifier in enumerate(verifiers.values()):
       if verifier.skipped:
         continue
       builder = verifier.name
@@ -239,26 +238,34 @@ def _launch_verifiers(api, verifiers, head):
         # Mark this as a dry_run so that builders with side effects (for
         # example, annealing pushes a manifest_ref) can avoid them.
         last_successful_build = _get_last_successful_build(api, builder)
-        led_result = api.led('get-build', last_successful_build.id).then(
-            'edit', '-p', 'dry_run=true')
+        led_result = api.led('get-build', last_successful_build.id)
 
         buildbucket = led_result.result.buildbucket
+        swarm = buildbucket.bbagent_args.build.infra.swarming
         build_properties = buildbucket.bbagent_args.build.input.properties
         recipe = build_properties['recipe']
-        build_properties.update(api.cq.props_for_child_build)
-
-        if _bad_bot_size(led_result):
-          led_result = led_result.then('edit', '-d', 'bot_size=large')
 
         if (verifier.always_launch or
             api.recipe_analyze.is_recipe_affected(affected_files, recipe)):
+
+          # Set the buildbucket test_recipes_task_id tag.
+          tag = buildbucket.bbagent_args.build.tags.add()
+          tag.key = "test_recipes_task_id"
+          tag.value = my_id
+
+          # Provide a unique id for testing.
+          if api._test_data.enabled:
+            swarm.task_id = 'fake-id-{}'.format(idx + 1)
+
+          build_properties.update(api.cq.props_for_child_build)
+          led_result = led_result.then('edit', '-p', 'dry_run=true')
+          if _bad_bot_size(swarm):
+            led_result = led_result.then('edit', '-d', 'bot_size=large')
+
           # Run the child task with priority=20, to put it ahead of actual
           # staging jobs.  We could run it with the dimension 'role=infra',
           # but there are no large role=infra bots.
           name = '%s %s' % (builder, last_successful_build.id)
-          tag = buildbucket.bbagent_args.build.tags.add()
-          tag.key = "test_recipes_task_id"
-          tag.value = my_id
           led_result = led_result.then('edit-recipe-bundle').then(
               'edit-system', '-p', '20').then('edit', '-name', name)
           verifier.led_job = led_result
@@ -312,23 +319,19 @@ def _collect_results(api, verifiers):
   Returns:
     A list of swarming TaskResult.
   """
-  task_data = namedtuple('_task_data', ['name', 'task_id'])
-  tasks = [
-      task_data(v.name, v.led_launch_result.task_id)
-      for v in verifiers.values()
-      if v.led_launch_result
-  ]
-  assert tasks
+  verifier_by_id = OrderedDict((v.led_launch_result.task_id, v)
+                               for v in verifiers.values()
+                               if v.led_launch_result)
+  assert verifier_by_id
   with api.step.nest('collect results'):
-    host_name = _extract_host_name(api, [
-        v.led_launch_result for v in verifiers.values() if v.led_launch_result
-    ])
+    host_name = _extract_host_name(
+        api, [v.led_launch_result for v in verifier_by_id.values()])
     with api.swarming.with_server(host_name):
-      results = api.swarming.collect('collect swarming tasks',
-                                     [t.task_id for t in tasks])
-      for task, result in zip(tasks, results):
-        assert task.task_id == result.id
-        verifiers[task.name].swarming_result = result
+      results = api.swarming.collect(
+          'collect swarming tasks',
+          [v.led_launch_result.task_id for v in verifier_by_id.values()])
+      for result in results:
+        verifier_by_id[result.id].swarming_result = result
       return verifiers
 
 
@@ -361,11 +364,7 @@ def _update_skipped_verifiers(api, verifiers):
 
       verifiers[skip_builder].skipped = True
 
-    builders = [
-        v.name
-        for v in verifiers.values()
-        if not v.skipped and not v.always_launch
-    ]
+    builders = [v.name for v in verifiers.values() if not v.skipped]
     presentation.step_text = 'Non-skipped builders: {}'.format(builders)
     presentation.logs['Skipped builders'] = skip_builders
 
@@ -558,8 +557,9 @@ def GenTests(api):
     return api.step_data(
         'collect results.collect swarming tasks',
         api.swarming.collect([
-            api.swarming.task_result(id='fake-task-id', name="A swarming task",
-                                     failure=True)
+            api.swarming.task_result(id='fake-id-1', name="A swarming task",
+                                     failure=True),
+            api.swarming.task_result(id='fake-id-2', name="Another task")
         ]))
 
   def try_build(project, bucket, builder):
