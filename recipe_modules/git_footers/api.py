@@ -89,17 +89,24 @@ class GitFootersApi(recipe_api.RecipeApi):
           self.test_api.step_test_data_factory('%s:%s' % (ref, key)))
     return self(*args, **kwargs)
 
-  def position_num(self, ref, **kwargs):
+  def position_num(self, ref, test_position_num=None, **kwargs):
     """Return the footer value for Cr-Commit-Position.
 
     Args:
       ref (str): The git ref.
+      test_position_num (int): The test value.  step_test_data, if given, will
+        override this.
+      **kwargs (dict): positional parameters for self.__call__()
 
     Returns:
       list[str]: The position number for the ref.
     """
-    kwargs.setdefault('step_test_data',
-                      self.test_api.step_test_data_factory('101'))
+    test_position_num = (
+        self.test_api.test_position_num
+        if test_position_num is None else test_position_num)
+    kwargs.setdefault(
+        'step_test_data',
+        self.test_api.step_test_data_factory(str(test_position_num)))
     output = self(ref, '--position-num', **kwargs)
     if not output:
       # While we would like to fail here, if we are running on an unpinned

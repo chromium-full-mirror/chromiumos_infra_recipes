@@ -11,6 +11,8 @@ from recipe_engine import recipe_test_api
 class GitFootersTestApi(recipe_test_api.RecipeTestApi):
   """Generates test data for GitFootersApi."""
 
+  test_position_num = 101
+
   def step_data(self, name, *args, **kwargs):
     return super(GitFootersTestApi,
                  self).step_data(name,

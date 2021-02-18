@@ -4070,12 +4070,15 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
 
-&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#92)(self, ref, \*\*kwargs):**
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#92)(self, ref, test_position_num=None, \*\*kwargs):**
 
 Return the footer value for Cr-Commit-Position.
 
 Args:
   ref (str): The git ref.
+  test_position_num (int): The test value.  step_test_data, if given, will
+    override this.
+  **kwargs (dict): positional parameters for self.__call__()
 
 Returns:
   list[str]: The position number for the ref.
