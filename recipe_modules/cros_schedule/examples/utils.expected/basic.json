@@ -20,7 +20,7 @@
   {
     "cmd": [
       "curl",
-      "https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone=90&n=10"
+      "https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone=88&n=7"
     ],
     "name": "fetch chromiumdash schedule (2).curl fetch_milestone_schedule",
     "~followup_annotations": [

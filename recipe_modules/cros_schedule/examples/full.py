@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
+    'recipe_engine/time',
     'cros_schedule',
 ]
 
@@ -18,12 +19,12 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
-  args = {}
+  kwargs = {}
   if properties.fetch_n:
-    args['fetch_n'] = properties.fetch_n
+    kwargs['fetch_n'] = properties.fetch_n
   if properties.start_mstone:
-    args['start_mstone'] = properties.start_mstone
-  api.cros_schedule._fetch_chromiumdash_schedule(**args)
+    kwargs['start_mstone'] = properties.start_mstone
+  api.cros_schedule.fetch_chromiumdash_schedule(**kwargs)
 
 
 def GenTests(api):
@@ -33,7 +34,12 @@ def GenTests(api):
         'fetch chromiumdash schedule.curl fetch_milestone_schedule',
         api.raw_io.stream_output(ret_string))
 
-  yield api.test('basic')
+  # Seed recent time Friday, February 19, 2021 12:30:23 AM for test data.
+  yield api.test('basic', api.time.seed(1613694623.0))
+
+  # Start as if you were querying in the past (before 88) to cover exception.
+  yield api.test('back-to-the-future', api.time.seed(1513694623.0),
+                 api.post_check(post_process.StatusFailure))
 
   yield api.test('not-jq-return', override_fetch('not json'),
                  api.post_check(post_process.StatusFailure))
@@ -44,11 +50,11 @@ def GenTests(api):
   yield api.test(
       'fetch-one', api.properties(start_mstone=88, fetch_n=1),
       override_fetch(
-          api.cros_schedule.test_chromiumdash_fetch_response(n_stones=1)),
+          api.cros_schedule.test_chromiumdash_fetch_response(fetch_n=1)),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
       'fetch-too-few', api.properties(start_mstone=88, fetch_n=2),
       override_fetch(
-          api.cros_schedule.test_chromiumdash_fetch_response(n_stones=1)),
+          api.cros_schedule.test_chromiumdash_fetch_response(fetch_n=1)),
       api.post_check(post_process.StatusFailure))

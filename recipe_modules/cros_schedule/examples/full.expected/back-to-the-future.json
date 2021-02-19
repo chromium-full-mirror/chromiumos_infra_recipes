@@ -1,10 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "fetch chromiumdash schedule",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "fetch chromiumdash schedule"
   },
   {
     "cmd": [
@@ -19,7 +16,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "fetch schedule response json format bad"
+      "humanReason": "could not find milestone"
     },
     "name": "$result"
   }

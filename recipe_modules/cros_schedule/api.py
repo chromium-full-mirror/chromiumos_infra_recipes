@@ -5,10 +5,15 @@
 
 """API for working with CrOS's Schedule."""
 
+from datetime import datetime
+from google.protobuf.json_format import Parse
 import json
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+
+from PB.chromiumos.chromiumdash import (FetchMilestoneScheduleResponse,
+                                        Milestone)
 
 
 class CrosScheduleApi(recipe_api.RecipeApi):
@@ -18,7 +23,12 @@ class CrosScheduleApi(recipe_api.RecipeApi):
       'https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone={}&n={}'
   )
 
-  def _fetch_chromiumdash_schedule(self, start_mstone=None, fetch_n=10):
+  def _json_to_proto(self, sched_str_json):
+    """Returns a FetchMilestoneScheduleResponse from JSON repr."""
+    mstones = FetchMilestoneScheduleResponse()
+    return Parse(sched_str_json, mstones)
+
+  def fetch_chromiumdash_schedule(self, start_mstone=None, fetch_n=10):
     """Return the json schedule from chromiumdash.
 
     Args:
@@ -29,14 +39,15 @@ class CrosScheduleApi(recipe_api.RecipeApi):
     Returns:
       (str): JSON string representing the results of the query, or None.
     """
-    start_mstone = start_mstone or self._get_last_mstone()
+    start_mstone = start_mstone or self.get_last_branched_mstone_n()
     query_url = self.CHROMIUMDASH_FETCH_URL_TEMPLATE.format(
         start_mstone, fetch_n)
 
     with self.m.step.nest('fetch chromiumdash schedule'):
       returned_data = self.m.easy.stdout_step(
           'curl fetch_milestone_schedule', ['curl', query_url],
-          test_stdout=self.test_api.test_chromiumdash_fetch_response())
+          test_stdout=self.test_api.test_chromiumdash_fetch_response(
+              start_mstone=start_mstone, fetch_n=fetch_n))
       # Validate you have real json and the expected number of records.
       try:
         json_data = json.loads(returned_data)
@@ -49,8 +60,40 @@ class CrosScheduleApi(recipe_api.RecipeApi):
       if mstones_returned != fetch_n:
         raise self.m.step.StepFailure(
             'fetch schedule did not return expected number of mstones')
+      return returned_data
 
-  def _get_last_mstone(self):
-    """Gets the last branched milestone."""
-    # TODO(crbug.com/1157948): Really impl.
-    return 88
+  def get_last_branched_mstone(self):
+    """Gets the last branched milestone.
+
+    Returns:
+      A chromiumos.chromiumdash.FetchMilestoneScheduleResponse.
+
+    Raises: StepFailure if not able to find mstone.
+    """
+    # Seed with an intial datapoint.
+    start_mstone = 88
+    start = datetime(2020, 11, 12)
+    today = self.m.time.utcnow()
+
+    # Guess how many to pull assuming a minimum 2 week mstone period (min 2).
+    fetch_n = max((today - start).days / 14, 2)
+    schedule_json = self.fetch_chromiumdash_schedule(start_mstone=start_mstone,
+                                                     fetch_n=fetch_n)
+    mstones = self._json_to_proto(schedule_json)
+    mstones = sorted(mstones.mstones, key=lambda x: x.mstone)
+    # Very lazy straight iteration (no use being much more clever).
+    prev = None
+    for mstone in mstones:
+      if mstone.branch_point.ToDatetime() > today:
+        # If we're already past the branch point, something's wrong.
+        if prev is None:
+          break
+        else:
+          return prev
+      prev = mstone
+    # Failed to find the mstone that is most recently branched.
+    raise StepFailure('could not find milestone')
+
+  def get_last_branched_mstone_n(self):
+    """Gets the last branched milestone number as an int."""
+    return self.get_last_branched_mstone().mstone

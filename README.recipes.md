@@ -204,6 +204,7 @@
   * [cros_relevance:examples/pointless](#recipes-cros_relevance_examples_pointless)
   * [cros_relevance:examples/toolchain](#recipes-cros_relevance_examples_toolchain)
   * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full)
+  * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils)
   * [cros_sdk:examples/existing_sdk_cache](#recipes-cros_sdk_examples_existing_sdk_cache)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_sdk:tests/long_timeouts](#recipes-cros_sdk_tests_long_timeouts)
@@ -2387,13 +2388,38 @@ Returns:
 Whether there are toolchain CLs applied to the source tree.
 ### *recipe_modules* / [cros\_schedule](/recipe_modules/cros_schedule)
 
-[DEPS](/recipe_modules/cros_schedule/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_schedule/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 API for working with CrOS's Schedule.
 
-#### **class [CrosScheduleApi](/recipe_modules/cros_schedule/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosScheduleApi](/recipe_modules/cros_schedule/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for reading, commiting, and manipulating the release schedule.
+
+&mdash; **def [fetch\_chromiumdash\_schedule](/recipe_modules/cros_schedule/api.py#31)(self, start_mstone=None, fetch_n=10):**
+
+Return the json schedule from chromiumdash.
+
+Args:
+  start_mstone (int): start with this milestone. Default: last branched
+      milestone.
+  fetch_n (int): Number of milestones to return. Default: 10.
+
+Returns:
+  (str): JSON string representing the results of the query, or None.
+
+&mdash; **def [get\_last\_branched\_mstone](/recipe_modules/cros_schedule/api.py#65)(self):**
+
+Gets the last branched milestone.
+
+Returns:
+  A chromiumos.chromiumdash.FetchMilestoneScheduleResponse.
+
+Raises: StepFailure if not able to find mstone.
+
+&mdash; **def [get\_last\_branched\_mstone\_n](/recipe_modules/cros_schedule/api.py#97)(self):**
+
+Gets the last branched milestone number as an int.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
 [DEPS](/recipe_modules/cros_sdk/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [goma](#recipe_modules-goma), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6621,9 +6647,14 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/toolchain.py#20)(api, properties):**
 ### *recipes* / [cros\_schedule:examples/full](/recipe_modules/cros_schedule/examples/full.py)
 
-[DEPS](/recipe_modules/cros_schedule/examples/full.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_schedule/examples/full.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/full.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/full.py#21)(api, properties):**
+### *recipes* / [cros\_schedule:examples/utils](/recipe_modules/cros_schedule/examples/utils.py)
+
+[DEPS](/recipe_modules/cros_schedule/examples/utils.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/utils.py#21)(api, properties):**
 ### *recipes* / [cros\_sdk:examples/existing\_sdk\_cache](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
