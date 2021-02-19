@@ -2283,9 +2283,8 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
-      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
     ]
@@ -2335,7 +2334,7 @@
       ]
     },
     "name": "cq-depend generated CLs.set cq-depend for src/overlay CL.set CL 1 description.git_cl set description",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n\nCq-Depend: chromium:1\n",
+    "stdin": "a quick description\n\nCq-Depend: chromium:1\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2423,9 +2422,8 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
-      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
     ]
@@ -2475,7 +2473,7 @@
       ]
     },
     "name": "cq-depend generated CLs.set cq-depend for src/private-overlay CL.set CL 1 description.git_cl set description",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n\nCq-Depend: chromium:1\n",
+    "stdin": "a quick description\n\nCq-Depend: chromium:1\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

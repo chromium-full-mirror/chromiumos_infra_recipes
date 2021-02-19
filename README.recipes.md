@@ -1653,7 +1653,7 @@ Args:
 Returns:
   str: The reference string for the change, e.g. chromium:12345
 
-&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#199)(self, gerrit_changes):**
+&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#201)(self, gerrit_changes):**
 
 Mutually Cq-Depend all given Gerrit changes.
 
@@ -4036,6 +4036,19 @@ Args:
 
 Returns:
   list[str]: All matching footer values, or None
+
+&mdash; **def [edit\_add\_change\_description](/recipe_modules/git_footers/api.py#119)(self, change_message, footer, footer_text):**
+
+Edit or add the given footer to the change_message.
+
+Args:
+  change_message (str): The gerrit change message.
+  footer (str): The name of the footer, e.g. "Cq-Depends"
+  footer_text (str): The value of the footer. If footer_text starts with
+    "{footer}: ", that prefix will be ignored.
+
+Returns:
+  str: Modified change_message.
 
 &mdash; **def [from\_gerrit\_change](/recipe_modules/git_footers/api.py#36)(self, gerrit_change, key=None, \*\*kwargs):**
 
@@ -6859,7 +6872,7 @@ An experimental recipe for running GCE tests.
 &mdash; **def [RunSteps](/recipe_modules/gcloud/examples/full.py#11)(api):**
 ### *recipes* / [generator](/recipes/generator.py)
 
-[DEPS](/recipes/generator.py#35): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/generator.py#35): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the PUpr generator.
 
@@ -6869,9 +6882,9 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#64)(api, properties):**
+&mdash; **def [RunSteps](/recipes/generator.py#65)(api, properties):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#367)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#368)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
@@ -6970,7 +6983,7 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 
 Test git_footers calls.
 
-&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#22)(api, invalid_cr_commit_position):**
+&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#43)(api, invalid_cr_commit_position):**
 ### *recipes* / [git\_txn:examples/full](/recipe_modules/git_txn/examples/full.py)
 
 [DEPS](/recipe_modules/git_txn/examples/full.py#6): [git\_txn](#recipe_modules-git_txn), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

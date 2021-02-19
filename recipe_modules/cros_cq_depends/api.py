@@ -194,6 +194,8 @@ class CrosCqDependsApi(RecipeApi):
       str: The full Cq-Depend string.
     """
     depends = map(self.get_cq_depend_reference, gerrit_changes)
+    if len(depends) == 0:
+      return ''
     return 'Cq-Depend: {}'.format(','.join(depends))
 
   def get_mutual_cq_depend(self, gerrit_changes):

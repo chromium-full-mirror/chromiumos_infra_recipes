@@ -115,3 +115,35 @@ class GitFootersApi(recipe_api.RecipeApi):
 
     assert len(output) == 1, 'expected exactly one Cr-Commit-Position footer'
     return int(output[0].strip())
+
+  def edit_add_change_description(self, change_message, footer, footer_text):
+    """Edit or add the given footer to the change_message.
+
+    Args:
+      change_message (str): The gerrit change message.
+      footer (str): The name of the footer, e.g. "Cq-Depends"
+      footer_text (str): The value of the footer. If footer_text starts with
+        "{footer}: ", that prefix will be ignored.
+
+    Returns:
+      str: Modified change_message.
+    """
+    blocks = change_message.split("\n\n")
+    footer_block = blocks[-1]
+    footers = footer_block.split("\n")
+
+    def reassemble():
+      blocks[-1] = "\n".join(footers)
+      return "\n\n".join(blocks)
+
+    if footer_text.startswith(footer + ":"):
+      footer_text = footer_text[len(footer) + 1:].lstrip()
+    new_footer = "{}: {}".format(footer, footer_text)
+    for i in range(len(footers)):
+      # Exists, edit existing footer.
+      if footers[i].startswith(footer):
+        footers[i] = new_footer
+        return reassemble()
+    # Doesn't exist, add to start of footer block.
+    footers = [new_footer] + footers
+    return reassemble()

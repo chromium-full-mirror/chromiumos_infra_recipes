@@ -31,6 +31,8 @@ def RunSteps(api):
       api.cros_cq_depends.get_cq_depend([gerrit_change]),
       'Cq-Depend: foo:123')
 
+  api.assertions.assertEqual(api.cros_cq_depends.get_cq_depend([]), '')
+
   changes = [gerrit_change, another_gerrit_change]
   actual = api.cros_cq_depends.get_mutual_cq_depend(changes)
   expected = ['Cq-Depend: baz:456', 'Cq-Depend: foo:123']

@@ -18,6 +18,27 @@ DEPS = [
 
 PROPERTIES = {'invalid_cr_commit_position': Property(default=False)}
 
+DESCRIPTION_EXISTING = """
+This is a change where the footer in question already exists.
+
+BUG=None
+TEST=None
+
+Cq-Footer: foo
+Cq-Depend: {}
+Change-Id: ffffffffffffffff
+"""
+
+DESCRIPTION_NON_EXISTING = """
+This is a change where the footer in question does not exist.
+
+BUG=None
+TEST=None
+{}
+Cq-Footer: foo
+Change-Id: ffffffffffffffff
+"""
+
 
 def RunSteps(api, invalid_cr_commit_position):
   api.assertions.assertEqual(
@@ -44,6 +65,28 @@ def RunSteps(api, invalid_cr_commit_position):
       api.git_footers.test_api.simulated_get_footers(['footer1', 'footer2'],
                                                      parent_step_name='test',
                                                      step_number=2))
+
+  description_existing = DESCRIPTION_EXISTING.format("bar")
+  expected_description = DESCRIPTION_EXISTING.format("baz")
+  api.assertions.assertEqual(
+      api.git_footers.edit_add_change_description(description_existing,
+                                                  "Cq-Depend", "baz"),
+      expected_description)
+
+  description_existing = DESCRIPTION_EXISTING.format("bar")
+  expected_description = DESCRIPTION_EXISTING.format("baz")
+  api.assertions.assertEqual(
+      api.git_footers.edit_add_change_description(description_existing,
+                                                  "Cq-Depend",
+                                                  "Cq-Depend: baz"),
+      expected_description)
+
+  description_nonexisting = DESCRIPTION_NON_EXISTING.format("")
+  expected_description = DESCRIPTION_NON_EXISTING.format("\nCq-Depend: baz")
+  api.assertions.assertEqual(
+      api.git_footers.edit_add_change_description(description_nonexisting,
+                                                  "Cq-Depend", "baz"),
+      expected_description)
 
 
 def GenTests(api):

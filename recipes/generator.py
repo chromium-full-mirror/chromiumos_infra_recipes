@@ -51,6 +51,7 @@ DEPS = [
     'easy',
     'gerrit',
     'git',
+    'git_footers',
     'naming',
     'pupr',
     'repo',
@@ -489,9 +490,14 @@ def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
     with api.step.nest('cq-depend generated CLs'):
       cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
       for change, cq_depend in zip(changes, cq_depends):
-        with api.step.nest('set cq-depend for {} CL'.format(change.project)):
+        with api.step.nest('set cq-depend for {} CL'.format(
+            change.project)) as presentation:
+          if not cq_depend:
+            presentation.step_text = "empty Cq-Depend, skipping"
+            continue
           description = api.gerrit.get_change_description(change)
-          description = '{}\n{}\n'.format(description, cq_depend)
+          description = api.git_footers.edit_add_change_description(
+              description, 'Cq-Depend', cq_depend)
           api.gerrit.set_change_description(change, description)
 
   with api.step.nest('update CL labels'):
@@ -682,6 +688,16 @@ def GenTests(api):
       api.step_data(
           'try uprev chromeos-base/chromite.uprev versioned package'
           '.read output file', api.file.read_raw(content='{}')),
+  )
+
+  yield api.test(
+      'one-change',
+      _props(branch_policies=[_policy(existing_cls_policy=FULL_RUN)]),
+      api.repo.project_infos_step_data('commit uprev', data=[
+          dict(project='overlay'),
+      ]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
   )
 
   yield api.test(
