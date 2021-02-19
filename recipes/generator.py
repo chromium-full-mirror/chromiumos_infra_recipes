@@ -279,13 +279,9 @@ def RunSteps(api, properties):
             outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                         'PUpr has been set to abandon.').format(
                                             mrm.display_url)
-            try:
-              api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
-                                        message=outdated_comment_message)
-              abandoned_cls.append(outdated_cl)
-            except api.step.StepFailure as ex:  # pragma: no cover
-              pres.step_text = 'CL abandon failed: {}'.format(
-                  ex.reason_message())
+            api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
+                                      message=outdated_comment_message)
+            abandoned_cls.append(outdated_cl)
 
     existing_cls = open_changes and len(abandoned_cls) < len(open_changes)
     send_to_cq_policy = (
