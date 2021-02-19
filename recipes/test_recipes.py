@@ -29,6 +29,7 @@ from collections import namedtuple, OrderedDict
 import contextlib
 import re
 
+from google.protobuf.json_format import Parse
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
@@ -241,12 +242,17 @@ def _launch_verifiers(api, verifiers, head):
         led_result = api.led('get-build', last_successful_build.id)
 
         buildbucket = led_result.result.buildbucket
-        swarm = buildbucket.bbagent_args.build.infra.swarming
-        build_properties = buildbucket.bbagent_args.build.input.properties
-        recipe = build_properties['recipe']
+        build = buildbucket.bbagent_args.build
+        swarm = build.infra.swarming
+        recipe = build.input.properties['recipe']
 
         if (verifier.always_launch or
             api.recipe_analyze.is_recipe_affected(affected_files, recipe)):
+
+          # Pass the output gitiles commit to the re-run.
+          if not build.input.gitiles_commit.project:
+            build.input.gitiles_commit.CopyFrom(
+                last_successful_build.output.gitiles_commit)
 
           # Set the buildbucket test_recipes_task_id tag.
           tag = buildbucket.bbagent_args.build.tags.add()
@@ -257,7 +263,7 @@ def _launch_verifiers(api, verifiers, head):
           if api._test_data.enabled:
             swarm.task_id = 'fake-id-{}'.format(idx + 1)
 
-          build_properties.update(api.cq.props_for_child_build)
+          build.input.properties.update(api.cq.props_for_child_build)
           led_result = led_result.then('edit', '-p', 'dry_run=true')
           if _bad_bot_size(swarm):
             led_result = led_result.then('edit', '-d', 'bot_size=large')
