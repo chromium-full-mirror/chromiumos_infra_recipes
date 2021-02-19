@@ -125,14 +125,18 @@ def GenTests(api):
           'buildbucket.search'),
   )
 
+  config_ref = 'refs/changes/33/433/1'
   yield api.test(
       'with-config',
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{
               '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(config_ref='refs/changes/33/433/1')
+                  CrosInfraConfigProperties(config_ref=config_ref)
           }),
+      api.cros_infra_config.override_builder_configs_test_data(
+          api.cros_infra_config.builder_configs_test_data, ref=config_ref,
+          binaryproto=False),
       api.git_footers.simulated_get_footers([], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
           'amd64-generic-cq', 'arm-generic-cq', 'arm64-generic-cq',
@@ -152,8 +156,7 @@ def GenTests(api):
       api.properties(
           **{
               '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(config_ref='refs/changes/33/433/1',
-                                            switch_to_external_manifest=True)
+                  CrosInfraConfigProperties(switch_to_external_manifest=True)
           }),
       api.git_footers.simulated_get_footers([], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([

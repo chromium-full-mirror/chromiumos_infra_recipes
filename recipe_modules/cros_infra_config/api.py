@@ -5,7 +5,7 @@
 
 import json
 
-from google.protobuf.json_format import MessageToDict, ParseDict
+from google.protobuf.json_format import MessageToDict, Parse, ParseDict
 from recipe_engine import recipe_api
 from recipe_engine.util import exponential_retry
 
@@ -199,11 +199,20 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def _download_binproto(self, filename, step_test_data, branch='HEAD',
-                         timeout=None, application='ChromeOS'):
+                         timeout=None, application='ChromeOS', message=None):
     """Helper method to fetch a file from gititles."""
     repo = CHROME_OS_REPO_URL
     if application == 'Chrome':
       repo = CHROME_REPO_URL
+
+    if self._config_ref.startswith('refs/changes/') and message:
+      # If we are running with a CL for the config_ref, convert the jsonpb proto
+      # to binaryproto and return that.
+      data = self.m.depot_gitiles.download_file(
+          repo, filename + '.cfg', branch=self._config_ref,
+          step_test_data=step_test_data, timeout=timeout or
+          self.test_api.gitiles_timeout_seconds).encode('utf-8')
+      return Parse(data, message).SerializeToString()
 
     return self.m.depot_gitiles.download_file(
         repo, filename + '.binaryproto', branch=self._config_ref,
@@ -219,7 +228,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Step nesting needs to happen here or it shows up many times in Milo,
     # once for each builder.
     return self._download_binproto('generated/builder_configs',
-                                   self.test_api.builder_configs_step_test_data)
+                                   self.test_api.builder_configs_step_test_data,
+                                   message=BuilderConfigs())
 
   def _get_name_to_builder_config(self, force_reload=False):
     """Helper method that returns the name to BuilderConfig map.
@@ -312,10 +322,11 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       return BotPolicyCfg.FromString(
           self._download_binproto('configs/bot-scaling/generated/bot_policy',
                                   self.test_api.bot_policy_test_data_chrome,
-                                  application='Chrome'))
+                                  application='Chrome', message=BotPolicyCfg()))
     return BotPolicyCfg.FromString(
         self._download_binproto('bot_scaling/generated/bot_policy',
-                                self.test_api.bot_policy_test_data))
+                                self.test_api.bot_policy_test_data,
+                                message=BotPolicyCfg()))
 
   def get_vm_retry_config(self):
     """Get SuiteRetryCfg as defined in infra/config for tast vm.
@@ -325,7 +336,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     return SuiteRetryCfg.FromString(
         self._download_binproto('testingconfig/generated/vm_retry',
-                                self.test_api.vm_retry_test_data))
+                                self.test_api.vm_retry_test_data,
+                                message=SuiteRetryCfg()))
 
   def get_dut_tracking_config(self):
     """Get TrackingPolicyCfg as defined in infra/config.
@@ -335,7 +347,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     return TrackingPolicyCfg.FromString(
         self._download_binproto('testingconfig/generated/dut_tracking',
-                                self.test_api.dut_tracking_test_data))
+                                self.test_api.dut_tracking_test_data,
+                                message=TrackingPolicyCfg()))
 
   def _has_valid_commit(self, config, commit, manifest):
     """Determine if the builder has a valid commit.

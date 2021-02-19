@@ -26,14 +26,21 @@ def RunSteps(api):
 
 
 def GenTests(api):
+  config_ref = 'refs/changes/45/12345/3'
   yield api.test(
       'specify_CL',
       api.properties(
           **{
               '$chromeos/cros_infra_config':
                   CrosInfraConfigProperties(
-                      config_ref='refs/changes/45/12345/3',
+                      config_ref=config_ref,
                   )
           }),
+      api.cros_infra_config.override_builder_configs_test_data(
+          api.cros_infra_config.builder_configs_test_data, ref=config_ref,
+          binaryproto=False),
+      api.cros_infra_config.override_builder_configs_test_data(
+          api.cros_infra_config.builder_configs_test_data, ref=config_ref,
+          iteration=2, binaryproto=False),
       api.test_util.test_child_build('amd64-generic', bucket='toolchain',
                                      builder='clang-tidy-toolchain').build)

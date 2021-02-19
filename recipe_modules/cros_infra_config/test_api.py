@@ -38,6 +38,16 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     msg = jsonpb.Parse(data, message)
     return self.m.depot_gitiles.make_encoded_file(msg.SerializeToString())
 
+  @property
+  def builder_configs_test_data(self):
+    """BuilderConfigs message containing the test builders."""
+    with open(
+        os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            'test_builder_configs.json')) as f:
+      data = f.read().strip()
+    return jsonpb.Parse(data, BuilderConfigs())
+
   def builder_configs_step_test_data(self):
     """A function for step_test_data to generate BuilderConfigs."""
     # Humans can edit the JSON file for test data, impl reads binary proto.
@@ -65,22 +75,27 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     return self._read_config('test_dut_tracking_config.json',
                              TrackingPolicyCfg())
 
-  def override_builder_configs_test_data(self, message, iteration=1):
+  def override_builder_configs_test_data(self, message, iteration=1, ref='HEAD',
+                                         binaryproto=True):
     """Set arbitrary builder config test data.
 
     Args:
       message (BuilderConfigs): The data to return.
       iteration (int): Which call to read builder configs to replace.
+      binaryproto (bool): Whether this is a binaryproto read. (Default)
 
     Returns:
       (StepTestData) to overwrite that BuilderConfigs refresh.
     """
     step_name = ('read builder configs'
                  if iteration == 1 else 'read builder configs (%d)' % iteration)
-    step_name += '.fetch HEAD:generated/builder_configs.binaryproto'
-    return self.step_data(
-        step_name,
-        self.m.depot_gitiles.make_encoded_file(message.SerializeToString()))
+    step_name += '.fetch {}:generated/builder_configs.{}'.format(
+        ref, 'binaryproto' if binaryproto else 'cfg')
+    data = (
+        message.SerializeToString()
+        if binaryproto else jsonpb.MessageToJson(message))
+    return self.step_data(step_name,
+                          self.m.depot_gitiles.make_encoded_file(data))
 
   def current_builder_group(self, group):
     """Set the builder group for the currently running builder.
