@@ -18,7 +18,8 @@ BOT_COST = {
     'smedium': .0402,
     'medium': 1.93,
     'large': 8.08,
-    'xlarge': 8.08
+    'xlarge': 8.08,
+    'xxlarge': 14.376,
 }
 
 
