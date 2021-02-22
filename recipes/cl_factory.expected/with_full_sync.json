@@ -396,8 +396,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/config",
-      "chromeos/program/galaxy",
       "--ignore-missing",
       "-j",
       "32",

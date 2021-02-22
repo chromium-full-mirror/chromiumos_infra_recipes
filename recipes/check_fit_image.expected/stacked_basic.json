@@ -457,9 +457,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromeos/overlays/baseboard-bar-private",
-      "chromeos/overlays/baseboard-foo-private",
-      "chromeos/overlays/baseboard-baz-private",
       "--ignore-missing",
       "-j",
       "32",

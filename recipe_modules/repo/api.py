@@ -187,7 +187,7 @@ class RepoApi(recipe_api.RecipeApi):
     self._step(cmd, timeout=15 * 60)
     self._binary_selfupdate(self.m.context.cwd)
     if not clean:
-      self._clear_git_locks(projects)
+      self._clear_git_locks()
 
     if self.m.context.cwd:
       self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))

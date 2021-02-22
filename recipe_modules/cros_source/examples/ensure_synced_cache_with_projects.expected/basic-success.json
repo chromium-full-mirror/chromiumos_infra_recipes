@@ -307,7 +307,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/config",
       "--ignore-missing",
       "-j",
       "32",

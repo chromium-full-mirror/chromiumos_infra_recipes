@@ -372,8 +372,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromeos/manifest-internal",
-      "chromiumos/manifest",
       "--ignore-missing",
       "-j",
       "32",

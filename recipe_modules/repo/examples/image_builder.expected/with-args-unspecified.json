@@ -233,8 +233,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/config",
-      "chromeos/project/puff/duffy",
       "--ignore-missing",
       "-j",
       "32",
