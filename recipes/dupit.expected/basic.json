@@ -39,10 +39,10 @@
       "--recursive",
       "--links",
       "--safe-links",
-      "rsync://mirrors.rit.edu/gentoo/distfiles/**"
+      "rsync://rsync.gtlib.gatech.edu/gentoo/distfiles/**"
     ],
     "infra_step": true,
-    "name": "list distfiles in rsync://mirrors.rit.edu/gentoo/distfiles"
+    "name": "list distfiles in rsync://rsync.gtlib.gatech.edu/gentoo/distfiles"
   },
   {
     "cmd": [
@@ -87,11 +87,11 @@
       "--timeout=180",
       "--bwlimit=1m",
       "--files-from=[CLEANUP]/distfile_lists_tmp_1/new.txt",
-      "rsync://mirrors.rit.edu/gentoo/distfiles/",
+      "rsync://rsync.gtlib.gatech.edu/gentoo/distfiles/",
       "[CLEANUP]/distfiles_tmp_1"
     ],
     "infra_step": true,
-    "name": "rsync distfiles from rsync://mirrors.rit.edu/gentoo/distfiles"
+    "name": "rsync distfiles from rsync://rsync.gtlib.gatech.edu/gentoo/distfiles"
   },
   {
     "cmd": [

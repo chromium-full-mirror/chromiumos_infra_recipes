@@ -12,7 +12,7 @@ DEPS = [
 
 def RunSteps(api):
   api.cros_dupit.configure(
-      rsync_mirror_address='rsync://mirrors.rit.edu/gentoo/distfiles',
+      rsync_mirror_address='rsync://rsync.gtlib.gatech.edu/gentoo/distfiles',
       rsync_mirror_rate_limit='1m',
       gs_distfiles_uri='gs://chromeos-mirror/gentoo/distfiles/')
   api.cros_dupit.run()
