@@ -13,7 +13,13 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 # Cost is in USD per day as calculated in go/cros-infra-sizing on 2018-12-12.
 # With an estimate for medium, since postdates that doc.
-BOT_COST = {'small': 0.342, 'smedium': .0402, 'medium': 1.93, 'large': 8.08}
+BOT_COST = {
+    'small': 0.342,
+    'smedium': .0402,
+    'medium': 1.93,
+    'large': 8.08,
+    'xlarge': 8.08
+}
 
 
 class BotCostApi(RecipeApi):
