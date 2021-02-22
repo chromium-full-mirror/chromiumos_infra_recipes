@@ -27,6 +27,8 @@ PROPERTIES = BrancherProperties
 
 def RunSteps(api, properties):
   with api.step.nest('validate properties'):
+    if not properties.source_version:
+      raise StepFailure("source_version required")
     if properties.branch_info.type not in [Branch.RELEASE, Branch.STABILIZE]:
       raise StepFailure("unsupported branch type: {}".format(
           properties.branch_info.type))
@@ -69,12 +71,20 @@ def GenTests(api):
   )
 
   yield api.test(
+      'no-source-version',
+      api.properties(
+          BrancherProperties(branch_info=Branch(type=Branch.RELEASE))),
+      api.post_check(post_process.StepFailure, 'validate properties'),
+  )
+
+  yield api.test(
       'bad-branch-type',
       api.properties(
           BrancherProperties(source_version='R89-13729.0.0',
                              branch_info=Branch(type=Branch.FACTORY))),
       api.post_check(post_process.StepFailure, 'validate properties'),
   )
+
   yield api.test(
       'bad-branch_util-run',
       api.properties(
