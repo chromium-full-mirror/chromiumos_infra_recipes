@@ -33,8 +33,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """Initialization that follows all module loading."""
     # TODO(crbug/1179353): remove once public builders are rolled out.
     public = (
-        self.m.cros_infra_config.config_or_default.artifacts.prebuilts ==
-        BuilderConfig.Artifacts.PUBLIC)
+        self.m.cros_infra_config.config_or_default.general.manifest ==
+        BuilderConfig.General.PUBLIC)
     # Only look for 1 set of prebuilts if a public builder and switch to
     # external manifest experiment is enabled.
     if (public and self._send_snapshot_prebuilts and
