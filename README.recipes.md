@@ -5466,7 +5466,7 @@ Returns:
 
 A module to execute tast commands.
 
-&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#28)(self, artifacts_gs_bucket, artifacts_gs_path, test_artifacts_dir):**
+&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#30)(self, artifacts_gs_bucket, artifacts_gs_path, test_artifacts_dir):**
 
 Downloads the tast executable from specified build artifacts.
 
@@ -5478,7 +5478,7 @@ Args:
     downloaded. The tast executable will be found at tast/tast relative
     to this directory.
 
-&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#51)(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):**
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#53)(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):**
 
 Downloads the VM image from specified build artifacts.
 
@@ -5495,7 +5495,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#194)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#196)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
 
 Run tast tests without retries or results processing.
 
@@ -5514,7 +5514,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#154)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#156)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -5532,7 +5532,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#92)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#94)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 

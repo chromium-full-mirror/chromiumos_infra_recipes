@@ -24,6 +24,8 @@ class TastExecApi(RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(TastExecApi, self).__init__(*args, **kwargs)
     self._exec_timeout = properties.exec_timeout or 90 * 60
+    # TODO(dhanyaganesh): switch this to properties once it populates.
+    self._should_retry = True
 
   def download_tast(self, artifacts_gs_bucket, artifacts_gs_path,
                     test_artifacts_dir):
@@ -119,7 +121,7 @@ class TastExecApi(RecipeApi):
     failures, failed_test_cases = self.m.tast_results.get_failures(
         task_result, tests_to_retry)
     empty_result = task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
-    if tests_to_retry:
+    if tests_to_retry and self._should_retry:
       retry_task_result = self._retry_iter(suite_name, tests_to_retry,
                                            qcow_image_path, test_artifacts_dir,
                                            private_key_path, 'second',
