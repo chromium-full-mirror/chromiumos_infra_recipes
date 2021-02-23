@@ -227,10 +227,41 @@ class CrosSdkApi(RecipeApi):
       self.m.cros_build_api.SdkService.Delete(
           DeleteSdkRequest(chroot=self.chroot))
 
+  def _is_chroot_usable(self, version, parent_step):
+    """Determine whether the cached version of the chroot can be reused.
+
+    Compare the config's sdk version and manifest branch to the ones cached on
+    the bot. If they are the same the cached chroot can be reused.
+
+    Args:
+      version (int): Required SDK cache version, if any. Some recipes do not
+          care what version the SDK is, they just need any SDK.
+      parent_step (Step): The calling step, to be used for presentation
+          purposes.
+
+    Returns:
+      Boolean indicating if the chroot can be reused.
+    """
+    disk_version = self.sdk_cache_version
+    parent_step.logs['sdk cache version'] = [
+        'Version in config: %d' % version,
+        'Version on disk: %d' % disk_version,
+    ]
+    disk_branch = self._sdk_cache_manifest_branch
+    parent_step.logs['sdk manifest branch'] = [
+        'Branch on disk: %s' % disk_branch
+    ]
+    return (version == disk_version and
+            disk_branch == self.m.cros_source.manifest_branch)
+
   def create_chroot(self, version=None, use_image=True, bootstrap=False,
                     timeout_sec='DEFAULT', test_data=None,
                     test_toolchain_cls=None, name=None):
     """Initialize the chroot and link it into the workspace.
+
+    Create a chroot if one does not already exist in the chroot path. If one
+    already exists, but is not reusable by this build (see _ensure_cache_state)
+    delete the existing chroot and create a new one.
 
     Args:
       version (int): Required SDK cache version, if any.  Some recipes do not
@@ -254,26 +285,16 @@ class CrosSdkApi(RecipeApi):
     with self.m.step.nest(name or 'init sdk') as presentation:
       try:
         self.build_chmod_chroot()
-        # Replace the chroot if necessary.
-        replace = False
-        disk_version = self.sdk_cache_version
-        presentation.logs['sdk cache version'] = [
-            'Version in config: %d' % version,
-            'Version on disk: %d' % disk_version,
-        ]
-        disk_branch = self._sdk_cache_manifest_branch
-        presentation.logs['sdk manifest branch'] = [
-            'Branch on disk: %s' % disk_branch
-        ]
-        replace = (
-            version != disk_version or
-            disk_branch != self.m.cros_source.manifest_branch)
         if timeout_sec == 'DEFAULT':
           timeout_sec = None if bootstrap else 90 * 60
 
+        # Determine whether a cached root could be reused.
+        no_replace = self._is_chroot_usable(version, presentation)
+        # SdkService/Create will create a chroot if one does not already exist
+        # or no_replace is False.
         response = self.m.cros_build_api.SdkService.Create(
             CreateSdkRequest(
-                flags=CreateSdkRequest.Flags(no_replace=not replace,
+                flags=CreateSdkRequest.Flags(no_replace=no_replace,
                                              no_use_image=not use_image,
                                              bootstrap=bootstrap),
                 chroot=self.chroot), timeout=timeout_sec,
