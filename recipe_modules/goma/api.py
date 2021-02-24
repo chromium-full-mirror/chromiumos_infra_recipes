@@ -31,7 +31,7 @@ class GomaApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(GomaApi, self).__init__(*args, **kwargs)
-    self._client_version = properties.client_version or 'latest'
+    self._client_version = properties.client_version or 'release'
     self._goma_approach = properties.goma_approach or common.GomaConfig.DEFAULT
     self._upload_goma_logs = not properties.disable_goma_logs_upload
     self._upload_stats_counterz = (
