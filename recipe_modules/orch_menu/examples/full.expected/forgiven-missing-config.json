@@ -13,7 +13,104 @@
       "ensure-directory",
       "--mode",
       "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure chroot path.mount overlay chromeos_sdk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/upperdir/chromeos_sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.mount overlay chromeos_sdk.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/workdir/chromeos_sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.mount overlay chromeos_sdk.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
       "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.mount overlay chromeos_sdk.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=/preload/chromeos-sdk,upperdir=[CACHE]/chromiumos/upperdir/chromeos_sdk,workdir=[CACHE]/chromiumos/workdir/chromeos_sdk,x-chromeos-overlay.name=chromeos_sdk",
+      "overlay",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.mount overlay chromeos_sdk.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot/chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path.ensure chroot directory",

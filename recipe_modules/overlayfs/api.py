@@ -43,14 +43,18 @@ class OverlayfsApi(recipe_api.RecipeApi):
 
     Args:
       * name (str): An alphanumeric name for the mount, used for display and
-          implementation details. Should usually be unique within a recipe.
+          implementation details. Underscores are allowed. Should usually be
+          unique within a recipe.
       * lowerdir_path (Path): Path to the OverlayFS "lowerdir". See mount(8)
           "Mount options for overlay".
       * mount_path (Path): Path to mount the OverlayFS at. Will be created if
           it doesn't exist.
       * persist (bool): Whether to persist the mount beyond one execution.
     """
-    assert name.isalnum(), 'overlayfs mount names must be alphanumeric'
+    _is_valid_char = lambda char: char.isalnum() or char == '_'
+    assert all(
+        _is_valid_char(char) for char in name
+    ), 'overlayfs mount names may only contain alphanumeric characters and underscores'
     with self.m.step.nest('mount overlay %s' % name):
       with self.m.context(infra_steps=True):
         # Create overlayfs directories.

@@ -13,7 +13,104 @@
       "ensure-directory",
       "--mode",
       "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure chroot path.mount overlay chromeos_sdk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/upperdir/chromeos_sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.mount overlay chromeos_sdk.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/workdir/chromeos_sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.mount overlay chromeos_sdk.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
       "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.mount overlay chromeos_sdk.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=/preload/chromeos-sdk,upperdir=[CACHE]/chromiumos/upperdir/chromeos_sdk,workdir=[CACHE]/chromiumos/workdir/chromeos_sdk,x-chromeos-overlay.name=chromeos_sdk",
+      "overlay",
+      "[CACHE]/cros_chroot"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.mount overlay chromeos_sdk.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot/chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path.ensure chroot directory",
@@ -1322,11 +1419,11 @@
       "-n",
       "chmod",
       "u=rwx,g=rx,o=rx,-t",
-      "[CACHE]/cros_chroot"
+      "[CACHE]/cros_chroot/chroot"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "init sdk.changing permissions of [CACHE]/cros_chroot",
+    "name": "init sdk.changing permissions of [CACHE]/cros_chroot/chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1358,7 +1455,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@request@        {@@@",
@@ -1385,7 +1482,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"noReplace\": true, \n    \"noUseImage\": true\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"noReplace\": true, \n    \"noUseImage\": true\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1395,7 +1492,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
@@ -1483,7 +1580,7 @@
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"createRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"env\": {@@@",
       "@@@STEP_LOG_LINE@published event@        \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@published event@          {@@@",
@@ -1521,7 +1618,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAcIBMgoECAEYARIqChNbQ0FDSEVdL2Nyb3NfY2hyb290GhMK\\nEQoPY2hyb21lX2ludGVybmFsygEECgIIe9AC0OyA2a7xtZJ82gJCaW5pdCBzZGt8Y2FsbCBjaHJv\\nbWl0ZS5hcGkuU2RrU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAcIBOQoECAEYARIxChpbQ0FDSEVdL2Nyb3NfY2hyb290L2No\\ncm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbMoBBAoCCHvQAtDsgNmu8bWSfNoCQmluaXQgc2RrfGNh\\nbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1597,7 +1694,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "symlink",
-      "[CACHE]/cros_chroot",
+      "[CACHE]/cros_chroot/chroot",
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1629,7 +1726,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@request@        {@@@",
@@ -1652,7 +1749,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1662,7 +1759,7 @@
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
@@ -1872,7 +1969,7 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@request@        {@@@",
@@ -1896,7 +1993,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"toolchainTargets\": [\n    {\n      \"name\": \"amd64-generic\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {}\n}",
+      "{\n  \"toolchainTargets\": [\n    {\n      \"name\": \"amd64-generic\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1911,7 +2008,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
@@ -2001,7 +2098,7 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ], @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"env\": {@@@",
       "@@@STEP_LOG_LINE@published event@        \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@published event@          {@@@",
@@ -2036,7 +2133,7 @@
     },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdIBPwoAEg8KDWFtZDY0LWdlbmVyaWMaKgoTW0NBQ0hFXS9j\\ncm9zX2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbNoBBAoCCHvQAtDsgNmu8bWSfNoCRHVwZGF0\\nZSBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9VcGRhdGV8Y2FsbCBidWlsZCBBUEkg\\nc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdIBRgoAEg8KDWFtZDY0LWdlbmVyaWMaMQoaW0NBQ0hFXS9j\\ncm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWzaAQQKAgh70ALQ7IDZrvG1knza\\nAkR1cGRhdGUgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVp\\nbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2059,7 +2156,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@request@        {@@@",
@@ -2093,7 +2190,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"chrootCurrent\": true, \n    \"replace\": true\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"chrootCurrent\": true, \n    \"replace\": true\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2106,7 +2203,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
@@ -2193,7 +2290,7 @@
       "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"env\": {@@@",
       "@@@STEP_LOG_LINE@published event@        \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@published event@          {@@@",
@@ -2238,7 +2335,7 @@
     },
     "infra_step": true,
     "name": "create sysroot.call chromite.api.SysrootService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAeIBQwoPCg1hbWQ2NC1nZW5lcmljEgQIARABIioKE1tDQUNI\\nRV0vY3Jvc19jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWzqASkKJwoUL2J1aWxkL2FtZDY0LWdl\\nbmVyaWMSDwoNYW1kNjQtZ2VuZXJpY9AC0OyA2a7xtZJ82gJMY3JlYXRlIHN5c3Jvb3R8Y2FsbCBj\\naHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAeIBSgoPCg1hbWQ2NC1nZW5lcmljEgQIARABIjEKGltDQUNI\\nRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFs6gEpCicKFC9idWlsZC9h\\nbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWPQAtDsgNmu8bWSfNoCTGNyZWF0ZSBzeXNyb290\\nfGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBz\\nY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2256,7 +2353,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@request@        {@@@",
@@ -2279,7 +2376,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2292,7 +2389,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
@@ -2527,7 +2624,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@request@        {@@@",
@@ -2556,7 +2653,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }, \n    \"path\": \"/build/amd64-generic\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }, \n    \"path\": \"/build/amd64-generic\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2569,7 +2666,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
@@ -2673,7 +2770,7 @@
       "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"env\": {@@@",
       "@@@STEP_LOG_LINE@published event@        \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@published event@          {@@@",
@@ -2716,7 +2813,7 @@
     },
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI1YDE/QQiDAjWgMT9BBCAyrXuAZIBZgoPCg1hbWQ2NC1nZW5lcmljEioKE1tDQUNIRV0vY3Jv\\nc19jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwiJwoUL2J1aWxkL2FtZDY0LWdlbmVyaWMSDwoN\\nYW1kNjQtZ2VuZXJpY5oBOwo5EjcSIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTIa\\nEQoPc29tZS9zb3VyY2UvZGly0ALQ7IDZrvG1knzaAm5kZXBlbmRlbmN5IGdyYXBoIGNhbGN1bGF0\\naW9ufGNhbGwgY2hyb21pdGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNlL0dldEJ1aWxkRGVwZW5kZW5j\\neUdyYXBofGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI1YDE/QQiDAjWgMT9BBCAyrXuAZIBbQoPCg1hbWQ2NC1nZW5lcmljEjEKGltDQUNIRV0vY3Jv\\nc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsIicKFC9idWlsZC9hbWQ2NC1nZW5l\\ncmljEg8KDWFtZDY0LWdlbmVyaWOaATsKORI3EiIKCmNocm9tZS1pY3USDWNocm9tZW9zLWJhc2Ua\\nBTEtcjUyGhEKD3NvbWUvc291cmNlL2RpctAC0OyA2a7xtZJ82gJuZGVwZW5kZW5jeSBncmFwaCBj\\nYWxjdWxhdGlvbnxjYWxsIGNocm9taXRlLmFwaS5EZXBlbmRlbmN5U2VydmljZS9HZXRCdWlsZERl\\ncGVuZGVuY3lHcmFwaHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3176,7 +3273,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@request@        {@@@",
@@ -3199,7 +3296,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "infra_step": true,
@@ -3208,7 +3305,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
@@ -3287,7 +3384,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@request@        {@@@",
@@ -3310,7 +3407,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "infra_step": true,
@@ -3319,7 +3416,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
@@ -3413,10 +3510,21 @@
       "-n",
       "chmod",
       "a+rwX,-t",
+      "[CACHE]/cros_chroot/chroot"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot/chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CACHE]/cros_chroot"
     ],
     "infra_step": true,
-    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot",
+    "name": "clean up SDK chroot.unmount overlay chromeos_sdk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
