@@ -16,12 +16,13 @@ DEPS = [
 
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
 from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
     TestInputProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
+from recipe_engine import post_process
 
 PROPERTIES = TestInputProperties
-
 
 def RunSteps(api, properties):
   workspace = api.path['cleanup'].join('workspace')
@@ -128,3 +129,13 @@ def GenTests(api):
       api.step_data(
           ('restoring chroot from snapshot.call chromite.api.SdkService/'
            'RestoreSnapshot.call build API script'), retcode=1))
+
+  yield api.test(
+      'mount-cache-off',
+      api.post_check(post_process.DoesNotRun, 'mount overlay cros_chroot'))
+
+  yield api.test(
+      'mount-cache-on',
+      api.properties(
+          **{"$chromeos/cros_sdk": CrosSdkProperties(mount_named_cache=True)}),
+      api.post_check(post_process.MustRun, 'mount overlay cros_chroot'))

@@ -11,4 +11,7 @@ message CrosSdkProperties {
   // This is used to verify that the SDK is compatible with the toolchain CL
   // being landed.  See crbug.com/1130707.
   bool force_off_toolchain_changed = 1;
+
+  // Whether to mount the named cache as an overlayfs.
+  bool mount_named_cache = 2;
 }

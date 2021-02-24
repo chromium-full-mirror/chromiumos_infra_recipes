@@ -9,10 +9,12 @@ DEPS = [
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'cros_build_api',
+    'cros_infra_config',
     'cros_relevance',
     'cros_source',
     'easy',
     'goma',
+    'overlayfs',
     'workspace_util',
 ]
 
