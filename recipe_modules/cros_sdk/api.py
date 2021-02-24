@@ -23,6 +23,7 @@ from PB.chromite.api.sdk import RestoreSnapshotRequest
 
 # Default value for the sdk cache version
 _DEFAULT_SDK_CACHE_VERSION = 1
+_PRELOAD_PATH = '/preload/chromeos-sdk'
 
 
 class CrosSdkApi(RecipeApi):
@@ -50,10 +51,12 @@ class CrosSdkApi(RecipeApi):
       chroot_parent_path (Path): Parent for chroot directory.
     """
     with self.m.step.nest('configure chroot path'):
-      self._chroot_path = chroot_parent_path.join('cros_chroot')
-      self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
+      self._preload_path = _PRELOAD_PATH
+      self.m.file.ensure_directory('create preload path', self._preload_path)
+      self._cache_path = chroot_parent_path.join('cros_chroot')
+      self._chroot_path = self._cache_path.join('chroot')
       self._sdk_cache_version = None
-      self._sdk_cache_version_file = self._chroot_path.join(
+      self._sdk_cache_version_file = self._cache_path.join(
           'sdk_cache_version.json')
       self._chrome_root = None
       self._goma_dir = None
@@ -393,6 +396,9 @@ class CrosSdkApi(RecipeApi):
       checkout_path (Path): Path to source checkout.  Default:
           cros_source.workspace_path.
     """
+    self.m.overlayfs.mount('cros_chroot', self._preload_path, self._cache_path,
+                           persist=True)
+    self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
     try:
       yield
     except StepFailure:
@@ -408,6 +414,7 @@ class CrosSdkApi(RecipeApi):
 
         self.unlink_chroot(checkout_path or self.m.cros_source.workspace_path)
         self.swarming_chmod_chroot()
+        self.m.overlayfs.unmount('cros_chroot', self._cache_path)
 
   @contextlib.contextmanager
   def snapshot(self, create_test_data=None, restore_test_data=None):
