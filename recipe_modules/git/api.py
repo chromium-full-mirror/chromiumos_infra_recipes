@@ -304,7 +304,7 @@ class GitApi(recipe_api.RecipeApi):
       cmd.extend(files)
     return self._step(cmd, **kwargs)
 
-  def _push(self, remote, refspec, dry_run, capture_stdout):
+  def _push(self, remote, refspec, dry_run, capture_stdout, name):
     """Runs 'git push'.
 
     Args:
@@ -324,10 +324,10 @@ class GitApi(recipe_api.RecipeApi):
       args += ['--porcelain']
       stdout = self.m.raw_io.output(add_output_log=True)
     args += [remote, refspec]
-    return self._step(args, stdout=stdout)
+    return self._step(args, stdout=stdout, name=name)
 
   def push(self, remote, refspec, dry_run=False, capture_stdout=False,
-           retry=True):
+           retry=True, name=None):
     """Runs 'git push'.
 
     Args:
@@ -344,7 +344,7 @@ class GitApi(recipe_api.RecipeApi):
     if retry:
       func = exponential_retry(retries=3, delay=datetime.timedelta(seconds=2))(
           self._push)
-    return func(remote, refspec, dry_run, capture_stdout)
+    return func(remote, refspec, dry_run, capture_stdout, name)
 
   def current_branch(self):
     """Returns the currently checked out branch name.

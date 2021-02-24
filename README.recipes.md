@@ -3946,7 +3946,7 @@ Args:
 Returns:
   bool: whether the merge succeeded
 
-&mdash; **def [push](/recipe_modules/git/api.py#329)(self, remote, refspec, dry_run=False, capture_stdout=False, retry=True):**
+&mdash; **def [push](/recipe_modules/git/api.py#329)(self, remote, refspec, dry_run=False, capture_stdout=False, retry=True, name=None):**
 
 Runs 'git push'.
 
