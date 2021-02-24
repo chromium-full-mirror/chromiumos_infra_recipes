@@ -354,6 +354,7 @@
   * [tast_vm](#recipes-tast_vm) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
+  * [test_plan_filtering](#recipes-test_plan_filtering) &mdash; Updates test plan rules to reflect new risk-based rules.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) &mdash; Recipe that triggers cros_test_platform runs.
@@ -7518,6 +7519,13 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 Verifies a repo manifest.
 
 &mdash; **def [RunSteps](/recipes/test_manifest.py#32)(api, properties):**
+### *recipes* / [test\_plan\_filtering](/recipes/test_plan_filtering.py)
+
+[DEPS](/recipes/test_plan_filtering.py#36): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Updates test plan rules to reflect new risk-based rules
+
+&mdash; **def [RunSteps](/recipes/test_plan_filtering.py#211)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
 [DEPS](/recipes/test_platform/cros_test_platform.py#45): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

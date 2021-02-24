@@ -1,0 +1,235 @@
+[
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "--symref",
+      ".",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "infra_step": true,
+    "name": "git ls-remote"
+  },
+  {
+    "cmd": [],
+    "name": "git transaction",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "git transaction.cloning config repo",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/config",
+      "[START_DIR]/config-internal"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "infra_step": true,
+    "name": "git transaction.cloning config repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[START_DIR]/config-internal/infra/config/scripts/device_usage/get_test_plans_to_be_filtered.py",
+      "--repo",
+      "[START_DIR]/config-internal/test/plans"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "name": "git transaction.find test plans",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/config-internal/infra/config/scripts/device_usage/filter_test_plan_by_availability.sh",
+      "[START_DIR]/base1/file1.jsonproto"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "name": "git transaction.filter test plans by availability step",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/base1/file1.filtered.jsonproto"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "infra_step": true,
+    "name": "git transaction.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[START_DIR]/config-internal/src/config-internal/test/scripts/generate_test_plan_summary.py",
+      "--input",
+      "[START_DIR]/base1/file1.filtered.jsonproto",
+      "--output",
+      "[START_DIR]/base1/generated/test_plans"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "name": "git transaction.generate test plan summary step",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/base1/generated/test_plans"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "infra_step": true,
+    "name": "git transaction.git add (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/config-internal/infra/config/scripts/device_usage/filter_test_plan_by_availability.sh",
+      "[START_DIR]/base2/file2.jsonproto"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "name": "git transaction.filter test plans by availability step (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/base2/file2.filtered.jsonproto"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "infra_step": true,
+    "name": "git transaction.git add (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[START_DIR]/config-internal/src/config-internal/test/scripts/generate_test_plan_summary.py",
+      "--input",
+      "[START_DIR]/base2/file2.filtered.jsonproto",
+      "--output",
+      "[START_DIR]/base2/generated/test_plans"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "name": "git transaction.generate test plan summary step (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/base2/generated/test_plans"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "infra_step": true,
+    "name": "git transaction.git add (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/config-internal/infra/config/scripts/device_usage/filter_test_plan_by_availability.sh",
+      "[START_DIR]/base3/file3.jsonproto"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "name": "git transaction.filter test plans by availability step (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/base3/file3.filtered.jsonproto"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "infra_step": true,
+    "name": "git transaction.git add (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[START_DIR]/config-internal/src/config-internal/test/scripts/generate_test_plan_summary.py",
+      "--input",
+      "[START_DIR]/base3/file3.filtered.jsonproto",
+      "--output",
+      "[START_DIR]/base3/generated/test_plans"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "name": "git transaction.generate test plan summary step (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/base3/generated/test_plans"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "infra_step": true,
+    "name": "git transaction.git add (6)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "git transaction.diffing to find changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/config-internal",
+    "infra_step": true,
+    "name": "git transaction.diffing to find changes.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
