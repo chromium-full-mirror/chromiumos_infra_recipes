@@ -80,4 +80,5 @@ class GceProvider(recipe_api.RecipeApi):
         'config.Configuration.' + method
     ]
     return self.m.easy.stdout_json_step(step_name, cmd, test_stdout=test_stdout,
+                                        ignore_exceptions=True,
                                         stdin_json=stdin_json, infra_step=True)
