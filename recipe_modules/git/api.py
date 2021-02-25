@@ -304,7 +304,7 @@ class GitApi(recipe_api.RecipeApi):
       cmd.extend(files)
     return self._step(cmd, **kwargs)
 
-  def _push(self, remote, refspec, dry_run, capture_stdout, name):
+  def _push(self, remote, refspec, dry_run, capture_stdout, name, force):
     """Runs 'git push'.
 
     Args:
@@ -312,6 +312,8 @@ class GitApi(recipe_api.RecipeApi):
       refspec (str): The refspec to push.
       dry_run (bool): If true, set --dry-run on git command.
       capture_stdout (bool): If True, return stdout in step data.
+      name (str): The name of the step. If None, generate from the args.
+      force: add force flag for git push
 
     Returns:
       StepData: See 'step.__call__'.
@@ -319,6 +321,8 @@ class GitApi(recipe_api.RecipeApi):
     args = ['push']
     if dry_run:
       args += ['--dry-run']
+    if force:
+      args += ['--force']
     stdout = None
     if capture_stdout:
       args += ['--porcelain']
@@ -327,7 +331,7 @@ class GitApi(recipe_api.RecipeApi):
     return self._step(args, stdout=stdout, name=name)
 
   def push(self, remote, refspec, dry_run=False, capture_stdout=False,
-           retry=True, name=None):
+           retry=True, name=None, force=False):
     """Runs 'git push'.
 
     Args:
@@ -336,6 +340,8 @@ class GitApi(recipe_api.RecipeApi):
       dry_run (bool): If true, set --dry-run on git command.
       capture_stdout (bool): If True, return stdout in step data.
       retry (bool): Whether to retry.  Default: True
+      name (str): The name of the step. If None, generate from the args.
+      force: add force flag for git push
 
     Returns:
       StepData: See 'step.__call__'.
@@ -344,7 +350,7 @@ class GitApi(recipe_api.RecipeApi):
     if retry:
       func = exponential_retry(retries=3, delay=datetime.timedelta(seconds=2))(
           self._push)
-    return func(remote, refspec, dry_run, capture_stdout, name)
+    return func(remote, refspec, dry_run, capture_stdout, name, force)
 
   def current_branch(self):
     """Returns the currently checked out branch name.
