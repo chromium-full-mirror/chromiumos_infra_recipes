@@ -6,9 +6,9 @@
 
 DEPS = [
     'recipe_engine/path',
+    'recipe_engine/properties',
     'tast_exec',
 ]
-
 
 def RunSteps(api):
   test_artifacts = api.path.mkdtemp(prefix='temp')
@@ -34,4 +34,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic', api.properties(**{'$chromeos/tast_exec': {
+          'should_retry': True
+      }}))

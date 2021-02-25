@@ -24,8 +24,7 @@ class TastExecApi(RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(TastExecApi, self).__init__(*args, **kwargs)
     self._exec_timeout = properties.exec_timeout or 90 * 60
-    # TODO(dhanyaganesh): switch this to properties once it populates.
-    self._should_retry = True
+    self._should_retry = properties.should_retry
 
   def download_tast(self, artifacts_gs_bucket, artifacts_gs_path,
                     test_artifacts_dir):
