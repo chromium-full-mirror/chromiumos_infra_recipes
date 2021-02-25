@@ -246,12 +246,12 @@
       "/path/to/tmp/json",
       "copy",
       "[CLEANUP]/test/cros_chroot/sdk_cache_version.json",
-      "/path/to/tmp/"
+      "/path/to/tmp/json"
     ],
     "infra_step": true,
     "name": "read sdk cache version json",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": 2}@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@version: 2@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },
@@ -263,24 +263,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\"manifest_branch\": \"\", \"version\": 3}",
-      "[CLEANUP]/sdk_cache_version.json"
+      "{\n\"version\": 3\n}",
+      "[CLEANUP]/test/cros_chroot/sdk_cache_version.json"
     ],
     "infra_step": true,
     "name": "write sdk cache version file",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"manifest_branch\": \"\", \"version\": 3}@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@version: 3@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "mv",
-      "[CLEANUP]/sdk_cache_version.json",
-      "[CLEANUP]/test/cros_chroot/sdk_cache_version.json"
-    ],
-    "name": "move sdk cache version file into place"
   },
   {
     "cmd": [],

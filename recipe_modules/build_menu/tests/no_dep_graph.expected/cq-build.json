@@ -1440,14 +1440,14 @@
       "/path/to/tmp/json",
       "copy",
       "[CACHE]/cros_chroot/sdk_cache_version.json",
-      "/path/to/tmp/"
+      "/path/to/tmp/json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "init sdk.read sdk cache version json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{}@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },
@@ -1635,29 +1635,16 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\"manifest_branch\": \"\", \"version\": 1}",
-      "[CLEANUP]/sdk_cache_version.json"
+      "{\n\"version\": 1\n}",
+      "[CACHE]/cros_chroot/sdk_cache_version.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
     "name": "init sdk.write sdk cache version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"manifest_branch\": \"\", \"version\": 1}@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@version: 1@@@",
       "@@@STEP_LOG_END@sdk_cache_version.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "mv",
-      "[CLEANUP]/sdk_cache_version.json",
-      "[CACHE]/cros_chroot/sdk_cache_version.json"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "init sdk.move sdk cache version file into place",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
