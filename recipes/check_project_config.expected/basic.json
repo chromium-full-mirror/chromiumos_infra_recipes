@@ -953,7 +953,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@raw_io.output@Test stdout from constraint checker@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
-      "@@@STEP_LINK@stdout (GS mirror)@https://storage.cloud.google.com/testprogram-testproject/cq_logs/8945511751514863184/check constraints/stdout@@@"
+      "@@@STEP_LINK@stdout (GS mirror)@https://storage.cloud.google.com/testprogram-testproject/cq_logs/8945511751514863184/check%20constraints/stdout@@@"
     ]
   },
   {

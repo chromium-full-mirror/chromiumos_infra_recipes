@@ -11,7 +11,7 @@
     "name": "nested step.basic with stdout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@stdout (GS mirror)@https://storage.cloud.google.com/testbucket/testprefix/0/basic with stdout/stdout@@@"
+      "@@@STEP_LINK@stdout (GS mirror)@https://storage.cloud.google.com/testbucket/testprefix/0/basic%20with%20stdout/stdout@@@"
     ]
   },
   {
