@@ -10,6 +10,7 @@ json files.
 """
 
 import functools
+from google.protobuf.text_format import MessageToString
 
 from recipe_engine import post_process
 
@@ -25,8 +26,10 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/time',
     'depot_tools/depot_tools',
     'depot_tools/gsutil',
+    'cros_schedule',
     'gerrit',
     'git',
     'git_cl',
@@ -94,7 +97,17 @@ def RunSteps(api, properties):
                 remote_config_file.bucket_name,
                 remote_config_file.object_name,
             ))
-
+    with api.step.nest('fetch chromiumos schedule') as presentation:
+      # Stay 10 milestones ahead.
+      schedule_fname = api.path.join(infra_config_dir,
+                                     'release/schedule/schedule.textproto')
+      last_mstone = api.cros_schedule.get_last_branched_mstone_n()
+      fetch_n = last_mstone - 70 + 10
+      mstones = api.cros_schedule.json_to_proto(
+          api.cros_schedule.fetch_chromiumdash_schedule(start_mstone=70,
+                                                        fetch_n=fetch_n))
+      api.file.write_text('write textproto', schedule_fname,
+                          MessageToString(mstones))
     # We need lucicfg from depot_tools.
     with api.depot_tools.on_path():
       # We need protoc from cipd.
@@ -196,15 +209,17 @@ def _commit_changed_files(api, repo_dir, project, labels):
 
 
 def GenTests(api):
-  yield api.test('dont_commit', api.properties(commit_changes=False))
+  yield api.test('dont_commit', api.time.seed(1613694623.0),
+                 api.properties(commit_changes=False))
 
   yield api.test(
-      'full',
+      'full', api.time.seed(1613694623.0),
       api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
                      branches=['R9000']))
 
   yield api.test(
       'old_and_new_properties_set',
+      api.time.seed(1613694623.0),
       api.properties(
           StarDoctorProperties(
               ge_bucket='test_ge_bucket',

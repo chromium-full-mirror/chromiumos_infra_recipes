@@ -13,38 +13,41 @@ class CrosScheduleTestApi(recipe_test_api.RecipeTestApi):
   def test_chromiumdash_fetch_response(self, start_mstone=88, fetch_n=2):
 
     def _make_mstone(inc_days=0, mstone=start_mstone):
+      # Annoyingly, this doesn't contain the 'Z' suffix. We have to include
+      # that before we parse as proto, but, this matches what chromiumdash
+      # gives us.
       dates = {
-          'final_beta_cut': '2021-01-12T00:00:00Z',
-          'final_beta': '2021-01-13T00:00:00Z',
-          'feature_freeze': '2020-10-30T00:00:00Z',
-          'earliest_beta': '2020-12-03T00:00:00Z',
-          'stable_refresh_first': '2021-02-02T00:00:00Z',
-          'latest_beta': '2020-12-10T00:00:00Z',
+          'final_beta_cut': '2021-01-12T00:00:00',
+          'final_beta': '2021-01-13T00:00:00',
+          'feature_freeze': '2020-10-30T00:00:00',
+          'earliest_beta': '2020-12-03T00:00:00',
+          'stable_refresh_first': '2021-02-02T00:00:00',
+          'latest_beta': '2020-12-10T00:00:00',
           'owners': {
               'clank': 'Krishna Govind',
               'bling': 'Bindu Suvarna',
               'cros': 'Marina Kazatcker',
               'desktop': 'Srinivas Sista',
           },
-          'stable_cut': '2021-01-12T00:00:00Z',
-          'stable_refresh_second': '2021-02-16T00:00:00Z',
+          'stable_cut': '2021-01-12T00:00:00',
+          'stable_refresh_second': '2021-02-16T00:00:00',
           'mstone': mstone,
-          'late_stable_date': '2021-01-26T00:00:00Z',
-          'stable_date': '2021-01-19T00:00:00Z',
+          'late_stable_date': '2021-01-26T00:00:00',
+          'stable_date': '2021-01-19T00:00:00',
           'ldaps': {
               'clank': 'govind',
               'bling': 'bindusuvarna',
               'cros': 'marinakz',
               'desktop': 'srinivassista ',
           },
-          'earliest_beta_ios': '2020-11-17T00:00:00Z',
-          'branch_point': '2020-11-12T00:00:00Z',
+          'earliest_beta_ios': '2020-11-17T00:00:00',
+          'branch_point': '2020-11-12T00:00:00',
       }
       for k, v in dates.items():
         try:
-          t = datetime.strptime(v, '%Y-%m-%dT%H:%M:%SZ')
+          t = datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
           dates[k] = (t +
-                      timedelta(days=inc_days)).strftime('%Y-%m-%dT%H:%M:%SZ')
+                      timedelta(days=inc_days)).strftime('%Y-%m-%dT%H:%M:%S')
         except TypeError, ValueError:
           pass
 

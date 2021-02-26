@@ -23,10 +23,12 @@ class CrosScheduleApi(recipe_api.RecipeApi):
       'https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone={}&n={}'
   )
 
-  def _json_to_proto(self, sched_str_json):
+  def json_to_proto(self, sched_str_json):
     """Returns a FetchMilestoneScheduleResponse from JSON repr."""
+    # Hack in timezone component to the json to satisfy protobuf's parser.
+    json_str = sched_str_json.replace('T00:00:00', 'T00:00:00Z')
     mstones = FetchMilestoneScheduleResponse()
-    return Parse(sched_str_json, mstones)
+    return Parse(json_str, mstones)
 
   def fetch_chromiumdash_schedule(self, start_mstone=None, fetch_n=10):
     """Return the json schedule from chromiumdash.
@@ -79,7 +81,7 @@ class CrosScheduleApi(recipe_api.RecipeApi):
     fetch_n = max((today - start).days / 14, 2)
     schedule_json = self.fetch_chromiumdash_schedule(start_mstone=start_mstone,
                                                      fetch_n=fetch_n)
-    mstones = self._json_to_proto(schedule_json)
+    mstones = self.json_to_proto(schedule_json)
     mstones = sorted(mstones.mstones, key=lambda x: x.mstone)
     # Very lazy straight iteration (no use being much more clever).
     prev = None
