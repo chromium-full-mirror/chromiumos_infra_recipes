@@ -269,6 +269,10 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         self.m.file.write_raw('write {}'.format(LEGACY_CONFIG), file_path,
                               contents)
 
+        # Refresh generated files.
+        self.m.step('./config/refresh_generated_files',
+                    ['./config/refresh_generated_files'])
+
     with self.m.step.nest('update config'):
       config_path = project_path[self.CONFIG_PROJECT]
       with self.m.context(cwd=config_path):
@@ -289,6 +293,9 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         release_builders = self._prune_builders(release_builders)
         self.m.file.write_proto('write {}'.format(CONFIG), file_path,
                                 release_builders, 'TEXTPB')
+
+        # Regenerate config.
+        self.m.step('./regenerate_configs.sh', ['./regenerate_configs.sh'])
 
     with self.m.step.nest('create CLs'):
       with self.m.context(cwd=workpath):

@@ -184,6 +184,16 @@
     ]
   },
   {
+    "cmd": [
+      "./config/refresh_generated_files"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "name": "update legacy config../config/refresh_generated_files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "update config"
   },
@@ -306,6 +316,16 @@
       "@@@STEP_LOG_LINE@release_builders.textpb@  build_schedule: \"0 8 * * *\"@@@",
       "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
       "@@@STEP_LOG_END@release_builders.textpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "./regenerate_configs.sh"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "name": "update config../regenerate_configs.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
