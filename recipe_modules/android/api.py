@@ -27,6 +27,7 @@ ANDROID_PACKAGE = {
     ('git_pi-arc', 'cheets'): 'android-container-pi',
     ('git_pi-arc-m86', 'cheets'): 'android-container-pi',
     ('git_rvc-arc', 'bertha'): 'android-vm-rvc',
+    ('git_sc-arc-dev', 'bertha'): 'android-vm-sc',
     ('git_master-arc-dev', 'bertha'): 'android-vm-master'
 }
 
