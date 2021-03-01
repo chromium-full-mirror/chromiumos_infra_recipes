@@ -1060,7 +1060,7 @@
       "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1156,10 +1156,10 @@
       "@@@STEP_LOG_LINE@published event@  \"uprevPackagesResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"modifiedEbuilds\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild\"@@@",
       "@@@STEP_LOG_LINE@published event@      }, @@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild\"@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ], @@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": \"1.2.3\"@@@",
@@ -1188,7 +1188,7 @@
     },
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJzYnVpbGQgY2hyb21pdW1vcyB3aXRo\\nIHVwcmV2ZWQgUGFyYWxsZWxzfHVwcmV2IHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlBhY2th\\nZ2VTZXJ2aWNlL1VwcmV2fGNhbGwgYnVpbGQgQVBJIHNjcmlwdOICAhgB6gJxCi8KLVtTVEFSVF9E\\nSVJdL2Nocm9taXVtb3Mvc3JjL292ZXJsYXkvZm9vLmVidWlsZAo3CjVbU1RBUlRfRElSXS9jaHJv\\nbWl1bW9zL3NyYy9wcml2YXRlLW92ZXJsYXkvYmFyLmVidWlsZBIFMS4yLjM=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJzYnVpbGQgY2hyb21pdW1vcyB3aXRo\\nIHVwcmV2ZWQgUGFyYWxsZWxzfHVwcmV2IHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlBhY2th\\nZ2VTZXJ2aWNlL1VwcmV2fGNhbGwgYnVpbGQgQVBJIHNjcmlwdOICAhgB6gKFAQo5CjdbU1RBUlRf\\nRElSXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28uZWJ1aWxkCkEKP1tTVEFS\\nVF9ESVJdL2Nocm9taXVtb3Nfd29ya3NwYWNlL3NyYy9wcml2YXRlLW92ZXJsYXkvYmFyLmVidWls\\nZBIFMS4yLjM=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

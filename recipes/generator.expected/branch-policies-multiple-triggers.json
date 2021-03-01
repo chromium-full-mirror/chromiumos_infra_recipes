@@ -925,7 +925,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"}]}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1047,8 +1047,8 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos/src/overlay",
-      "[START_DIR]/chromiumos/src/private-overlay",
+      "[START_DIR]/chromiumos_workspace/src/overlay",
+      "[START_DIR]/chromiumos_workspace/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -1104,7 +1104,7 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1165,7 +1165,7 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,

@@ -36,6 +36,17 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     """
     return str(self.m.path['start_dir'].join(subpath))
 
+  def src_path(self, path):
+    """Return the given path in the source tree checkout.
+
+    Args:
+      path (str): Relative path of interest.
+
+    Returns:
+      str: An absolute path to the source file.
+    """
+    return str(self.m.src_state.workspace_path.join(path))
+
   @property
   def android_service_responses(self):
     """Generate responses for AndroidService."""
@@ -119,7 +130,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         },
     ])
     responses['RegenBuildCache'] = jsonify(modified_overlays=[{
-        'path': self.path('chromiumos/src/overlay')
+        'path': self.src_path('src/overlay')
     }])
     return responses
 
@@ -260,21 +271,20 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['Uprev'] = jsonify(
         version='1.2.3', modified_ebuilds=[
             {
-                'path': self.path('chromiumos/src/overlay/foo.ebuild')
+                'path': self.src_path('src/overlay/foo.ebuild')
             },
             {
-                'path': self.path('chromiumos/src/private-overlay/bar.ebuild')
+                'path': self.src_path('src/private-overlay/bar.ebuild')
             },
         ])
     responses['UprevVersionedPackage'] = jsonify(responses=[
         dict(
             version='1.2.3', modified_ebuilds=[
                 {
-                    'path': self.path('chromiumos/src/overlay/foo.ebuild')
+                    'path': self.src_path('src/overlay/foo.ebuild')
                 },
                 {
-                    'path':
-                        self.path('chromiumos/src/private-overlay/bar.ebuild')
+                    'path': self.src_path('src/private-overlay/bar.ebuild')
                 },
             ])
     ])

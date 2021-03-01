@@ -754,7 +754,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"}]}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -868,9 +868,9 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check.git ls-files",
     "~followup_annotations": [
@@ -883,9 +883,9 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check.git diff",
     "~followup_annotations": [
@@ -904,9 +904,9 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check (2).git ls-files",
     "~followup_annotations": [
@@ -919,9 +919,9 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "try uprev chromeos-base/chromeos-chrome.verify updates.diff check (2).git diff",
     "~followup_annotations": [

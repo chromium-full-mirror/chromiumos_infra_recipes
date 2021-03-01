@@ -1395,7 +1395,7 @@
       "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1490,10 +1490,10 @@
       "@@@STEP_LOG_LINE@published event@  \"uprevPackagesResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"modifiedEbuilds\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos/src/overlay/foo.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild\"@@@",
       "@@@STEP_LOG_LINE@published event@      }, @@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos/src/private-overlay/bar.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild\"@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ], @@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": \"1.2.3\"@@@",
@@ -1585,7 +1585,7 @@
     },
     "infra_step": true,
     "name": "uprev packages.uprev ebuilds.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCWXVwcmV2IHBhY2thZ2VzfHVwcmV2IGVidWlsZHN8Y2Fs\\nbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n4gICGAHqAnEKLwotW1NUQVJUX0RJUl0vY2hyb21pdW1vcy9zcmMvb3ZlcmxheS9mb28uZWJ1aWxk\\nCjcKNVtTVEFSVF9ESVJdL2Nocm9taXVtb3Mvc3JjL3ByaXZhdGUtb3ZlcmxheS9iYXIuZWJ1aWxk\\nEgUxLjIuMw==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BNoCWXVwcmV2IHBhY2thZ2VzfHVwcmV2IGVidWlsZHN8Y2Fs\\nbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n4gICGAHqAoUBCjkKN1tTVEFSVF9ESVJdL2Nocm9taXVtb3Nfd29ya3NwYWNlL3NyYy9vdmVybGF5\\nL2Zvby5lYnVpbGQKQQo/W1NUQVJUX0RJUl0vY2hyb21pdW1vc193b3Jrc3BhY2Uvc3JjL3ByaXZh\\ndGUtb3ZlcmxheS9iYXIuZWJ1aWxkEgUxLjIuMw==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1600,7 +1600,7 @@
       "rev-parse",
       "--show-toplevel"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.git rev-parse",
     "~followup_annotations": [
@@ -1613,7 +1613,7 @@
       "rev-parse",
       "--show-toplevel"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "uprev packages.git rev-parse (2)",
     "~followup_annotations": [
@@ -1631,9 +1631,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.git add",
     "~followup_annotations": [
@@ -1651,7 +1651,7 @@
       "Marking set of ebuilds as stable",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.write commit message",
     "~followup_annotations": [
@@ -1667,9 +1667,9 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1",
       "--",
-      "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.git commit",
     "~followup_annotations": [
@@ -1680,9 +1680,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.git add (2)",
     "~followup_annotations": [
@@ -1700,7 +1700,7 @@
       "Marking set of ebuilds as stable",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.write commit message (2)",
     "~followup_annotations": [
@@ -1716,9 +1716,9 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_2",
       "--",
-      "[START_DIR]/chromiumos/src/overlay/foo.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "uprev packages.commit uprevs.git commit (2)",
     "~followup_annotations": [
@@ -1737,11 +1737,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos/src/private-overlay/bar.ebuild",
+      "[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1754,7 +1754,7 @@
     "name": "uprev packages.push uprevs.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/private-overlay/bar.ebuild|src/[START_DIR]/chromiumos/src/private-overlay/bar.ebuild|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild|src/[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1767,7 +1767,7 @@
       "cros",
       "HEAD:refs/heads/refs/heads/main"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.push uprevs.git push",
     "~followup_annotations": [
@@ -1791,7 +1791,7 @@
       "--short",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev.git symbolic-ref",
     "~followup_annotations": [
@@ -1805,7 +1805,7 @@
       "--short",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev.git symbolic-ref (2)",
     "~followup_annotations": [
@@ -1818,7 +1818,7 @@
       "fetch",
       "cros"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev.git fetch",
     "~followup_annotations": [
@@ -1831,7 +1831,7 @@
       "checkout",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev.git checkout",
     "~followup_annotations": [
@@ -1846,7 +1846,7 @@
       "-m",
       "Resolve uprev conflict"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev.git merge",
     "~followup_annotations": [
@@ -1862,7 +1862,7 @@
       "cros",
       "HEAD:refs/heads/refs/heads/main"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev.git push",
     "~followup_annotations": [
@@ -1876,7 +1876,7 @@
       "checkout",
       "main"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/private-overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev.git checkout (2)",
     "~followup_annotations": [
@@ -1887,11 +1887,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos/src/overlay/foo.ebuild",
+      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1904,7 +1904,7 @@
     "name": "uprev packages.push uprevs.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos/src/overlay/foo.ebuild|src/[START_DIR]/chromiumos/src/overlay/foo.ebuild|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild|src/[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1917,7 +1917,7 @@
       "cros",
       "HEAD:refs/heads/refs/heads/main"
     ],
-    "cwd": "[START_DIR]/chromiumos/src/overlay",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "uprev packages.push uprevs.git push (2)",
     "~followup_annotations": [
