@@ -380,14 +380,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     return not self.m.cros_infra_config.should_exit(install_packages.run_spec)
 
-  def build_and_test_images(self, config=None):
+  def build_and_test_images(self, config=None, include_version=False):
     """Build the image and run ebuild tests.
 
     This behavior is adjusted by the run_spec values in config.
 
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
-
+      include_version (bool): Whether or not to pass the workspace verson
+        to sysroot_util.build.
     Returns:
       (bool): Whether to continue with the build.
     """
@@ -398,9 +399,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
     builder_path = self.m.cros_artifacts.artifacts_gs_path(
         config.id.name, self.build_target, config.id.type)
 
+    extra_kwargs = {}
+    if include_version:
+      version = self.m.cros_version.read_workspace_version()
+      extra_kwargs = {'version': str(version)}
+
     self.m.sysroot_util.build_images(build_images.image_types, builder_path,
                                      build_images.disable_rootfs_verification,
-                                     build_images.disk_layout)
+                                     build_images.disk_layout, **extra_kwargs)
 
     # If we should run ebuild tests, do that.
     if self.m.cros_infra_config.should_run(unit_tests.ebuilds_run_spec):

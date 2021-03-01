@@ -701,7 +701,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#383)(self, config=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#383)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -709,7 +709,8 @@ This behavior is adjusted by the run_spec values in config.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
-
+  include_version (bool): Whether or not to pass the workspace verson
+    to sysroot_util.build.
 Returns:
   (bool): Whether to continue with the build.
 
@@ -804,7 +805,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#445)(self, config=None, failing_build=False, private_bundle_func=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#451)(self, config=None, failing_build=False, private_bundle_func=None):**
 
 Upload artifacts from the build.
 
@@ -816,7 +817,7 @@ Args:
       as when there is no Build API on the branch), this will be called
       instead of the internal bundling method.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#467)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#473)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -5401,7 +5402,7 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#241)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, timeout_sec=(60 \* 60), build_test_data=None, test_test_data=None, name=None):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#241)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, version=None, timeout_sec=(60 \* 60), build_test_data=None, test_test_data=None, name=None):**
 
 Build and validate images.
 
@@ -5410,6 +5411,7 @@ Args:
   builder_path (str): Builder path in GS for artifacts.
   disable_rootfs_verification (bool): whether to disable rootfs verification.
   disk_layout (str): disk_layout to set, or empty for default.
+  version (str): version string to pass to build API, or None.
   timeout_sec (int): Step timeout (in seconds).
   build_test_data (str): test response (JSON) from the ImageService/Create
       call, or None.

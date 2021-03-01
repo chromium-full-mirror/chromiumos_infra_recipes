@@ -40,7 +40,7 @@ def DoRunSteps(api, config, _properties):
   raise_upload_failure = True
   try:
     if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
-      if api.build_menu.build_and_test_images(config):
+      if api.build_menu.build_and_test_images(config, include_version=True):
         api.build_menu.upload_prebuilts(config)
   except StepFailure:
     raise_upload_failure = False
