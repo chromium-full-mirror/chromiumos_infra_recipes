@@ -222,8 +222,11 @@ def build_vm_image(api, properties, artifacts_path, parallels_version):
     if build.status != common_pb2.SUCCESS:
       raise StepFailure('Triggered VM image build did not succeed')
 
-    output = json_format.ParseDict(build.output.properties,
-                                   BuildParallelsImageProperties())
+    # The build output contains other fields, which are not in
+    # BuildParallelsImageProperties. These can be safely ignored.
+    output = json_format.ParseDict(js_dict=build.output.properties,
+                                   message=BuildParallelsImageProperties(),
+                                   ignore_unknown_fields=True)
 
     presentation.links['uploaded image'] = '{}/{}/{}/{}'.format(
         _PANTHEON_PREFIX, properties.test_image_gs_bucket,
@@ -568,13 +571,14 @@ def GenTests(api):
       ), created_by='user:luci-scheduler@appspot.gserviceaccount.com',
       create_time=timestamp_pb2.Timestamp(seconds=1527292217),
       status=common_pb2.SUCCESS, output=build_pb2.Build.Output())
-  build_success.output.properties.update(
-      json_format.MessageToDict(
-          BuildParallelsImageProperties(
-              image_name='pre_pluginvm_image_1.2.3.4_20201127.zip',
-              image_size=9876543210,
-              image_sha256='aabbccddeeff0011223344556677889900',
-          )))
+  build_success.output.properties.update({
+      '$recipe_engine/path': {
+          'other': 'properties'
+      },
+      'image_name': 'pre_pluginvm_image_1.2.3.4_20201127.zip',
+      'image_size': 9876543210,
+      'image_sha256': 'aabbccddeeff0011223344556677889900',
+  })
   yield api.build_menu.test(
       'uprev-success', api.properties(**good_props), api.git.diff_check(True),
       api.buildbucket.simulated_collect_output(

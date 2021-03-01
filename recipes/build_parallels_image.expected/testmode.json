@@ -52,6 +52,15 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@image_name@\"test_image.zip\"@@@",
+      "@@@SET_BUILD_PROPERTY@image_sha256@\"1234567890abcdef1234567890abcdef\"@@@",
+      "@@@SET_BUILD_PROPERTY@image_size@1234567890@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

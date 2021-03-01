@@ -6062,7 +6062,7 @@ behaving as expected.
 &mdash; **def [RunSteps](/recipe_modules/build_menu/tests/properties.py#27)(api, properties):**
 ### *recipes* / [build\_parallels\_image](/recipes/build_parallels_image.py)
 
-[DEPS](/recipes/build_parallels_image.py#26): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_parallels_image.py#27): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe for building a Parallels image for testing.
 
@@ -6076,9 +6076,9 @@ for more details.
 
 This recipe is invoked as part of uprev_parallels_pin.
 
-&mdash; **def [RunSteps](/recipes/build_parallels_image.py#56)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_parallels_image.py#57)(api, properties):**
 
-&mdash; **def [build\_vm\_image](/recipes/build_parallels_image.py#86)(api, properties):**
+&mdash; **def [build\_vm\_image](/recipes/build_parallels_image.py#88)(api, properties):**
 
 Builds a new VM image for testing.
 
@@ -6087,7 +6087,7 @@ Returns:
   image_size(int): The size of the generated image, in bytes.
   image_hash(str): The base64-encoded SHA256 hash of the generated image.
 
-&mdash; **def [invoke\_tast](/recipes/build_parallels_image.py#178)(api, test_artifacts_dir, build_gs_bucket, build_gs_path, dest_path):**
+&mdash; **def [invoke\_tast](/recipes/build_parallels_image.py#180)(api, test_artifacts_dir, build_gs_bucket, build_gs_path, dest_path):**
 
 Runs tast to build the new VM image.
 
@@ -7918,7 +7918,7 @@ Args:
 Returns:
   dict: The details of the new test image.
 
-&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#247)(api, properties, package, new_version_pin):**
+&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#250)(api, properties, package, new_version_pin):**
 
 Commits and uploads the uprev of the version-pin file.
 
@@ -7927,18 +7927,18 @@ Args:
       commit message.
   new_version_pin (VersionPin): the new version pin data.
 
-&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#289)(api, properties):**
+&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#292)(api, properties):**
 
 Gets the latest version of Parallels from the upstream bucket.
 
 Returns:
   string: the latest upstream version of Parallels.
 
-&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#370)(api, properties):**
+&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#373)(api, properties):**
 
 Gets the path of the VERSION-PIN file.
 
-&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#329)(api, properties):**
+&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#332)(api, properties):**
 
 Reads and returns the content of the VERSION-PIN file.
 
@@ -7948,7 +7948,7 @@ have been checked out.
 Returns:
   VersionPin: the pinned version data.
 
-&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#375)(version, previous_version):**
+&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#378)(version, previous_version):**
 
 Returns if version occurs logically after pervious_version.
 
@@ -7958,7 +7958,7 @@ Args:
   version (str): The version to compare.
   previous_version (str): The previous version to compare with.
 
-&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#352)(api, properties, new_version):**
+&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#355)(api, properties, new_version):**
 
 Sets the content of the VERSION-PIN file.
 

@@ -20,6 +20,7 @@ from collections import namedtuple
 import json
 
 from recipe_engine import post_process
+from recipe_engine.post_process import GetBuildProperties
 from recipe_engine.recipe_api import StepFailure
 from PB.test_platform.taskstate import TaskState
 
@@ -78,9 +79,10 @@ def RunSteps(api, properties):
     sha256 = '1234567890abcdef1234567890abcdef'
 
   # Set recipe outputs.
-  properties.image_name = image_name
-  properties.image_size = size
-  properties.image_sha256 = sha256
+  with api.step.nest('set output properties') as step:
+    step.properties['image_name'] = image_name
+    step.properties['image_size'] = size
+    step.properties['image_sha256'] = sha256
 
 
 def build_vm_image(api, properties):
@@ -155,7 +157,7 @@ def build_vm_image(api, properties):
   with api.step.nest('compute image size and sha256') as presentation:
     sha256 = api.easy.stdout_step(
         'get file sha256 hash', ['sha256sum', image_path],
-        test_stdout='1234567890abcdef1234567890abcdef /path/to/file').split(
+        test_stdout='fedbca09876543211234567890abcdef /path/to/file').split(
             ' ', 1)[0]
     size = int(
         api.easy.stdout_step('get file length',
@@ -385,11 +387,26 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'provision DUT'),
       api.post_check(post_process.MustRun, 'upload image'),
       api.post_check(post_process.MustRun, 'compute image size and sha256'),
-      api.post_check(post_process.StatusSuccess))
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(lambda check, steps: check(
+          GetBuildProperties(steps).get('image_name', '') ==
+          'pre_pluginvm_image_1.2.3.4_20120514.zip')),
+      api.post_check(lambda check, steps: check(
+          GetBuildProperties(steps).get('image_size', -1) == 9123456789)),
+      api.post_check(lambda check, steps: check(
+          GetBuildProperties(steps).get('image_sha256', '') ==
+          'fedbca09876543211234567890abcdef')))
 
   # Test mode
   props = good_props.copy()
   props['test_mode'] = True
-  yield api.build_menu.test('testmode', api.properties(**props),
-                            api.phosphorus.properties(),
-                            api.post_check(post_process.StatusSuccess))
+  yield api.build_menu.test(
+      'testmode', api.properties(**props), api.phosphorus.properties(),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(lambda check, steps: check(
+          GetBuildProperties(steps).get('image_name', '') == 'test_image.zip')),
+      api.post_check(lambda check, steps: check(
+          GetBuildProperties(steps).get('image_size', -1) == 1234567890)),
+      api.post_check(lambda check, steps: check(
+          GetBuildProperties(steps).get('image_sha256', '') ==
+          '1234567890abcdef1234567890abcdef')))

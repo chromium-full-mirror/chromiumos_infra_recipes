@@ -502,7 +502,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@metadata@{@@@",
       "@@@STEP_LOG_LINE@metadata@  \"url\": \"gs://chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip\", @@@",
-      "@@@STEP_LOG_LINE@metadata@  \"sha256sum\": \"1234567890abcdef1234567890abcdef\", @@@",
+      "@@@STEP_LOG_LINE@metadata@  \"sha256sum\": \"fedbca09876543211234567890abcdef\", @@@",
       "@@@STEP_LOG_LINE@metadata@  \"size\": 9123456789@@@",
       "@@@STEP_LOG_LINE@metadata@}@@@",
       "@@@STEP_LOG_END@metadata@@@"
@@ -527,6 +527,15 @@
     "name": "compute image size and sha256.get file length",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@image_name@\"pre_pluginvm_image_1.2.3.4_20120514.zip\"@@@",
+      "@@@SET_BUILD_PROPERTY@image_sha256@\"fedbca09876543211234567890abcdef\"@@@",
+      "@@@SET_BUILD_PROPERTY@image_size@9123456789@@@"
     ]
   },
   {
