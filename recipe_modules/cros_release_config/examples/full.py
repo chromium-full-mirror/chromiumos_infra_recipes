@@ -24,7 +24,8 @@ def construct_legacy_config(*blocks):
 
 LEGACY_BLOCK_NEW = """
       ('{}',
-       ['grunt-android-pi-pre-flight-branch'],
+       ['kevin-android-pi-pre-flight-branch',
+        'hatch-arc-r-android-rvc-pre-flight-branch'],
        '',
        [],
        [],

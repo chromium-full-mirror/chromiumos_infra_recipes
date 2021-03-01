@@ -19,7 +19,8 @@ CONFIG = "release/release_builders.textpb"
 
 LEGACY_RELEASE_BLOCK_TEMPLATE = """
       ('{}',
-       ['grunt-android-pi-pre-flight-branch'],
+       ['kevin-android-pi-pre-flight-branch',
+        'hatch-arc-r-android-rvc-pre-flight-branch'],
        '',
        [],
        [],
