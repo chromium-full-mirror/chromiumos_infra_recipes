@@ -36,5 +36,5 @@ message ChromeProperties {
 
   // TODO(crbug/1086714): remove feature flag when fixed.
   // Disable NeedsChromeSource, since it causes errors.
-  bool call_needs_chrome_source = 6;
+  bool no_call_needs_chrome_source = 6;
 }

@@ -54,14 +54,13 @@ class ChromeApi(recipe_api.RecipeApi):
         if properties.HasField('deps_isolate') else None)
     self._allow_deps_isolate = properties.allow_deps_isolate
     self._version = properties.version
-    # TODO(crbug/1086714): remove once working.
-    self._call_needs_chrome_source = properties.call_needs_chrome_source
+    self._no_call_needs_chrome_source = properties.no_call_needs_chrome_source
 
   def initialize(self):
     """Initialization that follows all module loading."""
     # TODO(crbug/1086714): remove once working.
-    self._call_needs_chrome_source |= (
-        'chromeos.chrome.call_needs_chrome_source' in
+    self._no_call_needs_chrome_source |= (
+        'chromeos.chrome.no_call_needs_chrome_source' in
         self.m.cros_infra_config.experiments)
 
   def _get_local_version(self, chroot, build_target):
@@ -295,6 +294,49 @@ class ChromeApi(recipe_api.RecipeApi):
         return True
     return False
 
+  def _fallback_needs_chrome_source(self, request, dep_graph, patch_sets=None):
+    """Legacy fallback to check whether chrome source is needed.
+
+    Args:
+      request (InstallPackagesRequest): InstallPackagesRequest for the build.
+      dep_graph (DepGraph): From cros_relevance.get_dependency_graph.
+      patch_sets (list[gerrit.PatchSet]): Applied patchsets.  Default: the list
+        from workspace_util.
+
+    Returns:
+      NeedsChromeSourceResponse: Response from BuildAPI
+    """
+    _type = NeedsChromeSourceResponse
+    response = _type()
+    chroot = request.chroot
+    target = request.sysroot.build_target
+    ignore_prebuilts = (
+        request.flags.compile_source or request.flags.toolchain_changed)
+
+    # Only bother to do these checks if the build target needs chrome src.
+    if self.needs_chrome(target, chroot, packages=request.packages):
+
+      # TODO(crbug.com/1086714): Remove dep_graph access and corresponding
+      # use, we shouldn't be inspecting this, rather, call the build api.
+      flattened_packages = []
+      for package in dep_graph.target.package_deps:
+        for dep_package in package.dependency_packages:
+          flattened_packages.append(dep_package)
+
+      response.builds_chrome = True
+      raw_reasons = [
+          _type.NO_PREBUILT if not self.has_chrome_prebuilt(
+              target, chroot, ignore_prebuilts=ignore_prebuilts) else None,
+          _type.LOCAL_UPREV if self.maybe_uprev_local_chrome(
+              target, chroot, patch_sets) else None,
+          _type.FOLLOWER_LACKS_PREBUILT if self.follower_lacks_prebuilt(
+              target, chroot, flattened_packages) else None,
+      ]
+      response.reasons.extend([r for r in raw_reasons if r])
+      response.needs_chrome_source = response.reasons != []
+
+    return response
+
   def needs_chrome_source(self, request, dep_graph, presentation,
                           patch_sets=None):
     """Checks whether chrome source is needed.
@@ -311,47 +353,23 @@ class ChromeApi(recipe_api.RecipeApi):
     """
     patch_sets = patch_sets or self.m.workspace_util.patch_sets
 
-    # TODO(https://crbug.com/1086714): NeedsChromeSource is temporarily removed,
-    # remove the "#pragma: nocover" when it comes back.
     # If there is a NeedChromeSource endpoint, use that.
-    if self._call_needs_chrome_source and self.m.cros_build_api.has_endpoint(
+    if not self._no_call_needs_chrome_source and self.m.cros_build_api.has_endpoint(
         self.m.cros_build_api.PackageService,
         'NeedsChromeSource'):  #pragma: nocover
-      response = self.m.cros_build_api.PackageService.NeedsChromeSource(
-          NeedsChromeSourceRequest(install_request=request))
+      try:
+        response = self.m.cros_build_api.PackageService.NeedsChromeSource(
+            NeedsChromeSourceRequest(install_request=request))
+      except Exception as e:
+        with self.m.step.nest('ignored exception') as pres:
+          pres.logs['caught exception'] = [repr(e)]
+        response = self._fallback_needs_chrome_source(request=request,
+                                                      dep_graph=dep_graph,
+                                                      patch_sets=patch_sets)
     else:
-      # Here we implement a (buggy) version of NeedsChromeSource.
-      # TODO(crbug/1086714): Drop this (incomplete) code once bisection does not
-      # need us to keep it.
-      _type = NeedsChromeSourceResponse
-      response = _type()
-      chroot = request.chroot
-      target = request.sysroot.build_target
-      ignore_prebuilts = (
-          request.flags.compile_source or request.flags.toolchain_changed)
-
-      # Only bother to do these checks if the build target needs chrome src.
-      if self.needs_chrome(target, chroot, packages=request.packages):
-
-        # TODO(crbug.com/1086714): Remove dep_graph access and corresponding
-        # use, we shouldn't be inspecting this, rather, call the build api.
-        flattened_packages = []
-        for package in dep_graph.target.package_deps:
-          for dep_package in package.dependency_packages:
-            flattened_packages.append(dep_package)
-
-        response.builds_chrome = True
-        raw_reasons = [
-            _type.NO_PREBUILT if not self.has_chrome_prebuilt(
-                target, chroot, ignore_prebuilts=ignore_prebuilts) else None,
-            _type.LOCAL_UPREV if self.maybe_uprev_local_chrome(
-                target, chroot, patch_sets) else None,
-            _type.FOLLOWER_LACKS_PREBUILT if self.follower_lacks_prebuilt(
-                target, chroot, flattened_packages) else None,
-        ]
-        response.reasons.extend([r for r in raw_reasons if r])
-        response.needs_chrome_source = response.reasons != []
-
+      response = self._fallback_needs_chrome_source(request=request,
+                                                    dep_graph=dep_graph,
+                                                    patch_sets=patch_sets)
     # AKA: "Chrome Source Needed Reason".  Create the dictionary of all possible
     # reasons (ignoring UNSPECIFIED), which we will then
     csnr = {

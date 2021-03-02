@@ -263,11 +263,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     )
     responses['HasChromePrebuilt'] = jsonify(has_prebuilt=False)
     responses['HasPrebuilt'] = jsonify(has_prebuilt=False)
-    # TODO(crbug/1086714): Add this when NeedsChromeSource is implemented.
-    #responses['NeedsChromeSource'] = jsonify(
-    #    needs_chrome_source=True,
-    #    reasons=["LOCAL_UPREV", "NO_PREBUILT"],
-    #)
+    responses['NeedsChromeSource'] = jsonify(
+        needs_chrome_source=True,
+        reasons=["LOCAL_UPREV", "NO_PREBUILT"],
+    )
     responses['Uprev'] = jsonify(
         version='1.2.3', modified_ebuilds=[
             {
