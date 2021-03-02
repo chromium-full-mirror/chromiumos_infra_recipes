@@ -295,9 +295,10 @@ def _regenerate_test_plan(api, properties, project_infos):
   Args:
     project_infos: ignored, but accepted. See notes on _ACTIONS.
   """
-  config_project_info = api.repo.project_info('chromeos/config-internal')
-  config_internal_test = api.context.cwd.join('src/config-internal/test')
-  config_internal_test_gen = config_internal_test.join('generated')
+  config_internal = api.context.cwd.join("src/config-internal")
+  config_internal_test = config_internal.join('test')
+  config_internal_test_plans = config_internal_test.join('plans')
+
   message = '''Updating generated test plans.
 
 Cr-Build-Url: %s
@@ -309,14 +310,11 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
     try:
       api.step('run generate', ['./generate'])
       with api.step.nest('diffing to find changes'):
-        if not api.git.diff_check(config_internal_test_gen):
+        if not api.git.diff_check(config_internal_test_plans):
           presentation.step_text = 'no changes'
           return []
 
-      cl_config = properties.cl_configs[cpp_pb2.ActionTypes.Name(
-          cpp_pb2.REGENERATE_TEST_PLAN)]
-
-      return [CommitInfo(config_internal_test_gen, 'Updating test plan.', [])]
+      return [CommitInfo(config_internal_test_plans, message, [])]
     except StepFailure:
       presentation.status = 'FAILURE'  # swallow StepFailure and keep going
       return []
