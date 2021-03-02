@@ -45,9 +45,42 @@ def RunSteps(api, properties):
   api.android.try_uprev(chroot, sysroot, patch_sets)
 
 
-TARGET_VERSIONS_WITH_ANDROID = """
+TARGET_VERSIONS_WITH_ANDROID_PI = """
+{
+  "androidBranchVersion": "git_pi-arc",
+  "androidTargetVersion": "cheets",
+  "androidVersion": "7002143",
+  "chromeVersion": "89.0.4339.0",
+  "fullVersion": "R89-13635.0.0",
+  "milestoneVersion": "89",
+  "platformVersion": "13635.0.0"
+}
+"""
+TARGET_VERSIONS_WITH_ANDROID_RVC = """
 {
   "androidBranchVersion": "git_rvc-arc",
+  "androidTargetVersion": "bertha",
+  "androidVersion": "7002143",
+  "chromeVersion": "89.0.4339.0",
+  "fullVersion": "R89-13635.0.0",
+  "milestoneVersion": "89",
+  "platformVersion": "13635.0.0"
+}
+"""
+TARGET_VERSIONS_WITH_ANDROID_SC = """
+{
+  "androidBranchVersion": "git_sc-arc-dev",
+  "androidTargetVersion": "bertha",
+  "androidVersion": "7002143",
+  "chromeVersion": "89.0.4339.0",
+  "fullVersion": "R89-13635.0.0",
+  "milestoneVersion": "89",
+  "platformVersion": "13635.0.0"
+}
+"""
+TARGET_VERSIONS_WITH_ANDROID_MAIN = """
+{
+  "androidBranchVersion": "git_master-arc-dev",
   "androidTargetVersion": "bertha",
   "androidVersion": "7002143",
   "chromeVersion": "89.0.4339.0",
@@ -78,29 +111,85 @@ TARGET_VERSIONS_WITH_BAD_ANDROID = """
   "platformVersion": "13635.0.0"
 }
 """
+TARGET_VERSIONS_WITH_MISSING_ANDROID_BRANCH = """
+{
+  "androidTargetVersion": "bertha",
+  "androidVersion": "7002143",
+  "chromeVersion": "89.0.4339.0",
+  "fullVersion": "R89-13635.0.0",
+  "milestoneVersion": "89",
+  "platformVersion": "13635.0.0"
+}
+"""
+TARGET_VERSIONS_WITH_MISSING_ANDROID_TARGET = """
+{
+  "androidBranchVersion": "git_pi-arc",
+  "androidVersion": "7002143",
+  "chromeVersion": "89.0.4339.0",
+  "fullVersion": "R89-13635.0.0",
+  "milestoneVersion": "89",
+  "platformVersion": "13635.0.0"
+}
+"""
 
 
 def GenTests(api):
-  android_version = api.step_data(
+  android_pi_version = api.step_data(
       'get android version information.read output file',
-      api.file.read_raw(TARGET_VERSIONS_WITH_ANDROID))
+      api.file.read_raw(TARGET_VERSIONS_WITH_ANDROID_PI))
+  android_rvc_version = api.step_data(
+      'get android version information.read output file',
+      api.file.read_raw(TARGET_VERSIONS_WITH_ANDROID_RVC))
+  android_sc_version = api.step_data(
+      'get android version information.read output file',
+      api.file.read_raw(TARGET_VERSIONS_WITH_ANDROID_SC))
+  android_main_version = api.step_data(
+      'get android version information.read output file',
+      api.file.read_raw(TARGET_VERSIONS_WITH_ANDROID_MAIN))
   no_android_version = api.step_data(
       'get android version information.read output file',
       api.file.read_raw(TARGET_VERSIONS_WITHOUT_ANDROID))
   bad_android_version = api.step_data(
       'get android version information.read output file',
       api.file.read_raw(TARGET_VERSIONS_WITH_BAD_ANDROID))
+  missing_android_branch_version = api.step_data(
+      'get android version information.read output file',
+      api.file.read_raw(TARGET_VERSIONS_WITH_MISSING_ANDROID_BRANCH))
+  missing_android_target_version = api.step_data(
+      'get android version information.read output file',
+      api.file.read_raw(TARGET_VERSIONS_WITH_MISSING_ANDROID_TARGET))
 
-  def test_data(changes=True, with_android=True, bad_android=False):
+  def test_data(changes=True, with_android=True,
+                android_steps=android_rvc_version):
     data = api.properties(TestProperties(changes=changes))
-    android = bad_android_version if bad_android else android_version
-    data += android if with_android else no_android_version
+    data += android_steps if with_android else no_android_version
     return data
 
   yield api.test('changes-with-android',
                  test_data(changes=True, with_android=True))
   yield api.test('no-changes-with-android',
                  test_data(changes=False, with_android=True))
+  yield api.test(
+      'changes-with-android-p',
+      test_data(changes=True, with_android=True,
+                android_steps=android_pi_version))
+  yield api.test(
+      'changes-with-android-sc',
+      test_data(changes=True, with_android=True,
+                android_steps=android_sc_version))
+  yield api.test(
+      'changes-with-android-main',
+      test_data(changes=True, with_android=True,
+                android_steps=android_main_version))
+  yield api.test(
+      'with-missing-android-branch',
+      test_data(changes=True, with_android=True,
+                android_steps=missing_android_branch_version))
+  yield api.test(
+      'with-missing-android-target',
+      test_data(changes=True, with_android=True,
+                android_steps=missing_android_target_version))
   yield api.test('without-android', test_data(with_android=False))
-  yield api.test('with-bad-android',
-                 test_data(with_android=True, bad_android=True))
+  yield api.test(
+      'with-bad-android',
+      test_data(with_android=True, android_steps=bad_android_version))
