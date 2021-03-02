@@ -9,7 +9,7 @@
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-#init-hook=
+init-hook='import sys; sys.path.extend([".recipe_deps/_pb", ".recipe_deps/recipe_engine"])'
 
 # Profiled execution.
 #profile=no
@@ -23,7 +23,8 @@
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=chromite.cli.cros.lint
+# importing from chromite fails, now that it is python3-only.
+#load-plugins=
 
 
 [MESSAGES CONTROL]
@@ -31,9 +32,7 @@ load-plugins=chromite.cli.cros.lint
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
 # multiple times.
-# R9301: logging is deprecated. Use "from chromite.lib import cros_logging as
-# logging" to import chromite/lib/cros_logging
-enable=cros-logging-import
+#enable=
 
 # Disable the message, report, category or checker with the given id(s). You
 # can either give multiple identifiers separated by comma (,) or put this
@@ -45,13 +44,9 @@ enable=cros-logging-import
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
 # We leave many of the style warnings to judgement/peer review.
-# TODO: We need to re-enable broad-except, but requires cleaning up our code.
 # TODO: Re-enable wrong-import-order/wrong-import-position.
-# TODO: Re-enable redefined-variable-type.
 disable=
-    broad-except,
     consider-iterating-dictionary,
-    fixme,
     file-ignored,
     invalid-name,
     locally-disabled,
@@ -59,7 +54,6 @@ disable=
     missing-docstring,
     no-member,
     no-self-use,
-    redefined-variable-type,
     relative-import,
     too-few-public-methods,
     too-many-arguments,
@@ -318,4 +312,4 @@ deprecated-modules=
 # Apply logging string format checks to calls on these modules.
 logging-modules=
     logging,
-    chromite.lib.cros_logging,
+    #chromite.lib.cros_logging,
