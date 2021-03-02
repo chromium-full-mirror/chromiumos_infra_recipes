@@ -243,8 +243,6 @@ def _regenerate_suite_scheduler_configs(api, properties, project_infos):
   Args:
     project_infos: ignored, but accepted. See notes on _ACTIONS.
   """
-  config_project_info = api.repo.project_info('chromeos/config-internal')
-
   config_internal = api.context.cwd.join('src/config-internal')
   cfg_int_ss = config_internal.join('test/suite_scheduler')
 
@@ -273,14 +271,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
           presentation.step_text = 'no changes'
           return []
 
-      cl_config = properties.cl_configs[cpp_pb2.ActionTypes.Name(
-          cpp_pb2.REGENERATE_SUITE_SCHEDULER)]
-
-      return [
-          CommitInfo(config_internal,
-                     'Updating Suite Schedulers generated rules.',
-                     regenerated_files)
-      ]
+      return [CommitInfo(config_internal, message, regenerated_files)]
     except StepFailure:
       presentation.status = 'FAILURE'  # swallow StepFailure and keep going
       return []

@@ -578,31 +578,6 @@
     "name": "Do regenerate_suite_scheduler_configs and create CL"
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos/config-internal",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "Do regenerate_suite_scheduler_configs and create CL.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/config-internal|src/chromeos/config-internal|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs",
     "~followup_annotations": [
@@ -713,7 +688,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Updating Suite Schedulers generated rules.",
+      "Updating Suite Scheduler's generated rules.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_postsubmit/regenerate_suite_scheduler",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
@@ -721,7 +696,10 @@
     "name": "Do regenerate_suite_scheduler_configs and create CL.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Updating Suite Schedulers generated rules.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Updating Suite Scheduler's generated rules.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: config_postsubmit/regenerate_suite_scheduler@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
