@@ -148,7 +148,7 @@ class FailuresApi(RecipeApi):
     """
     try:
       yield
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
       step = self.m.step('ignored exception', cmd=None)
       step.presentation.logs['caught exception'] = [repr(e)]
 

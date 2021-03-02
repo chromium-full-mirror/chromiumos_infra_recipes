@@ -38,7 +38,7 @@ def main():
     _track_free()
     dir = args.dir or os.getcwd()
     _track_usage(dir, args.depth)
-  except Exception as e:
+  except Exception as e:  # pylint: disable=broad-except
     logging.error(str(e))
 
 
