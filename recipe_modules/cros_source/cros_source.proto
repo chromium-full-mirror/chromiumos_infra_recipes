@@ -8,11 +8,6 @@ package recipe_modules.chromeos.cros_source;
 
 message CrosSourceProperties {
 
-  message SnapshotIsolate {
-    string isolated_hash = 1;
-    string isolate_server = 2;
-  }
-
   message SnapshotCas {
     string digest = 1;
   }
@@ -20,13 +15,7 @@ message CrosSourceProperties {
   // Used to specify a custom manifest snapshot to sync to as a
   // snapshot.xml file residing in the isolate.
   SnapshotCas snapshot_cas = 2;
-  SnapshotIsolate snapshot_isolate = 3;
 
   // Feature flag: whether to allow mounting the external or custom overlay.
   bool enable_custom_overlays = 4;
-
-  // By default, isolate usage is disallowed, since that is being turned down
-  // 2021 Q1.  This re-enables the use, which may no longer work.
-  // See crbug.com/1150957.
-  bool allow_snapshot_isolate = 5;
 }

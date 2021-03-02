@@ -62,16 +62,13 @@ class CrosVersionApi(recipe_api.RecipeApi):
       # to specific paths (which do not include a -$snapshot suffix on the version).
       if not self._remove_snapshot_from_version:
         with self.m.step.nest('read snapshot') as read_snapshot_step:
-          # If there is a snapshot isolate we are running against a custom
+          # If there is a snapshot in CAS, then we are running against a custom
           # manifest and there is no snapshot footer for us to read snapshot
           # numbers from. In that case we replace this piece of the version
-          # with the isolate hash.
-          # TODO(b/156557792): remove isolated support after migration
-          version_snapshot = (
-              self.m.cros_source.snapshot_isolated_hash or
-              self.m.cros_source.snapshot_cas_digest)
+          # with the CAS hash.
+          version_snapshot = self.m.cros_source.snapshot_cas_digest
           if version_snapshot:
-            read_snapshot_step.step_text = 'using snapshot isolate'
+            read_snapshot_step.step_text = 'using snapshot from CAS'
           else:
             manifest_path = self.m.src_state.build_manifest.path
             manifest_url = self.m.src_state.build_manifest.url

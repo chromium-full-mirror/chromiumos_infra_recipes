@@ -8,7 +8,6 @@ import re
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
-from PB.chromite.api import packages
 from PB.chromite.api.packages import BuildsChromeRequest
 from PB.chromite.api.packages import GetChromeVersionRequest
 from PB.chromite.api.packages import HasChromePrebuiltRequest
@@ -48,11 +47,6 @@ class ChromeApi(recipe_api.RecipeApi):
       self._parallel_sync_jobs = properties.parallel_sync_jobs
     self._deps_cas = (
         properties.deps_cas if properties.HasField('deps_cas') else None)
-    # TODO(b/156557792): remove isolate support after migration
-    self._deps_isolate = (
-        properties.deps_isolate
-        if properties.HasField('deps_isolate') else None)
-    self._allow_deps_isolate = properties.allow_deps_isolate
     self._version = properties.version
     self._no_call_needs_chrome_source = properties.no_call_needs_chrome_source
 
@@ -65,8 +59,7 @@ class ChromeApi(recipe_api.RecipeApi):
 
   def _get_local_version(self, chroot, build_target):
     """Returns chrome version from local chroot (e.g. "84.0.4109.1")."""
-    request = packages.GetChromeVersionRequest(chroot=chroot,
-                                               build_target=build_target)
+    request = GetChromeVersionRequest(chroot=chroot, build_target=build_target)
     return self.m.cros_build_api.PackageService.GetChromeVersion(
         request, infra_step=True).version
 
@@ -82,10 +75,7 @@ class ChromeApi(recipe_api.RecipeApi):
       internal (bool): True for internal checkout.
     """
     with self.m.step.nest('sync chrome') as pres:
-      if self._deps_isolate and not self._allow_deps_isolate:  # pragma: nocover
-        raise StepFailure('isolate is no longer supported: crbug.com/1150957')
-
-      if self._version or self._deps_isolate or self._deps_cas:
+      if self._version or self._deps_cas:
         version = self._version
       else:
         version = self._get_local_version(chroot, build_target)
@@ -108,11 +98,6 @@ class ChromeApi(recipe_api.RecipeApi):
                               chrome_root)
           soln.deps_file = str(chrome_root) + '/DEPS'
           self.m.file.read_text('read DEPS', soln.deps_file, test_data='DEPS')
-        elif self._deps_isolate:
-          self.m.isolated.download(
-              'download DEPS from isolated', self._deps_isolate.isolated_hash,
-              chrome_root, isolate_server=self._deps_isolate.isolate_server)
-          soln.deps_file = str(chrome_root) + '/DEPS'
 
         if version:
           soln.revision = version
@@ -198,10 +183,7 @@ class ChromeApi(recipe_api.RecipeApi):
 
   def has_chrome_prebuilt(self, build_target, chroot, internal=False,
                           ignore_prebuilts=False):
-    if self._deps_isolate and not self._allow_deps_isolate:  # pragma: nocover
-      raise StepFailure('isolate is no longer supported: crbug.com/1150957')
-
-    if ignore_prebuilts or self._deps_isolate or self._deps_cas:
+    if ignore_prebuilts or self._deps_cas:
       return False
     return self.m.cros_build_api.PackageService.HasChromePrebuilt(
         HasChromePrebuiltRequest(build_target=build_target, chroot=chroot,
@@ -289,7 +271,7 @@ class ChromeApi(recipe_api.RecipeApi):
             versions=[version_ref],
             build_targets=[build_target],
         )
-        response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
+        self.m.cros_build_api.PackageService.UprevVersionedPackage(
             request, name='uprev local chrome package')
         return True
     return False

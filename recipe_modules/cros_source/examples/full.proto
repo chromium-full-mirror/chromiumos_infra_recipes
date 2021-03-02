@@ -9,8 +9,6 @@ package recipe_modules.chromeos.cros_source.examples;
 message FullProperties {
   string expected_snapshot_cas_digest = 1;
 
-  string expected_snapshot_isolated_hash = 2;
-
   // Passed to apply_gerrit_changes.
   bool ignore_missing_projects = 3;
 }

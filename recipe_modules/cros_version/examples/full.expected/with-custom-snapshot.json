@@ -28,7 +28,7 @@
     "name": "read chromeos version.read snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@using snapshot isolate@@@"
+      "@@@STEP_TEXT@using snapshot from CAS@@@"
     ]
   },
   {

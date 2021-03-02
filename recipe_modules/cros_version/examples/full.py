@@ -56,8 +56,8 @@ def GenTests(api):
           **{
               '$chromeos/cros_source':
                   CrosSourceProperties(
-                      snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-                          isolated_hash='hash!!!', isolate_server='server.com'),
+                      snapshot_cas=CrosSourceProperties.SnapshotCas(
+                          digest='hash!!!'),
                   )
           }),
       api.properties(TestInputProperties(expected_version_snapshot='hash!!!')),

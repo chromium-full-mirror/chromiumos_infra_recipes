@@ -103,10 +103,7 @@ def GenTests(api):
     # Forcing cros_source to claim dirty source.
     if dirty_source:
       props['$chromeos/cros_source'] = CrosSourceProperties(
-          snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-              isolated_hash='xxx',
-              isolate_server='http://server.com',
-          ))
+          snapshot_cas=CrosSourceProperties.SnapshotCas(digest='xxx'))
 
     # TODO(crbug/1179353): Remove once public builders are rolled out.
     if switch_to_external_manifest:
@@ -117,15 +114,17 @@ def GenTests(api):
     ret += api.post_check(
         MustRun if private and not dirty_source else DoesNotRun,
         'upload prebuilts.read gs acls')
-    check = MustRun if enable_snapshot_prebuilts and not dirty_source else DoesNotRun
+    check = (
+        MustRun
+        if enable_snapshot_prebuilts and not dirty_source else DoesNotRun)
     ret += api.post_check(check, 'upload prebuilts.upload metadata')
     ret += api.post_check(check, 'upload prebuilts.upload metadata.gsutil acl')
     check = MustRun if expect_commit else DoesNotRun
     ret += api.post_check(check, 'upload prebuilts.update binhost conf file')
     if expect_commit:
       ret += api.step_data(
-          'upload prebuilts.update binhost conf file.git transaction.diff check.git diff',
-          retcode=1)
+          'upload prebuilts.update binhost conf file.'
+          'git transaction.diff check.git diff', retcode=1)
       ret += api.post_check(
           verify_branch,
           'staging' if use_staging else api.src_state.default_branch)

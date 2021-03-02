@@ -58,8 +58,6 @@ def RunSteps(api, properties):
   # At this point should be dirty only for custom manifest cases.
   if properties.expected_snapshot_cas_digest:
     api.assertions.assertTrue(api.cros_source.is_source_dirty)
-  elif properties.expected_snapshot_isolated_hash:
-    api.assertions.assertTrue(api.cros_source.is_source_dirty)
   else:
     api.assertions.assertFalse(api.cros_source.is_source_dirty)
   commits = api.cros_source.apply_gerrit_changes(
@@ -73,10 +71,7 @@ def RunSteps(api, properties):
 
   # The test.proto default for string is empty, the api returns a None
   # when this is not set.
-  expected_isolate_hash = properties.expected_snapshot_isolated_hash or None
   expected_cas_digest = properties.expected_snapshot_cas_digest or None
-  api.assertions.assertEqual(api.cros_source.snapshot_isolated_hash,
-                             expected_isolate_hash)
   api.assertions.assertEqual(api.cros_source.snapshot_cas_digest,
                              expected_cas_digest)
   api.assertions.assertTrue(api.cros_source.is_source_dirty)
@@ -116,31 +111,6 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess), gerrit_changes=[
           GerritChange(host='host', project='project', change=555, patchset=3)
       ])
-
-  # TODO(b/156557792): remove isolate test after migration
-  yield api.cros_source.test(
-      'disallowed-custom-snapshot-isolate',
-      api.properties(FullProperties(expected_snapshot_isolated_hash='xxx')),
-      api.post_check(post_process.StatusAnyFailure),
-      cros_source_properties=CrosSourceProperties(
-          snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-              isolated_hash='xxx',
-              isolate_server='http://server.com',
-          ),
-      ))
-
-  # TODO(b/156557792): remove isolate test after migration
-  yield api.cros_source.test(
-      'with-custom-snapshot-isolate',
-      api.properties(FullProperties(expected_snapshot_isolated_hash='xxx')),
-      api.post_check(post_process.StatusSuccess),
-      cros_source_properties=CrosSourceProperties(
-          allow_snapshot_isolate=True,
-          snapshot_isolate=CrosSourceProperties.SnapshotIsolate(
-              isolated_hash='xxx',
-              isolate_server='http://server.com',
-          ),
-      ))
 
   yield api.cros_source.test(
       'with-custom-snapshot-cas-success',

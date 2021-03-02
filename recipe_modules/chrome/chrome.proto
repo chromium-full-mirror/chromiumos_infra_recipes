@@ -16,23 +16,12 @@ message ChromeProperties {
     string digest = 1;
   }
 
-  message DepsIsolate {
-    string isolated_hash = 1;
-    string isolate_server = 2;
-  }
-
   // Used to specify a custom DEPS file to gclient sync to as a
   // DEPS file residing in the isolate.
   DepsCas deps_cas = 2;
-  DepsIsolate deps_isolate = 3;
 
   // Custom version to build, if any, used in gclient sync.
   string version = 4;
-
-  // By default, isolate usage is disallowed, since that is being turned down
-  // 2021 Q1.  This re-enables the use, which may no longer work.
-  // See crbug.com/1150957.
-  bool allow_deps_isolate = 5;
 
   // TODO(crbug/1086714): remove feature flag when fixed.
   // Disable NeedsChromeSource, since it causes errors.
