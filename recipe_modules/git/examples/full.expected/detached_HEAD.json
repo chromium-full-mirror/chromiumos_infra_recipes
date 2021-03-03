@@ -188,8 +188,8 @@
       "origin",
       "HEAD:main"
     ],
-    "infra_step": true,
     "name": "git push",
+    "timeout": 30,
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]

@@ -36,7 +36,7 @@ def RunSteps(api):
   api.git.commit('Updated README\n\nMuch better now.', files=['README.md'],
                  author='John Doe <john.doe@example.com>')
   api.git.push('origin', 'HEAD:main', dry_run=True, capture_stdout=True,
-               force=True)
+               force=True, infra_step=False, timeout=30)
 
   with api.step.nest('check diffs') as presentation:
     has_diffs = api.git.diff_check('some/file/path')

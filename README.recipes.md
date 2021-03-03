@@ -3965,7 +3965,7 @@ Args:
 Returns:
   (bool): whether the merge succeeded
 
-&mdash; **def [push](/recipe_modules/git/api.py#334)(self, remote, refspec, dry_run=False, capture_stdout=False, retry=True, name=None, force=False):**
+&mdash; **def [push](/recipe_modules/git/api.py#334)(self, remote, refspec, dry_run=False, capture_stdout=False, retry=True, force=False, \*\*kwargs):**
 
 Runs 'git push'.
 
@@ -3975,8 +3975,8 @@ Args:
   dry_run (bool): If true, set --dry-run on git command.
   capture_stdout (bool): If True, return stdout in step data.
   retry (bool): Whether to retry.  Default: True
-  name (str): The name of the step. If None, generate from the args.
   force (bool): add force flag for git push
+  kwargs (dict): Passed to api.step.
 
 Returns:
   (StepData): See 'step.__call__'.
