@@ -27,13 +27,13 @@ class GitApi(recipe_api.RecipeApi):
     """Executes 'git' with the supplied arguments.
 
     Args:
-      * args (list): A list of arguments to supply to 'git'.
-      * name (str): The name of the step. If None, generate from the args.
-      * test_stdout (str): Data to return as stdout when testing.
-      * kwargs: See 'step.__call__'.
+      args (list): A list of arguments to supply to 'git'.
+      name (str): The name of the step. If None, generate from the args.
+      test_stdout (str): Data to return as stdout when testing.
+      kwargs: See 'step.__call__'.
 
     Returns:
-      StepData: See 'step.__call__'.
+      (StepData): See 'step.__call__'.
     """
     if name is None:
       name = 'git'
@@ -54,7 +54,7 @@ class GitApi(recipe_api.RecipeApi):
     """Return the git repository root for the current directory.
 
     Returns:
-      str: The path to the git repository.
+      (str): The path to the git repository.
     """
     return self._step(
         ['rev-parse', '--show-toplevel'],
@@ -69,7 +69,7 @@ class GitApi(recipe_api.RecipeApi):
     and not modified, which you can use `diff_check` to check for.
 
     Args:
-      * paths list[str|Path]: The file paths to stage.
+      paths (list[str|Path]): The file paths to stage.
     """
     self._step(['add'] + paths)
 
@@ -77,10 +77,10 @@ class GitApi(recipe_api.RecipeApi):
     """Check if the given file changed from HEAD.
 
     Args:
-      * path (str|Path): The file path to check for changes.
+      path (str|Path): The file path to check for changes.
 
     Returns:
-      bool: True if the file changed from HEAD (or doesn't exist), False
+      (bool): True if the file changed from HEAD (or doesn't exist), False
           otherwise.
     """
     # Both `ls-files` and `diff-index` appear to be needed here. They return:
@@ -113,11 +113,11 @@ class GitApi(recipe_api.RecipeApi):
       2 revs - Changes between the two commits
 
     Args:
-      * from_rev (str): First revision  (see 'man 7 gitrevisions')
-      * to_rev (str): Second revision
+      from_rev (str): First revision  (see 'man 7 gitrevisions')
+      to_rev (str): Second revision
 
     Returns:
-      A list[str] of changed files.
+      (list[str]): changed files.
     """
 
     if not test_stdout:
@@ -153,9 +153,9 @@ class GitApi(recipe_api.RecipeApi):
     """Runs 'git fetch'.
 
     Args:
-      * remote (str): The remote repository to fetch from.
-      * refspecs (list[str]): The refspecs to fetch.
-      * timeout_sec (int): Timeout in seconds.
+      remote (str): The remote repository to fetch from.
+      refspecs (list[str]): The refspecs to fetch.
+      timeout_sec (int): Timeout in seconds.
     """
     args = ['fetch', remote]
     if refspecs is not None:
@@ -166,14 +166,14 @@ class GitApi(recipe_api.RecipeApi):
     """Fetch a list of remote refs.
 
     Args:
-      * remote (str): The remote repository to fetch from.
-      * ref (str): The ref to fetch.
-      * timeout_sec (int): Timeout in seconds.
-      * count (int): The number of commit IDs to return.
-      * test_ids (list[str]): List of test commit IDs, or None.
+      remote (str): The remote repository to fetch from.
+      ref (str): The ref to fetch.
+      timeout_sec (int): Timeout in seconds.
+      count (int): The number of commit IDs to return.
+      test_ids (list[str]): List of test commit IDs, or None.
 
     Returns:
-      list[str]: The commit IDs, starting with the fetched ref.
+      (list[str]): The commit IDs, starting with the fetched ref.
     """
     self.fetch(remote, ['%s:' % ref])
     test_ids = test_ids or self.test_api.generate_test_ids(count)
@@ -204,12 +204,12 @@ class GitApi(recipe_api.RecipeApi):
     """Fetch a ref, and return the commit ID (SHA).
 
     Args:
-      * remote (str): The remote repository to fetch from.
-      * ref (str): The ref to fetch.
-      * timeout_sec (int): Timeout in seconds.
+      remote (str): The remote repository to fetch from.
+      ref (str): The ref to fetch.
+      timeout_sec (int): Timeout in seconds.
 
     Returns:
-      str: The commit ID (SHA) of the fetched ref.
+      (str): The commit ID (SHA) of the fetched ref.
     """
     self.fetch(remote, ['%s:' % ref])
 
@@ -223,8 +223,8 @@ class GitApi(recipe_api.RecipeApi):
     """Runs 'git remote update'.
 
     Args:
-      * step_name (str): Name of the step to display.
-      * timeout_sec (int): Timeout in seconds.
+      step_name (str): Name of the step to display.
+      timeout_sec (int): Timeout in seconds.
     """
     self._step(['remote', 'update'], name=step_name, timeout=timeout_sec)
 
@@ -232,8 +232,8 @@ class GitApi(recipe_api.RecipeApi):
     """Runs 'git checkout'.
 
     Args:
-      * commit (str): The commit (technically "tree-like") to checkout.
-      * force (bool): If True, throw away local changes (--force).
+      commit (str): The commit (technically "tree-like") to checkout.
+      force (bool): If True, throw away local changes (--force).
     """
     args = ['checkout']
     if force:
@@ -245,9 +245,9 @@ class GitApi(recipe_api.RecipeApi):
     """Runs `git merge`.
 
     Args:
-      * ref (str): The ref to merge.
-      * message (str): The merge commit message.
-      * kwargs (dict): Passed to recipe_engine/step.
+      ref (str): The ref to merge.
+      message (str): The merge commit message.
+      kwargs (dict): Passed to recipe_engine/step.
     """
     self._step(['merge', ref, '-m', message], **kwargs)
 
@@ -257,11 +257,12 @@ class GitApi(recipe_api.RecipeApi):
     This won't generally throw a StepError.
 
     Args:
-      * ref (str): The ref to merge.
-      * message (str): The merge commit message.
-      * kwargs (dict): Passed to recipe_engine/step.
+      ref (str): The ref to merge.
+      message (str): The merge commit message.
+      kwargs (dict): Passed to recipe_engine/step.
+
     Returns:
-      bool: whether the merge succeeded
+      (bool): whether the merge succeeded
     """
     success = self._step(['merge', ref, '-m', message], ok_ret=(0, 1),
                          **kwargs).retcode == 0
@@ -271,8 +272,8 @@ class GitApi(recipe_api.RecipeApi):
     """Runs 'git cherry-pick'.
 
     Args:
-      * commit (str): The commit to cherry pick.
-      * kwargs (dict): Passed to recipe_engine/step.
+      commit (str): The commit to cherry pick.
+      kwargs (dict): Passed to recipe_engine/step.
     """
     self._step(['cherry-pick', commit], **kwargs)
 
@@ -284,11 +285,11 @@ class GitApi(recipe_api.RecipeApi):
     """Runs 'git commit' with the given files.
 
     Args:
-      * message (str): The commit message.
-      * files (list[str|Path]): A list of file paths to commit.
-      * author (str): The author to use in the commit. Ordinarily not used,
-          added to test permission oddities by forcing forged commit failure.
-      * kwargs (dict): Passed to recipe_engine/step.
+      message (str): The commit message.
+      files (list[str|Path]): A list of file paths to commit.
+      author (str): The author to use in the commit. Ordinarily not used,
+        added to test permission oddities by forcing forged commit failure.
+      kwargs (dict): Passed to recipe_engine/step.
     """
     # Single argument can't exceed 128kiB (crbug/987630), write to temp
     # and pass the argument as a file
@@ -313,10 +314,10 @@ class GitApi(recipe_api.RecipeApi):
       dry_run (bool): If true, set --dry-run on git command.
       capture_stdout (bool): If True, return stdout in step data.
       name (str): The name of the step. If None, generate from the args.
-      force: add force flag for git push
+      force (bool): add force flag for git push
 
     Returns:
-      StepData: See 'step.__call__'.
+      (StepData): See 'step.__call__'.
     """
     args = ['push']
     if dry_run:
@@ -341,10 +342,10 @@ class GitApi(recipe_api.RecipeApi):
       capture_stdout (bool): If True, return stdout in step data.
       retry (bool): Whether to retry.  Default: True
       name (str): The name of the step. If None, generate from the args.
-      force: add force flag for git push
+      force (bool): add force flag for git push
 
     Returns:
-      StepData: See 'step.__call__'.
+      (StepData): See 'step.__call__'.
     """
     func = self._push
     if retry:
@@ -356,7 +357,7 @@ class GitApi(recipe_api.RecipeApi):
     """Returns the currently checked out branch name.
 
     Returns:
-      str: The branch name pointed to by HEAD.
+      (str): The branch name pointed to by HEAD.
       None: If HEAD is detached.
     """
     step_data = self._step(['symbolic-ref', '--short', 'HEAD'],
@@ -374,8 +375,8 @@ class GitApi(recipe_api.RecipeApi):
        remote (str): remote name to query, by default remote of current branch
 
     Returns:
-       ref contained in the remote HEAD (ie the default branch), or None on
-       error.
+       (str): ref contained in the remote HEAD (ie the default branch), or None
+          on error.
     """
     if test_stdout is None:
       test_stdout = 'ref: refs/heads/main  HEAD\n'
@@ -417,7 +418,7 @@ class GitApi(recipe_api.RecipeApi):
       repo_url (str): The url of the remote, or None to use CWD.
 
     Returns:
-      List(Reference) A list of Refs.
+      (list[Reference]): A list of Refs.
     """
     cmd = ['ls-remote', repo_url or '.'] + refs
     test_stdout = '\n'.join(
@@ -440,7 +441,7 @@ class GitApi(recipe_api.RecipeApi):
       paths (list[str]): pathspecs to use.
 
     Returns:
-      List(Commit) A list of commit metas.
+      (list[Commit]): A list of commit metas.
     """
     cmd = ['log', '--pretty=%H%x1E%B%x00', '%s...%s' % (from_rev, to_rev)]
     if limit is not None:
@@ -471,7 +472,7 @@ class GitApi(recipe_api.RecipeApi):
       head (str): The starting revision.  Default: HEAD.
 
     Returns:
-      bool: True if the revision can be reached from (is an ancestor of) |head|.
+      (bool): Whether the revision is reachable from (is an ancestor of) |head|.
     """
     cmd = ['merge-base', '--is-ancestor', revision, head]
     return self._step(cmd, ok_ret=(0, 1, 128)).retcode == 0
@@ -484,8 +485,7 @@ class GitApi(recipe_api.RecipeApi):
       path (str): The file path to return the contents of.
 
     Returns:
-      str: The contents of the file.
-      None: The file does not exist at the given revision.
+      (str): The contents of the file, None if the file does not exist in |rev|.
     """
     step_data = self._step(['show', '%s:%s' % (rev, path)], ok_ret=(0, 128),
                            stdout=self.m.raw_io.output(),
@@ -513,13 +513,13 @@ class GitApi(recipe_api.RecipeApi):
     """Clones a Git repo into the current directory.
 
     Args:
-      * repo_url (str): The URL of the repo to clone.
-      * target_path (Path): Path in which to clone the repo, or None to specify
-          current directory.
-      * reference (Path): Path to the reference repo.
-      * dissociate (bool): Whether to dissociate from reference.
-      * branch (string): If set, performs a single branch clone.
-      * timeout_sec (int): Timeout in seconds.
+      repo_url (str): The URL of the repo to clone.
+      target_path (Path): Path in which to clone the repo, or None to specify
+        current directory.
+      reference (Path): Path to the reference repo.
+      dissociate (bool): Whether to dissociate from reference.
+      branch (string): If set, performs a single branch clone.
+      timeout_sec (int): Timeout in seconds.
     """
     if target_path is None:
       # Clone into current directory (no extra subdirectory) by default.
@@ -552,7 +552,7 @@ class GitApi(recipe_api.RecipeApi):
     """Runs `git config --global` to set global config.
 
     Args:
-      * args list[str]: args for `git config`.
+      args (list[str]): args for `git config`.
     """
     self._step(['config', '--global'] + args)
 
@@ -563,8 +563,11 @@ class GitApi(recipe_api.RecipeApi):
     default if the refspec is not of the required format.
 
     Args:
-      * refspec (str): refspec to split the branch from.
-      * default (str): value to return if refspec not of required format.
+      refspec (str): refspec to split the branch from.
+      default (str): value to return if refspec not of required format.
+
+    Returns:
+      (str): the extracted branch name.
     """
     if refspec.startswith('refs/heads/'):
       return refspec.split('/', 2)[2]
@@ -577,7 +580,10 @@ class GitApi(recipe_api.RecipeApi):
     Returns a refspec of the form refs/heads/{branch}.
 
     Args:
-      * branch (str): branch to split the branch from.
+      branch (str): branch to split the branch from.
+
+    Returns:
+      (str): The refspec for the branch.
     """
     if branch.startswith('refs/heads/'):
       return branch
@@ -587,9 +593,10 @@ class GitApi(recipe_api.RecipeApi):
     """Runs `get log` to determine the parents of a git commit.
 
     Args:
-      * commit_id (str): The commit sha.
+      commit_id (str): The commit hash.
 
-    Returns: list[str] parent commit sha.
+    Returns:
+      (list[str]): parent commit hash(es).
     """
     step_data = self._step(['log', '--pretty=%P', '-n 1', commit_id],
                            stdout=self.m.raw_io.output(),
@@ -600,9 +607,10 @@ class GitApi(recipe_api.RecipeApi):
     """Determines if the commit_id is a merge commit.
 
     Args:
-      * commit_id (str): The commit sha.
+      commit_id (str): The commit sha.
 
-    Returns: Bool if the commit has more than 1 parent.
+    Returns:
+      (bool): whether the commit has more than 1 parent.
     """
     return len(self.get_parents(commit_id)) > 1
 

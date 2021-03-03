@@ -3710,47 +3710,47 @@ Stages `paths` for commit. Note that this will fail if a file is tracked
 and not modified, which you can use `diff_check` to check for.
 
 Args:
-  * paths list[str|Path]: The file paths to stage.
+  paths (list[str|Path]): The file paths to stage.
 
 &mdash; **def [checkout](/recipe_modules/git/api.py#231)(self, commit, force=False):**
 
 Runs 'git checkout'.
 
 Args:
-  * commit (str): The commit (technically "tree-like") to checkout.
-  * force (bool): If True, throw away local changes (--force).
+  commit (str): The commit (technically "tree-like") to checkout.
+  force (bool): If True, throw away local changes (--force).
 
-&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#270)(self, commit, \*\*kwargs):**
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#271)(self, commit, \*\*kwargs):**
 
 Runs 'git cherry-pick'.
 
 Args:
-  * commit (str): The commit to cherry pick.
-  * kwargs (dict): Passed to recipe_engine/step.
+  commit (str): The commit to cherry pick.
+  kwargs (dict): Passed to recipe_engine/step.
 
 &mdash; **def [clone](/recipe_modules/git/api.py#511)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, timeout_sec=None):**
 
 Clones a Git repo into the current directory.
 
 Args:
-  * repo_url (str): The URL of the repo to clone.
-  * target_path (Path): Path in which to clone the repo, or None to specify
-      current directory.
-  * reference (Path): Path to the reference repo.
-  * dissociate (bool): Whether to dissociate from reference.
-  * branch (string): If set, performs a single branch clone.
-  * timeout_sec (int): Timeout in seconds.
+  repo_url (str): The URL of the repo to clone.
+  target_path (Path): Path in which to clone the repo, or None to specify
+    current directory.
+  reference (Path): Path to the reference repo.
+  dissociate (bool): Whether to dissociate from reference.
+  branch (string): If set, performs a single branch clone.
+  timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [commit](/recipe_modules/git/api.py#283)(self, message, files=None, author=None, \*\*kwargs):**
+&mdash; **def [commit](/recipe_modules/git/api.py#284)(self, message, files=None, author=None, \*\*kwargs):**
 
 Runs 'git commit' with the given files.
 
 Args:
-  * message (str): The commit message.
-  * files (list[str|Path]): A list of file paths to commit.
-  * author (str): The author to use in the commit. Ordinarily not used,
-      added to test permission oddities by forcing forged commit failure.
-  * kwargs (dict): Passed to recipe_engine/step.
+  message (str): The commit message.
+  files (list[str|Path]): A list of file paths to commit.
+  author (str): The author to use in the commit. Ordinarily not used,
+    added to test permission oddities by forcing forged commit failure.
+  kwargs (dict): Passed to recipe_engine/step.
 
 &mdash; **def [create\_bundle](/recipe_modules/git/api.py#497)(self, output_path, from_commit, to_ref):**
 
@@ -3764,12 +3764,12 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#355)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#356)(self):**
 
 Returns the currently checked out branch name.
 
 Returns:
-  str: The branch name pointed to by HEAD.
+  (str): The branch name pointed to by HEAD.
   None: If HEAD is detached.
 
 &mdash; **def [diff\_check](/recipe_modules/git/api.py#76)(self, path):**
@@ -3777,10 +3777,10 @@ Returns:
 Check if the given file changed from HEAD.
 
 Args:
-  * path (str|Path): The file path to check for changes.
+  path (str|Path): The file path to check for changes.
 
 Returns:
-  bool: True if the file changed from HEAD (or doesn't exist), False
+  (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
 &mdash; **def [extract\_branch](/recipe_modules/git/api.py#559)(self, refspec, default):**
@@ -3791,52 +3791,58 @@ Splits the branch from a refs/heads refspec and returns it. Returns
 default if the refspec is not of the required format.
 
 Args:
-  * refspec (str): refspec to split the branch from.
-  * default (str): value to return if refspec not of required format.
+  refspec (str): refspec to split the branch from.
+  default (str): value to return if refspec not of required format.
+
+Returns:
+  (str): the extracted branch name.
 
 &emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [fetch](/recipe_modules/git/api.py#151)(self, remote, refspecs=None, timeout_sec=None):**
 
 Runs 'git fetch'.
 
 Args:
-  * remote (str): The remote repository to fetch from.
-  * refspecs (list[str]): The refspecs to fetch.
-  * timeout_sec (int): Timeout in seconds.
+  remote (str): The remote repository to fetch from.
+  refspecs (list[str]): The refspecs to fetch.
+  timeout_sec (int): Timeout in seconds.
 
 &mdash; **def [fetch\_ref](/recipe_modules/git/api.py#203)(self, remote, ref, timeout_sec=None):**
 
 Fetch a ref, and return the commit ID (SHA).
 
 Args:
-  * remote (str): The remote repository to fetch from.
-  * ref (str): The ref to fetch.
-  * timeout_sec (int): Timeout in seconds.
+  remote (str): The remote repository to fetch from.
+  ref (str): The ref to fetch.
+  timeout_sec (int): Timeout in seconds.
 
 Returns:
-  str: The commit ID (SHA) of the fetched ref.
+  (str): The commit ID (SHA) of the fetched ref.
 
 &mdash; **def [fetch\_refs](/recipe_modules/git/api.py#165)(self, remote, ref, timeout_sec=None, count=1, test_ids=None):**
 
 Fetch a list of remote refs.
 
 Args:
-  * remote (str): The remote repository to fetch from.
-  * ref (str): The ref to fetch.
-  * timeout_sec (int): Timeout in seconds.
-  * count (int): The number of commit IDs to return.
-  * test_ids (list[str]): List of test commit IDs, or None.
+  remote (str): The remote repository to fetch from.
+  ref (str): The ref to fetch.
+  timeout_sec (int): Timeout in seconds.
+  count (int): The number of commit IDs to return.
+  test_ids (list[str]): List of test commit IDs, or None.
 
 Returns:
-  list[str]: The commit IDs, starting with the fetched ref.
+  (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#574)(self, branch):**
+&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#577)(self, branch):**
 
 Creates the full refspec for a branch.
 
 Returns a refspec of the form refs/heads/{branch}.
 
 Args:
-  * branch (str): branch to split the branch from.
+  branch (str): branch to split the branch from.
+
+Returns:
+  (str): The refspec for the branch.
 
 &mdash; **def [get\_diff\_files](/recipe_modules/git/api.py#107)(self, from_rev=None, to_rev=None, test_stdout=None):**
 
@@ -3848,26 +3854,27 @@ Revs are passed directly to 'git diff', which has the following effect:
   2 revs - Changes between the two commits
 
 Args:
-  * from_rev (str): First revision  (see 'man 7 gitrevisions')
-  * to_rev (str): Second revision
+  from_rev (str): First revision  (see 'man 7 gitrevisions')
+  to_rev (str): Second revision
 
 Returns:
-  A list[str] of changed files.
+  (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#586)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#592)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
 Args:
-  * commit_id (str): The commit sha.
+  commit_id (str): The commit hash.
 
-Returns: list[str] parent commit sha.
+Returns:
+  (list[str]): parent commit hash(es).
 
 &mdash; **def [get\_working\_dir\_diff\_files](/recipe_modules/git/api.py#138)(self):**
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#609)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#617)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -3878,24 +3885,25 @@ Args:
 Returns:
   (GitilesCommit): The GitilesCommit corresponding to HEAD.
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#396)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#397)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#402)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#403)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#599)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#606)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
 Args:
-  * commit_id (str): The commit sha.
+  commit_id (str): The commit sha.
 
-Returns: Bool if the commit has more than 1 parent.
+Returns:
+  (bool): whether the commit has more than 1 parent.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#466)(self, revision, head='HEAD'):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#467)(self, revision, head='HEAD'):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -3904,9 +3912,9 @@ Args:
   head (str): The starting revision.  Default: HEAD.
 
 Returns:
-  bool: True if the revision can be reached from (is an ancestor of) |head|.
+  (bool): Whether the revision is reachable from (is an ancestor of) |head|.
 
-&mdash; **def [log](/recipe_modules/git/api.py#433)(self, from_rev, to_rev, limit=None, paths=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#434)(self, from_rev, to_rev, limit=None, paths=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -3917,9 +3925,9 @@ Args:
   paths (list[str]): pathspecs to use.
 
 Returns:
-  List(Commit) A list of commit metas.
+  (list[Commit]): A list of commit metas.
 
-&mdash; **def [ls\_remote](/recipe_modules/git/api.py#412)(self, refs, repo_url=None):**
+&mdash; **def [ls\_remote](/recipe_modules/git/api.py#413)(self, refs, repo_url=None):**
 
 Return ls-remote output for a repository.
 
@@ -3928,18 +3936,18 @@ Args:
   repo_url (str): The url of the remote, or None to use CWD.
 
 Returns:
-  List(Reference) A list of Refs.
+  (list[Reference]): A list of Refs.
 
 &mdash; **def [merge](/recipe_modules/git/api.py#244)(self, ref, message, \*\*kwargs):**
 
 Runs `git merge`.
 
 Args:
-  * ref (str): The ref to merge.
-  * message (str): The merge commit message.
-  * kwargs (dict): Passed to recipe_engine/step.
+  ref (str): The ref to merge.
+  message (str): The merge commit message.
+  kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [merge\_abort](/recipe_modules/git/api.py#279)(self):**
+&mdash; **def [merge\_abort](/recipe_modules/git/api.py#280)(self):**
 
 Runs 'git merge --abort'.
 
@@ -3950,13 +3958,14 @@ Runs `git merge` and returns whether the merge succeeded.
 This won't generally throw a StepError.
 
 Args:
-  * ref (str): The ref to merge.
-  * message (str): The merge commit message.
-  * kwargs (dict): Passed to recipe_engine/step.
-Returns:
-  bool: whether the merge succeeded
+  ref (str): The ref to merge.
+  message (str): The merge commit message.
+  kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [push](/recipe_modules/git/api.py#333)(self, remote, refspec, dry_run=False, capture_stdout=False, retry=True, name=None, force=False):**
+Returns:
+  (bool): whether the merge succeeded
+
+&mdash; **def [push](/recipe_modules/git/api.py#334)(self, remote, refspec, dry_run=False, capture_stdout=False, retry=True, name=None, force=False):**
 
 Runs 'git push'.
 
@@ -3967,10 +3976,10 @@ Args:
   capture_stdout (bool): If True, return stdout in step data.
   retry (bool): Whether to retry.  Default: True
   name (str): The name of the step. If None, generate from the args.
-  force: add force flag for git push
+  force (bool): add force flag for git push
 
 Returns:
-  StepData: See 'step.__call__'.
+  (StepData): See 'step.__call__'.
 
 &mdash; **def [rebase](/recipe_modules/git/api.py#537)(self, force=False, branch=None):**
 
@@ -3980,7 +3989,7 @@ Args:
   force (bool): If True, set --force.
   branch (str): If set, rebase from specific branch.
 
-&mdash; **def [remote\_head](/recipe_modules/git/api.py#370)(self, remote='.', test_stdout=None):**
+&mdash; **def [remote\_head](/recipe_modules/git/api.py#371)(self, remote='.', test_stdout=None):**
 
 Returns the HEAD ref of the given remote.
 
@@ -3988,32 +3997,32 @@ Args:
    remote (str): remote name to query, by default remote of current branch
 
 Returns:
-   ref contained in the remote HEAD (ie the default branch), or None on
-   error.
+   (str): ref contained in the remote HEAD (ie the default branch), or None
+      on error.
 
 &emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=1))**<br>&mdash; **def [remote\_update](/recipe_modules/git/api.py#221)(self, step_name, timeout_sec=None):**
 
 Runs 'git remote update'.
 
 Args:
-  * step_name (str): Name of the step to display.
-  * timeout_sec (int): Timeout in seconds.
+  step_name (str): Name of the step to display.
+  timeout_sec (int): Timeout in seconds.
 
 &mdash; **def [repository\_root](/recipe_modules/git/api.py#53)(self):**
 
 Return the git repository root for the current directory.
 
 Returns:
-  str: The path to the git repository.
+  (str): The path to the git repository.
 
 &mdash; **def [set\_global\_config](/recipe_modules/git/api.py#551)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
-  * args list[str]: args for `git config`.
+  args (list[str]): args for `git config`.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#479)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#480)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -4022,8 +4031,7 @@ Args:
   path (str): The file path to return the contents of.
 
 Returns:
-  str: The contents of the file.
-  None: The file does not exist at the given revision.
+  (str): The contents of the file, None if the file does not exist in |rev|.
 ### *recipe_modules* / [git\_cl](/recipe_modules/git_cl)
 
 [DEPS](/recipe_modules/git_cl/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/git\_cl][depot_tools/recipe_modules/git_cl], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
