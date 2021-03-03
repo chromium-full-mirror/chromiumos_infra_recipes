@@ -255,7 +255,8 @@ def RunSteps(api, properties):
       # TODO(b/179503858): remove properties check when uprev change
       # fully rolled out
       if not properties.uprev_first:
-        _uprev_packages(api, properties, workspace_path, diffs)
+        dry_run = dry_run or is_staging
+        _uprev_packages(api, properties, workspace_path, diffs, dry_run)
 
 
 def _sync_manifest(api, properties, manifest_ref, prior_internal,
@@ -330,8 +331,7 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
     return {}
 
 
-def _uprev_packages(api, properties, workspace_path, manifest_diffs,
-                    dry_run=False):
+def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
   """Uprev any packages that contain differences
 
     Args:

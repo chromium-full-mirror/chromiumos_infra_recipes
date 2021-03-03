@@ -1712,6 +1712,7 @@
     "cmd": [
       "git",
       "push",
+      "--dry-run",
       "--porcelain",
       "cros",
       "HEAD:refs/for/main%notify=NONE,submit"
@@ -1809,6 +1810,7 @@
     "cmd": [
       "git",
       "push",
+      "--dry-run",
       "--porcelain",
       "cros",
       "HEAD:refs/for/main%notify=NONE,submit"
