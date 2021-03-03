@@ -1068,6 +1068,7 @@
       "checkout",
       "main"
     ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "patch manifest.sync internal manifest for patching.git checkout",
     "~followup_annotations": [

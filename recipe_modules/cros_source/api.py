@@ -686,7 +686,8 @@ class CrosSourceApi(RecipeApi):
               reference=self.cache_path.join(manifests.intern.relpath),
               dissociate=True, timeout_sec=60 * 60)
           # Also, check out the correct branch of the internal manifest.
-          self.m.git.checkout(i_branch)
+          with self.m.context(cwd=manifests.intern.path):
+            self.m.git.checkout(i_branch)
 
       def _copy_mirrored_files():
         for path in self.mirrored_manifest_files:
