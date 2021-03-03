@@ -1244,7 +1244,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Update with filtered configs.",
+      "Update with publically filtered configs.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_postsubmit/replicate_public",
       "[CLEANUP]/commit_msg_tmp_3"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
@@ -1252,7 +1252,10 @@
     "name": "Do replicate_public_config and create CL.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Update with filtered configs.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Update with publically filtered configs.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Automation-Id: config_postsubmit/replicate_public@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
     ]
   },

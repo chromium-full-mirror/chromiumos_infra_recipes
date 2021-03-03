@@ -69,6 +69,12 @@ def _replicate_public_config(api, properties, project_infos):
   """
   public_repo_path = api.context.cwd.join('src', 'project_public')
 
+  message = \
+    '''Update with publically filtered configs.
+
+Cr-Build-Url: %s
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/replicate_public')
+
   for project_info in project_infos:
     with api.step.nest(project_info.name):
       public_config_path = api.context.cwd.join(project_info.path,
@@ -91,7 +97,7 @@ def _replicate_public_config(api, properties, project_infos):
         api.file.rmtree('remove dest dir', dest_path)
         api.file.copytree('copy public config', public_config_path, dest_path)
 
-  return [CommitInfo(public_repo_path, 'Update with filtered configs.', [])]
+  return [CommitInfo(public_repo_path, message, [])]
 
 
 def _flatten_configs(api, properties, project_infos):
