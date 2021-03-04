@@ -190,6 +190,12 @@ def RunSteps(api, properties):
         if len(manifest_diffs) == 0:
           return
 
+        # Pushing to staging-infra-{$BRANCH} may fail since the commit histories
+        # have different acestors. If we can verify that they are reachable
+        # through a prior commit we will ignore the CQ depends.
+        # go/annealing-uprevs for more info.
+        ignore_cq_depends = False
+
         # Make sure that we have not lost commits.  If the new revision at a
         # path is older than the prior one, provide a clearer failure message
         # than the one we get in cros_cq_depends.
@@ -203,6 +209,9 @@ def RunSteps(api, properties):
             with api.context(cwd=workspace_path.join(diff.path)):
               if (not api.git.is_reachable(diff.from_rev, diff.to_rev) and
                   diff.path not in properties.ignore_downrev_paths):
+                if is_staging and api.git.is_reachable('{}~'.format(
+                    diff.from_rev)):
+                  ignore_cq_depends = True
                 downrevs.append('{}: {} is not an ancestor of {}'.format(
                     diff.path, diff.from_rev, diff.to_rev))
 
@@ -220,7 +229,9 @@ def RunSteps(api, properties):
             reach_pres.step_text = 'some downrevs occurred'
 
         # Otherwise we need to ensure all of those diffs have fulfilled deps.
-        api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
+        if not ignore_cq_depends:
+          api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(
+              manifest_diffs)
 
         # Then, get the diffs. We are specifically interested in what
         # gerrit changes have landed.
@@ -1094,6 +1105,34 @@ def GenTests(api):
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.step_data('check reachability.git merge-base', retcode=1),
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''),
+      api.post_check(post_process.MustRun, 'record new gerrit changes'),
+      api.post_check(post_process.MustRun, 'publish internal snapshot'),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'downrev-staging-allow-cq-depends',
+      api.properties(
+          AnnealingProperties(manifest_ref='staging-snapshot', dry_run=True,
+                              publish_uprevs=False)),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.step_data('check reachability.git merge-base', retcode=1),
+      api.step_data('check reachability.git merge-base (2)', retcode=1),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
