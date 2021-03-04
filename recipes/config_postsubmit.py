@@ -108,9 +108,14 @@ def _flatten_configs(api, properties, project_infos):
   config_bundle = 'generated/config.jsonproto'
   flat_config = 'generated/flattened.jsonproto'
 
-  def _flatten_config():
-    with api.step.nest('find input config') as presentation:
-      # figure out which input to use
+  flat_files = []
+
+  # generated a temporary flattened.jsonproto in each project
+  for project_info in project_infos:
+    with api.step.nest('processing %s' % project_info.name) as presentation,\
+         api.context(api.context.cwd.join(project_info.path)):
+
+      # if no joined configuration (not backfilled), use the ConfigBundle
       input_config = joined_config
       if not api.path.exists(api.context.cwd.join(input_config)):
         input_config = config_bundle
@@ -119,45 +124,66 @@ def _flatten_configs(api, properties, project_infos):
       full_input = api.context.cwd.join(input_config)
       if not api.path.exists(full_input):
         presentation.step_summary_text = "(does not exist)"
-        return False  # abort transaction
 
-    # have input selected and we know it exists
+      # have input selected and we know it exists, generate a flattened file
+      cmd = [
+          flatten_script,
+          "--input",
+          input_config,
+          "--output",
+          flat_config,
+      ]
+      api.step('generate flat payload', ['vpython'] + cmd)
+
+      flat_files.append(api.context.cwd.join(flat_config))
+
+  # now merge and import into config-internal
+  cwd = api.context.cwd
+  merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
+  config_internal = cwd.join('src/config-internal')
+  output_path = config_internal.join('hw_design', flat_config)
+
+  def _merge_flattened():
     cmd = [
-        flatten_script,
-        "--input",
-        input_config,
-        "--output",
-        flat_config,
-    ]
+        merge_script,
+        '-m',
+        'chromiumos.config.payload.FlatConfigList',
+        '-a',
+        'chromiumos.config.payload.FlatConfigList',
+        '-o',
+        output_path,
+    ] + flat_files
+    api.step('merge flattened configs to config-internal', ['vpython'] + cmd)
 
-    api.step('generate flat payload', ['vpython'] + cmd)
-    api.git.add([flat_config])
-
-    with api.step.nest("diffing to find changes"):
-      changed_files = api.git.get_diff_files('HEAD')
-      if not changed_files:
+    with api.step.nest("diffing to find changes") as presentation:
+      if not api.git.diff_check(output_path):
+        presentation.step_summary_text = "No changes to commit"
         return False  # abort transaction
 
     # commit files
+    api.git.add([output_path])
     message = \
-      '''Autogenerating flattened config payloads.
+      '''Automerging and importing flattened configs.
 
 Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/flatten')
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/merge_flattened')
     api.git.commit(message)
+    return True
 
-  for project_info in project_infos:
-    with api.step.nest('processing %s' % project_info.name) as presentation,\
-         api.context(api.context.cwd.join(project_info.path)):
-      try:
-        api.git_txn.update_ref(
-            project_info.remote,
-            _flatten_config,
-            ref=project_info.branch,
-        )
-      except StepFailure:
-        # Mark step as failed, but continue processing
-        presentation.status = 'FAILURE'
+  # git transaction wrapper around _merge_flattened
+  with api.context(config_internal),\
+       api.step.nest("aggregating flattened configs") as presentation:
+
+    config_project_info = api.repo.project_info("chromeos/config-internal")
+
+    try:
+      api.git_txn.update_ref(
+          config_project_info.remote,
+          _merge_flattened,
+          ref=config_project_info.branch,
+      )
+    except StepFailure:
+      presentation.status = 'FAILURE'  # swallow StepFailure and keep going
 
   return []
 
@@ -170,13 +196,6 @@ def _copy_to_internal(api, properties, project_infos):
   """
 
   configs = [
-      IngestConfig(
-          'flattened',
-          'generated/flattened.jsonproto',
-          'hw_design/generated/flattened.jsonproto',
-          'chromiumos.config.payload.FlatConfigList',
-          'chromiumos.config.payload.FlatConfigList',
-      ),
       IngestConfig(
           'joined',
           'generated/joined.jsonproto',
@@ -534,11 +553,11 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_process(
           post_process.MustRun,
-          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git push'
+          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.generate flat payload'
       ),
       api.post_process(
           post_process.DoesNotRun,
-          'Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git push'
+          'Do flatten_configs and create CL.processing chromeos/program/galaxy.generate flat payload'
       ),
   )
 
@@ -548,17 +567,15 @@ def GenTests(api):
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
-      api.git.diff_check(True),
-      api.step_data(
-          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.diffing to find changes.git diff',
-          stdout=api.raw_io.output('')),
+      mock_payloads("joined.jsonproto"),
+      api.git.diff_check(False),
       api.post_process(
           post_process.DoesNotRun,
-          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git push'
+          'Do flatten_configs and create CL.aggregating flattened configs.git transaction.git push'
       ),
       api.post_process(
           post_process.DoesNotRun,
-          'Do flatten_configs and create CL.processing chromeos/program/galaxy.git transaction.git push'
+          'Do flatten_configs and create CL.aggregating flattened configs.git transaction.git push'
       ),
   )
 
@@ -569,11 +586,11 @@ def GenTests(api):
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
       api.step_data(
-          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.generate flat payload',
+          'Do flatten_configs and create CL.aggregating flattened configs.git transaction.merge flattened configs to config-internal',
           retcode=1),
       api.post_process(
           post_process.DoesNotRun,
-          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.git push'
+          'Do flatten_configs and create CL.aggregating flattened configs.git transaction.git push',
       ),
   )
 
@@ -584,7 +601,7 @@ def GenTests(api):
       config_dlm_step_data(api),
       api.post_process(
           StepSummaryEquals,
-          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.git transaction.find input config',
+          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway',
           "(does not exist)"),
   )
 
@@ -599,6 +616,10 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_process(
           post_process.MustRun,
+          'Do copy_to_internal and create CL.aggregating configs.git transaction.merge joined configs to config-internal',
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
           'Do copy_to_internal and create CL.aggregating configs.git transaction.merge flattened configs to config-internal',
       ),
   )
@@ -626,7 +647,7 @@ def GenTests(api):
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
-          'Do copy_to_internal and create CL.aggregating configs.git transaction.merge flattened configs to config-internal',
+          'Do copy_to_internal and create CL.aggregating configs.git transaction.merge joined configs to config-internal',
           retcode=1),
   )
 
