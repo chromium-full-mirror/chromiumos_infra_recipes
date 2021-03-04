@@ -422,10 +422,9 @@ def _do_uprev(api, properties, workspace_path, triggers, package, cpv, topic,
           for ebuild in uprev_resp.modified_ebuilds)
     with api.context(cwd=workspace_path):
       ebuilds_by_pinfo = defaultdict(list)
-      infos = api.repo.project_infos(projects=[
-          api.path.dirname(ebuild.path) for ebuild in modified_ebuilds
-      ])
-      for ebuild, info in zip(modified_ebuilds, infos):
+      for ebuild in modified_ebuilds:
+        dirname = api.path.dirname(ebuild.path)
+        info = api.repo.project_infos(projects=[dirname])[0]
         ebuilds_by_pinfo[info].append(ebuild)
 
       # Checkout git branches via repo so they track correctly.  Create them
@@ -575,11 +574,13 @@ def GenTests(api):
   def _with_infos(name, *args, **kwargs):
     return api.test(
         name,
+        api.repo.project_infos_step_data('commit uprev', data=[
+            dict(project='overlay'),
+        ], iteration=1),
         api.repo.project_infos_step_data(
             'commit uprev', data=[
-                dict(project='overlay'),
-                dict(project='private-overlay', remote='cros-internal')
-            ]), *args, **kwargs)
+                dict(project='private-overlay', remote='cros-internal'),
+            ], iteration=2), *args, **kwargs)
 
   yield _with_infos(
       'with-uprev-do-nothing-policy',
@@ -689,9 +690,13 @@ def GenTests(api):
   yield api.test(
       'one-change',
       _props(branch_policies=[_policy(existing_cls_policy=FULL_RUN)]),
+      # Only one changed project.
       api.repo.project_infos_step_data('commit uprev', data=[
           dict(project='overlay'),
-      ]),
+      ], iteration=1),
+      api.repo.project_infos_step_data('commit uprev', data=[
+          dict(project='overlay'),
+      ], iteration=2),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
@@ -932,12 +937,14 @@ def GenTests(api):
   yield api.test(
       'coil-test',
       _props(),
+      api.repo.project_infos_step_data('commit uprev', data=[
+          dict(project='overlay'),
+      ], iteration=1),
       api.repo.project_infos_step_data(
           'commit uprev', data=[
-              dict(project='overlay'),
               dict(project='private-overlay', remote='cros-internal',
                    upstream='main')
-          ]),
+          ], iteration=2),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )

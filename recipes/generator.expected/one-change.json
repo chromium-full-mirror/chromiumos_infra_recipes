@@ -873,7 +873,6 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "[START_DIR]/chromiumos_workspace/src/overlay",
-      "[START_DIR]/chromiumos_workspace/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -888,6 +887,31 @@
     },
     "infra_step": true,
     "name": "commit uprev.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@overlay|src/overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/private-overlay",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "commit uprev.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@overlay|src/overlay|cros|refs/heads/main|refs/heads/main@@@",
@@ -927,7 +951,8 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild"
+      "[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild",
+      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
