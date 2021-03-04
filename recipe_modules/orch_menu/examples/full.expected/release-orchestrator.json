@@ -1322,6 +1322,239 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set up orchestrator.bump version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.bump version.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.bump version.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "main-HEAD-SHA:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "main-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.bump version.ensure version_bumper",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/version_bumper",
+      "-ensure-file",
+      "chromiumos/infra/version_bumper/${platform} staging",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.ensure version_bumper.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-staging---------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/version_bumper/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.bump version.clone chromiumos-overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--branch",
+      "rubik-staging",
+      "--single-branch",
+      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay",
+      "."
+    ],
+    "cwd": "[CLEANUP]/chromiumos-overlay_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.clone chromiumos-overlay.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/version_bumper/version_bumper",
+      "bump-version",
+      "--chromiumos_overlay_repo",
+      "[CLEANUP]/chromiumos-overlay_tmp_1",
+      "--bump_build_component"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "set up orchestrator.bump version.go version_bumper",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.bump version.commit chromeos/config/chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "chromeos/config/chromeos_version.sh"
+    ],
+    "cwd": "[CLEANUP]/chromiumos-overlay_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.commit chromeos/config/chromeos_version.sh.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Update to a new version number from R99-1234.56.0-101\n\nGenerated by Rubik, see https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184 for job details.\n\nBUG=None\nTEST=None\n\nCr-Automation-Id: release_orchestrator/version_bump",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos-overlay_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.commit chromeos/config/chromeos_version.sh.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update to a new version number from R99-1234.56.0-101@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by Rubik, see https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184 for job details.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@BUG=None@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@TEST=None@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: release_orchestrator/version_bump@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos-overlay_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.commit chromeos/config/chromeos_version.sh.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay",
+      "HEAD:refs/heads/rubik-staging"
+    ],
+    "cwd": "[CLEANUP]/chromiumos-overlay_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.bump version.commit chromeos/config/chromeos_version.sh.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "manifest",
@@ -1511,17 +1744,17 @@
       "/path/to/tmp/json",
       "copy",
       "Add releasespecs/99/1234.56.0.xml\n\nGenerated by Rubik, see https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184 for job details.\n",
-      "[CLEANUP]/commit_msg_tmp_1"
+      "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
     "name": "set up orchestrator.commit releasespecs/99/1234.56.0.xml.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Add releasespecs/99/1234.56.0.xml@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by Rubik, see https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184 for job details.@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Add releasespecs/99/1234.56.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Generated by Rubik, see https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184 for job details.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
   },
   {
@@ -1529,7 +1762,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_1"
+      "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,

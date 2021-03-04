@@ -199,6 +199,7 @@ class OrchMenuApi(RecipeApi):
         if config and config.id.type == BuilderConfig.Id.RELEASE:
           with self.m.workspace_util.sync_to_commit(
               staging=self.m.cros_infra_config.is_staging):
+            self.m.cros_version.bump_version()
             self.m.cros_release.create_releasespec()
 
       if config:

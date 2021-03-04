@@ -20,6 +20,7 @@ DEPS = [
     'cros_source',
     'cros_tags',
     'cros_test_proctor',
+    'cros_version',
     'easy',
     'failures',
     'gerrit',

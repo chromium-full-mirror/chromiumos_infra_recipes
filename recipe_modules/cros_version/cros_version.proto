@@ -11,4 +11,11 @@ message CrosVersionProperties {
     // TODO(crbug/1122854): Delete this once release builders can name
     // artifacts in a standard way.
     bool remove_snapshot_from_version = 1;
+
+    // Cipd package to use for verson_bumper.
+    // Defaults to "chromiumos/infra/version_bumper/linux-amd64".
+    string version_bumper_cipd_package = 2;
+
+    // Cipd ref to use for verson_bumper. Defaults to "latest".
+    string version_bumper_cipd_ref = 3;
 }
