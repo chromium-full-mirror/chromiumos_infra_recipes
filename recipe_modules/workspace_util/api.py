@@ -213,7 +213,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       init_opts['manifest_branch'] = manifest_branch
       manifest_url = self.m.src_state.internal_manifest.url
 
-    with self.m.cros_source.checkout_overlays_context():
+    with self.m.cros_source.checkout_overlays_context(
+        mount_cache=not cache_path_override):
       self.m.cros_source.ensure_synced_cache(
           gitiles_commit=gitiles_commit, manifest_url=manifest_url,
           init_opts=init_opts, cache_path_override=cache_path_override)
