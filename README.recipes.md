@@ -133,6 +133,7 @@
   * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt)
   * [chromeos_cbuildbot](#recipes-chromeos_cbuildbot)
   * [chromite:examples/full](#recipes-chromite_examples_full)
+  * [cipd_uprev](#recipes-cipd_uprev)
   * [cl_factory](#recipes-cl_factory) &mdash; Used to create sweeping changes by creating CLs in many repos.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full)
@@ -6277,6 +6278,46 @@ Return the kwargs as a json string.
 [DEPS](/recipe_modules/chromite/examples/full.py#7): [chromite](#recipe_modules-chromite), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/chromite/examples/full.py#15)(api):**
+### *recipes* / [cipd\_uprev](/recipes/cipd_uprev.py)
+
+[DEPS](/recipes/cipd_uprev.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+&mdash; **def [RunSteps](/recipes/cipd_uprev.py#115)(api, properties):**
+
+&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#62)(api, instruction):**
+
+Get the current version of the ref.
+
+Args:
+  * instruction (cipd_uprev.Instruction): A complete set of args for
+    `cipd set-ref`.
+Returns:
+  cipd_uprev.Instance
+Raises:
+  A StepFailure if the CIPD tool call fails.
+
+&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#90)(api, instruction, package_tags={}):**
+
+Change CIPD ref of a package according to the instructions.
+
+Args:
+  * instruction (cipd_uprev.Instruction): A complete set of args for
+    `cipd set-ref`.
+  * package_tags: Tags to add to the package.
+Returns:
+  cipd_uprev.Instance
+Raises:
+  A StepFailure if the CIPD tool call fails.
+
+&mdash; **def [validate](/recipes/cipd_uprev.py#27)(api, instruction):**
+
+Validate instructions for uprevving a specific package.
+
+Args:
+  * instruction (cipd_uprev.Instruction): A complete set of args for
+    `cipd set-ref`.
+Raises:
+  A ValueError if validation fails.
 ### *recipes* / [cl\_factory](/recipes/cl_factory.py)
 
 [DEPS](/recipes/cl_factory.py#38): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -1,0 +1,277 @@
+[
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64"
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.validate instructions package_name: \"chromiumos/infra/phosphorus/linux-amd64\"\nref: \"foo-phosphorus-ref\"\nversion: \"foo-phosphorus-version\"\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.get instance ID of package \"chromiumos/infra/phosphorus/linux-amd64\" with ref \"foo-phosphorus-ref\"",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "describe",
+      "chromiumos/infra/phosphorus/linux-amd64",
+      "-version",
+      "foo-phosphorus-ref",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.get instance ID of package \"chromiumos/infra/phosphorus/linux-amd64\" with ref \"foo-phosphorus-ref\".cipd describe chromiumos/infra/phosphorus/linux-amd64",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"instance_id\": \"resolved-instance_id-of-foo-phosphorus-r\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"package\": \"chromiumos/infra/phosphorus/linux-amd64\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"refs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"modified_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"modified_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"latest\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"registered_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"buildbot_build:some.waterfall/builder/1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_repository:https://chromium.googlesource.com/some/repo\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_revision:397a2597cdc237f3026e6143b683be4b9ab60540\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.uprev the \"foo-phosphorus-ref\" ref of the \"chromiumos/infra/phosphorus/linux-amd64\" package to \"foo-phosphorus-version\"",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "set-tag",
+      "chromiumos/infra/phosphorus/linux-amd64",
+      "-version",
+      "foo-phosphorus-version",
+      "-tag",
+      "ctp_release_version:ctp_1970-01-01T00:02:04.500000",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.uprev the \"foo-phosphorus-ref\" ref of the \"chromiumos/infra/phosphorus/linux-amd64\" package to \"foo-phosphorus-version\".cipd set-tag chromiumos/infra/phosphorus/linux-amd64",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"package\": \"chromiumos/infra/phosphorus/linux-amd64\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-foo-phosphorus-v\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/phosphorus/linux-amd64\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "set-ref",
+      "chromiumos/infra/phosphorus/linux-amd64",
+      "-version",
+      "foo-phosphorus-version",
+      "-ref",
+      "foo-phosphorus-ref",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.uprev the \"foo-phosphorus-ref\" ref of the \"chromiumos/infra/phosphorus/linux-amd64\" package to \"foo-phosphorus-version\".cipd set-ref chromiumos/infra/phosphorus/linux-amd64",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/phosphorus/linux-amd64\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"instance_id\": \"resolved-instance_id-of-foo-phosphorus-v\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"package\": \"chromiumos/infra/phosphorus/linux-amd64\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes"
+  },
+  {
+    "cmd": [],
+    "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.validate instructions package_name: \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\"\nref: \"foo-recipe-ref\"\nversion: \"foo-recipe-version\"\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.get instance ID of package \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\" with ref \"foo-recipe-ref\"",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "describe",
+      "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+      "-version",
+      "foo-recipe-ref",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.get instance ID of package \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\" with ref \"foo-recipe-ref\".cipd describe infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"instance_id\": \"resolved-instance_id-of-foo-recipe-ref--\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"package\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"refs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"modified_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"modified_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"latest\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"registered_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"buildbot_build:some.waterfall/builder/1234\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_repository:https://chromium.googlesource.com/some/repo\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_by\": \"user:44-blablbla@developer.gserviceaccount.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"registered_ts\": 1446574210, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"tag\": \"git_revision:397a2597cdc237f3026e6143b683be4b9ab60540\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.uprev the \"foo-recipe-ref\" ref of the \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\" package to \"foo-recipe-version\"",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "set-tag",
+      "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+      "-version",
+      "foo-recipe-version",
+      "-tag",
+      "ctp_release_version:ctp_1970-01-01T00:02:04.500000",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.uprev the \"foo-recipe-ref\" ref of the \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\" package to \"foo-recipe-version\".cipd set-tag infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"package\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-foo-recipe-versi\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "set-ref",
+      "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+      "-version",
+      "foo-recipe-version",
+      "-ref",
+      "foo-recipe-ref",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.uprev the \"foo-recipe-ref\" ref of the \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\" package to \"foo-recipe-version\".cipd set-ref infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"pin\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"instance_id\": \"resolved-instance_id-of-foo-recipe-versi\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"package\": \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
