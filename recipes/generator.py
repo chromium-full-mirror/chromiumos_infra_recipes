@@ -230,14 +230,7 @@ def RunSteps(api, properties):
                                             ('branch', info.branch_name),
                                             ('status', 'merged'),
                                             ('-age', '30d')]))
-              # TODO(crbug/1161078): Remove after 2/1/21 (COIL issue)
-              if info.branch_name == 'main':
-                merged_changes.extend(
-                    api.gerrit.query_changes(host_url, [('topic', topic),
-                                                        ('project', info.name),
-                                                        ('branch', 'master'),
-                                                        ('status', 'merged'),
-                                                        ('-age', '30d')]))
+
             if merged_changes:
               presentation.logs['merged CLs'] = [
                   api.gerrit.parse_gerrit_change_url(cl)
@@ -932,20 +925,4 @@ def GenTests(api):
           post_process.StepWarning,
           'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)'
       ),
-  )
-
-  # TODO(crbug/1161078): Remove after 2/1/21 (COIL issue)
-  yield api.test(
-      'coil-test',
-      _props(),
-      api.repo.project_infos_step_data('commit uprev', data=[
-          dict(project='overlay'),
-      ], iteration=1),
-      api.repo.project_infos_step_data(
-          'commit uprev', data=[
-              dict(project='private-overlay', remote='cros-internal',
-                   upstream='main')
-          ], iteration=2),
-      api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.git.diff_check(True),
   )
