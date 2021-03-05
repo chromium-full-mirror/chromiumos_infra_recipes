@@ -155,26 +155,7 @@ def RunSteps(api, properties):
             external_manifest.path.join('default.xml'), pinned=True,
             step_name='generate external manifest')
 
-        # Generate Cr-Snapshot-Identifer (b/171751551).
-        with api.step.nest('fetch previous snapshot identifier'):
-          api.git.fetch_ref(internal_manifest.url, prior_internal)
-          test_data = api.git_footers.test_api.step_test_data_factory('1000000')
-          snapshot_identifier_footers = api.git_footers.from_ref(
-              "FETCH_HEAD", key='Cr-Snapshot-Identifier',
-              step_test_data=test_data)
-          if not snapshot_identifier_footers:
-            raise StepFailure('missing Cr-Snapshot-Identifier footer')
-          snapshot_identifier = int(snapshot_identifier_footers[0])
-          snapshot_identifier += 1
 
-        # And publish.
-        with api.step.nest('publish external snapshot'):
-          external_snapshot_commit = _publish_snapshot(
-              api, external_manifest.url, manifest_ref, prior_external,
-              external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
-              disable_gerrit=True, dry_run=dry_run,
-              footers=[("Cr-Snapshot-Identifier", str(snapshot_identifier))])
-          external_snapshot_ref = external_snapshot_commit.id
 
       # snapshot internal manifest
       snapshot_xml_intern = api.repo.manifest(
@@ -192,8 +173,9 @@ def RunSteps(api, properties):
 
         # Pushing to staging-infra-{$BRANCH} may fail since the commit histories
         # have different acestors. If we can verify that they are reachable
-        # through a prior commit we will ignore the CQ depends.
-        # go/annealing-uprevs for more info.
+        # through a prior commit we will ignore the CQ depends. This issue
+        # arises when the last staging-annealing run was with
+        # properties.uprev_first == True. go/annealing-uprevs for more info.
         ignore_cq_depends = False
 
         # Make sure that we have not lost commits.  If the new revision at a
@@ -207,7 +189,7 @@ def RunSteps(api, properties):
           downrevs = []
           for diff in manifest_diffs:
             with api.context(cwd=workspace_path.join(diff.path)):
-              if (not api.git.is_reachable(diff.from_rev, diff.to_rev) and
+              if (not api.git.is_reachable(diff.from_rev) and
                   diff.path not in properties.ignore_downrev_paths):
                 if is_staging and api.git.is_reachable('{}~'.format(
                     diff.from_rev)):
@@ -237,6 +219,27 @@ def RunSteps(api, properties):
         # gerrit changes have landed.
         gerrit_commits, jobs = _get_gerrit_changes(api, manifest_diffs,
                                                    properties.path_triggers)
+
+      # Generate Cr-Snapshot-Identifer (b/171751551).
+      with api.step.nest('fetch previous snapshot identifier'):
+        api.git.fetch_ref(internal_manifest.url, prior_internal)
+        test_data = api.git_footers.test_api.step_test_data_factory('1000000')
+        snapshot_identifier_footers = api.git_footers.from_ref(
+            "FETCH_HEAD", key='Cr-Snapshot-Identifier',
+            step_test_data=test_data)
+        if not snapshot_identifier_footers:
+          raise StepFailure('missing Cr-Snapshot-Identifier footer')
+        snapshot_identifier = int(snapshot_identifier_footers[0])
+        snapshot_identifier += 1
+
+      # And publish.
+      with api.step.nest('publish external snapshot'):
+        external_snapshot_commit = _publish_snapshot(
+            api, external_manifest.url, manifest_ref, prior_external,
+            external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
+            disable_gerrit=True, dry_run=dry_run,
+            footers=[("Cr-Snapshot-Identifier", str(snapshot_identifier))])
+        external_snapshot_ref = external_snapshot_commit.id
 
       # TODO(b/179923413): remove properties check when uprev change
       # fully rolled out
@@ -665,6 +668,22 @@ def GenTests(api):
   yield api.test(
       'no-snapshot-identifier',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''),
       api.git_footers.step_data(
           'fetch previous snapshot identifier.read git footers', ''),
   )

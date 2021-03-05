@@ -769,8 +769,163 @@
     "infra_step": true,
     "name": "generate external manifest",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "generate internal manifest",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "diff remote and local manifest"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "show",
+      "FETCH_HEAD:snapshot.xml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "diff remote and local manifest.git show",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check reachability"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "FROM_REV",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "check reachability.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure manifest cq-depend fulfilled",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@diff manifest@NAME upreved from FROM_REV to TO_REV@@@",
+      "@@@STEP_LOG_END@diff manifest@@@",
+      "@@@STEP_LOG_LINE@gather cq-depend@No Cq-Depend found in any CLs@@@",
+      "@@@STEP_LOG_END@gather cq-depend@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%H%x1E%B%x00",
+      "FROM_REV...TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "ensure manifest cq-depend fulfilled.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001emessage\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes"
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes.NAME",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%H%x1E%B%x00",
+      "FROM_REV...TO_REV",
+      "-30"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "record new gerrit changes.NAME.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001emessage\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Reviewed-on"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "record new gerrit changes.NAME.read git footers",
+    "stdin": "message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -787,7 +942,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "fetch previous snapshot identifier.git fetch",
     "~followup_annotations": [
@@ -800,7 +955,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "fetch previous snapshot identifier.git rev-parse",
     "~followup_annotations": [
@@ -816,7 +971,7 @@
       "--key",
       "Cr-Snapshot-Identifier"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "fetch previous snapshot identifier.read git footers",
     "~followup_annotations": [
