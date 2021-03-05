@@ -2075,6 +2075,44 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "a quick description\n\nCq-Depend: chromium:1\nChange-Id: deadbeef\n",
+      "[CLEANUP]/commit_msg_tmp_3"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/[START_DIR]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "name": "cq-depend generated CLs.set cq-depend for src/[START_DIR]/chromiumos_workspace/src/overlay CL.set CL 1 description.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@a quick description@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cq-Depend: chromium:1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--amend",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_3"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/[START_DIR]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "name": "cq-depend generated CLs.set cq-depend for src/[START_DIR]/chromiumos_workspace/src/overlay CL.set CL 1 description.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "cq-depend generated CLs.set cq-depend for src/[START_DIR]/chromiumos_workspace/src/private-overlay CL",
     "~followup_annotations": [
@@ -2209,6 +2247,44 @@
     },
     "name": "cq-depend generated CLs.set cq-depend for src/[START_DIR]/chromiumos_workspace/src/private-overlay CL.set CL 1 description.git_cl set description",
     "stdin": "a quick description\n\nCq-Depend: chromium:1\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "a quick description\n\nCq-Depend: chromium:1\nChange-Id: deadbeef\n",
+      "[CLEANUP]/commit_msg_tmp_4"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/[START_DIR]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "cq-depend generated CLs.set cq-depend for src/[START_DIR]/chromiumos_workspace/src/private-overlay CL.set CL 1 description.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@a quick description@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cq-Depend: chromium:1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--amend",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_4"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/[START_DIR]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "cq-depend generated CLs.set cq-depend for src/[START_DIR]/chromiumos_workspace/src/private-overlay CL.set CL 1 description.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

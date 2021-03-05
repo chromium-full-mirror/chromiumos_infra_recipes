@@ -35,6 +35,8 @@ def RunSteps(api):
   api.git.cherry_pick('branch')
   api.git.commit('Updated README\n\nMuch better now.', files=['README.md'],
                  author='John Doe <john.doe@example.com>')
+  api.git.amend_head_message('Updating README\n\nMuch better now.')
+
   api.git.push('origin', 'HEAD:main', dry_run=True, capture_stdout=True,
                force=True, infra_step=False, timeout=30)
 

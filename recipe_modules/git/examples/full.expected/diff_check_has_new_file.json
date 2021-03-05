@@ -180,6 +180,37 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Updating README\n\nMuch better now.",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "write commit message (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Updating README@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Much better now.@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--amend",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "git commit (2)"
+  },
+  {
+    "cmd": [
       "git",
       "push",
       "--dry-run",

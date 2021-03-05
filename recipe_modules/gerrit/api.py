@@ -559,13 +559,16 @@ class GerritApi(RecipeApi):
       pres.logs['description text'] = [description]
       return description
 
-  def set_change_description(self, gerrit_change, description):
+  def set_change_description(self, gerrit_change, description,
+                             amend_local=False):
     """Set the description of the given Gerrit change.
 
     Args:
       gerrit_change (GerritChange): The change of interest.
       description (str): The new description, in full. Be sure this still
           includes the Change-Id and other essential metadata.
+      amend_local (bool): Should you amend the description of the HEAD local
+          change as well.
     """
     with self.m.step.nest('set CL %d description' %
                           gerrit_change.change) as pres:
@@ -582,6 +585,8 @@ class GerritApi(RecipeApi):
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         self.m.git_cl.set_description(description, patch_url=gerrit_change_url)
+        if amend_local:
+          self.m.git.amend_head_message(description)
 
   def abandon_change(self, gerrit_change, message=None):
     """Abandon the given change.

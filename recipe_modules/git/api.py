@@ -281,6 +281,22 @@ class GitApi(recipe_api.RecipeApi):
     """Runs 'git merge --abort'."""
     self._step(['merge', '--abort'], name='git merge --abort')
 
+  def amend_head_message(self, message, **kwargs):
+    """Runs 'git commit --amend' with the given description.
+
+    Args:
+      message (str): The commit message.
+      kwargs (dict): Passed to recipe_engine/step.
+    """
+    # Single argument can't exceed 128kiB (crbug/987630), write to temp
+    # and pass the argument as a file
+    commit_msg_path = self.m.path.mkstemp(prefix='commit_msg')
+    str_message = message.encode('utf-8')
+    self.m.file.write_text('write commit message', commit_msg_path, str_message)
+
+    cmd = ['commit', '--amend', '--file', str(commit_msg_path)]
+    return self._step(cmd, **kwargs)
+
   def commit(self, message, files=None, author=None, **kwargs):
     """Runs 'git commit' with the given files.
 

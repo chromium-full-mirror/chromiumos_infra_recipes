@@ -493,7 +493,8 @@ def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
           description = api.gerrit.get_change_description(change)
           description = api.git_footers.edit_add_change_description(
               description, 'Cq-Depend', cq_depend)
-          api.gerrit.set_change_description(change, description)
+          api.gerrit.set_change_description(change, description,
+                                            amend_local=True)
 
   with api.step.nest('update CL labels'):
     for change in changes:
