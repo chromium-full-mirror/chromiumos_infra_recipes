@@ -34,9 +34,9 @@ DEPS = [
     'repo',
 ]
 
-from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties as cpp_pb2
+from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
 
-PROPERTIES = cpp_pb2
+PROPERTIES = ConfigPostsubmitProperties
 
 # Represents a commit that should be made as the result of an action.
 #
@@ -61,7 +61,7 @@ IngestConfig = namedtuple(
 )
 
 
-def _replicate_public_config(api, properties, project_infos):
+def _replicate_public_config(api, _properties, project_infos):
   """Replicates any public configs in project repos into a public repo.
 
   Args:
@@ -69,11 +69,12 @@ def _replicate_public_config(api, properties, project_infos):
   """
   public_repo_path = api.context.cwd.join('src', 'project_public')
 
+  automation_id = 'config_postsubmit/replicate_public'
   message = \
     '''Update with publically filtered configs.
 
 Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/replicate_public')
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
 
   for project_info in project_infos:
     with api.step.nest(project_info.name):
@@ -100,7 +101,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/repli
   return [CommitInfo(public_repo_path, message, [])]
 
 
-def _flatten_configs(api, properties, project_infos):
+def _flatten_configs(api, _properties, project_infos):
   flatten_script = api.context.cwd.join(
       'src/config/payload_utils/flatten_config_payload.py')
 
@@ -162,11 +163,13 @@ def _flatten_configs(api, properties, project_infos):
 
     # commit files
     api.git.add([output_path])
+
+    automation_id = 'config_postsubmit/merge_flattened'
     message = \
       '''Automerging and importing flattened configs.
 
 Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/merge_flattened')
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
     api.git.commit(message)
     return True
 
@@ -188,13 +191,12 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/merge
   return []
 
 
-def _copy_to_internal(api, properties, project_infos):
+def _copy_to_internal(api, _properties, project_infos):
   """Aggregate config messages and copy them to config-internal
 
   This provides a single centralized location from which services can read all
   device configurations.
   """
-
   configs = [
       IngestConfig(
           'joined',
@@ -238,12 +240,14 @@ def _copy_to_internal(api, properties, project_infos):
 
     # commit files
     api.git.add(outputs)
+    automation_id = 'config_postsubmit/aggregate'
     message = \
       '''Automerging and importing config changes.
 
 Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/aggregate')
+Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
     api.git.commit(message)
+    return True
 
   with api.context(config_internal),\
        api.step.nest("aggregating configs") as presentation:
@@ -259,7 +263,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_postsubmit/aggre
   return []
 
 
-def _regenerate_suite_scheduler_configs(api, properties, project_infos):
+def _regenerate_suite_scheduler_configs(api, _properties, _project_infos):
   """Run Suite Scheduler configuration's ./generate and commit the results.
 
   This action runs the generate function in src/config-internal/test and commits
@@ -291,7 +295,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 
       with api.step.nest('diffing to find changes'):
         nothing_changed = not any(
-            [api.git.diff_check(x) for x in regenerated_files])
+            api.git.diff_check(x) for x in regenerated_files)
         if nothing_changed:
           presentation.step_text = 'no changes'
           return []
@@ -302,7 +306,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
       return []
 
 
-def _regenerate_test_plan(api, properties, project_infos):
+def _regenerate_test_plan(api, _properties, _project_infos):
   """Run test configurations ./generate and ./generate_test_plan_summary.
 
   This action runs the generate function in src/config-internal/test and commits
@@ -336,20 +340,20 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
       return []
 
 
-# A dictionary of CL configurations -> their functions which run on config repos.
+# A map of CL configurations -> their functions which run on config repos.
 #
 # Each action should take a RecipesApi and list of ProjectInfos as args and
 # optionally return a list of CommitInfos.
 _ACTIONS = {
-    cpp_pb2.REPLICATE_PUBLIC_CONFIG: _replicate_public_config,
-    cpp_pb2.FLATTEN_CONFIGS: _flatten_configs,
-    cpp_pb2.COPY_TO_INTERNAL: _copy_to_internal,
-    cpp_pb2.REGENERATE_SUITE_SCHEDULER: _regenerate_suite_scheduler_configs,
-    cpp_pb2.REGENERATE_TEST_PLAN: _regenerate_test_plan,
+    PROPERTIES.REPLICATE_PUBLIC_CONFIG: _replicate_public_config,
+    PROPERTIES.FLATTEN_CONFIGS: _flatten_configs,
+    PROPERTIES.COPY_TO_INTERNAL: _copy_to_internal,
+    PROPERTIES.REGENERATE_SUITE_SCHEDULER: _regenerate_suite_scheduler_configs,
+    PROPERTIES.REGENERATE_TEST_PLAN: _regenerate_test_plan,
 }
 
 
-def _create_cl(api, properties, commit_info, branch_name, cl_config):
+def _create_cl(api, _properties, commit_info, branch_name, cl_config):
   """Creates a CL based on commit_info.
 
   Args:
@@ -420,20 +424,19 @@ def RunSteps(api, properties):
       with api.step.nest('find config repos'):
         config_projects = _get_config_projects()
 
-      # One action failing should not block all later actions from running. Thus,
-      # catch StepFailures from each action and raise them later.
+      # One action failing should not block all later actions from
+      # running. Thus, catch StepFailures from each action and raise them later.
       #
-      # Note that an action failing should stop the CL from being created (i.e. a
-      # failed action might create an invalid CL), and thus
-      # api.step.defer_results
-      # cannot be used.
+      # Note that an action failing should stop the CL from being created
+      # (i.e. a failed action might create an invalid CL), and thus
+      # api.step.defer_results cannot be used.
       step_failures = []
       for cl_config_type, action in _ACTIONS.items():
-        cl_config = properties.cl_configs[cpp_pb2.ActionTypes.Name(
+        cl_config = properties.cl_configs[PROPERTIES.ActionTypes.Name(
             cl_config_type)]
         # Use the name of the fn. to create step names, branch names, etc.
         action_name = action.__name__.strip('_')
-        with api.step.nest('Do {} and create CL'.format(action_name)) as pres:
+        with api.step.nest('Do {} and create CL'.format(action_name)):
           try:
             commit_infos = action(api, properties, config_projects)
             for commit_info in commit_infos:
@@ -451,12 +454,12 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def default_properties():
-    aclc = cpp_pb2.ActionCLConfig(reviewers='test1@google.com',
-                                  ccs=['test2@google.com',
-                                       'test3@google.com'], topic='test topic',
-                                  hashtags=['ht1', 'ht2'], send_to_cq=True)
+    aclc = PROPERTIES.ActionCLConfig(
+        reviewers='test1@google.com',
+        ccs=['test2@google.com', 'test3@google.com'], topic='test topic',
+        hashtags=['ht1', 'ht2'], send_to_cq=True)
     return api.properties(
-        cpp_pb2(
+        PROPERTIES(
             cl_configs={
                 "REGENERATE_SUITE_SCHEDULER": aclc,
                 "FLATTEN_CONFIGS": aclc,
@@ -500,11 +503,15 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_process(
           post_process.StepCommandContains,
-          'Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config',
+          'Do replicate_public_config and create CL' \
+              '.chromeos/project/galaxy/milkyway'    \
+              '.copy public config',
           [
               'copytree',
-              '[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway/public_sw_build_config',
-              '[START_DIR]/chromiumos_workspace/src/project_public/galaxy/milkyway/sw_build_config',
+              '[START_DIR]/chromiumos_workspace/src/' \
+                  'project/galaxy/milkyway/public_sw_build_config',
+              '[START_DIR]/chromiumos_workspace/src/' \
+                  'project_public/galaxy/milkyway/sw_build_config',
           ],
       ),
   )
@@ -515,13 +522,18 @@ def GenTests(api):
       config_repos_step_data(api),
       config_dlm_step_data(api),
       api.step_data(
-          'Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config',
+          'Do replicate_public_config and create CL' \
+              '.chromeos/project/galaxy/milkyway'    \
+              '.copy public config',
           retcode=1),
       api.post_process(post_process.DoesNotRunRE, 'git commit'),
       api.post_process(post_process.StatusFailure),
       api.post_process(
           post_process.ResultReason,
-          "1 steps failed:Infra Failure: Step('Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config') (retcode: 1)"
+          "1 steps failed:Infra Failure: "                      \
+               "Step('Do replicate_public_config and create CL" \
+                   ".chromeos/project/galaxy/milkyway"          \
+                   ".copy public config') (retcode: 1)"
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -535,7 +547,8 @@ def GenTests(api):
       expected (str) - The expected value of the step_text
 
     Usage:
-      yield TEST + api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
+      yield TEST + \
+          api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
     """
     check(step_odict[step].step_summary_text == expected)
 
@@ -553,11 +566,15 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_process(
           post_process.MustRun,
-          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.generate flat payload'
+          'Do flatten_configs and create CL'                 \
+              '.processing chromeos/project/galaxy/milkyway' \
+              '.generate flat payload'
       ),
       api.post_process(
           post_process.DoesNotRun,
-          'Do flatten_configs and create CL.processing chromeos/program/galaxy.generate flat payload'
+          'Do flatten_configs and create CL'        \
+              '.processing chromeos/program/galaxy' \
+              '.generate flat payload'
       ),
   )
 
@@ -571,11 +588,15 @@ def GenTests(api):
       api.git.diff_check(False),
       api.post_process(
           post_process.DoesNotRun,
-          'Do flatten_configs and create CL.aggregating flattened configs.git transaction.git push'
+          'Do flatten_configs and create CL'   \
+              '.aggregating flattened configs' \
+              '.git transaction.git push'
       ),
       api.post_process(
           post_process.DoesNotRun,
-          'Do flatten_configs and create CL.aggregating flattened configs.git transaction.git push'
+          'Do flatten_configs and create CL'   \
+              '.aggregating flattened configs' \
+              '.git transaction.git push'
       ),
   )
 
@@ -586,11 +607,15 @@ def GenTests(api):
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
       api.step_data(
-          'Do flatten_configs and create CL.aggregating flattened configs.git transaction.merge flattened configs to config-internal',
+          'Do flatten_configs and create CL'   \
+              '.aggregating flattened configs' \
+              '.git transaction.merge flattened configs to config-internal',
           retcode=1),
       api.post_process(
           post_process.DoesNotRun,
-          'Do flatten_configs and create CL.aggregating flattened configs.git transaction.git push',
+          'Do flatten_configs and create CL'   \
+              '.aggregating flattened configs' \
+              '.git transaction.git push',
       ),
   )
 
@@ -601,7 +626,8 @@ def GenTests(api):
       config_dlm_step_data(api),
       api.post_process(
           StepSummaryEquals,
-          'Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway',
+          'Do flatten_configs and create CL' \
+              '.processing chromeos/project/galaxy/milkyway',
           "(does not exist)"),
   )
 
@@ -616,11 +642,15 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_process(
           post_process.MustRun,
-          'Do copy_to_internal and create CL.aggregating configs.git transaction.merge joined configs to config-internal',
+          'Do copy_to_internal and create CL' \
+              '.aggregating configs'          \
+              '.git transaction.merge joined configs to config-internal',
       ),
       api.post_process(
           post_process.DoesNotRun,
-          'Do copy_to_internal and create CL.aggregating configs.git transaction.merge flattened configs to config-internal',
+          'Do copy_to_internal and create CL' \
+              '.aggregating configs'          \
+              '.git transaction.merge flattened configs to config-internal',
       ),
   )
 
@@ -634,7 +664,9 @@ def GenTests(api):
       api.git.diff_check(False),
       api.post_process(
           StepSummaryEquals,
-          'Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes',
+          'Do copy_to_internal and create CL' \
+              '.aggregating configs'          \
+              '.git transaction.diffing to find changes',
           "No changes to commit"),
   )
 
@@ -647,7 +679,9 @@ def GenTests(api):
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
-          'Do copy_to_internal and create CL.aggregating configs.git transaction.merge joined configs to config-internal',
+          'Do copy_to_internal and create CL' \
+              '.aggregating configs'          \
+              '.git transaction.merge joined configs to config-internal',
           retcode=1),
   )
 
@@ -660,11 +694,15 @@ def GenTests(api):
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
-          'Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.run regenerate_configs.sh',
+          'Do regenerate_suite_scheduler_configs and create CL' \
+              '.regenerating suite scheduler configs'           \
+              '.run regenerate_configs.sh',
           retcode=1),
       api.post_process(
           post_process.DoesNotRun,
-          'Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes',
+          'Do regenerate_suite_scheduler_configs and create CL' \
+              '.regenerating suite scheduler configs'           \
+              '.diffing to find changes',
       ),
   )
 
@@ -677,10 +715,14 @@ def GenTests(api):
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
-          'Do regenerate_test_plan and create CL.regenerating test plans.run generate',
+          'Do regenerate_test_plan and create CL' \
+              '.regenerating test plans'          \
+              '.run generate',
           retcode=1),
       api.post_process(
           post_process.DoesNotRun,
-          'Do regenerate_test_plan and create CL.regenerating test plans.diffing to find changes',
+          'Do regenerate_test_plan and create CL' \
+              '.regenerating test plans'          \
+              '.diffing to find changes',
       ),
   )
