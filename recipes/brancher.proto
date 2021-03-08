@@ -14,7 +14,7 @@ message BrancherProperties {
   string source_version = 1;
 
   // Branch to create.
-  // Currently, only the branch_type field will be used.
+  // Only the branch_type and descriptor fields are used.
   chromiumos.Branch branch_info = 2;
 
   // Whether or not the branch_util should be invoked with --push.

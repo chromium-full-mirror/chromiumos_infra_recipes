@@ -37,7 +37,7 @@ def RunSteps(api, properties):
   # Create branch.
   with api.step.nest('create branch') as presentation:
     branch_name = api.cros_branch.create_from_buildspec(
-        properties.source_version, branch=Branch(type=branch_type),
+        properties.source_version, branch=properties.branch_info,
         push=properties.branch_util_push, force=properties.branch_util_force)
     if not branch_name:
       raise StepFailure("branch name could not be parsed from branch_util")
@@ -68,6 +68,30 @@ def GenTests(api):
       api.properties(
           BrancherProperties(source_version='R89-13729.0.0',
                              branch_info=Branch(type=Branch.RELEASE))),
+      api.post_check(
+          post_process.StepCommandContains,
+          'create branch.create branch from buildspec manifest 89/13729.0.0.xml',
+          ['create', '--buildspec-manifest', '89/13729.0.0.xml', '--release']),
+  )
+
+  yield api.test(
+      'stabilize-branch-descriptor',
+      api.step_data(
+          'create branch.create branch from buildspec manifest 89/13729.0.0.xml',
+          stdout=api.raw_io.output(TEST_STDOUT)),
+      api.properties(
+          BrancherProperties(
+              source_version='R89-13729.0.0',
+              branch_info=Branch(type=Branch.STABILIZE,
+                                 name='this should not be used anywhere',
+                                 descriptor="foo"))),
+      api.post_check(
+          post_process.StepCommandContains,
+          'create branch.create branch from buildspec manifest 89/13729.0.0.xml',
+          [
+              'create', '--buildspec-manifest', '89/13729.0.0.xml',
+              '--stabilize', '--descriptor', 'foo'
+          ]),
   )
 
   yield api.test(
