@@ -233,7 +233,8 @@ def RunSteps(api, properties):
         snapshot_identifier += 1
 
       # And publish.
-      with api.step.nest('publish external snapshot'):
+      with api.step.nest('publish external snapshot'), \
+          api.context(cwd=external_manifest.path):
         external_snapshot_commit = _publish_snapshot(
             api, external_manifest.url, manifest_ref, prior_external,
             external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,

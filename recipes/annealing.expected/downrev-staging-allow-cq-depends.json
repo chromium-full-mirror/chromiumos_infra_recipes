@@ -1006,7 +1006,7 @@
       "https://chromium.googlesource.com/chromiumos/manifest",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git fetch",
     "~followup_annotations": [
@@ -1019,7 +1019,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git rev-parse",
     "~followup_annotations": [
@@ -1033,7 +1033,7 @@
       "--short",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git symbolic-ref",
     "~followup_annotations": [
@@ -1046,7 +1046,7 @@
       "checkout",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git checkout",
     "~followup_annotations": [
@@ -1068,7 +1068,7 @@
       "HEAD",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.create commit message.read git footers",
     "~followup_annotations": [
@@ -1081,7 +1081,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git rev-parse (2)",
     "~followup_annotations": [
@@ -1094,7 +1094,7 @@
       "checkout",
       "main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "publish external snapshot.git checkout (2)",
     "~followup_annotations": [
