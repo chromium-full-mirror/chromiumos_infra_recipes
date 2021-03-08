@@ -106,7 +106,7 @@ def RunSteps(api, properties):
           api.cros_source.ensure_synced_cache(
               cache_path_override=workspace_path, is_staging=is_staging,
               init_opts=dict(manifest_branch=branch))
-          api.cros_source.sync_snapshot(commit)
+          api.cros_source.sync_to_gitiles_commit(commit)
           prior_internal = api.git.fetch_refs(internal_manifest.url, commit.id,
                                               count=2)[-1]
           test_data = api.git_footers.test_api.step_test_data_factory('e' * 40)

@@ -940,8 +940,10 @@ class CrosSourceApi(RecipeApi):
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
 
   @exponential_retry(retries=3, condition=retry_timeouts)
-  def sync_snapshot(self, gitiles_commit, manifest_url=None, **kwargs):
-    """Sync a checkout to the snapshot.
+  def sync_to_gitiles_commit(self, gitiles_commit, manifest_url=None, **kwargs):
+    """Sync a checkout to the specified gitiles commit.
+
+      Will first attempt to sync to snapshot.xml, then default.xml.
 
     Args:
       gitiles_commit (GitilesCommit): commit to sync to
@@ -949,12 +951,12 @@ class CrosSourceApi(RecipeApi):
       kwargs (dict): additional args for repo.sync_manifest.
     """
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
-    with self.m.step.nest('sync to snapshot'), self.m.context(
+    with self.m.step.nest('sync to gitiles commit'), self.m.context(
         cwd=self.workspace_path):
       self._sync_target = dict(call='sync_snapshot',
                                commit=MessageToDict(gitiles_commit))
       projects = kwargs.get('projects', None)
-      snapshot_xml = self._get_snapshot(gitiles_commit, projects=projects)
+      snapshot_xml = self._get_manifest(gitiles_commit, projects=projects)
       sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8)
       sync_opts.update(kwargs)
       # TODO(b/179913081): workaround for bisector to sync legacy versions
@@ -971,16 +973,16 @@ class CrosSourceApi(RecipeApi):
             self.m.repo.ensure_pinned_manifest(projects=projects, test_data='')
             or snapshot_xml)
 
-  def _get_snapshot(self, gitiles_commit, projects=None):
-    """Returns the snapshot to use.
+  def _get_manifest(self, gitiles_commit, projects=None):
+    """Returns the manifest to use.
 
-    Returns the snapshot to use. If a custom snapshot has been provided
+    Returns the manifest to use. If a custom snapshot has been provided
     via an input property, that will be used. Otherwise it will fall back
     to the typical syncing to the gitiles_commit.
     """
     if self._snapshot_cas:
       return self._get_snapshot_from_cas()
-    return self._get_snapshot_from_gitiles(gitiles_commit, projects=projects)
+    return self._get_manifest_from_gitiles(gitiles_commit, projects=projects)
 
   def _get_snapshot_from_cas(self):
     """Returns the snapshot to use from cas"""
@@ -992,8 +994,12 @@ class CrosSourceApi(RecipeApi):
                                  snapshot_dir.join('snapshot.xml'),
                                  test_data='<manifest></manifest>')
 
-  def _get_snapshot_from_gitiles(self, gitiles_commit, projects=None):
-    """Returns the snapshot to use from gitiles.
+  def _get_manifest_from_gitiles(self, gitiles_commit, projects=None):
+    """Returns the manifest to use from gitiles.
+
+      First looks for snapshot.xml in the appropriate directory.
+      If snapshot.xml does not exist, returns an unpinned manifest
+      generated from default.xml.
 
     Args:
     gitiles_commit (GitilesCommit): Commit to use.

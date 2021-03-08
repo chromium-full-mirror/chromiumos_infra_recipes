@@ -866,7 +866,7 @@
   },
   {
     "cmd": [],
-    "name": "recreating older run.sync to snapshot",
+    "name": "recreating older run.sync to gitiles commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -886,7 +886,7 @@
       "200,404"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "recreating older run.sync to snapshot.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",
+    "name": "recreating older run.sync to gitiles commit.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -905,7 +905,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "recreating older run.sync to snapshot.write manifest",
+    "name": "recreating older run.sync to gitiles commit.write manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
@@ -934,7 +934,7 @@
       ]
     },
     "infra_step": true,
-    "name": "recreating older run.sync to snapshot.repo init",
+    "name": "recreating older run.sync to gitiles commit.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -960,14 +960,14 @@
       ]
     },
     "infra_step": true,
-    "name": "recreating older run.sync to snapshot.repo sync",
+    "name": "recreating older run.sync to gitiles commit.repo sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "recreating older run.sync to snapshot.ensure manifest is pinned",
+    "name": "recreating older run.sync to gitiles commit.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -989,7 +989,7 @@
       ]
     },
     "infra_step": true,
-    "name": "recreating older run.sync to snapshot.ensure manifest is pinned.repo forall",
+    "name": "recreating older run.sync to gitiles commit.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"

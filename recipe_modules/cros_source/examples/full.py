@@ -52,7 +52,7 @@ def RunSteps(api, properties):
       api.cros_source.ensure_synced_cache(is_staging=True)
       # Either checkout tip of tree, or sync to a snapshot.
       api.cros_source.checkout_tip_of_tree()
-      api.cros_source.sync_snapshot(api.buildbucket.gitiles_commit)
+      api.cros_source.sync_to_gitiles_commit(api.buildbucket.gitiles_commit)
       _ = api.cros_source.pinned_manifest
 
   # At this point should be dirty only for custom manifest cases.
@@ -87,7 +87,7 @@ def GenTests(api):
       api.post_check(post_process.StepFailure,
                      'sync cached directory.retry cache sync'))
 
-  sync_step_name = ('sync to snapshot.fetch '
+  sync_step_name = ('sync to gitiles commit.fetch '
                     '2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml')
   yield api.cros_source.test(
       'sync-to-branch', api.post_check(post_process.StatusSuccess),

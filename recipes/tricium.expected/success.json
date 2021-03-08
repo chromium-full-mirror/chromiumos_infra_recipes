@@ -735,7 +735,7 @@
   },
   {
     "cmd": [],
-    "name": "sync to snapshot"
+    "name": "sync to gitiles commit"
   },
   {
     "cmd": [
@@ -752,7 +752,7 @@
       "200,404"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "sync to snapshot.fetch snapshot-HEAD-SHA:snapshot.xml",
+    "name": "sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -771,7 +771,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync to snapshot.write manifest",
+    "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
@@ -800,7 +800,7 @@
       ]
     },
     "infra_step": true,
-    "name": "sync to snapshot.repo init",
+    "name": "sync to gitiles commit.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -827,7 +827,7 @@
       ]
     },
     "infra_step": true,
-    "name": "sync to snapshot.repo sync",
+    "name": "sync to gitiles commit.repo sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

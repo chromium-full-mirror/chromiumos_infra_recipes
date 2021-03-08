@@ -84,7 +84,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
         cache_path_override=cache_path_override, projects=projects)
 
     with self.m.context(cwd=self.m.cros_source.workspace_path):
-      self.m.cros_source.sync_snapshot(commit, manifest_url, projects=projects)
+      self.m.cros_source.sync_to_gitiles_commit(commit, manifest_url,
+                                                projects=projects)
       yield
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',

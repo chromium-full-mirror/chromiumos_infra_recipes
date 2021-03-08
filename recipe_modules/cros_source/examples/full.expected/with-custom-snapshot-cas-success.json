@@ -549,11 +549,11 @@
   },
   {
     "cmd": [],
-    "name": "sync to snapshot"
+    "name": "sync to gitiles commit"
   },
   {
     "cmd": [],
-    "name": "sync to snapshot.install infra/tools/luci/cas",
+    "name": "sync to gitiles commit.install infra/tools/luci/cas",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -572,7 +572,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync to snapshot.install infra/tools/luci/cas.ensure package directory",
+    "name": "sync to gitiles commit.install infra/tools/luci/cas.ensure package directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -592,7 +592,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync to snapshot.install infra/tools/luci/cas.ensure_installed",
+    "name": "sync to gitiles commit.install infra/tools/luci/cas.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -621,7 +621,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync to snapshot.download snapshot.xml from cas",
+    "name": "sync to gitiles commit.download snapshot.xml from cas",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -639,7 +639,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync to snapshot.read snapshot.xml",
+    "name": "sync to gitiles commit.read snapshot.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@snapshot.xml@<manifest></manifest>@@@",
@@ -659,7 +659,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync to snapshot.write manifest",
+    "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
@@ -688,7 +688,7 @@
       ]
     },
     "infra_step": true,
-    "name": "sync to snapshot.repo init",
+    "name": "sync to gitiles commit.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -715,14 +715,14 @@
       ]
     },
     "infra_step": true,
-    "name": "sync to snapshot.repo sync",
+    "name": "sync to gitiles commit.repo sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "sync to snapshot.ensure manifest is pinned",
+    "name": "sync to gitiles commit.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -744,7 +744,7 @@
       ]
     },
     "infra_step": true,
-    "name": "sync to snapshot.ensure manifest is pinned.repo forall",
+    "name": "sync to gitiles commit.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
