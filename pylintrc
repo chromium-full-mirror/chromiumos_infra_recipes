@@ -48,6 +48,7 @@ init-hook='import sys; sys.path.extend([".recipe_deps/_pb", ".recipe_deps/recipe
 disable=
     consider-iterating-dictionary,
     file-ignored,
+    fixme,
     invalid-name,
     locally-disabled,
     locally-enabled,
