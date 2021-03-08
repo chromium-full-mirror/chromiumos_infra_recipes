@@ -418,11 +418,11 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
             if not properties.uprev_first:
               raise ex
 
-            no_change, requires_fetch_first = _check_push_exception(ex)
+            git_flags = _check_push_exception(ex)
             # Define no change
-            if no_change:
+            if git_flags.no_change:
               pass
-            elif requires_fetch_first:
+            elif git_flags.merge_required:
               # try resolving the issue three times before failing
               with api.step.nest("retry uprev to {}".format(repo_name)):
                 for index in range(3):
@@ -461,17 +461,19 @@ def _check_push_exception(exception):
   Args:
     exception(StepFailure): step failure encounted during git push
 
-  Returns:
+  Returns(FailureFlags):
     no_change(bool): push failed due to no files changed
-    requires_fetch_first(bool): fetch and merge required
+    merge_required(bool): fetch and merge required
   """
-  no_change = requires_fetch_first = False
+  FailureFlags = collections.namedtuple('FailureFlags',
+                                        ['no_change', 'merge_required'])
+  no_change = merge_required = False
   for line in exception.result.stdout.splitlines():
-    if re.search(r'\(no new changes\)$', line):
-      no_change = True
-    elif re.match(r'remote contains work that you', line):
-      requires_fetch_first = True
-  return (no_change, requires_fetch_first)
+    no_change = bool(re.search(r'\(no new changes\)$', line))
+    merge_required = bool(
+        re.search(r'remote contains work that you', line) or
+        re.search(r' a pushed branch tip is behind its remote', line))
+  return FailureFlags(no_change, merge_required)
 
 
 def _uprev_retry(api, project, dry_run, step_name, branch, is_staging):
@@ -877,6 +879,46 @@ def GenTests(api):
       api.step_data('uprev packages.push uprevs.git push src/overlay',
                     retcode=1,
                     stdout=api.raw_io.output('remote contains work that you')),
+      api.git_footers.step_data(
+          'record new gerrit changes.NAME.read git footers', ''),
+      api.post_check(
+          post_process.MustRun,
+          'uprev packages.push uprevs.retry uprev to src/overlay.git '
+          'push src/overlay'),
+      api.post_check(
+          post_process.MustRun,
+          'uprev packages.push uprevs.retry uprev to src/private-overlay.git '
+          'push src/private-overlay'),
+      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
+                     'Passed Uprevs', ('src/overlay\nsrc/private-overlay')))
+
+  yield api.test(
+      'retry-fast-forward',
+      api.properties(
+          AnnealingProperties(manifest_ref='snapshot', dry_run=False,
+                              uprev_first=True)),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.step_data(
+          'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
+          stdout=api.raw_io.output('Updates were rejected because a'
+                                   ' pushed branch tip is behind its remote')),
+      api.step_data(
+          'uprev packages.push uprevs.git push src/overlay', retcode=1,
+          stdout=api.raw_io.output('Updates were rejected because a'
+                                   ' pushed branch tip is behind its remote')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(
