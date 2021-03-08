@@ -65,6 +65,7 @@ def RunSteps(api, properties):
   workspace_path = api.src_state.workspace_path
   properties.uprev_first |= (
       'chromeos.annealing.uprev_first' in api.cros_infra_config.experiments)
+  api.easy.set_properties_step(uprev_first=properties.uprev_first)
   commit = api.src_state.gitiles_commit
   prior_internal = prior_external = diffs = None
   dry_run = api.cq.state != api.cq.INACTIVE or properties.dry_run
@@ -418,6 +419,8 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
             if not properties.uprev_first:
               raise ex
 
+            api.step.active_result.presentation.logs['exception'] = (
+                ex.result.stdout.splitlines())
             git_flags = _check_push_exception(ex)
             # Define no change
             if git_flags.no_change:
@@ -455,7 +458,7 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
 def _check_push_exception(exception):
   """Parse stdout in push exception
 
-  When the push during an uprec fails we need to parse the output to 
+  When the push during an uprev fails we need to parse the output to
   determine what out next steps will be.
 
   Args:
@@ -469,10 +472,10 @@ def _check_push_exception(exception):
                                         ['no_change', 'merge_required'])
   no_change = merge_required = False
   for line in exception.result.stdout.splitlines():
-    no_change = bool(re.search(r'\(no new changes\)$', line))
-    merge_required = bool(
-        re.search(r'remote contains work that you', line) or
-        re.search(r' a pushed branch tip is behind its remote', line))
+    no_change |= bool(re.search(r'\(no new changes\)', line))
+    merge_required |= bool(
+        re.search(r'\(fetch first\)', line) or
+        re.search(r'\(non-fast-forward\)', line))
   return FailureFlags(no_change, merge_required)
 
 
@@ -873,12 +876,14 @@ def GenTests(api):
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
-      api.step_data('uprev packages.push uprevs.git push src/private-overlay',
-                    retcode=1,
-                    stdout=api.raw_io.output('remote contains work that you')),
-      api.step_data('uprev packages.push uprevs.git push src/overlay',
-                    retcode=1,
-                    stdout=api.raw_io.output('remote contains work that you')),
+      api.step_data(
+          'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
+          stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra'
+                                   '-main	[rejected] (fetch first)')),
+      api.step_data(
+          'uprev packages.push uprevs.git push src/overlay', retcode=1,
+          stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra'
+                                   '-main	[rejected] (fetch first)')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(
@@ -913,12 +918,12 @@ def GenTests(api):
           )),
       api.step_data(
           'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
-          stdout=api.raw_io.output('Updates were rejected because a'
-                                   ' pushed branch tip is behind its remote')),
+          stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra-main	'
+                                   '[rejected] (non-fast-forward)')),
       api.step_data(
           'uprev packages.push uprevs.git push src/overlay', retcode=1,
-          stdout=api.raw_io.output('Updates were rejected because a'
-                                   ' pushed branch tip is behind its remote')),
+          stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra-main	'
+                                   '[rejected] (non-fast-forward)')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(
@@ -950,9 +955,10 @@ def GenTests(api):
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
                               uprev_first=True)),
-      api.step_data('uprev packages.push uprevs.git push src/private-overlay',
-                    retcode=1,
-                    stdout=api.raw_io.output('remote contains work that you')),
+      api.step_data(
+          'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
+          stdout=api.raw_io.output(('!	HEAD:refs/heads/staging-'
+                                    'infra-main	[rejected] (fetch first)'))),
       api.step_data(
           ('uprev packages.push uprevs.retry uprev to src/private-overlay.git '
            'push src/private-overlay'),

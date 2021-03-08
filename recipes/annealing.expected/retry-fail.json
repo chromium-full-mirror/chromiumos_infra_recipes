@@ -23,6 +23,13 @@
   },
   {
     "cmd": [],
+    "name": "set uprev_first",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@uprev_first@true@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "mount overlay chromiumos"
   },
   {
@@ -1159,8 +1166,10 @@
     "name": "uprev packages.push uprevs.git push src/private-overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@remote contains work that you@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/heads/staging-infra-main\t[rejected] (fetch first)@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_LINE@exception@!\tHEAD:refs/heads/staging-infra-main\t[rejected] (fetch first)@@@",
+      "@@@STEP_LOG_END@exception@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },

@@ -23,13 +23,20 @@
   },
   {
     "cmd": [],
+    "name": "set uprev_first",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@uprev_first@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "RECIPE CRASH (Uncaught exception)",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@",
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/annealing.py\", line 73, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/annealing.py\", line 74, in RunSteps",
       "    raise ValueError('must set manifest ref')",
       "ValueError: must set manifest ref"
     ]

@@ -23,6 +23,13 @@
   },
   {
     "cmd": [],
+    "name": "set uprev_first",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@uprev_first@true@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "mount overlay chromiumos"
   },
   {
@@ -1160,6 +1167,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_END@exception@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
