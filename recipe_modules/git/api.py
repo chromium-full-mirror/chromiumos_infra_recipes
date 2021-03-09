@@ -241,15 +241,16 @@ class GitApi(recipe_api.RecipeApi):
     args += [commit]
     self._step(args)
 
-  def merge(self, ref, message, **kwargs):
+  def merge(self, ref, message, *args, **kwargs):
     """Runs `git merge`.
 
     Args:
       ref (str): The ref to merge.
       message (str): The merge commit message.
+      args (tuple): Additional arguments to git merge.
       kwargs (dict): Passed to recipe_engine/step.
     """
-    self._step(['merge', ref, '-m', message], **kwargs)
+    self._step(['merge', ref, '-m', message] + list(args), **kwargs)
 
   def merge_silent_fail(self, ref, message, **kwargs):
     """Runs `git merge` and returns whether the merge succeeded.
@@ -382,7 +383,9 @@ class GitApi(recipe_api.RecipeApi):
                                self.m.src_state.default_branch))
     if step_data.retcode != 0:
       return None
-    return step_data.stdout.strip()
+    ret = step_data.stdout.strip()
+    self.m.step.active_result.presentation.logs['branch'] = [ret]
+    return ret
 
   def remote_head(self, remote='.', test_stdout=None):
     """Returns the HEAD ref of the given remote.
@@ -412,9 +415,11 @@ class GitApi(recipe_api.RecipeApi):
 
   def head_commit(self):
     """Returns the HEAD commit ID."""
-    return self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
-                      test_stdout='%s\n' %
-                      self.test_api.test_commit_id).stdout.strip()
+    ret = self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
+                     test_stdout='%s\n' %
+                     self.test_api.test_commit_id).stdout.strip()
+    self.m.step.active_result.presentation.logs['HEAD'] = [ret]
+    return ret
 
   @contextlib.contextmanager
   def head_context(self):

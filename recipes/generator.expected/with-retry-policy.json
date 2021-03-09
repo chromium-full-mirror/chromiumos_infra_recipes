@@ -1830,7 +1830,9 @@
     "infra_step": true,
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.git symbolic-ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {

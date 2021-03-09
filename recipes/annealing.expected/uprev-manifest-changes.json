@@ -1577,7 +1577,9 @@
     "infra_step": true,
     "name": "publish external snapshot.git symbolic-ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {
@@ -1746,7 +1748,9 @@
     "infra_step": true,
     "name": "publish external snapshot.git rev-parse (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {
@@ -1804,7 +1808,9 @@
     "infra_step": true,
     "name": "publish internal snapshot.git symbolic-ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {
@@ -1974,7 +1980,9 @@
     "infra_step": true,
     "name": "publish internal snapshot.git rev-parse (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {

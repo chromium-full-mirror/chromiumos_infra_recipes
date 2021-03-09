@@ -418,7 +418,11 @@
     ],
     "cwd": "[START_DIR]/repo/.repo/manifests",
     "infra_step": true,
-    "name": "git rev-parse"
+    "name": "git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
   },
   {
     "cmd": [
@@ -429,7 +433,11 @@
     ],
     "cwd": "[START_DIR]/repo/.repo/manifests",
     "infra_step": true,
-    "name": "git symbolic-ref"
+    "name": "git symbolic-ref",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
+    ]
   },
   {
     "cmd": [],

@@ -91,7 +91,11 @@
       "HEAD"
     ],
     "infra_step": true,
-    "name": "git symbolic-ref"
+    "name": "git symbolic-ref",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
+    ]
   },
   {
     "cmd": [

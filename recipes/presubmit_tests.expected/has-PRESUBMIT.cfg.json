@@ -1137,7 +1137,9 @@
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {
@@ -1216,7 +1218,9 @@
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (4)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {
@@ -1295,7 +1299,9 @@
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (6)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {
@@ -1357,7 +1363,9 @@
     "infra_step": true,
     "name": "run presubmit checks.checking src/p1.git symbolic-ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {
@@ -1489,7 +1497,9 @@
     "infra_step": true,
     "name": "run presubmit checks.checking src/p2.git symbolic-ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {

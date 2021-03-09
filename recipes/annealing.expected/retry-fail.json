@@ -1289,7 +1289,9 @@
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev to src/private-overlay.git symbolic-ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {
@@ -1303,7 +1305,9 @@
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev to src/private-overlay.git symbolic-ref (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {
@@ -1388,7 +1392,9 @@
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev to src/private-overlay.git symbolic-ref (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {
@@ -1402,7 +1408,9 @@
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev to src/private-overlay.git symbolic-ref (4)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {
@@ -1487,7 +1495,9 @@
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev to src/private-overlay.git symbolic-ref (5)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {
@@ -1501,7 +1511,9 @@
     "infra_step": true,
     "name": "uprev packages.push uprevs.retry uprev to src/private-overlay.git symbolic-ref (6)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
     ]
   },
   {

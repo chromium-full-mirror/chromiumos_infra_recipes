@@ -1080,7 +1080,9 @@
     "infra_step": true,
     "name": "cherry-pick gerrit changes.patch manifest.chromiumos/manifest: apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {

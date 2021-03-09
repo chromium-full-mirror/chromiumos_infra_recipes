@@ -350,7 +350,11 @@
       "HEAD"
     ],
     "infra_step": true,
-    "name": "git symbolic-ref"
+    "name": "git symbolic-ref",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
+    ]
   },
   {
     "cmd": [
@@ -436,7 +440,11 @@
       "HEAD"
     ],
     "infra_step": true,
-    "name": "git rev-parse (3)"
+    "name": "git rev-parse (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
   },
   {
     "cmd": [
@@ -446,7 +454,11 @@
       "HEAD"
     ],
     "infra_step": true,
-    "name": "git symbolic-ref (2)"
+    "name": "git symbolic-ref (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
+    ]
   },
   {
     "cmd": [

@@ -475,7 +475,9 @@
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {
@@ -554,7 +556,9 @@
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse (4)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {

@@ -244,7 +244,11 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
-    "name": "git rev-parse"
+    "name": "git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
   },
   {
     "cmd": [],
