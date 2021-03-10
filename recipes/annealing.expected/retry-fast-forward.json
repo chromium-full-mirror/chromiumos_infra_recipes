@@ -1467,6 +1467,42 @@
   },
   {
     "cmd": [],
+    "name": "diff remote and local manifest.validate NAME",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@FROM_REV => FROM_REV@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "FROM_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "FROM_REV",
+      "TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check reachability"
   },
   {
@@ -1519,21 +1555,6 @@
     "name": "record new gerrit changes.NAME",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "merge-base",
-      "--is-ancestor",
-      "FROM_REV",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
-    "infra_step": true,
-    "name": "record new gerrit changes.NAME.git merge-base",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

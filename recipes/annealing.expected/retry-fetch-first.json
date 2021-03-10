@@ -1467,6 +1467,42 @@
   },
   {
     "cmd": [],
+    "name": "diff remote and local manifest.validate NAME",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@FROM_REV => FROM_REV@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "FROM_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "FROM_REV",
+      "TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check reachability"
   },
   {
@@ -1524,78 +1560,9 @@
   {
     "cmd": [
       "git",
-      "merge-base",
-      "--is-ancestor",
-      "FROM_REV",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
-    "infra_step": true,
-    "name": "record new gerrit changes.NAME.git merge-base",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      ".",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "record new gerrit changes.NAME.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@.|src/.|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "cros",
-      "FROM_REV"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
-    "infra_step": true,
-    "name": "record new gerrit changes.NAME.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "merge-base",
-      "--is-ancestor",
-      "FROM_REV^2",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
-    "infra_step": true,
-    "name": "record new gerrit changes.NAME.git merge-base (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "log",
       "--pretty=%H%x1E%B%x00",
-      "FROM_REV^2...TO_REV",
+      "FROM_REV...TO_REV",
       "-30"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/NAME",

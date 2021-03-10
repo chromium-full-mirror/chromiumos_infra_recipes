@@ -848,6 +848,42 @@
   },
   {
     "cmd": [],
+    "name": "diff remote and local manifest.validate NAME",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@FROM_REV => FROM_REV@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "FROM_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "FROM_REV",
+      "TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check reachability",
     "~followup_annotations": [
       "@@@STEP_TEXT@some downrevs occurred@@@",
@@ -871,18 +907,29 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "ensure manifest cq-depend fulfilled",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@diff manifest@NAME upreved from FROM_REV to TO_REV@@@",
+      "@@@STEP_LOG_END@diff manifest@@@",
+      "@@@STEP_LOG_LINE@gather cq-depend@No Cq-Depend found in any CLs@@@",
+      "@@@STEP_LOG_END@gather cq-depend@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
-      "merge-base",
-      "--is-ancestor",
-      "FROM_REV~",
-      "HEAD"
+      "log",
+      "--pretty=%H%x1E%B%x00",
+      "FROM_REV...TO_REV"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/NAME",
     "infra_step": true,
-    "name": "check reachability.git merge-base (2)",
+    "name": "ensure manifest cq-depend fulfilled.git log",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001emessage\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
     ]
   },
   {
@@ -894,21 +941,6 @@
     "name": "record new gerrit changes.NAME",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "merge-base",
-      "--is-ancestor",
-      "FROM_REV",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
-    "infra_step": true,
-    "name": "record new gerrit changes.NAME.git merge-base",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

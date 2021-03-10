@@ -798,7 +798,7 @@
     "infra_step": true,
     "name": "generate internal manifest",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest visibility=\"internal\"><project name=\"NAME\" remote=\"cros-internal\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -844,6 +844,42 @@
     "name": "diff remote and local manifest.git show",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "diff remote and local manifest.validate NAME",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@FROM_REV => FROM_REV@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros-internal",
+      "FROM_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "FROM_REV",
+      "TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -900,21 +936,6 @@
     "name": "record new gerrit changes.NAME",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "merge-base",
-      "--is-ancestor",
-      "FROM_REV",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
-    "infra_step": true,
-    "name": "record new gerrit changes.NAME.git merge-base",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

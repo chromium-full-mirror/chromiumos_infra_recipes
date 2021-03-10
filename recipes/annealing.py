@@ -155,7 +155,8 @@ def RunSteps(api, properties):
       snapshot_xml_intern = api.repo.manifest(
           pinned=True, step_name='generate internal manifest')
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
-          internal_manifest.url, manifest_ref, snapshot_xml_intern)
+          internal_manifest.url, manifest_ref, snapshot_xml_intern,
+          use_merge_base=is_staging)
 
       # TODO(athilenius): It would be nice to set the 'Info' column here.
       gerrit_commits = []
@@ -170,8 +171,6 @@ def RunSteps(api, properties):
         # through a prior commit we will ignore the CQ depends. This issue
         # arises when the last staging-annealing run was with
         # properties.uprev_first == True. go/annealing-uprevs for more info.
-        ignore_cq_depends = False
-
         # Make sure that we have not lost commits.  If the new revision at a
         # path is older than the prior one, provide a clearer failure message
         # than the one we get in cros_cq_depends.
@@ -185,9 +184,6 @@ def RunSteps(api, properties):
             with api.context(cwd=workspace_path.join(diff.path)):
               if (not api.git.is_reachable(diff.from_rev) and
                   diff.path not in properties.ignore_downrev_paths):
-                if is_staging and api.git.is_reachable('{}~'.format(
-                    diff.from_rev)):
-                  ignore_cq_depends = True
                 downrevs.append('{}: {} is not an ancestor of {}'.format(
                     diff.path, diff.from_rev, diff.to_rev))
 
@@ -205,9 +201,7 @@ def RunSteps(api, properties):
             reach_pres.step_text = 'some downrevs occurred'
 
         # Otherwise we need to ensure all of those diffs have fulfilled deps.
-        if not ignore_cq_depends:
-          api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(
-              manifest_diffs)
+        api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
 
         # Then, get the diffs. We are specifically interested in what
         # gerrit changes have landed.
@@ -589,19 +583,7 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
     for diff in manifest_diffs:
       with api.step.nest(diff.path) as step, api.context(
           cwd=api.src_state.workspace_path.join(diff.path)):
-        from_rev = diff.from_rev
-        if not api.git.is_reachable(from_rev):
-          # If from_rev isn't reachable, then we have a downrev that we ignored
-          # earlier (because we are not publishing uprevs.) If |from_rev| is the
-          # first ever commit on refs/staging-infra, then we need parent1,
-          # otherwise, we need parent2.  There wil only be one project_info for
-          # the checkout path, so we can safely use [0].
-          project = api.repo.project_infos(projects=['.'])[0]
-          api.git.fetch(project.remote, [from_rev])
-          parent1 = '{}~'.format(from_rev)
-          parent2 = '{}^2'.format(from_rev)
-          from_rev = parent2 if api.git.is_reachable(parent2) else parent1
-        commits = api.git.log(from_rev, diff.to_rev, limit=30)
+        commits = api.git.log(diff.from_rev, diff.to_rev, limit=30)
         for commit in commits:
           reviewed_on_footers = api.git_footers.from_message(
               commit.message, key='Reviewed-on')
@@ -616,8 +598,9 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
         # See if we hit any triggers.
         for trigger in path_triggers or []:
           if (diff.path == trigger.repo_path and
-              (not trigger.file_paths or api.git.log(
-                  from_rev, diff.to_rev, limit=1, paths=trigger.file_paths))):
+              (not trigger.file_paths or
+               api.git.log(diff.from_rev, diff.to_rev, limit=1,
+                           paths=trigger.file_paths))):
             jobs.extend(trigger.jobs)
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.
@@ -680,6 +663,8 @@ def _make_message(api, manifest_ref, gerrit_commits, disable_gerrit_commits):
 
 def GenTests(api):
 
+  # At some point, we need to update the manifest test data to reflect something
+  # closer to the actual manifests we process.
   yield api.test(
       'basic',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
@@ -694,14 +679,15 @@ def GenTests(api):
                                    '<project name="NAME" revision="TO_REV"/>'
                                    '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output(
+              '<manifest visibility="internal">'
+              '<project name="NAME" remote="cros-internal" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
-              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )),
+              '<manifest>'
+              '<project name="NAME" remote="cros-internal" revision="FROM_REV"/>'
+              '</manifest>')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.git_footers.step_data(
@@ -898,7 +884,6 @@ def GenTests(api):
           'uprev packages.push uprevs.git push src/overlay', retcode=1,
           stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra'
                                    '-main	[rejected] (fetch first)')),
-      api.step_data('record new gerrit changes.NAME.git merge-base', retcode=1),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(
@@ -1214,8 +1199,6 @@ def GenTests(api):
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
-      api.step_data('check reachability.git merge-base', retcode=1),
-      api.step_data('check reachability.git merge-base (2)', retcode=1),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
