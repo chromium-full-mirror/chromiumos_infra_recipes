@@ -25,7 +25,7 @@ def GenTests(api):
           **{
               '$chromeos/service_version':
                   ServiceVersionProperties(
-                      version=service_version.ServiceVersion(skylab_tool=1))
+                      version=service_version.ServiceVersion(skylab_tool=2))
           }))
 
   yield api.test(

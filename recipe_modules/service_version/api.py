@@ -5,7 +5,7 @@
 
 from recipe_engine import recipe_api
 
-_MINIMUM_SKYLAB_VERSION = 1
+_MINIMUM_SKYLAB_VERSION = 2
 
 
 class ServiceVersionCommand(recipe_api.RecipeApi):
