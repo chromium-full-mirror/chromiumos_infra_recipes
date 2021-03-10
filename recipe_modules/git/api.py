@@ -498,6 +498,23 @@ class GitApi(recipe_api.RecipeApi):
     cmd = ['merge-base', '--is-ancestor', revision, head]
     return self._step(cmd, ok_ret=(0, 1, 128)).retcode == 0
 
+  def merge_base(self, *args, **kwargs):
+    """Return the output from `git merge-base`.
+
+    Args:
+      args (tuple): Additional arguments to git merge.
+      kwargs (dict): Passed to recipe_engine/step.
+
+    Returns:
+      (str) stdout of the command, or None for errors.
+    """
+    kwargs.setdefault('ok_ret', (0, 1, 128))
+    kwargs.setdefault('stdout', self.m.raw_io.output())
+    step_data = self._step(['merge-base'] + list(args), **kwargs)
+    if step_data.retcode != 0:
+      return None
+    return step_data.stdout.strip() or None
+
   def show_file(self, rev, path, test_contents=None):
     """Returns the contents of the given file path at the given revision.
 

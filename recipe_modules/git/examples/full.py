@@ -63,6 +63,10 @@ def RunSteps(api):
     api.assertions.assertFalse(api.git.get_diff_files(test_stdout='\n'), [])
     api.assertions.assertEqual(api.git.get_working_dir_diff_files(),
                                ['changed.txt', 'new.txt'])
+    api.assertions.assertIsNone(api.git.merge_base('commit1', 'commit2'))
+    api.assertions.assertEqual(
+        api.git.merge_base('commit1', 'commit2', test_stdout='commit3'),
+        'commit3')
 
   with api.git.head_context():
     pass
@@ -122,4 +126,9 @@ def GenTests(api):
   yield api.test(
       'is_merge_commit_fails',
       api.step_data('git log (2)', retcode=1),
+  )
+
+  yield api.test(
+      'merge_base_fails',
+      api.step_data('git merge-base (2)', retcode=1),
   )

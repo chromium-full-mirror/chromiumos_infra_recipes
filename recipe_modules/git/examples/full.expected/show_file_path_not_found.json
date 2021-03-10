@@ -372,6 +372,26 @@
   {
     "cmd": [
       "git",
+      "merge-base",
+      "commit1",
+      "commit2"
+    ],
+    "infra_step": true,
+    "name": "git merge-base (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "commit1",
+      "commit2"
+    ],
+    "infra_step": true,
+    "name": "git merge-base (3)"
+  },
+  {
+    "cmd": [
+      "git",
       "symbolic-ref",
       "--short",
       "HEAD"

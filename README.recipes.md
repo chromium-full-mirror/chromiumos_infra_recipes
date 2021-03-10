@@ -3753,7 +3753,7 @@ Args:
   commit (str): The commit to cherry pick.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#532)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, timeout_sec=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#549)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, timeout_sec=None):**
 
 Clones a Git repo into the current directory.
 
@@ -3777,7 +3777,7 @@ Args:
     added to test permission oddities by forcing forged commit failure.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#518)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#535)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -3808,7 +3808,7 @@ Returns:
   (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#580)(self, refspec, default):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#597)(self, refspec, default):**
 
 Splits the branch from the refspec.
 
@@ -3857,7 +3857,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#598)(self, branch):**
+&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#615)(self, branch):**
 
 Creates the full refspec for a branch.
 
@@ -3885,7 +3885,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#613)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#630)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -3899,7 +3899,7 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#638)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#655)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -3918,7 +3918,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#627)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#644)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -3977,6 +3977,17 @@ Args:
 
 Runs 'git merge --abort'.
 
+&mdash; **def [merge\_base](/recipe_modules/git/api.py#501)(self, \*args, \*\*kwargs):**
+
+Return the output from `git merge-base`.
+
+Args:
+  args (tuple): Additional arguments to git merge.
+  kwargs (dict): Passed to recipe_engine/step.
+
+Returns:
+  (str) stdout of the command, or None for errors.
+
 &mdash; **def [merge\_silent\_fail](/recipe_modules/git/api.py#255)(self, ref, message, \*\*kwargs):**
 
 Runs `git merge` and returns whether the merge succeeded.
@@ -4007,7 +4018,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#558)(self, force=False, branch=None):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#575)(self, force=False, branch=None):**
 
 Run `git rebase` with the given arguments.
 
@@ -4041,14 +4052,14 @@ Return the git repository root for the current directory.
 Returns:
   (str): The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#572)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#589)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   args (list[str]): args for `git config`.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#501)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#518)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
