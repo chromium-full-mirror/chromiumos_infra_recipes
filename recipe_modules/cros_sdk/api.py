@@ -6,6 +6,7 @@
 """API for interacting with cros_sdk, the interface to the CrOS SDK."""
 
 import contextlib
+import json
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 
@@ -19,7 +20,6 @@ from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UnmountRequest as UnmountSdkRequest
 from PB.chromite.api.sdk import CreateSnapshotRequest
 from PB.chromite.api.sdk import RestoreSnapshotRequest
-from PB.chromiumos.sdk_cache_state import SdkCacheState
 
 # Default value for the sdk cache version
 _DEFAULT_SDK_CACHE_VERSION = 1
@@ -112,16 +112,15 @@ class CrosSdkApi(RecipeApi):
   def sdk_cache_version(self):
     """Lazily load from file. Can be None if version file doesn't exist."""
     if self._sdk_cache_version == None:
-      data = SdkCacheState()
+      data = {}
       self.m.path.mock_add_paths(self._sdk_cache_version_file)
       if self.m.path.exists(self._sdk_cache_version_file):
-        data = self.m.file.read_proto('read sdk cache version json',
-                                      self._sdk_cache_version_file,
-                                      SdkCacheState, 'JSONPB')
-      data.version = data.version or _DEFAULT_SDK_CACHE_VERSION
-      data.manifest_branch = data.manifest_branch or ''
-      self._sdk_cache_version = data.version
-      self._sdk_cache_manifest_branch = data.manifest_branch
+        data = self.m.file.read_json('read sdk cache version json',
+                                     self._sdk_cache_version_file, dict())
+      data.setdefault('version', _DEFAULT_SDK_CACHE_VERSION)
+      data.setdefault('manifest_branch', '')
+      self._sdk_cache_version = int(data['version'])
+      self._sdk_cache_manifest_branch = data['manifest_branch']
     return self._sdk_cache_version
 
   @sdk_cache_version.setter
@@ -131,12 +130,13 @@ class CrosSdkApi(RecipeApi):
     Args:
       * value (int): new sdk cache version to set.
     """
+    tmp_file = self.m.path['cleanup'].join('sdk_cache_version.json')
     value = int(value)
-    self.m.file.write_proto(
-        'write sdk cache version file', self._sdk_cache_version_file,
-        SdkCacheState(version=value,
-                      manifest_branch=self.m.cros_source.manifest_branch),
-        'JSONPB')
+    self.m.file.write_json(
+        'write sdk cache version file', tmp_file,
+        dict(version=value, manifest_branch=self.m.cros_source.manifest_branch))
+    cmd = ['sudo', 'mv', tmp_file, self._sdk_cache_version_file]
+    self.m.step('move sdk cache version file into place', cmd)
     self._sdk_cache_version = value
 
   def configure_goma(self, chrome_root):

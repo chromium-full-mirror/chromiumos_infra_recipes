@@ -2563,7 +2563,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@sdk_cache_version.setter**<br>&mdash; **def [sdk\_cache\_version](/recipe_modules/cros_sdk/api.py#127)(self, value=_DEFAULT_SDK_CACHE_VERSION):**
+&emsp; **@sdk_cache_version.setter**<br>&mdash; **def [sdk\_cache\_version](/recipe_modules/cros_sdk/api.py#126)(self, value=_DEFAULT_SDK_CACHE_VERSION):**
 
 Set sdk cache version and write to file.
 
@@ -6745,9 +6745,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/utils.py#21)(api, properties):**
 ### *recipes* / [cros\_sdk:examples/existing\_sdk\_cache](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py)
 
-[DEPS](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py#16)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [goma](#recipe_modules-goma), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

@@ -5,13 +5,12 @@
 
 DEPS = [
     'recipe_engine/assertions',
-    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'cros_sdk',
 ]
 
-from PB.chromiumos.sdk_cache_state import SdkCacheState
+from PB.chromiumos import common
 
 
 def RunSteps(api):
@@ -29,4 +28,9 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.step_data('read sdk cache version json',
-                    api.file.read_proto(SdkCacheState(version=2))))
+                    api.raw_io.output_text('{"version": 2}')))
+
+  yield api.test(
+      'old-string-version',
+      api.step_data('read sdk cache version json',
+                    api.raw_io.output_text('{"version": "2"}')))
