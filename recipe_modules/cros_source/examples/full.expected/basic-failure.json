@@ -292,7 +292,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir/workspace"
+      "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -311,7 +311,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir/workspace"
+      "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -347,7 +347,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[START_DIR]/chromiumos_workspace"
     ],

@@ -454,7 +454,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir/workspace"
+      "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create upperdir",
@@ -472,7 +472,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir/workspace"
+      "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create workdir",
@@ -506,7 +506,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[START_DIR]/chromiumos_workspace"
     ],
@@ -1010,7 +1010,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/upperdir/workspace"
+      "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
     "infra_step": true,
     "name": "upreving pin for branch master.mount overlay workspace.create upperdir",
@@ -1028,7 +1028,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/overlayfs/workdir/workspace"
+      "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
     "infra_step": true,
     "name": "upreving pin for branch master.mount overlay workspace.create workdir",
@@ -1062,7 +1062,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[START_DIR]/chromiumos_workspace"
     ],

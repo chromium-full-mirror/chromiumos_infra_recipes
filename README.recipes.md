@@ -4705,13 +4705,14 @@ Initialize OverlayfsApi.
 
 Returns a context that cleans up any overlayfs mounts created in it.
 
-&mdash; **def [mount](/recipe_modules/overlayfs/api.py#41)(self, name, lowerdir_path, mount_path, persist=False):**
+&mdash; **def [mount](/recipe_modules/overlayfs/api.py#36)(self, name, lowerdir_path, mount_path, persist=False):**
 
 Mount an OverlayFS.
 
 Args:
   * name (str): An alphanumeric name for the mount, used for display and
-      implementation details. Should usually be unique within a recipe.
+      implementation details. Underscores are allowed. Should usually be
+      unique within a recipe.
   * lowerdir_path (Path): Path to the OverlayFS "lowerdir". See mount(8)
       "Mount options for overlay".
   * mount_path (Path): Path to mount the OverlayFS at. Will be created if
