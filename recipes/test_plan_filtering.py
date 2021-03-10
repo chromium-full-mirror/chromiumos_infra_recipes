@@ -212,6 +212,11 @@ def RunSteps(api, properties):
   # Defines paths to which to clone repos.
   cros_config_internal_path = api.path['start_dir'].join('config-internal')
 
+  # Clone config repo
+  with api.step.nest('cloning config repo'):
+    api.git.clone(CROS_CONFIG_INTERNAL_REPO,
+                  target_path=cros_config_internal_path)
+
   # BEGIN INTERNAL METHOD DEFINITIONS
   def _filter_all_test_plans():
     """ Callback for git_txn.update_refs.
@@ -222,11 +227,6 @@ def RunSteps(api, properties):
     Returns:
         bool: False if nothing is to be changed. Otherwise None.
     """
-    # Clone config repo
-    with api.step.nest('cloning config repo'):
-      api.git.clone(CROS_CONFIG_INTERNAL_REPO,
-                    target_path=cros_config_internal_path)
-
     # Get all test plans which must be updated
     test_plan_files = _find_test_plan_files(
         api, repo_folder=cros_config_internal_path)

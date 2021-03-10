@@ -1,5 +1,22 @@
 [
   {
+    "cmd": [],
+    "name": "cloning config repo"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/config",
+      "[START_DIR]/config-internal"
+    ],
+    "infra_step": true,
+    "name": "cloning config repo.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "ls-remote",
@@ -14,27 +31,6 @@
   {
     "cmd": [],
     "name": "git transaction"
-  },
-  {
-    "cmd": [],
-    "name": "git transaction.cloning config repo",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "https://chromium.googlesource.com/chromiumos/config",
-      "[START_DIR]/config-internal"
-    ],
-    "cwd": "[START_DIR]/config-internal",
-    "infra_step": true,
-    "name": "git transaction.cloning config repo.git clone",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
   },
   {
     "cmd": [
