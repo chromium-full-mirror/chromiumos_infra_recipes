@@ -996,6 +996,21 @@
   {
     "cmd": [
       "git",
+      "merge-base",
+      "--is-ancestor",
+      "FROM_REV",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "record new gerrit changes.NAME.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "log",
       "--pretty=%H%x1E%B%x00",
       "FROM_REV...TO_REV",

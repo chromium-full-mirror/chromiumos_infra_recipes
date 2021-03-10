@@ -11,7 +11,7 @@ The annealing builders run in serial and do the following:
 2. Rewind (i.e. checkout an ancestor) projects with missing dependencies; this
    prevents a bad tree state due to e.g. Gerrit replication latency.
 3. Uprev portage packages (for each board)
-4. Make a manifest snapshot (aka "revlocked manifest"), and push it
+4. Make a manifest snapshot (aka "pinned manifest"), and push it
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 """
@@ -155,8 +155,6 @@ def RunSteps(api, properties):
         snapshot_xml_extern = api.repo.manifest(
             external_manifest.path.join('default.xml'), pinned=True,
             step_name='generate external manifest')
-
-
 
       # snapshot internal manifest
       snapshot_xml_intern = api.repo.manifest(
@@ -401,11 +399,11 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
           project = projects[0]
           step_name = 'git push {}'.format(repo_name)
           branch = project.branch_name
-          # Change name to
+          namespace = 'heads'
           if properties.uprev_first and is_staging:
-            branch = 'staging-infra-{}'.format(branch)
+            namespace = 'staging-infra'
+          refspec = 'HEAD:refs/{}/{}'.format(namespace, branch)
 
-          refspec = 'HEAD:refs/heads/{}'.format(branch)
           # TODO(b/179502549): remove conditional logic once rollout of
           # go/annealing-uprevs is done
           if not properties.uprev_first:
@@ -427,12 +425,12 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
               pass
             elif git_flags.merge_required:
               # try resolving the issue three times before failing
-              with api.step.nest("retry uprev to {}".format(repo_name)):
+              with api.step.nest('retry uprev to {}'.format(repo_name)):
                 for index in range(3):
                   with api.git.head_context():
                     try:
                       _uprev_retry(api, project, dry_run, step_name, branch,
-                                   is_staging)
+                                   is_staging, namespace)
                       passed_uprevs.append(repo_name)
                       break
                     except StepFailure as ex:
@@ -448,7 +446,10 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
               failed_uprevs.append(repo_name)
               all_uprevs_passed = False
       # Log failures and successes
-      if not all_uprevs_passed:
+      if all_uprevs_passed:
+        # If they all eventually succeeded, the step was successful.
+        presentation.status = api.step.SUCCESS
+      else:
         presentation.logs['Failed Uprevs'] = failed_uprevs
       presentation.logs['Passed Uprevs'] = passed_uprevs
 
@@ -479,7 +480,8 @@ def _check_push_exception(exception):
   return FailureFlags(no_change, merge_required)
 
 
-def _uprev_retry(api, project, dry_run, step_name, branch, is_staging):
+def _uprev_retry(api, project, dry_run, step_name, branch, is_staging,
+                 namespace):
   """Retry the uprev push
 
   LUCI CQ may push changes while we are upreving. This retry process will
@@ -492,14 +494,20 @@ def _uprev_retry(api, project, dry_run, step_name, branch, is_staging):
     step_name:    Step name overide for the git push
     branch:       Branch name to push to
     is_staging:   If annealing is running in staging or not
+    namespace:    The namespace for the refspec ('heads' or 'staging-infra').
   """
   current_branch = api.git.current_branch() or api.git.head_commit()
-  api.git.fetch(project.remote)
-  api.git.checkout("FETCH_HEAD")
-  api.git.merge(current_branch, "Resolve uprev conflict")
-  api.git.push(project.remote, 'HEAD:refs/heads/{}'.format(branch),
-               dry_run=dry_run, capture_stdout=True, retry=False,
-               name=step_name)
+  ref = 'refs/{}/{}'.format(namespace, branch)
+  api.git.fetch(project.remote, [ref])
+  if is_staging:
+    # Ignore all the changes on the ref, since they have been done on ToT since
+    # then.
+    api.git.merge('FETCH_HEAD', 'Resolve uprev conflict', '--strategy=ours')
+  else:
+    api.git.checkout('FETCH_HEAD')
+    api.git.merge(current_branch, 'Resolve uprev conflict')
+  api.git.push(project.remote, 'HEAD:{}'.format(ref), dry_run=dry_run,
+               capture_stdout=True, retry=False, name=step_name)
 
 
 def _schedule_triggered_builds(api, commit, jobs):
@@ -586,7 +594,19 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
     for diff in manifest_diffs:
       with api.step.nest(diff.path) as step, api.context(
           cwd=api.src_state.workspace_path.join(diff.path)):
-        commits = api.git.log(diff.from_rev, diff.to_rev, limit=30)
+        from_rev = diff.from_rev
+        if not api.git.is_reachable(from_rev):
+          # If from_rev isn't reachable, then we have a downrev that we ignored
+          # earlier (because we are not publishing uprevs.) If |from_rev| is the
+          # first ever commit on refs/staging-infra, then we need parent1,
+          # otherwise, we need parent2.  There wil only be one project_info for
+          # the checkout path, so we can safely use [0].
+          project = api.repo.project_infos(projects=['.'])[0]
+          api.git.fetch(project.remote, [from_rev])
+          parent1 = '{}~'.format(from_rev)
+          parent2 = '{}^2'.format(from_rev)
+          from_rev = parent2 if api.git.is_reachable(parent2) else parent1
+        commits = api.git.log(from_rev, diff.to_rev, limit=30)
         for commit in commits:
           reviewed_on_footers = api.git_footers.from_message(
               commit.message, key='Reviewed-on')
@@ -601,9 +621,8 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
         # See if we hit any triggers.
         for trigger in path_triggers or []:
           if (diff.path == trigger.repo_path and
-              (not trigger.file_paths or
-               api.git.log(diff.from_rev, diff.to_rev, limit=1,
-                           paths=trigger.file_paths))):
+              (not trigger.file_paths or api.git.log(
+                  from_rev, diff.to_rev, limit=1, paths=trigger.file_paths))):
             jobs.extend(trigger.jobs)
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.
@@ -884,6 +903,7 @@ def GenTests(api):
           'uprev packages.push uprevs.git push src/overlay', retcode=1,
           stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra'
                                    '-main	[rejected] (fetch first)')),
+      api.step_data('record new gerrit changes.NAME.git merge-base', retcode=1),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(
@@ -954,7 +974,7 @@ def GenTests(api):
       'retry-fail',
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
-                              uprev_first=True)),
+                              uprev_first=True, publish_uprevs=True)),
       api.step_data(
           'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
           stdout=api.raw_io.output(('!	HEAD:refs/heads/staging-'

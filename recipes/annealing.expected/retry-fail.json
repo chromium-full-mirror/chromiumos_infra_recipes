@@ -324,9 +324,6 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify",
       "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
@@ -1159,7 +1156,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
@@ -1256,7 +1253,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1314,7 +1311,8 @@
     "cmd": [
       "git",
       "fetch",
-      "cros"
+      "cros",
+      "refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1357,7 +1355,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1417,7 +1415,8 @@
     "cmd": [
       "git",
       "fetch",
-      "cros"
+      "cros",
+      "refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1460,7 +1459,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1520,7 +1519,8 @@
     "cmd": [
       "git",
       "fetch",
-      "cros"
+      "cros",
+      "refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1563,7 +1563,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,

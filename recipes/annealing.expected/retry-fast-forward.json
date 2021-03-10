@@ -814,10 +814,7 @@
   },
   {
     "cmd": [],
-    "name": "uprev packages",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "uprev packages"
   },
   {
     "cmd": [],
@@ -1067,8 +1064,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@Passed Uprevs@src/overlay@@@",
       "@@@STEP_LOG_LINE@Passed Uprevs@src/private-overlay@@@",
-      "@@@STEP_LOG_END@Passed Uprevs@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_LOG_END@Passed Uprevs@@@"
     ]
   },
   {
@@ -1158,7 +1154,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/staging-infra/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
@@ -1215,7 +1211,8 @@
     "cmd": [
       "git",
       "fetch",
-      "cros"
+      "cros",
+      "refs/staging-infra/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
@@ -1227,23 +1224,11 @@
   {
     "cmd": [
       "git",
-      "checkout",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "name": "uprev packages.push uprevs.retry uprev to src/overlay.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "merge",
-      "main",
+      "FETCH_HEAD",
       "-m",
-      "Resolve uprev conflict"
+      "Resolve uprev conflict",
+      "--strategy=ours"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
@@ -1258,7 +1243,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/staging-infra/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
@@ -1276,7 +1261,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "uprev packages.push uprevs.retry uprev to src/overlay.git checkout (2)",
+    "name": "uprev packages.push uprevs.retry uprev to src/overlay.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1368,7 +1353,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/staging-infra/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1425,7 +1410,8 @@
     "cmd": [
       "git",
       "fetch",
-      "cros"
+      "cros",
+      "refs/staging-infra/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1437,23 +1423,11 @@
   {
     "cmd": [
       "git",
-      "checkout",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "uprev packages.push uprevs.retry uprev to src/private-overlay.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "merge",
-      "main",
+      "FETCH_HEAD",
       "-m",
-      "Resolve uprev conflict"
+      "Resolve uprev conflict",
+      "--strategy=ours"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1468,7 +1442,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/staging-infra/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1486,7 +1460,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
-    "name": "uprev packages.push uprevs.retry uprev to src/private-overlay.git checkout (2)",
+    "name": "uprev packages.push uprevs.retry uprev to src/private-overlay.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1642,6 +1616,21 @@
     "name": "record new gerrit changes.NAME",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "FROM_REV",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "record new gerrit changes.NAME.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

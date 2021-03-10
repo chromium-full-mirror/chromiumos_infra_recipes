@@ -5937,7 +5937,7 @@ The annealing builders run in serial and do the following:
 2. Rewind (i.e. checkout an ancestor) projects with missing dependencies; this
    prevents a bad tree state due to e.g. Gerrit replication latency.
 3. Uprev portage packages (for each board)
-4. Make a manifest snapshot (aka "revlocked manifest"), and push it
+4. Make a manifest snapshot (aka "pinned manifest"), and push it
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 

@@ -814,10 +814,7 @@
   },
   {
     "cmd": [],
-    "name": "uprev packages",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "uprev packages"
   },
   {
     "cmd": [],
@@ -1066,8 +1063,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@Passed Uprevs@src/overlay@@@",
-      "@@@STEP_LOG_END@Passed Uprevs@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_LOG_END@Passed Uprevs@@@"
     ]
   },
   {
@@ -1157,7 +1153,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/staging-infra/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
@@ -1254,7 +1250,7 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/heads/staging-infra-main"
+      "HEAD:refs/staging-infra/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
