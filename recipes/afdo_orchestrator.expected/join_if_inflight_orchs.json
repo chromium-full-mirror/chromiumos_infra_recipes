@@ -817,7 +817,7 @@
     "name": "find inflight orchestrator",
     "~followup_annotations": [
       "@@@STEP_TEXT@found 1 inflight run(s) to wait on@@@",
-      "@@@STEP_LINK@cq-orchestrator@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172513001@@@"
+      "@@@STEP_LINK@cq-orchestrator@https://cr-buildbucket.appspot.com/build/8922054662172513001@@@"
     ]
   },
   {
@@ -832,7 +832,7 @@
       "bb",
       "ls",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-json",
       "-nopage",
       "-n",
@@ -848,7 +848,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"STARTED\", \"tags\": [{\"value\": \"false\", \"key\": \"cq_experimental\"}], \"builder\": {\"project\": \"chromeos\", \"builder\": \"cq-orchestrator\", \"bucket\": \"cq\"}, \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:commit-bot@chromium.org\", \"input\": {\"gerritChanges\": [{\"project\": \"project-a\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"change\": \"123456\"}]}, \"infra\": {\"swarming\": {\"priority\": 30, \"botDimensions\": [{\"value\": \"small\", \"key\": \"bot_size\"}]}, \"resultdb\": {\"invocation\": \"invocations/build:8922054662172513001\"}}, \"id\": \"8922054662172513001\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@cq-orchestrator@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172513001@@@"
+      "@@@STEP_LINK@cq-orchestrator@https://cr-buildbucket.appspot.com/build/8922054662172513001@@@"
     ]
   },
   {
@@ -863,7 +863,7 @@
       "bb",
       "collect",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "8922054662172513001"
@@ -880,7 +880,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "find inflight orchestrator.waiting for existing runs.get",
@@ -946,7 +946,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172513001@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172513001@@@"
+      "@@@STEP_LINK@8922054662172513001@https://cr-buildbucket.appspot.com/build/8922054662172513001@@@"
     ]
   },
   {
@@ -1357,7 +1357,7 @@
       "bb",
       "ls",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-json",
       "-nopage",
       "-n",
@@ -1479,7 +1479,7 @@
       "bb",
       "ls",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-json",
       "-nopage",
       "-n",
@@ -1509,7 +1509,7 @@
       "bb",
       "ls",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-json",
       "-nopage",
       "-n",
@@ -2138,7 +2138,7 @@
       "bb",
       "collect",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "8922054662172514000",
@@ -2158,7 +2158,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run builds.collect.get",
@@ -2426,9 +2426,9 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@amd64-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_LINK@arm-generic-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@",
-      "@@@STEP_LINK@atlas-cq@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+      "@@@STEP_LINK@amd64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
+      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {
@@ -2464,7 +2464,7 @@
     "name": "check build results.build results.arm-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514001@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -2473,7 +2473,7 @@
     "name": "check build results.build results.amd64-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
     ]
   },
   {
@@ -2481,7 +2481,7 @@
     "name": "check build results.build results.atlas-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {
@@ -4589,7 +4589,7 @@
       "bb",
       "ls",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-json",
       "-nopage",
       "-n",
@@ -4618,7 +4618,7 @@
     "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@suite link@https://beefy-dot-cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/4321@@@"
     ]
   },
   {
@@ -4626,7 +4626,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.buildbucket.schedule",
@@ -4797,7 +4797,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@4321@https://beefy-dot-cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_LINK@4321@https://cr-buildbucket.appspot.com/build/4321@@@"
     ]
   },
   {
@@ -4821,7 +4821,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.schedule autotest vm tests",
@@ -5011,7 +5011,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@target-autotest-vm@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514006@@@"
+      "@@@STEP_LINK@target-autotest-vm@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
     ]
   },
   {
@@ -5019,7 +5019,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.schedule tast vm tests",
@@ -5380,8 +5380,8 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@target-direct-tast-vm@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514007@@@",
-      "@@@STEP_LINK@target-tast-vm-informational@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514008@@@"
+      "@@@STEP_LINK@target-direct-tast-vm@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@",
+      "@@@STEP_LINK@target-tast-vm-informational@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@"
     ]
   },
   {
@@ -5396,7 +5396,7 @@
     "name": "run tests.collect tests.collect skylab tasks v2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=4321L, url='https://beefy-dot-cr-buildbucket.appspot.com/build/4321', test=suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=4321L, url='https://cr-buildbucket.appspot.com/build/4321', test=suite: \"bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.bvt-cq\"@@@",
@@ -5787,7 +5787,7 @@
       "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@])@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=4321L, url='https://beefy-dot-cr-buildbucket.appspot.com/build/4321', test=suite: \"bvt-inline\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=4321L, url='https://cr-buildbucket.appspot.com/build/4321', test=suite: \"bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.bvt-inline\"@@@",
@@ -6191,7 +6191,7 @@
       "bb",
       "collect",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "4321"
@@ -6208,7 +6208,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect skylab tasks v2.buildbucket.collect.get",
@@ -6296,7 +6296,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@4321@https://beefy-dot-cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_LINK@4321@https://cr-buildbucket.appspot.com/build/4321@@@"
     ]
   },
   {
@@ -6311,7 +6311,7 @@
       "bb",
       "collect",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "8922054662172514006"
@@ -6328,7 +6328,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect autotest vm tests.get",
@@ -6386,7 +6386,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {
@@ -6401,7 +6401,7 @@
       "bb",
       "collect",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "8922054662172514007",
@@ -6419,7 +6419,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect tast vm tests.get",
@@ -6472,7 +6472,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://beefy-dot-cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
     ]
   },
   {
@@ -6480,7 +6480,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-inline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://beefy-dot-cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
     ]
   },
   {
@@ -6496,7 +6496,7 @@
     "name": "check test results.vm test results.vm-test",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@test page@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {
@@ -6523,7 +6523,7 @@
       "bb",
       "collect",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "8922054662172514004"
@@ -6540,7 +6540,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "final build collect.collect.get",
@@ -6569,7 +6569,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LINK@@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
     ]
   },
   {
@@ -6605,7 +6605,7 @@
     "name": "final build collect.check build results.build results.",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
     ]
   },
   {
@@ -6716,7 +6716,7 @@
       "bb",
       "ls",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-json",
       "-nopage",
       "-n",

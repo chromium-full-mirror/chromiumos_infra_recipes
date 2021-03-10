@@ -834,7 +834,7 @@
       "bb",
       "ls",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-json",
       "-nopage",
       "-n",

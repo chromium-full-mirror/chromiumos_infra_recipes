@@ -971,7 +971,7 @@
       "bb",
       "ls",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-json",
       "-nopage",
       "-n",
@@ -1110,7 +1110,7 @@
       "bb",
       "collect",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "8922054662172514000"
@@ -1127,7 +1127,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run builds.collect.get",
@@ -1215,7 +1215,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@amd64-generic-postsubmit@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@amd64-generic-postsubmit@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {
@@ -1247,7 +1247,7 @@
     "name": "check build results.build results.amd64-generic-postsubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@build page@https://beefy-dot-cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
     ]
   },
   {
@@ -1314,7 +1314,7 @@
     "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@suite link@https://beefy-dot-cr-buildbucket.appspot.com/build/1234@@@"
+      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {
@@ -1322,7 +1322,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.buildbucket.schedule",
@@ -1449,7 +1449,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@1234@https://beefy-dot-cr-buildbucket.appspot.com/build/1234@@@"
+      "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {
@@ -1480,7 +1480,7 @@
     "name": "run tests.collect tests.collect skylab tasks v2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=1234L, url='https://beefy-dot-cr-buildbucket.appspot.com/build/1234', test=suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=1234L, url='https://cr-buildbucket.appspot.com/build/1234', test=suite: \"bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"kip.hw.bvt-cq\"@@@",
@@ -1567,7 +1567,7 @@
       "bb",
       "collect",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
       "1234"
@@ -1584,7 +1584,7 @@
       "bb",
       "batch",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "run tests.collect tests.collect skylab tasks v2.buildbucket.collect.get",
@@ -1646,7 +1646,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@1234@https://beefy-dot-cr-buildbucket.appspot.com/build/1234@@@"
+      "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {
@@ -1674,7 +1674,7 @@
     "name": "check test results.hw test results.kip.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://beefy-dot-cr-buildbucket.appspot.com/build/1234@@@"
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {
@@ -1768,7 +1768,7 @@
       "bb",
       "ls",
       "-host",
-      "beefy-dot-cr-buildbucket.appspot.com",
+      "cr-buildbucket.appspot.com",
       "-json",
       "-nopage",
       "-n",

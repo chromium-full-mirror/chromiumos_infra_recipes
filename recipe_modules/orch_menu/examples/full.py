@@ -256,7 +256,7 @@ def GenTests(api):
 
   summary = (
       '1 build failed\n\n- amd64-generic-postsubmit: [build page](https://'
-      'beefy-dot-cr-buildbucket.appspot.com/build/8922054662172514000)')
+      'cr-buildbucket.appspot.com/build/8922054662172514000)')
   yield api.orch_menu.test(
       'critical_child_builder_fails',
       api.post_check(post_process.StatusAnyFailure),

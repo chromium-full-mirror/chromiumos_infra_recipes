@@ -102,7 +102,7 @@ class OrchMenuApi(RecipeApi):
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
-    self.m.buildbucket.host = self.m.buildbucket.HOST_PROD_BEEFY
+    self.m.buildbucket.host = self.m.buildbucket.HOST_PROD
 
   @property
   def config(self):
