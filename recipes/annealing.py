@@ -364,9 +364,10 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
     for repo, files in manifest_diffs.items():
       ebuilds_by_repository[repo].extend(files)
 
-    with api.step.nest('push uprevs') as presentation:
-      for repository, ebuilds in ebuilds_by_repository.items():
-        repo_name = api.path.relpath(repository, api.src_state.workspace_path)
+  with api.step.nest('push uprevs') as push_uprevs_pres:
+    for repository, ebuilds in ebuilds_by_repository.items():
+      repo_name = api.path.relpath(repository, api.src_state.workspace_path)
+      with api.step.nest('push to {}'.format(repo_name)) as push_pres:
         with api.context(cwd=api.path.abs_to_path(repository)):
           with api.step.nest('commit uprev changes in {}'.format(repo_name)):
             api.git.add(ebuilds)
@@ -421,26 +422,23 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
                       _uprev_retry(api, project, dry_run, step_name, branch,
                                    is_staging, namespace)
                       passed_uprevs.append(repo_name)
+                      push_pres.status = api.step.SUCCESS
+                      api.step.active_result.presentation.status = api.step.SUCCESS
                       break
                     except StepFailure as ex:
                       if index == 2:
                         failed_uprevs.append(repo_name)
                         all_uprevs_passed = False
-                      else:
-                        # Works around coverage bug:
-                        # https://github.com/nedbat/coveragepy/issues/198
-                        _ = True
-                        continue
             else:
               failed_uprevs.append(repo_name)
               all_uprevs_passed = False
-      # Log failures and successes
-      if all_uprevs_passed:
-        # If they all eventually succeeded, the step was successful.
-        presentation.status = api.step.SUCCESS
-      else:
-        presentation.logs['Failed Uprevs'] = failed_uprevs
-      presentation.logs['Passed Uprevs'] = passed_uprevs
+    # Log failures and successes
+    if all_uprevs_passed:
+      # If they all eventually succeeded, the step was successful.
+      push_uprevs_pres.status = api.step.SUCCESS
+    else:
+      push_uprevs_pres.logs['Failed Uprevs'] = failed_uprevs
+    push_uprevs_pres.logs['Passed Uprevs'] = passed_uprevs
 
     return all_uprevs_passed
 
@@ -782,8 +780,7 @@ def GenTests(api):
           )),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
-      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
-                     'Passed Uprevs',
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
                      ('manifest\nsrc/overlay\nsrc/private-overlay')))
 
   # No changes in the manifest at all.
@@ -876,26 +873,25 @@ def GenTests(api):
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
+      api.step_data(('push uprevs.push to src/private-overlay.git push '
+                     'src/private-overlay'), retcode=1,
+                    stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra'
+                                             '-main	[rejected] (fetch first)')),
       api.step_data(
-          'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
-          stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra'
-                                   '-main	[rejected] (fetch first)')),
-      api.step_data(
-          'uprev packages.push uprevs.git push src/overlay', retcode=1,
+          'push uprevs.push to src/overlay.git push src/overlay', retcode=1,
           stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra'
                                    '-main	[rejected] (fetch first)')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(
           post_process.MustRun,
-          'uprev packages.push uprevs.retry uprev to src/overlay.git '
-          'push src/overlay'),
-      api.post_check(
-          post_process.MustRun,
-          'uprev packages.push uprevs.retry uprev to src/private-overlay.git '
-          'push src/private-overlay'),
-      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
-                     'Passed Uprevs', ('src/overlay\nsrc/private-overlay')))
+          ('push uprevs.push to src/overlay.retry uprev to src/overlay.git '
+           'push src/overlay')),
+      api.post_check(post_process.MustRun,
+                     ('push uprevs.push to src/private-overlay.retry uprev to '
+                      'src/private-overlay.git push src/private-overlay')),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
+                     ('src/overlay\nsrc/private-overlay')))
 
   yield api.test(
       'retry-fast-forward',
@@ -917,25 +913,25 @@ def GenTests(api):
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.step_data(
-          'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
+          ('push uprevs.push to src/private-overlay.git push '
+           'src/private-overlay'), retcode=1,
           stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra-main	'
                                    '[rejected] (non-fast-forward)')),
       api.step_data(
-          'uprev packages.push uprevs.git push src/overlay', retcode=1,
+          'push uprevs.push to src/overlay.git push src/overlay', retcode=1,
           stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra-main	'
                                    '[rejected] (non-fast-forward)')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(
           post_process.MustRun,
-          'uprev packages.push uprevs.retry uprev to src/overlay.git '
-          'push src/overlay'),
-      api.post_check(
-          post_process.MustRun,
-          'uprev packages.push uprevs.retry uprev to src/private-overlay.git '
-          'push src/private-overlay'),
-      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
-                     'Passed Uprevs', ('src/overlay\nsrc/private-overlay')))
+          ('push uprevs.push to src/overlay.retry uprev to src/overlay.git '
+           'push src/overlay')),
+      api.post_check(post_process.MustRun,
+                     ('push uprevs.push to src/private-overlay.retry uprev to '
+                      'src/private-overlay.git push src/private-overlay')),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
+                     ('src/overlay\nsrc/private-overlay')))
 
   yield api.test(
       'retry-no-change',
@@ -943,11 +939,11 @@ def GenTests(api):
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
                               uprev_first=True)),
       api.step_data(
-          'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
-          stdout=api.raw_io.output(
-              ' ! [remote rejected]   HEAD -> main (no new changes)')),
-      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
-                     'Passed Uprevs', 'src/overlay'),
+          ('push uprevs.push to src/private-overlay.git push '
+           'src/private-overlay'), retcode=1, stdout=api.raw_io.output(
+               ' ! [remote rejected]   HEAD -> main (no new changes)')),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
+                     'src/overlay'),
   )
 
   yield api.test(
@@ -955,55 +951,64 @@ def GenTests(api):
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
                               uprev_first=True, publish_uprevs=True)),
+      api.step_data(('push uprevs.push to src/private-overlay.git push '
+                     'src/private-overlay'), retcode=1,
+                    stdout=api.raw_io.output(
+                        ('!	HEAD:refs/heads/staging-'
+                         'infra-main	[rejected] (fetch first)'))),
       api.step_data(
-          'uprev packages.push uprevs.git push src/private-overlay', retcode=1,
-          stdout=api.raw_io.output(('!	HEAD:refs/heads/staging-'
-                                    'infra-main	[rejected] (fetch first)'))),
-      api.step_data(
-          ('uprev packages.push uprevs.retry uprev to src/private-overlay.git '
-           'push src/private-overlay'),
+          ('push uprevs.push to src/private-overlay.retry uprev to '
+           'src/private-overlay.git push src/private-overlay'),
           retcode=1,
       ),
       api.step_data(
-          ('uprev packages.push uprevs.retry uprev to src/private-overlay.git '
-           'push src/private-overlay (2)'),
+          ('push uprevs.push to src/private-overlay.retry uprev to '
+           'src/private-overlay.git push src/private-overlay (2)'),
           retcode=1,
       ),
       api.step_data(
-          ('uprev packages.push uprevs.retry uprev to src/private-overlay.git '
-           'push src/private-overlay (3)'),
+          ('push uprevs.push to src/private-overlay.retry uprev to '
+           'src/private-overlay.git push src/private-overlay (3)'),
           retcode=1,
       ),
-      api.post_check(post_process.StepException,
-                     'uprev packages.push uprevs.git push src/private-overlay'),
+      api.post_check(
+          post_process.StepException,
+          'push uprevs.push to src/private-overlay.git push src/private-overlay'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'push uprevs.push to src/private-overlay.git push src/private-overlay'
+      ),
       api.post_check(post_process.MustRun,
-                     'uprev packages.push uprevs.git push src/private-overlay'),
-      api.post_check(post_process.MustRun,
-                     'uprev packages.push uprevs.git push src/overlay'),
-      api.post_check(post_process.StepException, 'uprev packages.push uprevs'),
-      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
-                     'Failed Uprevs', 'src/private-overlay'),
-      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
-                     'Passed Uprevs', 'src/overlay'))
+                     'push uprevs.push to src/overlay.git push src/overlay'),
+      api.post_check(post_process.StepException, 'push uprevs'),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Failed Uprevs',
+                     'src/private-overlay'),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
+                     'src/overlay'))
 
   yield api.test(
       'retry-unknown',
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
                               uprev_first=True)),
-      api.step_data('uprev packages.push uprevs.git push src/private-overlay',
-                    retcode=1),
-      api.post_check(post_process.StepException,
-                     'uprev packages.push uprevs.git push src/private-overlay'),
+      api.step_data(('push uprevs.push to src/private-overlay.git push '
+                     'src/private-overlay'), retcode=1),
+      api.post_check(
+          post_process.StepException,
+          'push uprevs.push to src/private-overlay.git push src/private-overlay'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'push uprevs.push to src/private-overlay.git push src/private-overlay'
+      ),
       api.post_check(post_process.MustRun,
-                     'uprev packages.push uprevs.git push src/private-overlay'),
-      api.post_check(post_process.MustRun,
-                     'uprev packages.push uprevs.git push src/overlay'),
-      api.post_check(post_process.StepException, 'uprev packages.push uprevs'),
-      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
-                     'Failed Uprevs', 'src/private-overlay'),
-      api.post_check(post_process.LogEquals, 'uprev packages.push uprevs',
-                     'Passed Uprevs', 'src/overlay'))
+                     'push uprevs.push to src/overlay.git push src/overlay'),
+      api.post_check(post_process.StepException, 'push uprevs'),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Failed Uprevs',
+                     'src/private-overlay'),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
+                     'src/overlay'))
 
   yield api.test(
       'retry-feature-locked',
@@ -1024,11 +1029,11 @@ def GenTests(api):
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
-      api.step_data('uprev packages.push uprevs.git push src/private-overlay',
-                    retcode=1),
+      api.step_data(('push uprevs.push to src/private-overlay.git push '
+                     'src/private-overlay'), retcode=1),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
-      api.post_check(post_process.StepException, 'uprev packages.push uprevs'))
+      api.post_check(post_process.StepException, 'push uprevs'))
 
   # CQ: manifest changes, but no gerrit change to go with it.
   yield api.test(
