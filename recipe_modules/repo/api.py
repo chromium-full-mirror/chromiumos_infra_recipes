@@ -443,7 +443,8 @@ class RepoApi(recipe_api.RecipeApi):
 
   def diff_remote_and_local_manifests(self, from_manifest_url,
                                       from_manifest_ref, to_manifest_str,
-                                      test_from_data=None):
+                                      test_from_data=None,
+                                      use_merge_base=False):
     """Diffs the remote manifest against the local manifest string.
 
     Diffs the 'snapshot.xml' at the given `from_manifest_url` at the ref
@@ -455,6 +456,8 @@ class RepoApi(recipe_api.RecipeApi):
       to_manifest_str (str): The string XML for the to manifest.
       test_from_data (str): Test data: The from_manifest contents, or None for
           the default.
+      use_merge_base (bool): Whether to adjust the from_ref with `git
+          merge-base`.
 
     Returns:
       List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
@@ -471,7 +474,8 @@ class RepoApi(recipe_api.RecipeApi):
         presentation.status = 'WARNING'
         return None
 
-      diffs = self.diff_manifests(from_xml, to_manifest_str)
+      diffs = self.diff_manifests(from_xml, to_manifest_str,
+                                  use_merge_base=use_merge_base)
 
       if not diffs:
         presentation.step_text = 'no manifest diffs from remote to local'
@@ -479,7 +483,8 @@ class RepoApi(recipe_api.RecipeApi):
 
       return diffs
 
-  def diff_manifests(self, from_manifest_str, to_manifest_str):
+  def diff_manifests(self, from_manifest_str, to_manifest_str,
+                     use_merge_base=False):
     """Diffs the two manifests and returns an array of differences.
 
     Given the two manifest XML strings, generates an array of `ManifestDiff`.
@@ -489,6 +494,8 @@ class RepoApi(recipe_api.RecipeApi):
     Args:
       from_manifest_str (str): The from manifest XML string
       to_manifest_str (str):The to manifest XML string.
+      use_merge_base (bool): Whether to adjust the from_ref with `git
+          merge-base`.
 
     Returns:
       List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
@@ -501,6 +508,15 @@ class RepoApi(recipe_api.RecipeApi):
           return annotation.get('value')
       return None
 
+    def find_default_remote(xml_data):
+      xml = ElementTree.fromstring(xml_data)
+      ret = [
+          x.attrib.get('remote')
+          for x in xml.iterfind('default')
+          if x.attrib.get('remote')
+      ] + ['cros']
+      return ret[0]
+
     def project_paths(xml_data):
       xml = ElementTree.fromstring(xml_data)
       # Some projects may be ignored by annealing. Specifically, the checked
@@ -510,14 +526,18 @@ class RepoApi(recipe_api.RecipeApi):
           for proj in xml.iterfind('project')
           if snapshot_mode(proj) != 'ignore-diff'
       ]
+
       # Make sure `path` is set, use `name` if `path` is missing
       for attr in attrs:
         attr['path'] = attr.get('path', attr.get('name'))
       # Key them by path
       return {attr['path']: attr for attr in attrs}
 
+    if use_merge_base:
+      repo_root = self._find_root()
     from_paths = project_paths(from_manifest_str)
     to_paths = project_paths(to_manifest_str)
+    default_remote = find_default_remote(from_manifest_str)
     changes = []
     for from_path, from_attrs in from_paths.items():
       if from_path not in to_paths:
@@ -525,11 +545,23 @@ class RepoApi(recipe_api.RecipeApi):
         continue
       from_name = from_attrs['name']
       from_revision = from_attrs['revision']
+      from_remote = from_attrs.get('remote', default_remote)
       to_revision = to_paths[from_path]['revision']
       if from_revision == to_revision:
         # The revision didn't change (aka no CLs landed between the last
         # snapshot and this one for that path.
         continue
+      if use_merge_base:
+        # Fetch the from_revision, since it may not be under refs/heads.
+        with self.m.step.nest('validate {}'.format(from_path)) as val_pres, \
+            self.m.context(cwd=repo_root.join(from_path)):
+          self.m.git.fetch(from_remote, [from_revision])
+          base = self.m.git.merge_base(from_revision, to_revision,
+                                       test_stdout=from_revision)
+          val_pres.step_text = (
+              from_revision if from_revision != base else '{} => {}'.format(
+                  from_revision, base or from_revision))
+          from_revision = base or from_revision
       changes.append(
           ManifestDiff(from_name, from_path, from_revision, to_revision))
     return changes

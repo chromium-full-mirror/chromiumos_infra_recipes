@@ -57,9 +57,11 @@ def RunSteps(api, properties):
       snapshot_xml = api.repo.manifest(properties.manifest_file, pinned=True,
                                        test_data=manifest_data)
 
+    # Annealing passes use_merge_base=True when not publishing uprevs.
     manifest_diffs = api.repo.diff_remote_and_local_manifests(
         manifest_url, properties.manifest_ref, snapshot_xml,
-        test_from_data=properties.from_manifest_data.encode('utf-8'))
+        test_from_data=properties.from_manifest_data.encode('utf-8'),
+        use_merge_base=True)
     expected = [
         api.repo.ManifestDiff(x.name, x.path, x.from_rev, x.to_rev)
         for x in properties.expected_manifest_diffs
@@ -104,6 +106,7 @@ def AnnealingWithChanges(api, state_name, state):
   # Annealing with diffs
   from_manifest = """
     <manifest>
+      <default revision="refs/heads/main" remote="REMOTE" sync-j="8"/>
       <project name="NAME" path="PATH" revision="FROM_REV"/>
       <project name="NO_CHANGE" revision="NO_CHANGE_REV"/>
       <project name="DELETED" revision="REV"/>
@@ -115,6 +118,7 @@ def AnnealingWithChanges(api, state_name, state):
 
   to_manifest = """
     <manifest>
+      <default revision="refs/heads/main" remote="REMOTE" sync-j="8"/>
       <project name="NAME" path="PATH" revision="TO_REV"/>
       <project name="NO_CHANGE" revision="NO_CHANGE_REV"/>
       <project name="IGNORE" revision="TO_REV">

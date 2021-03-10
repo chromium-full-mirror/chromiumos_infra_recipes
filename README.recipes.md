@@ -4926,7 +4926,7 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#482)(self, from_manifest_str, to_manifest_str):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#486)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -4937,12 +4937,14 @@ added or deleted.
 Args:
   from_manifest_str (str): The from manifest XML string
   to_manifest_str (str):The to manifest XML string.
+  use_merge_base (bool): Whether to adjust the from_ref with `git
+      merge-base`.
 
 Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#537)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#569)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -4950,7 +4952,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#444)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#444)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -4963,6 +4965,8 @@ Args:
   to_manifest_str (str): The string XML for the to manifest.
   test_from_data (str): Test data: The from_manifest contents, or None for
       the default.
+  use_merge_base (bool): Whether to adjust the from_ref with `git
+      merge-base`.
 
 Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
@@ -4988,7 +4992,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#588)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#620)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
 
 &mdash; **def [init](/recipe_modules/repo/api.py#145)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
 
@@ -5029,7 +5033,7 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#582)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#614)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
@@ -7365,13 +7369,13 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 
 [DEPS](/recipe_modules/repo/examples/annealing.py#6): [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [AnnealingLocalManifest](/recipe_modules/repo/examples/annealing.py#82)(api, state_name, state):**
+&mdash; **def [AnnealingLocalManifest](/recipe_modules/repo/examples/annealing.py#84)(api, state_name, state):**
 
-&mdash; **def [AnnealingMissingFromXML](/recipe_modules/repo/examples/annealing.py#95)(api, state_name, state):**
+&mdash; **def [AnnealingMissingFromXML](/recipe_modules/repo/examples/annealing.py#97)(api, state_name, state):**
 
-&mdash; **def [AnnealingTest](/recipe_modules/repo/examples/annealing.py#75)(api, state_name, state):**
+&mdash; **def [AnnealingTest](/recipe_modules/repo/examples/annealing.py#77)(api, state_name, state):**
 
-&mdash; **def [AnnealingWithChanges](/recipe_modules/repo/examples/annealing.py#103)(api, state_name, state):**
+&mdash; **def [AnnealingWithChanges](/recipe_modules/repo/examples/annealing.py#105)(api, state_name, state):**
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/annealing.py#27)(api, properties):**
 ### *recipes* / [repo:examples/branching](/recipe_modules/repo/examples/branching.py)
