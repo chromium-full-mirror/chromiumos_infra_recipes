@@ -13,104 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "/preload/chromeos-sdk"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.create preload path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure chroot path.mount overlay chromeos_sdk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos/upperdir/chromeos_sdk"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.mount overlay chromeos_sdk.create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos/workdir/chromeos_sdk"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.mount overlay chromeos_sdk.create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
       "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.mount overlay chromeos_sdk.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=/preload/chromeos-sdk,upperdir=[CACHE]/chromiumos/upperdir/chromeos_sdk,workdir=[CACHE]/chromiumos/workdir/chromeos_sdk,x-chromeos-overlay.name=chromeos_sdk",
-      "overlay",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.mount overlay chromeos_sdk.mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot/chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path.ensure chroot directory",
@@ -193,7 +96,7 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"forcedBuildRelevance\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -210,7 +113,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"artifactInfo\": {\n    \"profileInfo\": {\n      \"chromeCwpProfile\": \"silvermont\"\n    }, \n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            7\n          ]\n        }\n      ]\n    }, \n    \"toolchain\": {\n      \"inputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n            \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n          ], \n          \"artifactTypes\": [\n            11\n          ]\n        }\n      ], \n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n            \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n          ], \n          \"artifactTypes\": [\n            11\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"forcedBuildRelevance\": true\n}",
+      "{\n  \"artifactInfo\": {\n    \"profileInfo\": {\n      \"chromeCwpProfile\": \"silvermont\"\n    }, \n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            7\n          ]\n        }\n      ]\n    }, \n    \"toolchain\": {\n      \"inputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n            \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n          ], \n          \"artifactTypes\": [\n            11\n          ]\n        }\n      ], \n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n            \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n          ], \n          \"artifactTypes\": [\n            11\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"forcedBuildRelevance\": true\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -257,7 +160,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"forcedBuildRelevance\": true@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
@@ -336,7 +239,7 @@
       "@@@STEP_LOG_LINE@request@    \"chromeCwpProfile\": \"silvermont\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"artifactTypes\": [@@@",
       "@@@STEP_LOG_LINE@request@    11@@@",
@@ -364,7 +267,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"profileInfo\": {\n    \"chromeCwpProfile\": \"silvermont\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"artifactTypes\": [\n    11\n  ], \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": 11, \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n        \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n      ]\n    }\n  ]\n}",
+      "{\n  \"profileInfo\": {\n    \"chromeCwpProfile\": \"silvermont\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"artifactTypes\": [\n    11\n  ], \n  \"inputArtifacts\": [\n    {\n      \"inputArtifactType\": 11, \n      \"inputArtifactGsLocations\": [\n        \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n        \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n      ]\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
@@ -376,7 +279,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeCwpProfile\": \"silvermont\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"artifactTypes\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    11@@@",

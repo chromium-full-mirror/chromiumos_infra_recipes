@@ -13,104 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "/preload/chromeos-sdk"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.create preload path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure chroot path.mount overlay chromeos_sdk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos/upperdir/chromeos_sdk"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.mount overlay chromeos_sdk.create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos/workdir/chromeos_sdk"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.mount overlay chromeos_sdk.create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
       "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.mount overlay chromeos_sdk.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=/preload/chromeos-sdk,upperdir=[CACHE]/chromiumos/upperdir/chromeos_sdk,workdir=[CACHE]/chromiumos/workdir/chromeos_sdk,x-chromeos-overlay.name=chromeos_sdk",
-      "overlay",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.mount overlay chromeos_sdk.mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot/chroot"
     ],
     "infra_step": true,
     "name": "configure chroot path.ensure chroot directory",
@@ -351,7 +254,7 @@
       "@@@STEP_LOG_LINE@request@  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\", @@@",
       "@@@STEP_LOG_LINE@request@  \"destBucket\": \"gs://\", @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
@@ -372,7 +275,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\", \n  \"destBucket\": \"gs://\", \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  }\n}",
+      "{\n  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\", \n  \"destBucket\": \"gs://\", \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -383,7 +286,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"destBucket\": \"gs://\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"buildTarget\": {@@@",

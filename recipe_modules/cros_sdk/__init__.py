@@ -13,7 +13,6 @@ DEPS = [
     'cros_source',
     'easy',
     'goma',
-    'overlayfs',
     'workspace_util',
 ]
 

@@ -51,7 +51,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'run ebuild tests.process code coverage data'),
       api.step_data(
-          'run ebuild tests.process code coverage data.upload coverage to ZOSS.read coverage data from [CACHE]/cros_chroot/chroot/build/amd64-generic/build/coverage_data/coverage.json',
+          'run ebuild tests.process code coverage data.upload coverage to ZOSS.read coverage data from [CACHE]/cros_chroot/build/amd64-generic/build/coverage_data/coverage.json',
           retcode=1), builder='sarien-code-coverage-postsubmit',
       input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True),
