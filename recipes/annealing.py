@@ -17,19 +17,14 @@ The annealing builders run in serial and do the following:
 """
 
 import collections
-import datetime
 import urlparse
 import re
 
-from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
-from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.annealing import AnnealingProperties
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
-from recipe_engine import util
-from recipe_engine.util import exponential_retry
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -139,7 +134,7 @@ def RunSteps(api, properties):
           # do not generate snapshot
           if not _uprev_packages(api, properties, workspace_path, diffs,
                                  dry_run):
-            raise StepFailure("Failed to uprev all changes")
+            raise StepFailure('Failed to uprev all changes')
 
         api.easy.set_properties_step(dry_run=properties.dry_run)
 
@@ -224,7 +219,7 @@ def RunSteps(api, properties):
         api.git.fetch_ref(internal_manifest.url, prior_internal)
         test_data = api.git_footers.test_api.step_test_data_factory('1000000')
         snapshot_identifier_footers = api.git_footers.from_ref(
-            "FETCH_HEAD", key='Cr-Snapshot-Identifier',
+            'FETCH_HEAD', key='Cr-Snapshot-Identifier',
             step_test_data=test_data)
         if not snapshot_identifier_footers:
           raise StepFailure('missing Cr-Snapshot-Identifier footer')
@@ -238,7 +233,7 @@ def RunSteps(api, properties):
             api, external_manifest.url, manifest_ref, prior_external,
             external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
             disable_gerrit=True, dry_run=dry_run,
-            footers=[("Cr-Snapshot-Identifier", str(snapshot_identifier))])
+            footers=[('Cr-Snapshot-Identifier', str(snapshot_identifier))])
         external_snapshot_ref = external_snapshot_commit.id
 
       # TODO(b/179923413): remove properties check when uprev change
@@ -248,8 +243,8 @@ def RunSteps(api, properties):
             api, internal_manifest.url, manifest_ref, prior_internal,
             internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
             gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
-            footers=[("Cr-External-Snapshot", external_snapshot_ref),
-                     ("Cr-Snapshot-Identifier", str(snapshot_identifier))],
+            footers=[('Cr-External-Snapshot', external_snapshot_ref),
+                     ('Cr-Snapshot-Identifier', str(snapshot_identifier))],
             dry_run=dry_run)
 
         # Set output.properties.commit, this will also set the commit as the
@@ -334,7 +329,7 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
       for f in external_paths:
         if api.git.diff_check(f):
           diff_paths[repo].append(api.path.abspath(f))
-      presentation.logs["diffs"] = [str(diff_paths)]
+      presentation.logs['diffs'] = [str(diff_paths)]
       return diff_paths
 
     # TODO(b/179502549): remove conditional logic once rollout of
@@ -539,7 +534,7 @@ def _publish_snapshot(api, repo_url, snapshot_ref, prior_commit, snapshot_file,
   Args:
       api (object):   See RunSteps documentation
       repo_url:       URL to git repo to publish snapshot.xml file to
-      snapshot_ref:   git ref to publish to (e.g.: "snapshot")
+      snapshot_ref:   git ref to publish to (e.g.: 'snapshot')
       prior_commit:   The prior commit ID.
       snapshot_file:  location of snapshot.xml to write
       snapshot_xml:   contents to write to snapshot.xml in cwd
@@ -563,9 +558,9 @@ def _publish_snapshot(api, repo_url, snapshot_ref, prior_commit, snapshot_file,
                                    disable_gerrit)
 
     if footers:
-      commit_message += "\n"
+      commit_message += '\n'
       for key, val in footers:
-        commit_message += "%s: %s\n" % (key, val)
+        commit_message += '%s: %s\n' % (key, val)
 
     if not dry_run:
       api.git_txn.update_ref_write_file(repo_url, commit_message, snapshot_file,
@@ -633,7 +628,7 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
 def _make_gitiles_commit(_api, repo_url, ref, commit_id):
   """Create a GitilesCommit for the given |repo_url|, |ref|, and |commit_id|."""
   url = urlparse.urlparse(repo_url)
-  return common_pb2.GitilesCommit(
+  return GitilesCommit(
       host=url.hostname,
       project=url.path[1:], # strip leading /
       ref=ref,
