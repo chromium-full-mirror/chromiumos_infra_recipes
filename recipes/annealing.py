@@ -391,7 +391,7 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
           branch = project.branch_name
           namespace = 'heads'
           if properties.uprev_first and is_staging:
-            namespace = 'staging-infra'
+            branch = 'staging-infra-{}'.format(branch)
           refspec = 'HEAD:refs/{}/{}'.format(namespace, branch)
 
           # TODO(b/179502549): remove conditional logic once rollout of
