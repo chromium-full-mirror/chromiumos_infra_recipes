@@ -142,14 +142,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test/cros_chroot/sdk_cache_version.json",
-      "/path/to/tmp/"
+      "[CLEANUP]/test/cros_chroot/sdk_cache_state.json",
+      "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "read sdk cache version json",
+    "name": "read sdk cache state json",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"version\": 2}@@@",
-      "@@@STEP_LOG_END@sdk_cache_version.json@@@"
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@version: 2@@@",
+      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
     ]
   },
   {
@@ -160,24 +160,17 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\"manifest_branch\": \"\", \"version\": 3}",
-      "[CLEANUP]/sdk_cache_version.json"
+      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"version\": 3\n}",
+      "[CLEANUP]/test/cros_chroot/sdk_cache_state.json"
     ],
     "infra_step": true,
-    "name": "write sdk cache version file",
+    "name": "write sdk cache state file",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"manifest_branch\": \"\", \"version\": 3}@@@",
-      "@@@STEP_LOG_END@sdk_cache_version.json@@@"
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@version: 3@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_branch: \"snapshot\"@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
     ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "mv",
-      "[CLEANUP]/sdk_cache_version.json",
-      "[CLEANUP]/test/cros_chroot/sdk_cache_version.json"
-    ],
-    "name": "move sdk cache version file into place"
   },
   {
     "cmd": [],

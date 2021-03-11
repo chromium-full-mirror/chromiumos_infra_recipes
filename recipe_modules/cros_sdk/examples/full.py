@@ -8,13 +8,13 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
-    'recipe_engine/raw_io',
     'cros_sdk',
     'goma',
     'workspace_util',
 ]
 
 from PB.chromiumos import common
+from PB.chromiumos.sdk_cache_state import SdkCacheState
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
     TestInputProperties)
@@ -74,8 +74,8 @@ def GenTests(api):
 
   yield api.test(
       'versioned',
-      api.step_data('init sdk.read sdk cache version json',
-                    api.raw_io.output_text('{"version": 1}')))
+      api.step_data('init sdk.read sdk cache state json',
+                    api.file.read_proto(SdkCacheState(version=1))))
 
   yield api.test(
       'with-changes',
