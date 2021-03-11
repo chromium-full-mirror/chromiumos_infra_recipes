@@ -29,8 +29,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosRelevanceApi, self).__init__(*args, **kwargs)
-    self._test_planner_cipd_ref = (
-        properties.test_planner_cipd_ref.encode('utf-8') or "latest")
+    self._properties = properties
 
   def initialize(self):
     """Initializes the module."""
@@ -38,6 +37,21 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     self._build_planner_path = None
     # Toolchain changes have been detected.
     self._toolchain_cls_applied = False
+
+    self._build_planner_cipd_package = (
+        self._properties.build_plan_generator_cipd_package.encode('utf-8') or
+        "chromiumos/infra/build_plan_generator/${platform}")
+    self._pointless_build_checker_cipd_package = (
+        self._properties.pointless_build_checker_cipd_package.encode('utf-8') or
+        "chromiumos/infra/pointless_build_checker/${platform}")
+
+    default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
+    self._build_planner_cipd_ref = (
+        self._properties.build_plan_generator_cipd_ref.encode('utf-8') or
+        default_ref)
+    self._pointless_build_checker_cipd_ref = (
+        self._properties.pointless_build_checker_cipd_ref.encode('utf-8') or
+        default_ref)
 
   @property
   def toolchain_cls_applied(self):
@@ -373,11 +387,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     if not self._pointless_build_checker_path:
       with self.m.step.nest('ensure binaries'):
         with self.m.context(infra_steps=True):
-          cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
+          cipd_dir = self.m.path['start_dir'].join('cipd')
 
           pkgs = self.m.cipd.EnsureFile()
-          pkgs.add_package('chromiumos/infra/test_planner',
-                           self._test_planner_cipd_ref)
+          pkgs.add_package(self._build_planner_cipd_package,
+                           self._build_planner_cipd_ref)
+          pkgs.add_package(self._pointless_build_checker_cipd_package,
+                           self._pointless_build_checker_cipd_ref)
           self.m.cipd.ensure(cipd_dir, pkgs)
 
           self._pointless_build_checker_path = (

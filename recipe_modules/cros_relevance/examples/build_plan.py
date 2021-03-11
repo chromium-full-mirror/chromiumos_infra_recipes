@@ -5,7 +5,9 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'cros_infra_config',
     'cros_relevance',
     'cros_source',
     'src_state',
@@ -47,20 +49,49 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.post_check(post_process.StepCommandContains,
-                     'plan builds.ensure binaries.ensure_installed',
-                     ['chromiumos/infra/test_planner latest']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'plan builds.ensure binaries.ensure_installed', [
+              'chromiumos/infra/build_plan_generator/${platform} prod\n' +
+              'chromiumos/infra/pointless_build_checker/${platform} prod'
+          ]),
+  )
+
+  yield api.test(
+      'staging',
+      api.buildbucket.ci_build(
+          project='chromeos',
+          bucket='release',
+          builder='staging-main-release-orchestrator',
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'plan builds.ensure binaries.ensure_installed', [
+              'chromiumos/infra/build_plan_generator/${platform} staging\n' +
+              'chromiumos/infra/pointless_build_checker/${platform} staging'
+          ]),
   )
 
   yield api.test(
       'with-ref',
       api.properties(
-          **{"$chromeos/cros_relevance": {
-              "test_planner_cipd_ref": "foo"
-          }}),
+          **{
+              "$chromeos/cros_relevance": {
+                  "build_plan_generator_cipd_package":
+                      "build_plan_generator_foo",
+                  "build_plan_generator_cipd_ref":
+                      "bar",
+                  "pointless_build_checker_cipd_package":
+                      "pointless_build_checker_foo",
+                  "pointless_build_checker_cipd_ref":
+                      "bar",
+              }
+          }),
       api.post_check(post_process.StepCommandContains,
-                     'plan builds.ensure binaries.ensure_installed',
-                     ['chromiumos/infra/test_planner foo']),
+                     'plan builds.ensure binaries.ensure_installed', [
+                         'build_plan_generator_foo bar\n' +
+                         'pointless_build_checker_foo bar'
+                     ]),
   )
 
   yield api.test(

@@ -1710,9 +1710,9 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd/test_planner",
+      "[START_DIR]/cipd",
       "-ensure-file",
-      "chromiumos/infra/test_planner latest",
+      "chromiumos/infra/build_plan_generator/${platform} prod\nchromiumos/infra/pointless_build_checker/${platform} prod",
       "-max-threads",
       "0",
       "-json-output",
@@ -1727,8 +1727,12 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_planner\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/build_plan_generator/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/pointless_build_checker/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
@@ -1763,7 +1767,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_planner/pointless_build_checker",
+      "[START_DIR]/cipd/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto",
@@ -2644,7 +2648,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_planner/pointless_build_checker",
+      "[START_DIR]/cipd/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
       "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto",
@@ -2728,7 +2732,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_planner/pointless_build_checker",
+      "[START_DIR]/cipd/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
       "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto",

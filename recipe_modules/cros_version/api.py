@@ -37,13 +37,18 @@ class CrosVersionApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(CrosVersionApi, self).__init__(*args, **kwargs)
     self._remove_snapshot_from_version = properties.remove_snapshot_from_version
+    self._properties = properties
+
+  def initialize(self):
+    """Initializes the module."""
     self._version_bumper_path = None
     self._version_bumper_cipd_package = (
-        properties.version_bumper_cipd_package.encode('utf-8') or
+        self._properties.version_bumper_cipd_package.encode('utf-8') or
         "chromiumos/infra/version_bumper/${platform}")
-    # TODO(b:177902822): Set based on environment when Rubik builders hit prod.
+
+    default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
     self._version_bumper_cipd_ref = (
-        properties.version_bumper_cipd_ref.encode('utf-8') or "staging")
+        self._properties.version_bumper_cipd_ref.encode('utf-8') or default_ref)
 
   def read_workspace_version(self):
     """Read the Chrome OS version from the workspace.

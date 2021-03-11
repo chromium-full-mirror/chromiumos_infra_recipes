@@ -1377,6 +1377,26 @@
     },
     {
       "id": {
+        "name": "staging-main-release-orchestrator",
+        "branch": "main",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "environment": "STAGING",
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
+      }
+    },
+    {
+      "id": {
         "name": "cq-orchestrator",
         "branch": "main",
         "type": "CQ"

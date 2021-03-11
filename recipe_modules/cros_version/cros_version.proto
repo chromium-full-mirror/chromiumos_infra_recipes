@@ -13,9 +13,9 @@ message CrosVersionProperties {
     bool remove_snapshot_from_version = 1;
 
     // Cipd package to use for verson_bumper.
-    // Defaults to "chromiumos/infra/version_bumper/linux-amd64".
+    // Defaults to "chromiumos/infra/version_bumper/${platform}".
     string version_bumper_cipd_package = 2;
 
-    // Cipd ref to use for verson_bumper. Defaults to "latest".
+    // Cipd ref to use for verson_bumper. Defaults to "staging" or "prod".
     string version_bumper_cipd_ref = 3;
 }
