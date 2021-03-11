@@ -502,6 +502,8 @@ class RepoApi(recipe_api.RecipeApi):
       changed project (excludes added/removed projects).
     """
 
+    _test_data_default_remote = 'cros'
+
     def snapshot_mode(project):
       for annotation in project.iterfind('annotation'):
         if annotation.get('name') == 'snapshot-mode':
@@ -514,8 +516,17 @@ class RepoApi(recipe_api.RecipeApi):
           x.attrib.get('remote')
           for x in xml.iterfind('default')
           if x.attrib.get('remote')
-      ] + ['cros']
+      ] + [_test_data_default_remote]
       return ret[0]
+
+    def find_remotes(xml_data):
+      xml = ElementTree.fromstring(xml_data)
+      remotes = [x.attrib for x in xml.iterfind('remote')] or [{
+          'name': _test_data_default_remote
+      }]
+      for remote in remotes:
+        remote.setdefault('alias', remote.get('name'))
+      return {remote['name']: remote for remote in remotes}
 
     def project_paths(xml_data):
       xml = ElementTree.fromstring(xml_data)
@@ -535,6 +546,7 @@ class RepoApi(recipe_api.RecipeApi):
 
     if use_merge_base:
       repo_root = self._find_root()
+    remotes = find_remotes(from_manifest_str)
     from_paths = project_paths(from_manifest_str)
     to_paths = project_paths(to_manifest_str)
     default_remote = find_default_remote(from_manifest_str)
@@ -546,6 +558,9 @@ class RepoApi(recipe_api.RecipeApi):
       from_name = from_attrs['name']
       from_revision = from_attrs['revision']
       from_remote = from_attrs.get('remote', default_remote)
+      # Not all test data provides remotes, so just pass the remote name along
+      # if we don't have a declaration for the remote.
+      from_remote = remotes.get(from_remote, {'alias': from_remote})['alias']
       to_revision = to_paths[from_path]['revision']
       if from_revision == to_revision:
         # The revision didn't change (aka no CLs landed between the last
