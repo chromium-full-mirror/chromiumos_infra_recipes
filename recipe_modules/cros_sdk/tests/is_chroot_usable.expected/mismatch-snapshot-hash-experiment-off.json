@@ -36,8 +36,7 @@
       "@@@STEP_LOG_END@sdk manifest branch@@@",
       "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash in config: @@@",
       "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash on disk: 123@@@",
-      "@@@STEP_LOG_END@sdk snapshot hash@@@",
-      "@@@SET_BUILD_PROPERTY@sdk_cache@\"cros_chroot\"@@@"
+      "@@@STEP_LOG_END@sdk snapshot hash@@@"
     ]
   },
   {

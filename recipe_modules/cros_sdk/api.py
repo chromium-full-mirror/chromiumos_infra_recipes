@@ -63,6 +63,8 @@ class CrosSdkApi(RecipeApi):
       self._chroot_path = self._cache_path.join('chroot')
       self._sdk_cache_state = None
       self._sdk_cache_state_file = self._cache_path.join('sdk_cache_state.json')
+      self._preload_cache_state_file = self._preload_path.join(
+          'sdk_cache_state.json')
       self._chrome_root = None
       self._goma_dir = None
       self._goma_client_json = None
@@ -112,20 +114,31 @@ class CrosSdkApi(RecipeApi):
 
   @property
   def sdk_cache_state(self):
-    """Lazily load from file. Can be None if state file doesn't exist."""
+    """Returns default values if not set and cache state file does not exist."""
     if not self._sdk_cache_state:
-      data = SdkCacheState()
-      self.m.path.mock_add_paths(self._sdk_cache_state_file)
-      if self.m.path.exists(self._sdk_cache_state_file):
-        data = self.m.file.read_proto('read sdk cache state json',
-                                      self._sdk_cache_state_file, SdkCacheState,
-                                      'JSONPB')
-      data.version = data.version or _DEFAULT_SDK_CACHE_VERSION
-      data.manifest_branch = data.manifest_branch or ''
-      data.manifest_url = data.manifest_url or ''
-      data.snapshot_hash = data.snapshot_hash or ''
-      self._sdk_cache_state = data
+      self._sdk_cache_state = self._read_sdk_cache_state_file(
+          self._sdk_cache_state_file)
     return self._sdk_cache_state
+
+  def _read_sdk_cache_state_file(self, path,
+                                 step_name='read sdk cache state json'):
+    """Read SdkCacheState proto from file.
+
+    Args:
+      path (Path): Path to read SdkCacheState file from.
+      step_name (string): Name for the step.
+
+    Returns:
+      sdk_state (SdkCacheState): The SdkCacheState proto from the file or an
+        SdkCacheProto with default values if the file does not exist.
+    """
+    self.m.path.mock_add_paths(path)
+    sdk_state = SdkCacheState()
+    if self.m.path.exists(self._sdk_cache_state_file):
+      sdk_state = self.m.file.read_proto(step_name, self._sdk_cache_state_file,
+                                         SdkCacheState, 'JSONPB')
+    sdk_state.version = sdk_state.version or _DEFAULT_SDK_CACHE_VERSION
+    return sdk_state
 
   def _write_sdk_cache_state(self, version=_DEFAULT_SDK_CACHE_VERSION):
     """Set sdk cache state and write to file.
@@ -237,53 +250,99 @@ class CrosSdkApi(RecipeApi):
       self.m.cros_build_api.SdkService.Delete(
           DeleteSdkRequest(chroot=self.chroot))
 
-  def _is_chroot_usable(self, version, parent_step):
+  def _is_chroot_usable(self, cache_state, version, step_logs):
     """Determine whether the cached version of the chroot can be reused.
 
-    Compare the config's sdk version and manifest branch to the ones cached on
-    the bot. If they are the same the cached chroot can be reused.
+    Compare the config's sdk version and manifest branch to the ones in the
+    given SdkCacheState. If they are the same the cached chroot can be reused.
 
     Args:
+      cache_state (SdkCacheState): The state of the cached chroot of
+          interest.
       version (int): Required SDK cache version, if any. Some recipes do not
           care what version the SDK is, they just need any SDK.
-      parent_step (Step): The calling step, to be used for presentation
-          purposes.
+      step_logs (dict): The logs dict of the calling step.
 
     Returns:
       Boolean indicating if the chroot can be reused.
     """
-    parent_step.logs['sdk cache version'] = [
+    step_logs['sdk cache version'] = [
         'Version in config: %d' % version,
-        'Version on disk: %d' % self.sdk_cache_state.version,
+        'Version on disk: %d' % cache_state.version,
     ]
-    parent_step.logs['sdk manifest url'] = [
+    step_logs['sdk manifest url'] = [
         'Url in config: %s' % self.m.src_state.build_manifest.url,
-        'Url on disk: %s' % self.sdk_cache_state.manifest_url
+        'Url on disk: %s' % cache_state.manifest_url
     ]
-    parent_step.logs['sdk manifest branch'] = [
+    step_logs['sdk manifest branch'] = [
         'Branch in config: %s' % self.m.cros_source.manifest_branch or
         'snapshot',
-        'Branch on disk: %s' % self.sdk_cache_state.manifest_branch
+        'Branch on disk: %s' % cache_state.manifest_branch
     ]
-    parent_step.logs['sdk snapshot hash'] = [
+    step_logs['sdk snapshot hash'] = [
         'Snapshot hash in config: %s' % self.m.src_state.gitiles_commit.id,
-        'Snapshot hash on disk: %s' % self.sdk_cache_state.snapshot_hash
+        'Snapshot hash on disk: %s' % cache_state.snapshot_hash
     ]
+
+    if self._test_data.enabled:
+      reuse = self._test_data.get('is_chroot_usable', None)
+      if reuse:
+        return reuse.pop(0)
+
     reuse = True
-    reuse &= (version == self._sdk_cache_state.version)
+    reuse &= (version == cache_state.version)
     manifest_branch = self.m.cros_source.manifest_branch or 'snapshot'
-    reuse &= (manifest_branch == self._sdk_cache_state.manifest_branch)
+    reuse &= (manifest_branch == cache_state.manifest_branch)
     if self._compare_snapshot_hash:
-      reuse &= (
-          self.m.src_state.build_manifest.url ==
-          self._sdk_cache_state.manifest_url)
+      reuse &= (self.m.src_state.build_manifest.url == cache_state.manifest_url)
       with self.m.context(cwd=self.m.src_state.build_manifest.path):
         reuse &= (
-            bool(self._sdk_cache_state.snapshot_hash) and
-            self.m.git.is_reachable(self._sdk_cache_state.snapshot_hash.strip(),
+            bool(cache_state.snapshot_hash) and
+            self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
                                     self.m.src_state.gitiles_commit.id))
-    parent_step.properties['sdk_cache'] = 'cros_chroot' if reuse else 'none'
     return reuse
+
+  def _check_sdk_cache_state(self, version):
+    """Check if any cached SDK can be reused for the build.
+
+    Args:
+      version (int): Required SDK cache version, if any. Some recipes do not
+          care what version the SDK is, they just need any SDK.
+
+    Returns:
+      reuse (bool): Whether a cached version of the chroot can be reused for the
+          build.
+    """
+    with self.m.step.nest('check SDK in named cache') as presentation:
+      reuse = self._is_chroot_usable(self.sdk_cache_state, version,
+                                     presentation.logs)
+      if reuse:
+        presentation.properties['sdk_cache'] = 'cros_chroot'
+        return reuse
+
+      # TODO(crbug.com/1167322): Keep until mount_named_cache is no longer
+      # an experiment and all prod builders use an image with the preload SDK.
+      if not self._mount_named_cache:
+        presentation.properties['sdk_cache'] = 'none'
+        return reuse
+
+    with self.m.step.nest('check SDK in preload cache') as presentation:
+      preload_cache = self._read_sdk_cache_state_file(
+          self._preload_cache_state_file)
+      reuse = self._is_chroot_usable(preload_cache, version, presentation.logs)
+      if not reuse:
+        presentation.properties['sdk_cache'] = 'none'
+        return reuse
+
+      presentation.properties['sdk_cache'] = 'preload'
+      self._remove_chroot('delete SDK in named cache')
+      self.unlink_chroot(self.m.cros_source.workspace_path)
+      self.m.overlayfs.unmount('cros_chroot', self._cache_path)
+      self.m.step('deleting named cache',
+                  ['sudo', '-n', 'rm', '-rf', self._cache_path])
+      self.m.overlayfs.mount('cros_chroot', self._preload_path,
+                             self._cache_path, persist=True)
+      return reuse
 
   def create_chroot(self, version=None, use_image=True, bootstrap=False,
                     timeout_sec='DEFAULT', test_data=None,
@@ -320,7 +379,7 @@ class CrosSdkApi(RecipeApi):
           timeout_sec = None if bootstrap else 90 * 60
 
         # Determine whether a cached root could be reused.
-        no_replace = self._is_chroot_usable(version, presentation)
+        no_replace = self._check_sdk_cache_state(version)
         # SdkService/Create will create a chroot if one does not already exist
         # or no_replace is False.
         response = self.m.cros_build_api.SdkService.Create(
@@ -445,6 +504,8 @@ class CrosSdkApi(RecipeApi):
         self.swarming_chmod_chroot()
         if self._mount_named_cache:
           self.m.overlayfs.unmount('cros_chroot', self._cache_path)
+      assert self._test_data.get('is_chroot_usable',
+                                 []) == [], ('not all input test data used')
 
   @contextlib.contextmanager
   def snapshot(self, create_test_data=None, restore_test_data=None):

@@ -26,7 +26,9 @@ PROPERTIES = {
 # pylint: disable=protected-access
 def RunSteps(api, is_chroot_usable):
   with api.step.nest('is chroot usable') as parent_step:
-    reuse = api.cros_sdk._is_chroot_usable(version=1, parent_step=parent_step)
+    reuse = api.cros_sdk._is_chroot_usable(api.cros_sdk.sdk_cache_state,
+                                           version=1,
+                                           step_logs=parent_step.logs)
     api.assertions.assertEqual(is_chroot_usable, reuse)
 
 

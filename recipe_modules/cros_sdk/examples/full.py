@@ -75,8 +75,9 @@ def GenTests(api):
 
   yield api.test(
       'versioned',
-      api.step_data('init sdk.read sdk cache state json',
-                    api.file.read_proto(SdkCacheState(version=2))))
+      api.step_data(
+          'init sdk.check SDK in named cache.read sdk cache state json',
+          api.file.read_proto(SdkCacheState(version=2))))
 
   yield api.test(
       'with-changes',
@@ -139,3 +140,9 @@ def GenTests(api):
       api.properties(
           **{"$chromeos/cros_sdk": CrosSdkProperties(mount_named_cache=True)}),
       api.post_check(post_process.MustRun, 'mount overlay cros_chroot'))
+
+  yield api.test(
+      'remaining-test-data',
+      api.cros_sdk.is_chroot_usable(['False', 'True']),
+      api.expect_exception('AssertionError'),
+  )
