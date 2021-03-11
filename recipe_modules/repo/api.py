@@ -559,7 +559,7 @@ class RepoApi(recipe_api.RecipeApi):
           base = self.m.git.merge_base(from_revision, to_revision,
                                        test_stdout=from_revision)
           val_pres.step_text = (
-              from_revision if from_revision != base else '{} => {}'.format(
+              from_revision if from_revision == base else '{} => {}'.format(
                   from_revision, base or from_revision))
           from_revision = base or from_revision
       changes.append(

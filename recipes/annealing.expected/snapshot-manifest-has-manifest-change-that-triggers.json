@@ -851,7 +851,7 @@
     "name": "diff remote and local manifest.validate NAME",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@FROM_REV => FROM_REV@@@"
+      "@@@STEP_TEXT@FROM_REV@@@"
     ]
   },
   {
