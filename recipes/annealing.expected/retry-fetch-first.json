@@ -1136,7 +1136,7 @@
       "merge",
       "FETCH_HEAD",
       "-m",
-      "Resolve uprev conflict",
+      "Resolve uprev conflict\n",
       "--strategy=ours"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
@@ -1342,7 +1342,7 @@
       "merge",
       "FETCH_HEAD",
       "-m",
-      "Resolve uprev conflict",
+      "Resolve uprev conflict\n",
       "--strategy=ours"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",

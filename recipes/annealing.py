@@ -489,10 +489,10 @@ def _uprev_retry(api, project, dry_run, step_name, branch, is_staging,
   if is_staging:
     # Ignore all the changes on the ref, since they have been done on ToT since
     # then.
-    api.git.merge('FETCH_HEAD', 'Resolve uprev conflict', '--strategy=ours')
+    api.git.merge('FETCH_HEAD', 'Resolve uprev conflict\n', '--strategy=ours')
   else:
     api.git.checkout('FETCH_HEAD')
-    api.git.merge(current_branch, 'Resolve uprev conflict')
+    api.git.merge(current_branch, 'Resolve uprev conflict\n')
   api.git.push(project.remote, 'HEAD:{}'.format(ref), dry_run=dry_run,
                capture_stdout=True, retry=False, name=step_name)
 

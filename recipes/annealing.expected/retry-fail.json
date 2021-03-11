@@ -1254,7 +1254,7 @@
       "merge",
       "main",
       "-m",
-      "Resolve uprev conflict"
+      "Resolve uprev conflict\n"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1358,7 +1358,7 @@
       "merge",
       "main",
       "-m",
-      "Resolve uprev conflict"
+      "Resolve uprev conflict\n"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
@@ -1462,7 +1462,7 @@
       "merge",
       "main",
       "-m",
-      "Resolve uprev conflict"
+      "Resolve uprev conflict\n"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
