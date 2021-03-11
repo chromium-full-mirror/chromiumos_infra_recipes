@@ -412,9 +412,10 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
             git_flags = _check_push_exception(ex)
             # Define no change
             if git_flags.no_change:
-              pass
+              api.step.active_result.presentation.status = api.step.SUCCESS
             elif git_flags.merge_required:
               # try resolving the issue three times before failing
+              api.step.active_result.presentation.status = api.step.WARNING
               with api.step.nest('retry uprev to {}'.format(repo_name)):
                 for index in range(3):
                   with api.git.head_context():
@@ -422,8 +423,6 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
                       _uprev_retry(api, project, dry_run, step_name, branch,
                                    is_staging, namespace)
                       passed_uprevs.append(repo_name)
-                      push_pres.status = api.step.SUCCESS
-                      api.step.active_result.presentation.status = api.step.SUCCESS
                       break
                     except StepFailure as ex:
                       if index == 2:
@@ -972,7 +971,7 @@ def GenTests(api):
           retcode=1,
       ),
       api.post_check(
-          post_process.StepException,
+          post_process.StepWarning,
           'push uprevs.push to src/private-overlay.git push src/private-overlay'
       ),
       api.post_check(

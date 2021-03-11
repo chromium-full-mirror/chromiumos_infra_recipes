@@ -973,7 +973,8 @@
     "cmd": [],
     "name": "push uprevs.push to src/overlay",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -1074,7 +1075,7 @@
       "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_LINE@exception@!\tHEAD:refs/heads/staging-infra-main\t[rejected] (fetch first)@@@",
       "@@@STEP_LOG_END@exception@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -1179,7 +1180,8 @@
     "cmd": [],
     "name": "push uprevs.push to src/private-overlay",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -1280,7 +1282,7 @@
       "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_LINE@exception@!\tHEAD:refs/heads/staging-infra-main\t[rejected] (fetch first)@@@",
       "@@@STEP_LOG_END@exception@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
