@@ -104,6 +104,11 @@ def GenTests(api):
   )
 
   yield api.test(
+      'is_reachable',
+      api.git.is_reachable(False),
+  )
+
+  yield api.test(
       'log_yields_no_output',
       api.step_data('git log', stdout=api.raw_io.output('')),
   )
