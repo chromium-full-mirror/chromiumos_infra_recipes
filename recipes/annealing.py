@@ -58,9 +58,12 @@ def RunSteps(api, properties):
   # If we're configured not to publish uprev's run as staging.
   is_staging = not properties.publish_uprevs
   workspace_path = api.src_state.workspace_path
+
+  # TODO(b/182591232): remove experiment logic when b/179923558 is done
   properties.uprev_first |= (
       'chromeos.annealing.uprev_first' in api.cros_infra_config.experiments)
   api.easy.set_properties_step(uprev_first=properties.uprev_first)
+
   commit = api.src_state.gitiles_commit
   prior_internal = prior_external = diffs = None
   dry_run = api.cq.state != api.cq.INACTIVE or properties.dry_run
@@ -129,6 +132,7 @@ def RunSteps(api, properties):
                                external_manifest)
 
         # Uprev before snapshot generation if flag is set
+        # TODO(b/182591232): remove experiment logic when b/179923558 is done
         if properties.uprev_first:
           # One or more uprevs did not complete, end recipe and
           # do not generate snapshot
@@ -230,8 +234,6 @@ def RunSteps(api, properties):
             footers=[('Cr-Snapshot-Identifier', str(snapshot_identifier))])
         external_snapshot_ref = external_snapshot_commit.id
 
-      # TODO(b/179923413): remove properties check when uprev change
-      # fully rolled out
       with api.step.nest('publish internal snapshot'):
         internal_snapshot_commit = _publish_snapshot(
             api, internal_manifest.url, manifest_ref, prior_internal,
@@ -255,8 +257,7 @@ def RunSteps(api, properties):
       # from the remote uprev commits. The only two ways around it are (a)
       # run repo sync a second time, after uprevs, or (b) include the uprevs
       # in the NEXT snapshot. We choose the least wasteful option.
-      # TODO(b/179503858): remove properties check when uprev change
-      # fully rolled out
+      # TODO(b/182591232): remove when b/179923558 is done
       if not properties.uprev_first:
         dry_run = dry_run or is_staging
         _uprev_packages(api, properties, workspace_path, diffs, dry_run)
@@ -280,13 +281,16 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
   Return:
     diff_paths(dict): Dictionary containing paths to manifest changes
   """
+  # TODO(b/182591232): remove when b/179923558 is done
   is_staging = not properties.publish_uprevs
+
   with api.step.nest('sync manifests') as presentation:
     presentation.logs['prior versions'] = [
         'internal {}: {}'.format(manifest_ref, prior_internal),
         'external {}: {}'.format(manifest_ref, prior_external),
     ]
 
+    # TODO(b/182591232): remove when b/179923558 is done
     def _update_callback():
       """Callback function for git_txn to update mirrored files."""
       files = api.cros_source.mirrored_manifest_files
@@ -307,8 +311,7 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
       api.git.commit(commit_message)
       return True
 
-    # TODO(b/179502549): remove conditional logic once rollout of
-    # go/annealing-uprevs is done
+    # TODO(b/182591232): remove exepriment conditional when b/179923558 is done
     if properties.uprev_first:
       diff_paths = {}
       files = api.cros_source.mirrored_manifest_files
@@ -326,8 +329,7 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
       presentation.logs['diffs'] = [str(diff_paths)]
       return diff_paths
 
-    # TODO(b/179502549): remove conditional logic once rollout of
-    # go/annealing-uprevs is done
+    # TODO(b/182591232): remove when b/179923558 is done
     if not api.git_txn.update_ref(external_manifest.url, _update_callback):
       presentation.step_text = 'No diffs'
 
