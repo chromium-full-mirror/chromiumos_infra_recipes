@@ -661,11 +661,11 @@ class CrosSourceApi(RecipeApi):
             'Changes must be made in manifest-internal: {}'.format(', '.join(
                 self.mirrored_manifest_files)))
 
-      # If patches.intern changes a mirrored manifest file, then:
+      # If patches.intern is non-empty, then
       # 1. We do not have the internal manifest checked out, and
-      # 2. We will need it so that we can copy the file over to the external
-      #    manifest.
-      if _changes_mirrored_file(patches.intern):
+      # 2. We will need it so that we can apply manifest patches and potentially
+      #    copy the file over to the external manifest.
+      if patches.intern:
         with self.m.step.nest('sync internal manifest for patching'):
           # Fetch the internal manifest into its path.  Use the (synced) cache
           # as a reference, so that we do not use the network for this.

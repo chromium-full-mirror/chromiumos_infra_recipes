@@ -1036,6 +1036,43 @@
   },
   {
     "cmd": [],
+    "name": "patch manifest.sync internal manifest for patching",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--reference",
+      "[CACHE]/chromiumos/manifest-internal",
+      "--dissociate",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "[START_DIR]/chromiumos_workspace/manifest-internal"
+    ],
+    "infra_step": true,
+    "name": "patch manifest.sync internal manifest for patching.git clone",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "main"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "patch manifest.sync internal manifest for patching.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
