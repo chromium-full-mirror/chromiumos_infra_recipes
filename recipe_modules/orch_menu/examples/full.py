@@ -201,6 +201,12 @@ def GenTests(api):
       git_footers=[],
       tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/chromeos-chrome'))
 
+  yield api.orch_menu.test(
+      'lts-pupr-noop', data.ctp_normal,
+      api.post_check(post_process.DoesNotRun, 'run builds|schedule new builds'),
+      builder='lts-cq-orchestrator', cq=True,
+      tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/chromeos-chrome'))
+
   # Bisection
   yield api.orch_menu.test(
       'with-test-bisection',

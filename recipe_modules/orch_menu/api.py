@@ -337,6 +337,13 @@ class OrchMenuApi(RecipeApi):
       (BuildsStatus): The current status of the builds.
     """
     with self.m.step.nest(run_step_name or 'run builds') as pres:
+      # Don't run builds if testing LTS chrome. https://crbug.com/1186358
+      # Delete this hack once https://crbug.com/1186852 is fixed.
+      if (self.m.buildbucket.build.builder.builder == 'lts-cq-orchestrator' and
+          self.m.cros_tags.has_entry('cq_cl_tag',
+                                     'pupr:chromeos-base/chromeos-chrome',
+                                     self.m.buildbucket.build.tags)):
+        return self._builds_status
       completed_builds, collect_after = self._filter_schedule_wait_builds(
           pres, self._bisect_builder_child_specs())
 

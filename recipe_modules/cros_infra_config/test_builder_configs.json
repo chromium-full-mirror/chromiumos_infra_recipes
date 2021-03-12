@@ -1415,6 +1415,44 @@
     },
     {
       "id": {
+        "name": "lts-cq-orchestrator",
+        "branch": "main",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "child_specs": [
+          {
+            "name": "amd64-generic-cq",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "arm-generic-cq",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "arm64-generic-cq",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "arm-generic-pointless-cq",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "atlas-cq"
+          },
+          {
+            "name": "cave-cq",
+            "collectHandling": "COLLECT_AFTER_HW_TEST"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
         "name": "chromite-cq",
         "branch": "main",
         "type": "CQ"
