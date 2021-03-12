@@ -24,11 +24,18 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosTestPlanApi, self).__init__(*args, **kwargs)
-    self._test_planner_cipd_ref = (
-        properties.test_planner_cipd_ref.encode('utf-8') or "latest")
+    self._properties = properties
 
   def initialize(self):
     self._test_planner_path = None
+    self._test_planner_cipd_package = (
+        self._properties.test_plan_generator_cipd_package.encode('utf-8') or
+        "chromiumos/infra/test_plan_generator/${platform}")
+
+    default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
+    self._test_planner_cipd_ref = (
+        self._properties.test_plan_generator_cipd_ref.encode('utf-8') or
+        default_ref)
 
   def generate(self, builds, gerrit_changes, manifest_commit, name=None):
     """Generate test plan.
@@ -101,15 +108,12 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
 
   def _ensure_test_planner(self):
     """Ensure the test_planner cli is installed."""
-    if self._test_planner_path:
-      return
-
     with self.m.step.nest('ensure test_planner'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
+        cipd_dir = self.m.path['start_dir'].join('cipd')
 
         pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package('chromiumos/infra/test_planner',
+        pkgs.add_package(self._test_planner_cipd_package,
                          self._test_planner_cipd_ref)
         self.m.cipd.ensure(cipd_dir, pkgs)
 
