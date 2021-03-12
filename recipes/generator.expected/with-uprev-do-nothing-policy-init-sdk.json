@@ -818,15 +818,8 @@
       "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
       "@@@STEP_LOG_END@sdk cache version@@@",
-      "@@@STEP_LOG_LINE@sdk manifest url@Url in config: https://chrome-internal.googlesource.com/chromeos/manifest-internal@@@",
-      "@@@STEP_LOG_LINE@sdk manifest url@Url on disk: @@@",
-      "@@@STEP_LOG_END@sdk manifest url@@@",
-      "@@@STEP_LOG_LINE@sdk manifest branch@Branch in config: @@@",
       "@@@STEP_LOG_LINE@sdk manifest branch@Branch on disk: @@@",
       "@@@STEP_LOG_END@sdk manifest branch@@@",
-      "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash in config: snapshot-HEAD-SHA@@@",
-      "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash on disk: @@@",
-      "@@@STEP_LOG_END@sdk snapshot hash@@@",
       "@@@STEP_LOG_LINE@sdk version@123@@@",
       "@@@STEP_LOG_END@sdk version@@@"
     ]
@@ -854,16 +847,16 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CACHE]/cros_chroot/sdk_cache_state.json",
-      "/path/to/tmp/json"
+      "[CACHE]/cros_chroot/sdk_cache_version.json",
+      "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "init sdk.read sdk cache state json",
+    "name": "init sdk.read sdk cache version json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@@@@",
-      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{}@@@",
+      "@@@STEP_LOG_END@sdk_cache_version.json@@@"
     ]
   },
   {
@@ -876,6 +869,7 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"noReplace\": true, @@@",
       "@@@STEP_LOG_LINE@request@    \"noUseImage\": true@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -892,7 +886,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"flags\": {\n    \"noUseImage\": true\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"flags\": {\n    \"noReplace\": true, \n    \"noUseImage\": true\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -905,6 +899,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"noReplace\": true, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"noUseImage\": true@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
@@ -978,6 +973,7 @@
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"noReplace\": true, @@@",
       "@@@STEP_LOG_LINE@published event@      \"noUseImage\": true@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
@@ -1011,7 +1007,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BMIBIgoCGAESHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJv\\nb3TKAQQKAgh72gJCaW5pdCBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9DcmVhdGV8\\nY2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BMIBJAoECAEYARIcChpbQ0FDSEVdL2Nyb3NfY2hyb290L2No\\ncm9vdMoBBAoCCHvaAkJpbml0IHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL0NyZWF0\\nZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1028,19 +1024,29 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"snapshot_hash\": \"snapshot-HEAD-SHA\", \n\"version\": 1\n}",
-      "[CACHE]/cros_chroot/sdk_cache_state.json"
+      "{\"manifest_branch\": \"\", \"version\": 1}",
+      "[CLEANUP]/sdk_cache_version.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "init sdk.write sdk cache state file",
+    "name": "init sdk.write sdk cache version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@version: 1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_branch: \"snapshot\"@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@snapshot_hash: \"snapshot-HEAD-SHA\"@@@",
-      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
+      "@@@STEP_LOG_LINE@sdk_cache_version.json@{\"manifest_branch\": \"\", \"version\": 1}@@@",
+      "@@@STEP_LOG_END@sdk_cache_version.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mv",
+      "[CLEANUP]/sdk_cache_version.json",
+      "[CACHE]/cros_chroot/sdk_cache_version.json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "init sdk.move sdk cache version file into place",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

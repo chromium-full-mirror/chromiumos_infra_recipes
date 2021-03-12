@@ -11,7 +11,6 @@ import json
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.chromiumos import common
-from PB.chromiumos.sdk_cache_state import SdkCacheState
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
@@ -56,8 +55,9 @@ class CrosSdkApi(RecipeApi):
       self.m.file.ensure_directory('create preload path', self._preload_path)
       self._cache_path = chroot_parent_path.join('cros_chroot')
       self._chroot_path = self._cache_path.join('chroot')
-      self._sdk_cache_state = None
-      self._sdk_cache_state_file = self._cache_path.join('sdk_cache_state.json')
+      self._sdk_cache_version = None
+      self._sdk_cache_version_file = self._cache_path.join(
+          'sdk_cache_version.json')
       self._chrome_root = None
       self._goma_dir = None
       self._goma_client_json = None
@@ -106,37 +106,35 @@ class CrosSdkApi(RecipeApi):
     return str(self._chrome_root) if self._chrome_root else None
 
   @property
-  def sdk_cache_state(self):
-    """Lazily load from file. Can be None if state file doesn't exist."""
-    if not self._sdk_cache_state:
-      data = SdkCacheState()
-      self.m.path.mock_add_paths(self._sdk_cache_state_file)
-      if self.m.path.exists(self._sdk_cache_state_file):
-        data = self.m.file.read_proto('read sdk cache state json',
-                                      self._sdk_cache_state_file, SdkCacheState,
-                                      'JSONPB')
-      data.version = data.version or _DEFAULT_SDK_CACHE_VERSION
-      data.manifest_branch = data.manifest_branch or ''
-      data.manifest_url = data.manifest_url or ''
-      data.snapshot_hash = data.snapshot_hash or ''
-      self._sdk_cache_state = data
-    return self._sdk_cache_state
+  def sdk_cache_version(self):
+    """Lazily load from file. Can be None if version file doesn't exist."""
+    if self._sdk_cache_version == None:
+      data = {}
+      self.m.path.mock_add_paths(self._sdk_cache_version_file)
+      if self.m.path.exists(self._sdk_cache_version_file):
+        data = self.m.file.read_json('read sdk cache version json',
+                                     self._sdk_cache_version_file, dict())
+      data.setdefault('version', _DEFAULT_SDK_CACHE_VERSION)
+      data.setdefault('manifest_branch', '')
+      self._sdk_cache_version = int(data['version'])
+      self._sdk_cache_manifest_branch = data['manifest_branch']
+    return self._sdk_cache_version
 
-  def _write_sdk_cache_state(self, version=_DEFAULT_SDK_CACHE_VERSION):
-    """Set sdk cache state and write to file.
+  @sdk_cache_version.setter
+  def sdk_cache_version(self, value=_DEFAULT_SDK_CACHE_VERSION):
+    """Set sdk cache version and write to file.
 
     Args:
-      version (int): new sdk cache version to set.
+      * value (int): new sdk cache version to set.
     """
-    state = SdkCacheState(
-        version=version,
-        manifest_branch=self.m.cros_source.manifest_branch or 'snapshot',
-        manifest_url=self.m.src_state.build_manifest.url,
-        snapshot_hash=self.m.src_state.gitiles_commit.id,
-    )
-    self.m.file.write_proto('write sdk cache state file',
-                            self._sdk_cache_state_file, state, 'JSONPB')
-    self._sdk_cache_state = state
+    tmp_file = self.m.path['cleanup'].join('sdk_cache_version.json')
+    value = int(value)
+    self.m.file.write_json(
+        'write sdk cache version file', tmp_file,
+        dict(version=value, manifest_branch=self.m.cros_source.manifest_branch))
+    cmd = ['sudo', 'mv', tmp_file, self._sdk_cache_version_file]
+    self.m.step('move sdk cache version file into place', cmd)
+    self._sdk_cache_version = value
 
   def configure_goma(self, chrome_root):
     """Configure goma for Chrome.
@@ -247,36 +245,17 @@ class CrosSdkApi(RecipeApi):
     Returns:
       Boolean indicating if the chroot can be reused.
     """
+    disk_version = self.sdk_cache_version
     parent_step.logs['sdk cache version'] = [
         'Version in config: %d' % version,
-        'Version on disk: %d' % self.sdk_cache_state.version,
+        'Version on disk: %d' % disk_version,
     ]
-    parent_step.logs['sdk manifest url'] = [
-        'Url in config: %s' % self.m.src_state.build_manifest.url,
-        'Url on disk: %s' % self.sdk_cache_state.manifest_url
-    ]
+    disk_branch = self._sdk_cache_manifest_branch
     parent_step.logs['sdk manifest branch'] = [
-        'Branch in config: %s' % self.m.cros_source.manifest_branch or
-        'snapshot',
-        'Branch on disk: %s' % self.sdk_cache_state.manifest_branch
+        'Branch on disk: %s' % disk_branch
     ]
-    parent_step.logs['sdk snapshot hash'] = [
-        'Snapshot hash in config: %s' % self.m.src_state.gitiles_commit.id,
-        'Snapshot hash on disk: %s' % self.sdk_cache_state.snapshot_hash
-    ]
-    reuse = True
-    reuse &= (version == self._sdk_cache_state.version)
-    reuse &= (
-        self.m.src_state.build_manifest.url ==
-        self._sdk_cache_state.manifest_url)
-    manifest_branch = self.m.cros_source.manifest_branch or 'snapshot'
-    reuse &= (manifest_branch == self._sdk_cache_state.manifest_branch)
-    with self.m.context(cwd=self.m.src_state.build_manifest.path):
-      reuse &= (
-          bool(self._sdk_cache_state.snapshot_hash) and
-          self.m.git.is_reachable(self._sdk_cache_state.snapshot_hash.strip(),
-                                  self.m.src_state.gitiles_commit.id))
-    return reuse
+    return (version == disk_version and
+            disk_branch == self.m.cros_source.manifest_branch)
 
   def create_chroot(self, version=None, use_image=True, bootstrap=False,
                     timeout_sec='DEFAULT', test_data=None,
@@ -324,7 +303,7 @@ class CrosSdkApi(RecipeApi):
                 chroot=self.chroot), timeout=timeout_sec,
             test_output_data=test_data)
         presentation.logs['sdk version'] = str(response.version.version)
-        self._write_sdk_cache_state(version)
+        self.sdk_cache_version = version
         self.link_chroot(self.m.cros_source.workspace_path)
 
         # If there were toolchain changes already applied to the workspace, we

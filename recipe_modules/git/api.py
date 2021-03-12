@@ -495,11 +495,6 @@ class GitApi(recipe_api.RecipeApi):
     Returns:
       (bool): Whether the revision is reachable from (is an ancestor of) |head|.
     """
-    if self._test_data.enabled:
-      is_reachable = self._test_data.get('is_reachable', None)
-      if is_reachable is not None:
-        return is_reachable
-
     cmd = ['merge-base', '--is-ancestor', revision, head]
     return self._step(cmd, ok_ret=(0, 1, 128)).retcode == 0
 

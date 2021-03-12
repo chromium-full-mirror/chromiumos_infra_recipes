@@ -24,8 +24,3 @@ class GitTestApi(recipe_test_api.RecipeTestApi):
   @staticmethod
   def diff_check(value):
     return value
-
-  @recipe_test_api.mod_test_data
-  @staticmethod
-  def is_reachable(value):
-    return value
