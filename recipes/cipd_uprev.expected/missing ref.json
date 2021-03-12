@@ -22,9 +22,9 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/cipd_uprev.py\", line 119, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/cipd_uprev.py\", line 124, in RunSteps",
       "    validate(api, instruction)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/cipd_uprev.py\", line 39, in validate",
+      "  File \"RECIPE_REPO[chromeos]/recipes/cipd_uprev.py\", line 44, in validate",
       "    instruction.package_name)",
       "ValueError: No ref to update for package chromiumos/infra/phosphorus/linux-amd64"
     ]
