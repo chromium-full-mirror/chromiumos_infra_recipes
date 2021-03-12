@@ -13,10 +13,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "/preload/chromeos-sdk"
+      "[CACHE]/cros_chroot"
     ],
     "infra_step": true,
-    "name": "configure chroot path.create preload path",
+    "name": "configure chroot path.ensure chroot directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -290,97 +290,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "mount overlay cros_chroot"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot/upperdir/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "mount overlay cros_chroot.create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot/workdir/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "mount overlay cros_chroot.create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "mount overlay cros_chroot.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=/preload/chromeos-sdk,upperdir=[CACHE]/cros_chroot/upperdir/cros_chroot,workdir=[CACHE]/cros_chroot/workdir/cros_chroot,x-chromeos-overlay.name=cros_chroot",
-      "overlay",
-      "[CACHE]/cros_chroot"
-    ],
-    "infra_step": true,
-    "name": "mount overlay cros_chroot.mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/cros_chroot/chroot"
-    ],
-    "infra_step": true,
-    "name": "ensure chroot directory"
   },
   {
     "cmd": [],
@@ -1385,11 +1294,11 @@
       "-n",
       "chmod",
       "u=rwx,g=rx,o=rx,-t",
-      "[CACHE]/cros_chroot/chroot"
+      "[CACHE]/cros_chroot"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "init sdk.changing permissions of [CACHE]/cros_chroot/chroot",
+    "name": "init sdk.changing permissions of [CACHE]/cros_chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1421,7 +1330,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"noReplace\": true, @@@",
@@ -1441,7 +1350,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"flags\": {\n    \"noReplace\": true, \n    \"noUseImage\": true\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"flags\": {\n    \"noReplace\": true, \n    \"noUseImage\": true\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1451,7 +1360,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"flags\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"noReplace\": true, @@@",
@@ -1532,7 +1441,7 @@
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"createRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"noReplace\": true, @@@",
@@ -1563,7 +1472,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAcIBJAoECAEYARIcChpbQ0FDSEVdL2Nyb3NfY2hyb290L2No\\ncm9vdMoBBAoCCHvQAtDsgNmu8bWSfNoCQmluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1Nl\\ncnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAcIBHQoECAEYARIVChNbQ0FDSEVdL2Nyb3NfY2hyb290ygEE\\nCgIIe9AC0OyA2a7xtZJ82gJCaW5pdCBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9D\\ncmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1639,7 +1548,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "symlink",
-      "[CACHE]/cros_chroot/chroot",
+      "[CACHE]/cros_chroot",
       "[START_DIR]/chromiumos_workspace/chroot"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1671,7 +1580,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -1687,7 +1596,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1697,7 +1606,7 @@
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -1900,7 +1809,7 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"flags\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -1917,7 +1826,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"toolchainTargets\": [\n    {\n      \"name\": \"atlas-slim\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"flags\": {}\n}",
+      "{\n  \"toolchainTargets\": [\n    {\n      \"name\": \"atlas-slim\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"flags\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1932,7 +1841,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"flags\": {}@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
@@ -2015,7 +1924,7 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ], @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"flags\": {}@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
@@ -2043,7 +1952,7 @@
     },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdIBLgoAEgwKCmF0bGFzLXNsaW0aHAoaW0NBQ0hFXS9jcm9z\\nX2Nocm9vdC9jaHJvb3TaAQQKAgh70ALQ7IDZrvG1knzaAkR1cGRhdGUgc2RrfGNhbGwgY2hyb21p\\ndGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdIBJwoAEgwKCmF0bGFzLXNsaW0aFQoTW0NBQ0hFXS9jcm9z\\nX2Nocm9vdNoBBAoCCHvQAtDsgNmu8bWSfNoCRHVwZGF0ZSBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGku\\nU2RrU2VydmljZS9VcGRhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2066,7 +1975,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"chrootCurrent\": true, @@@",
@@ -2093,7 +2002,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"flags\": {\n    \"chrootCurrent\": true, \n    \"replace\": true\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"flags\": {\n    \"chrootCurrent\": true, \n    \"replace\": true\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2106,7 +2015,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"flags\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chrootCurrent\": true, @@@",
@@ -2186,7 +2095,7 @@
       "@@@STEP_LOG_LINE@published event@      \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"chrootCurrent\": true, @@@",
@@ -2224,7 +2133,7 @@
     },
     "infra_step": true,
     "name": "create sysroot.call chromite.api.SysrootService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAeIBMgoMCgphdGxhcy1zbGltEgQIARABIhwKGltDQUNIRV0v\\nY3Jvc19jaHJvb3QvY2hyb2906gEjCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW3Q\\nAtDsgNmu8bWSfNoCTGNyZWF0ZSBzeXNyb290fGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2\\naWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAeIBKwoMCgphdGxhcy1zbGltEgQIARABIhUKE1tDQUNIRV0v\\nY3Jvc19jaHJvb3TqASMKIQoRL2J1aWxkL2F0bGFzLXNsaW0SDAoKYXRsYXMtc2xpbdAC0OyA2a7x\\ntZJ82gJMY3JlYXRlIHN5c3Jvb3R8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvQ3Jl\\nYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2242,7 +2151,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -2258,7 +2167,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2271,7 +2180,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -2499,7 +2408,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
@@ -2521,7 +2430,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2534,7 +2443,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"buildTarget\": {@@@",
@@ -2631,7 +2540,7 @@
       "@@@STEP_LOG_LINE@published event@      \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
@@ -2667,7 +2576,7 @@
     },
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI1YDE/QQiDAjWgMT9BBCAyrXuAZIBTwoMCgphdGxhcy1zbGltEhwKGltDQUNIRV0vY3Jvc19j\\naHJvb3QvY2hyb290IiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW2aATsKORI3EiIK\\nCmNocm9tZS1pY3USDWNocm9tZW9zLWJhc2UaBTEtcjUyGhEKD3NvbWUvc291cmNlL2RpctAC0OyA\\n2a7xtZJ82gJuZGVwZW5kZW5jeSBncmFwaCBjYWxjdWxhdGlvbnxjYWxsIGNocm9taXRlLmFwaS5E\\nZXBlbmRlbmN5U2VydmljZS9HZXRCdWlsZERlcGVuZGVuY3lHcmFwaHxjYWxsIGJ1aWxkIEFQSSBz\\nY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI1YDE/QQiDAjWgMT9BBCAyrXuAZIBSAoMCgphdGxhcy1zbGltEhUKE1tDQUNIRV0vY3Jvc19j\\naHJvb3QiIQoRL2J1aWxkL2F0bGFzLXNsaW0SDAoKYXRsYXMtc2xpbZoBOwo5EjcSIgoKY2hyb21l\\nLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTIaEQoPc29tZS9zb3VyY2UvZGly0ALQ7IDZrvG1knza\\nAm5kZXBlbmRlbmN5IGdyYXBoIGNhbGN1bGF0aW9ufGNhbGwgY2hyb21pdGUuYXBpLkRlcGVuZGVu\\nY3lTZXJ2aWNlL0dldEJ1aWxkRGVwZW5kZW5jeUdyYXBofGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2863,7 +2772,7 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"flags\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
@@ -2885,7 +2794,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"flags\": {}, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }\n}",
+      "{\n  \"flags\": {}, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2896,7 +2805,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"flags\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"buildTarget\": {@@@",
@@ -2977,7 +2886,7 @@
       "@@@STEP_LOG_LINE@published event@  \"installToolchainRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"flags\": {}, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
@@ -3009,7 +2918,7 @@
     },
     "infra_step": true,
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI2IDE/QQiDAjZgMT9BBCAyrXuAfIBQwohChEvYnVpbGQvYXRsYXMtc2xpbRIMCgphdGxhcy1z\\nbGltEgAaHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3T6AQDQAtDsgNmu8bWSfNoCWWluc3Rh\\nbGwgdG9vbGNoYWlufGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxUb29s\\nY2hhaW58Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI2IDE/QQiDAjZgMT9BBCAyrXuAfIBPAohChEvYnVpbGQvYXRsYXMtc2xpbRIMCgphdGxhcy1z\\nbGltEgAaFQoTW0NBQ0hFXS9jcm9zX2Nocm9vdPoBANAC0OyA2a7xtZJ82gJZaW5zdGFsbCB0b29s\\nY2hhaW58Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFRvb2xjaGFpbnxj\\nYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3061,7 +2970,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
@@ -3088,7 +2997,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }, \n  \"srcPaths\": [\n    {\n      \"path\": \"src/project-a/my/fake/file\"\n    }\n  ]\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }, \n  \"srcPaths\": [\n    {\n      \"path\": \"src/project-a/my/fake/file\"\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3098,7 +3007,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"buildTarget\": {@@@",
@@ -3207,7 +3116,7 @@
       "@@@STEP_LOG_LINE@request@      \"path\": \"/build/atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -3224,7 +3133,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"installRequest\": {\n    \"flags\": {}, \n    \"packages\": [\n      {\n        \"category\": \"chromeos-base\", \n        \"packageName\": \"chrome-icu\", \n        \"version\": \"1-r52\"\n      }, \n      {\n        \"category\": \"virtual\", \n        \"packageName\": \"implicit-system\"\n      }\n    ], \n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"atlas-slim\"\n      }, \n      \"path\": \"/build/atlas-slim\"\n    }, \n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot/chroot\"\n    }\n  }\n}",
+      "{\n  \"installRequest\": {\n    \"flags\": {}, \n    \"packages\": [\n      {\n        \"category\": \"chromeos-base\", \n        \"packageName\": \"chrome-icu\", \n        \"version\": \"1-r52\"\n      }, \n      {\n        \"category\": \"virtual\", \n        \"packageName\": \"implicit-system\"\n      }\n    ], \n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"atlas-slim\"\n      }, \n      \"path\": \"/build/atlas-slim\"\n    }, \n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot\"\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3253,7 +3162,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"/build/atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
@@ -3342,7 +3251,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -3358,7 +3267,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3371,7 +3280,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -3443,7 +3352,7 @@
       "@@@STEP_LOG_LINE@published event@      \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\"@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:53Z\", @@@",
@@ -3476,7 +3385,7 @@
     },
     "infra_step": true,
     "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI4YDE/QQiDAjigMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJ/aW5zdGFsbCBwYWNrYWdlc3xjaGVj\\nayBjaHJvbWUgc291cmNlIG5lZWRlZHxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNr\\nYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDLAocChpb\\nQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBIMCgphdGxhcy1zbGltigMJCgd2ZXJzaW9u\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI4YDE/QQiDAjigMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJ/aW5zdGFsbCBwYWNrYWdlc3xjaGVj\\nayBjaHJvbWUgc291cmNlIG5lZWRlZHxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNr\\nYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDJQoVChNb\\nQ0FDSEVdL2Nyb3NfY2hyb290EgwKCmF0bGFzLXNsaW2KAwkKB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3639,7 +3548,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -3656,7 +3565,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3669,7 +3578,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
@@ -3775,7 +3684,7 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"/build/atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -3792,7 +3701,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\", \n    \"gomaApproach\": 1, \n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    }, \n    \"statsFile\": \"stats.binaryproto\", \n    \"counterzFile\": \"counterz.binaryproto\", \n    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\"\n  }, \n  \"flags\": {\n    \"useGoma\": true\n  }, \n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\", \n      \"packageName\": \"chrome-icu\", \n      \"version\": \"1-r52\"\n    }, \n    {\n      \"category\": \"virtual\", \n      \"packageName\": \"implicit-system\"\n    }\n  ], \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
+      "{\n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\", \n    \"gomaApproach\": 1, \n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    }, \n    \"statsFile\": \"stats.binaryproto\", \n    \"counterzFile\": \"counterz.binaryproto\", \n    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\"\n  }, \n  \"flags\": {\n    \"useGoma\": true\n  }, \n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\", \n      \"packageName\": \"chrome-icu\", \n      \"version\": \"1-r52\"\n    }, \n    {\n      \"category\": \"virtual\", \n      \"packageName\": \"implicit-system\"\n    }\n  ], \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -3832,7 +3741,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"/build/atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
@@ -3935,7 +3844,7 @@
       "@@@STEP_LOG_LINE@published event@      \"path\": \"/build/atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
@@ -3964,7 +3873,7 @@
     },
     "infra_step": true,
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CrYCCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SAhgBGiIKCmNocm9tZS1pY3US\\nDWNocm9tZW9zLWJhc2UaBTEtcjUyGhoKD2ltcGxpY2l0LXN5c3RlbRIHdmlydHVhbCIwChpbQ0FD\\nSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lMpoBChVbU1RBUlRfRElS\\nXS9jaXBkL2dvbWESOC9jcmVkcy9zZXJ2aWNlX2FjY291bnRzL3NlcnZpY2UtYWNjb3VudC1nb21h\\nLWNsaWVudC5qc29uIAEqHAoaW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzEyEXN0YXRzLmJpbmFy\\neXByb3RvOhRjb3VudGVyei5iaW5hcnlwcm90bxIAGgYI54DE/QQiDAjogMT9BBCAyrXuAdAC0OyA\\n2a7xtZJ82gJXaW5zdGFsbCBwYWNrYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2Vydmlj\\nZS9JbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"Cq8CCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SAhgBGiIKCmNocm9tZS1pY3US\\nDWNocm9tZW9zLWJhc2UaBTEtcjUyGhoKD2ltcGxpY2l0LXN5c3RlbRIHdmlydHVhbCIpChNbQ0FD\\nSEVdL2Nyb3NfY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUymgEKFVtTVEFSVF9ESVJdL2NpcGQv\\nZ29tYRI4L2NyZWRzL3NlcnZpY2VfYWNjb3VudHMvc2VydmljZS1hY2NvdW50LWdvbWEtY2xpZW50\\nLmpzb24gASocChpbQ0xFQU5VUF0vZ29tYS1sb2dzLV90bXBfMTIRc3RhdHMuYmluYXJ5cHJvdG86\\nFGNvdW50ZXJ6LmJpbmFyeXByb3RvEgAaBgjngMT9BCIMCOiAxP0EEIDKte4B0ALQ7IDZrvG1knza\\nAldpbnN0YWxsIHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3Rh\\nbGxQYWNrYWdlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4073,7 +3982,7 @@
       "@@@STEP_LOG_LINE@request@    \"testablePackagesOptional\": true@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"resultPath\": \"[CLEANUP]/tmp_tmp_1\"@@@",
@@ -4091,7 +4000,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"flags\": {\n    \"testablePackagesOptional\": true\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"resultPath\": \"[CLEANUP]/tmp_tmp_1\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"flags\": {\n    \"testablePackagesOptional\": true\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"resultPath\": \"[CLEANUP]/tmp_tmp_1\"\n}",
       "[CLEANUP]/build_api_messages_tmp_14/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4107,7 +4016,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"testablePackagesOptional\": true@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"resultPath\": \"[CLEANUP]/tmp_tmp_1\"@@@",
@@ -4187,7 +4096,7 @@
       "@@@STEP_LOG_LINE@published event@      \"testablePackagesOptional\": true@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"resultPath\": \"[CLEANUP]/tmp_tmp_1\"@@@",
@@ -4219,7 +4128,7 @@
     },
     "infra_step": true,
     "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI6oDE/QQiDAjrgMT9BBCAyrXuAYICWQoMCgphdGxhcy1zbGltEhNbQ0xFQU5VUF0vdG1wX3Rt\\ncF8xGjAKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUiAiAB\\nigIOCgx0YXJiYWxsL3BhdGjQAtDsgNmu8bWSfNoCWHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJv\\nbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBz\\nY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI6oDE/QQiDAjrgMT9BBCAyrXuAYICUgoMCgphdGxhcy1zbGltEhNbQ0xFQU5VUF0vdG1wX3Rt\\ncF8xGikKE1tDQUNIRV0vY3Jvc19jaHJvb3QiEltTVEFSVF9ESVJdL2Nocm9tZSICIAGKAg4KDHRh\\ncmJhbGwvcGF0aNAC0OyA2a7xtZJ82gJYcnVuIGVidWlsZCB0ZXN0c3xjYWxsIGNocm9taXRlLmFw\\naS5UZXN0U2VydmljZS9CdWlsZFRhcmdldFVuaXRUZXN0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4252,7 +4161,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
@@ -4276,7 +4185,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas-slim\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"\n}",
       "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4289,7 +4198,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"sysroot\": {@@@",
@@ -4372,7 +4281,7 @@
       "@@@STEP_LOG_LINE@published event@      \"name\": \"atlas-slim\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
@@ -4414,7 +4323,7 @@
     },
     "infra_step": true,
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI7YDE/QQiDAjugMT9BBCAyrXuASp+CgwKCmF0bGFzLXNsaW0SGVtDTEVBTlVQXS9hcnRpZmFj\\ndHNfdG1wXzEaMAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QiEltTVEFSVF9ESVJdL2Nocm9t\\nZSIhChEvYnVpbGQvYXRsYXMtc2xpbRIMCgphdGxhcy1zbGltMiMKIQofW1NUQVJUX0RJUl0vdG1w\\nL2FydGlmYWN0LnRhci5netAC0OyA2a7xtZJ82gJ0dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1B\\nR0VfWklQIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5k\\nbGVJbWFnZVppcHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI7YDE/QQiDAjugMT9BBCAyrXuASp3CgwKCmF0bGFzLXNsaW0SGVtDTEVBTlVQXS9hcnRpZmFj\\ndHNfdG1wXzEaKQoTW0NBQ0hFXS9jcm9zX2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lIiEKES9i\\ndWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0yIwohCh9bU1RBUlRfRElSXS90bXAvYXJ0aWZh\\nY3QudGFyLmd60ALQ7IDZrvG1knzaAnR1cGxvYWQgYXJ0aWZhY3RzfGJ1bmRsZSBJTUFHRV9aSVAg\\nZm9yIHVwbG9hZHxjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1bmRsZUltYWdl\\nWmlwfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4447,7 +4356,7 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
@@ -4470,7 +4379,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\", \n      \"location\": 2\n    }\n  }, \n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            1\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }\n}",
+      "{\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\", \n      \"location\": 2\n    }\n  }, \n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            1\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    }, \n    \"path\": \"/build/atlas-slim\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_16/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4497,7 +4406,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"sysroot\": {@@@",
@@ -4939,7 +4848,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -4956,7 +4865,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
     ],
     "infra_step": true,
@@ -4965,7 +4874,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
@@ -5038,7 +4947,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -5055,7 +4964,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
     ],
     "infra_step": true,
@@ -5064,7 +4973,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
@@ -5152,21 +5061,10 @@
       "-n",
       "chmod",
       "a+rwX,-t",
-      "[CACHE]/cros_chroot/chroot"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot/chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CACHE]/cros_chroot"
     ],
     "infra_step": true,
-    "name": "clean up SDK chroot.unmount overlay cros_chroot",
+    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

@@ -13,10 +13,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "/preload/chromeos-sdk"
+      "[CACHE]/cros_chroot"
     ],
     "infra_step": true,
-    "name": "configure chroot path.create preload path",
+    "name": "configure chroot path.ensure chroot directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
