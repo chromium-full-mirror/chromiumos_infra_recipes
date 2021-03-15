@@ -26,6 +26,7 @@
 #
 #   Commit the resulting diff (if any) back to config-internal.
 
+import os
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
 
@@ -51,19 +52,23 @@ DEPS = [
     'git_txn',
 ]
 
-# Repo Base URLs
-CROS_EXTERNAL = 'https://chromium.googlesource.com/chromiumos'
-
-# Repo Complete URIs
-CROS_CONFIG_INTERNAL_REPO = '{}/config'.format(CROS_EXTERNAL)
-
 # Scripts
 FIND_TESTS_PATH = \
     'infra/config/scripts/device_usage/get_test_plans_to_be_filtered.py'
 FILTER_TESTS_BY_AVAILABILITY_PATH = \
-    'infra/config/scripts/device_usage/filter_test_plan_by_availability.sh'
+    'infra/config/scripts/device_usage/filter_test_plans_by_availability.py'
 GENERATE_TEST_PLAN_SUMMARY_PATH = \
     'src/config-internal/test/scripts/generate_test_plan_summary.py'
+
+# Git Paths
+CONFIG_PATH = 'src/config'
+INFRA_CONFIG_PATH = 'infra/config'
+CONFIG_INTERNAL_PATH = 'src/config-internal'
+PAYLOAD_UTILS_PATH = os.path.join(CONFIG_PATH, 'payload_utils')
+TEST_PLANS_PATH = 'test/plans'
+
+# Cloud Credentials
+CLOUD_CREDS_PATH = '/creds/service_accounts/service-account-chromeos.json'
 
 
 def _generate_filter_test_output_file_path(api, file_path):
@@ -96,7 +101,7 @@ def _generate_test_plan_summary_file_path(api, file_path):
   related generated test plans will live.
   Used by the generate step as an output file path.
   E.g.:
-  "/base/uri/filename" => "/base/uri/generated/test_plans"
+  "/base/uri/filename" => "/base/uri/test_plans"
 
   Args:
       api (RecipeScriptApi): Ubiquitous API object.
@@ -106,7 +111,7 @@ def _generate_test_plan_summary_file_path(api, file_path):
   """
   path_name = api.path.dirname(file_path)
 
-  return api.path.join(path_name, 'generated', 'test_plans')
+  return api.path.join(path_name, 'test_plans')
 
 
 def _run_filter_command_and_commit(api, input_file, output_file):
@@ -120,14 +125,31 @@ def _run_filter_command_and_commit(api, input_file, output_file):
       input_file (str): Input file for filter_test_plan_by_availability.
       output_file (str): Output file for filter_test_plan_by_availability.
   """
-  filter_test_script = api.context.cwd.join(FILTER_TESTS_BY_AVAILABILITY_PATH)
+  filter_test_script = api.cros_source.workspace_path.join(
+      FILTER_TESTS_BY_AVAILABILITY_PATH)
 
   filter_command = [
+      'vpython',
       filter_test_script,
+      '--input',
       input_file,
+      '--output',
+      output_file,
   ]
 
-  api.step('filter test plans by availability step', filter_command)
+  python_paths = []
+  for dependency in [
+      PAYLOAD_UTILS_PATH, INFRA_CONFIG_PATH, CONFIG_INTERNAL_PATH
+  ]:
+    python_paths.append("{}".format(
+        api.cros_source.workspace_path.join(dependency)))
+
+  with api.context(
+      env={
+          'GOOGLE_APPLICATION_CREDENTIALS': CLOUD_CREDS_PATH,
+          'PYTHONPATH': ':'.join(python_paths)
+      }):
+    api.step('filter test plans by availability step', filter_command)
 
   api.git.add([output_file])
 
@@ -143,7 +165,7 @@ def _run_generate_command_and_commit(api, input_file, output_file):
       input_file (str): Input File for generate_test_plan_summary.
       output_file (str): Output file for generate_test_plan_summary.
   """
-  generate_test_plan_summary_script = api.context.cwd.join(
+  generate_test_plan_summary_script = api.cros_source.workspace_path.join(
       GENERATE_TEST_PLAN_SUMMARY_PATH)
 
   generate_command = [
@@ -182,41 +204,33 @@ def _update_test_plans(api, file_path):
                                    output_file=generated_summary_file)
 
 
-def _find_test_plan_files(api, repo_folder):
+def _find_test_plan_files(api):
   """ Find all test plan files inside the repo folder
 
-    Run the get_test_plans_to_be_filtered script, which finds all required
-    test plan files. Splits the newline-delimited output into a list.
+  Run the get_test_plans_to_be_filtered script, which finds all required
+  test plan files. Splits the newline-delimited output into a list.
 
-    Args:
-        api (RecipeScriptApi): Ubiquitous api object.
-        repo_folder (Path): The folder which contains the config-internal repo.
-    Returns:
-        list(str): A compiled list of all test plan files.
-    """
-  find_tests_script = api.context.cwd.join(FIND_TESTS_PATH)
+  Args:
+      api (RecipeScriptApi): Ubiquitous api object.
+      repo_folder (Path): The folder which contains the config-internal repo.
+  Returns:
+      list(str): A compiled list of all test plan files.
+  """
+  find_tests_script = api.cros_source.workspace_path.join(FIND_TESTS_PATH)
 
   find_command = [
       find_tests_script,
       "--repo",
-      '{}'.format(repo_folder.join('test/plans')),
+      '{}'.format(api.context.cwd.join(TEST_PLANS_PATH)),
   ]
 
-  step_result = api.step("find test plans", ['vpython'] + find_command,
+  step_result = api.step("find test plans", ['vpython3'] + find_command,
                          stdout=api.raw_io.output())
 
   return step_result.stdout.strip().splitlines()
 
 
 def RunSteps(api, properties):
-  # Defines paths to which to clone repos.
-  cros_config_internal_path = api.path['start_dir'].join('config-internal')
-
-  # Clone config repo
-  with api.step.nest('cloning config repo'):
-    api.git.clone(CROS_CONFIG_INTERNAL_REPO,
-                  target_path=cros_config_internal_path)
-
   # BEGIN INTERNAL METHOD DEFINITIONS
   def _filter_all_test_plans():
     """ Callback for git_txn.update_refs.
@@ -228,8 +242,7 @@ def RunSteps(api, properties):
         bool: False if nothing is to be changed. Otherwise None.
     """
     # Get all test plans which must be updated
-    test_plan_files = _find_test_plan_files(
-        api, repo_folder=cros_config_internal_path)
+    test_plan_files = _find_test_plan_files(api)
 
     # Updated test plans for all test plan files
     for test_plan_file in test_plan_files:
@@ -252,11 +265,19 @@ Cr-Automation-Id: {}""" \
 
   # END INTERNAL METHOD DEFINITIONS
 
-  # Update the repo atomically
-  with api.context(cwd=cros_config_internal_path):
-    api.git_txn.update_ref(CROS_CONFIG_INTERNAL_REPO,
-                           update_callback=_filter_all_test_plans,
-                           ref=api.git.remote_head())
+  with api.cros_source.checkout_overlays_context():
+    api.cros_source.ensure_synced_cache(
+        projects=[INFRA_CONFIG_PATH, CONFIG_PATH, CONFIG_INTERNAL_PATH])
+    api.cros_source.checkout_tip_of_tree()
+
+    config_internal = api.cros_source.workspace_path.join(CONFIG_INTERNAL_PATH)
+
+    # Update the repo atomically
+    with api.context(cwd=config_internal):
+      config_project_info = api.repo.project_info()
+      api.git_txn.update_ref(config_project_info.remote,
+                             update_callback=_filter_all_test_plans,
+                             ref=api.git.remote_head())
 
 
 def GenTests(api):
