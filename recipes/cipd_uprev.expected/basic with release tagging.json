@@ -5,7 +5,7 @@
   },
   {
     "cmd": [],
-    "name": "package chromiumos/infra/phosphorus/linux-amd64.validate instructions package_name: \"chromiumos/infra/phosphorus/linux-amd64\"\nref: \"foo-phosphorus-ref\"\nversion: \"foo-phosphorus-version\"\n",
+    "name": "package chromiumos/infra/phosphorus/linux-amd64.validate package instructions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -141,7 +141,7 @@
   },
   {
     "cmd": [],
-    "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.validate instructions package_name: \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\"\nref: \"foo-recipe-ref\"\nversion: \"foo-recipe-version\"\n",
+    "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.validate package instructions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

@@ -6322,11 +6322,11 @@ Return the kwargs as a json string.
 &mdash; **def [RunSteps](/recipe_modules/chromite/examples/full.py#15)(api):**
 ### *recipes* / [cipd\_uprev](/recipes/cipd_uprev.py)
 
-[DEPS](/recipes/cipd_uprev.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/cipd_uprev.py#10): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-&mdash; **def [RunSteps](/recipes/cipd_uprev.py#121)(api, properties):**
+&mdash; **def [RunSteps](/recipes/cipd_uprev.py#128)(api, properties):**
 
-&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#68)(api, instruction):**
+&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#75)(api, instruction):**
 
 Get the current version of the ref.
 
@@ -6338,7 +6338,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#96)(api, instruction, package_tags={}):**
+&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#103)(api, instruction, package_tags={}):**
 
 Change CIPD ref of a package according to the instructions.
 
@@ -6351,7 +6351,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [validate](/recipes/cipd_uprev.py#33)(api, instruction):**
+&mdash; **def [validate](/recipes/cipd_uprev.py#35)(api, instruction):**
 
 Validate instructions for uprevving a specific package.
 
