@@ -125,6 +125,7 @@ def _flatten_configs(api, _properties, project_infos):
       full_input = api.context.cwd.join(input_config)
       if not api.path.exists(full_input):
         presentation.step_summary_text = "(does not exist)"
+        continue
 
       # have input selected and we know it exists, generate a flattened file
       cmd = [
