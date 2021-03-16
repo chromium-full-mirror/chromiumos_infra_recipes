@@ -121,6 +121,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create branch.set branch_name",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@branch_name@\"release-R89-13729.B\"@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

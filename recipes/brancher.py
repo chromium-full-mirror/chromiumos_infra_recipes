@@ -13,6 +13,7 @@ DEPS = [
     'cros_release_config',
     'cros_sdk',
     'cros_source',
+    'easy',
     'workspace_util',
 ]
 
@@ -42,6 +43,7 @@ def RunSteps(api, properties):
     if not branch_name:
       raise StepFailure("branch name could not be parsed from branch_util")
     presentation.step_text = "Created branch {}".format(branch_name)
+    api.easy.set_properties_step(branch_name=branch_name)
 
   if branch_type == Branch.RELEASE:
     with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
