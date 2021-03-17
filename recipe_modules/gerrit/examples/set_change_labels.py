@@ -29,6 +29,10 @@ def RunSteps(api):
                                             'refs/change/78/12345678/3', labels)
   api.assertions.assertEqual(ref, 'refs/for/main%l=Code-Review+2,l=Verified+1')
 
+  ref = api.gerrit.set_change_labels(gerrit_change, labels, submit=True)
+  exp_ref = 'refs/for/main%l=Code-Review+2,l=Verified+1,submit'
+  api.assertions.assertEqual(ref, exp_ref)
+
 
 def GenTests(api):
   yield api.test('basic')

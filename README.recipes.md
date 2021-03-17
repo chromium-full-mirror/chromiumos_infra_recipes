@@ -3539,7 +3539,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#591)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#599)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -3547,7 +3547,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#519)(self, gerrit_change, comment):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#527)(self, gerrit_change, comment):**
 
 Add a comment to the given Gerrit change.
 
@@ -3618,7 +3618,7 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#540)(self, gerrit_change):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#548)(self, gerrit_change):**
 
 Get the description of the given Gerrit change.
 
@@ -3662,7 +3662,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#605)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#613)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -3675,7 +3675,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#562)(self, gerrit_change, description, amend_local=False):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#570)(self, gerrit_change, description, amend_local=False):**
 
 Set the description of the given Gerrit change.
 
@@ -3686,13 +3686,14 @@ Args:
   amend_local (bool): Should you amend the description of the HEAD local
       change as well.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#472)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#472)(self, gerrit_change, labels, submit=False):**
 
 Set the given labels for the given Gerrit change.
 
 Args:
   gerrit_change (GerritChange): The change of interest.
   labels (dict): Mapping from label (Label) to value (int).
+  submit (bool): Should we attempt to submit the CL as well.
 
 Returns:
   str: The new label ref (primarily for testing).

@@ -22,10 +22,10 @@ from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.recipes.chromeos.generator import (
-    SendToCqPolicy, DO_NOTHING, DRY_RUN, FULL_RUN, ABANDON, OutdatedClsPolicy,
-    OUTDATED_DO_NOTHING, OUTDATED_LEAVE_COMMENT, OUTDATED_ABANDON,
-    RetryClPolicy, NO_RETRY, RETRY_LATEST_OR_LATEST_PINNED, RETRY_LATEST_PINNED,
-    BranchPolicy, Reviewer, GeneratorProperties, RetryRef)
+    SendToCqPolicy, DO_NOTHING, DRY_RUN, FULL_RUN, ABANDON, SUBMIT,
+    OutdatedClsPolicy, OUTDATED_DO_NOTHING, OUTDATED_LEAVE_COMMENT,
+    OUTDATED_ABANDON, RetryClPolicy, NO_RETRY, RETRY_LATEST_OR_LATEST_PINNED,
+    RETRY_LATEST_PINNED, BranchPolicy, Reviewer, GeneratorProperties, RetryRef)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
     CronTrigger, GitilesTrigger, Trigger, WebUITrigger)
@@ -503,6 +503,7 @@ def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
       message_lines.append({
           DRY_RUN: 'Therefore, marking CL as CQ+1',
           FULL_RUN: 'Therefore, marking CL as CQ+2',
+          SUBMIT: 'Therefore, marking CQ as Bot-Commit+1 and submitting',
           ABANDON: 'Therefore, abandoning the CL',
       }.get(
           send_to_cq_policy,
@@ -526,10 +527,15 @@ def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
               api.gerrit.Label.BOT_COMMIT: 1,
               api.gerrit.Label.COMMIT_QUEUE: 2,
           },
+          SUBMIT: {
+              api.gerrit.Label.BOT_COMMIT: 1,
+          },
       }.get(send_to_cq_policy)
 
+
       if labels is not None:
-        api.gerrit.set_change_labels(change, labels)
+        api.gerrit.set_change_labels(change, labels,
+                                     submit=send_to_cq_policy == SUBMIT)
 
 
 def GenTests(api):

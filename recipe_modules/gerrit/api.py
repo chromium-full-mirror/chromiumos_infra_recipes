@@ -469,19 +469,21 @@ class GerritApi(RecipeApi):
 
       return ref
 
-  def set_change_labels(self, gerrit_change, labels):
+  def set_change_labels(self, gerrit_change, labels, submit=False):
     """Set the given labels for the given Gerrit change.
 
     Args:
       gerrit_change (GerritChange): The change of interest.
       labels (dict): Mapping from label (Label) to value (int).
+      submit (bool): Should we attempt to submit the CL as well.
 
     Returns:
       str: The new label ref (primarily for testing).
     """
-    return self._set_change_labels(gerrit_change, labels)
+    return self._set_change_labels(gerrit_change, labels, submit=submit)
 
-  def _set_change_labels(self, gerrit_change, labels, rebase_from_remote=False):
+  def _set_change_labels(self, gerrit_change, labels, rebase_from_remote=False,
+                         submit=False):
     """Set the given labels for the given Gerrit change.
 
     Args:
@@ -489,6 +491,7 @@ class GerritApi(RecipeApi):
       labels (dict): Mapping from label (Label) to value (int).
       rebase_from_remote (bool): If true, sets the rebase branch to the equiv.
         of origin/master (usually cros/master).
+      submit (bool): Should we attempt to submit the CL as well.
 
     Returns:
       str: The new label ref (primarily for testing).
@@ -503,8 +506,13 @@ class GerritApi(RecipeApi):
         project_info = self.m.repo.project_info(gerrit_change.project)
 
       branch = project_info.branch.split('/')[-1]
-      ref = 'refs/for/%s%%%s' % (branch, ','.join(
-          ['l=%s' % label for label in full_labels]))
+
+      labels_str = ','.join(['l=%s' % l for l in full_labels])
+      if submit:
+        labels_str += ',submit' if labels_str else 'submit'
+
+      ref = 'refs/for/%s%%%s' % (branch, labels_str)
+
       refspec = 'HEAD:%s' % ref
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
