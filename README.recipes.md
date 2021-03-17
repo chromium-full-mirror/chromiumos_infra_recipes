@@ -5152,11 +5152,11 @@ Returns:
 
 [DEPS](/recipe_modules/service_version/__init__.py#8): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [ServiceVersionCommand](/recipe_modules/service_version/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ServiceVersionCommand](/recipe_modules/service_version/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing ServiceVersion commands
 
-&mdash; **def [validate\_skylab\_version](/recipe_modules/service_version/api.py#18)(self):**
+&mdash; **def [validate\_skylab\_version](/recipe_modules/service_version/api.py#21)(self):**
 
 Validate that the caller's skylab tool version number is up-to-date.
     
