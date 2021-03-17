@@ -3,10 +3,13 @@
 # include chromiumos/chromite:/OWNERS.ci
 # Most of your recipes CLs should go to this group.
 andrewlamb@chromium.org
+brigitr@google.com
 ctmcnamara@chromium.org
 dhanyaganesh@chromium.org
 engeg@google.com
 jackneus@google.com
+jaquesc@google.com
+jaredloucks@google.com
 juahurta@google.com
 lamontjones@chromium.org
 mikenichols@chromium.org
@@ -26,16 +29,8 @@ mwarton@google.com
 shengjun@google.com
 xiaoningw@google.com
 
-# TODO(crbug/1108077): Once depot_tools and gerrit agree on include syntax,
-# include chromiumos/chromite:/OWNERS.testplatform
-# Chrome OS Test Platform team
-brigitr@google.com
-dhanyaganesh@chromium.org
-jaredloucks@google.com
-jaquesc@google.com
+# Additional members of Infra.
 nednguyen@chromium.org
-pprabhu@chromium.org
-seanabraham@chromium.org
 
 # Service accounts
 recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
