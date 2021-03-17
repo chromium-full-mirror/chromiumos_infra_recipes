@@ -188,66 +188,6 @@
     "name": "git checkout (2)"
   },
   {
-    "cmd": [],
-    "name": "set labels on CL 12345678 (3)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@Code-Review+2,Verified+1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/project/+/12345678/3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "project",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "set labels on CL 12345678 (3).repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project|src/project|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
-    "infra_step": true,
-    "name": "set labels on CL 12345678 (3).git rebase",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/main%l=Code-Review+2,l=Verified+1,submit"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
-    "infra_step": true,
-    "name": "set labels on CL 12345678 (3).git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "name": "$result"
   }
 ]
