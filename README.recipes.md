@@ -268,6 +268,7 @@
   * [gerrit:examples/query_changes](#recipes-gerrit_examples_query_changes)
   * [gerrit:examples/set_change_description](#recipes-gerrit_examples_set_change_description)
   * [gerrit:examples/set_change_labels](#recipes-gerrit_examples_set_change_labels)
+  * [gerrit:examples/submit_change](#recipes-gerrit_examples_submit_change)
   * [git:examples/fetch_refs](#recipes-git_examples_fetch_refs)
   * [git:examples/full](#recipes-git_examples_full)
   * [git_cl:examples/forwarding](#recipes-git_cl_examples_forwarding)
@@ -3662,7 +3663,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#605)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#621)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -3710,6 +3711,13 @@ Args:
 
 Returns:
   str: The new label ref (primarily for testing).
+
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#605)(self, gerrit_change):**
+
+Submits the given change.
+
+Args:
+  gerrit_change (GerritChange): The change to submit.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
 [DEPS](/recipe_modules/git/__init__.py#5): [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7101,6 +7109,11 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 [DEPS](/recipe_modules/gerrit/examples/set_change_labels.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/set_change_labels.py#14)(api):**
+### *recipes* / [gerrit:examples/submit\_change](/recipe_modules/gerrit/examples/submit_change.py)
+
+[DEPS](/recipe_modules/gerrit/examples/submit_change.py#8): [gerrit](#recipe_modules-gerrit)
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/submit_change.py#13)(api):**
 ### *recipes* / [git:examples/fetch\_refs](/recipe_modules/git/examples/fetch_refs.py)
 
 [DEPS](/recipe_modules/git/examples/fetch_refs.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

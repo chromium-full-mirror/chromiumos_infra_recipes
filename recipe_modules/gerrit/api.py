@@ -602,6 +602,22 @@ class GerritApi(RecipeApi):
           self.parse_qualified_gerrit_host(gerrit_change), gerrit_change.change,
           message=message)
 
+  def submit_change(self, gerrit_change):
+    """Submits the given change.
+
+    Args:
+      gerrit_change (GerritChange): The change to submit.
+    """
+    with self.m.step.nest('submit CL %d' % gerrit_change.change) as pres:
+      pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
+      with self.m.context(cwd=self.m.src_state.workspace_path):
+        project_info = self.m.repo.project_info(gerrit_change.project)
+
+      with self.m.context(
+          cwd=self.m.src_state.workspace_path.join(project_info.path)):
+        self.m.git_cl('issue', [gerrit_change.change])
+        self.m.git_cl('land', [gerrit_change.change])
+
   def query_changes(self, host, query_params):
     """Query gerrit for the given changes.
 
