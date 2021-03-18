@@ -22,16 +22,16 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/cipd_uprev.py\", line 124, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/cipd_uprev.py\", line 125, in RunSteps",
       "    validate(api, instruction)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/cipd_uprev.py\", line 52, in validate",
+      "  File \"RECIPE_REPO[chromeos]/recipes/cipd_uprev.py\", line 53, in validate",
       "    (instruction.package_name, package_passlist))",
-      "ValueError: Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/build_plan_generator/linux-amd64', 'chromiumos/infra/test_plan_generator/linux-amd64', 'chromiumos/infra/pointless_build_checker/linux-amd64', 'chromiumos/infra/version_bumper/linux-amd64']"
+      "ValueError: Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/branch_util/linux-amd64', 'chromiumos/infra/build_plan_generator/linux-amd64', 'chromiumos/infra/test_plan_generator/linux-amd64', 'chromiumos/infra/pointless_build_checker/linux-amd64', 'chromiumos/infra/version_bumper/linux-amd64']"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError(u\"Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/build_plan_generator/linux-amd64', 'chromiumos/infra/test_plan_generator/linux-amd64', 'chromiumos/infra/pointless_build_checker/linux-amd64', 'chromiumos/infra/version_bumper/linux-amd64']\",)"
+      "humanReason": "Uncaught Exception: ValueError(u\"Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/branch_util/linux-amd64', 'chromiumos/infra/build_plan_generator/linux-amd64', 'chromiumos/infra/test_plan_generator/linux-amd64', 'chromiumos/infra/pointless_build_checker/linux-amd64', 'chromiumos/infra/version_bumper/linux-amd64']\",)"
     },
     "name": "$result"
   }

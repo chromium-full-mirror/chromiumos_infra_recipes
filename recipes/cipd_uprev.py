@@ -19,6 +19,7 @@ _RECIPE_CIPD_PACKAGE = (
 _GO_BINARY_CIPD_PACKAGE_PATTERN = 'chromiumos/infra/%s/linux-amd64'
 _CTP_GO_BINARIES = ['cros_test_platform', 'phosphorus']
 _CI_GO_BINARIES = [
+    'branch_util',
     'build_plan_generator',
     'test_plan_generator',
     'pointless_build_checker',
