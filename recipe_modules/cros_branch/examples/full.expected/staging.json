@@ -10,7 +10,7 @@
       "-root",
       "[START_DIR]/cipd",
       "-ensure-file",
-      "chromiumos/infra/branch_util_foo bar",
+      "chromiumos/infra/branch_util/${platform} staging",
       "-max-threads",
       "0",
       "-json-output",
@@ -24,8 +24,8 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-bar-------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/branch_util_foo\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-staging---------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/branch_util/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
@@ -55,8 +55,7 @@
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release",
       "--skip-group-check",
-      "--force",
-      "--push"
+      "--force"
     ],
     "name": "create branch from http://chromium.org/manifest.xml",
     "~followup_annotations": [
@@ -75,8 +74,7 @@
       "89/13729.0.0.xml",
       "--release",
       "--skip-group-check",
-      "--force",
-      "--push"
+      "--force"
     ],
     "name": "create branch from buildspec",
     "~followup_annotations": [

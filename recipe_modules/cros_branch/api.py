@@ -20,11 +20,19 @@ class CrosBranchApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosBranchApi, self).__init__(*args, **kwargs)
-    self._test_planner_cipd_ref = (
-        properties.test_planner_cipd_ref.encode('utf-8') or "latest")
+    self._properties = properties
 
   def initialize(self):
+    """Initializes the module."""
     self._branch_util_path = None
+
+    self._branch_util_cipd_package = (
+        self._properties.branch_util_cipd_package.encode('utf-8') or
+        "chromiumos/infra/branch_util/${platform}")
+
+    default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
+    self._branch_util_cipd_ref = (
+        self._properties.branch_util_cipd_ref.encode('utf-8') or default_ref)
 
   def __call__(self,
                cmd,
@@ -47,7 +55,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     branch_args = ['--skip-group-check']
     if force:
       branch_args.append('--force')
-    if push:
+    if push and not self.m.cros_infra_config.is_staging:
       branch_args.append('--push')
 
     self._ensure_branch_util()
@@ -182,11 +190,11 @@ class CrosBranchApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('ensure branch_util'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'test_planner')
+        cipd_dir = self.m.path['start_dir'].join('cipd')
 
         pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package('chromiumos/infra/test_planner',
-                         self._test_planner_cipd_ref)
+        pkgs.add_package(self._branch_util_cipd_package,
+                         self._branch_util_cipd_ref)
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._branch_util_path = cipd_dir.join('branch_util')

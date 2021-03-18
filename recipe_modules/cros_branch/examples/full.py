@@ -10,6 +10,7 @@ from PB.recipe_modules.chromeos.cros_branch.cros_branch import (
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -54,13 +55,29 @@ TEST_STDOUT = """
 2021/02/16 23:10:19 Repairing manifest project chromiumos/manifest
 """
 
-
 def GenTests(api):
   yield api.test(
       'basic',
       api.post_check(post_process.StepCommandContains,
                      'ensure branch_util.ensure_installed',
-                     ['chromiumos/infra/test_planner latest']),
+                     ['chromiumos/infra/branch_util/${platform} prod']),
+      api.step_data('create branch from buildspec',
+                    stdout=api.raw_io.output(TEST_STDOUT)),
+      api.post_check(
+          post_process.StepCommandContains, 'create branch from buildspec',
+          ['create', '--buildspec-manifest', '89/13729.0.0.xml', '--release']),
+  )
+
+  yield api.test(
+      'staging',
+      api.buildbucket.ci_build(
+          project='chromeos',
+          bucket='release',
+          builder='staging-main-release-orchestrator',
+      ),
+      api.post_check(post_process.StepCommandContains,
+                     'ensure branch_util.ensure_installed',
+                     ['chromiumos/infra/branch_util/${platform} staging']),
       api.step_data('create branch from buildspec',
                     stdout=api.raw_io.output(TEST_STDOUT)),
       api.post_check(
@@ -71,12 +88,17 @@ def GenTests(api):
   yield api.test(
       'with-ref',
       api.properties(
-          **{"$chromeos/cros_branch": {
-              "test_planner_cipd_ref": "foo"
-          }}),
+          **{
+              "$chromeos/cros_branch": {
+                  "branch_util_cipd_package":
+                      "chromiumos/infra/branch_util_foo",
+                  "branch_util_cipd_ref":
+                      "bar"
+              }
+          }),
       api.step_data('create branch from buildspec',
                     stdout=api.raw_io.output(TEST_STDOUT)),
       api.post_check(post_process.StepCommandContains,
                      'ensure branch_util.ensure_installed',
-                     ['chromiumos/infra/test_planner foo']),
+                     ['chromiumos/infra/branch_util_foo bar']),
   )

@@ -1415,7 +1415,7 @@ Args:
 &emsp; **@property**<br>&mdash; **def [test\_bisection\_percent](/recipe_modules/cros_bisect/api.py#31)(self):**
 ### *recipe_modules* / [cros\_branch](/recipe_modules/cros_branch)
 
-[DEPS](/recipe_modules/cros_branch/__init__.py#4): [cros\_version](#recipe_modules-cros_version), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_branch/__init__.py#4): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API wrapping the cros branch tool.
 
@@ -1423,7 +1423,7 @@ API wrapping the cros branch tool.
 
 A module for calling cros branch.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_branch/api.py#29)(self, cmd, step_name=None, force=False, push=False, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_branch/api.py#37)(self, cmd, step_name=None, force=False, push=False, \*\*kwargs):**
 
 Call cros branch with the given args.
 
@@ -1437,7 +1437,7 @@ Args:
 Returns:
   branch_name (string): The name of the created branch, or None.
 
-&mdash; **def [create\_from\_buildspec](/recipe_modules/cros_branch/api.py#86)(self, source_version, branch, \*\*kwargs):**
+&mdash; **def [create\_from\_buildspec](/recipe_modules/cros_branch/api.py#94)(self, source_version, branch, \*\*kwargs):**
 
 Call `cros branch create`, branching from the appropriate buildspec
   manifest.
@@ -1453,7 +1453,7 @@ Args:
 Returns:
   branch_name (string): The name of the created branch, or None.
 
-&mdash; **def [create\_from\_file](/recipe_modules/cros_branch/api.py#113)(self, manifest_file, branch, manifest_src=None, \*\*kwargs):**
+&mdash; **def [create\_from\_file](/recipe_modules/cros_branch/api.py#121)(self, manifest_file, branch, manifest_src=None, \*\*kwargs):**
 
 Call `cros branch create`, branching from the file specified in
   manifest_file.
@@ -1469,7 +1469,7 @@ Args:
 Returns:
   branch_name (string): The name of the created branch, or None.
 
-&mdash; **def [delete](/recipe_modules/cros_branch/api.py#160)(self, branch, \*\*kwargs):**
+&mdash; **def [delete](/recipe_modules/cros_branch/api.py#168)(self, branch, \*\*kwargs):**
 
 Call `cros branch delete` with the appropriate arguments.
 
@@ -1478,9 +1478,11 @@ Args:
   kwargs: Keyword arguments for cros branch/recipe_engine/step.
     Accepts the same keyword arguments as __call__.
 
-&mdash; **def [initialize](/recipe_modules/cros_branch/api.py#26)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_branch/api.py#25)(self):**
 
-&mdash; **def [rename](/recipe_modules/cros_branch/api.py#135)(self, branch, new_branch_name, \*\*kwargs):**
+Initializes the module.
+
+&mdash; **def [rename](/recipe_modules/cros_branch/api.py#143)(self, branch, new_branch_name, \*\*kwargs):**
 
 Call `cros branch rename` with the appropriate arguments.
 
@@ -6483,9 +6485,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/test_plan_processing.py#27)(api):**
 ### *recipes* / [cros\_branch:examples/full](/recipe_modules/cros_branch/examples/full.py)
 
-[DEPS](/recipe_modules/cros_branch/examples/full.py#11): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_branch/examples/full.py#11): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_branch/examples/full.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_branch/examples/full.py#22)(api):**
 ### *recipes* / [cros\_branch:tests/errors](/recipe_modules/cros_branch/tests/errors.py)
 
 [DEPS](/recipe_modules/cros_branch/tests/errors.py#9): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
