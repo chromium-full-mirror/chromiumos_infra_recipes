@@ -22,10 +22,10 @@ from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.recipes.chromeos.generator import (
-    SendToCqPolicy, DO_NOTHING, DRY_RUN, FULL_RUN, ABANDON, OutdatedClsPolicy,
-    OUTDATED_DO_NOTHING, OUTDATED_LEAVE_COMMENT, OUTDATED_ABANDON,
-    RetryClPolicy, NO_RETRY, RETRY_LATEST_OR_LATEST_PINNED, RETRY_LATEST_PINNED,
-    BranchPolicy, Reviewer, GeneratorProperties, RetryRef)
+    SendToCqPolicy, DO_NOTHING, DRY_RUN, FULL_RUN, ABANDON, SUBMIT,
+    OutdatedClsPolicy, OUTDATED_DO_NOTHING, OUTDATED_LEAVE_COMMENT,
+    OUTDATED_ABANDON, RetryClPolicy, NO_RETRY, RETRY_LATEST_OR_LATEST_PINNED,
+    RETRY_LATEST_PINNED, BranchPolicy, Reviewer, GeneratorProperties, RetryRef)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
     CronTrigger, GitilesTrigger, Trigger, WebUITrigger)
@@ -504,6 +504,7 @@ def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
           DRY_RUN: 'Therefore, marking CL as CQ+1',
           FULL_RUN: 'Therefore, marking CL as CQ+2',
           ABANDON: 'Therefore, abandoning the CL',
+          SUBMIT: 'Therefore, will attempt to directly submit the CL.',
       }.get(
           send_to_cq_policy,
           'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
@@ -526,10 +527,17 @@ def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
               api.gerrit.Label.BOT_COMMIT: 1,
               api.gerrit.Label.COMMIT_QUEUE: 2,
           },
+          SUBMIT: {
+              api.gerrit.Label.BOT_COMMIT: 1,
+          },
       }.get(send_to_cq_policy)
 
       if labels is not None:
         api.gerrit.set_change_labels(change, labels)
+
+    if send_to_cq_policy == SUBMIT:
+      with api.step.nest('submit CL'):
+        api.gerrit.submit_change(change)
 
 
 def GenTests(api):
@@ -622,6 +630,15 @@ def GenTests(api):
       'with-uprev-abandon-no-nothing-policy',
       _props(branch_policies=[_policy(
           outdated_cls_policy=OUTDATED_DO_NOTHING)]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+  )
+
+  yield _with_infos(
+      'with-submit-policy',
+      _props(branch_policies=[
+          _policy(no_existing_cls_policy=SUBMIT, existing_cls_policy=SUBMIT)
+      ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
