@@ -35,24 +35,19 @@ def DoRunSteps(api, config, _properties):
   # Artifacts are frequently of use even if the build failed.  For example, it
   # is likely that the developer will want to see the ebuild logs from install
   # packages when that step fails, or even if build images fail afterward.
-  # Thus, we track raise_upload_failure to avoid raising an upload failure if
-  # the build has already failed. See also crbug/1086630.
-  raise_upload_failure = True
+  failing_build = False
   try:
     if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
       if api.build_menu.build_and_test_images(config, include_version=True):
         api.build_menu.upload_prebuilts(config)
   except StepFailure:
-    raise_upload_failure = False
+    failing_build = True
     raise
   finally:
     try:
-      api.build_menu.upload_artifacts(config,
-                                      failing_build=not raise_upload_failure)
+      api.build_menu.upload_artifacts(config, failing_build=failing_build)
     except StepFailure:
-      # TODO(crbug/1086630): We do not need to catch StepFailure here after
-      # 2020-12-31.
-      if raise_upload_failure:
+      if not failing_build:
         raise
 
   api.cros_release.push_and_sign_images()
