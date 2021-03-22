@@ -59,11 +59,6 @@ def RunSteps(api, properties):
   is_staging = not properties.publish_uprevs
   workspace_path = api.src_state.workspace_path
 
-  # TODO(b/182591232): remove experiment logic when b/179923558 is done
-  properties.uprev_first |= (
-      'chromeos.annealing.uprev_first' in api.cros_infra_config.experiments)
-  api.easy.set_properties_step(uprev_first=properties.uprev_first)
-
   commit = api.src_state.gitiles_commit
   prior_internal = prior_external = diffs = None
   dry_run = api.cq.active or properties.dry_run
@@ -131,14 +126,10 @@ def RunSteps(api, properties):
                                prior_external, internal_manifest,
                                external_manifest)
 
-        # Uprev before snapshot generation if flag is set
-        # TODO(b/182591232): remove experiment logic when b/179923558 is done
-        if properties.uprev_first:
-          # One or more uprevs did not complete, end recipe and
-          # do not generate snapshot
-          if not _uprev_packages(api, properties, workspace_path, diffs,
-                                 dry_run):
-            raise StepFailure('Failed to uprev all changes')
+        # One or more uprevs did not complete, end recipe and
+        # do not generate snapshot
+        if not _uprev_packages(api, properties, workspace_path, diffs, dry_run):
+          raise StepFailure('Failed to uprev all changes')
 
         api.easy.set_properties_step(dry_run=properties.dry_run)
 
@@ -250,18 +241,6 @@ def RunSteps(api, properties):
       if jobs and not properties.dry_run:
         _schedule_triggered_builds(api, internal_snapshot_commit, jobs)
 
-      # It may seem weird that we publish uprevs after publishing the snapshot.
-      # Unfortunately, publishing uprevs takes ~10 minutes, in which time it is
-      # not unlikely that commits will land upstream and be trivially merged by
-      # Gerrit. This means the local uprev commits will have different sha1s
-      # from the remote uprev commits. The only two ways around it are (a)
-      # run repo sync a second time, after uprevs, or (b) include the uprevs
-      # in the NEXT snapshot. We choose the least wasteful option.
-      # TODO(b/182591232): remove when b/179923558 is done
-      if not properties.uprev_first:
-        dry_run = dry_run or is_staging
-        _uprev_packages(api, properties, workspace_path, diffs, dry_run)
-
 
 def _sync_manifest(api, properties, manifest_ref, prior_internal,
                    prior_external, internal_manifest, external_manifest):
@@ -281,7 +260,6 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
   Return:
     diff_paths(dict): Dictionary containing paths to manifest changes
   """
-  # TODO(b/182591232): remove when b/179923558 is done
   is_staging = not properties.publish_uprevs
 
   with api.step.nest('sync manifests') as presentation:
@@ -290,50 +268,21 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
         'external {}: {}'.format(manifest_ref, prior_external),
     ]
 
-    # TODO(b/182591232): remove when b/179923558 is done
-    def _update_callback():
-      """Callback function for git_txn to update mirrored files."""
-      files = api.cros_source.mirrored_manifest_files
-      external_paths = [external_manifest.path.join(p) for p in files]
-      for path in files:
-        api.file.copy('Copy manifest-internal/{}'.format(path),
-                      internal_manifest.path.join(path),
-                      external_manifest.path.join(path))
-      if not any(api.git.diff_check(f) for f in external_paths):
-        return False
-      if properties.dry_run or is_staging:
-        presentation.logs['skip'] = ['staging/dry-run: skipping sync']
-        properties.dry_run = True
-        api.step('git reset', ['git', 'reset', '--hard'])
-        return False
-      commit_message = 'Syncing with internal manifest.'
-      api.git.add(external_paths)
-      api.git.commit(commit_message)
-      return True
+    diff_paths = {}
+    files = api.cros_source.mirrored_manifest_files
+    external_paths = [external_manifest.path.join(p) for p in files]
+    for path in files:
+      api.file.copy('Copy manifest-internal/{}'.format(path),
+                    internal_manifest.path.join(path),
+                    external_manifest.path.join(path))
 
-    # TODO(b/182591232): remove exepriment conditional when b/179923558 is done
-    if properties.uprev_first:
-      diff_paths = {}
-      files = api.cros_source.mirrored_manifest_files
-      external_paths = [external_manifest.path.join(p) for p in files]
-      for path in files:
-        api.file.copy('Copy manifest-internal/{}'.format(path),
-                      internal_manifest.path.join(path),
-                      external_manifest.path.join(path))
-
-      repo = api.git.repository_root()
-      diff_paths = collections.defaultdict(list)
-      for f in external_paths:
-        if api.git.diff_check(f):
-          diff_paths[repo].append(api.path.abspath(f))
-      presentation.logs['diffs'] = [str(diff_paths)]
-      return diff_paths
-
-    # TODO(b/182591232): remove when b/179923558 is done
-    if not api.git_txn.update_ref(external_manifest.url, _update_callback):
-      presentation.step_text = 'No diffs'
-
-    return {}
+    repo = api.git.repository_root()
+    diff_paths = collections.defaultdict(list)
+    for f in external_paths:
+      if api.git.diff_check(f):
+        diff_paths[repo].append(api.path.abspath(f))
+    presentation.logs['diffs'] = [str(diff_paths)]
+    return diff_paths
 
 
 def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
@@ -399,20 +348,11 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
           if properties.uprev_first and is_staging:
             branch = 'staging-infra-{}'.format(branch)
           refspec = 'HEAD:refs/{}/{}'.format(namespace, branch)
-
-          # TODO(b/179502549): remove conditional logic once rollout of
-          # go/annealing-uprevs is done
-          if not properties.uprev_first:
-            refspec = 'HEAD:refs/for/{}%notify=NONE,submit'.format(branch)
           try:
             api.git.push(project.remote, refspec, dry_run=dry_run,
                          capture_stdout=True, retry=False, name=step_name)
             passed_uprevs.append(repo_name)
           except StepFailure as ex:
-            # Ignore retry logic if feature not on
-            if not properties.uprev_first:
-              raise ex
-
             api.step.active_result.presentation.logs['exception'] = (
                 ex.result.stdout.splitlines())
             git_flags = _check_push_exception(ex)
@@ -1014,31 +954,6 @@ def GenTests(api):
                      'src/private-overlay'),
       api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
                      'src/overlay'))
-
-  yield api.test(
-      'retry-feature-locked',
-      api.properties(
-          AnnealingProperties(manifest_ref='snapshot', dry_run=False,
-                              uprev_first=False)),
-      api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
-      api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
-      api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
-              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )),
-      api.step_data(('push uprevs.push to src/private-overlay.git push '
-                     'src/private-overlay'), retcode=1),
-      api.git_footers.step_data(
-          'record new gerrit changes.NAME.read git footers', ''),
-      api.post_check(post_process.StepException, 'push uprevs'))
 
   # CQ: manifest changes, but no gerrit change to go with it.
   yield api.test(
