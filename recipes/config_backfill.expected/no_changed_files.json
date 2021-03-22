@@ -250,6 +250,9 @@
       "test_project",
       "--program-name",
       "test_program",
+      "--config-bundle",
+      "generated/config.jsonproto",
+      "--import-only",
       "--output",
       "generated/imported.jsonproto"
     ],

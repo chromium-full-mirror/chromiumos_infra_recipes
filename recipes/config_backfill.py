@@ -229,18 +229,19 @@ def RunSteps(api, properties):
     if properties.program_name:
       cmd += ['--program-name', properties.program_name]
 
-    # Generate imported file which is just the backfilled data
+    # TODO(crbug.com/1154322): remove merged configuration generation once
+    # the merge functionality is available, just call gen_config instead.
+    # Generate output joined with existing starlark config
+    if api.path.exists(api.context.cwd.join(SRC_CONFIG)):
+      cmd += ['--config-bundle', SRC_CONFIG]
+
     with api.context(env={'GOOGLE_APPLICATION_CREDENTIALS': CLOUD_CREDS_PATH}):
+      # generate the import-only config (no merging with config.jsonproto)
       api.step("Generate imported configuration",
-               ["vpython"] + cmd + ['--output', DST_IMPORTED])
+               ["vpython"] + cmd + ['--import-only', '--output', DST_IMPORTED])
       api.git.add([DST_IMPORTED])
 
-      # TODO(crbug.com/1154322): remove merged configuration generation once
-      # the merge functionality is available, just call gen_config instead.
-      # Generate output joined with existing starlark config
-      if api.path.exists(api.context.cwd.join(SRC_CONFIG)):
-        cmd += ['--config-bundle', SRC_CONFIG]
-
+      # generate joined config (with merging)
       api.step("Generate joined configuration",
                ["vpython"] + cmd + ['--output', DST_CONFIG])
       api.git.add([DST_CONFIG])
