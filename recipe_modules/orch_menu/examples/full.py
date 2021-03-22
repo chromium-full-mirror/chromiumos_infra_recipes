@@ -50,8 +50,10 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(
         str(expected_changes), str(api.orch_menu.gerrit_changes))
 
-    api.assertions.assertEqual(api.orch_menu.is_dry_run,
-                               (api.cq.state == api.cq.DRY))
+    api.assertions.assertEqual(
+        api.orch_menu.is_dry_run,
+        api.cq.active and api.cq.run_mode == api.cq.DRY_RUN,
+    )
 
     builds_status = api.orch_menu.plan_and_run_children()
 

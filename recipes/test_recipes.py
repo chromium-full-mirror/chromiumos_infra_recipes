@@ -612,7 +612,7 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(builders=[
@@ -640,7 +640,7 @@ def GenTests(api):
 
   yield api.test(
       'two_changes',
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
@@ -662,7 +662,7 @@ def GenTests(api):
 
   yield api.test(
       'two_changes_mixed_repos',
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
@@ -684,7 +684,7 @@ def GenTests(api):
 
   yield api.test(
       'skipped_builder',
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
@@ -705,7 +705,7 @@ def GenTests(api):
 
   yield api.test(
       'failed_swarming_task',
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       # Specify one builder to run.
       api.properties(TestRecipesProperties(builders=['staging-Annealing'])),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
@@ -725,7 +725,7 @@ def GenTests(api):
 
   yield api.test(
       'invalid_skip_builder_footer',
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(
@@ -736,14 +736,14 @@ def GenTests(api):
       api.expect_exception('ValueError'))
 
   yield api.test(
-      'no_successful_builds', api.cq(full_run=True),
+      'no_successful_builds', api.cq(run_mode=api.cq.FULL_RUN),
       get_non_skipped_builders_test_data(),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'))
 
-  yield api.test('no_gerrit_changes', api.cq(full_run=True),
+  yield api.test('no_gerrit_changes', api.cq(run_mode=api.cq.FULL_RUN),
                  api.expect_exception('ValueError'))
 
   yield api.test(
-      'invalid_builders', api.cq(full_run=True),
+      'invalid_builders', api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(TestRecipesProperties(builders=['production-builder'])),
       api.expect_exception('ValueError'))

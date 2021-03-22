@@ -140,7 +140,7 @@ def RunSteps(api, properties):
         pres.step_text = 'using default branch'
     api.easy.set_properties_step(policy=MessageToDict(policy))
 
-    if api.cq.state != api.cq.INACTIVE or api.src_state.gerrit_changes:
+    if api.cq.active or api.src_state.gerrit_changes:
       # Use case: Developer is working on the versioned uprev code for a
       # package, such as Chrome, and wants to test the changes prior to landing
       # them in chromite.  While launching a build with the correct polcies and
@@ -732,7 +732,7 @@ def GenTests(api):
 
   yield _with_infos(
       'cq-active', _props(), api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.git.diff_check(True), api.cq(full_run=True),
+      api.git.diff_check(True), api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(post_process.MustRun,
                      'apply gerrit changes.update policy'),
       api.test_util.test_build(

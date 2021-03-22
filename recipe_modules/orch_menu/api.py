@@ -122,7 +122,7 @@ class OrchMenuApi(RecipeApi):
 
   @property
   def is_dry_run(self):
-    return self.m.cq.state == self.m.cq.DRY
+    return self.m.cq.active and self.m.cq.run_mode == self.m.cq.DRY_RUN
 
   @property
   def builds_status(self):

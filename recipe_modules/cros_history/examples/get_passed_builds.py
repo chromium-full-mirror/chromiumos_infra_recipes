@@ -37,8 +37,7 @@ def _build_with_changes(build):
 
 def GenTests(api):
   yield api.test(
-      'patch_without_history',
-      api.cq(full_run=True),
+      'patch_without_history', api.cq(run_mode=api.cq.FULL_RUN),
       api.buildbucket.simulated_search_results(
           [], 'get change build history.buildbucket.search'),
       api.properties(
@@ -50,7 +49,7 @@ def GenTests(api):
               input_target_patches=[common_pb2.GerritChange(change=2341)])))
 
   yield api.test(
-      'passed_builds_with_history', api.cq(full_run=True),
+      'passed_builds_with_history', api.cq(run_mode=api.cq.FULL_RUN),
       api.buildbucket.build(
           _build_with_changes(
               build_pb2.Build(

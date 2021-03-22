@@ -66,7 +66,7 @@ def RunSteps(api, properties):
 
   commit = api.src_state.gitiles_commit
   prior_internal = prior_external = diffs = None
-  dry_run = api.cq.state != api.cq.INACTIVE or properties.dry_run
+  dry_run = api.cq.active or properties.dry_run
   manifest_ref = properties.manifest_ref
   if not manifest_ref:
     raise ValueError('must set manifest ref')
@@ -82,10 +82,10 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
     with api.context(cwd=internal_manifest.path):
-      if api.cq.state == api.cq.INACTIVE:
+      if not api.cq.active:
         api.cros_source.checkout_tip_of_tree()
 
-      if api.cq.state != api.cq.INACTIVE and not commit.id:
+      if api.cq.active and not commit.id:
         # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
         ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)
         commit.host = commit.host or api.src_state.internal_manifest.host
@@ -1046,7 +1046,7 @@ def GenTests(api):
       api.buildbucket.ci_build(project='chromeos',
                                git_repo=api.src_state.internal_manifest.url,
                                git_ref='refs/heads/snapshot'),
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -1073,7 +1073,7 @@ def GenTests(api):
       api.buildbucket.ci_build(project='chromeos',
                                git_repo=api.src_state.internal_manifest.url,
                                git_ref='refs/heads/snapshot'),
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data('recreating older run.read git footers',
                     stdout=api.raw_io.output('')),
@@ -1085,7 +1085,7 @@ def GenTests(api):
   # CQ without bb commit: manifest changes, but no gerrit change to go with it.
   yield api.test(
       'cq-build-no-commit',
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',

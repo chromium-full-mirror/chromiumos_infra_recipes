@@ -188,7 +188,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     if input_dict:
       ret += self.m.properties(**input_dict)
     if cq:
-      ret += self.m.cq(dry_run=dry_run, full_run=not dry_run)
+      run_mode = self.m.cq.DRY_RUN if dry_run else self.m.cq.FULL_RUN
+      ret += self.m.cq(run_mode=run_mode)
 
     return _test_build_return(msg, ret)
 

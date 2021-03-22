@@ -124,7 +124,7 @@ def GenTests(api):
       'tests_with_history',
       api.properties(need_tests_builds_serialized=serialize_builds(builds)),
       # cq_orchestrator_build_with_gerrit_change(),
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(enable_history=True),
       api.properties(
           need_tests_builds_serialized=serialize_builds([

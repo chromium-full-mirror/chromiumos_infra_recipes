@@ -90,7 +90,7 @@ def GenTests(api):
   external_exists = api.path.exists(api.path['start_dir'].join(
       'chromiumos_workspace/src/chromiumos/manifest/default.xml'))
   common_args = [
-      api.cq(full_run=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(post_process.DoesNotRun,
                      'test branch_util for chromiumos/manifest')
   ]

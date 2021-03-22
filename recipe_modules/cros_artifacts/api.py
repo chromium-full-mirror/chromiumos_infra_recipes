@@ -570,7 +570,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       # Builders that publish artifacts should not recycyle dry-run builds,
       # since we treat them differently here.
-      if self.m.cq.state == self.m.cq.DRY:
+      if self.m.cq.active and self.m.cq.run_mode == self.m.cq.DRY_RUN:
         with self.m.step.nest('skip publish artifacts') as presentation:
           presentation.step_text = 'Not publishing artifacts in dry run'
           return

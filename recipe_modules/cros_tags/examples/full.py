@@ -74,7 +74,7 @@ def GenTests(api):
   equiv = u'01f806668b9e02978b40f699340d5ad7c0da85fb4446d3421c41e790'
   group = u'099ed4f822eaff88f1f0d0cae8c40f09e212b0672c2497afe9f88449'
   yield api.test(
-      'basic', api.cq(full_run=True),
+      'basic', api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(
           TestInputProperties(cq_cl_group_key=group,
                               cq_equivalent_cl_group_key=equiv)),
@@ -85,7 +85,7 @@ def GenTests(api):
                                   cq_equivalent_cl_group_key=equiv)))
 
   yield api.test(
-      'no_group_key_tags', api.cq(full_run=True),
+      'no_group_key_tags', api.cq(run_mode=api.cq.FULL_RUN),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='postsubmit-orchestrator'))
 
