@@ -362,7 +362,7 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
         repository = api.git.repository_root()
         ebuilds_by_repository[repository].append(ebuild.path)
 
-    # treat manifest changes like an uprev
+    # Treat the manifest changes as if they were an uprev
     for repo, files in manifest_diffs.items():
       ebuilds_by_repository[repo].extend(files)
 
@@ -373,7 +373,11 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
         with api.context(cwd=api.path.abs_to_path(repository)):
           with api.step.nest('commit uprev changes in {}'.format(repo_name)):
             api.git.add(ebuilds)
-            api.git.commit('Marking set of ebuilds as stable', files=ebuilds)
+            if repository in manifest_diffs:
+              message = 'Syncing with internal manifest'
+            else:
+              message = 'Marking set of ebuilds as stable'
+            api.git.commit(message, files=ebuilds)
 
           # Filter to ebuilds that exist. In particular, we need to exclude
           # the version of the ebuild from prior to the uprev.

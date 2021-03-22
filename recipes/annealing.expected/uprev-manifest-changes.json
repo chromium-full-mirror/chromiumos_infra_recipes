@@ -945,7 +945,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Marking set of ebuilds as stable",
+      "Syncing with internal manifest",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
@@ -953,7 +953,7 @@
     "name": "push uprevs.push to manifest.commit uprev changes in manifest.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Syncing with internal manifest@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
