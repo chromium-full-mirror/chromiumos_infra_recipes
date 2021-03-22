@@ -289,6 +289,7 @@
       "all",
       "--reference",
       "[CACHE]/chromiumos",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -687,6 +688,7 @@
       "all",
       "--manifest-branch",
       "release-R12-34567.B",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

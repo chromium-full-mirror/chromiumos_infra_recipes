@@ -410,6 +410,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
@@ -767,6 +768,7 @@
       "all",
       "--manifest-branch",
       "release-R79-*.B",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

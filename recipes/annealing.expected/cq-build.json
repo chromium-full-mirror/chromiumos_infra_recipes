@@ -924,6 +924,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"
@@ -1053,6 +1054,7 @@
       "all",
       "--manifest-branch",
       "main",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

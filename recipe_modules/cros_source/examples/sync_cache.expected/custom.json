@@ -155,6 +155,7 @@
       "https://chromium.googlesource.com/chromiumos/manifest",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos-external",

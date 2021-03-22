@@ -179,6 +179,9 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--repo-url', repo_url]
     if repo_branch is not None:
       cmd += ['--repo-branch', repo_branch, '--no-repo-verify']
+    elif not self.m.cros_infra_config.is_staging:
+      # Enforce stable if branch not specified and not in staging.
+      cmd += ['--repo-rev=stable']
     if manifest_name:
       cmd += ['--manifest-name', manifest_name]
     # TODO(b/176082897) Force --verbose while debugging.

@@ -343,6 +343,7 @@
       "all",
       "--groups",
       "partner-config",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

@@ -109,6 +109,7 @@
       "http://manifest_url",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
@@ -182,6 +183,7 @@
       "http://manifest_url",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",

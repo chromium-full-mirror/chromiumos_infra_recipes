@@ -447,6 +447,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
@@ -813,6 +814,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"

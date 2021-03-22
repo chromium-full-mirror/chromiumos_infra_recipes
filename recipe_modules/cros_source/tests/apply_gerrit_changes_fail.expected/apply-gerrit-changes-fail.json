@@ -142,6 +142,7 @@
       "all",
       "--manifest-branch",
       "main",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

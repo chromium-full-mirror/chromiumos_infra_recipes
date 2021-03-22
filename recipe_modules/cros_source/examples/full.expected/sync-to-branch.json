@@ -597,6 +597,7 @@
       "all",
       "--manifest-branch",
       "release-R87-13505.B",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -781,6 +782,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"

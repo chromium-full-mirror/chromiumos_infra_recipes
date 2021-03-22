@@ -25,6 +25,7 @@
       "",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"
