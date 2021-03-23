@@ -33,7 +33,7 @@ def RunSteps(api, properties):
     api.cros_source.checkout_manifests(
         checkout_external=properties.checkout_external)
     api.assertions.assertEqual(api.cros_source.manifest_branch,
-                               properties.branch_name)
+                               properties.branch_name or 'main')
 
   if api.path.exists(snapshot_xml):
     api.assertions.assertEqual(snapshot_xml,

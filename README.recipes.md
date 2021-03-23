@@ -2683,7 +2683,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#549)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#555)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
@@ -2711,7 +2711,7 @@ This is the cached version of source (the internal manifest checkout),
 usually updated once at the beginning of a build and then mounted into the
 workspace path.
 
-&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#394)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
+&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#400)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
 
 Check out a branch of the current manifest.
 
@@ -2728,7 +2728,7 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
   * step_name (str): Name for the step, or None for default.
 
-&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#288)(self, commit=None, is_staging=False, checkout_external=False, test_footers=None):**
+&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#297)(self, commit=None, is_staging=False, checkout_external=False, test_footers=None):**
 
 Check out the manifest projects.
 
@@ -2754,14 +2754,14 @@ Args:
 Returns:
   (GitilesCommit) The GitilesCommit to use for the external manifest.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#499)(self, mount_cache=True):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#505)(self, mount_cache=True):**
 
 Returns a context where overlays can be mounted.
 
 Args:
   mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1081)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1088)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2774,11 +2774,11 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#439)(self):**
+&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#445)(self):**
 
 Check out the tip-of-tree in the workspace.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1038)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1045)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -2808,7 +2808,7 @@ Args:
   * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
   current value.
 
-&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#446)(self, count=((7 \* 24) \* 2)):**
+&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#452)(self, count=((7 \* 24) \* 2)):**
 
 Return snapshot SHAs for the manifest.
 
@@ -2822,7 +2822,7 @@ Args:
 Returns:
   (list[str]) The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#521)(self, project, branch, empty_ok=False):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#527)(self, project, branch, empty_ok=False):**
 
 Find the source paths for a given project in the workspace.
 
@@ -2882,7 +2882,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot digest in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#942)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#948)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -3129,18 +3129,22 @@ API for working with CrOS version numbers.
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#119)(self):**
+&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#119)(self, versions_branch=CHROMIUMOS_OVERLAY_RUBIK_BRANCH, dry_run=False):**
 
 Bumps the chromeos version (as represented in chromeos_version.sh)
-  and pushes the change to the chromiumos-overlay repo.
+and pushes the change to the chromiumos-overlay repo.
 
-  Which component is bumped depends on the branch the invoking recipe
-  is running for (main/tot --> build, release-* --> branch).
+Which component is bumped depends on the branch the invoking recipe
+is running for (main/tot --> build, release-* --> branch).
 
-  The updated version file is currently pushed to the 'rubik-staging'
-  branch of the chromiumos-overlays repo.
+The updated version file is currently pushed to the 'rubik-staging'
+branch of the chromiumos-overlays repo.
 
-Returns: None.
+Args:
+  versions_branch (str): The branch to use in manifest-versions.  Default
+    is currently a staging branch, but will change to 'main'.
+  dry_run (bool): Whether to actually push the commit to
+    manifest-versions.
 
 &mdash; **def [initialize](/recipe_modules/cros_version/api.py#42)(self):**
 
@@ -6897,9 +6901,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_runner/examples/full.py#17)(api):**
 ### *recipes* / [cros\_version:examples/bump\_version](/recipe_modules/cros_version/examples/bump_version.py)
 
-[DEPS](/recipe_modules/cros_version/examples/bump_version.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_version/examples/bump_version.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/bump_version.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/bump_version.py#21)(api):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

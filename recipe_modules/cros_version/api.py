@@ -44,9 +44,9 @@ class CrosVersionApi(recipe_api.RecipeApi):
     self._version_bumper_path = None
     self._version_bumper_cipd_package = (
         self._properties.version_bumper_cipd_package.encode('utf-8') or
-        "chromiumos/infra/version_bumper/${platform}")
+        'chromiumos/infra/version_bumper/${platform}')
 
-    default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
+    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
     self._version_bumper_cipd_ref = (
         self._properties.version_bumper_cipd_ref.encode('utf-8') or default_ref)
 
@@ -116,7 +116,8 @@ class CrosVersionApi(recipe_api.RecipeApi):
 
         self._version_bumper_path = cipd_dir.join('version_bumper')
 
-  def bump_version(self):
+  def bump_version(self, versions_branch=CHROMIUMOS_OVERLAY_RUBIK_BRANCH,
+                   dry_run=False):
     """Bumps the chromeos version (as represented in chromeos_version.sh)
       and pushes the change to the chromiumos-overlay repo.
 
@@ -126,7 +127,11 @@ class CrosVersionApi(recipe_api.RecipeApi):
       The updated version file is currently pushed to the 'rubik-staging'
       branch of the chromiumos-overlays repo.
 
-    Returns: None.
+      Args:
+        versions_branch (str): The branch to use in manifest-versions.  Default
+          is currently a staging branch, but will change to 'main'.
+        dry_run (bool): Whether to actually push the commit to
+          manifest-versions.
     """
     with self.m.step.nest('bump version'):
       old_version = self.read_workspace_version()
@@ -141,20 +146,17 @@ class CrosVersionApi(recipe_api.RecipeApi):
       with self.m.context(cwd=tmp_dir):
         # Clone chromiumos-overlay repo to current path.
         with self.m.step.nest('clone chromiumos-overlay'):
-          self.m.git.clone(CHROMIUMOS_OVERLAY_REMOTE,
-                           branch=CHROMIUMOS_OVERLAY_RUBIK_BRANCH)
+          self.m.git.clone(CHROMIUMOS_OVERLAY_REMOTE, branch=versions_branch)
 
       chromiumos_overlay_repo = self.m.src_state.workspace_path.join(
           CHROMIUMOS_OVERLAY_REPO)
       # For now, overwrite to our separately cloned copy of the repo.
       chromiumos_overlay_repo = tmp_dir
 
-      branch = self.m.cros_infra_config.config.id.branch
-      component_flag = ('--bump_build_component'
-                        if branch == "main" else '--bump_branch_component')
       cmd = [
-          self._version_bumper_path, "bump-version",
-          "--chromiumos_overlay_repo", chromiumos_overlay_repo, component_flag
+          self._version_bumper_path, 'bump-version',
+          '--chromiumos_overlay_repo', chromiumos_overlay_repo,
+          '--bump_from_branch_name', self.m.cros_source.manifest_branch
       ]
       self.m.step('go version_bumper', cmd)
 
@@ -169,12 +171,12 @@ class CrosVersionApi(recipe_api.RecipeApi):
             'BUG=None',
             'TEST=None',
             '',
-            'Cr-Automation-Id: release_orchestrator/version_bump',
+            'Cr-Automation-Id: cros_version/version_bump',
         ]
         commit_message = '\n'.join(commit_lines)
         with self.m.step.nest('commit {}'.format(CHROMEOS_VERSION_FILE)):
           self.m.git.add([CHROMEOS_VERSION_FILE])
           self.m.git.commit(commit_message)
-          self.m.git.push(
-              CHROMIUMOS_OVERLAY_REMOTE,
-              'HEAD:refs/heads/{}'.format(CHROMIUMOS_OVERLAY_RUBIK_BRANCH))
+          self.m.git.push(CHROMIUMOS_OVERLAY_REMOTE,
+                          'HEAD:refs/heads/{}'.format(versions_branch),
+                          dry_run=dry_run)

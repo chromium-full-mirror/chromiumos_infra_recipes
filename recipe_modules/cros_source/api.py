@@ -279,11 +279,20 @@ class CrosSourceApi(RecipeApi):
               step_name = 'sync {} branches'.format(man.project)
               self.m.git.remote_update(step_name=step_name)
 
+    self._manifest_branch = manifest_branch or ''
+
     # Finally, create the workspace overlay.
     if cache_path != self.workspace_path:
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
       self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
       self._workspace_mounted = True
+
+  def _gitiles_branch(self, ref):
+    """Return the branch for a gitiles_commit.ref"""
+    branch = (
+        ref[len('refs/heads/'):] if ref.startswith('refs/heads/') else ref)
+    branch = '' if branch in ("snapshot", "staging-snapshot") else branch
+    return branch
 
   def checkout_manifests(self, commit=None, is_staging=False,
                          checkout_external=False, test_footers=None):
@@ -319,10 +328,7 @@ class CrosSourceApi(RecipeApi):
     # can determine the one that matches the current checkout.
     ext_commit = e_manifest.as_gitiles_commit_proto
     ext_commit.ref = commit.ref
-    branch = (
-        commit.ref[len('refs/heads/'):]
-        if commit.ref.startswith('refs/heads/') else commit.ref)
-    branch = '' if branch == "snapshot" else branch
+    branch = self._gitiles_branch(commit.ref)
 
     projects = self.m.src_state.manifest_projects
 
@@ -953,6 +959,7 @@ class CrosSourceApi(RecipeApi):
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
     with self.m.step.nest('sync to gitiles commit'), self.m.context(
         cwd=self.workspace_path):
+      self._manifest_branch = self._gitiles_branch(gitiles_commit.ref)
       self._sync_target = dict(call='sync_snapshot',
                                commit=MessageToDict(gitiles_commit))
       projects = kwargs.get('projects', None)

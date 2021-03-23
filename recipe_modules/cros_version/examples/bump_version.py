@@ -10,23 +10,49 @@ DEPS = [
     'recipe_engine/file',
     'cros_infra_config',
     'cros_version',
+    'src_state',
+    'test_util',
+    'workspace_util',
 ]
 
 from recipe_engine import post_process
 
 
 def RunSteps(api):
-  api.cros_version.bump_version()
+  config = api.cros_infra_config.configure_builder()
+  with api.workspace_util.setup_workspace():
+    api.workspace_util.sync_to_commit(staging=api.cros_infra_config.is_staging)
+    api.cros_version.bump_version()
 
 
 def GenTests(api):
+
+  def orchestrator(**kwargs):
+    kwargs.setdefault('bucket', 'release')
+    kwargs.setdefault('builder', 'main-release-orchestrator')
+    kwargs.setdefault('git_ref', 'refs/heads/main')
+    kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
+    return api.test_util.test_orchestrator(**kwargs).build
+
   yield api.test(
       'basic',
-      api.buildbucket.ci_build(
-          project='chromeos',
-          bucket='release',
-          builder='main-release-orchestrator',
-      ),
+      orchestrator(),
+      api.post_check(post_process.StepCommandContains,
+                     'bump version.ensure version_bumper.ensure_installed',
+                     ['chromiumos/infra/version_bumper/${platform} prod']),
+  )
+
+  yield api.test(
+      'release-branch',
+      orchestrator(git_ref='refs/heads/release-R87-13505.B'),
+      api.post_check(post_process.StepCommandContains,
+                     'bump version.ensure version_bumper.ensure_installed',
+                     ['chromiumos/infra/version_bumper/${platform} prod']),
+  )
+
+  yield api.test(
+      'stabilize-branch',
+      orchestrator(git_ref='refs/heads/stabilize-13505.33.B'),
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',
                      ['chromiumos/infra/version_bumper/${platform} prod']),
@@ -34,11 +60,7 @@ def GenTests(api):
 
   yield api.test(
       'staging',
-      api.buildbucket.ci_build(
-          project='chromeos',
-          bucket='release',
-          builder='staging-main-release-orchestrator',
-      ),
+      orchestrator(builder='staging-main-release-orchestrator'),
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',
                      ['chromiumos/infra/version_bumper/${platform} staging']),
@@ -46,11 +68,7 @@ def GenTests(api):
 
   yield api.test(
       'with-ref',
-      api.buildbucket.ci_build(
-          project='chromeos',
-          bucket='release',
-          builder='main-release-orchestrator',
-      ),
+      orchestrator(),
       api.properties(
           **{
               "$chromeos/cros_version": {
