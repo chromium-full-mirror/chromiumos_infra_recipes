@@ -7,7 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_infra_config;
 
 message CrosInfraConfigProperties {
-  // For testing, this is a reference to what refspec to use when fetching
+  // For testing, this is a reference to what refspec to use when fetching.
   // {CONFIG}.binaryproto.  Example values:
   // - '': tip-of-tree (default)
   // - 'refs/changes/80/2472480/2': patchset 2 of crrev.com/i/2472480
@@ -17,6 +17,9 @@ message CrosInfraConfigProperties {
   // config is generated from the jsonpb (.cfg) file in the gerrit change.
   // (Saving the developer from needing to generate the binaryproto files in
   // their CL.)
+  //
+  // THIS IS ONLY USED BY STAGING BUILDERS.
+  //
   string config_ref = 1;
 
   // Whether to ignore the changelist in the builder config.

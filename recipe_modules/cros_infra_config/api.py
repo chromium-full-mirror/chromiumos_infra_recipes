@@ -63,14 +63,15 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._switch_to_external_manifest = properties.switch_to_external_manifest
 
   def initialize(self):
-    # Parse properties.config_ref
-    self._config_ref = self._config_ref or 'HEAD'
-
     # If the builder is in the staging bucket, or has a name that begins
     # 'staging-', then assume we are in staging.
     builder = self.m.buildbucket.build.builder
     self._is_staging = (
         builder.bucket == 'staging' or builder.builder.startswith('staging-'))
+    # Parse properties.config_ref, but only on staging.
+    self._config_ref = (
+        self._config_ref if self._is_staging and self._config_ref else 'HEAD')
+
     self._properties.honor_gitiles_commit_ref |= (
         'chromeos.cros_infra_config.honor_gitiles_commit_ref' in
         self.experiments)

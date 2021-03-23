@@ -78,9 +78,9 @@ def GenTests(api):
 
   def cq_orchestrator_build_with_gerrit_change(**kwargs):
     """Generate a test build proto with no gitiles commit project."""
-    build = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                             builder='cq-orchestrator',
-                                             **kwargs)
+    kwargs.setdefault('bucket', 'cq')
+    kwargs.setdefault('builder', 'cq-orchestrator')
+    build = api.buildbucket.ci_build_message(project='chromeos', **kwargs)
     build.input.gerrit_changes.extend([
         common_pb2.GerritChange(host='chromium-review.googlesource.com',
                                 change=1234)
@@ -128,7 +128,8 @@ def GenTests(api):
   config_ref = 'refs/changes/33/433/1'
   yield api.test(
       'with-config',
-      cq_orchestrator_build_with_gerrit_change(),
+      cq_orchestrator_build_with_gerrit_change(
+          bucket='staging', builder='staging-cq-orchestrator'),
       api.properties(
           **{
               '$chromeos/cros_infra_config':

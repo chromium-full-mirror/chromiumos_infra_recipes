@@ -937,6 +937,100 @@
     },
     {
       "id": {
+        "name": "staging-clang-tidy-toolchain",
+        "branch": "main",
+        "type": "TOOLCHAIN"
+      },
+      "general": {
+        "critical": false,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        },
+        "manifest": "PRIVATE"
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "EBUILD_LOGS"
+                ]
+              }
+            ]
+          },
+          "toolchain": {
+            "inputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CHROME_CLANG_WARNINGS_FILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/clang-tidy-1"
+                ]
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CHROME_CLANG_WARNINGS_FILE"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/clang-tidy-1"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          },
+          {
+            "flag": "strict_toolchain_checks"
+          },
+          {
+            "flag": "-afdo_use"
+          },
+          {
+            "flag": "thinlto"
+          },
+          {
+            "flag": "clang_tidy"
+          }
+        ],
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
+          "compileSource": true,
+          "packages": [
+            {
+              "packageName": "chromeos-chrome",
+              "category": "chromeos-base"
+            }
+          ],
+          "disableGoma": true
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "NO_RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
         "name": "orderfile-generate-orchestrator",
         "branch": "main",
         "type": "TOOLCHAIN"
@@ -1393,6 +1487,44 @@
           "ref": "refs/heads/main"
         },
         "child_specs": []
+      }
+    },
+    {
+      "id": {
+        "name": "staging-cq-orchestrator",
+        "branch": "main",
+        "type": "CQ"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "child_specs": [
+          {
+            "name": "amd64-generic-cq",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "arm-generic-cq",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "arm64-generic-cq",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "arm-generic-pointless-cq",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "atlas-cq"
+          },
+          {
+            "name": "cave-cq",
+            "collectHandling": "COLLECT_AFTER_HW_TEST"
+          }
+        ]
       }
     },
     {
