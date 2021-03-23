@@ -25,4 +25,7 @@ message BuildLegacyFwProperties {
 
   // The build targets to build.  Replaces build_target above.
   repeated chromiumos.BuildTarget build_targets = 5;
+
+  // Whether to bump the version.
+  bool bump_version = 6;
 }

@@ -101,6 +101,9 @@ class FirmwareBuilder(object):
       with self.m.build_menu.setup_workspace(), \
           self.m.context(cwd=self.m.src_state.workspace_path), \
           self.m.depot_tools.on_path(), self._setup_chroot():
+        if self.properties.bump_version:
+          # TODO(b/182613582) pass 'main' before going to production.
+          self.m.cros_version.bump_version()
         self._bcs_version = self.m.cros_version.read_workspace_version()
         yield
 
@@ -264,26 +267,38 @@ def GenTests(api):
   def withdebugsymbols(check, steps, name):
     return check('--withdebugsymbols' in steps[name].cmd)
 
+  yield test('release',
+             api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(MustRun, 'bump version'),
+             api.post_check(withdebugsymbols, 'install packages: target'),
+             api.post_check(StatusSuccess),
+             input_properties=dict(bump_version=True))
+
   yield test('postsubmit',
              api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(DoesNotRun, 'bump version'),
              api.post_check(withdebugsymbols, 'install packages: target'),
              api.post_check(StatusSuccess))
 
   yield test('old-postsubmit',
              api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(DoesNotRun, 'bump version'),
              api.post_check(no_withdebugsymbols, 'install packages: target'),
              api.post_check(StatusSuccess), version='R39-6301.202.44')
 
   yield test('cq', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(DoesNotRun, 'bump version'),
              api.post_check(StatusSuccess), cq=True, builder='fw-atlas-cq')
 
   yield test(
       'two-targets',
       api.post_check(MustRun, 'setup board: board1'),
       api.post_check(MustRun, 'setup board: board2'),
+      api.post_check(DoesNotRun, 'bump version'),
       api.post_check(StatusSuccess),
       input_properties=dict(
           build_targets=[dict(
@@ -296,7 +311,7 @@ def GenTests(api):
                     api.file.listdir()),
       api.post_check(DoesNotRun, 'upload artifacts.bundle tarball'),
       api.post_check(DoesNotRun, 'upload artifacts.gsutil rsync'),
-      api.post_check(StatusSuccess))
+      api.post_check(DoesNotRun, 'bump version'), api.post_check(StatusSuccess))
 
   yield test('chroot-exists',
              api.path.exists(api.src_state.workspace_path.join('chroot')))
