@@ -163,9 +163,7 @@ def RunSteps(api, properties):
 
         # Pushing to staging-infra-{$BRANCH} may fail since the commit histories
         # have different acestors. If we can verify that they are reachable
-        # through a prior commit we will ignore the CQ depends. This issue
-        # arises when the last staging-annealing run was with
-        # properties.uprev_first == True. go/annealing-uprevs for more info.
+        # through a prior commit we will ignore the CQ depends.
         # Make sure that we have not lost commits.  If the new revision at a
         # path is older than the prior one, provide a clearer failure message
         # than the one we get in cros_cq_depends.
@@ -345,7 +343,7 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
           step_name = 'git push {}'.format(repo_name)
           branch = project.branch_name
           namespace = 'heads'
-          if properties.uprev_first and is_staging:
+          if is_staging:
             branch = 'staging-infra-{}'.format(branch)
           refspec = 'HEAD:refs/{}/{}'.format(namespace, branch)
           try:
@@ -707,8 +705,7 @@ def GenTests(api):
       'uprev-manifest-changes',
       api.properties(
           AnnealingProperties(manifest_ref='main', publish_uprevs=True,
-                              dry_run=False, uprev_first=True)),
-      api.git.diff_check(True),
+                              dry_run=False)), api.git.diff_check(True),
       api.step_data(
           'generate external manifest',
           stdout=api.raw_io.output('<manifest visibility="external">'
@@ -802,8 +799,7 @@ def GenTests(api):
   yield api.test(
       'retry-fetch-first',
       api.properties(
-          AnnealingProperties(manifest_ref='snapshot', dry_run=False,
-                              uprev_first=True)),
+          AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
           'generate external manifest',
           stdout=api.raw_io.output('<manifest visibility="external">'
@@ -841,8 +837,7 @@ def GenTests(api):
   yield api.test(
       'retry-fast-forward',
       api.properties(
-          AnnealingProperties(manifest_ref='snapshot', dry_run=False,
-                              uprev_first=True)),
+          AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
           'generate external manifest',
           stdout=api.raw_io.output('<manifest visibility="external">'
@@ -881,8 +876,7 @@ def GenTests(api):
   yield api.test(
       'retry-no-change',
       api.properties(
-          AnnealingProperties(manifest_ref='snapshot', dry_run=False,
-                              uprev_first=True)),
+          AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
           ('push uprevs.push to src/private-overlay.git push '
            'src/private-overlay'), retcode=1, stdout=api.raw_io.output(
@@ -895,7 +889,7 @@ def GenTests(api):
       'retry-fail',
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
-                              uprev_first=True, publish_uprevs=True)),
+                              publish_uprevs=True)),
       api.step_data(('push uprevs.push to src/private-overlay.git push '
                      'src/private-overlay'), retcode=1,
                     stdout=api.raw_io.output(
@@ -935,8 +929,7 @@ def GenTests(api):
   yield api.test(
       'retry-unknown',
       api.properties(
-          AnnealingProperties(manifest_ref='snapshot', dry_run=False,
-                              uprev_first=True)),
+          AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(('push uprevs.push to src/private-overlay.git push '
                      'src/private-overlay'), retcode=1),
       api.post_check(
