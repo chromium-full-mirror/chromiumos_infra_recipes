@@ -10,12 +10,12 @@
       "-n",
       "1",
       "-fields",
-      "output",
+      "input,output",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"octopus-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
     ],
     "infra_step": true,
-    "name": "find recent green octopus build",
+    "name": "find recent green octopus-postsubmit build",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]

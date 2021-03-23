@@ -5179,7 +5179,7 @@ Validate that the caller's skylab tool version number is up-to-date.
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#147)(self, test, unit, timeout, name=None, async_suite_run=False):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#154)(self, test, unit, timeout, name=None, async_suite_run=False):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -5208,7 +5208,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#71)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#78)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -5226,7 +5226,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#227)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#234)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -7718,11 +7718,11 @@ Returns: Struct containing requests.
 &mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#48)(api, properties):**
 ### *recipes* / [test\_platform/ctp\_traffic\_generator](/recipes/test_platform/ctp_traffic_generator.py)
 
-[DEPS](/recipes/test_platform/ctp_traffic_generator.py#20): [cros\_test\_platform](#recipe_modules-cros_test_platform), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/ctp_traffic_generator.py#22): [cros\_test\_platform](#recipe_modules-cros_test_platform), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe that triggers cros_test_platform runs.
 
-&mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#32)(api):**
+&mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#34)(api):**
 ### *recipes* / [test\_platform/ctp\_uprev](/recipes/test_platform/ctp_uprev.py)
 
 [DEPS](/recipes/test_platform/ctp_uprev.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
