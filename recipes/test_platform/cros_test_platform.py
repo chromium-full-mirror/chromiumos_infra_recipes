@@ -89,11 +89,7 @@ def validated_requests(api, properties):
   requests = _get_requests_from_properties(api, properties)
   with api.step.nest('input validation'):
     with api.step.nest('service version'):
-      # We want to add service version validation for every CTP build, but
-      # so far skylab CLI is the only launcher of CTP builds that includes
-      # its service version in the request.
-      if _client_is_skylab_cli(requests):
-        api.service_version.validate_skylab_version()
+      api.service_version.validate_service_version_if_exists()
 
     validation_errors = []
     with api.step.nest('request'):
@@ -104,14 +100,6 @@ def validated_requests(api, properties):
       raise api.step.StepFailure('request validation failed')
 
   return requests
-
-
-def _client_is_skylab_cli(requests):
-  # We only need to check one request to see if the whole build was
-  # launched from the skylab CLI.
-  first_request = requests.values()[0]
-  request_tags = first_request.params.decorations.tags
-  return any("skylab-tool" in tag for tag in request_tags)
 
 
 def _validate_software_dependencies(api, requests):
@@ -696,8 +684,9 @@ def GenTests(api):
                          )
                  })))
 
-  yield (api.test('neither priority and qs_account set') +  #
-         api.properties(CrosTestPlatformProperties(request=Request())))
+  yield (
+      api.test('neither priority and qs_account set') +  #
+      api.properties(CrosTestPlatformProperties(requests={'first': Request()})))
 
   # Request with too large priority should cause build failure.
   yield (api.test('priority out of range') +  #
@@ -739,29 +728,20 @@ def GenTests(api):
                                  )))
                  })))
 
-  # A skylab CLI-launched build without a valid service version should cause build failure.
-  yield (api.test('skylab-tool-launched build with invalid service version') +
-         api.properties(
-             CrosTestPlatformProperties(
-                 requests={
-                     'first':
-                         Request(
-                             params=Request.Params(
-                                 decorations=Request.Params.Decorations(
-                                     tags=["skylab-tool:create-test"])))
-                 })))
+  yield (
+      api.test('skylab-tool-launched build with invalid service version') +
+      api.properties(
+          CrosTestPlatformProperties(requests={'first': Request()}),  #
+          **{
+              '$chromeos/service_version':
+                  ServiceVersionProperties(
+                      version=service_version_pb.ServiceVersion(skylab_tool=1)),
+          }))
 
   yield (
       api.test('skylab-tool-launched build with valid service version') +
       api.properties(
-          CrosTestPlatformProperties(
-              requests={
-                  'first':
-                      Request(
-                          params=Request.Params(
-                              decorations=Request.Params.Decorations(
-                                  tags=["skylab-tool:create-test"])))
-              }),  #
+          CrosTestPlatformProperties(requests={'first': Request()}),  #
           **{
               '$chromeos/service_version':
                   ServiceVersionProperties(

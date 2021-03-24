@@ -15,26 +15,57 @@ from PB.test_platform import service_version
 
 
 def RunSteps(api):
-  api.service_version.validate_skylab_version()
+  api.service_version.validate_service_version_if_exists()
 
 
 def GenTests(api):
+  yield api.test('no service version (no validation performed)',)
+
   yield api.test(
-      'valid skylab version',
+      'empty service version (no validation performed)',
       api.properties(
           **{
               '$chromeos/service_version':
                   ServiceVersionProperties(
-                      version=service_version.ServiceVersion(skylab_tool=2))
+                      version=service_version.ServiceVersion())
           }))
 
   yield api.test(
-      'invalid skylab version',
+      'good crosfleet version, bad skylab version',
       api.properties(
           **{
               '$chromeos/service_version':
                   ServiceVersionProperties(
-                      version=service_version.ServiceVersion(skylab_tool=0))
+                      version=service_version.ServiceVersion(
+                          crosfleet_tool=2, skylab_tool=1))
           }))
 
-  yield api.test('missing skylab version')
+  yield api.test(
+      'bad crosfleet version, good skylab version',
+      api.properties(
+          **{
+              '$chromeos/service_version':
+                  ServiceVersionProperties(
+                      version=service_version.ServiceVersion(
+                          crosfleet_tool=1, skylab_tool=2))
+          }))
+
+  yield api.test(
+      'bad crosfleet version, bad skylab version',
+      api.properties(
+          **{
+              '$chromeos/service_version':
+                  ServiceVersionProperties(
+                      version=service_version.ServiceVersion(
+                          crosfleet_tool=1, skylab_tool=1))
+          }))
+
+  yield api.test(
+      'good crosfleet version, good skylab version',
+      api.properties(
+          **{
+              '$chromeos/service_version':
+                  ServiceVersionProperties(
+                      version=service_version.ServiceVersion(
+                          crosfleet_tool=2, skylab_tool=2))
+          }))

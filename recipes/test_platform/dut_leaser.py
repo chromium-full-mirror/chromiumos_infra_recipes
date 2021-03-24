@@ -30,7 +30,7 @@ _DUT_LEASER_TEST_ID = 'dut-leaser'
 
 def RunSteps(api, properties):
   lease_end_seconds = api.time.time() + 60 * properties.lease_length_minutes
-  api.service_version.validate_skylab_version()
+  api.service_version.validate_service_version_if_exists()
   with api.step.nest('lease DUT for %s hr %s min' %
                      (properties.lease_length_minutes // 60,
                       properties.lease_length_minutes % 60)):
@@ -62,7 +62,7 @@ def GenTests(api):
                           }),
               '$chromeos/service_version':
                   ServiceVersionProperties(
-                      version=service_version.ServiceVersion(skylab_tool=2),
+                      version=service_version.ServiceVersion(crosfleet_tool=2),
                   ),
           }) +  #
       api.properties.environ(
@@ -91,7 +91,11 @@ def GenTests(api):
                               'cros_inventory_service': 'inv-service',
                               'cros_ufs_service': 'ufs-service',
                               'autotest_dir': '/path/to/autotest',
-                          })
+                          }),
+              '$chromeos/service_version':
+                  ServiceVersionProperties(
+                      version=service_version.ServiceVersion(crosfleet_tool=1),
+                  ),
           }) +  #
       api.properties.environ(
           PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',

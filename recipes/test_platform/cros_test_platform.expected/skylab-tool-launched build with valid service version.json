@@ -77,7 +77,7 @@
   },
   {
     "cmd": [],
-    "name": "input validation.service version.validate Skylab tool version",
+    "name": "input validation.service version.validate skylab tool version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

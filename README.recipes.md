@@ -5171,10 +5171,9 @@ Returns:
 
 Module for issuing ServiceVersion commands
 
-&mdash; **def [validate\_skylab\_version](/recipe_modules/service_version/api.py#21)(self):**
+&mdash; **def [validate\_service\_version\_if\_exists](/recipe_modules/service_version/api.py#21)(self):**
 
-Validate that the caller's skylab tool version number is up-to-date.
-    
+Validate the caller's service version if they sent one.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
 [DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -5183,7 +5182,7 @@ Validate that the caller's skylab tool version number is up-to-date.
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#154)(self, test, unit, timeout, name=None, async_suite_run=False):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#147)(self, test, unit, timeout, name=None, async_suite_run=False):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -5212,7 +5211,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#78)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#71)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -5230,7 +5229,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#234)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#227)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -7665,9 +7664,9 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#316)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#304)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#213)(api, requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#201)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -7677,23 +7676,23 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#278)(api, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#266)(api, requests):**
 
 Execute request in the correct backend.
 
 Args:
   requests: ExecutionRequests payload.
 
-&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#338)(api):**
+&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#326)(api):**
 
 &mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#65)(api, properties):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#347)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#335)(api, requests, responses):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#255)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#243)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -7702,13 +7701,13 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#444)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#432)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#512)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#500)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#387)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#375)(api, enumerations, responses):**
 
 &mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#84)(api, properties):**
 

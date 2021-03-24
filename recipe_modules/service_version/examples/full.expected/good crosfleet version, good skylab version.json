@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "validate crosfleet tool version"
+  },
+  {
+    "cmd": [],
+    "name": "validate skylab tool version"
+  },
+  {
+    "name": "$result"
+  }
+]

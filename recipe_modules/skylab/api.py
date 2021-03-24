@@ -59,13 +59,6 @@ class SkylabApi(recipe_api.RecipeApi):
         self._ctp_builder,
         bucket='testplatform',
         properties={
-            # TODO(crbug/1192115): Change how we validate skylab version
-            # so that we don't have to hardcode it here.
-            '$chromeos/service_version': {
-                'version': {
-                    'skylabTool': '3'
-                }
-            },
             'requests': tagged_requests,
         },
         tags=self.m.cros_tags.tags(**bb_tags) if bb_tags else [],

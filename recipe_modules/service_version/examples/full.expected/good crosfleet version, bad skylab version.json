@@ -1,0 +1,20 @@
+[
+  {
+    "cmd": [],
+    "name": "validate crosfleet tool version"
+  },
+  {
+    "cmd": [],
+    "name": "validate skylab tool version",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "this build was launched with an outdated version of the skylab tool; please update via `skylab update` and try again"
+    },
+    "name": "$result"
+  }
+]
