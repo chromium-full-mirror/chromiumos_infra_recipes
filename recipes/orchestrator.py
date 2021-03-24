@@ -9,9 +9,11 @@ All builders run against the same source tree.
 """
 
 DEPS = [
+    'cros_release',
     'orch_menu',
-    'test_util',
 ]
+
+from google.protobuf.json_format import MessageToDict
 
 import json
 
@@ -21,14 +23,19 @@ from recipe_engine import post_process
 def RunSteps(api):
   with api.orch_menu.setup_orchestrator(missing_ok=True) as config:
     if config:
-      DoRunSteps(api, config)
+      DoRunSteps(api)
     return api.orch_menu.create_recipe_result()
 
 
-def DoRunSteps(api, config):
+def DoRunSteps(api):
 
   # Run the child builders.
-  api.orch_menu.plan_and_run_children()
+  extra_child_props = {}
+  # If a release builder, need to pass information about the pinned manifest.
+  if api.orch_menu.is_release_orchestrator:
+    extra_child_props['sync_to_manifest'] = MessageToDict(
+        api.cros_release.releasespec)
+  api.orch_menu.plan_and_run_children(extra_child_props=extra_child_props)
 
   # Run any HW tests.
   api.orch_menu.plan_and_run_tests()
@@ -43,6 +50,12 @@ def GenTests(api):
 
   yield api.orch_menu.test('basic', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess),
+                           with_history=True, collect_builds=data.builds,
+                           with_manifest_refs=True)
+
+  yield api.orch_menu.test('release-orchestrator', data.ctp_normal,
+                           api.post_check(post_process.StatusSuccess),
+                           builder='main-release-orchestrator',
                            with_history=True, collect_builds=data.builds,
                            with_manifest_refs=True)
 

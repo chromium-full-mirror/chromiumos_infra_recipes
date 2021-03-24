@@ -6,14 +6,17 @@
 """Recipe for building images for release."""
 
 DEPS = [
+    'recipe_engine/properties',
     'build_menu',
     'cros_release',
     'test_util',
 ]
 
+from google.protobuf.json_format import MessageToDict
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
-from PB.recipes.chromeos.build_target import BuildTargetProperties
+from PB.recipes.chromeos.build_target import (BuildTargetProperties,
+                                              ManifestLocation)
 
 # TODO(crbug/1099259): Drop our properties.
 # Our properties are processed and used by both the build_menu module, as well
@@ -24,7 +27,8 @@ PROPERTIES = BuildTargetProperties
 
 def RunSteps(api, properties):
   with api.build_menu.configure_builder() as config, \
-      api.build_menu.setup_workspace_and_chroot():
+      api.build_menu.setup_workspace_and_chroot(
+        sync_to_manifest=properties.sync_to_manifest):
     return DoRunSteps(api, config, properties)
 
 
@@ -55,10 +59,21 @@ def DoRunSteps(api, config, _properties):
 
 
 def GenTests(api):
+  manifest_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 
   # Normal release build.
   yield api.build_menu.test(
-      'release-build', api.post_check(post_process.MustRun, 'build images'),
+      'release-build',
+      api.properties(
+          **{
+              'sync_to_manifest':
+                  MessageToDict(
+                      ManifestLocation(
+                          manifest_repo_url=manifest_url, branch='release',
+                          manifest_file='releasespecs/91/13818.0.0.xml'))
+          }), api.post_check(post_process.MustRun,
+                             'sync to specified manifest'),
+      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),

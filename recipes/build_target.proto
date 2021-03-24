@@ -8,6 +8,20 @@ package recipes.chromeos.build_target;
 
 import "chromiumos/common.proto";
 
+message ManifestLocation {
+  // URL of the project the manifest is in, e.g.
+  // https://chrome-internal.googlesource.com/chromeos/manifest-versions
+  string manifest_repo_url = 1;
+
+  // Branch of repository to get manifest from, e.g.
+  // 'main' or 'release'.
+  string branch = 2;
+
+  // Path (relative to repository root) of manifest file, e.g.
+  // releasespecs/90/....xml.
+  string manifest_file = 3;
+}
+
 message BuildTargetProperties {
   // The build target being built.
   chromiumos.BuildTarget build_target = 1;
@@ -17,4 +31,7 @@ message BuildTargetProperties {
 
   // Whether this is an artifact build (calls ArtifactsService/PrepareForBuild.)
   bool artifact_build = 3;
+
+  // Manifest to sync to before building.
+  ManifestLocation sync_to_manifest = 4;
 }

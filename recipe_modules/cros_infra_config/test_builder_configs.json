@@ -1466,6 +1466,53 @@
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
         },
+        "child_specs": [
+          {
+            "name": "eve-main-release",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "kukui-main-release",
+            "collectHandling": "COLLECT"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "eve-main-release",
+        "branch": "main",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
+      }
+    },
+    {
+      "id": {
+        "name": "kukui-main-release",
+        "branch": "main",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
         "child_specs": []
       }
     },

@@ -31,4 +31,10 @@ message FullProperties {
 
   // The name of any process_child builder to run.
   string process_child = 7;
+
+  // Whether or not the test is for a release orchestrator.
+  bool is_release_orchestrator = 8;
+
+  // Whether or not to include extra_props.
+  bool use_extra_props = 9;
 }

@@ -29,6 +29,13 @@ STAGING_INIT_OPTS = dict(repo_branch='main')
 DEFAULT_CHECKOUT_SYNC_OPTS = dict(jobs=8, optimized_fetch=True, timeout=3600,
                                   force_sync=True, retry_fetches=8)
 
+# Manifest repositories that sync_to_pinned_manifest is allowed to pull from.
+ALLOWED_MANIFEST_SOURCES = [
+    'https://chrome-internal.googlesource.com/chromeos/manifest-internal',
+    'https://chrome-internal.googlesource.com/chromeos/manifest-versions',
+    'https://chromium.googlesource.com/chromiumos/manifest',
+]
+
 
 class CrosSourceApi(RecipeApi):
   """A module for CrOS-specific source steps."""
@@ -951,6 +958,47 @@ class CrosSourceApi(RecipeApi):
       return new_commit
 
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
+
+  @exponential_retry(retries=3, condition=retry_timeouts)
+  def sync_to_pinned_manifest(self, manifest_url, manifest_branch,
+                              manifest_path, **kwargs):
+    """Sync a checkout to the specified [pinned] manifest.
+
+      The manifest will be downloaded directly from the source using gitiles.
+
+    Args:
+      manifest_url (string): URL of the project the manifest is in, e.g.
+        https://chrome-internal.googlesource.com/chromeos/manifest-versions
+      manifest_branch (string): Branch of repository to get manifest from,
+        e.g. 'main' or 'releasespecs'.
+      manifest_path (string): Path (relative to repository root) of manifest
+        file, e.g. releasespecs/90/....xml.
+    """
+    with self.m.step.nest('sync to specified manifest'), self.m.context(
+        cwd=self.workspace_path):
+      # Check that the manifest_url is allowed.
+      if manifest_url not in ALLOWED_MANIFEST_SOURCES:
+        raise StepFailure("manifest_url ({}) was not one of {}".format(
+            manifest_url, ",".join(ALLOWED_MANIFEST_SOURCES)))
+
+      testdata = '<manifest></manifest>'
+      step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file(
+          testdata)
+      manifest_xml = self.m.gitiles.download_file(
+          manifest_url, manifest_path, manifest_branch,
+          step_test_data=step_test_data, accept_statuses=[200],
+          timeout=self.test_api.gitiles_timeout_seconds)
+
+      self._sync_target = dict(call='sync_to_manifest',
+                               manifest_url=manifest_url,
+                               manifest_path=manifest_path,
+                               manifest_branch=manifest_branch)
+      sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8)
+      sync_opts.update(kwargs)
+      self.m.repo.sync_manifest(manifest_url, manifest_data=manifest_xml,
+                                **sync_opts)
+      self._pinned_manifest = (
+          self.m.repo.ensure_pinned_manifest(test_data='') or manifest_xml)
 
   @exponential_retry(retries=3, condition=retry_timeouts)
   def sync_to_gitiles_commit(self, gitiles_commit, manifest_url=None, **kwargs):

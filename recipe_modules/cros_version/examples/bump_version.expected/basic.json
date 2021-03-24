@@ -20,6 +20,14 @@
       "@@@STEP_LOG_LINE@builder config@    project: \"chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  child_specs {@@@",
+      "@@@STEP_LOG_LINE@builder config@    name: \"eve-main-release\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    collect_handling: COLLECT@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  child_specs {@@@",
+      "@@@STEP_LOG_LINE@builder config@    name: \"kukui-main-release\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    collect_handling: COLLECT@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
     ]

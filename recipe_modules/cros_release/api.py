@@ -14,6 +14,7 @@ from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_ACCESSORY_USBPD,
                                   IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_GSC_FIRMWARE)
+from PB.recipes.chromeos.build_target import ManifestLocation
 
 MANIFEST_VERSIONS_URL = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 
@@ -58,6 +59,12 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     self._firmware_update = properties.firmware_update
     self._dryrun = properties.dryrun
     self._paygen_dryrun = properties.paygen_dryrun
+    self._releasespec = None
+
+  @property
+  def releasespec(self):
+    """Return the releasespec as created by this module, or None."""
+    return self._releasespec
 
   def create_releasespec(self, specs_dir='releasespecs', branch='release',
                          step_name='create releasespec'):
@@ -81,7 +88,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       tmp_dir = self.m.path.mkdtemp(prefix='manifest-versions')
       with self.m.context(cwd=tmp_dir):
         # Clone manifest-versions repo to current path.
-
         with self.m.step.nest('clone manifest-versions'):
           self.m.git.clone(MANIFEST_VERSIONS_URL, branch=branch,
                            single_branch=True)
@@ -109,6 +115,10 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           self.m.git.add([manifest_file])
           self.m.git.commit(commit_message)
           self.m.git.push('origin', 'HEAD:refs/for/{}%submit'.format(branch))
+
+      self._releasespec = ManifestLocation(
+          manifest_repo_url=MANIFEST_VERSIONS_URL, branch=branch,
+          manifest_file=manifest_file)
 
   def schedule_payload_generation(self):
     """Schedule the generation of release payloads using the context of a build.

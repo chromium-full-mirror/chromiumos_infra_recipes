@@ -23,6 +23,7 @@ DEPS = [
 ]
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
@@ -50,10 +51,19 @@ def RunSteps(api, properties):
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache(is_staging=True)
-      # Either checkout tip of tree, or sync to a snapshot.
+      # Either checkout tip of tree, sync to a snapshot,
+      # or sync to a manifest.
       api.cros_source.checkout_tip_of_tree()
       api.cros_source.sync_to_gitiles_commit(api.buildbucket.gitiles_commit)
+      manifest_internal_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
+      api.cros_source.sync_to_pinned_manifest(manifest_internal_url, 'release',
+                                              'releasespecs/91/13818.0.0.xml')
       _ = api.cros_source.pinned_manifest
+
+      with api.assertions.assertRaises(StepFailure):
+        api.cros_source.sync_to_pinned_manifest(
+            'https://github.com/not-authorized', 'release',
+            'releasespecs/91/13818.0.0.xml')
 
   # At this point should be dirty only for custom manifest cases.
   if properties.expected_snapshot_cas_digest:

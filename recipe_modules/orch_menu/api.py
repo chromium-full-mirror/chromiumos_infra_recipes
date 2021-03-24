@@ -99,6 +99,7 @@ class OrchMenuApi(RecipeApi):
     # Our properties: OrchMenuProperties ($chromeos/orch_menu).
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
+    self._is_release_orchestrator = False
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
@@ -127,6 +128,10 @@ class OrchMenuApi(RecipeApi):
   @property
   def builds_status(self):
     return self._builds_status
+
+  @property
+  def is_release_orchestrator(self):
+    return self._is_release_orchestrator
 
   def _get_manifest_info(self, external=False):
     """Return information about a manifest repo.
@@ -197,6 +202,7 @@ class OrchMenuApi(RecipeApi):
 
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:
+          self._is_release_orchestrator = True
           with self.m.workspace_util.sync_to_commit(
               staging=self.m.cros_infra_config.is_staging):
             self.m.cros_version.bump_version()
@@ -324,7 +330,8 @@ class OrchMenuApi(RecipeApi):
       )
 
   def plan_and_run_children(self, run_step_name=None, results_step_name=None,
-                            check_critical_step_name=None):
+                            check_critical_step_name=None,
+                            extra_child_props=None):
     """Plan, schedule, and run child builders.
 
     Args:
@@ -332,7 +339,8 @@ class OrchMenuApi(RecipeApi):
       results_step_name (str): Name for "check build results" step, or None.
       check_critical_step_name (str): Name for "non-critical build check" step,
         or None.
-
+      extra_child_props (dict): If set, extra properties to append to the child
+        builder requests.
     Returns:
       (BuildsStatus): The current status of the builds.
     """
@@ -345,7 +353,8 @@ class OrchMenuApi(RecipeApi):
                                      self.m.buildbucket.build.tags)):
         return self._builds_status
       completed_builds, collect_after = self._filter_schedule_wait_builds(
-          pres, self._bisect_builder_child_specs())
+          pres, self._bisect_builder_child_specs(),
+          extra_props=extra_child_props)
 
     check_result = self._collect_and_check_build_results(
         completed_builds, results_step_name=results_step_name,
@@ -401,7 +410,8 @@ class OrchMenuApi(RecipeApi):
         for cb in self.m.cros_bisect.get_test_child_builders()
     ] or self.config.orchestrator.child_specs
 
-  def _filter_schedule_wait_builds(self, parent_step, child_specs):
+  def _filter_schedule_wait_builds(self, parent_step, child_specs,
+                                   extra_props=None):
     """Find the builds we need, filter those already started, run, and collect.
 
     Most of the heavy lifting is done in get_build_plan.
@@ -409,6 +419,7 @@ class OrchMenuApi(RecipeApi):
     Args:
       parent_step (Step): the calling step, used for presentation purposes.
       child_specs (list(ChildSpec)): A list of child specs.
+      extra_props (dict): Extra properties to append to child requests.
 
     Returns:
       (list[Build]) List of build results.
@@ -424,9 +435,24 @@ class OrchMenuApi(RecipeApi):
         len(new_build_requests),
         len(completed_builds) + len(existing_builds)))
 
+    log_msg = ''
     if new_build_requests:
+      # Add in extra_props.
+      if extra_props:
+        for i in range(len(new_build_requests)):
+          # Only set the value if it's not set already.
+          # We don't want to clobber anything.
+          for key, val in extra_props.items():
+            if key not in new_build_requests[i].properties:
+              new_build_requests[i].properties[key] = val
+            elif new_build_requests[i].properties[key] != val:
+              log_msg = 'extra_props mismatch: [{}] = {} but had extra_prop value {}'.format(
+                  key, new_build_requests[i].properties[key], val)
+
       # Implement sleepy builds for GoB smoothing: crbug.com/1063143
-      with self.m.step.nest('schedule new builds'):
+      with self.m.step.nest('schedule new builds') as presentation:
+        if log_msg:
+          presentation.step_text = log_msg
         with self.m.buildbucket.with_host(self.m.buildbucket.HOST_PROD):
           for new_build_request in new_build_requests:
             # Request new builds and add to total existing.

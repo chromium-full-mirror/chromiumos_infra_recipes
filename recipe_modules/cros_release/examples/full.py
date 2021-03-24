@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_release',
     'test_util',
@@ -15,6 +16,7 @@ from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProp
 
 def RunSteps(api):
   api.cros_release.create_releasespec()
+  api.assertions.assertIsNotNone(api.cros_release.releasespec)
   api.cros_release.push_and_sign_images()
   api.cros_release.schedule_payload_generation()
 

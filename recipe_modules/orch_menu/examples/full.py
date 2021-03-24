@@ -41,6 +41,9 @@ def RunSteps(api, properties):
       return
     api.assertions.assertIsNotNone(config)
 
+    api.assertions.assertEqual(api.orch_menu.is_release_orchestrator,
+                               properties.is_release_orchestrator)
+
     expected_changes = build.input.gerrit_changes
     # Add any changes from the config.
     expected_changes.extend([
@@ -55,7 +58,20 @@ def RunSteps(api, properties):
         api.cq.active and api.cq.run_mode == api.cq.DRY_RUN,
     )
 
-    builds_status = api.orch_menu.plan_and_run_children()
+    # It's hard to set buildbucket properties for these tests so we
+    # get coverage by creating a dict that returns multiple items with the
+    # same key, knowing that the impl of this module calls dict.items().
+    class FakeDict:
+
+      def items(self):
+        return [('foo', 'bar'), ('foo', 'baz')]
+
+    f = FakeDict()
+
+    if properties.use_extra_props:
+      builds_status = api.orch_menu.plan_and_run_children(extra_child_props=f)
+    else:
+      builds_status = api.orch_menu.plan_and_run_children()
 
     if not builds_status.fatal_failures:
       builds_status = api.orch_menu.plan_and_run_tests()
@@ -96,6 +112,8 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'release-orchestrator', data.ctp_normal,
+      api.properties(
+          FullProperties(is_release_orchestrator=True, use_extra_props=True)),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),

@@ -59,7 +59,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       yield
 
   @contextlib.contextmanager
-  def sync_to_commit(self, commit=None, staging=False, projects=None):
+  def sync_to_commit(self, commit=None, sync_to_manifest=None, staging=False,
+                     projects=None):
     """Sync the source tree.
 
     This context manager syncs the workspace path.
@@ -67,6 +68,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     Args:
       commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
           saved in cros_infra_config.configure_builder().
+      sync_to_manifest (ManifestLocation): If set, will sync to the specified
+        manifest rather than the default manifest location at `commit`.
       staging (bool): Whether this is a staging build.  Default: False.
       projects (List[str]): Project names or paths to return info for. Defaults
         to all projects.
@@ -84,8 +87,13 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
         cache_path_override=cache_path_override, projects=projects)
 
     with self.m.context(cwd=self.m.cros_source.workspace_path):
-      self.m.cros_source.sync_to_gitiles_commit(commit, manifest_url,
-                                                projects=projects)
+      if sync_to_manifest and sync_to_manifest.manifest_repo_url:
+        self.m.cros_source.sync_to_pinned_manifest(
+            sync_to_manifest.manifest_repo_url, sync_to_manifest.branch,
+            sync_to_manifest.manifest_file)
+      else:
+        self.m.cros_source.sync_to_gitiles_commit(commit, manifest_url,
+                                                  projects=projects)
       yield
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',

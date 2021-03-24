@@ -171,7 +171,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
             build.builder.builder))
 
   @contextlib.contextmanager
-  def setup_workspace_and_chroot(self, no_chroot_timeout=False):
+  def setup_workspace_and_chroot(self, no_chroot_timeout=False,
+                                 sync_to_manifest=None):
     """Setup the workspace and chroot for the builder.
 
     This context manager sets up the workspace path.
@@ -179,21 +180,24 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       no_chroot_timeout (bool): whether to allow unlimited time to create the
           chroot.
+      sync_to_manifest (ManifestLocation): if set, sync to this manifest instead
+          of a gitiles commit.
 
     Returns:
       (bool): Whether the build is relevant.
     """
-    with self.setup_workspace():
+    with self.setup_workspace(sync_to_manifest=sync_to_manifest):
       yield self.setup_chroot(no_chroot_timeout)
 
   @contextlib.contextmanager
-  def setup_workspace(self):
+  def setup_workspace(self, sync_to_manifest=None):
     """Setup the workspace for the builder."""
     # If we do not have a config, use an empty one.
     config = self.config_or_default
 
     # Set up source checkouts.
-    with self.m.workspace_util.sync_to_commit(staging=self.is_staging):
+    with self.m.workspace_util.sync_to_commit(
+        staging=self.is_staging, sync_to_manifest=sync_to_manifest):
 
       # Apply any appropriate gerrit changes.
       fail_not_applicable = False
