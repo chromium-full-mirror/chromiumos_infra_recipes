@@ -682,11 +682,7 @@ class RepoApi(recipe_api.RecipeApi):
     #       'manifest branch incorrect: expected {} got {}'.format(
     #           manifest_branch, repo_state.manifest_branch))
 
-    # If the repo state is not STATE_CLEAN or the manifest_url has
-    # changed then the checkout is considered dirty
-    clean = (
-        repo_state.state == RepoState.STATE_CLEAN and
-        repo_state.manifest_url == manifest_url)
+    clean = (repo_state.state == RepoState.STATE_CLEAN)
 
     # Set opt so we know if to clear locks or not during init()
     if init_opts:
