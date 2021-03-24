@@ -31,11 +31,11 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
-    'build_menu',
     'easy',
     'phosphorus',
     'tast_exec',
     'tast_results',
+    'test_util',
 ]
 
 from PB.recipes.chromeos.build_parallels_image import \
@@ -249,8 +249,9 @@ def GenTests(api):
   # Test missing recipe parameters.
   props = good_props.copy()
   del props['build_gs_bucket']
-  yield api.build_menu.test(
+  yield api.test(
       'no-build_gs_bucket',
+      api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
@@ -260,8 +261,9 @@ def GenTests(api):
 
   props = good_props.copy()
   del props['build_gs_path']
-  yield api.build_menu.test(
+  yield api.test(
       'no-build_gs_path',
+      api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
@@ -271,8 +273,9 @@ def GenTests(api):
 
   props = good_props.copy()
   del props['test_image_gs_bucket']
-  yield api.build_menu.test(
+  yield api.test(
       'no-test_image_gs_bucket',
+      api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
@@ -282,8 +285,9 @@ def GenTests(api):
 
   props = good_props.copy()
   del props['test_image_gs_path']
-  yield api.build_menu.test(
+  yield api.test(
       'no-test_image_gs_path',
+      api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
@@ -293,8 +297,9 @@ def GenTests(api):
 
   props = good_props.copy()
   del props['parallels_version']
-  yield api.build_menu.test(
+  yield api.test(
       'no-parallels_version',
+      api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
@@ -332,8 +337,9 @@ def GenTests(api):
   }]''')
 
   # Tast fails
-  yield api.build_menu.test(
+  yield api.test(
       'tast-failure',
+      api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**good_props),
       api.phosphorus.properties(),
       api.post_check(post_process.MustRun, 'provision DUT'),
@@ -369,9 +375,10 @@ def GenTests(api):
   }]''')
 
   # Tast appears to succeed, but not VM image was produced.
-  yield api.build_menu.test(
-      'tast-no-image', api.properties(**good_props),
-      api.phosphorus.properties(),
+  yield api.test(
+      'tast-no-image',
+      api.test_util.test_build(builder='build-parallels-image').build,
+      api.properties(**good_props), api.phosphorus.properties(),
       api.post_check(post_process.MustRun, 'provision DUT'),
       api.step_data('invoke tast.process tast output.read results.json',
                     api.file.read_json(successJson)),
@@ -380,8 +387,10 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'upload image'))
 
   # Success
-  yield api.build_menu.test(
-      'success', api.properties(**good_props), api.phosphorus.properties(),
+  yield api.test(
+      'success',
+      api.test_util.test_build(builder='build-parallels-image').build,
+      api.properties(**good_props), api.phosphorus.properties(),
       api.step_data('invoke tast.process tast output.read results.json',
                     api.file.read_json(successJson)),
       api.post_check(post_process.MustRun, 'provision DUT'),
@@ -400,8 +409,10 @@ def GenTests(api):
   # Test mode
   props = good_props.copy()
   props['test_mode'] = True
-  yield api.build_menu.test(
-      'testmode', api.properties(**props), api.phosphorus.properties(),
+  yield api.test(
+      'testmode',
+      api.test_util.test_build(builder='build-parallels-image').build,
+      api.properties(**props), api.phosphorus.properties(),
       api.post_check(post_process.StatusSuccess),
       api.post_check(lambda check, steps: check(
           GetBuildProperties(steps).get('image_name', '') == 'test_image.zip')),

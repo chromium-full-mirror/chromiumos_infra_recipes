@@ -1,51 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "configure chroot path"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "/preload/chromeos-sdk"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.create preload path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "read builder configs"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "validate properties",
     "~followup_annotations": [
       "@@@STEP_TEXT@all properties good@@@"
@@ -192,7 +147,7 @@
     "cmd": [],
     "name": "invoke tast",
     "~followup_annotations": [
-      "@@@STEP_LINK@tast_logs@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/first_results@@@"
+      "@@@STEP_LINK@tast_logs@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results@@@"
     ]
   },
   {
@@ -309,7 +264,7 @@
     "name": "invoke tast.process tast output.GS upload first_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/first_results@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results@@@"
     ]
   },
   {
@@ -326,7 +281,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/tast-results_tmp_1",
-      "gs://chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/first_results"
+      "gs://chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results"
     ],
     "infra_step": true,
     "name": "invoke tast.process tast output.GS upload first_results.gsutil rsync",
@@ -340,7 +295,7 @@
     "name": "invoke tast.record logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/system_logs@@@"
+      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/system_logs@@@"
     ]
   },
   {
@@ -376,7 +331,7 @@
     "name": "invoke tast.record logs.GS upload system_logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/system_logs@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/system_logs@@@"
     ]
   },
   {
@@ -393,7 +348,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/var-log-dump_tmp_1",
-      "gs://chromeos-parallels-uprev-archive/amd64-generic-postsubmit/8945511751514863184/system_logs"
+      "gs://chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/system_logs"
     ],
     "infra_step": true,
     "name": "invoke tast.record logs.GS upload system_logs.gsutil rsync",

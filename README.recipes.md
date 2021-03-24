@@ -6140,7 +6140,7 @@ behaving as expected.
 &mdash; **def [RunSteps](/recipe_modules/build_menu/tests/properties.py#27)(api, properties):**
 ### *recipes* / [build\_parallels\_image](/recipes/build_parallels_image.py)
 
-[DEPS](/recipes/build_parallels_image.py#27): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_parallels_image.py#27): [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe for building a Parallels image for testing.
 
