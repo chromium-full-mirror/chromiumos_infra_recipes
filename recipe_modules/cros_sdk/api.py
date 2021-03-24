@@ -23,7 +23,8 @@ from PB.chromite.api.sdk import RestoreSnapshotRequest
 
 # Default value for the sdk cache version
 _DEFAULT_SDK_CACHE_VERSION = 1
-_PRELOAD_PATH = '/preload/chromeos-sdk'
+_PRELOAD_PATH = '/preload'
+_PRELOAD_CACHE_PATH = '/preload/chromeos-sdk'
 
 
 class CrosSdkApi(RecipeApi):
@@ -57,14 +58,13 @@ class CrosSdkApi(RecipeApi):
       chroot_parent_path (Path): Parent for chroot directory.
     """
     with self.m.step.nest('configure chroot path'):
-      self._preload_path = _PRELOAD_PATH
-      self.m.file.ensure_directory('create preload path', self._preload_path)
+      self._preload_cache_path = None
+      self._preload_cache_state_file = None
+      self._configure_preload_if_exists()
       self._cache_path = chroot_parent_path.join('cros_chroot')
       self._chroot_path = self._cache_path.join('chroot')
       self._sdk_cache_state = None
       self._sdk_cache_state_file = self._cache_path.join('sdk_cache_state.json')
-      self._preload_cache_state_file = self._preload_path.join(
-          'sdk_cache_state.json')
       self._chrome_root = None
       self._goma_dir = None
       self._goma_client_json = None
@@ -74,6 +74,18 @@ class CrosSdkApi(RecipeApi):
       self._goma_counterz_file = None
       self._use_flags = None
       self._sdk_is_dirty = False
+
+  def _configure_preload_if_exists(self):
+    """Configures the preload cache path if the the preload directory exists."""
+    if self._test_data.enabled and self._test_data.get('preload_path_exists',
+                                                       True):
+      self.m.path.mock_add_paths(_PRELOAD_PATH)
+    if self.m.path.exists(_PRELOAD_PATH):
+      self._preload_cache_path = _PRELOAD_CACHE_PATH
+      self.m.file.ensure_directory('create preload path',
+                                   self._preload_cache_path)
+      self._preload_cache_state_file = self._preload_cache_path.join(
+          'sdk_cache_state.json')
 
   @property
   def long_timeouts(self):
@@ -320,9 +332,10 @@ class CrosSdkApi(RecipeApi):
         presentation.properties['sdk_cache'] = 'cros_chroot'
         return reuse
 
-      # TODO(crbug.com/1167322): Keep until mount_named_cache is no longer
-      # an experiment and all prod builders use an image with the preload SDK.
-      if not self._mount_named_cache:
+      # TODO(crbug.com/1167322): Remove check for self_mount_named_cache when
+      # mount_named_cache is no longer an experiment and all prod builders use
+      # an image with the preload SDK.
+      if not self._preload_cache_path or not self._mount_named_cache:
         presentation.properties['sdk_cache'] = 'none'
         return reuse
 
@@ -340,7 +353,7 @@ class CrosSdkApi(RecipeApi):
       self.m.overlayfs.unmount('cros_chroot', self._cache_path)
       self.m.step('deleting named cache',
                   ['sudo', '-n', 'rm', '-rf', self._cache_path])
-      self.m.overlayfs.mount('cros_chroot', self._preload_path,
+      self.m.overlayfs.mount('cros_chroot', self._preload_cache_path,
                              self._cache_path, persist=True)
       return reuse
 
@@ -483,8 +496,8 @@ class CrosSdkApi(RecipeApi):
       checkout_path (Path): Path to source checkout.  Default:
           cros_source.workspace_path.
     """
-    if self._mount_named_cache:
-      self.m.overlayfs.mount('cros_chroot', self._preload_path,
+    if self._mount_named_cache and self._preload_cache_path:
+      self.m.overlayfs.mount('cros_chroot', self._preload_cache_path,
                              self._cache_path, persist=True)
     self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
     try:
@@ -502,7 +515,7 @@ class CrosSdkApi(RecipeApi):
 
         self.unlink_chroot(checkout_path or self.m.cros_source.workspace_path)
         self.swarming_chmod_chroot()
-        if self._mount_named_cache:
+        if self._mount_named_cache and self._preload_cache_path:
           self.m.overlayfs.unmount('cros_chroot', self._cache_path)
       assert self._test_data.get('is_chroot_usable',
                                  []) == [], ('not all input test data used')

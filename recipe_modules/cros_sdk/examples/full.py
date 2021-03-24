@@ -146,3 +146,8 @@ def GenTests(api):
       api.cros_sdk.is_chroot_usable(['False', 'True']),
       api.expect_exception('AssertionError'),
   )
+
+  yield api.test(
+      'preload-does-not-exists', api.cros_sdk.preload_path_exists(False),
+      api.post_check(post_process.DoesNotRun,
+                     'configure chroot path.create preload path'))

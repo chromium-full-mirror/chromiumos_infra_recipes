@@ -72,3 +72,14 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'check SDK in preload cache.delete SDK in named cache'),
   )
+
+  yield api.test(
+      'no-valid-sdk-mount-preload-does-not-exist',
+      api.cros_sdk.is_chroot_usable([False]),
+      api.cros_sdk.preload_path_exists(False),
+      api.post_check(post_process.PropertyEquals, 'sdk_cache', 'none'),
+      api.post_check(post_process.MustRun, 'check SDK in named cache'),
+      api.post_check(post_process.DoesNotRun, 'check SDK in preload cache'),
+      api.post_check(post_process.DoesNotRun,
+                     'check SDK in preload cache.delete SDK in named cache'),
+  )
