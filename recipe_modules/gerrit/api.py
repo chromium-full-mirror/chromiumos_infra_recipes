@@ -616,7 +616,7 @@ class GerritApi(RecipeApi):
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         self.m.git_cl('issue', [gerrit_change.change])
-        self.m.git_cl('land', [gerrit_change.change])
+        self.m.git_cl('land', ['-f', gerrit_change.change])
 
   def query_changes(self, host, query_params):
     """Query gerrit for the given changes.

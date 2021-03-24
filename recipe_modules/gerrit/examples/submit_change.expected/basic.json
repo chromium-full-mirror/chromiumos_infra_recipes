@@ -59,6 +59,7 @@
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "land",
+      "-f",
       "123"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",

@@ -2440,6 +2440,7 @@
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "land",
+      "-f",
       "1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
