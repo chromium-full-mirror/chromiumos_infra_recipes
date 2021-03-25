@@ -27,14 +27,14 @@ DEPS = [
 ]
 
 BOARD = 'octopus'
-DUMMY_TEST_SUITE = 'dummy'
+SANITY_TEST_SUITE = 'infra_qual'
 TIMEOUT_SECONDS = 30 * 60  # 30 minutes
 
 
 def RunSteps(api):
-  # Send a dummy request with predictable outcome to generate a consistent
-  # signal for # the staging environment.
-  test_unit = _construct_test_unit(api, BOARD, DUMMY_TEST_SUITE)
+  # Send an always-passing suite request to generate a consistent signal for
+  # the staging environment.
+  test_unit = _construct_test_unit(api, BOARD, SANITY_TEST_SUITE)
   test = test_unit.hw_test_cfg.hw_test[0]
   timeout = duration_pb2.Duration(seconds=TIMEOUT_SECONDS)
 
