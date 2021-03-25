@@ -3125,7 +3125,7 @@ Checks if cros_test_runner is enabled for use.
 Returns: bool
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
-[DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS version numbers.
 
@@ -3133,7 +3133,7 @@ API for working with CrOS version numbers.
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#119)(self, versions_branch=CHROMIUMOS_OVERLAY_RUBIK_BRANCH, dry_run=False):**
+&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#119)(self, production=False, dry_run=False):**
 
 Bumps the chromeos version (as represented in chromeos_version.sh)
 and pushes the change to the chromiumos-overlay repo.
@@ -3145,10 +3145,10 @@ The updated version file is currently pushed to the 'rubik-staging'
 branch of the chromiumos-overlays repo.
 
 Args:
-  versions_branch (str): The branch to use in manifest-versions.  Default
-    is currently a staging branch, but will change to 'main'.
-  dry_run (bool): Whether to actually push the commit to
-    manifest-versions.
+  production (bool): Whether to use the checked out overlay. The default
+    is to increment the verison on the 'rubik-staging' branch, having no
+    effect on the source tree.
+  dry_run (bool): Whether the git push is --dry-run.
 
 &mdash; **def [initialize](/recipe_modules/cros_version/api.py#42)(self):**
 

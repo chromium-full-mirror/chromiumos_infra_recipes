@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
     'cros_source',
+    'easy',
     'git',
     'git_footers',
     'src_state',
