@@ -552,7 +552,7 @@ class GitApi(recipe_api.RecipeApi):
     self._step(['bundle', 'create', output_path, revs])
 
   def clone(self, repo_url, target_path=None, reference=None, dissociate=False,
-            branch=None, timeout_sec=None):
+            branch=None, single_branch=False, timeout_sec=None):
     """Clones a Git repo into the current directory.
 
     Args:
@@ -561,7 +561,9 @@ class GitApi(recipe_api.RecipeApi):
         current directory.
       reference (Path): Path to the reference repo.
       dissociate (bool): Whether to dissociate from reference.
-      branch (string): If set, performs a single branch clone.
+      branch (string): If set, performs a single branch clone of that branch.
+      single_branch (bool): If set, performs a single branch clone of the
+         default branch.
       timeout_sec (int): Timeout in seconds.
     """
     if target_path is None:
@@ -574,6 +576,8 @@ class GitApi(recipe_api.RecipeApi):
       args += ['--dissociate']
     if branch:
       args += ['--branch', branch, '--single-branch']
+    elif single_branch:
+      args += ['--single-branch']
     args += [repo_url, target_path]
     self._step(args, timeout=timeout_sec)
 
