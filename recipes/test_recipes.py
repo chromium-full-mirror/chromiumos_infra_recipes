@@ -25,17 +25,15 @@ DEPS = [
     'recipe_analyze',
 ]
 
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict
 import contextlib
-import re
 
-from google.protobuf.json_format import Parse
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
-                                                       builds_service_pb2)
+from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
+    BuildPredicate)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.led.job import job as job_pb2
 
@@ -84,23 +82,15 @@ def _verifier(name, critical=False, always_launch=False):
 
 
 # Default verifiers.
+# Note: infra/config overrides this by specifying the input property.
 DEFAULT_VERIFIERS = [
     _verifier(name='staging-Annealing', critical=True),
     _verifier(name='staging-amd64-generic-postsubmit', critical=True),
     _verifier(name='staging-chromite-postsubmit', critical=True),
     _verifier(name='staging-test-manifest', critical=True),
-    _verifier(name='staging-staging-release-triggerer', critical=True,
+    _verifier(name='staging-release-triggerer', critical=True,
               always_launch=True),
 ]
-
-# Note: infra/config overrides this by specifying the input property.
-DEFAULT_BUILDERS = [
-    'staging-Annealing', 'staging-amd64-generic-postsubmit',
-    'staging-chromite-postsubmit', 'staging-test-manifest'
-]
-
-# Default builders to *ALWAYS* launch.
-DEFAULT_ALWAYS = ['staging-release-triggerer']
 
 # URL for the ChromeOS CI recipes repo.
 RECIPE_REPO_HOST = 'chromium.googlesource.com'
@@ -176,7 +166,7 @@ def _get_last_successful_build(api, builder):
   """
   # Note that buildbucket.search returns results ordered newest-to-oldest.
   successful_builds = api.buildbucket.search(
-      builds_service_pb2.BuildPredicate(
+      BuildPredicate(
           builder={
               'project': PROJECT,
               'bucket': BUCKET,
@@ -260,7 +250,7 @@ def _launch_verifiers(api, verifiers, head):
           tag.value = my_id
 
           # Provide a unique id for testing.
-          if api._test_data.enabled:
+          if api._test_data.enabled:  # pylint: disable=protected-access
             swarm.task_id = 'fake-id-{}'.format(idx + 1)
 
           build.input.properties.update(api.cq.props_for_child_build)
@@ -410,24 +400,12 @@ def _analyze_swarming_results(api, verifiers):
       presentation.status = api.step.FAILURE
 
       raise StepFailure('{} tasks failed'.format(fail_count))
-    else:
-      presentation.step_text = 'all tasks succeeded'
+    presentation.step_text = 'all tasks succeeded'
 
 
 def RunSteps(api, properties):
   api.step.nest('set up')
   verifier_list = properties.verifiers or DEFAULT_VERIFIERS
-  # TODO(crbug/1170835): drop properties.builders and
-  # properties.always_launch_builders and drop this block of code.
-  if True:
-    verifier_list = properties.verifiers or [
-        _verifier(name=x, critical=True)
-        for x in properties.builders or DEFAULT_BUILDERS
-    ] + [
-        _verifier(name=x, critical=True, always_launch=True)
-        for x in properties.always_launch_builders or DEFAULT_ALWAYS
-    ]
-  verifier_list = verifier_list or DEFAULT_VERIFIERS
   verifiers = OrderedDict(((v.name, VerifierRunInfo(v)) for v in verifier_list))
 
   for verifier in verifiers.values():
@@ -615,10 +593,20 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
-          TestRecipesProperties(builders=[
-              'staging-Annealing', 'staging-chromite-postsubmit',
-              'staging-no-size'
-          ])),
+          TestRecipesProperties(verifiers=[{
+              'name': 'staging-Annealing',
+              'critical': True
+          }, {
+              'name': 'staging-chromite-postsubmit',
+              'critical': True
+          }, {
+              'name': 'staging-no-size',
+              'critical': True
+          }, {
+              'name': 'staging-release-triggerer',
+              'always_launch': True,
+              'critical': True
+          }])),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # No builders are skipped
       get_non_skipped_builders_test_data(),
@@ -643,8 +631,17 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
-          TestRecipesProperties(
-              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
+          TestRecipesProperties(verifiers=[{
+              'name': 'staging-Annealing',
+              'critical': True
+          }, {
+              'name': 'staging-chromite-postsubmit',
+              'critical': True
+          }, {
+              'name': 'staging-release-triggerer',
+              'always_launch': True,
+              'critical': True
+          }])),
       two_cl_try_build(project='chromeos', bucket='infra',
                        builder='test-recipes'),
       # Buildbucket search and led get-build results.
@@ -665,8 +662,17 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
-          TestRecipesProperties(
-              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
+          TestRecipesProperties(verifiers=[{
+              'name': 'staging-Annealing',
+              'critical': True
+          }, {
+              'name': 'staging-chromite-postsubmit',
+              'critical': True
+          }, {
+              'name': 'staging-release-triggerer',
+              'always_launch': True,
+              'critical': True
+          }])),
       two_cl_try_build_with_other_repo(project='chromeos', bucket='infra',
                                        builder='test-recipes'),
       # Buildbucket search and led get-build results.
@@ -687,8 +693,17 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
-          TestRecipesProperties(
-              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
+          TestRecipesProperties(verifiers=[{
+              'name': 'staging-Annealing',
+              'critical': True
+          }, {
+              'name': 'staging-chromite-postsubmit',
+              'critical': True
+          }, {
+              'name': 'staging-release-triggerer',
+              'always_launch': True,
+              'critical': True
+          }])),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # The annealing builder is skipped
       get_non_skipped_builders_test_data(skipped_builders=['staging-Annealing']
@@ -707,7 +722,15 @@ def GenTests(api):
       'failed_swarming_task',
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify one builder to run.
-      api.properties(TestRecipesProperties(builders=['staging-Annealing'])),
+      api.properties(
+          TestRecipesProperties(verifiers=[{
+              'name': 'staging-Annealing',
+              'critical': True
+          }, {
+              'name': 'staging-release-triggerer',
+              'always_launch': True,
+              'critical': True
+          }])),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # No builders are skipped
       get_non_skipped_builders_test_data(),
@@ -728,8 +751,17 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
-          TestRecipesProperties(
-              builders=['staging-Annealing', 'staging-chromite-postsubmit'])),
+          TestRecipesProperties(verifiers=[{
+              'name': 'staging-Annealing',
+              'critical': True
+          }, {
+              'name': 'staging-chromite-postsubmit',
+              'critical': True
+          }, {
+              'name': 'staging-release-triggerer',
+              'always_launch': True,
+              'critical': True
+          }])),
       # The skipped builder isn't part of the specified builders.
       get_non_skipped_builders_test_data(skipped_builders=['other-builder']),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
@@ -745,5 +777,8 @@ def GenTests(api):
 
   yield api.test(
       'invalid_builders', api.cq(run_mode=api.cq.FULL_RUN),
-      api.properties(TestRecipesProperties(builders=['production-builder'])),
-      api.expect_exception('ValueError'))
+      api.properties(
+          TestRecipesProperties(verifiers=[{
+              'name': 'production-builder',
+              'critical': True
+          }])), api.expect_exception('ValueError'))

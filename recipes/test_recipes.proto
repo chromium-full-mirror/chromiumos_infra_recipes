@@ -18,14 +18,6 @@ message TestRecipesProperties {
     bool always_launch = 3;
   }
 
-  // A list of builders to test the CL on. Only builders in the
-  // staging environment should be used.  These builders will only be launched
-  // if the CL modifies the recipe, or one of its dependencies.
-  repeated string builders = 1;
-
-  // A list of builders to always test the CL with.
-  repeated string always_launch_builders = 2;
-
   // Verifier used to test recipes.  If set, this overrides builders and
   // always_launch_builders.
   repeated Verifier verifiers = 3;
