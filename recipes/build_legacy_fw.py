@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'build_menu',
+    'cros_release',
     'cros_sdk',
     'cros_version',
     'easy',
@@ -72,6 +73,7 @@ class FirmwareBuilder(object):
     self._config = None
     self._bcs_version = None
     self._firmware_version = None
+    self._is_staging = True
 
   def __call__(self, name, sdk_args=(), cmd=(), **kwargs):
     """Run cros_sdk with the given command"""
@@ -90,6 +92,7 @@ class FirmwareBuilder(object):
     """Configure the builder"""
     # If we do not have a gitiles_commit from buildbucket, and input properties
     # has manifest_branch, use that branch of the internal manifest.
+    self._is_staging = self.m.build_menu.is_staging
     commit = self.m.src_state.gitiles_commit
     if not commit.project and self.properties.manifest_branch:
       commit = self.m.src_state.internal_manifest.as_gitiles_commit_proto
@@ -99,13 +102,21 @@ class FirmwareBuilder(object):
                                              disable_sdk=True) as config:
       self._config = config
       with self.m.build_menu.setup_workspace(), \
-          self.m.context(cwd=self.m.src_state.workspace_path), \
-          self.m.depot_tools.on_path(), self._setup_chroot():
+          self.m.context(cwd=self.m.src_state.workspace_path):
         if self.properties.bump_version:
-          # TODO(b/182613582) pass 'main' before going to production.
-          self.m.cros_version.bump_version()
+          # Use 'rubik-staging' if we are on staging.  manifest-versions has not
+          # migrated to main yet, so we pass create_releasespec branch=None to
+          # use the default branch, whatever it is.
+          self.m.cros_version.bump_version(production=True,
+                                           dry_run=self._is_staging)
+          self.m.cros_release.create_releasespec(
+              'buildspecs',
+              branch='rubik-staging' if self._is_staging else None,
+              step_name='create buildspec')
+
         self._bcs_version = self.m.cros_version.read_workspace_version()
-        yield
+        with self.m.depot_tools.on_path(), self._setup_chroot():
+          yield
 
   @contextmanager
   def _setup_chroot(self):
