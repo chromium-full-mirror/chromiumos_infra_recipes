@@ -95,6 +95,13 @@ class CrosSourceApi(RecipeApi):
     return self._manifest_branch
 
   @property
+  def manifest_push(self):
+    """Returns the manifest branch to push changes to."""
+    ret = self._manifest_branch
+    ret = 'main' if ret in ('snapshot', '') else ret
+    return ret
+
+  @property
   def is_source_dirty(self):
     """Returns whether the source is dirty.
 
