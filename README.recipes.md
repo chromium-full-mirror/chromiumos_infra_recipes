@@ -2220,20 +2220,27 @@ Args:
 
 An API for providing release related operations (e.g. paygen, signing).
 
-#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#64)(self):**
+&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#62)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec'):**
 
 Create a pinned manifest and upload to manifest-versions/releasespecs.
+
+Args:
+  specs_dir (str): Relative path in manifest-versions in which to place the
+    pinned manifest.
+  branch (str): The branch of manifest-versions that will be used, or None
+    to use the default branch.
+  step_name (str): The step name to use.
 
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&emsp; **@staticmethod**<br>&mdash; **def [massage\_channels](/recipe_modules/cros_release/api.py#45)(channels):**
+&emsp; **@staticmethod**<br>&mdash; **def [massage\_channels](/recipe_modules/cros_release/api.py#43)(channels):**
 
 Takes an array of common_pb2.Channel & validates & strings them.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#144)(self):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#152)(self):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2242,7 +2249,7 @@ for signing. The actual execution of these procedures is handled in the
 underlying script, chromite/scripts/push_image.py. Must be used in the
 context of a build.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#105)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#113)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 
