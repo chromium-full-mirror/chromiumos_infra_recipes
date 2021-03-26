@@ -15,7 +15,7 @@ message PaygenOrchestratorProperties {
 
   // The version the builder\caller wants payloads to update to.
   // e.g. "13020.54.0".
-  string target_chrome_os_version = 2;
+  string target_chromeos_version = 2;
 
   // The delta types to generate for, empty for all.
   repeated chromiumos.DeltaType delta_types = 3;

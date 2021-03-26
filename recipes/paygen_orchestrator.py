@@ -106,7 +106,7 @@ def RunSteps(api, properties):
         found_arts = api.cros_storage.discover_gs_artifacts(
             path.join('gs://' + properties.src_bucket, long_chan_name,
                       properties.builder_name,
-                      properties.target_chrome_os_version),
+                      properties.target_chromeos_version),
             parse_types=api.cros_storage.image_types)
         target_artifacts.extend([x.to_proto() for x in found_arts])
 
@@ -169,11 +169,11 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def get_props(delta_types=None, builder_name='coral',
-                target_chrome_os_version='13505.15.0', channels=None):
+                target_chromeos_version='13505.15.0', channels=None):
     delta_types = delta_types or ['OMAHA']
     channels = channels or ['DEV', 'BETA']
     props = api.properties(delta_types=delta_types, builder_name=builder_name,
-                           target_chrome_os_version=target_chrome_os_version,
+                           target_chromeos_version=target_chromeos_version,
                            channels=channels)
     return props
 
