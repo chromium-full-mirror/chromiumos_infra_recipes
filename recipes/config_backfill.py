@@ -265,8 +265,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_backfill')
 
   # Update the repo atomically
   with api.context(cwd=dest_repo_path):
-    api.git_txn.update_ref(properties.dest_repo, _merge_configs,
-                           ref=api.git.remote_head())
+    api.git_txn.update_ref(_merge_configs)
 
 
 def GenTests(api):

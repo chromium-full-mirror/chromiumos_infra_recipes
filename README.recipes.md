@@ -4224,23 +4224,20 @@ Returns:
   list[str]: The position number for the ref.
 ### *recipe_modules* / [git\_txn](/recipe_modules/git_txn)
 
-[DEPS](/recipe_modules/git_txn/__init__.py#5): [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git_txn/__init__.py#5): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for updating remote git repositories transactionally.
 
-#### **class [GitTxnApi](/recipe_modules/git_txn/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitTxnApi](/recipe_modules/git_txn/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for executing git transactions.
 
-&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#25)(self, remote, update_callback, ref=None, retries=3, automerge=False):**
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#18)(self, update_callback, step_name='git transaction'):**
 
 Transactionally update a remote git repository ref.
 
 |update_callback| will be called and should update the checked out HEAD by
-e.g. committing a new change. Then this new HEAD will be pushed back to the
-|remote| |ref|. If this push fails because the remote ref was modified in
-the meantime, the new ref is fetched and checked out, and the process will
-repeat up to |retries| times.
+e.g. committing a new change.
 
 The common case is that there's no issue updating the ref, so we don't do
 a fetch and checkout before attempting to update.  This means that
@@ -4250,23 +4247,14 @@ ref.
 This step expects to be run with `cwd` inside a git repo.
 
 Args:
-  remote (str): The remote repository to update.
   update_callback (callable): The callback function that will update the
       local repo's HEAD. The callback is passed no arguments. If the
       callback returns False the update will be cancelled but succeed.
-  retries (int): Number of update attempts to make before failing.
-  automerge (bool): Whether to use Gerrit's "auto-merge" feature.
-  ref (str): The remote ref to update. If it does not start with 'refs/' it
-      will be treated as a branch name. If not specified, the HEAD ref for
-      the remote of the current repo project will be used.
 
 Returns:
   bool: True if the transaction succeeded, false if it explicitly aborts.
 
-Raises:
-  TooManyAttempts: if the number of attempts exceeds |retries|.
-
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#92)(self, remote, message, dest, data, ref=None, \*\*kwargs):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#54)(self, remote, message, dest, data, ref=None, \*\*kwargs):**
 
 Transactionally update a file in a remote git repository ref.
 
@@ -6438,7 +6426,7 @@ action to copy these public configs to a public repo.
 Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 
-&mdash; **def [RunSteps](/recipes/config_postsubmit.py#394)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_postsubmit.py#386)(api, properties):**
 ### *recipes* / [cros\_artifacts:examples/download\_artifacts](/recipe_modules/cros_artifacts/examples/download_artifacts.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/download_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

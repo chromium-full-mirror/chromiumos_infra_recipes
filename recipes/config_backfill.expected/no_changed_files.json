@@ -85,18 +85,6 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "ls-remote",
-      "--symref",
-      ".",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "infra_step": true,
-    "name": "git ls-remote"
-  },
-  {
     "cmd": [],
     "name": "git transaction",
     "~followup_annotations": [

@@ -153,18 +153,6 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "ls-remote",
-      "--symref",
-      ".",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/dest",
-    "infra_step": true,
-    "name": "git ls-remote"
-  },
-  {
     "cmd": [],
     "name": "git transaction"
   },
@@ -453,19 +441,223 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "git transaction.create gerrit change for src/project",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "src/project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "git transaction.create gerrit change for src/project.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@src/project|src/src/project|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--send-mail"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/project",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "git transaction.create gerrit change for src/project.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/project",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "git transaction.create gerrit change for src/project.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "git transaction.set labels on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Bot-Commit+1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/project/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "src/project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "git transaction.set labels on CL 1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@src/project|src/src/project|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/project",
+    "infra_step": true,
+    "name": "git transaction.set labels on CL 1.git rebase",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "push",
-      "--porcelain",
-      "https://example.com/some/project/repo",
-      "HEAD:refs/heads/main"
+      "cros",
+      "HEAD:refs/for/main%l=Bot-Commit+1"
     ],
-    "cwd": "[START_DIR]/dest",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/project",
     "infra_step": true,
-    "name": "git transaction.git push",
+    "name": "git transaction.set labels on CL 1.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "git transaction.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/project/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "src/project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "git transaction.submit CL 1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@src/project|src/src/project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/project",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "git transaction.submit CL 1.git_cl issue",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "land",
+      "-f",
+      "1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/src/project",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "git transaction.submit CL 1.git_cl land",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

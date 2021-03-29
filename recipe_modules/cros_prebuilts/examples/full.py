@@ -27,7 +27,7 @@ from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import (
     FullProperties)
 
 from recipe_engine.post_process import MustRun, DoesNotRun
-
+from recipe_engine import post_process
 PROPERTIES = FullProperties
 
 
@@ -126,18 +126,10 @@ def GenTests(api):
           'upload prebuilts.update binhost conf file.'
           'git transaction.diff check.git diff', retcode=1)
       ret += api.post_check(
-          verify_branch,
-          'staging' if use_staging else api.src_state.default_branch)
+          post_process.MustRunRE,
+          r'upload prebuilts.update binhost conf file.git transaction.submit CL.*'
+      )
     return ret
-
-  def verify_branch(check, steps, branch):
-    expected = [
-        'git', 'push', '--porcelain', 'cros',
-        'HEAD:refs/for/refs/heads/{}%notify=NONE,submit'.format(branch)
-    ]
-    return check(steps[
-        'upload prebuilts.update binhost conf file.git transaction.git push']
-                 .cmd == expected)
 
   for private in False, True:
     for use_staging in False, True:
