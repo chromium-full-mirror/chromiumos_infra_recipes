@@ -66,7 +66,7 @@ done
 git_prod=$(cipd_version_to_githash "prod")
 
 if [[ -z "${cipd_target}" ]]; then
-  git_target="$(cipd_version_to_githash "refs/heads/master")"
+  git_target="$(cipd_version_to_githash "refs/heads/main")"
   cipd_target=$(cipd_ref_to_instance "git_revision:${git_target}")
 else
   git_target=$(cipd_version_to_githash "${cipd_target}")
