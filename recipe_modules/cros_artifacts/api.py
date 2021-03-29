@@ -781,5 +781,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         profile=profile,
         sign_types=sign_types,
         dest_bucket=dest_bucket,
+        is_staging=self.m.cros_infra_config.is_staging,
     )
     self.m.cros_build_api.ImageService.PushImage(request, test_output_data='{}')
