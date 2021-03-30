@@ -306,7 +306,8 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
     ebuilds_by_repository = collections.defaultdict(list)
     for ebuild in response.modified_ebuilds:
       with api.context(cwd=api.path.abs_to_path(api.path.dirname(ebuild.path))):
-        repository = api.git.repository_root()
+        repository = api.git.repository_root(step_name='repo for {}'.format(
+            api.path.relpath(ebuild.path, api.src_state.workspace_path)))
         ebuilds_by_repository[repository].append(ebuild.path)
 
     # Treat the manifest changes as if they were an uprev
@@ -321,9 +322,15 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
           with api.step.nest('commit uprev changes in {}'.format(repo_name)):
             api.git.add(ebuilds)
             if repository in manifest_diffs:
-              message = 'Syncing with internal manifest'
+              subject = 'Syncing with internal manifest'
             else:
-              message = 'Marking set of ebuilds as stable'
+              subject = 'Marking set of ebuilds as stable'
+            message = '\n'.join([
+                subject,
+                '',
+                'Cr-Build-Url: {}'.format(api.buildbucket.build_url()),
+                'Cr-Automation-Id: annealing/push_uprevs',
+            ]) + '\n'
             api.git.commit(message, files=ebuilds)
 
           # Filter to ebuilds that exist. In particular, we need to exclude

@@ -935,7 +935,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "uprev packages.git rev-parse",
+    "name": "uprev packages.repo for src/overlay/foo.ebuild",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -948,7 +948,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
-    "name": "uprev packages.git rev-parse (2)",
+    "name": "uprev packages.repo for src/private-overlay/bar.ebuild",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -997,7 +997,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Marking set of ebuilds as stable",
+      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: annealing/push_uprevs\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
@@ -1006,6 +1006,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: annealing/push_uprevs@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
@@ -1102,7 +1105,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Marking set of ebuilds as stable",
+      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: annealing/push_uprevs\n",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
@@ -1111,6 +1114,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: annealing/push_uprevs@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
   },
