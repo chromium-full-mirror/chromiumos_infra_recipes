@@ -210,18 +210,25 @@ class PhosphorusCommand(recipe_api.RecipeApi):
                             seal_results_dir=seal_results_dir)
       self._run('save', request, SaveRequest)
 
-  def build_parallels_image_provision(self, image_gs_path):
+  def build_parallels_image_provision(self, image_gs_path,
+                                      max_duration_sec=2 * 60 * 60):
     """Provisions a DUT with the given Chrome OS image and Parallels DLC.
 
     Args:
       image_gs_path (str): The Google Storage path (prefix) where images are
-      located. For example,
-      'gs://chromeos-image-archive/eve-release/R86-13380.0.0'.
+        located. For example,
+        'gs://chromeos-image-archive/eve-release/R86-13380.0.0'.
+      max_duration_sec (int): Maximum duration of the provision operation, in
+        seconds. Defaults to two hours.
     """
     with self.m.context(infra_steps=True):
       request = ParallelsProvisionRequest(
           config=self._build_parallels_image_config(),
           dut_name=self._dut_hostname, image_gs_path=image_gs_path)
+
+      request.deadline.seconds = (
+          self.m.time.ms_since_epoch() / 1000 + max_duration_sec)
+
       self._run('build-parallels-image-provision', request,
                 ParallelsProvisionRequest)
 

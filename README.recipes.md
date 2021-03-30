@@ -4771,22 +4771,24 @@ Args:
   * mount_path (Path): Path to unmount the OverlayFS from.
 ### *recipe_modules* / [phosphorus](/recipe_modules/phosphorus)
 
-[DEPS](/recipe_modules/phosphorus/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/phosphorus/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#213)(self, image_gs_path):**
+&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#213)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
 
 Provisions a DUT with the given Chrome OS image and Parallels DLC.
 
 Args:
   image_gs_path (str): The Google Storage path (prefix) where images are
-  located. For example,
-  'gs://chromeos-image-archive/eve-release/R86-13380.0.0'.
+    located. For example,
+    'gs://chromeos-image-archive/eve-release/R86-13380.0.0'.
+  max_duration_sec (int): Maximum duration of the provision operation, in
+    seconds. Defaults to two hours.
 
-&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#228)(self, dut_state):**
+&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#235)(self, dut_state):**
 
 Saves the given DUT state in UFS.
 
@@ -4826,7 +4828,7 @@ Run a prejob or a provision via `prejob` subcommand.
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#259)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#266)(self):**
 
 "Return the DUT hostname.
 
@@ -8057,7 +8059,7 @@ Args:
 Returns:
   BuildPath: where the build artifacts were uploaded.
 
-&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#185)(api, properties, artifacts_path, parallels_version):**
+&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#189)(api, properties, artifacts_path, parallels_version):**
 
 Builds a new VM image for testing.
 
@@ -8068,7 +8070,7 @@ Args:
 Returns:
   dict: The details of the new test image.
 
-&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#250)(api, properties, package, new_version_pin):**
+&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#254)(api, properties, package, new_version_pin):**
 
 Commits and uploads the uprev of the version-pin file.
 
@@ -8077,18 +8079,18 @@ Args:
       commit message.
   new_version_pin (VersionPin): the new version pin data.
 
-&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#292)(api, properties):**
+&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#296)(api, properties):**
 
 Gets the latest version of Parallels from the upstream bucket.
 
 Returns:
   string: the latest upstream version of Parallels.
 
-&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#373)(api, properties):**
+&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#377)(api, properties):**
 
 Gets the path of the VERSION-PIN file.
 
-&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#332)(api, properties):**
+&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#336)(api, properties):**
 
 Reads and returns the content of the VERSION-PIN file.
 
@@ -8098,7 +8100,7 @@ have been checked out.
 Returns:
   VersionPin: the pinned version data.
 
-&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#378)(version, previous_version):**
+&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#382)(version, previous_version):**
 
 Returns if version occurs logically after pervious_version.
 
@@ -8108,7 +8110,7 @@ Args:
   version (str): The version to compare.
   previous_version (str): The previous version to compare with.
 
-&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#355)(api, properties, new_version):**
+&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#359)(api, properties, new_version):**
 
 Sets the content of the VERSION-PIN file.
 
@@ -8118,7 +8120,7 @@ have been checked out.
 Args:
   new_version (VersionPin): the new version pin data.
 
-&mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#148)(api, properties, package, to_version):**
+&mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#152)(api, properties, package, to_version):**
 
 Uprevs the Parallels package to the given version.
 

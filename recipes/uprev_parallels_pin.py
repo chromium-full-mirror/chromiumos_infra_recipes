@@ -114,9 +114,13 @@ def build_os_with_uprev(api, properties, package, upstream_version):
 
       version_pin = get_version_pin(api, properties)
       if not is_version_after(upstream_version, version_pin.version):
-        presentation.step_text = 'build not required, Parallels already up to'\
-          ' date.'
-        return None
+        if api.build_menu.is_staging:
+          presentation.step_text = 'build not required, but forcing anyway to'\
+            ' test recipe in staging'
+        else:
+          presentation.step_text = 'build not required, Parallels already up'\
+            ' to date.'
+          return None
 
       uprev_package(api, properties, package, upstream_version)
 
@@ -199,7 +203,7 @@ def build_vm_image(api, properties, artifacts_path, parallels_version):
 
     bucket = 'infra'
     builder = 'build-parallels-image'
-    if api.build_menu.is_staging:  # pragma: nocover
+    if api.build_menu.is_staging:
       bucket = 'staging'
       builder = 'staging-build-parallels-image'
 
@@ -592,3 +596,47 @@ def GenTests(api):
       api.post_check(post_process.MustRun, _IMAGE_STEP_NAME),
       api.post_check(post_process.MustRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusSuccess))
+
+  # Staging success
+  staging_build_success = build_pb2.Build(
+      id=8922054662172514000, number=1234, builder=builder_pb2.BuilderID(
+          project='chromeos',
+          bucket='staging',
+          builder='staging-build-parallels-image',
+      ), created_by='user:luci-scheduler@appspot.gserviceaccount.com',
+      create_time=timestamp_pb2.Timestamp(seconds=1527292217),
+      status=common_pb2.SUCCESS, output=build_pb2.Build.Output())
+  staging_build_success.output.properties.update({
+      '$recipe_engine/path': {
+          'other': 'properties'
+      },
+      'image_name': 'pre_pluginvm_image_1.2.3.4_20201127.zip',
+      'image_size': 9876543210,
+      'image_sha256': 'aabbccddeeff0011223344556677889900',
+  })
+  yield api.build_menu.test(
+      'uprev-success-staging', api.properties(**good_props),
+      # Simulate no uprev required.
+      api.step_data(
+          _BUILD_STEP_NAME + '.read pinned version file.VERSION-PIN',
+          api.file.read_json({
+              'version': '1.0.1.1098',
+              'test_image': {
+                  'opaque': 'data'
+              }
+          })),
+      api.git.diff_check(True),
+      api.buildbucket.simulated_collect_output(
+          [staging_build_success],
+          step_name=_IMAGE_STEP_NAME\
+              + '.run staging-build-parallels-image.collect'),
+      api.post_check(post_process.MustRun, _BUILD_STEP_NAME + '.build images'),
+      api.post_check(post_process.MustRun,
+                     _BUILD_STEP_NAME + '.run ebuild tests'),
+      api.post_check(post_process.MustRun,
+                     _BUILD_STEP_NAME + '.upload artifacts'),
+      api.post_check(post_process.MustRun, _IMAGE_STEP_NAME),
+      api.post_check(post_process.MustRun, 'update VERSION-PIN'),
+      api.post_check(post_process.StatusSuccess),
+      # Leverage test data for existing postsubmit builder.
+      builder='amd64-generic-postsubmit', bucket='staging')

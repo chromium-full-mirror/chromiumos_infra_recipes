@@ -120,6 +120,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T14:53:21Z\", @@@",
       "@@@STEP_LOG_LINE@request@  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
@@ -138,7 +139,7 @@
     ],
     "infra_step": true,
     "name": "provision DUT.call `phosphorus` (2).build-parallels-image-provision",
-    "stdin": "{\n  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
+    "stdin": "{\n  \"deadline\": \"2012-05-14T14:53:21Z\", \n  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
