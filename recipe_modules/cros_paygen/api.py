@@ -487,7 +487,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             continue  # pragma: nocover
           reqs.append(
               GenerationRequest(src_unsigned_image=src, tgt_unsigned_image=tgt,
-                                bucket=bucket, verify=verify, keyset=keyset,
+                                bucket=bucket, verify=verify, keyset='',
                                 dryrun=dryrun))
         elif isinstance(src, DLCImage_pb2):
           if not self.m.cros_storage.DLCImage.compatible(tgt, src):
@@ -524,7 +524,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           continue  #  pragma: nocover
         reqs.append(
             GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
-                              bucket=bucket, verify=verify, keyset=keyset,
+                              bucket=bucket, verify=verify, keyset='',
                               dryrun=dryrun))
       elif isinstance(tgt, DLCImage_pb2):
         reqs.append(

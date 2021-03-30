@@ -129,7 +129,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           tgt_unsigned_image=UNSIGNED_TGT,
           bucket='b',
           verify=True,
-          keyset='mp-v2',
+          keyset='',
           dryrun=False,
       )
   ]
@@ -162,7 +162,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           tgt_unsigned_image=UNSIGNED_TGT,
           bucket='b',
           verify=True,
-          keyset='mp-v2',
+          keyset='',
           dryrun=True,
       )
   ]
