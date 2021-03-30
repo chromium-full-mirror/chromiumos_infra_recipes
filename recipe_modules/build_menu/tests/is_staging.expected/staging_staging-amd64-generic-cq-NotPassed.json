@@ -50,7 +50,6 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"staging-amd64-generic-cq\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  branch: \"main\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: CQ@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",
