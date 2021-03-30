@@ -50,8 +50,11 @@ class GitApi(recipe_api.RecipeApi):
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, ['git'] + args, **kwargs)
 
-  def repository_root(self):
+  def repository_root(self, step_name=None):
     """Return the git repository root for the current directory.
+
+    Args:
+      step_name (str): the step name to use instead of the default.
 
     Returns:
       (str): The path to the git repository.
@@ -60,6 +63,7 @@ class GitApi(recipe_api.RecipeApi):
         ['rev-parse', '--show-toplevel'],
         stdout=self.m.raw_io.output(),
         test_stdout=str(self.m.context.cwd),
+        name=step_name,
     ).stdout.strip()
 
   def add(self, paths):
