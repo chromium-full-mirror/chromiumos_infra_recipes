@@ -49,19 +49,22 @@ class SkylabApi(recipe_api.RecipeApi):
         objects.
       swarming_parent_run_id (str): Swarming run id to with which to associate
         the child build request.
-      bb_tags (dict): Dict mapping keys to values.  If the value is a list,
-        multiple tags for the same key will be created.
+      bb_tags (dict or list[StringPair]): If of the type list[StringPair], will
+        be used directly as a bb_tag list. If a dict, used to map keys to values.
+        If the value is a list, multiple tags for the same key will be created.
 
     Returns:
       The scheduled buildbucket build.
     """
+    bb_tags = self.m.cros_tags.tags(
+        **bb_tags) if isinstance(bb_tags, dict) else bb_tags
     bb_request = self.m.buildbucket.schedule_request(
         self._ctp_builder,
         bucket='testplatform',
         properties={
             'requests': tagged_requests,
         },
-        tags=self.m.cros_tags.tags(**bb_tags) if bb_tags else [],
+        tags=bb_tags if bb_tags else [],
         gerrit_changes=[],
         swarming_parent_run_id=swarming_parent_run_id,
         # Disable inheriting the version from the parent builder.
@@ -113,9 +116,8 @@ class SkylabApi(recipe_api.RecipeApi):
         self._enable_test_retries(req)
         reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
 
-      # We're sending this only to add a link back to the parent. This will not
-      # cause cascading termination. For that see swarming_parent_run_id.
-      bb_tags = {'parent_buildbucket_id': str(self.m.buildbucket.build.id)}
+      bb_tags = self.m.cros_tags.make_schedule_tags(
+          self.m.cros_infra_config.gitiles_commit, inherit_buildsets=True)
       swarming_parent_run_id = None if async_suite_run else self.m.swarming.task_id
       build = self.schedule_ctp_requests(
           tagged_requests=reqs, swarming_parent_run_id=swarming_parent_run_id,
