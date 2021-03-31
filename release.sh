@@ -17,7 +17,41 @@ bundle=infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes
 function usage() {
   echo "Usage: $0 [-i instanceid] [-f]" >&2
   echo "-f bypasses the prompt" >&2
+  echo "-s skips staging checks" >&2
   exit 1
+}
+
+function check_bb_auth() {
+  if ! bb auth-info > /dev/null; then
+    bb auth-login
+  fi
+}
+
+function check_staging() {
+  check_bb_auth
+  checks=("staging-Annealing" "staging-StarDoctor" "staging-DutTracker"
+          "staging-amd64-generic-postsubmit" "staging-RoboCrop"
+          "staging-chrome-pupr-generator")
+  baddies=()
+  echo "Looking for 5 consecutive successes in staging."
+  for name in "${checks[@]}"; do
+    printf "Checking the status of: %s --> " "${name}"
+    statuses=$(bb ls -n 5 -json "chromeos/staging/${name}" | \
+      jq -r 'select(.status!="STARTED" and .status!="CANCELED" and .status!="SCHEDULED") | .status' | \
+      sort | uniq)
+    # These ops first give statuses good printing, then good matching.
+    statuses=$(echo "${statuses}" | tr '\n' ' ')
+    echo "${statuses}"
+    statuses=$(echo "${statuses}" | tr -d ' ')
+    if [[ ${statuses} != "SUCCESS" ]]; then
+      baddies+=("${name}")
+    fi
+  done
+  if [[ ${#baddies[@]} -ne 0 ]]; then
+    echo "Please address the failures in the above builders."
+    echo "When you're certain staging is OK, you may use -s to continue."
+    exit 1
+  fi
 }
 
 # Get the git revision associated with a cipd version (dereference it).
@@ -54,14 +88,18 @@ cipd_target=""
 # Update to remote.
 git -C "${infra_recipes_root}" remote update > /dev/null
 
-while getopts "fi:" opt; do
+while getopts "fi:s" opt; do
   case $opt in
     f) prompt="no";;
     i) cipd_target=$OPTARG;;
+    s) skip_check="true";;
     *) usage;;
   esac
 done
 
+if [[ ! ${skip_check} == "true" ]]; then
+  check_staging
+fi
 
 git_prod=$(cipd_version_to_githash "prod")
 
