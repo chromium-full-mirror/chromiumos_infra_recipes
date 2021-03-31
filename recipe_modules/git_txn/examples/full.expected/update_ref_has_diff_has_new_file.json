@@ -27,10 +27,7 @@
   },
   {
     "cmd": [],
-    "name": "git transaction (3)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
+    "name": "git transaction (3)"
   },
   {
     "cmd": [
@@ -90,15 +87,62 @@
   {
     "cmd": [
       "git",
-      "diff",
-      "--quiet",
-      "HEAD",
+      "add",
       "file/path.txt"
     ],
     "infra_step": true,
-    "name": "git transaction (3).diff check.git diff",
+    "name": "git transaction (3).git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Update file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "git transaction (3).write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update file@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1",
+      "--",
+      "file/path.txt"
+    ],
+    "infra_step": true,
+    "name": "git transaction (3).git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "remote",
+      "HEAD:refs/heads/ref"
+    ],
+    "infra_step": true,
+    "name": "git transaction (3).git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

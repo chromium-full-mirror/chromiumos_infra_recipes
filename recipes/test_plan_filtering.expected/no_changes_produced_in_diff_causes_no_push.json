@@ -541,6 +541,18 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "--symref",
+      ".",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "git ls-remote"
+  },
+  {
     "cmd": [],
     "name": "git transaction",
     "~followup_annotations": [
