@@ -2774,7 +2774,7 @@ Returns a context where overlays can be mounted.
 Args:
   mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1143)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1144)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2791,7 +2791,7 @@ Returns:
 
 Check out the tip-of-tree in the workspace.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1100)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1101)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -2899,7 +2899,7 @@ the bot, used as an initial reference path.
 
 Returns the snapshot digest in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1003)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1004)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 

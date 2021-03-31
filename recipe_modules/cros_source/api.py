@@ -993,7 +993,8 @@ class CrosSourceApi(RecipeApi):
                                manifest_url=manifest_url,
                                manifest_path=manifest_path,
                                manifest_branch=manifest_branch)
-      sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8)
+      sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8,
+                       force_sync=True)
       sync_opts.update(kwargs)
       self.m.repo.sync_manifest(manifest_url, manifest_data=manifest_xml,
                                 **sync_opts)
