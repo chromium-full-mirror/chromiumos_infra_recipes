@@ -1,0 +1,98 @@
+[
+  {
+    "cmd": [],
+    "name": "cloudready specific setup"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace/src/browser"
+    ],
+    "infra_step": true,
+    "name": "cloudready specific setup.create src/browser",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "wget",
+      "https://s3.amazonaws.com/neverware-dev/.gclient"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "name": "cloudready specific setup.download cloudready .gclient file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace/src/browser/src"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "infra_step": true,
+    "name": "cloudready specific setup.create src dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--branch",
+      "upstream/neverware-d90",
+      "--single-branch",
+      "https://chrome-internal.googlesource.com/external/gitlab.neverware.com/neverware/chromium-browser",
+      "."
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/browser/src",
+    "infra_step": true,
+    "name": "cloudready specific setup.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sed",
+      "-i",
+      "'s#git@gitlab.neverware.com:neverware/skia#https://chrome-internal.googlesource.com/external/gitlab.neverware.com/neverware/skia#g'",
+      "src/tools/neverware/neverware_deps.conf"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "name": "cloudready specific setup.update deps file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gclient",
+      "sync"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "name": "cloudready specific setup.gclient sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

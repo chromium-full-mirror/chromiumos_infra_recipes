@@ -68,6 +68,13 @@ def GenTests(api):
   # This covers the env_info.pointless check.
   yield api.build_menu.test('pointless-cq-build', cq=True, pointless=True)
 
+  # Release build.
+  yield api.build_menu.test(
+      'release-build',
+      api.properties(**{'$chromeos/build_menu': {
+          'is_cloudready': True,
+      }}), build_target='cloudready-release-R90-13816.B', bucket='release')
+
   # Run the other tests that we only run in the module.
   yield api.build_menu.test(
       'postsubmit-build',

@@ -5,10 +5,12 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
     'bot_cost',
+    'cloudready',
     'code_coverage',
     'cros_artifacts',
     'cros_bisect',

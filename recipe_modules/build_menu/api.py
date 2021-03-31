@@ -58,6 +58,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._package_indexes = None
     self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
 
+    self._is_cloudready = props.is_cloudready
+
   def initialize(self):
     self._force_empty_toolchain_targets |= (
         'chromeos.build_menu.force_empty_toolchain_targets' in
@@ -199,6 +201,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
     with self.m.workspace_util.sync_to_commit(
         staging=self.is_staging, sync_to_manifest=sync_to_manifest):
 
+      if self._is_cloudready:
+        # If a Cloudready build, perform additional setup.
+        self.m.cloudready.setup_cloudready_workspace()
+
       # Apply any appropriate gerrit changes.
       fail_not_applicable = False
       if config.general.manifest == BuilderConfig.General.PUBLIC:
@@ -209,6 +215,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # The Chrome OS verison can be reported once the workspace is synced.
       version = self.m.cros_version.read_workspace_version()
       self.m.easy.set_properties_step(chromeos_version=str(version))
+
       yield
 
   def setup_chroot(self, no_chroot_timeout=False):
