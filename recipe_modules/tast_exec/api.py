@@ -180,15 +180,18 @@ class TastExecApi(RecipeApi):
 
     self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
                     kvm_monitor_serial_file, private_key_path)
-    tests = self.run_direct('localhost:9222', expressions, test_artifacts_dir,
-                            artifacts_gs_bucket, artifacts_gs_path,
-                            test_results_dir, private_key_path=private_key_path,
-                            run_args=run_args)
+    try:
+      tests = self.run_direct('localhost:9222', expressions, test_artifacts_dir,
+                              artifacts_gs_bucket, artifacts_gs_path,
+                              test_results_dir,
+                              private_key_path=private_key_path,
+                              run_args=run_args)
 
-    # Add logs and other artifacts from DUT into the test results directory.
-    self._archive_vm_artifacts(private_key_path, test_results_dir)
-
-    self._kill_vm(kvm_pid_file)
+      # Add logs and other artifacts from DUT into the test results directory.
+      self._archive_vm_artifacts(private_key_path, test_results_dir)
+    finally:
+      # Always kill QEMU.
+      self._kill_vm(kvm_pid_file)
     self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
     return tests
 
