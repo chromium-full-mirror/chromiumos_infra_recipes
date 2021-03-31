@@ -275,9 +275,7 @@ Cr-Automation-Id: {}""" \
     # Update the repo atomically
     with api.context(cwd=config_internal):
       config_project_info = api.repo.project_info()
-      api.git_txn.update_ref(config_project_info.remote,
-                             update_callback=_filter_all_test_plans,
-                             ref=api.git.remote_head())
+      api.git_txn.update_ref(_filter_all_test_plans)
 
 
 def GenTests(api):

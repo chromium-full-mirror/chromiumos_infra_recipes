@@ -405,7 +405,7 @@ class GerritApi(RecipeApi):
       return
 
   def create_change(self, project, reviewers=None, ccs=None, topic=None,
-                    hashtags=None):
+                    branch=None, hashtags=None):
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
@@ -418,6 +418,7 @@ class GerritApi(RecipeApi):
       ccs (list[str]): List of cc emails. If specified, gerrit will cc the
           individuals.
       topic (str): Topic to set for the CL.
+      branch: Branch argument to be passed to git cl upload
       hashtags (list[str]): List of hashtags to set for the CL.
 
     Returns:
@@ -430,7 +431,8 @@ class GerritApi(RecipeApi):
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
-                             hashtags=hashtags, send_mail=True)
+                             hashtags=hashtags, send_mail=True,
+                             target_branch=branch)
         gerrit_change_url = self.m.git_cl.status(
             field='url', fast=True, step_test_data=functools.partial(
                 self.m.raw_io.test_api.stream_output,
@@ -469,7 +471,7 @@ class GerritApi(RecipeApi):
 
       return ref
 
-  def set_change_labels(self, gerrit_change, labels):
+  def set_change_labels(self, gerrit_change, labels, ref=None):
     """Set the given labels for the given Gerrit change.
 
     Args:
@@ -479,9 +481,10 @@ class GerritApi(RecipeApi):
     Returns:
       str: The new label ref (primarily for testing).
     """
-    return self._set_change_labels(gerrit_change, labels)
+    return self._set_change_labels(gerrit_change, labels, ref=ref)
 
-  def _set_change_labels(self, gerrit_change, labels, rebase_from_remote=False):
+  def _set_change_labels(self, gerrit_change, labels, rebase_from_remote=False,
+                         ref=None):
     """Set the given labels for the given Gerrit change.
 
     Args:
@@ -503,15 +506,17 @@ class GerritApi(RecipeApi):
         project_info = self.m.repo.project_info(gerrit_change.project)
 
       branch = project_info.branch.split('/')[-1]
-      ref = 'refs/for/%s%%%s' % (branch, ','.join(
-          ['l=%s' % label for label in full_labels]))
+      if ref is None:
+        ref = 'refs/for/%s' % branch
+      ref = '%s%%%s' % (ref, ','.join(['l=%s' % label for label in full_labels
+                                      ]))
       refspec = 'HEAD:%s' % ref
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         # Rebase before pushing so Gerrit does not complain there was no change.
         rebase_branch = branch = "%s/%s" % (
             project_info.remote, branch) if rebase_from_remote else None
-        self.m.git.rebase(force=True, branch=rebase_branch)
+        self.m.git.rebase(force=True, branch=refspec)
         self.m.git.push(project_info.remote, refspec)
 
       return ref

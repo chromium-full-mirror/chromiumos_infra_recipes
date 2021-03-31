@@ -15,7 +15,6 @@ DEPS = [
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget, Profile
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 # TODO(crbug/1179353): Remove once public builders are rolled out.
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
@@ -26,8 +25,7 @@ from PB.recipe_modules.chromeos.cros_source.cros_source import (
 from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import (
     FullProperties)
 
-from recipe_engine.post_process import MustRun, DoesNotRun
-
+from recipe_engine.post_process import MustRun, DoesNotRun, MustRunRE
 PROPERTIES = FullProperties
 
 
@@ -47,6 +45,24 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
+
+  def verify_branch(check, steps, branch):
+    expected = [
+        'git', 'push', 'cros',
+        'HEAD:refs/for/refs/heads/{}%l=Bot-Commit+1'.format(branch)
+    ]
+    step_substr1 = 'upload prebuilts.update binhost conf file.git transaction.set labels on CL'
+    step_substr2 = 'git push'
+    step_key = ''
+    for key, val in steps.items():
+      if step_substr1 in key and step_substr2 in key:
+        step_key = key
+        return check(val.cmd == expected)
+    return check(False)
+
+  # None of our tests call verify_branch without having the step present, so do
+  # that here.
+  assert verify_branch(lambda x: x, {}, '') == False
 
   def make_package_indexes(gs_bucket, target, profile=None, count=4):
     profile = profile or Profile()
@@ -129,15 +145,6 @@ def GenTests(api):
           verify_branch,
           'staging' if use_staging else api.src_state.default_branch)
     return ret
-
-  def verify_branch(check, steps, branch):
-    expected = [
-        'git', 'push', '--porcelain', 'cros',
-        'HEAD:refs/for/refs/heads/{}%notify=NONE,submit'.format(branch)
-    ]
-    return check(steps[
-        'upload prebuilts.update binhost conf file.git transaction.git push']
-                 .cmd == expected)
 
   for private in False, True:
     for use_staging in False, True:

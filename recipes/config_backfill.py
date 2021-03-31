@@ -342,9 +342,8 @@ def backfill_project(api, properties, config):
 
     # Update the repo atomically
     with api.context(cwd=path_project_repo):
-      api.git_txn.update_ref(properties.dest_repo,
-                             config_merger(api, config, path_cros_repo),
-                             ref=api.git.remote_head())
+      api.git_txn.update_ref(
+          config_merger(api, config, path_cros_repo), ref=api.git.remote_head())
 
 
 def RunSteps(api, properties):
