@@ -10,7 +10,7 @@
       "-n",
       "1",
       "-fields",
-      "input,output",
+      "*",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"octopus-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
     ],

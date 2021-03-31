@@ -1,0 +1,13 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.test_platform.ctp_traffic_generator;
+
+message Properties {
+    // Maximum runtime (in seconds) for a CTP build to be replayed.
+    // Defaults to 20 minutes (1200s).
+    int32 ctp_replay_max_runtime = 1;
+}

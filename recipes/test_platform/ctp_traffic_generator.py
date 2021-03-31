@@ -7,8 +7,10 @@
 
 from google.protobuf import duration_pb2
 from google.protobuf import struct_pb2
+from google.protobuf import timestamp_pb2
 from google.protobuf.json_format import MessageToDict
 
+from PB.recipes.chromeos.test_platform.ctp_traffic_generator import Properties
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as bb_service
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
@@ -19,8 +21,12 @@ from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.test_platform.request import Request
 
+from recipe_engine import post_process
+
+PROPERTIES = Properties
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'cros_test_platform',
     'skylab',
@@ -29,9 +35,12 @@ DEPS = [
 BOARD = 'octopus'
 PASSING_TEST_SUITE = 'calibration'
 TIMEOUT_SECONDS = 30 * 60  # 30 minutes
+DEFAULT_CTP_REPLAY_MAX_RUNTIME = 20 * 60
 
 
-def RunSteps(api):
+def RunSteps(api, properties):
+  ctp_replay_max_runtime = properties.ctp_replay_max_runtime or DEFAULT_CTP_REPLAY_MAX_RUNTIME
+
   # Send an always-passing suite request to generate a consistent signal for
   # the staging environment.
   test_unit = _construct_test_unit(api, BOARD, PASSING_TEST_SUITE)
@@ -44,7 +53,7 @@ def RunSteps(api):
   # Replay the last successful production CTP build in staging to
   # seed staging with real requests.
   with api.step.nest('replay prod CTP run'):
-    _replay_last_successful_ctp_build_in_staging(api)
+    _replay_last_successful_ctp_build_in_staging(api, ctp_replay_max_runtime)
 
 
 def _construct_test_unit(api, board, test_suite):
@@ -71,22 +80,33 @@ def _construct_test_unit(api, board, test_suite):
   )
 
 
-def _get_last_successful_build(api, builder, bucket):
+def _get_last_successful_build(api, builder, bucket, time_limit_seconds=None):
+  # Need to get a bunch of runs if we're filtering on runtime.
+  limit = 1 if not time_limit_seconds else 50
   successful_builds = api.buildbucket.search(
       bb_service.BuildPredicate(
           builder={
               'project': 'chromeos',
               'bucket': bucket,
               'builder': builder,
-          }, status=bb_common.SUCCESS,
-          include_experimental=False), limit=1, fields=['input', 'output'],
-      step_name='find recent green %s build' % builder)
+          }, status=bb_common.SUCCESS, include_experimental=False), limit=limit,
+      fields=['*'], step_name='find recent green %s build' % builder)
 
   if not successful_builds:
     raise api.step.StepFailure('No successful builds found for builder %s' %
                                builder)
+  if not time_limit_seconds:
+    return successful_builds[0]
 
-  return successful_builds[0]
+  for build in successful_builds:
+    run_time = build.end_time.seconds - build.start_time.seconds
+    # If run time is less than time_limit_seconds, use the build.
+    # Otherwise keep looking.
+    if run_time < time_limit_seconds:
+      return build
+  raise api.step.StepFailure(
+      'No successful builds with completion time under {}s found for builder {}'
+      .format(time_limit_seconds, builder))
 
 
 def _get_last_successful_postsubmit_build(api, board):
@@ -94,11 +114,15 @@ def _get_last_successful_postsubmit_build(api, board):
   return _get_last_successful_build(api, postsubmit_builder, 'postsubmit')
 
 
-def _replay_last_successful_ctp_build_in_staging(api):
-  build = _get_last_successful_build(api, 'cros_test_platform', 'testplatform')
+def _replay_last_successful_ctp_build_in_staging(api, time_limit_seconds):
+  build = _get_last_successful_build(api, 'cros_test_platform', 'testplatform',
+                                     time_limit_seconds=time_limit_seconds)
 
   reqs = MessageToDict(build.input.properties["requests"])
-  bb_tags = {'parent_buildbucket_id': str(api.buildbucket.build.id)}
+  bb_tags = {
+      'replay_from_prod_buildbucket_id': str(build.id),
+      'parent_buildbucket_id': str(api.buildbucket.build.id)
+  }
   api.skylab.schedule_ctp_requests(tagged_requests=reqs, bb_tags=bb_tags)
 
 
@@ -168,12 +192,29 @@ def GenTests(api):
       }
   }
   green_ctp_builds = [
+      # This build took more than an hour.
       build_pb2.Build(
+          id=123,
           builder={
               'project': 'chromeos',
               'bucket': 'testplatform',
               'builder': 'cros_test_platform',
           },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 65),
+          status='SUCCESS',
+          input={'properties': ctp_input_properties},
+      ),
+      # This build took less than an hour.
+      build_pb2.Build(
+          id=456,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 15),
           status='SUCCESS',
           input={'properties': ctp_input_properties},
       )
@@ -193,4 +234,20 @@ def GenTests(api):
   yield api.test(
       'octopus build not found',
       api.buildbucket.simulated_search_results(
-          [], step_name='find recent green octopus-postsubmit build'))
+          [], step_name='find recent green octopus-postsubmit build'),
+  )
+
+  yield api.test(
+      'ctp build not found',
+      api.properties(**{
+          'ctp_replay_max_runtime': 60 * 10,
+      }),
+      api.buildbucket.simulated_search_results(
+          green_postsubmit_builds,
+          step_name='find recent green octopus-postsubmit build'),
+      api.buildbucket.simulated_search_results(
+          green_ctp_builds,
+          step_name='replay prod CTP run.find recent green cros_test_platform build'
+      ),
+      api.post_check(post_process.StepFailure, 'replay prod CTP run'),
+  )
