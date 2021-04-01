@@ -36,14 +36,15 @@ function check_staging() {
   echo "Looking for 5 consecutive successes in staging."
   for name in "${checks[@]}"; do
     printf "Checking the status of: %s --> " "${name}"
-    statuses=$(bb ls -n 5 -json "chromeos/staging/${name}" | \
-      jq -r 'select(.status!="STARTED" and .status!="CANCELED" and .status!="SCHEDULED") | .status' | \
+    # Look for statuses that match "SUCCESS" or "FAILURE".
+    statuses=$(bb ls -n 5 -json "chromeos/staging/${name}" |
+      jq -r '.status|select(.|test("(SUCCESS|FAILURE)"))' |
       sort | uniq)
     # These ops first give statuses good printing, then good matching.
     statuses=$(echo "${statuses}" | tr '\n' ' ')
     echo "${statuses}"
     statuses=$(echo "${statuses}" | tr -d ' ')
-    if [[ ${statuses} != "SUCCESS" ]]; then
+    if [[ "${statuses}" != SUCCESS ]]; then
       baddies+=("${name}")
     fi
   done
@@ -56,15 +57,13 @@ function check_staging() {
 
 # Get the git revision associated with a cipd version (dereference it).
 cipd_version_to_githash() {
-  cipd describe -json-output /proc/self/fd/2 -version "$1" "${bundle}" 2>&1 > /dev/null \
-    | jq -r '((.result.tags[].tag | select(startswith("git_revision"))) / ":")[1]'
+  cipd describe -json-output /proc/self/fd/2 -version "$1" "${bundle}" 2>&1 > /dev/null |
+    jq -r '.result.tags|map(.tag|select(startswith("git_revision:")))[0]|sub(".*:";"")'
 }
 
 # Get the instance id associated with ref.
 cipd_ref_to_instance() {
-  cipd resolve -version "$1" \
-    infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes | \
-    sed 's/^[^:]*://g' | awk NF
+  cipd resolve -version "$1" "${bundle}" | sed 's/^[^:]*://g' | awk NF
 }
 
 # Print recipe commits pending release to production.
@@ -126,12 +125,7 @@ if [[ "${prompt}" == "yes" ]]; then
   fi
 fi
 
-cipd set-ref \
-  infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes \
-  -ref="release_$(TZ='America/Los_Angeles' date +%Y/%m/%d-%H)" \
-  -version="${cipd_target}"
+cipd set-ref "${bundle}" -version="${cipd_target}"
+  -ref="release_$(TZ='America/Los_Angeles' date +%Y/%m/%d-%H)"
 
-cipd set-ref \
-  infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes \
-  -ref=prod \
-  -version="${cipd_target}"
+cipd set-ref "${bundle}" -version="${cipd_target}" -ref=prod
