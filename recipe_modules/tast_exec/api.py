@@ -25,6 +25,7 @@ class TastExecApi(RecipeApi):
     super(TastExecApi, self).__init__(*args, **kwargs)
     self._exec_timeout = properties.exec_timeout or 90 * 60
     self._should_retry = properties.should_retry
+    self._public_builder = properties.public_builder
 
   def download_tast(self, artifacts_gs_bucket, artifacts_gs_path,
                     test_artifacts_dir):
@@ -261,22 +262,24 @@ class TastExecApi(RecipeApi):
 
   def _list_tests(self, dut_name, expressions, tast_dir, private_key_path,
                   build_artifacts_url):
+    private_builder = 'false' if self._public_builder else 'true'
+    private_bundles_str = '-downloadprivatebundles={}'.format(private_builder)
     keyfile_args = []
     if private_key_path is not None:
       keyfile_args = ['-keyfile={}'.format(private_key_path)]
 
     list_stdout = self.m.easy.stdout_step('tast list', [
-    str(tast_dir.join('tast')), \
-    'list', \
-    '-build=false', \
-    '-downloadprivatebundles=true', \
-    '-buildartifactsurl={}'.format(build_artifacts_url), \
-    '-remotebundledir={}'.format(
-        str(tast_dir.join('bundles').join('remote'))), \
-    '-remotedatadir={}'.format(str(
-        tast_dir.join('data'))), \
-    '-remoterunner={}'.format(
-        str(tast_dir.join('remote_test_runner')))] + \
+        str(tast_dir.join('tast')), \
+        'list', \
+        '-build=false', \
+        private_bundles_str, \
+        '-buildartifactsurl={}'.format(build_artifacts_url), \
+        '-remotebundledir={}'.format(
+            str(tast_dir.join('bundles').join('remote'))), \
+        '-remotedatadir={}'.format(str(
+            tast_dir.join('data'))), \
+        '-remoterunner={}'.format(
+            str(tast_dir.join('remote_test_runner')))] + \
     keyfile_args + \
     [dut_name] + \
     list(expressions), timeout=2 * 60)
@@ -286,6 +289,8 @@ class TastExecApi(RecipeApi):
 
   def _run_tests(self, dut_name, expressions, tast_dir, private_key_path,
                  build_artifacts_url, test_results_dir, extra_args):
+    private_builder = 'false' if self._public_builder else 'true'
+    private_bundles_str = '-downloadprivatebundles={}'.format(private_builder)
     keyfile_args = []
     if private_key_path is not None:
       keyfile_args = ['-keyfile={}'.format(private_key_path)]
@@ -296,7 +301,7 @@ class TastExecApi(RecipeApi):
         'run', \
         '-build=false', \
         '-sshretries=2', \
-        '-downloadprivatebundles=true', \
+        private_bundles_str, \
         '-buildartifactsurl={}'.format(build_artifacts_url), \
         '-waituntilready', \
         '-continueafterfailure', \

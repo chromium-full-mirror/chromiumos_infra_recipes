@@ -13,4 +13,6 @@ message TastExecProperties {
   int32 exec_timeout = 1;
   // Should the exec retry for eligible failed tests.
   bool should_retry = 2;
+  // Whether this is a public target.
+  bool public_builder = 3;
 }
