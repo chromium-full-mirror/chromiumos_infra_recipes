@@ -10,4 +10,7 @@ message Properties {
     // Maximum runtime (in seconds) for a CTP build to be replayed.
     // Defaults to 20 minutes (1200s).
     int32 ctp_replay_max_runtime = 1;
+
+    // Number of CTP builds to replay. Defaults to 5.
+    int32 ctp_num_replay_builds = 2;
 }
