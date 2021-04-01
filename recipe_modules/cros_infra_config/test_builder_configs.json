@@ -679,7 +679,7 @@
         "type": "CQ"
       },
       "general": {
-        "critical": true,
+        "critical": false,
         "manifest": "PRIVATE"
       },
       "artifacts": {
@@ -1572,6 +1572,10 @@
           },
           {
             "name": "cave-cq",
+            "collectHandling": "COLLECT_AFTER_HW_TEST"
+          },
+          {
+            "name": "coral-cq",
             "collectHandling": "COLLECT_AFTER_HW_TEST"
           }
         ]

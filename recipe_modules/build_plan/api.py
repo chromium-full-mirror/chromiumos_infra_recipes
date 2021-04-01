@@ -150,8 +150,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
           count_skip_wait_on_other_run += 1
           continue
 
-        # Don't retry non-critical builds.
-        if not critical and is_retry:
+        # Don't retry non-critical builds unless recycling is disabled.
+        if not critical and is_retry and not (
+            child_builder_name in forced_rebuilds or 'all' in forced_rebuilds):
           filter_log.append('{} is non-critical and this is a CQ rerun'.format(
               child_builder_name))
           count_skip_noncritical_on_rerun += 1

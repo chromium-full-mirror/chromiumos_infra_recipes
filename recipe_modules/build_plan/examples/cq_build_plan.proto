@@ -9,4 +9,10 @@ package recipe_modules.chromeos.build_plan.examples;
 message CqBuildPlanProperties {
   // The expected experiments for the builder.
   repeated string expected_experiments = 1;
+
+  // The builder names of the expected child build requests.
+  repeated string expected_build_requests = 2;
+
+  // The builder names of the expected completed builds.
+  repeated string expected_completed_builds = 3;
 }
