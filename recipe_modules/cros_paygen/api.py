@@ -179,7 +179,7 @@ class PaygenTestConfig(object):
     Returns:
        A dictionary of string to test_platform.Request objects.
     """
-    if models is None and self._applicable_models is None:
+    if not models and not self._applicable_models:
       return self._create_tagged_request(request_opts=request_opts)
 
     tagged_requests = {}
