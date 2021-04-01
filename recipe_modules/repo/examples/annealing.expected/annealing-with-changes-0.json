@@ -367,7 +367,10 @@
   },
   {
     "cmd": [],
-    "name": "diff remote and local manifest"
+    "name": "diff remote and local manifest",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "cmd": [
@@ -414,7 +417,23 @@
     "name": "diff remote and local manifest.validate PATH",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@FROM_REV@@@"
+      "@@@STEP_TEXT@FROM_REV@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "FROM_REV",
+      "TO_REV"
+    ],
+    "cwd": "[START_DIR]/repo/PATH",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate PATH.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -428,7 +447,8 @@
     "infra_step": true,
     "name": "diff remote and local manifest.validate PATH.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -440,7 +460,7 @@
     ],
     "cwd": "[START_DIR]/repo/PATH",
     "infra_step": true,
-    "name": "diff remote and local manifest.validate PATH.git merge-base",
+    "name": "diff remote and local manifest.validate PATH.git merge-base (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

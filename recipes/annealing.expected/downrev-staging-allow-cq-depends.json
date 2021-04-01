@@ -1286,13 +1286,14 @@
   {
     "cmd": [
       "git",
-      "fetch",
-      "cros",
-      "FROM_REV"
+      "merge-base",
+      "--is-ancestor",
+      "FROM_REV",
+      "TO_REV"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/NAME",
     "infra_step": true,
-    "name": "diff remote and local manifest.validate NAME.git fetch",
+    "name": "diff remote and local manifest.validate NAME.git merge-base",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1306,7 +1307,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/NAME",
     "infra_step": true,
-    "name": "diff remote and local manifest.validate NAME.git merge-base",
+    "name": "diff remote and local manifest.validate NAME.git merge-base (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

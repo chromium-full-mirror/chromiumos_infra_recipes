@@ -574,13 +574,21 @@ class RepoApi(recipe_api.RecipeApi):
         with self.m.step.nest('validate {}'.format(from_path)) as val_pres, \
             self.m.context(cwd=repo_root.join(from_path)):
           # The git helper binary does retries of its own, so we do not need to.
-          self.m.git.fetch(from_remote, [from_revision], retries=0)
+          if not self.m.git.is_reachable(from_revision, to_revision):
+            try:
+              self.m.git.fetch(from_remote, [from_revision], retries=0)
+            except recipe_api.StepFailure:
+              # Changes in the manifest project/branch may mean that the
+              # from_revision is not an ancestor of the to_revision.  If history
+              # was rewritten, it may not even exist any more.
+              pass
+          # If the from_revision is unreachable, ignore changes for the project.
           base = self.m.git.merge_base(from_revision, to_revision,
-                                       test_stdout=from_revision)
+                                       test_stdout=from_revision) or to_revision
           val_pres.step_text = (
               from_revision if from_revision == base else '{} => {}'.format(
-                  from_revision, base or from_revision))
-          from_revision = base or from_revision
+                  from_revision, base))
+          from_revision = base
       changes.append(
           ManifestDiff(from_name, from_path, from_revision, to_revision))
     return changes

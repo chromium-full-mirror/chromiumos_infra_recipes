@@ -131,6 +131,11 @@ def GenTests(api):
     to_manifest = dedent(to_manifest)
     return api.test(
         'annealing-with-changes-{}'.format(state),
+        api.step_data(
+            'diff remote and local manifest.validate PATH.git merge-base',
+            retcode=1),
+        api.step_data('diff remote and local manifest.validate PATH.git fetch',
+                      retcode=1),
         api.properties(
             AnnealingProperties(
                 manifest_file='snapshot.xml', manifest_data=to_manifest,
