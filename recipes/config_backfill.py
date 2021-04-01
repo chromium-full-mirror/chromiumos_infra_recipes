@@ -13,6 +13,9 @@
 #
 # Any resulting changes are then committed to the configured destination.
 
+import textwrap
+import urlparse
+
 from PB.recipes.chromeos.config_backfill import ConfigBackfillProperties
 from recipe_engine import post_process
 
@@ -25,10 +28,13 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'cros_infra_config',
+    'cros_source',
     'gerrit',
     'git',
     'git_txn',
     'gitiles',
+    'src_state',
 ]
 
 PROPERTIES = ConfigBackfillProperties
@@ -36,17 +42,17 @@ PROPERTIES = ConfigBackfillProperties
 CROS_EXTERNAL = 'https://chromium.googlesource.com/chromiumos'
 CROS_INTERNAL = 'https://chrome-internal.googlesource.com/chromeos'
 
+# Paths to repos
+PATH_CROS_CONFIG = "src/config"
+PATH_CROS_HWID = "src/platform/chromeos-hwid"
+PATH_CROS_OVERLAYS = "src/overlays"
+PATH_CROS_OVERLAYS_PRIVATE = "src/private-overlays"
+
 # Repo URL configuration
-CROS_HWID_REPO = CROS_INTERNAL + '/chromeos-hwid'
-CROS_CONFIG_REPO = CROS_EXTERNAL + '/config'
 PUBLIC_BASEBOARD_REPO = CROS_EXTERNAL + '/overlays/board-overlays'
 PRIVATE_BASEBOARD_REPO = CROS_INTERNAL + '/overlays/baseboard-{program}-private'
 
-# Source and destination config files
-SRC_CONFIG = 'generated/config.jsonproto'
-DST_CONFIG = 'generated/joined.jsonproto'
-DST_IMPORTED = 'generated/imported.jsonproto'
-
+# Paths to scripts
 JOIN_SCRIPT_PATH = 'payload_utils/join_config_payloads.py'
 
 # path to cloud credentials
@@ -55,41 +61,196 @@ CLOUD_CREDS_PATH = '/creds/service_accounts/service-account-chromeos.json'
 
 def require(cond, message):
   """Require a given condition be true or throw a ValueError."""
-  if not cond:
+  if not cond:  # pragma: nocover
     raise ValueError(message)
 
 
-def RunSteps(api, properties):
-  require(properties.dest_repo, 'Destination repo must be specified.')
+def split_overlay_project(api, repo):
+  """Take a private overlay URL and parse out project name."""
+  parts = urlparse.urlparse(repo)
+  require(
+      parts.netloc == api.src_state.internal_manifest.host,
+      "overlay isn't in internal repo",
+  )
+  return parts.path
 
-  # Defines paths to which to clone repos.
-  cros_config_path = api.path['start_dir'].join('config')
-  dest_repo_path = api.path['start_dir'].join('dest')
-  public_repo_path = api.path['start_dir'].join('public')
-  private_repo_path = api.path['start_dir'].join('private')
-  hwid_repo_path = api.path['start_dir'].join('hwid')
 
-  # Destination path configuration
-  dest_file_path = dest_repo_path.join('imported')
-  dest_hwid_path = dest_file_path.join('hwid')
-  dest_yaml_path = dest_file_path.join('model.yaml')
+def config_merger(api, config, path_cros_repo):
+  """Create a closure to merge configs.
 
-  # Clone config repo
-  with api.step.nest('cloning config repo'):
-    api.git.clone(CROS_CONFIG_REPO, target_path=cros_config_path)
+  Meant to be called from git_txn.update_ref, which requires a single
+  function taking no arguments, so close on what we need.
 
-  # Clone source repos.
-  if properties.HasField('public_yaml'):
-    with api.step.nest('cloning public overlay'):
-      api.git.clone(properties.public_yaml.repo, target_path=public_repo_path)
+  Args:
+    api: Reference to recipes API
+    config: Merge config to execute
+    path_cros_repo: Path to root of ChromeOS checkout
 
-  if properties.HasField('private_yaml'):
-    with api.step.nest('cloning private overlay'):
-      api.git.clone(properties.private_yaml.repo, target_path=private_repo_path)
+  Return:
+    closure to execute merge operation
+  """
 
-  if properties.hwid_key:
-    with api.step.nest('cloning hwid repo'):
-      api.git.clone(CROS_HWID_REPO, target_path=hwid_repo_path)
+  def merge():
+    """Execute merge operation on repo"""
+
+    path_project_repo = path_cros_repo.join("src/project/{}/{}".format(
+        config.program_name.lower(),
+        config.project_name.lower(),
+    ))
+
+    path_imported = path_project_repo.join('imported')
+    path_generated = path_project_repo.join('generated')
+
+    path_public_yaml = None
+    if config.public_yaml_path:
+      path_public_yaml = path_cros_repo.join(
+          PATH_CROS_OVERLAYS,
+          config.public_yaml_path,
+      )
+
+    path_private_yaml = None
+    if config.HasField('private_yaml'):
+      path_private_yaml = path_cros_repo.join(
+          PATH_CROS_OVERLAYS_PRIVATE,
+          split_overlay_project(api, config.private_yaml.repo).split("/")[-1],
+          config.private_yaml.path,
+      )
+
+    path_hwid = None
+    if config.hwid_key:
+      path_hwid = path_cros_repo.join(
+          PATH_CROS_HWID,
+          "v3/{}".format(config.hwid_key),
+      )
+
+    with api.context(cwd=path_project_repo):
+      # Create import directory.
+      api.file.ensure_directory(
+          'ensure %s directory exists' % path_imported,
+          path_imported,
+      )
+
+      # Copy public model.yaml to import.
+      if path_public_yaml:
+        dst_path = path_imported.join('public_model.yaml')
+        api.file.copy(
+            'copy public model.yaml',
+            path_public_yaml,
+            dst_path,
+        )
+        api.git.add([dst_path])
+
+      # Copy private model.yaml to import.
+      if path_private_yaml:
+        dst_path = path_imported.join('private_model.yaml')
+        api.file.copy(
+            'copy private model.yaml',
+            path_private_yaml,
+            dst_path,
+        )
+        api.git.add([dst_path])
+
+      # Copy the HWID database.
+      if config.hwid_key:
+        dst_path = path_imported.join("hwid")
+        api.file.copy(
+            'copy HWID database',
+            path_hwid,
+            dst_path,
+        )
+        api.git.add([dst_path])
+
+      # create generate/ if it doesn't exist
+      api.file.ensure_directory(
+          'ensure %s directory exists' % path_generated,
+          path_generated,
+      )
+
+      # Mock existence of config bundle for tests
+      path_config_bundle = path_generated.join('config.jsonproto')
+      api.path.mock_add_paths(path_config_bundle)
+
+      # Merge backfilled data into a ConfigBundle payload
+      cmd = [path_cros_repo.join(PATH_CROS_CONFIG, JOIN_SCRIPT_PATH)]
+      cmd += ['--log', 'DEBUG']
+      cmd += ['--project-name', config.project_name]
+      cmd += ['--program-name', config.program_name]
+
+      if path_public_yaml:
+        cmd += ['--public-model', path_public_yaml]
+      if path_private_yaml:
+        cmd += ['--private-model', path_private_yaml]
+      if path_hwid:
+        cmd += ['--hwid', path_hwid]
+
+      # TODO(crbug.com/1154322): remove merged configuration generation once
+      # the merge functionality is available, just call gen_config instead.
+      # Generate output joined with existing starlark config
+      if api.path.exists(path_config_bundle):
+        cmd += ['--config-bundle', path_config_bundle]
+
+      # configure environment to point to proper credentials file for GCP access
+      with api.context(env={
+          'GOOGLE_APPLICATION_CREDENTIALS': CLOUD_CREDS_PATH,
+      }):
+        # generate the import-only config (no merging with config.jsonproto)
+        path_imported_config = path_generated.join('imported.jsonproto')
+        api.step("Generate imported configuration", ["vpython"] + cmd + [
+            '--import-only',
+            '--output',
+            path_imported_config,
+        ])
+        api.git.add([path_imported_config])
+
+        # generate joined config (with merging)
+        path_merged_config = path_generated.join('joined.jsonproto')
+        api.step("Generate joined configuration", ["vpython"] + cmd + [
+            '--output',
+            path_merged_config,
+        ])
+        api.git.add([path_merged_config])
+
+    # Commit changes (if any)
+    with api.step.nest('diffing repo to find changes') as presentation:
+      changed_files = api.git.get_diff_files('HEAD')
+      if changed_files:
+        presentation.logs['changed files'] = ", ".join(changed_files)
+      else:
+        presentation.step_summary_text = "no files changed"
+        return False
+
+      # Add and commit
+      commit_msg = textwrap.dedent(
+          '''\
+        Merging legacy configs.
+
+        Cr-Build-Url: {build_url}
+        Cr-Automation-Id: {automation_id}'''.format(
+              build_url=api.buildbucket.build_url(),
+              automation_id='config_backfill'),
+      )
+      if not api.cros_infra_config.is_staging:
+        api.git.commit(commit_msg)
+
+      return True
+
+  return merge
+
+
+def backfill_project(api, properties, config):
+  """Backfill an individual project.
+
+  Expects to be run in the root of the chromeos checkout.
+
+  Args:
+    config (ConfigBackfillProperties.ProjectConfig) - configuration for project
+  """
+
+  path_cros_repo = api.context.cwd
+  path_project_repo = path_cros_repo.join("src/project/{}/{}".format(
+      config.program_name.lower(),
+      config.project_name.lower(),
+  ))
 
   # TODO(crbug.com/1144956).  This is a workaround for fizz and reef.  They're
   # unique in that they expect their baseboard overlay to be available so they
@@ -122,8 +283,7 @@ def RunSteps(api, properties):
             dst_path,
         )
 
-  program = properties.program_name.lower()
-
+  ### main function body
   # These paths aren't consistent so we'll just enumerate them
   config_paths = {
       'reef': {
@@ -148,125 +308,68 @@ def RunSteps(api, properties):
       }
   }
 
-  if program in ['reef', 'fizz']:
-    _copy_baseboard(
-        'configuring public baseboard overlay',
-        public_repo_path,
-        'overlay-{program}/'.format(program=program) +
-        config_paths[program]['public_dst'],
-        PUBLIC_BASEBOARD_REPO,
-        api.path.join(
-            'baseboard-{program}'.format(program=program),
-            config_paths[program]['public_src'],
-        ),
-    )
+  program = config.program_name.lower()
+  project = config.project_name.lower()
 
-    _copy_baseboard(
-        'configuring private baseboard overlay',
-        private_repo_path,
-        config_paths[program]['private_dst'],
-        PRIVATE_BASEBOARD_REPO.format(program=program),
-        config_paths[program]['private_src'],
-    )
+  with api.step.nest("processing {}/{}".format(program, project)):
+    if program in ['reef', 'fizz']:
+      _copy_baseboard(
+          step_text='configuring public baseboard overlay',
+          overlay_path=path_cros_repo.join(
+              "src/overlay-{program}".format(program=program)),
+          baseboard_repo=PUBLIC_BASEBOARD_REPO,
+          dst_path='overlay-{}/{}'.format(
+              program,
+              config_paths[program]['public_dst'],
+          ),
+          src_path=api.path.join(
+              'baseboard-{program}'.format(program=program),
+              config_paths[program]['public_src'],
+          ),
+      )
 
-  # Clone the destination repo.
-  with api.step.nest('cloning destination repo'):
-    api.git.clone(properties.dest_repo, target_path=dest_repo_path)
+      _copy_baseboard(
+          step_text='configuring private baseboard overlay',
+          overlay_path=path_cros_repo.join(
+              PATH_CROS_OVERLAYS_PRIVATE,
+              split_overlay_project(api,
+                                    config.private_yaml.repo).split("/")[-1],
+          ),
+          baseboard_repo=PRIVATE_BASEBOARD_REPO.format(program=program),
+          dst_path=config_paths[program]['private_dst'],
+          src_path=config_paths[program]['private_src'],
+      )
 
-  def _merge_configs():
-    """Copy files and merge with existing config to generate output.  This
-    is intended to be called from git_txn.update_ref"""
-    api.file.ensure_directory('ensure %s directory exists' % dest_file_path,
-                              dest_file_path)
+    # Update the repo atomically
+    with api.context(cwd=path_project_repo):
+      api.git_txn.update_ref(properties.dest_repo,
+                             config_merger(api, config, path_cros_repo),
+                             ref=api.git.remote_head())
 
-    if properties.HasField('public_yaml'):
-      file_path = dest_file_path.join('public_model.yaml')
-      api.file.copy('copy public model.yaml',
-                    public_repo_path.join(properties.public_yaml.path),
-                    file_path)
-      api.git.add([file_path])
 
-    if properties.HasField('private_yaml'):
-      file_path = dest_file_path.join('private_model.yaml')
-      api.file.copy('copy private model.yaml',
-                    private_repo_path.join(properties.private_yaml.path),
-                    file_path)
-      api.git.add([file_path])
+def RunSteps(api, properties):
+  api.cros_infra_config.configure_builder()
 
-    # Copy the HWID database
-    if properties.hwid_key:
-      api.file.copy('copy HWID database',
-                    hwid_repo_path.join('v3/%s' % properties.hwid_key.upper()),
-                    dest_hwid_path)
-      api.git.add([dest_hwid_path])
+  configs = properties.configs
 
-    generated_path = dest_repo_path.join('generated')
-    api.file.ensure_directory('ensure %s directory exists' % generated_path,
-                              generated_path)
+  # TODO(crbug.com/1193491): remove once migrated to the new config format
+  if properties.dest_repo:
+    config = configs.add()
+    config.public_yaml_path = properties.public_yaml.path
+    config.private_yaml.MergeFrom(properties.private_yaml)
+    config.hwid_key = properties.hwid_key
+    config.project_name = properties.project_name
+    config.program_name = properties.program_name
 
-    # Mock existence of source path for tests
-    api.path.mock_add_paths(api.context.cwd.join(SRC_CONFIG))
+  # setup overlays, sync projects and move to tip-of-tree
+  with api.cros_source.checkout_overlays_context():
+    api.cros_source.ensure_synced_cache()
+    api.cros_source.checkout_tip_of_tree()
 
-    # Merge backfilled data into a ConfigBundle payload
-    cmd = [cros_config_path.join(JOIN_SCRIPT_PATH), '--log', 'DEBUG']
-    if properties.HasField('public_yaml'):
-      cmd += [
-          '--public-model',
-          public_repo_path.join(properties.public_yaml.path)
-      ]
-    if properties.HasField('private_yaml'):
-      cmd += [
-          '--private-model',
-          private_repo_path.join(properties.private_yaml.path)
-      ]
-    if properties.hwid_key:
-      cmd += [
-          '--hwid',
-          '%s/v3/%s' % (hwid_repo_path, properties.hwid_key.upper())
-      ]
-    if properties.project_name:
-      cmd += ['--project-name', properties.project_name]
-    if properties.program_name:
-      cmd += ['--program-name', properties.program_name]
-
-    # TODO(crbug.com/1154322): remove merged configuration generation once
-    # the merge functionality is available, just call gen_config instead.
-    # Generate output joined with existing starlark config
-    if api.path.exists(api.context.cwd.join(SRC_CONFIG)):
-      cmd += ['--config-bundle', SRC_CONFIG]
-
-    with api.context(env={'GOOGLE_APPLICATION_CREDENTIALS': CLOUD_CREDS_PATH}):
-      # generate the import-only config (no merging with config.jsonproto)
-      api.step("Generate imported configuration",
-               ["vpython"] + cmd + ['--import-only', '--output', DST_IMPORTED])
-      api.git.add([DST_IMPORTED])
-
-      # generate joined config (with merging)
-      api.step("Generate joined configuration",
-               ["vpython"] + cmd + ['--output', DST_CONFIG])
-      api.git.add([DST_CONFIG])
-
-    # Commit changes (if any)
-    with api.step.nest('diffing repo to find changes') as presentation:
-      changed_files = api.git.get_diff_files('HEAD')
-      if changed_files:
-        presentation.logs['changed files'] = ", ".join(changed_files)
-      else:
-        presentation.step_summary_text = "no files changed"
-        return False
-
-      # Add and commit
-      commit_msg = \
-        '''Merging legacy configs.
-
-Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), 'config_backfill')
-      api.git.commit(commit_msg)
-
-  # Update the repo atomically
-  with api.context(cwd=dest_repo_path):
-    api.git_txn.update_ref(properties.dest_repo, _merge_configs,
-                           ref=api.git.remote_head())
+    # run backfill
+    with api.context(cwd=api.cros_source.workspace_path):
+      for config in configs:
+        backfill_project(api, properties, config)
 
 
 def GenTests(api):
@@ -280,7 +383,7 @@ def GenTests(api):
                   'path': 'some/model.yaml'
               },
               'private_yaml': {
-                  'repo': 'https://example.com/private/',
+                  'repo': CROS_INTERNAL + '/private/',
                   'path': 'some/model.yaml'
               },
               'hwid_key': 'some_key',
@@ -298,30 +401,13 @@ def GenTests(api):
                   'path': 'some/model.yaml'
               },
               'private_yaml': {
-                  'repo': 'https://example.com/private/',
+                  'repo': CROS_INTERNAL + '/private/',
                   'path': 'some/model.yaml'
               },
               'hwid_key': 'some_key',
               'project_name': 'test_project',
               'program_name': 'reef',
           }))
-
-  yield api.test(
-      'no_dest_repo',
-      api.properties(
-          **{
-              'public_yaml': {
-                  'repo': 'https://example.com/public/',
-                  'path': 'some/model.yaml'
-              },
-              'private_yaml': {
-                  'repo': 'https://example.com/private/',
-                  'path': 'some/model.yaml'
-              },
-              'hwid_key': 'some_key',
-              'project_name': 'test_project',
-              'program_name': 'test_program',
-          }), api.expect_exception('ValueError'))
 
   yield api.test(
       'no_changed_files',
@@ -333,12 +419,15 @@ def GenTests(api):
                   'path': 'some/model.yaml'
               },
               'private_yaml': {
-                  'repo': 'https://example.com/private/',
+                  'repo': CROS_INTERNAL + '/private/',
                   'path': 'some/model.yaml'
               },
               'hwid_key': 'some_key',
               'project_name': 'test_project',
               'program_name': 'test_program',
           }),
-      api.step_data('git transaction.diffing repo to find changes.git diff',
-                    stdout=api.raw_io.output('')))
+      api.step_data(
+          'processing test_program/test_project'
+          '.git transaction'
+          '.diffing repo to find changes.git diff',
+          stdout=api.raw_io.output('')))

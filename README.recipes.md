@@ -6445,15 +6445,43 @@ For more details on the input properties, see cl_factory.proto.
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/full.py#13)(api):**
 ### *recipes* / [config\_backfill](/recipes/config_backfill.py)
 
-[DEPS](/recipes/config_backfill.py#20): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/config_backfill.py#23): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#62)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#350)(api, properties):**
 
-&mdash; **def [require](/recipes/config_backfill.py#56)(cond, message):**
+&mdash; **def [backfill\_project](/recipes/config_backfill.py#240)(api, properties, config):**
+
+Backfill an individual project.
+
+Expects to be run in the root of the chromeos checkout.
+
+Args:
+  config (ConfigBackfillProperties.ProjectConfig) - configuration for project
+
+&mdash; **def [config\_merger](/recipes/config_backfill.py#78)(api, config, path_cros_repo):**
+
+Create a closure to merge configs.
+
+Meant to be called from git_txn.update_ref, which requires a single
+function taking no arguments, so close on what we need.
+
+Args:
+  api: Reference to recipes API
+  config: Merge config to execute
+  path_cros_repo: Path to root of ChromeOS checkout
+
+Return:
+  closure to execute merge operation
+
+&mdash; **def [require](/recipes/config_backfill.py#62)(cond, message):**
 
 Require a given condition be true or throw a ValueError.
+
+&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#68)(api, repo):**
+
+Take a private overlay URL and parse out project name.
 ### *recipes* / [config\_postsubmit](/recipes/config_postsubmit.py)
 
 [DEPS](/recipes/config_postsubmit.py#22): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
