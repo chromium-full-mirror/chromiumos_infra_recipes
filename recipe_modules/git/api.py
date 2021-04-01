@@ -6,7 +6,7 @@
 """API for working with git."""
 
 import contextlib
-import datetime
+from datetime import timedelta
 import types
 from collections import namedtuple
 from urlparse import urlparse
@@ -152,8 +152,7 @@ class GitApi(recipe_api.RecipeApi):
     # Need to strip the diff mode characters, e.g. "?? "
     return [line[2:].strip() for line in step_data.stdout.strip().splitlines()]
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))
-  def fetch(self, remote, refspecs=None, timeout_sec=None):
+  def _fetch(self, remote, refspecs, timeout_sec):
     """Runs 'git fetch'.
 
     Args:
@@ -165,6 +164,21 @@ class GitApi(recipe_api.RecipeApi):
     if refspecs is not None:
       args += refspecs
     self._step(args, timeout=timeout_sec)
+
+  def fetch(self, remote, refspecs=None, timeout_sec=None, retries=3):
+    """Runs 'git fetch'.
+
+    Args:
+      remote (str): The remote repository to fetch from.
+      refspecs (list[str]): The refspecs to fetch.
+      timeout_sec (int): Timeout in seconds.
+      retry (int): Number of times to retry.
+    """
+    func = self._fetch
+    if retries:
+      delay = timedelta(seconds=1)
+      func = exponential_retry(retries=retries, delay=delay)(func)
+    return func(remote, refspecs, timeout_sec)
 
   def fetch_refs(self, remote, ref, timeout_sec=None, count=1, test_ids=None):
     """Fetch a list of remote refs.
@@ -222,7 +236,7 @@ class GitApi(recipe_api.RecipeApi):
                            test_stdout='%s\n' % self.test_api.test_commit_id)
     return step_data.stdout.strip()
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(minutes=1))
+  @exponential_retry(retries=3, delay=timedelta(minutes=1))
   def remote_update(self, step_name, timeout_sec=None):
     """Runs 'git remote update'.
 
@@ -370,7 +384,7 @@ class GitApi(recipe_api.RecipeApi):
     """
     func = self._push
     if retry:
-      func = exponential_retry(retries=3, delay=datetime.timedelta(seconds=2))(
+      func = exponential_retry(retries=3, delay=timedelta(seconds=2))(
           self._push)
     return func(remote, refspec, dry_run, capture_stdout, force, **kwargs)
 

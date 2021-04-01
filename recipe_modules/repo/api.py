@@ -573,7 +573,8 @@ class RepoApi(recipe_api.RecipeApi):
         # Fetch the from_revision, since it may not be under refs/heads.
         with self.m.step.nest('validate {}'.format(from_path)) as val_pres, \
             self.m.context(cwd=repo_root.join(from_path)):
-          self.m.git.fetch(from_remote, [from_revision])
+          # The git helper binary does retries of its own, so we do not need to.
+          self.m.git.fetch(from_remote, [from_revision], retries=0)
           base = self.m.git.merge_base(from_revision, to_revision,
                                        test_stdout=from_revision)
           val_pres.step_text = (
