@@ -7468,15 +7468,7 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 
 [DEPS](/recipe_modules/repo/examples/annealing.py#6): [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [AnnealingLocalManifest](/recipe_modules/repo/examples/annealing.py#84)(api, state_name, state):**
-
-&mdash; **def [AnnealingMissingFromXML](/recipe_modules/repo/examples/annealing.py#97)(api, state_name, state):**
-
-&mdash; **def [AnnealingTest](/recipe_modules/repo/examples/annealing.py#77)(api, state_name, state):**
-
-&mdash; **def [AnnealingWithChanges](/recipe_modules/repo/examples/annealing.py#105)(api, state_name, state):**
-
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/annealing.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/annealing.py#29)(api, properties):**
 ### *recipes* / [repo:examples/branching](/recipe_modules/repo/examples/branching.py)
 
 [DEPS](/recipe_modules/repo/examples/branching.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
