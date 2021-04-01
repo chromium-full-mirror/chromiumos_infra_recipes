@@ -1,0 +1,20 @@
+[
+  {
+    "cmd": [
+      "/bin/true"
+    ],
+    "name": "test",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/bin/true"
+    ],
+    "name": "test (2)"
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -6,7 +6,7 @@
 import os
 from google.protobuf import json_format as jsonpb
 from recipe_engine.recipe_api import RecipeApi, StepFailure
-from recipe_engine.util import exponential_retry
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 from PB.test_platform.taskstate import TaskState
 
 SYS_LOG_DIR = '/var/log'

@@ -3,13 +3,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Cloud_pubsub module.
+"""Module providing importable utilities.
 
 """
 
-DEPS = [
-    'recipe_engine/context',
-    'recipe_engine/step',
-    'support',
-    'util',
-]
+from recipe_engine import recipe_api
+
+
+class UtilApi(recipe_api.RecipeApi):
+  """Includable utilities."""
+  pass

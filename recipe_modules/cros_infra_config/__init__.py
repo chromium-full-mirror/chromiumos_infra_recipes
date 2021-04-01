@@ -16,6 +16,7 @@ DEPS = {
     'easy': 'easy',
     'gitiles': 'gitiles',
     'src_state': 'src_state',
+    'util': 'util',
 }
 
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (

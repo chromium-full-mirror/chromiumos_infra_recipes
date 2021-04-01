@@ -6,4 +6,5 @@
 DEPS = [
     'recipe_engine/step',
     'src_state',
+    'util',
 ]

@@ -13,7 +13,7 @@ from google.protobuf.json_format import MessageToDict
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine.recipe_api import RecipeApi, StepFailure
-from recipe_engine.util import exponential_retry
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id', 'patch_set'])
 

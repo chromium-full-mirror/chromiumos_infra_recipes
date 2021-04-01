@@ -9,7 +9,7 @@ import re
 import datetime
 
 from recipe_engine import recipe_api
-from recipe_engine.util import exponential_retry
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 
 class PortageApi(recipe_api.RecipeApi):

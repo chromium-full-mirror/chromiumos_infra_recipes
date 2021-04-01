@@ -9,7 +9,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import step as step_pb2
 from google.protobuf import timestamp_pb2
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
-from recipe_engine.util import exponential_retry
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 import contextlib
 import datetime

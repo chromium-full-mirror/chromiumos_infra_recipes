@@ -12,7 +12,7 @@ from collections import namedtuple
 from urlparse import urlparse
 
 from recipe_engine import recipe_api
-from recipe_engine.util import exponential_retry
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 

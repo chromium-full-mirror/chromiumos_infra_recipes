@@ -9,7 +9,7 @@ import datetime
 import json
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
-from recipe_engine.util import exponential_retry
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 # Number of seconds to wait on gsutil rsync.
 gsutil_timeout_seconds = 30 * 60

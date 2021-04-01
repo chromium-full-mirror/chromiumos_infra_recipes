@@ -12,7 +12,7 @@ from PB.chromite.api.binhost import RegenBuildCacheRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 
-from recipe_engine import util
+from RECIPE_MODULES.chromeos.util import util
 
 DEPS = [
     'recipe_engine/context',
@@ -23,6 +23,7 @@ DEPS = [
     'cros_source',
     'git',
     'repo',
+    'util',
 ]
 
 

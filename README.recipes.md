@@ -79,6 +79,7 @@
   * [tast_results](#recipe_modules-tast_results)
   * [test_util](#recipe_modules-test_util) &mdash; API to simpify testing Chrome OS recipes.
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
+  * [util](#recipe_modules-util) &mdash; Module providing importable utilities.
   * [workspace_util](#recipe_modules-workspace_util) &mdash; API for various support functions for building.
 
 **[Recipes](#Recipes)**
@@ -377,6 +378,7 @@
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
+  * [util:tests/util](#recipes-util_tests_util)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
   * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch)
   * [workspace_util:examples/manifest_groups](#recipes-workspace_util_examples_manifest_groups)
@@ -1152,7 +1154,7 @@ Returns: (context manager) A context manager that inserts system python
     into the front of PATH.
 ### *recipe_modules* / [cloud\_pubsub](/recipe_modules/cloud_pubsub)
 
-[DEPS](/recipe_modules/cloud_pubsub/__init__.py#1): [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cloud_pubsub/__init__.py#10): [support](#recipe_modules-support), [util](#recipe_modules-util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for using Cloud Pub/Sub
 
@@ -1599,7 +1601,7 @@ Returns:
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#223)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
 
-[DEPS](/recipe_modules/cros_cache/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_cache/__init__.py#5): [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS cache.
 
@@ -1788,7 +1790,7 @@ Args:
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
 
-[DEPS](/recipe_modules/cros_infra_config/__init__.py#6): [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
+[DEPS](/recipe_modules/cros_infra_config/__init__.py#6): [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
 
 #### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -2688,7 +2690,7 @@ Args:
 Returns: A str
 ### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
 
-[DEPS](/recipe_modules/cros_source/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS source.
 
@@ -3759,7 +3761,7 @@ Args:
   gerrit_change (GerritChange): The change to submit.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
-[DEPS](/recipe_modules/git/__init__.py#5): [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git/__init__.py#5): [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with git.
 
@@ -4464,7 +4466,7 @@ Raises:
   matching predicate.
 ### *recipe_modules* / [metadata\_json](/recipe_modules/metadata_json)
 
-[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -4880,7 +4882,7 @@ Args:
   request: an UploadToTkoRequest.
 ### *recipe_modules* / [portage](/recipe_modules/portage)
 
-[DEPS](/recipe_modules/portage/__init__.py#6): [src\_state](#recipe_modules-src_state), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/portage/__init__.py#6): [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for CrOS Portage.
 
@@ -5574,7 +5576,7 @@ Returns:
   (BuildSetupResponse): Whether the build is relevant.
 ### *recipe_modules* / [tast\_exec](/recipe_modules/tast_exec)
 
-[DEPS](/recipe_modules/tast_exec/__init__.py#6): [easy](#recipe_modules-easy), [tast\_results](#recipe_modules-tast_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/tast_exec/__init__.py#6): [easy](#recipe_modules-easy), [tast\_results](#recipe_modules-tast_results), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [TastExecApi](/recipe_modules/tast_exec/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -5665,7 +5667,7 @@ Returns:
     the results were empty.
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
-[DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [TastResultsApi](/recipe_modules/tast_results/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -5840,6 +5842,13 @@ Args:
 Returns:
   str->str: title->URL pointing to the vm_test's milo page.
     For direct-vm tests, the individual failing tests are listed.
+### *recipe_modules* / [util](/recipe_modules/util)
+
+Module providing importable utilities.
+
+#### **class [UtilApi](/recipe_modules/util/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Includable utilities.
 ### *recipe_modules* / [workspace\_util](/recipe_modules/workspace_util)
 
 [DEPS](/recipe_modules/workspace_util/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7452,11 +7461,11 @@ Recipe for running presubmit on multiple CLs.
 &mdash; **def [RunSteps](/recipe_modules/recipe_analyze/examples/full.py#9)(api):**
 ### *recipes* / [regen\_build\_cache](/recipes/regen_build_cache.py)
 
-[DEPS](/recipes/regen_build_cache.py#17): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/regen_build_cache.py#17): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [util](#recipe_modules-util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the Chrome OS Build Metadata Cache Regnerator.
 
-&mdash; **def [RunSteps](/recipes/regen_build_cache.py#29)(api):**
+&mdash; **def [RunSteps](/recipes/regen_build_cache.py#30)(api):**
 ### *recipes* / [repo:examples/annealing](/recipe_modules/repo/examples/annealing.py)
 
 [DEPS](/recipe_modules/repo/examples/annealing.py#6): [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7774,9 +7783,9 @@ Get and validate requests from input properties.
 Returns: Struct containing requests.
 ### *recipes* / [test\_platform/cros\_test\_postprocess](/recipes/test_platform/cros_test_postprocess.py)
 
-[DEPS](/recipes/test_platform/cros_test_postprocess.py#13): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_postprocess.py#13): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [urls](#recipe_modules-urls), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#48)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_postprocess.py#49)(api, properties):**
 ### *recipes* / [test\_platform/ctp\_traffic\_generator](/recipes/test_platform/ctp_traffic_generator.py)
 
 [DEPS](/recipes/test_platform/ctp_traffic_generator.py#27): [cros\_test\_platform](#recipe_modules-cros_test_platform), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8170,6 +8179,11 @@ Basic tests for the urls recipe module.
 Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#21)(api):**
+### *recipes* / [util:tests/util](/recipe_modules/util/tests/util.py)
+
+[DEPS](/recipe_modules/util/tests/util.py#6): [util](#recipe_modules-util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/util/tests/util.py#15)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -1,0 +1,11 @@
+[
+  {
+    "cmd": [
+      "/bin/true"
+    ],
+    "name": "test"
+  },
+  {
+    "name": "$result"
+  }
+]

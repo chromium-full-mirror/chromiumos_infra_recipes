@@ -16,4 +16,5 @@ DEPS = [
     'src_state',
     'test_util',
     'urls',
+    'util',
 ]

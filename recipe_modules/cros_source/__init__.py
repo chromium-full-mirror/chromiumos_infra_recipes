@@ -21,6 +21,7 @@ DEPS = [
     'repo',
     'src_state',
     'test_util',
+    'util',
 ]
 
 from PB.recipe_modules.chromeos.cros_source.cros_source import (

@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/step',
     'easy',
     'tast_results',
+    'util',
 ]
 
 from PB.recipe_modules.chromeos.tast_exec.tast_exec import (TastExecProperties)

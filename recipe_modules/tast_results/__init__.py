@@ -12,6 +12,7 @@ DEPS = [
     'cros_infra_config',
     'easy',
     'failures',
+    'util',
 ]
 
 from PB.recipe_modules.chromeos.tast_results.tast_results import (

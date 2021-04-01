@@ -1,0 +1,27 @@
+[
+  {
+    "cmd": [
+      "/bin/true"
+    ],
+    "name": "test",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/bin/true"
+    ],
+    "name": "test (2)",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "Step('test (2)') (retcode: 1)"
+    },
+    "name": "$result"
+  }
+]

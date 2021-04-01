@@ -7,7 +7,7 @@ import json
 
 from google.protobuf.json_format import MessageToDict, Parse, ParseDict
 from recipe_engine import recipe_api
-from recipe_engine.util import exponential_retry
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
