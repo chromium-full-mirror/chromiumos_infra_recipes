@@ -125,7 +125,7 @@ if [[ "${prompt}" == "yes" ]]; then
   fi
 fi
 
-cipd set-ref "${bundle}" -version="${cipd_target}"
+cipd set-ref "${bundle}" -version="${cipd_target}" \
   -ref="release_$(TZ='America/Los_Angeles' date +%Y/%m/%d-%H)"
 
 cipd set-ref "${bundle}" -version="${cipd_target}" -ref=prod
