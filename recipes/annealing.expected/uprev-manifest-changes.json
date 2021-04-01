@@ -1327,6 +1327,43 @@
   },
   {
     "cmd": [],
+    "name": "diff remote and local manifest.validate NAME",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@FROM_REV@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "FROM_REV",
+      "TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "FROM_REV",
+      "TO_REV"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/NAME",
+    "infra_step": true,
+    "name": "diff remote and local manifest.validate NAME.git merge-base (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check reachability"
   },
   {

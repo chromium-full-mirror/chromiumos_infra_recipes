@@ -151,7 +151,7 @@ def RunSteps(api, properties):
           pinned=True, step_name='generate internal manifest')
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
           internal_manifest.url, manifest_ref, snapshot_xml_intern,
-          use_merge_base=is_staging)
+          use_merge_base=True)
 
       # TODO(athilenius): It would be nice to set the 'Info' column here.
       gerrit_commits = []
