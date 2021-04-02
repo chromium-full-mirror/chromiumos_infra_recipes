@@ -181,7 +181,11 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
     config_project_info = api.repo.project_info("chromeos/config-internal")
 
     try:
-      api.git_txn.update_ref(_merge_flattened)
+      api.git_txn.update_ref(
+          config_project_info.remote,
+          _merge_flattened,
+          ref=config_project_info.branch,
+      )
     except StepFailure:
       presentation.status = 'FAILURE'  # swallow StepFailure and keep going
 
@@ -249,7 +253,11 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
   with api.context(config_internal),\
        api.step.nest("aggregating configs") as presentation:
     try:
-      api.git_txn.update_ref(_merge_configs)
+      api.git_txn.update_ref(
+          config_project_info.remote,
+          _merge_configs,
+          ref=config_project_info.branch,
+      )
     except StepFailure:
       presentation.status = 'FAILURE'  # swallow StepFailure and keep going
 

@@ -36,8 +36,7 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase",
-      "HEAD:refs/for/main%l=Code-Review+2,l=Verified+1"
+      "--force-rebase"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
@@ -156,7 +155,7 @@
       "git",
       "rebase",
       "--force-rebase",
-      "HEAD:refs/for/main%l=Code-Review+2,l=Verified+1"
+      "cros/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,

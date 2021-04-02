@@ -811,46 +811,6 @@
     ]
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/config-internal",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.repo forall (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/config-internal|src/[START_DIR]/chromiumos_workspace/src/config-internal|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-remote",
-      "--symref",
-      "cros",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.git ls-remote",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "Do flatten_configs and create CL.aggregating flattened configs.git transaction",
     "~followup_annotations": [
@@ -911,46 +871,6 @@
     "name": "Do copy_to_internal and create CL.aggregating configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/config-internal",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/config-internal|src/[START_DIR]/chromiumos_workspace/src/config-internal|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-remote",
-      "--symref",
-      "cros",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.git ls-remote",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1321,8 +1241,7 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
+      "--force-rebase"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project_public",
     "infra_step": true,

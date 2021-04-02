@@ -6,237 +6,16 @@
   {
     "cmd": [
       "git",
-      "rev-parse",
-      "--show-toplevel"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
-    "infra_step": true,
-    "name": "git transaction.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "git transaction.create gerrit change for [START_DIR]/chromiumos_workspace/src/project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/project",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "git transaction.create gerrit change for [START_DIR]/chromiumos_workspace/src/project.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project|src/[START_DIR]/chromiumos_workspace/src/project|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--send-mail",
-      "--target-branch",
-      "refs/for/ref"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "git transaction.create gerrit change for [START_DIR]/chromiumos_workspace/src/project.git_cl upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "git transaction.create gerrit change for [START_DIR]/chromiumos_workspace/src/project.git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "git transaction.set labels on CL 1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Bot-Commit+1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/project/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/project",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "git transaction.set labels on CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project|src/[START_DIR]/chromiumos_workspace/src/project|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase",
-      "HEAD:refs/for/ref%l=Bot-Commit+1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "infra_step": true,
-    "name": "git transaction.set labels on CL 1.git rebase",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "push",
-      "cros",
-      "HEAD:refs/for/ref%l=Bot-Commit+1"
+      "--porcelain",
+      "remote",
+      "HEAD:refs/for/refs/heads/ref%notify=NONE,submit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "git transaction.set labels on CL 1.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "git transaction.submit CL 1",
+    "name": "git transaction.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/project/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/project",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "git transaction.submit CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project|src/[START_DIR]/chromiumos_workspace/src/project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "issue",
-      "1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "git transaction.submit CL 1.git_cl issue",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "land",
-      "-f",
-      "1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "git transaction.submit CL 1.git_cl land",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -260,7 +39,6 @@
       "remove",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "git transaction (3).try remove existing file",
     "~followup_annotations": [
@@ -278,7 +56,6 @@
       "data",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "git transaction (3).write file",
     "~followup_annotations": [
@@ -301,7 +78,6 @@
       "--error-unmatch",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "git transaction (3).diff check.git ls-files",
     "~followup_annotations": [
@@ -316,7 +92,6 @@
       "HEAD",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "git transaction (3).diff check.git diff",
     "~followup_annotations": [
@@ -329,7 +104,6 @@
       "add",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "git transaction (3).git add",
     "~followup_annotations": [
@@ -347,7 +121,6 @@
       "Update file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "git transaction (3).write commit message",
     "~followup_annotations": [
@@ -365,7 +138,6 @@
       "--",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "git transaction (3).git commit",
     "~followup_annotations": [
@@ -375,237 +147,16 @@
   {
     "cmd": [
       "git",
-      "rev-parse",
-      "--show-toplevel"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
-    "infra_step": true,
-    "name": "git transaction (3).git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "git transaction (3).create gerrit change for [START_DIR]/chromiumos_workspace/src/project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/project",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "git transaction (3).create gerrit change for [START_DIR]/chromiumos_workspace/src/project.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project|src/[START_DIR]/chromiumos_workspace/src/project|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--send-mail",
-      "--target-branch",
-      "refs/for/ref"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "git transaction (3).create gerrit change for [START_DIR]/chromiumos_workspace/src/project.git_cl upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "git transaction (3).create gerrit change for [START_DIR]/chromiumos_workspace/src/project.git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "git transaction (3).set labels on CL 1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Bot-Commit+1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/project/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/project",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "git transaction (3).set labels on CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project|src/[START_DIR]/chromiumos_workspace/src/project|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase",
-      "HEAD:refs/for/ref%l=Bot-Commit+1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "infra_step": true,
-    "name": "git transaction (3).set labels on CL 1.git rebase",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "push",
-      "cros",
-      "HEAD:refs/for/ref%l=Bot-Commit+1"
+      "--porcelain",
+      "remote",
+      "HEAD:refs/heads/ref"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "git transaction (3).set labels on CL 1.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "git transaction (3).submit CL 1",
+    "name": "git transaction (3).git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/project/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[START_DIR]/chromiumos_workspace/src/project",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "git transaction (3).submit CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project|src/[START_DIR]/chromiumos_workspace/src/project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "issue",
-      "1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "git transaction (3).submit CL 1.git_cl issue",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "land",
-      "-f",
-      "1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "git transaction (3).submit CL 1.git_cl land",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

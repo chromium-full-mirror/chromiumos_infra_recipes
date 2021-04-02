@@ -1821,7 +1821,7 @@
       "git",
       "rebase",
       "--force-rebase",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
+      "cros/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
@@ -2499,8 +2499,7 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+1"
+      "--force-rebase"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/src/overlay",
     "infra_step": true,
@@ -2625,8 +2624,7 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+1"
+      "--force-rebase"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
     "infra_step": true,
