@@ -1449,7 +1449,6 @@
     {
       "id": {
         "name": "eve-main-release",
-        "branch": "main",
         "type": "RELEASE"
       },
       "general": {
@@ -1468,7 +1467,6 @@
     {
       "id": {
         "name": "kukui-main-release",
-        "branch": "main",
         "type": "RELEASE"
       },
       "general": {
