@@ -6473,13 +6473,13 @@ For more details on the input properties, see cl_factory.proto.
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/full.py#13)(api):**
 ### *recipes* / [config\_backfill](/recipes/config_backfill.py)
 
-[DEPS](/recipes/config_backfill.py#23): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/config_backfill.py#23): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#361)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#362)(api, properties):**
 
-&mdash; **def [backfill\_project](/recipes/config_backfill.py#328)(api, properties, config):**
+&mdash; **def [backfill\_project](/recipes/config_backfill.py#329)(api, properties, config):**
 
 Backfill an individual project.
 
@@ -6488,7 +6488,7 @@ Expects to be run in the root of the chromeos checkout.
 Args:
   config (ConfigBackfillProperties.ProjectConfig) - configuration for project
 
-&mdash; **def [config\_merger](/recipes/config_backfill.py#161)(api, config, path_cros_repo, step_pres):**
+&mdash; **def [config\_merger](/recipes/config_backfill.py#162)(api, config, path_cros_repo, step_pres):**
 
 Create a closure to merge configs.
 
@@ -6504,20 +6504,20 @@ Args:
 Return:
   closure to execute merge operation
 
-&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#78)(api):**
+&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#79)(api):**
 
 Hack around needing a full portage environment for reef/fizz.
 
 Reef/fizz require their baseboard overlay to include common files.  We can
 work around this by using symlinks to simulate the overlay.
 
-&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#389)(api, path):**
+&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#396)(api, path):**
 
-&mdash; **def [require](/recipes/config_backfill.py#62)(cond, message):**
+&mdash; **def [require](/recipes/config_backfill.py#63)(cond, message):**
 
 Require a given condition be true or throw a ValueError.
 
-&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#68)(api, repo):**
+&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#69)(api, repo):**
 
 Take a private overlay URL and parse out project name.
 ### *recipes* / [config\_postsubmit](/recipes/config_postsubmit.py)
@@ -8257,6 +8257,7 @@ Basic tests for the urls recipe module.
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9e296d9de0aff5d33a94bb493932f20c9e736f37/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9e296d9de0aff5d33a94bb493932f20c9e736f37/README.recipes.md#recipe_modules-cq
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9e296d9de0aff5d33a94bb493932f20c9e736f37/README.recipes.md#recipe_modules-file
+[recipe_engine/recipe_modules/futures]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9e296d9de0aff5d33a94bb493932f20c9e736f37/README.recipes.md#recipe_modules-futures
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9e296d9de0aff5d33a94bb493932f20c9e736f37/README.recipes.md#recipe_modules-json
 [recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9e296d9de0aff5d33a94bb493932f20c9e736f37/README.recipes.md#recipe_modules-led
 [recipe_engine/recipe_modules/legacy_annotation]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/9e296d9de0aff5d33a94bb493932f20c9e736f37/README.recipes.md#recipe_modules-legacy_annotation

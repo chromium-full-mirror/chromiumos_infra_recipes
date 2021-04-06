@@ -24,6 +24,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/futures',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -382,8 +383,14 @@ def RunSteps(api, properties):
       with api.step.nest("create portage workaround symlinks"):
         create_portage_workaround(api)
 
-      for config in configs:
-        backfill_project(api, properties, config)
+      futures = [
+          api.futures.spawn(backfill_project, api, properties, config)
+          for config in configs
+      ]
+      api.futures.wait(futures)
+
+      # Get results, this will re-raise any exceptions that occured in the futures
+      results = [f.result() for f in futures]
 
 
 def mock_workspace_path(api, path):
