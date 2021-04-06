@@ -1603,7 +1603,8 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase"
+      "--force-rebase",
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
     "infra_step": true,

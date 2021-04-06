@@ -1,0 +1,54 @@
+# -*- coding: utf-8 -*-
+# Copyright 2021 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/context',
+    'recipe_engine/raw_io',
+    'src_state',
+    'git_txn',
+]
+
+
+def RunSteps(api):
+  with api.context(cwd=api.src_state.workspace_path.join('src/project')):
+    api.git_txn.update_ref('remote', lambda: None, ref='ref', automerge=True)
+    api.git_txn.update_ref('remote', lambda: False, ref='ref', automerge=True)
+    api.git_txn.update_ref_write_file('remote', 'Update file', 'file/path.txt',
+                                      'data', ref='ref', automerge=True)
+
+
+def GenTests(api):
+  yield api.test('basic')
+  yield api.test(
+      'fail_empty_push_response',
+      api.step_data('update ref.gerrit transaction.git push',
+                    stdout=api.raw_io.output((''))))
+  yield api.test(
+      'fail_incorrect_git_response',
+      api.step_data(
+          'update ref.gerrit transaction.git push', stdout=api.raw_io.output(
+              ('https://chromium-review.googlesource.com'))))
+
+  yield api.test(
+      'update_ref_has_diff_has_change',
+      api.step_data(
+          'update ref.gerrit transaction.git push', stdout=api.raw_io.output(
+              ('remote:   https://chromium-review.googlesource'
+               '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))),
+      api.step_data('update ref (3).gerrit transaction.diff check.git ls-files',
+                    retcode=0),
+      api.step_data('update ref (3).gerrit transaction.diff check.git diff',
+                    retcode=1))
+
+  yield api.test(
+      'update_ref_has_diff_has_no_change',
+      api.step_data(
+          'update ref.gerrit transaction.git push', stdout=api.raw_io.output(
+              ('remote:   https://chromium-review.googlesource'
+               '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))),
+      api.step_data('update ref (3).gerrit transaction.diff check.git ls-files',
+                    retcode=0),
+      api.step_data('update ref (3).gerrit transaction.diff check.git diff',
+                    retcode=0))

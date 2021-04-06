@@ -5,8 +5,6 @@
 
 """API for working with git cl."""
 
-import re
-
 from recipe_engine import recipe_api
 
 
@@ -21,9 +19,8 @@ class GitClApi(recipe_api.RecipeApi):
       kwargs['name'] = step_name
 
     with self.m.depot_tools.on_path():
-      return self.m.depot_tools_git_cl(
-          *args, stdout=self.m.raw_io.output(), **kwargs
-      ).stdout.strip()
+      return self.m.depot_tools_git_cl(*args, stdout=self.m.raw_io.output(),
+                                       **kwargs)
 
   def __getattr__(self, name):
     attr = getattr(self.m.depot_tools_git_cl, name)
@@ -38,7 +35,7 @@ class GitClApi(recipe_api.RecipeApi):
     return wrapper
 
   def upload(self, topic=None, reviewers=None, ccs=None, hashtags=None,
-             send_mail=False, **kwargs):
+             send_mail=False, target_branch=None, **kwargs):
     """Run `git cl upload`.
 
     --force and --bypass-hooks are always set to remove the need to enter
@@ -50,6 +47,7 @@ class GitClApi(recipe_api.RecipeApi):
       ccs (list[str]): Optional list of --cc to set.
       hashtags (list[str]): Optional list of --hashtags to set.
       send_mail (bool): If true, set --send-mail.
+      target_branch (str): Optional --target-branch to send to.
       kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
 
     Returns:
@@ -79,7 +77,11 @@ class GitClApi(recipe_api.RecipeApi):
     if send_mail:
       args.append('--send-mail')
 
-    return self('upload', args, **kwargs)
+    if target_branch is not None:
+      args.append('--target-branch')
+      args.append(target_branch)
+
+    return self('upload', args, **kwargs).stdout.strip()
 
   def status(self, field=None, fast=False, **kwargs):
     """Run `git cl status` with given arguments.
@@ -101,4 +103,4 @@ class GitClApi(recipe_api.RecipeApi):
     if fast:
       args.append('--fast')
 
-    return self('status', args, **kwargs)
+    return self('status', args, **kwargs).stdout.strip()
