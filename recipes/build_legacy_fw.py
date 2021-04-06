@@ -7,6 +7,7 @@
 
 DEPS = [
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -104,17 +105,22 @@ class FirmwareBuilder(object):
       with self.m.build_menu.setup_workspace(), \
           self.m.context(cwd=self.m.src_state.workspace_path):
         if self.properties.bump_version:
-          # Use 'rubik-staging' if we are on staging.  manifest-versions has not
-          # migrated to main yet, so we pass create_releasespec branch=None to
-          # use the default branch, whatever it is.
           self.m.cros_version.bump_version(production=True,
                                            dry_run=self._is_staging)
-          self.m.cros_release.create_releasespec(
-              'buildspecs',
-              branch='rubik-staging' if self._is_staging else None,
-              step_name='create buildspec')
+          if self.m.cq.active:
+            with self.m.step.nest('CQ run: not pushing buildspec'):
+              pass
+          else:
+            # Use 'rubik-staging' if we are on staging.  manifest-versions has
+            # not migrated to main yet, so we pass create_releasespec
+            # branch=None to use the default branch, whatever it is.
+            self.m.cros_release.create_releasespec(
+                'buildspecs',
+                branch='rubik-staging' if self._is_staging else None,
+                step_name='create buildspec')
 
-        self._bcs_version = self.m.cros_version.read_workspace_version()
+        self._bcs_version = self.m.cros_version.read_workspace_version(
+            name='reread chromeos version')
         with self.m.depot_tools.on_path(), self._setup_chroot():
           yield
 
@@ -282,6 +288,7 @@ def GenTests(api):
              api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
              api.post_check(MustRun, 'bump version'),
+             api.post_check(MustRun, 'create buildspec'),
              api.post_check(withdebugsymbols, 'install packages: target'),
              api.post_check(StatusSuccess),
              input_properties=dict(bump_version=True))
@@ -290,6 +297,7 @@ def GenTests(api):
              api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
              api.post_check(DoesNotRun, 'bump version'),
+             api.post_check(DoesNotRun, 'create buildspec'),
              api.post_check(withdebugsymbols, 'install packages: target'),
              api.post_check(StatusSuccess))
 
@@ -297,13 +305,23 @@ def GenTests(api):
              api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
              api.post_check(DoesNotRun, 'bump version'),
+             api.post_check(DoesNotRun, 'create buildspec'),
              api.post_check(no_withdebugsymbols, 'install packages: target'),
              api.post_check(StatusSuccess), version='R39-6301.202.44')
 
   yield test('cq', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
              api.post_check(DoesNotRun, 'bump version'),
+             api.post_check(DoesNotRun, 'create buildspec'),
              api.post_check(StatusSuccess), cq=True, builder='fw-atlas-cq')
+
+  yield test('cq-bump',
+             api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(MustRun, 'bump version'),
+             api.post_check(DoesNotRun, 'create buildspec'),
+             api.post_check(StatusSuccess), cq=True, builder='fw-atlas-cq',
+             input_properties=dict(bump_version=True))
 
   yield test(
       'two-targets',
