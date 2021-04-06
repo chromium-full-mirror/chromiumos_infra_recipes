@@ -10,6 +10,7 @@ json files.
 """
 
 import functools
+import json
 from google.protobuf.text_format import MessageToString
 
 from recipe_engine import post_process
@@ -22,6 +23,7 @@ DEPS = [
     'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -52,7 +54,11 @@ PROPERTIES = StarDoctorProperties
 
 
 def RunSteps(api, properties):
+
   with api.step.nest('set up'):
+    # Files that won't alone trigger a commit and upload.
+    irrelevant_files = set()
+
     infra_config_dir = _get_clone(api, INFRA_CONFIG_URL)
     ss_dir = _get_clone(api, SUITE_SCHEDULER_URL)
     # We don't really need the full clone yet. But, it is assumed that configs
@@ -108,6 +114,13 @@ def RunSteps(api, properties):
                                                         fetch_n=fetch_n))
       api.file.write_text('write textproto', schedule_fname,
                           MessageToString(mstones))
+
+    # Update the release configuration time.
+    tl_file = 'release/timeline_configuration.json'
+    tl_cfg_fpath = api.path.join(infra_config_dir, tl_file)
+    _update_release_time(api, tl_cfg_fpath)
+    irrelevant_files.add(tl_file)
+
     # We need lucicfg from depot_tools.
     with api.depot_tools.on_path():
       # We need protoc from cipd.
@@ -138,8 +151,10 @@ def RunSteps(api, properties):
     infra_config_labels = ['l=Bot-Commit+1', 'l=Commit-Queue+2']
     ss_labels = infra_config_labels + ['l=Verified+1']
     _commit_changed_files(api, infra_config_dir, INFRA_CONFIG_PROJECT,
-                          infra_config_labels)
-    _commit_changed_files(api, ss_dir, SUITE_SCHEDULER_PROJECT, ss_labels)
+                          infra_config_labels,
+                          irrelevant_files=irrelevant_files)
+    _commit_changed_files(api, ss_dir, SUITE_SCHEDULER_PROJECT, ss_labels,
+                          irrelevant_files=irrelevant_files)
 
 
 def _abandon_old_changes(api, project):
@@ -166,14 +181,29 @@ def _get_clone(api, repo_url):
   return repo_dir
 
 
-def _commit_changed_files(api, repo_dir, project, labels):
+def _update_release_time(api, tl_cfg_fpath):
+  """Update the infra/config/releases/timeline_configuration.json time field."""
+  with api.step.nest("update configured release time") as pres:
+    step_result = api.json.read(
+        'read json', tl_cfg_fpath, step_test_data=lambda: api.json.test_api.
+        output({"time": "2021-04-06T16:00:40Z"}))
+    tl_cfg = step_result.json.output
+    tl_cfg['time'] = api.time.utcnow().strftime("%FT%TZ")
+    api.file.write_text('write release channel timeline configuration',
+                        tl_cfg_fpath, json.dumps(tl_cfg, indent=2))
+
+
+def _commit_changed_files(api, repo_dir, project, labels,
+                          irrelevant_files=None):
   """Commit and push changed files.
 
   Args:
     repo_dir(Path): Path to the repository to push.
     project(str): Project name of the repo.
     labels([str]): Submission labels for the project.
+    irrelevant_files(set(files)): Files that alone, shouldn't trigger a commit.
   """
+  irrelevant_files = irrelevant_files or set()
   host = (INTERNAL_HOST if project.startswith('chromeos') else EXTERNAL_HOST)
   _abandon_old_changes(api, project)
   repo_url = '{}/{}'.format(host, project)
@@ -190,9 +220,12 @@ def _commit_changed_files(api, repo_dir, project, labels):
     with api.context(cwd=repo_dir):
       branch = api.git.current_branch()
       changed_files = api.git.get_working_dir_diff_files()
-      if not changed_files:  # pragma: nocover
-        presentation.step_text = 'no files changed'
+
+      # If there aren't leftover files when we subtract the irrelevant ones.
+      if not set(changed_files) - irrelevant_files:
+        presentation.step_text = 'no relevant files changed'
         return None
+
       api.git.add(changed_files)
       api.git.commit(commit_msg)
       # Upload using git cl so that we can add topic and hashtags.
@@ -216,6 +249,17 @@ def GenTests(api):
       'full', api.time.seed(1613694623.0),
       api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
                      branches=['R9000']))
+
+  yield api.test(
+      'only_irrelevant', api.time.seed(1613694623.0),
+      api.step_data(
+          'commit changes.committing to chromeos/infra/config.git status',
+          stdout=api.raw_io.output(' M release/timeline_configuration.json')),
+      api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
+                     branches=['R9000']),
+      api.post_check(
+          post_process.DoesNotRun,
+          'commit changes.committing to chromeos/infra/config.git commit'))
 
   yield api.test(
       'old_and_new_properties_set',
