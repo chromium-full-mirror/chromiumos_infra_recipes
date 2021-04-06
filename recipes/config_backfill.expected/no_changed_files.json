@@ -664,7 +664,114 @@
   },
   {
     "cmd": [],
-    "name": "processing test_program/test_project"
+    "name": "create portage workaround symlinks"
+  },
+  {
+    "cmd": [],
+    "name": "create portage workaround symlinks.[reef] configuring public baseboard overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "[START_DIR]/chromiumos_workspace/src/overlays/baseboard-reef/chromeos-base/chromeos-config-bsp-baseboard/files",
+      "[START_DIR]/chromiumos_workspace/src/overlays/overlay-reef/chromeos-base/chromeos-config-bsp/files/include-public"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "create portage workaround symlinks.[reef] configuring public baseboard overlay.copying files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create portage workaround symlinks.[reef] configuring private baseboard overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/baseboard-reef-private/chromeos-base/chromeos-config-bsp-baseboard-private/files",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/overlay-reef-private/chromeos-base/chromeos-config-bsp-private/files/include-private"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "create portage workaround symlinks.[reef] configuring private baseboard overlay.copying files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create portage workaround symlinks.[fizz] configuring public baseboard overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "[START_DIR]/chromiumos_workspace/src/overlays/baseboard-fizz/chromeos-base/chromeos-config-bsp-baseboard/files",
+      "[START_DIR]/chromiumos_workspace/src/overlays/overlay-fizz/chromeos-base/chromeos-config-bsp-fizz/files/include-public"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "create portage workaround symlinks.[fizz] configuring public baseboard overlay.copying files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create portage workaround symlinks.[fizz] configuring private baseboard overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/baseboard-fizz-private/chromeos-base/chromeos-config-bsp-baseboard/files/include",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/overlay-fizz-private/chromeos-base/chromeos-config-bsp-fizz-private/files/include"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "create portage workaround symlinks.[fizz] configuring private baseboard overlay.copying files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "processing test_program/test_project",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@no files changed@@@"
+    ]
   },
   {
     "cmd": [
@@ -917,8 +1024,7 @@
     "cmd": [],
     "name": "processing test_program/test_project.git transaction.diffing repo to find changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@no files changed@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

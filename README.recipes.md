@@ -6477,9 +6477,9 @@ For more details on the input properties, see cl_factory.proto.
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#350)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#361)(api, properties):**
 
-&mdash; **def [backfill\_project](/recipes/config_backfill.py#240)(api, properties, config):**
+&mdash; **def [backfill\_project](/recipes/config_backfill.py#328)(api, properties, config):**
 
 Backfill an individual project.
 
@@ -6488,7 +6488,7 @@ Expects to be run in the root of the chromeos checkout.
 Args:
   config (ConfigBackfillProperties.ProjectConfig) - configuration for project
 
-&mdash; **def [config\_merger](/recipes/config_backfill.py#78)(api, config, path_cros_repo):**
+&mdash; **def [config\_merger](/recipes/config_backfill.py#161)(api, config, path_cros_repo, step_pres):**
 
 Create a closure to merge configs.
 
@@ -6499,9 +6499,19 @@ Args:
   api: Reference to recipes API
   config: Merge config to execute
   path_cros_repo: Path to root of ChromeOS checkout
+  step_pres: Step presentation instance
 
 Return:
   closure to execute merge operation
+
+&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#78)(api):**
+
+Hack around needing a full portage environment for reef/fizz.
+
+Reef/fizz require their baseboard overlay to include common files.  We can
+work around this by using symlinks to simulate the overlay.
+
+&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#389)(api, path):**
 
 &mdash; **def [require](/recipes/config_backfill.py#62)(cond, message):**
 

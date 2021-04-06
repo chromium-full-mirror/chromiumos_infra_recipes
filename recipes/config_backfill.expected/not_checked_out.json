@@ -664,27 +664,13 @@
   },
   {
     "cmd": [],
-    "name": "processing reef/test_project"
+    "name": "create portage workaround symlinks"
   },
   {
     "cmd": [],
-    "name": "processing reef/test_project.configuring public baseboard overlay",
+    "name": "create portage workaround symlinks.[reef] configuring public baseboard overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "https://chromium.googlesource.com/chromiumos/overlays/board-overlays",
-      "[CLEANUP]/tmp_tmp_1/baseboard"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "processing reef/test_project.configuring public baseboard overlay.git clone",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -695,35 +681,21 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[CLEANUP]/tmp_tmp_1/baseboard/baseboard-reef/chromeos-base/chromeos-config-bsp-baseboard/files",
-      "[START_DIR]/chromiumos_workspace/src/overlay-reef/overlay-reef/chromeos-base/chromeos-config-bsp/files/include-public"
+      "[START_DIR]/chromiumos_workspace/src/overlays/baseboard-reef/chromeos-base/chromeos-config-bsp-baseboard/files",
+      "[START_DIR]/chromiumos_workspace/src/overlays/overlay-reef/chromeos-base/chromeos-config-bsp/files/include-public"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "processing reef/test_project.configuring public baseboard overlay.copying files",
+    "name": "create portage workaround symlinks.[reef] configuring public baseboard overlay.copying files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "processing reef/test_project.configuring private baseboard overlay",
+    "name": "create portage workaround symlinks.[reef] configuring private baseboard overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "https://chrome-internal.googlesource.com/chromeos/overlays/baseboard-reef-private",
-      "[CLEANUP]/tmp_tmp_2/baseboard"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "processing reef/test_project.configuring private baseboard overlay.git clone",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -734,34 +706,19 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[CLEANUP]/tmp_tmp_2/baseboard/chromeos-base/chromeos-config-bsp-baseboard-private/files",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/chromeos-base/chromeos-config-bsp-private/files/include-private"
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/baseboard-reef-private/chromeos-base/chromeos-config-bsp-baseboard-private/files",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/overlay-reef-private/chromeos-base/chromeos-config-bsp-private/files/include-private"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "processing reef/test_project.configuring private baseboard overlay.copying files",
+    "name": "create portage workaround symlinks.[reef] configuring private baseboard overlay.copying files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
-    "cmd": [
-      "git",
-      "ls-remote",
-      "--symref",
-      ".",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git ls-remote",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
-    "name": "processing reef/test_project.git transaction",
+    "name": "create portage workaround symlinks.[fizz] configuring public baseboard overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -773,244 +730,22 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/imported"
+      "copytree",
+      "[START_DIR]/chromiumos_workspace/src/overlays/baseboard-fizz/chromeos-base/chromeos-config-bsp-baseboard/files",
+      "[START_DIR]/chromiumos_workspace/src/overlays/overlay-fizz/chromeos-base/chromeos-config-bsp-fizz/files/include-public"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "processing reef/test_project.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/reef/test_project/imported directory exists",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/imported/public_model.yaml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.copy public model.yaml",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/imported/public_model.yaml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.git add",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/imported/private_model.yaml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.copy private model.yaml",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/imported/private_model.yaml"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.git add (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/imported/hwid"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.copy HWID database",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/imported/hwid"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.git add (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/generated"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/reef/test_project/generated directory exists",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
-      "--log",
-      "DEBUG",
-      "--project-name",
-      "test_project",
-      "--program-name",
-      "reef",
-      "--public-model",
-      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
-      "--private-model",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
-      "--hwid",
-      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
-      "--config-bundle",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/generated/config.jsonproto",
-      "--import-only",
-      "--output",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/generated/imported.jsonproto"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "env": {
-      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
-    },
-    "name": "processing reef/test_project.git transaction.Generate imported configuration",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/generated/imported.jsonproto"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "env": {
-      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
-    },
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.git add (4)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
-      "--log",
-      "DEBUG",
-      "--project-name",
-      "test_project",
-      "--program-name",
-      "reef",
-      "--public-model",
-      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
-      "--private-model",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
-      "--hwid",
-      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
-      "--config-bundle",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/generated/config.jsonproto",
-      "--output",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/generated/joined.jsonproto"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "env": {
-      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
-    },
-    "name": "processing reef/test_project.git transaction.Generate joined configuration",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[START_DIR]/chromiumos_workspace/src/project/reef/test_project/generated/joined.jsonproto"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "env": {
-      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
-    },
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.git add (5)",
+    "name": "create portage workaround symlinks.[fizz] configuring public baseboard overlay.copying files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "processing reef/test_project.git transaction.diffing repo to find changes",
+    "name": "create portage workaround symlinks.[fizz] configuring private baseboard overlay",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@changed files@a/b/text.txt, other_test.txt@@@",
-      "@@@STEP_LOG_END@changed files@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--name-only",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.diffing repo to find changes.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1020,50 +755,22 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "copy",
-      "Merging legacy configs.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_backfill",
-      "[CLEANUP]/commit_msg_tmp_1"
+      "copytree",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/baseboard-fizz-private/chromeos-base/chromeos-config-bsp-baseboard/files/include",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/overlay-fizz-private/chromeos-base/chromeos-config-bsp-fizz-private/files/include"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "processing reef/test_project.git transaction.diffing repo to find changes.write commit message",
+    "name": "create portage workaround symlinks.[fizz] configuring private baseboard overlay.copying files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Merging legacy configs.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: config_backfill@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.diffing repo to find changes.git commit",
+    "cmd": [],
+    "name": "processing test_program/test_project",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "--porcelain",
-      "https://example.com/some/project/repo",
-      "HEAD:refs/heads/main"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/reef/test_project",
-    "infra_step": true,
-    "name": "processing reef/test_project.git transaction.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_SUMMARY_TEXT@project not checked out@@@"
     ]
   },
   {

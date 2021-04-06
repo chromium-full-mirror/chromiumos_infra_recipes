@@ -75,7 +75,90 @@ def split_overlay_project(api, repo):
   return parts.path
 
 
-def config_merger(api, config, path_cros_repo):
+def create_portage_workaround(api):
+  """Hack around needing a full portage environment for reef/fizz.
+
+  Reef/fizz require their baseboard overlay to include common files.  We can
+  work around this by using symlinks to simulate the overlay.
+  """
+
+  path_cros_repo = api.context.cwd
+
+  # TODO(crbug.com/1144956).  This is a workaround for fizz and reef.  They're
+  # unique in that they expect their baseboard overlay to be available so they
+  # can include a common yaml file from it.  We don't have portage available
+  # so we have to clone the repos and hack it with symlinks.  Once the mentioned
+  # bug is resolved, we can make this more consistent for all projects.
+  def _copy_baseboard(step_text, src_path, dst_path):
+    """Copy files from baseboard overlay to project overlay.
+
+    Args:
+        step_text (str): display text for the step
+        src_path (str): path in the baseboard overlay to copy from
+        dst_path (str): path in overlay to copy files to
+    """
+
+    with api.step.nest(step_text):
+      api.path.mock_add_paths(src_path)
+      if api.path.exists(src_path):
+        api.file.copytree(
+            'copying files',
+            src_path,
+            dst_path,
+        )
+
+  ### main function body
+  # These paths aren't consistent so we'll just enumerate them
+  config_paths = {
+      'reef': {
+          'public_baseboard':
+              'chromeos-base/chromeos-config-bsp-baseboard/files',
+          'public_overlay':
+              'chromeos-base/chromeos-config-bsp/files/include-public',
+          'private_baseboard':
+              'chromeos-base/chromeos-config-bsp-baseboard-private/files',
+          'private_overlay':
+              'chromeos-base/chromeos-config-bsp-private/files/include-private',
+      },
+      'fizz': {
+          'public_baseboard':
+              'chromeos-base/chromeos-config-bsp-baseboard/files',
+          'public_overlay':
+              'chromeos-base/chromeos-config-bsp-fizz/files/include-public',
+          'private_baseboard':
+              'chromeos-base/chromeos-config-bsp-baseboard/files/include',
+          'private_overlay':
+              'chromeos-base/chromeos-config-bsp-fizz-private/files/include',
+      }
+  }
+
+  for program in ['reef', 'fizz']:
+    _copy_baseboard(
+        step_text='[%s] configuring public baseboard overlay' % program,
+        src_path=path_cros_repo.join(
+            'src/overlays/baseboard-{}'.format(program),
+            config_paths[program]['public_baseboard'],
+        ),
+        dst_path=path_cros_repo.join(
+            "src/overlays/overlay-{}".format(program),
+            config_paths[program]['public_overlay'],
+        ),
+    )
+
+    _copy_baseboard(
+        step_text='[%s] configuring private baseboard overlay' % program,
+        src_path=path_cros_repo.join(
+            "src/private-overlays/baseboard-{}-private".format(program),
+            config_paths[program]['private_baseboard'],
+        ),
+        dst_path=path_cros_repo.join(
+            "src/private-overlays/overlay-{}-private".format(program),
+            config_paths[program]['private_overlay'],
+        ),
+    )
+
+
+def config_merger(api, config, path_cros_repo, step_pres):
   """Create a closure to merge configs.
 
   Meant to be called from git_txn.update_ref, which requires a single
@@ -85,6 +168,7 @@ def config_merger(api, config, path_cros_repo):
     api: Reference to recipes API
     config: Merge config to execute
     path_cros_repo: Path to root of ChromeOS checkout
+    step_pres: Step presentation instance
 
   Return:
     closure to execute merge operation
@@ -211,12 +295,12 @@ def config_merger(api, config, path_cros_repo):
         api.git.add([path_merged_config])
 
     # Commit changes (if any)
-    with api.step.nest('diffing repo to find changes') as presentation:
+    with api.step.nest('diffing repo to find changes'):
       changed_files = api.git.get_diff_files('HEAD')
       if changed_files:
-        presentation.logs['changed files'] = ", ".join(changed_files)
+        step_pres.logs['changed files'] = ", ".join(changed_files)
       else:
-        presentation.step_summary_text = "no files changed"
+        step_pres.step_summary_text = "no files changed"
         return False
 
       # Add and commit
@@ -229,8 +313,12 @@ def config_merger(api, config, path_cros_repo):
               build_url=api.buildbucket.build_url(),
               automation_id='config_backfill'),
       )
-      if not api.cros_infra_config.is_staging:
-        api.git.commit(commit_msg)
+
+      # Abort transaction if we're in staging, otherwise commit
+      if api.cros_infra_config.is_staging:
+        step_pres.step_summary_text = "staging, don't commit"
+        return False
+      api.git.commit(commit_msg)
 
       return True
 
@@ -252,99 +340,22 @@ def backfill_project(api, properties, config):
       config.project_name.lower(),
   ))
 
-  # TODO(crbug.com/1144956).  This is a workaround for fizz and reef.  They're
-  # unique in that they expect their baseboard overlay to be available so they
-  # can include a common yaml file from it.  We don't have portage available
-  # so we have to clone the repos and hack it with symlinks.  Once the mentioned
-  # bug is resolved, we can make this more consistent for all projects.
-  def _copy_baseboard(step_text, overlay_path, dst_path, baseboard_repo,
-                      src_path):
-    """Copy files from baseboard overlay to project overlay.
-
-    Args:
-        step_text (str): display text for the step
-        overlay_path (str): path to the project overlay
-        dst_path (str): path in overlay to copy files to
-        baseboard_repo (str): url to the repo for the baseboard overlay
-        src_path (str): path in the baseboard overlay to copy from
-    """
-
-    with api.step.nest(step_text):
-      baseboard_path = api.path.mkdtemp().join('baseboard')
-      api.git.clone(baseboard_repo, baseboard_path)
-
-      src_path = api.path.join(baseboard_path, src_path)
-      dst_path = api.path.join(overlay_path, dst_path)
-      api.path.mock_add_paths(src_path)
-      if api.path.exists(src_path):
-        api.file.copytree(
-            'copying files',
-            src_path,
-            dst_path,
-        )
-
-  ### main function body
-  # These paths aren't consistent so we'll just enumerate them
-  config_paths = {
-      'reef': {
-          'public_src':
-              'chromeos-base/chromeos-config-bsp-baseboard/files',
-          'public_dst':
-              'chromeos-base/chromeos-config-bsp/files/include-public',
-          'private_src':
-              'chromeos-base/chromeos-config-bsp-baseboard-private/files',
-          'private_dst':
-              'chromeos-base/chromeos-config-bsp-private/files/include-private',
-      },
-      'fizz': {
-          'public_src':
-              'chromeos-base/chromeos-config-bsp-baseboard/files',
-          'public_dst':
-              'chromeos-base/chromeos-config-bsp-fizz/files/include-public',
-          'private_src':
-              'chromeos-base/chromeos-config-bsp-baseboard/files/include',
-          'private_dst':
-              'chromeos-base/chromeos-config-bsp-fizz-private/files/include',
-      }
-  }
-
   program = config.program_name.lower()
   project = config.project_name.lower()
 
-  with api.step.nest("processing {}/{}".format(program, project)):
-    if program in ['reef', 'fizz']:
-      _copy_baseboard(
-          step_text='configuring public baseboard overlay',
-          overlay_path=path_cros_repo.join(
-              "src/overlay-{program}".format(program=program)),
-          baseboard_repo=PUBLIC_BASEBOARD_REPO,
-          dst_path='overlay-{}/{}'.format(
-              program,
-              config_paths[program]['public_dst'],
-          ),
-          src_path=api.path.join(
-              'baseboard-{program}'.format(program=program),
-              config_paths[program]['public_src'],
-          ),
-      )
-
-      _copy_baseboard(
-          step_text='configuring private baseboard overlay',
-          overlay_path=path_cros_repo.join(
-              PATH_CROS_OVERLAYS_PRIVATE,
-              split_overlay_project(api,
-                                    config.private_yaml.repo).split("/")[-1],
-          ),
-          baseboard_repo=PRIVATE_BASEBOARD_REPO.format(program=program),
-          dst_path=config_paths[program]['private_dst'],
-          src_path=config_paths[program]['private_src'],
-      )
+  with api.step.nest("processing {}/{}".format(program,
+                                               project)) as presentation:
+    # Check that project is checked out
+    if not api.path.exists(path_project_repo):
+      presentation.step_summary_text = "project not checked out"
+      return
 
     # Update the repo atomically
     with api.context(cwd=path_project_repo):
-      api.git_txn.update_ref(properties.dest_repo,
-                             config_merger(api, config, path_cros_repo),
-                             ref=api.git.remote_head())
+      api.git_txn.update_ref(
+          properties.dest_repo,
+          config_merger(api, config, path_cros_repo, presentation),
+          ref=api.git.remote_head())
 
 
 def RunSteps(api, properties):
@@ -368,11 +379,38 @@ def RunSteps(api, properties):
 
     # run backfill
     with api.context(cwd=api.cros_source.workspace_path):
+      with api.step.nest("create portage workaround symlinks"):
+        create_portage_workaround(api)
+
       for config in configs:
         backfill_project(api, properties, config)
 
 
+def mock_workspace_path(api, path):
+  return api.path.exists(
+      api.path["start_dir"].join(
+          "chromiumos_workspace",
+          path,
+      ),
+  )
+
+
 def GenTests(api):
+
+  def StepSummaryEquals(check, step_odict, step, expected):
+    """Check that the step's step_summary_text equals given value.
+
+    Args:
+      step (str) - The step to check the step_text of
+      expected (str) - The expected value of the step_text
+
+    Usage:
+      yield TEST + api.post_process(
+          StepSummaryEquals, 'step-name', 'expected-text'
+      )
+    """
+    check(step_odict[step].step_summary_text == expected)
+
   yield api.test(
       'basic',
       api.properties(
@@ -389,10 +427,14 @@ def GenTests(api):
               'hwid_key': 'some_key',
               'project_name': 'test_project',
               'program_name': 'test_program',
-          }))
+          }),
+      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      api.post_process(post_process.StatusSuccess),
+  )
 
   yield api.test(
-      'baseboard_workaround',
+      'staging_no_commit',
+      api.buildbucket.generic_build(builder="staging-backfiller"),
       api.properties(
           **{
               'dest_repo': 'https://example.com/some/project/repo',
@@ -406,8 +448,41 @@ def GenTests(api):
               },
               'hwid_key': 'some_key',
               'project_name': 'test_project',
-              'program_name': 'reef',
-          }))
+              'program_name': 'test_program',
+          }),
+      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      api.post_process(
+          StepSummaryEquals,
+          'processing test_program/test_project',
+          "staging, don't commit",
+      ),
+      api.post_process(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'not_checked_out',
+      api.properties(
+          **{
+              'dest_repo': 'https://example.com/some/project/repo',
+              'public_yaml': {
+                  'repo': 'https://example.com/public/',
+                  'path': 'some/model.yaml'
+              },
+              'private_yaml': {
+                  'repo': CROS_INTERNAL + '/private/',
+                  'path': 'some/model.yaml'
+              },
+              'hwid_key': 'some_key',
+              'project_name': 'test_project',
+              'program_name': 'test_program',
+          }),
+      api.post_process(
+          StepSummaryEquals,
+          'processing test_program/test_project',
+          'project not checked out',
+      ),
+      api.post_process(post_process.StatusSuccess),
+  )
 
   yield api.test(
       'no_changed_files',
@@ -426,8 +501,10 @@ def GenTests(api):
               'project_name': 'test_project',
               'program_name': 'test_program',
           }),
+      mock_workspace_path(api, 'src/project/test_program/test_project'),
       api.step_data(
           'processing test_program/test_project'
           '.git transaction'
           '.diffing repo to find changes.git diff',
-          stdout=api.raw_io.output('')))
+          stdout=api.raw_io.output('')),
+  )
