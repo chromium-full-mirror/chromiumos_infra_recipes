@@ -51,10 +51,18 @@ def GenTests(api):
   input_proto = api.build_plan.input_proto
   builds = [
       # Completed successfully.
+      build_pb2.Build(id=8922054662172514000, builder={'builder': 'cave-cq'},
+                      status=common_pb2.SUCCESS,
+                      input=input_proto(None, 'cave')),
+      # Slim parallel launch, completed successfully.
       build_pb2.Build(id=8922054662172514000,
                       builder={'builder': 'amd64-generic-cq'},
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514000,
+                      builder={'builder': 'amd64-generic-slim-cq'},
+                      status=common_pb2.FAILURE, critical=False,
+                      input=input_proto(None, 'amd64-generic-slim')),
       # Non-critical failure.
       build_pb2.Build(id=8922054662172514004, builder={'builder': 'coral-cq'},
                       status=common_pb2.FAILURE,
@@ -64,13 +72,18 @@ def GenTests(api):
                       builder={'builder': 'arm-generic-cq'},
                       status=common_pb2.FAILURE,
                       input=input_proto(None, 'arm-generic')),
-      # Private builder failure.
+      # Broken before private builder.
       build_pb2.Build(id=8922054662172514002,
                       builder={'builder': 'atlas-slim-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562475245),
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'atlas-slim')),
-      # Public builder failure.
+      # Broken before private builder.
+      build_pb2.Build(id=8922054662172514002, builder={'builder': 'atlas-cq'},
+                      start_time=timestamp_pb2.Timestamp(seconds=1562475245),
+                      status=common_pb2.SUCCESS,
+                      input=input_proto(None, 'atlas')),
+      # Broken before public builder.
       build_pb2.Build(id=8922054662172514003,
                       builder={'builder': 'arm64-generic-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562475245),
@@ -98,14 +111,18 @@ def GenTests(api):
               'atlas-cq',
               'arm64-generic-cq',
           ],
-          expected_completed_builds=['amd64-generic-cq'],
+          expected_completed_builds=[
+              'amd64-generic-cq',
+              'cave-cq',
+          ],
       ),
       api.git_footers.simulated_get_footers([], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-cq',
+          'amd64-generic-slim-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
           'atlas-slim-cq',
+          'cave-cq',
       ]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
@@ -125,15 +142,19 @@ def GenTests(api):
               'arm64-generic-cq',
               'coral-cq',
           ],
-          expected_completed_builds=['amd64-generic-cq'],
+          expected_completed_builds=[
+              'amd64-generic-cq',
+              'cave-cq',
+          ],
       ),
       api.git_footers.simulated_get_footers(['coral-cq'], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-cq',
+          'amd64-generic-slim-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
           'atlas-slim-cq',
           'coral-cq',
+          'cave-cq',
       ]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
@@ -153,15 +174,18 @@ def GenTests(api):
               'arm64-generic-cq',
               'coral-cq',
               'amd64-generic-cq',
+              'amd64-generic-slim-cq',
               'arm-generic-cq',
+              'cave-cq',
           ], expected_completed_builds=[]),
       api.git_footers.simulated_get_footers(['all'], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-cq',
+          'amd64-generic-slim-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
           'atlas-slim-cq',
           'coral-cq',
+          'cave-cq',
       ]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
@@ -186,16 +210,18 @@ def GenTests(api):
           ],
           expected_completed_builds=[
               'amd64-generic-cq',
+              'cave-cq',
           ],
       ),
       api.git_footers.simulated_get_footers([], 'get build history'),
       api.git_footers.simulated_get_footers(['named-exp-from-cl'],
                                             'filter builds'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-cq',
+          'amd64-generic-slim-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
           'atlas-slim-cq',
+          'cave-cq',
       ]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
@@ -217,6 +243,7 @@ def GenTests(api):
               'arm64-generic-cq',
           ], expected_completed_builds=[
               'amd64-generic-cq',
+              'cave-cq',
           ], **{
               '$chromeos/cros_infra_config':
                   CrosInfraConfigProperties(config_ref=config_ref),
@@ -226,10 +253,11 @@ def GenTests(api):
           binaryproto=False),
       api.git_footers.simulated_get_footers([], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-cq',
+          'amd64-generic-slim-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
           'atlas-slim-cq',
+          'cave-cq',
       ]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
@@ -249,16 +277,18 @@ def GenTests(api):
               'arm64-generic-cq',
           ], expected_completed_builds=[
               'amd64-generic-cq',
+              'cave-cq',
           ], **{
               '$chromeos/cros_infra_config':
                   CrosInfraConfigProperties(switch_to_external_manifest=True)
           }),
       api.git_footers.simulated_get_footers([], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-cq',
+          'amd64-generic-slim-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
           'atlas-slim-cq',
+          'cave-cq',
       ]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'

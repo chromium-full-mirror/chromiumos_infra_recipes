@@ -640,7 +640,7 @@
         "type": "CQ"
       },
       "general": {
-        "critical": true,
+        "critical": false,
         "brokenBefore": "2019-11-01T00:00:00Z",
         "manifest": "PRIVATE"
       },

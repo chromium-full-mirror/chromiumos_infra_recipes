@@ -113,12 +113,22 @@ class BuildPlanApi(recipe_api.RecipeApi):
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
 
+      # TODO(crbug.com/1123776): Remove full_builder_* references upon
+      # completion of go/cros-slim-rollout parallel adoption phases.
+      # Slim builds will always run as non-critical during the parallel
+      # adoption stage, so we need to check criticality of the full builder
+      # as well.
       for child_spec in child_specs:
         # Get the builder variant in the build plan.
         if child_spec.name in necessary_builders:
           child_builder_name = child_spec.name
+          full_builder_critical = None
         elif self.get_slim_builder_name(child_spec.name) in necessary_builders:
           child_builder_name = self.get_slim_builder_name(child_spec.name)
+          full_builder_name = child_spec.name
+          full_builder_config = self.m.cros_infra_config.get_builder_config(
+              full_builder_name)
+          full_builder_critical = full_builder_config.general.critical.value
         else:
           filter_log.append('{} build is not needed for changes'.format(
               child_spec.name))
@@ -141,6 +151,13 @@ class BuildPlanApi(recipe_api.RecipeApi):
           count_skip_since_already_passed += 1
           continue
 
+        # Do not retry slim builds if an equivalent full build already passed.
+        if child_builder_name.endswith(
+            'slim-cq') and full_builder_name in completed_builders:
+          filter_log.append('{} already passed'.format(full_builder_name))
+          count_skip_since_already_passed += 1
+          continue
+
         # We've already found an existing build, we'll just wait on it later.
         if child_builder_spec in snapshot_build_targets:
           snapshot_build = snapshot_build_targets[child_builder_spec]
@@ -152,7 +169,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           continue
 
         # Don't retry non-critical builds unless recycling is disabled.
-        if not critical and is_retry and not (
+        if not (critical or full_builder_critical) and is_retry and not (
             child_builder_name in forced_rebuilds or 'all' in forced_rebuilds):
           filter_log.append('{} is non-critical and this is a CQ rerun'.format(
               child_builder_name))
@@ -190,10 +207,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # adoption phase.
         if child_builder_name.endswith('-slim-cq'):
           count_scheduled_slim_builds += 1
-          full_builder_name = self.get_full_builder_name(child_builder_name)
-          full_builder_config = self.m.cros_infra_config.get_builder_config(
-              full_builder_name)
-          full_builder_critical = full_builder_config.general.critical.value
 
           new_build_requests.append(
               self.m.buildbucket.schedule_request(
@@ -259,6 +272,16 @@ class BuildPlanApi(recipe_api.RecipeApi):
             self.get_slim_builder_name(cs.name) for cs in child_specs
         ]
         if build.builder.builder not in child_builders:  #pragma: no cover
+          continue
+
+        # Filter out successful slim cq buids which ran in parallel with a full
+        # cq builder that failed.
+        if (build.builder.builder.endswith('slim-cq') and not build.critical and
+            self.get_full_builder_name(
+                build.builder.builder) not in passed_builds):
+          skip_log.append(
+              '{} is skipped because full builder equivalent failed.'.format(
+                  build.builder.builder))
           continue
 
         if build.builder.builder in forced_rebuilds or 'all' in forced_rebuilds:
