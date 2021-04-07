@@ -142,7 +142,7 @@ class FirmwareBuilder(object):
       if match:
         versions[match.groupdict()['key']] = match.groupdict()['value']
     self.m.easy.set_properties_step(
-        bcs_version=str(self._bcs_version), **versions)
+        bcs_version=str(self._bcs_version), firmware_version=versions)
     self._firmware_version = versions['VERSION'][1:]
 
   def _setup_board_and_install_packages(self, build_target):

@@ -1140,13 +1140,8 @@
     "cmd": [],
     "name": "set properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BUILDER@\"ldap@machine.example.com\"@@@",
-      "@@@SET_BUILD_PROPERTY@CROS_ECTOOL_VERSION@\"v0.0.3733-0612ae7\"@@@",
-      "@@@SET_BUILD_PROPERTY@CROS_EC_VERSION32@\"_v0.0.3733-0612ae7\"@@@",
-      "@@@SET_BUILD_PROPERTY@CROS_STM32MON_VERSION@\"v0.0.3733-0612ae7\"@@@",
-      "@@@SET_BUILD_PROPERTY@DATE@\"2021-03-10 20:52:43\"@@@",
-      "@@@SET_BUILD_PROPERTY@VERSION@\"_v0.0.3733-0612ae7\"@@@",
-      "@@@SET_BUILD_PROPERTY@bcs_version@\"R39-6301.202.4-101\"@@@"
+      "@@@SET_BUILD_PROPERTY@bcs_version@\"R39-6301.202.4-101\"@@@",
+      "@@@SET_BUILD_PROPERTY@firmware_version@{\"BUILDER\": \"ldap@machine.example.com\", \"CROS_ECTOOL_VERSION\": \"v0.0.3733-0612ae7\", \"CROS_EC_VERSION32\": \"_v0.0.3733-0612ae7\", \"CROS_STM32MON_VERSION\": \"v0.0.3733-0612ae7\", \"DATE\": \"2021-03-10 20:52:43\", \"VERSION\": \"_v0.0.3733-0612ae7\"}@@@"
     ]
   },
   {
