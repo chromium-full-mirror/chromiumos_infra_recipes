@@ -769,32 +769,40 @@
     "cmd": [],
     "name": "processing test_program/test_project",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@staging, don't commit@@@",
       "@@@STEP_LOG_LINE@changed files@a/b/text.txt, other_test.txt@@@",
       "@@@STEP_LOG_END@changed files@@@"
     ]
   },
   {
     "cmd": [
-      "git",
-      "ls-remote",
-      "--symref",
-      ".",
-      "HEAD"
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
-    "name": "processing test_program/test_project.git ls-remote",
+    "name": "processing test_program/test_project.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project/test_program/test_project|src/[START_DIR]/chromiumos_workspace/src/project/test_program/test_project|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
     "cmd": [],
     "name": "processing test_program/test_project.git transaction",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1040,6 +1048,60 @@
     "name": "processing test_program/test_project.git transaction.diffing repo to find changes.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Merging legacy configs.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: config_backfill",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.diffing repo to find changes.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Merging legacy configs.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: config_backfill@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.diffing repo to find changes.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--dry-run",
+      "--porcelain",
+      "cros",
+      "HEAD:refs/heads/main"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

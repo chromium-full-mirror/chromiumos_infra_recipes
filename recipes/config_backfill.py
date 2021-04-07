@@ -35,6 +35,7 @@ DEPS = [
     'git',
     'git_txn',
     'gitiles',
+    'repo',
     'src_state',
 ]
 
@@ -315,12 +316,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
               automation_id='config_backfill'),
       )
 
-      # Abort transaction if we're in staging, otherwise commit
-      if api.cros_infra_config.is_staging:
-        step_pres.step_summary_text = "staging, don't commit"
-        return False
       api.git.commit(commit_msg)
-
       return True
 
   return merge
@@ -353,10 +349,14 @@ def backfill_project(api, properties, config):
 
     # Update the repo atomically
     with api.context(cwd=path_project_repo):
+      project_info = api.repo.project_info()
+
       api.git_txn.update_ref(
-          properties.dest_repo,
+          project_info.remote,
           config_merger(api, config, path_cros_repo, presentation),
-          ref=api.git.remote_head())
+          ref=project_info.branch,
+          dry_run=api.cros_infra_config.is_staging,
+      )
 
 
 def RunSteps(api, properties):
@@ -459,9 +459,11 @@ def GenTests(api):
           }),
       mock_workspace_path(api, 'src/project/test_program/test_project'),
       api.post_process(
-          StepSummaryEquals,
-          'processing test_program/test_project',
-          "staging, don't commit",
+          post_process.StepCommandContains,
+          "processing test_program/test_project"
+          ".git transaction"
+          ".git push",
+          ["git", "push", "--dry-run"],
       ),
       api.post_process(post_process.StatusSuccess),
   )

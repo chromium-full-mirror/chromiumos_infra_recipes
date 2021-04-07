@@ -776,17 +776,27 @@
   },
   {
     "cmd": [
-      "git",
-      "ls-remote",
-      "--symref",
-      ".",
-      "HEAD"
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
-    "name": "processing test_program/test_project.git ls-remote",
+    "name": "processing test_program/test_project.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project/test_program/test_project|src/[START_DIR]/chromiumos_workspace/src/project/test_program/test_project|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -1083,7 +1093,7 @@
       "git",
       "push",
       "--porcelain",
-      "https://example.com/some/project/repo",
+      "cros",
       "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",

@@ -23,7 +23,7 @@ class GitTxnApi(recipe_api.RecipeApi):
   """A module for executing git transactions."""
 
   def update_ref(self, remote, update_callback, ref=None, retries=3,
-                 automerge=False):
+                 automerge=False, dry_run=False):
     """Transactionally update a remote git repository ref.
 
     |update_callback| will be called and should update the checked out HEAD by
@@ -49,6 +49,7 @@ class GitTxnApi(recipe_api.RecipeApi):
       ref (str): The remote ref to update. If it does not start with 'refs/' it
           will be treated as a branch name. If not specified, the HEAD ref for
           the remote of the current repo project will be used.
+      dry_run (bool): If set, pass --dry-run to git push
 
     Returns:
       bool: True if the transaction succeeded, false if it explicitly aborts.
@@ -75,7 +76,8 @@ class GitTxnApi(recipe_api.RecipeApi):
             # See https://gerrit-review.googlesource.com/Documentation/user-upload.html#auto_merge
             dest_ref = 'refs/for/%s%%notify=NONE,submit' % dest_ref
           dest_ref = 'HEAD:%s' % dest_ref
-          self.m.git.push(remote, dest_ref, capture_stdout=True, retry=False)
+          self.m.git.push(remote, dest_ref, capture_stdout=True, retry=False,
+                          dry_run=dry_run)
           return True
         except recipe_api.StepFailure as ex:
           # Only retry on remote 'rejected' errors.

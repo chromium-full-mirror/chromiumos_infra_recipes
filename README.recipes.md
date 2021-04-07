@@ -4271,7 +4271,7 @@ API for updating remote git repositories transactionally.
 
 A module for executing git transactions.
 
-&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#25)(self, remote, update_callback, ref=None, retries=3, automerge=False):**
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#25)(self, remote, update_callback, ref=None, retries=3, automerge=False, dry_run=False):**
 
 Transactionally update a remote git repository ref.
 
@@ -4298,6 +4298,7 @@ Args:
   ref (str): The remote ref to update. If it does not start with 'refs/' it
       will be treated as a branch name. If not specified, the HEAD ref for
       the remote of the current repo project will be used.
+  dry_run (bool): If set, pass --dry-run to git push
 
 Returns:
   bool: True if the transaction succeeded, false if it explicitly aborts.
@@ -4305,7 +4306,7 @@ Returns:
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#92)(self, remote, message, dest, data, ref=None, \*\*kwargs):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#94)(self, remote, message, dest, data, ref=None, \*\*kwargs):**
 
 Transactionally update a file in a remote git repository ref.
 
@@ -6473,13 +6474,13 @@ For more details on the input properties, see cl_factory.proto.
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/full.py#13)(api):**
 ### *recipes* / [config\_backfill](/recipes/config_backfill.py)
 
-[DEPS](/recipes/config_backfill.py#23): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/config_backfill.py#23): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Copy legacy configuration and generate backfilled configuration.
 
 &mdash; **def [RunSteps](/recipes/config_backfill.py#362)(api, properties):**
 
-&mdash; **def [backfill\_project](/recipes/config_backfill.py#329)(api, properties, config):**
+&mdash; **def [backfill\_project](/recipes/config_backfill.py#325)(api, properties, config):**
 
 Backfill an individual project.
 
@@ -6488,7 +6489,7 @@ Expects to be run in the root of the chromeos checkout.
 Args:
   config (ConfigBackfillProperties.ProjectConfig) - configuration for project
 
-&mdash; **def [config\_merger](/recipes/config_backfill.py#162)(api, config, path_cros_repo, step_pres):**
+&mdash; **def [config\_merger](/recipes/config_backfill.py#163)(api, config, path_cros_repo, step_pres):**
 
 Create a closure to merge configs.
 
@@ -6504,7 +6505,7 @@ Args:
 Return:
   closure to execute merge operation
 
-&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#79)(api):**
+&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#80)(api):**
 
 Hack around needing a full portage environment for reef/fizz.
 
@@ -6513,11 +6514,11 @@ work around this by using symlinks to simulate the overlay.
 
 &mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#396)(api, path):**
 
-&mdash; **def [require](/recipes/config_backfill.py#63)(cond, message):**
+&mdash; **def [require](/recipes/config_backfill.py#64)(cond, message):**
 
 Require a given condition be true or throw a ValueError.
 
-&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#69)(api, repo):**
+&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#70)(api, repo):**
 
 Take a private overlay URL and parse out project name.
 ### *recipes* / [config\_postsubmit](/recipes/config_postsubmit.py)
