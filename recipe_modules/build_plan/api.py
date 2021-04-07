@@ -64,6 +64,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
               b.id for b in builder_configs if 'pointless' not in b.id.name
           ])
+    slim_eligible_run = any(x.endswith('slim-cq') for x in necessary_builders)
 
     if enable_history:
       if gerrit_changes:
@@ -226,7 +227,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
           build_plan_skip_for_noncritical_on_rerun=(
               count_skip_noncritical_on_rerun),
           build_plan_new_build_requests=len(new_build_requests),
-          count_scheduled_slim_builds=count_scheduled_slim_builds)
+          count_scheduled_slim_builds=count_scheduled_slim_builds,
+          slim_eligible_run=slim_eligible_run)
 
     return completed_builds, filtered_snapshot_builds, new_build_requests
 

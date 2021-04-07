@@ -866,7 +866,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#233)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#235)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -880,7 +880,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#391)(self, builder_name):**
+&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#393)(self, builder_name):**
 
 Returns to the name of the full variant of the builder.
 
@@ -891,7 +891,7 @@ Args:
 Returns:
    A string of the full builder name.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#376)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#378)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -902,7 +902,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#295)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#297)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
