@@ -64,6 +64,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     # Because of *args and **kwargs, we need to fetch our arguments from kwargs.
     with_history = kwargs.pop('with_history', False)
     with_manifest_refs = kwargs.pop('with_manifest_refs', False)
+    max_build_failure_ratio = kwargs.pop('max_build_failure_ratio', 0.0)
     git_footers = kwargs.pop('git_footers', None)
     inflight_orch = kwargs.pop('inflight_orch', None)
     annealing_builds = kwargs.pop('annealing_builds', None)
@@ -81,7 +82,8 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         '$chromeos/orch_menu':
             self.get_default_module_properties(
                 with_manifest_refs=with_manifest_refs,
-                with_history=with_history)
+                with_history=with_history,
+                max_build_failure_ratio=max_build_failure_ratio)
     }
     # TODO(crbug/1098798): Stop using the recipe properties once they have moved
     # to module properties.  For now, copy the module properties into recipe
@@ -178,12 +180,14 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     return super(OrchMenuTestApi, self).test(name, ret, *args)
 
   def get_default_module_properties(self, with_manifest_refs=False,
-                                    with_history=False):
+                                    with_history=False,
+                                    max_build_failure_ratio=0.0):
     """Return the default properties for the module."""
     ret = dict(stagger_children_seconds=10)
     if with_manifest_refs:
-      ret['update_manifest_refs'] = dict(build='refs/heads/stable',
-                                         start='refs/heads/postsubmit')
+      ret['update_manifest_refs'] = dict(
+          build='refs/heads/stable', start='refs/heads/postsubmit',
+          max_build_failure_ratio=max_build_failure_ratio)
     if with_history:
       ret.update(enable_history=True, assert_singleton=True)
     return ret

@@ -156,6 +156,13 @@ def GenTests(api):
           update_manifest_refs=dict(start='missing-ref-heads')))
 
   yield api.orch_menu.test(
+      'bad-failure-ratio',
+      api.properties(
+          FullProperties(missing_ok=True, expect_missing_config=True)),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(max_build_failure_ratio=1.1)))
+
+  yield api.orch_menu.test(
       'required-missing-config',
       api.properties(FullProperties(expect_missing_config=True)),
       builder='no-config', with_manifest_refs=True)

@@ -92,6 +92,16 @@ def GenTests(api):
                            with_manifest_refs=True, collect_builds=data.builds)
 
   yield api.orch_menu.test(
+      'does_not_update_refs', data.ctp_normal,
+      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.DoesNotRun,
+                     'update manifest-internal ref refs/heads/stable'),
+      api.post_check(post_process.DoesNotRun,
+                     'update manifest ref refs/heads/stable'),
+      with_manifest_refs=True, max_build_failure_ratio=0.49,
+      collect_builds=data.crit_fail)
+
+  yield api.orch_menu.test(
       'missing_gitiles_commit', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,

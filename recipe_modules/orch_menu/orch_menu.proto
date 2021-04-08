@@ -15,9 +15,12 @@ message OrchMenuProperties {
     // right when the orchestrator launches.
     string start = 1;
 
-    // The "build" ref is updated only if all child builds (but not necessarily
-    // tests) succeed.
+    // The "build" ref is updated only if max_build_failure_ratio is met.
     string build = 2;
+
+    // The maximum fraction of builds that can fail when considering if we
+    // should update the ref. Default (0.0) means all must succeed.
+    float max_build_failure_ratio = 4;
 
     // The "test" ref is updated only if ALL tests succeed.
     string test = 3;

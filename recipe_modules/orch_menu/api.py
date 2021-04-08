@@ -5,6 +5,8 @@
 
 """API providing a menu for orchestrator steps"""
 
+from __future__ import division
+
 from collections import defaultdict, namedtuple
 import contextlib
 
@@ -246,10 +248,15 @@ class OrchMenuApi(RecipeApi):
     """
     # The only property we need to validate is update_manifest_refs, and we want
     # to validate all of them.
-    for ref, value in self._properties.update_manifest_refs.ListFields():
-      if not value.startswith('refs/heads/'):
-        raise StepFailure('%s ref %s is missing refs/heads/' %
-                          (ref.name, value))
+    for field, value in self._properties.update_manifest_refs.ListFields():
+      if field.name is 'max_build_failure_ratio':
+        if value < 0.0 or value > 1.0:
+          raise StepFailure('%s is out of range [0.0, 1.0] at %s' %
+                            (field.name, value))
+      else:
+        if not value.startswith('refs/heads/'):
+          raise StepFailure('%s ref %s is missing refs/heads/' %
+                            (field.name, value))
       self._update_manifest_refs = True
 
   def _push_manifest_refs(self, ref):
@@ -362,9 +369,14 @@ class OrchMenuApi(RecipeApi):
 
     self._builds_status.update(completed_builds, check_result.failures,
                                check_result.configs, collect_after)
-    if not self._builds_status.fatal_failures:
-      # If we've made it this far, the relevant child builders were successful
-      # and we can update the build success manifest ref if it is specified.
+
+    # Determine the failure ratio and see if we should update the ref.
+    # If we didn't complete a build, call it success.
+    failure_ratio = (
+        len(self._builds_status.fatal_failures) /
+        max(1, len(self._builds_status.completed_builds)))
+    if failure_ratio <= self._properties.update_manifest_refs.max_build_failure_ratio:
+      # If we've made it this far, update the build success manifest ref.
       self._push_manifest_refs(self._properties.update_manifest_refs.build)
 
     return self._builds_status
