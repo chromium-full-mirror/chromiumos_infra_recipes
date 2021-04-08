@@ -769,6 +769,7 @@
     "cmd": [],
     "name": "processing test_program/test_project",
     "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@[deadbeef]@@@",
       "@@@STEP_LOG_LINE@changed files@a/b/text.txt, other_test.txt@@@",
       "@@@STEP_LOG_END@changed files@@@"
     ]
@@ -1102,6 +1103,21 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {

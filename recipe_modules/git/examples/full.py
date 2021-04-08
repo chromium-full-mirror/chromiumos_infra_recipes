@@ -38,6 +38,8 @@ def RunSteps(api):
                  author='John Doe <john.doe@example.com>')
   api.git.amend_head_message('Updating README\n\nMuch better now.')
 
+  api.assertions.assertEqual(api.git.remote_url(),
+                             "https://chromium.googlesource.com")
   api.git.push('origin', 'HEAD:main', dry_run=True, capture_stdout=True,
                force=True, infra_step=False, timeout=30)
 

@@ -4113,6 +4113,16 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#705)(self, remote='origin'):**
+
+Get the URL for a defined remote.
+
+Args:
+  remote (str): The name of the remote to query
+
+Returns:
+  URL to the remote on success
+
 &mdash; **def [repository\_root](/recipe_modules/git/api.py#53)(self, step_name=None):**
 
 Return the git repository root for the current directory.
@@ -6481,7 +6491,7 @@ For more details on the input properties, see cl_factory.proto.
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#362)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#373)(api, properties):**
 
 &mdash; **def [backfill\_project](/recipes/config_backfill.py#325)(api, properties, config):**
 
@@ -6515,7 +6525,7 @@ Hack around needing a full portage environment for reef/fizz.
 Reef/fizz require their baseboard overlay to include common files.  We can
 work around this by using symlinks to simulate the overlay.
 
-&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#396)(api, path):**
+&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#407)(api, path):**
 
 &mdash; **def [require](/recipes/config_backfill.py#64)(cond, message):**
 

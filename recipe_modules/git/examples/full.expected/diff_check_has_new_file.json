@@ -223,6 +223,16 @@
   {
     "cmd": [
       "git",
+      "remote",
+      "get-url",
+      "origin"
+    ],
+    "infra_step": true,
+    "name": "git remote"
+  },
+  {
+    "cmd": [
+      "git",
       "push",
       "--dry-run",
       "--force",
@@ -465,7 +475,7 @@
       "remote"
     ],
     "infra_step": true,
-    "name": "git remote"
+    "name": "git remote (2)"
   },
   {
     "cmd": [
@@ -475,7 +485,7 @@
       "cros-internal"
     ],
     "infra_step": true,
-    "name": "git remote (2)"
+    "name": "git remote (3)"
   },
   {
     "cmd": [

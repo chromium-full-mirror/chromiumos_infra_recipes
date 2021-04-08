@@ -770,7 +770,7 @@
     "cmd": [],
     "name": "processing test_program/test_project",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@no files changed@@@"
+      "@@@STEP_SUMMARY_TEXT@[deadbeef](https://chromium.googlesource.com/+/deadbeefdeadbeefdeadbeefdeadbeefdeadbeef)@@@"
     ]
   },
   {
@@ -1049,6 +1049,35 @@
     "name": "processing test_program/test_project.git transaction.diffing repo to find changes.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "get-url",
+      "cros"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

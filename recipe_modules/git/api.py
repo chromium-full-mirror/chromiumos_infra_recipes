@@ -701,3 +701,19 @@ class GitApi(recipe_api.RecipeApi):
     ref = 'refs/heads/{}'.format(self.current_branch())
     return GitilesCommit(host=url_parts.netloc, id=commit_sha, ref=ref,
                          project=url_parts.path.strip('/'))
+
+  def remote_url(self, remote='origin'):
+    """Get the URL for a defined remote.
+
+    Args:
+      remote (str): The name of the remote to query
+
+    Returns:
+      URL to the remote on success
+    """
+    result = self._step(
+        ["remote", "get-url", remote],
+        stdout=self.m.raw_io.output(),
+        test_stdout="https://chromium.googlesource.com",
+    )
+    return result.stdout.strip()
