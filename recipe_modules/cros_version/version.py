@@ -18,11 +18,12 @@ def int_or_none(n):
   return int(n)
 
 
-CHROMEOS_VERSION_STRING_RES = [(re.compile(
-    r'^(R(?P<chrome_branch>\d+)-)?(?P<build>\d+)\.(?P<branch>\d+).(?P<patch>\d)+$'
-), lambda cls, grps: cls(
-    int_or_none(grps['chrome_branch']), int(grps['build']), int(grps['branch']),
-    int(grps['patch']), None))]
+CHROMEOS_VERSION_STRING_RES = [
+    (re.compile(r'^(R(?P<chrome_branch>\d+)-)?(?P<build>\d+)'
+                r'\.(?P<branch>\d+).(?P<patch>\d)+$'), lambda cls, grps: cls(
+                    int_or_none(grps['chrome_branch']), int(grps['build']),
+                    int(grps['branch']), int(grps['patch']), None))
+]
 
 
 @total_ordering
@@ -48,6 +49,7 @@ class Version(object):
       m = re.match(r, version_string)
       if m:
         return l(cls, m.groupdict())
+    return None
 
   def __init__(self, chrome_branch, build, branch=0, patch=0, snapshot=None):
     self.chrome_branch = chrome_branch
@@ -80,6 +82,23 @@ class Version(object):
     if self.patch < other.patch:
       return True
     return False
+
+  def is_after(self, version):
+    """Return whether the workspace is at or after a specific version.
+
+    In general, cros_build_api.has_endpoint should be used, rather than checking
+    the workspace version.
+
+    Args:
+      version (Version or str): The minumum version.
+
+    Returns:
+      (bool): whether our version is at least |version|.
+    """
+    version = (
+        version
+        if isinstance(version, Version) else Version.from_string(version))
+    return self >= version
 
   @property
   def platform_version(self):

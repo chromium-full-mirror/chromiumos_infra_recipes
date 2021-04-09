@@ -28,7 +28,7 @@ def RunSteps(api, properties):
   expected_snapshot = (
       properties.expected_version_snapshot or
       api.cros_version.test_api.test_snapshot)
-  v = api.cros_version.read_workspace_version()
+  v = api.cros_version.version
   if not properties.remove_snapshot:
     api.assertions.assertEqual(
         str(v), '{}-{}'.format(expected_version, expected_snapshot))

@@ -1328,7 +1328,7 @@
   },
   {
     "cmd": [],
-    "name": "bump version.read chromeos version (2)",
+    "name": "bump version.read updated version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@found version: R86-13434.100.9-101@@@"
@@ -1347,14 +1347,14 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "bump version.read chromeos version (2).read chromeos_version.sh",
+    "name": "bump version.read updated version.read chromeos_version.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "bump version.read chromeos version (2).read snapshot",
+    "name": "bump version.read updated version.read snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1368,7 +1368,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "bump version.read chromeos version (2).read snapshot.git fetch",
+    "name": "bump version.read updated version.read snapshot.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1381,7 +1381,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "bump version.read chromeos version (2).read snapshot.git rev-parse",
+    "name": "bump version.read updated version.read snapshot.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1396,7 +1396,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "bump version.read chromeos version (2).read snapshot.read git footers",
+    "name": "bump version.read updated version.read snapshot.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

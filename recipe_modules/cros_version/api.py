@@ -38,10 +38,18 @@ class CrosVersionApi(recipe_api.RecipeApi):
     super(CrosVersionApi, self).__init__(*args, **kwargs)
     self._remove_snapshot_from_version = properties.remove_snapshot_from_version
     self._properties = properties
+    self._version = None
+    self._version_bumper_path = None
+    self._version_bumper_cipd_package = None
+    self._version_bumper_cipd_ref = None
+
+  @property
+  def version(self):
+    """The Version of the workspace checkout."""
+    return self._version or self.read_workspace_version()
 
   def initialize(self):
     """Initializes the module."""
-    self._version_bumper_path = None
     self._version_bumper_cipd_package = (
         self._properties.version_bumper_cipd_package.encode('utf-8') or
         'chromiumos/infra/version_bumper/${platform}')
@@ -83,7 +91,8 @@ class CrosVersionApi(recipe_api.RecipeApi):
         version_args[k] = int(m.group(1))
 
       # This option exists because release builders need to publish artifacts
-      # to specific paths (which do not include a -$snapshot suffix on the version).
+      # to specific paths (which do not include a -$snapshot suffix on the
+      # version).
       if not self._remove_snapshot_from_version:
         with self.m.step.nest('read snapshot') as read_snapshot_step:
           # If there is a snapshot in CAS, then we are running against a custom
@@ -104,6 +113,7 @@ class CrosVersionApi(recipe_api.RecipeApi):
           version_args['snapshot'] = version_snapshot
 
       version = Version(**version_args)
+      self._version = version
       presentation.step_text = 'found version: %s' % version
       return version
 
@@ -131,7 +141,7 @@ class CrosVersionApi(recipe_api.RecipeApi):
 
       Args:
         production (bool): Whether to use the checked out overlay. The default
-          is to increment the verison on the 'rubik-staging' branch, having no
+          is to increment the version on the 'rubik-staging' branch, having no
           effect on the source tree.
         dry_run (bool): Whether the git push is --dry-run.
     """
@@ -191,4 +201,5 @@ class CrosVersionApi(recipe_api.RecipeApi):
 
       # Update the version in output properties.
       self.m.easy.set_properties_step(
-          chromeos_version=str(self.read_workspace_version()))
+          chromeos_version=str(
+              self.read_workspace_version(name='read updated version')))

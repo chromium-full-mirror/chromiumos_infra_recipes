@@ -40,7 +40,14 @@ def RunSteps(api):
   api.assertions.assertEqual(v, api.cros_version.Version(1000, 134, 1, 2, None))
   # Close but not a real version.
   v = api.cros_version.Version.from_string('1213.123.41.21')
-  api.assertions.assertTrue(v == None)
+  api.assertions.assertIsNone(v)
+
+  # Test the is_after method.
+  v = api.cros_version.Version.from_string('R90-134.1.2')
+  api.assertions.assertTrue(v.is_after(v))
+  api.assertions.assertTrue(v.is_after('134.1.2'))
+  api.assertions.assertFalse(v.is_after('134.1.3'))
+  api.assertions.assertFalse(v.is_after('135.0.0'))
 
 
 def GenTests(api):

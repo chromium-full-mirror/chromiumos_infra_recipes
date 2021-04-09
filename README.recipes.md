@@ -3175,7 +3175,7 @@ API for working with CrOS version numbers.
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#122)(self, production=False, dry_run=False):**
+&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#132)(self, production=False, dry_run=False):**
 
 Bumps the chromeos version (as represented in chromeos_version.sh)
 and pushes the change to the chromiumos-overlay repo.
@@ -3188,15 +3188,15 @@ branch of the chromiumos-overlays repo.
 
 Args:
   production (bool): Whether to use the checked out overlay. The default
-    is to increment the verison on the 'rubik-staging' branch, having no
+    is to increment the version on the 'rubik-staging' branch, having no
     effect on the source tree.
   dry_run (bool): Whether the git push is --dry-run.
 
-&mdash; **def [initialize](/recipe_modules/cros_version/api.py#42)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_version/api.py#51)(self):**
 
 Initializes the module.
 
-&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#53)(self, name='read chromeos version'):**
+&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#61)(self, name='read chromeos version'):**
 
 Read the Chrome OS version from the workspace.
 
@@ -3207,6 +3207,10 @@ Args:
 
 Raises:
   ValueError: if the version file had unexpected formatting.
+
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_version/api.py#46)(self):**
+
+The Version of the workspace checkout.
 ### *recipe_modules* / [cts\_results\_archive](/recipe_modules/cts_results_archive)
 
 [DEPS](/recipe_modules/cts_results_archive/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
