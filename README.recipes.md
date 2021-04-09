@@ -7841,7 +7841,7 @@ Returns: Struct containing requests.
 
 Recipe that triggers cros_test_platform runs.
 
-&mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#43)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#41)(api, properties):**
 ### *recipes* / [test\_platform/ctp\_uprev](/recipes/test_platform/ctp_uprev.py)
 
 [DEPS](/recipes/test_platform/ctp_uprev.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

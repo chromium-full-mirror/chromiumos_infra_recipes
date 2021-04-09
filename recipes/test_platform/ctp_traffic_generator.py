@@ -32,11 +32,9 @@ DEPS = [
     'skylab',
 ]
 
-BOARD = 'octopus'
-PASSING_TEST_SUITE = 'calibration'
 TIMEOUT_SECONDS = 30 * 60  # 30 minutes
 DEFAULT_CTP_REPLAY_MAX_RUNTIME = 20 * 60
-CTP_BUILDS_TO_REPLAY = 5
+CTP_BUILDS_TO_REPLAY = 2
 REPLAYED_PROD_BUILD_ID_TAG = 'replay_from_prod_buildbucket_id'
 
 
@@ -44,60 +42,11 @@ def RunSteps(api, properties):
   ctp_replay_max_runtime = properties.ctp_replay_max_runtime or DEFAULT_CTP_REPLAY_MAX_RUNTIME
   ctp_num_replay_builds = properties.ctp_num_replay_builds or CTP_BUILDS_TO_REPLAY
 
-  # Send an always-passing suite request to generate a consistent signal for
-  # the staging environment.
-  test_unit = _construct_test_unit(api, BOARD, PASSING_TEST_SUITE)
-  test = test_unit.hw_test_cfg.hw_test[0]
-  timeout = duration_pb2.Duration(seconds=TIMEOUT_SECONDS)
-
-  api.skylab.create_recipe(test, test_unit, timeout, name='trigger CTP builder',
-                           async_suite_run=True)
-
-  # Replay the last successful production CTP build in staging to
+  # Replay the last two successful production CTP builds in staging to
   # seed staging with real requests.
   with api.step.nest('replay prod CTP run'):
     _replay_successful_ctp_builds_in_staging(api, ctp_num_replay_builds,
                                              ctp_replay_max_runtime)
-
-
-def _construct_test_unit(api, board, test_suite):
-  last_successful_board_build = _get_last_successful_postsubmit_build(
-      api, board)
-  return HwTestUnit(
-      common=TestUnitCommon(
-          build_payload=BuildPayload(
-              artifacts_gs_bucket='chromeos-image-archive',
-              artifacts_gs_path=last_successful_board_build.output
-              .properties['artifacts']['gs_path'])),
-      hw_test_cfg=HwTestCfg(
-          hw_test=[
-              HwTestCfg.HwTest(
-                  common=TestSuiteCommon(
-                      display_name='%s.hw.%s' % (board, test_suite),
-                      critical={'value': True}),
-                  suite=test_suite,
-                  skylab_board=board,
-                  pool='DUT_POOL_QUOTA',
-              ),
-          ],
-      ),
-  )
-
-
-def _get_last_successful_postsubmit_build(api, board):
-  postsubmit_builder = board + '-postsubmit'
-  successful_builds = api.buildbucket.search(
-      bb_service.BuildPredicate(
-          builder={
-              'project': 'chromeos',
-              'bucket': 'postsubmit',
-              'builder': postsubmit_builder,
-          }, status=bb_common.SUCCESS), limit=1, fields=['*'],
-      step_name='find recent green %s build' % postsubmit_builder)
-  if not successful_builds:
-    raise api.step.StepFailure('No successful builds found for builder %s' %
-                               postsubmit_builder)
-  return successful_builds[0]
 
 
 def _get_last_successful_ctp_builds(api, num_builds=CTP_BUILDS_TO_REPLAY,
@@ -179,22 +128,6 @@ def _replay_successful_ctp_builds_in_staging(api, ctp_num_replay_builds,
 
 
 def GenTests(api):
-  builder_output_properties = struct_pb2.Struct()
-  builder_output_properties['artifacts'] = {
-      'gs_path': 'octopus-postsubmit/R86-13420.0.0-36875-8871425273263211168',
-  }
-  green_postsubmit_builds = [
-      build_pb2.Build(
-          builder={
-              'project': 'chromeos',
-              'bucket': 'postsubmit',
-              'builder': 'octopus-postsubmit',
-          },
-          status='SUCCESS',
-          output={'properties': builder_output_properties},
-      )
-  ]
-
   ctp_input_properties = struct_pb2.Struct()
   ctp_input_properties['requests'] = {
       "gale_gale": {
@@ -312,9 +245,6 @@ def GenTests(api):
           'ctp_num_replay_builds': 3,
       }),
       api.buildbucket.simulated_search_results(
-          green_postsubmit_builds,
-          step_name='find recent green octopus-postsubmit build'),
-      api.buildbucket.simulated_search_results(
           green_ctp_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
@@ -324,16 +254,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'octopus build not found',
-      api.buildbucket.simulated_search_results(
-          [], step_name='find recent green octopus-postsubmit build'),
-  )
-
-  yield api.test(
       'ctp prod build not found',
-      api.buildbucket.simulated_search_results(
-          green_postsubmit_builds,
-          step_name='find recent green octopus-postsubmit build'),
       api.buildbucket.simulated_search_results(
           [],
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
@@ -344,9 +265,6 @@ def GenTests(api):
       api.properties(**{
           'ctp_replay_max_runtime': 60 * 10,
       }),
-      api.buildbucket.simulated_search_results(
-          green_postsubmit_builds,
-          step_name='find recent green octopus-postsubmit build'),
       api.buildbucket.simulated_search_results(
           green_ctp_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
