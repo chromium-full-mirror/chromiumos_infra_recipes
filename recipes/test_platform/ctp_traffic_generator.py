@@ -60,8 +60,9 @@ def _get_last_successful_ctp_builds(api, num_builds=CTP_BUILDS_TO_REPLAY,
               'project': 'chromeos',
               'bucket': 'testplatform',
               'builder': ctp_builder,
-          }, status=bb_common.SUCCESS, create_time=six_hours_back),
-      fields=['*'], step_name='find recent green %s builds' % ctp_builder)
+          }, status=bb_common.SUCCESS,
+          create_time=six_hours_back), fields=['*'], limit=100,
+      step_name='find recent green %s builds' % ctp_builder)
   if not successful_builds:
     raise api.step.StepFailure('No successful builds found for builder %s' %
                                ctp_builder)

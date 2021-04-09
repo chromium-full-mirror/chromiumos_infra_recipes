@@ -15,7 +15,7 @@
       "-json",
       "-nopage",
       "-n",
-      "1000",
+      "100",
       "-fields",
       "*",
       "-predicate",
