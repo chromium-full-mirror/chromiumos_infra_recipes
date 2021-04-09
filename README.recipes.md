@@ -6491,7 +6491,7 @@ For more details on the input properties, see cl_factory.proto.
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#373)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#374)(api, properties):**
 
 &mdash; **def [backfill\_project](/recipes/config_backfill.py#325)(api, properties, config):**
 
@@ -6525,7 +6525,7 @@ Hack around needing a full portage environment for reef/fizz.
 Reef/fizz require their baseboard overlay to include common files.  We can
 work around this by using symlinks to simulate the overlay.
 
-&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#407)(api, path):**
+&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#408)(api, path):**
 
 &mdash; **def [require](/recipes/config_backfill.py#64)(cond, message):**
 

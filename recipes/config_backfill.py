@@ -351,23 +351,24 @@ def backfill_project(api, properties, config):
     with api.context(cwd=path_project_repo):
       project_info = api.repo.project_info()
 
-      api.git_txn.update_ref(
+      updated = api.git_txn.update_ref(
           project_info.remote,
           config_merger(api, config, path_cros_repo, presentation),
           ref=project_info.branch,
           dry_run=api.cros_infra_config.is_staging,
       )
 
-      # don't actually link to commit in staging (because it doesn't exist)
-      commit_hash = api.git.head_commit()
-      if api.cros_infra_config.is_staging:
-        presentation.step_summary_text = "[%s]" % commit_hash[:8]
-      else:
-        presentation.step_summary_text = "[%s](%s/+/%s)" % (
-            commit_hash[:8],
-            api.git.remote_url(project_info.remote),
-            commit_hash,
-        )
+      if updated:
+        commit_hash = api.git.head_commit()
+        # don't actually link to commit in staging (because it doesn't exist)
+        if api.cros_infra_config.is_staging:
+          presentation.step_summary_text = "[%s]" % commit_hash[:8]
+        else:
+          presentation.step_summary_text = "[%s](%s/+/%s)" % (
+              commit_hash[:8],
+              api.git.remote_url(project_info.remote),
+              commit_hash,
+          )
 
 
 def RunSteps(api, properties):
