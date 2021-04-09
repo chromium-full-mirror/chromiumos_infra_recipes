@@ -997,9 +997,14 @@
       "upstream/neverware-d90",
       "--single-branch",
       "https://chrome-internal.googlesource.com/external/gitlab.neverware.com/neverware/chromium-browser",
-      "."
+      ".",
+      "-v",
+      "--progress"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/browser/src",
+    "env": {
+      "GIT_HTTP_LOW_SPEED_LIMIT": "0"
+    },
     "infra_step": true,
     "name": "cloudready specific setup.git clone",
     "~followup_annotations": [

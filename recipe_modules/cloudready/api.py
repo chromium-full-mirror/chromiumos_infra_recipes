@@ -43,9 +43,11 @@ class CloudreadyApi(recipe_api.RecipeApi):
 
         browser_src_dir = browser_dir.join('src')
         self.m.file.ensure_directory('create src dir', browser_src_dir)
-        with self.m.context(cwd=browser_src_dir):
+        with self.m.context(cwd=browser_src_dir,
+                            env={'GIT_HTTP_LOW_SPEED_LIMIT': '0'}):
           self.m.git.clone(NEVERWARE_BROWSER_REPO_URL,
-                           branch='upstream/neverware-d90')
+                           branch='upstream/neverware-d90', verbose=True,
+                           progress=True)
 
         # Temporary hack, see go/build-cloudready for context.
         self.m.step('update deps file', SKIA_CMD)

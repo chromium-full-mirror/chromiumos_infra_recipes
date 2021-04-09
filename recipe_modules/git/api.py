@@ -570,7 +570,8 @@ class GitApi(recipe_api.RecipeApi):
     self._step(['bundle', 'create', output_path, revs])
 
   def clone(self, repo_url, target_path=None, reference=None, dissociate=False,
-            branch=None, single_branch=False, timeout_sec=None):
+            branch=None, single_branch=False, timeout_sec=None, verbose=False,
+            progress=False):
     """Clones a Git repo into the current directory.
 
     Args:
@@ -583,6 +584,8 @@ class GitApi(recipe_api.RecipeApi):
       single_branch (bool): If set, performs a single branch clone of the
          default branch.
       timeout_sec (int): Timeout in seconds.
+      verbose (bool): If set, run git clone as verbose.
+      progress (bool): If set, print progress to stdout.
     """
     if target_path is None:
       # Clone into current directory (no extra subdirectory) by default.
@@ -597,6 +600,10 @@ class GitApi(recipe_api.RecipeApi):
     elif single_branch:
       args += ['--single-branch']
     args += [repo_url, target_path]
+    if verbose:
+      args += ['-v']
+    if progress:
+      args += ['--progress']
     self._step(args, timeout=timeout_sec)
 
   def rebase(self, force=False, branch=None):

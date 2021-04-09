@@ -3822,7 +3822,7 @@ Args:
   commit (str): The commit to cherry pick.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#572)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, timeout_sec=None):**
+&mdash; **def [clone](/recipe_modules/git/api.py#572)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, timeout_sec=None, verbose=False, progress=False):**
 
 Clones a Git repo into the current directory.
 
@@ -3836,6 +3836,8 @@ Args:
   single_branch (bool): If set, performs a single branch clone of the
      default branch.
   timeout_sec (int): Timeout in seconds.
+  verbose (bool): If set, run git clone as verbose.
+  progress (bool): If set, print progress to stdout.
 
 &mdash; **def [commit](/recipe_modules/git/api.py#319)(self, message, files=None, author=None, \*\*kwargs):**
 
@@ -3879,7 +3881,7 @@ Returns:
   (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#624)(self, refspec, default):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#631)(self, refspec, default):**
 
 Splits the branch from the refspec.
 
@@ -3929,7 +3931,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#642)(self, branch):**
+&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#649)(self, branch):**
 
 Creates the full refspec for a branch.
 
@@ -3957,7 +3959,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#657)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#664)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -3971,7 +3973,7 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#682)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#689)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -3990,7 +3992,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#671)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#678)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -4090,7 +4092,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#602)(self, force=False, branch=None):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#609)(self, force=False, branch=None):**
 
 Run `git rebase` with the given arguments.
 
@@ -4117,7 +4119,7 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [remote\_url](/recipe_modules/git/api.py#705)(self, remote='origin'):**
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#712)(self, remote='origin'):**
 
 Get the URL for a defined remote.
 
@@ -4137,7 +4139,7 @@ Args:
 Returns:
   (str): The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#616)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#623)(self, args):**
 
 Runs `git config --global` to set global config.
 
