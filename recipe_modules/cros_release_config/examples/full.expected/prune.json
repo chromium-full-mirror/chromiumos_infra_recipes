@@ -337,7 +337,7 @@
     "cmd": [
       "git",
       "add",
-      "config/chromeos_config.py"
+      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
@@ -538,7 +538,7 @@
     "cmd": [
       "git",
       "add",
-      "release/release_builders.textpb"
+      "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
     "infra_step": true,

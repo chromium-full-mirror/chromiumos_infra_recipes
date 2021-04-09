@@ -317,9 +317,9 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
           with self.m.step.nest(
               'commit in {}'.format(project)), self.m.context(cwd=proj_path):
             if project == self.LEGACY_CONFIG_PROJECT:
-              self.m.git.add([LEGACY_CONFIG])
+              self.m.git.add([project_path[self.LEGACY_CONFIG_PROJECT]])
             elif project == self.CONFIG_PROJECT:
-              self.m.git.add([CONFIG])
+              self.m.git.add([project_path[self.CONFIG_PROJECT]])
             else:
               continue  # pragma: nocover
             self.m.git.commit(commit_message)
