@@ -1122,6 +1122,77 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "clone",
+      "--local",
+      "--shared",
+      "--config",
+      "remote.origin.fetch=+refs/remotes/cros/main:refs/heads/main",
+      "[START_DIR]/chromiumos_workspace/chromite",
+      "[CLEANUP]/tmp_tmp_1/chromite"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "clone tip-of-tree chromite"
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "main"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1/chromite",
+    "infra_step": true,
+    "name": "git checkout"
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@packages@sys-boot/depthcharge sys-apps/coreboot-utils@@@",
+      "@@@STEP_LOG_END@packages@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/tmp_tmp_1/chromite/bin/cros_mark_as_stable",
+      "commit",
+      "--dryrun",
+      "--all",
+      "--boards=target",
+      "--drop_file",
+      "[CLEANUP]/tmp_tmp_2",
+      "--buildroot",
+      "[START_DIR]/chromiumos_workspace",
+      "--overlay-type",
+      "both"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "uprev packages.call cros_mark_as_stable",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_2",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "uprev packages.read uprevved packages",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "bump version"
   },
@@ -1412,80 +1483,6 @@
   {
     "cmd": [],
     "name": "CQ run: not pushing buildspec"
-  },
-  {
-    "cmd": [],
-    "name": "reread chromeos version",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@found version: R86-13434.100.9-101@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "reread chromeos version.read chromeos_version.sh",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "reread chromeos version.read snapshot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "firmware-board-9999.B-HEAD-SHA:"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "reread chromeos version.read snapshot.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "reread chromeos version.read snapshot.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "firmware-board-9999.B-HEAD-SHA",
-      "--position-num"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "reread chromeos version.read snapshot.read git footers",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
   },
   {
     "cmd": [

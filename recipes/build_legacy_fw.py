@@ -19,6 +19,7 @@ DEPS = [
     'cros_sdk',
     'cros_version',
     'easy',
+    'git',
     'src_state',
     'test_util',
 ]
@@ -30,7 +31,8 @@ import re
 from recipe_engine.post_process import MustRun, DoesNotRun, StatusSuccess
 
 from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
-from PB.chromite.api import firmware
+from PB.chromite.api.firmware import FirmwareArtifactInfo
+from PB.chromiumos.builder_config import BuilderConfig
 
 PROPERTIES = BuildLegacyFwProperties
 _FIRMWARE_TARBALL_NAME = 'firmware_from_source.tar.bz2'
@@ -88,6 +90,10 @@ class FirmwareBuilder(object):
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, command, **kwargs)
 
+  def _is_after(self, version_str):
+    """Return whether the workspace version is >= |version_str|."""
+    return self.m.cros_version.version.is_after(version_str)
+
   @contextmanager
   def _setup(self):
     """Configure the builder"""
@@ -104,6 +110,7 @@ class FirmwareBuilder(object):
       self._config = config
       with self.m.build_menu.setup_workspace(), \
           self.m.context(cwd=self.m.src_state.workspace_path):
+        self._uprev()
         if self.properties.bump_version:
           self.m.cros_version.bump_version(production=True,
                                            dry_run=self._is_staging)
@@ -119,10 +126,51 @@ class FirmwareBuilder(object):
                 branch='rubik-staging' if self._is_staging else None,
                 step_name='create buildspec')
 
-        self._bcs_version = self.m.cros_version.read_workspace_version(
-            name='reread chromeos version')
+        self._bcs_version = self.m.cros_version.version
         with self.m.depot_tools.on_path(), self._setup_chroot():
           yield
+
+  def _uprev(self):
+    # TODO(b/181786185): Once we have a good "push the uprevs" method, we should
+    # switch to calling cros_sdk.uprev_packages, and pushing them, for branches
+    # that are new enough.
+
+    # The build team supports using the tip-of-tree cros_mark_as_stable to uprev
+    # older branches until such time as they have a long-term answer.  This is
+    # not true for other chromite commands.
+    workspace = self.m.src_state.workspace_path
+    tot_chromite = self.m.path.mkdtemp().join('chromite')
+    self.m.step('clone tip-of-tree chromite', [
+        'git', 'clone', '--local', '--shared', '--config',
+        'remote.origin.fetch=+refs/remotes/cros/main:refs/heads/main',
+        workspace.join('chromite'), tot_chromite
+    ])
+    with self.m.context(cwd=tot_chromite):
+      self.m.git.checkout('main', force=True)
+
+    no_push = bool(self.m.cq.active or self._is_staging or
+                   self.m.src_state.gerrit_changes)
+    drop_file = self.m.path.mkstemp()
+    boards = ':'.join(x.name for x in self.properties.build_targets)
+    manifest = 0 if not self._config else self._config.general.manifest
+
+    cmd = [tot_chromite.join('bin/cros_mark_as_stable')]
+    if no_push:
+      cmd.extend(['commit', '--dryrun'])
+    else:
+      cmd.append('push')
+    cmd.extend([
+        '--all',
+        '--boards=%s' % boards, '--drop_file', drop_file, '--buildroot',
+        workspace, '--overlay-type',
+        'public' if manifest == BuilderConfig.General.PUBLIC else 'both'
+    ])
+
+    with self.m.step.nest('uprev packages') as pres:
+      self.m.step('call cros_mark_as_stable', cmd)
+      pres.logs['packages'] = self.m.file.read_raw(
+          'read uprevved packages', drop_file,
+          test_data='sys-boot/depthcharge sys-apps/coreboot-utils')
 
   @contextmanager
   def _setup_chroot(self):
@@ -176,7 +224,7 @@ class FirmwareBuilder(object):
         '--skip_chroot_upgrade', '--nousepkg'
     ]
     # --withdebugsymbols was added to build_packages in 6302.0.0
-    if self._bcs_version > self.m.cros_version.Version.from_string('6302.0.0'):
+    if self._is_after('6302.0.0'):
       cmd.append('--withdebugsymbols')
 
     cmd += [
@@ -222,7 +270,7 @@ class FirmwareBuilder(object):
     ret = defaultdict(list)
     # We need a directory inside of the chroot.  Use mkdtemp() to get a name, so
     # that test expectations are constant.
-    metadata = firmware.FirmwareArtifactInfo()
+    metadata = FirmwareArtifactInfo()
     metadata.bcs_version_info.version_string = str(self._bcs_version)
     for build_target in self.properties.build_targets:
       tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
