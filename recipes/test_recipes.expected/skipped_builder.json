@@ -32,7 +32,7 @@
     },
     "infra_step": true,
     "name": "get non-skipped builders.gerrit fetch current CL info",
-    "timeout": 600,
+    "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -76,6 +76,7 @@
     },
     "infra_step": true,
     "name": "get non-skipped builders.gerrit changes",
+    "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
