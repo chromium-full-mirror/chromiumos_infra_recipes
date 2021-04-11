@@ -95,12 +95,12 @@
     ],
     "infra_step": true,
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"staging-snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -118,7 +118,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -126,7 +126,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -350,6 +350,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
+      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos",
@@ -769,9 +770,7 @@
     "cmd": [],
     "name": "processing test_program/test_project",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@[deadbeef]@@@",
-      "@@@STEP_LOG_LINE@changed files@a/b/text.txt, other_test.txt@@@",
-      "@@@STEP_LOG_END@changed files@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -803,7 +802,8 @@
     "cmd": [],
     "name": "processing test_program/test_project.git transaction",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -965,166 +965,15 @@
     },
     "name": "processing test_program/test_project.git transaction.Generate imported configuration",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/imported.jsonproto"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
-    "env": {
-      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
-    },
-    "infra_step": true,
-    "name": "processing test_program/test_project.git transaction.git add (4)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
-      "--log",
-      "DEBUG",
-      "--project-name",
-      "test_project",
-      "--program-name",
-      "test_program",
-      "--public-model",
-      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
-      "--private-model",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
-      "--hwid",
-      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
-      "--config-bundle",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/config.jsonproto",
-      "--output",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/joined.jsonproto"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
-    "env": {
-      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
-    },
-    "name": "processing test_program/test_project.git transaction.Generate joined configuration",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/joined.jsonproto"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
-    "env": {
-      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
-    },
-    "infra_step": true,
-    "name": "processing test_program/test_project.git transaction.git add (5)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "processing test_program/test_project.git transaction.diffing repo to find changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--name-only",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
-    "infra_step": true,
-    "name": "processing test_program/test_project.git transaction.diffing repo to find changes.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "Merging legacy configs.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: config_backfill",
-      "[CLEANUP]/commit_msg_tmp_1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
-    "infra_step": true,
-    "name": "processing test_program/test_project.git transaction.diffing repo to find changes.write commit message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Merging legacy configs.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: config_backfill@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_1"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
-    "infra_step": true,
-    "name": "processing test_program/test_project.git transaction.diffing repo to find changes.git commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "--dry-run",
-      "--porcelain",
-      "cros",
-      "HEAD:refs/heads/main"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
-    "infra_step": true,
-    "name": "processing test_program/test_project.git transaction.git push",
-    "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
-    "infra_step": true,
-    "name": "processing test_program/test_project.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
-      "@@@STEP_LOG_END@HEAD@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
     "name": "set commits",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@commits@{\"test_program\": {\"test_project\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@commits@{}@@@"
     ]
   },
   {
@@ -1161,6 +1010,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "Step('processing test_program/test_project.git transaction.Generate imported configuration') (retcode: 1)"
+    },
     "name": "$result"
   }
 ]

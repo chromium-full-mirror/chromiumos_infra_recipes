@@ -13,6 +13,7 @@
 #
 # Any resulting changes are then committed to the configured destination.
 
+import collections
 import textwrap
 import urlparse
 
@@ -31,6 +32,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
     'cros_source',
+    'easy',
     'gerrit',
     'git',
     'git_txn',
@@ -329,23 +331,25 @@ def backfill_project(api, properties, config):
 
   Args:
     config (ConfigBackfillProperties.ProjectConfig) - configuration for project
-  """
 
-  path_cros_repo = api.context.cwd
-  path_project_repo = path_cros_repo.join("src/project/{}/{}".format(
-      config.program_name.lower(),
-      config.project_name.lower(),
-  ))
+  Return:
+    (program, project, commit_hash)
+    or None if no commit made
+  """
 
   program = config.program_name.lower()
   project = config.project_name.lower()
+
+  path_cros_repo = api.context.cwd
+  path_project_repo = path_cros_repo.join("src/project/{}/{}".format(
+      program, project))
 
   with api.step.nest("processing {}/{}".format(program,
                                                project)) as presentation:
     # Check that project is checked out
     if not api.path.exists(path_project_repo):
       presentation.step_summary_text = "project not checked out"
-      return
+      return None
 
     # Update the repo atomically
     with api.context(cwd=path_project_repo):
@@ -360,15 +364,16 @@ def backfill_project(api, properties, config):
 
       if updated:
         commit_hash = api.git.head_commit()
+
         # don't actually link to commit in staging (because it doesn't exist)
         if api.cros_infra_config.is_staging:
           presentation.step_summary_text = "[%s]" % commit_hash[:8]
         else:
-          presentation.step_summary_text = "[%s](%s/+/%s)" % (
-              commit_hash[:8],
-              api.git.remote_url(project_info.remote),
-              commit_hash,
-          )
+          url = api.git.remote_url(project_info.remote) + "/+/" + commit_hash
+          presentation.step_summary_text = "[%s](%s)" % (commit_hash[:8], url)
+
+        return (program, project, commit_hash)
+      return None
 
 
 def RunSteps(api, properties):
@@ -401,8 +406,25 @@ def RunSteps(api, properties):
       ]
       api.futures.wait(futures)
 
-      # Get results, this will re-raise any exceptions that occured in the futures
-      results = [f.result() for f in futures]
+      # Get results, this will re-raise any exceptions that occurred in the futures
+      commits = collections.defaultdict(dict)
+      errors = []
+      for f in futures:
+        if f.exception():
+          errors.append(f)
+          continue
+
+        result = f.result()
+        if result:
+          program, project, commit = result
+          commits[program][project] = commit
+
+      # save results in output properties
+      api.easy.set_properties_step(commits=commits)
+
+      # just re-raise the first error we encountered to fail the build
+      for f in errors:
+        f.result()
 
 
 def mock_workspace_path(api, path):
@@ -449,6 +471,31 @@ def GenTests(api):
           }),
       mock_workspace_path(api, 'src/project/test_program/test_project'),
       api.post_process(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'backfill_error',
+      api.properties(
+          **{
+              'dest_repo': 'https://example.com/some/project/repo',
+              'public_yaml': {
+                  'repo': 'https://example.com/public/',
+                  'path': 'some/model.yaml'
+              },
+              'private_yaml': {
+                  'repo': CROS_INTERNAL + '/private/',
+                  'path': 'some/model.yaml'
+              },
+              'hwid_key': 'some_key',
+              'project_name': 'test_project',
+              'program_name': 'test_program',
+          }),
+      api.step_data(
+          'processing test_program/test_project'
+          '.git transaction'
+          '.Generate imported configuration', retcode=1),
+      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      api.post_process(post_process.StatusFailure),
   )
 
   yield api.test(
