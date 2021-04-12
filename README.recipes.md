@@ -6493,13 +6493,13 @@ For more details on the input properties, see cl_factory.proto.
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/full.py#13)(api):**
 ### *recipes* / [config\_backfill](/recipes/config_backfill.py)
 
-[DEPS](/recipes/config_backfill.py#24): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/config_backfill.py#28): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#379)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#383)(api, properties):**
 
-&mdash; **def [backfill\_project](/recipes/config_backfill.py#327)(api, properties, config):**
+&mdash; **def [backfill\_project](/recipes/config_backfill.py#331)(api, properties, config):**
 
 Backfill an individual project.
 
@@ -6512,7 +6512,7 @@ Return:
   (program, project, commit_hash)
   or None if no commit made
 
-&mdash; **def [config\_merger](/recipes/config_backfill.py#165)(api, config, path_cros_repo, step_pres):**
+&mdash; **def [config\_merger](/recipes/config_backfill.py#169)(api, config, path_cros_repo, step_pres):**
 
 Create a closure to merge configs.
 
@@ -6528,20 +6528,20 @@ Args:
 Return:
   closure to execute merge operation
 
-&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#82)(api):**
+&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#86)(api):**
 
 Hack around needing a full portage environment for reef/fizz.
 
 Reef/fizz require their baseboard overlay to include common files.  We can
 work around this by using symlinks to simulate the overlay.
 
-&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#430)(api, path):**
+&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#463)(api, path):**
 
-&mdash; **def [require](/recipes/config_backfill.py#66)(cond, message):**
+&mdash; **def [require](/recipes/config_backfill.py#70)(cond, message):**
 
 Require a given condition be true or throw a ValueError.
 
-&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#72)(api, repo):**
+&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#76)(api, repo):**
 
 Take a private overlay URL and parse out project name.
 ### *recipes* / [config\_postsubmit](/recipes/config_postsubmit.py)

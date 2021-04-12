@@ -20,6 +20,10 @@ import urlparse
 from PB.recipes.chromeos.config_backfill import ConfigBackfillProperties
 from recipe_engine import post_process
 
+# import protos
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
+
 # Recipe dependencies
 DEPS = [
     'recipe_engine/buildbucket',
@@ -406,25 +410,54 @@ def RunSteps(api, properties):
       ]
       api.futures.wait(futures)
 
-      # Get results, this will re-raise any exceptions that occurred in the futures
-      commits = collections.defaultdict(dict)
+      # parse results
+      output_commits = collections.defaultdict(dict)
+      commits = []
       errors = []
       for f in futures:
-        if f.exception():
-          errors.append(f)
+        ex = f.exception()
+        if ex:
+          errors.append(ex)
           continue
 
         result = f.result()
         if result:
+          commits.append(result)
           program, project, commit = result
-          commits[program][project] = commit
+          output_commits[program][project] = commit
 
       # save results in output properties
-      api.easy.set_properties_step(commits=commits)
+      api.easy.set_properties_step(commits=output_commits)
 
-      # just re-raise the first error we encountered to fail the build
-      for f in errors:
-        f.result()
+      # create summary markdown
+      COMMIT_TEMPLATE = \
+        "- {program}/{project} [{commit_short}]("                      \
+          "https://chrome-internal.googlesource.com/chromeos/project/" \
+          "{program}/{project}/+/{commit_sha}"                         \
+        ")"
+
+      lines = ["{} changes made".format(len(commits))]
+      for commit in sorted(commits):
+        program, project, commit_sha = commit
+        lines.append(
+            COMMIT_TEMPLATE.format(
+                program=program,
+                project=project,
+                commit_short=commit_sha[:8],
+                commit_sha=commit_sha,
+            ),
+        )
+      lines.append("")
+
+      if errors:
+        lines.append("{} errors".format(len(errors)))
+        for error in errors:
+          lines.append("- {}".format(error))
+
+      return result_pb2.RawResult(
+          status=common_pb2.FAILURE if errors else common_pb2.SUCCESS,
+          summary_markdown="\n".join(lines),
+      )
 
 
 def mock_workspace_path(api, path):

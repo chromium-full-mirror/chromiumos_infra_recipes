@@ -1012,7 +1012,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Step('processing test_program/test_project.git transaction.Generate imported configuration') (retcode: 1)"
+      "humanReason": "0 changes made\n\n1 errors\n- Step('processing test_program/test_project.git transaction.Generate imported configuration') (retcode: 1)"
     },
     "name": "$result"
   }
