@@ -377,7 +377,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
         BuilderConfig.CL_AFFECTED_DEPENDENCIES):
       relevant_packages = self.m.cros_relevance.get_package_dependencies(
           sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
-          patch_sets=self.m.workspace_util.patch_sets, packages=packages)
+          patch_sets=self.m.workspace_util.patch_sets, packages=packages,
+          include_rev_deps=True)
       # Ensure implicit dependencies are installed.
       relevant_packages.add(category='virtual', package_name='implicit-system')
     if self.m.cros_infra_config.should_run(install_packages.run_spec):

@@ -710,7 +710,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#394)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#395)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -816,7 +816,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#462)(self, config=None, failing_build=False, private_bundle_func=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#463)(self, config=None, failing_build=False, private_bundle_func=None):**
 
 Upload artifacts from the build.
 
@@ -828,7 +828,7 @@ Args:
       as when there is no Build API on the branch), this will be called
       instead of the internal bundling method.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#484)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#485)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -2361,7 +2361,7 @@ Args:
 Returns:
   list[str]: the names of the child builders that must be run.
 
-&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#361)(self, sysroot, chroot, patch_sets=None, packages=None):**
+&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#361)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
 
 Calculates the dependencies for the build target.
 

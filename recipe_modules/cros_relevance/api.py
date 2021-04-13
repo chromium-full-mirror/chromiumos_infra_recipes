@@ -359,7 +359,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       return affected_paths
 
   def get_package_dependencies(self, sysroot, chroot, patch_sets=None,
-                               packages=None):
+                               packages=None, include_rev_deps=False):
     """Calculates the dependencies for the build target.
 
     Args:
@@ -379,7 +379,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       affected_paths = self._get_affected_paths(patch_sets)
       resp = self.m.cros_build_api.DependencyService.List(
           ListRequest(sysroot=sysroot, chroot=chroot, src_paths=affected_paths,
-                      packages=packages))
+                      packages=packages, include_rev_deps=include_rev_deps))
       return resp.package_deps
 
   def _ensure_binaries(self):
