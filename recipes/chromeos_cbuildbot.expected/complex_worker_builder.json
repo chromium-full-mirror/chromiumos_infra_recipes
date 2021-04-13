@@ -331,7 +331,7 @@
       "--buildroot",
       "[CACHE]/cbuild",
       "--branch",
-      "slave_branch",
+      "worker_branch",
       "--master-build-id",
       "123",
       "--git-cache-dir",
@@ -342,7 +342,7 @@
       "[START_DIR]/cipd/goma",
       "--goma_client_json",
       "/creds/service_accounts/service-account-goma-client.json",
-      "slave_config"
+      "worker_config"
     ],
     "env": {
       "DEPOT_TOOLS_UPDATE": "0",
@@ -362,7 +362,7 @@
         "[START_DIR]/depot_tools"
       ]
     },
-    "name": "cbuildbot_launch [slave_config]",
+    "name": "cbuildbot_launch [worker_config]",
     "stdin": "2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",

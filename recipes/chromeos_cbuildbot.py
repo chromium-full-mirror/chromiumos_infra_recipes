@@ -1,4 +1,4 @@
-# Copyright 2020 The Chromium Authors. All rights reserved.
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -77,9 +77,9 @@ def MakeSummaryMarkdown(api, failure):
     lines.append('builder: %s' % cbb_config)
 
   buildset = api.properties.get('buildset', '')
-  m = re.match('^cros/master_buildbucket_id/(\d+)$', buildset)
+  m = re.match('^cros/ma(in|ster)_buildbucket_id/(\d+)$', buildset)
   if m:
-    lines.append('[master](https://ci.chromium.org/b/%s)' % m.groups()[0])
+    lines.append('[main](https://ci.chromium.org/b/%s)' % m.groups()[0])
 
   return '\n\n'.join(lines)
 
@@ -111,7 +111,7 @@ def GenTests(api):
       api.properties(
           bot_id='test',
           cbb_config='swarming-build-config',
-          buildset='cros/master_buildbucket_id/8904538489270332096',
+          buildset='cros/main_buildbucket_id/8904538489270332096',
       ),
       api.step_data('cbuildbot_launch [swarming-build-config]',
                     api.legacy_annotation.failure_step),
@@ -137,16 +137,16 @@ def GenTests(api):
 
   # Test a tryjob with a branch and CLs.
   yield api.test(
-      'master_builder',
-      api.properties(branch='', cbb_branch='slave_branch',
-                     cbb_config='master_config', **common_properties),
+      'main_builder',
+      api.properties(branch='', cbb_branch='worker_branch',
+                     cbb_config='main_config', **common_properties),
   )
 
   # Test a tryjob with a branch and CLs.
   yield api.test(
-      'complex_slave_builder',
-      api.properties(branch='', cbb_branch='slave_branch',
-                     cbb_config='slave_config', cbb_master_build_id=123,
+      'complex_worker_builder',
+      api.properties(branch='', cbb_branch='worker_branch',
+                     cbb_config='worker_config', cbb_master_build_id=123,
                      **common_properties),
   )
 
