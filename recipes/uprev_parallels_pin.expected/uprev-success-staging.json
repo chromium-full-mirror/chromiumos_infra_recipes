@@ -23,29 +23,6 @@
   },
   {
     "cmd": [],
-    "name": "read builder configs"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "validate properties",
     "~followup_annotations": [
       "@@@STEP_TEXT@all properties good@@@"
@@ -143,6 +120,32 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "build chromiumos with upreved Parallels.configure builder.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.configure builder.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -197,7 +200,7 @@
     ],
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -220,7 +223,7 @@
     "name": "build chromiumos with upreved Parallels.configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
     ]
   },
   {
@@ -228,7 +231,7 @@
     "name": "build chromiumos with upreved Parallels.configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
     ]
   },
   {
@@ -434,344 +437,6 @@
   },
   {
     "cmd": [],
-    "name": "build chromiumos with upreved Parallels.sync cached directory",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build chromiumos with upreved Parallels.sync cached directory.set initial_repo_state",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
-    ],
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_END@.recipes_state.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.ensure root path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.remove .repo/manifests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests.git"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.remove .repo/manifests.git",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.repo init",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.repo binary update",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.repo binary update.repo version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "selfupdate"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.repo binary update.repo selfupdate",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.repo binary update.repo version (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.clear repo locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".",
-      "-type",
-      "f",
-      "-path",
-      "./.git/*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.clear git locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.ensure clean checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "git",
-      "clean",
-      "-d",
-      "-f"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.ensure clean checkout.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--force-sync",
-      "--detach",
-      "--current-branch",
-      "--jobs",
-      "8",
-      "--no-tags",
-      "--optimized-fetch",
-      "--retry-fetches",
-      "8"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.ensure synced checkout.repo sync",
-    "timeout": 3600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
-    ],
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_END@.recipes_state.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "remote",
-      "update"
-    ],
-    "cwd": "[CACHE]/chromiumos/manifest-internal",
-    "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.sync cached directory.sync chromeos/manifest-internal branches",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "build chromiumos with upreved Parallels.mount overlay workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -851,6 +516,357 @@
   },
   {
     "cmd": [],
+    "name": "build chromiumos with upreved Parallels.set initial_repo_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"https://chromium.googlesource.com/chromiumos/manifest\", \"state\": \"STATE_DIRTY\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+    ],
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chromium.googlesource.com/chromiumos/manifest\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.ensure root path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]/chromiumos_workspace/.repo/manifests"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.remove .repo/manifests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]/chromiumos_workspace/.repo/manifests.git"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.remove .repo/manifests.git",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "--groups",
+      "all",
+      "--repo-branch",
+      "main",
+      "--no-repo-verify"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.clear repo locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.clear git locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.ensure clean checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "clean",
+      "-d",
+      "-f"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.ensure clean checkout.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "8",
+      "--no-tags",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.ensure synced checkout.repo sync",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+    ],
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chromium.googlesource.com/chromiumos/manifest\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build chromiumos with upreved Parallels.sync manifest branches",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.sync manifest branches.sync chromiumos/manifest branches",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.sync manifest branches.sync chromiumos/manifest branches (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build chromiumos with upreved Parallels.sync to gitiles commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -864,7 +880,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/staging-snapshot-HEAD-SHA/snapshot.xml",
+      "https://chromium.googlesource.com/chromiumos/manifest/+/staging-snapshot-HEAD-SHA/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -902,7 +918,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "--groups",
       "all",
       "--manifest-name",
@@ -1016,10 +1032,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "staging-snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -1032,7 +1048,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -1047,7 +1063,7 @@
       "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -1247,7 +1263,7 @@
       "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
       "@@@STEP_LOG_END@sdk cache version@@@",
-      "@@@STEP_LOG_LINE@sdk manifest url@Url in config: https://chrome-internal.googlesource.com/chromeos/manifest-internal@@@",
+      "@@@STEP_LOG_LINE@sdk manifest url@Url in config: https://chromium.googlesource.com/chromiumos/manifest@@@",
       "@@@STEP_LOG_LINE@sdk manifest url@Url on disk: @@@",
       "@@@STEP_LOG_END@sdk manifest url@@@",
       "@@@STEP_LOG_LINE@sdk manifest branch@Branch in config: @@@",
@@ -1457,7 +1473,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"snapshot_hash\": \"staging-snapshot-HEAD-SHA\", \n\"version\": 1\n}",
+      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\", \n\"snapshot_hash\": \"staging-snapshot-HEAD-SHA\", \n\"version\": 1\n}",
       "[CACHE]/cros_chroot/sdk_cache_state.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1467,7 +1483,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@version: 1@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_branch: \"snapshot\"@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_url: \"https://chromium.googlesource.com/chromiumos/manifest\"@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@snapshot_hash: \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_END@sdk_cache_state.json@@@"
     ]
@@ -2358,10 +2374,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "staging-snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.upload metadata.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -2374,7 +2390,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.upload metadata.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -2389,7 +2405,7 @@
       "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.upload metadata.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -2645,7 +2661,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chrome-internal.googlesource.com\\022\\032chromeos/manifest-internal\\032\\031staging-snapshot-HEAD-SHA\\\"\\033refs/heads/staging-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\023chromiumos/manifest\\032\\031staging-snapshot-HEAD-SHA\\\"\\033refs/heads/staging-snapshot\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
@@ -2704,7 +2720,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0019staging-snapshot-HEAD-SHABx\nv\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshot",
+      "2\u0019staging-snapshot-HEAD-SHABj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshot",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2712,9 +2728,9 @@
     "name": "build chromiumos with upreved Parallels.validate SDK reuse.depgraph relevance check.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@2\u0019staging-snapshot-HEAD-SHABx@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@v@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshot@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@2\u0019staging-snapshot-HEAD-SHABj@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@h@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshot@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },
@@ -3836,10 +3852,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "staging-snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.read chromeos version (2).read snapshot.git fetch",
     "~followup_annotations": [
@@ -3852,7 +3868,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.read chromeos version (2).read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -3867,7 +3883,7 @@
       "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.read chromeos version (2).read snapshot.read git footers",
     "~followup_annotations": [
@@ -4928,10 +4944,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "staging-snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.upload artifacts.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -4944,7 +4960,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.upload artifacts.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -4959,7 +4975,7 @@
       "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.upload artifacts.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -5042,10 +5058,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "staging-snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.get artifacts path.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -5058,7 +5074,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.get artifacts path.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -5073,7 +5089,7 @@
       "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.get artifacts path.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -5276,10 +5292,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "staging-snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.finalize metadata.upload metadata.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -5292,7 +5308,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.finalize metadata.upload metadata.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -5307,7 +5323,7 @@
       "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "build chromiumos with upreved Parallels.finalize metadata.upload metadata.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -5608,7 +5624,7 @@
     "name": "build chromiumos with upreved Parallels.set source_sync_target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/staging-snapshot\"}}@@@"
     ]
   },
   {
@@ -5942,26 +5958,6 @@
     "name": "update VERSION-PIN.sync cached directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CACHE]/chromiumos/.recipes_state.json",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "update VERSION-PIN.sync cached directory.Read proto from [CACHE]/chromiumos/.recipes_state.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
   {
@@ -6456,7 +6452,7 @@
     "name": "update VERSION-PIN.set source_sync_target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/staging-snapshot\"}}@@@"
     ]
   },
   {

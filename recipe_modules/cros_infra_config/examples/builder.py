@@ -62,10 +62,6 @@ def RunSteps(api, properties):
   expected_commit = common_pb2.GitilesCommit(host=expect_host,
                                              project=expect_project,
                                              id=expect_id, ref=expect_ref)
-  if (config.general.manifest == BuilderConfig.General.PUBLIC and
-      api.cros_infra_config.switch_to_external_manifest):
-    expected_commit.host = api.src_state.external_manifest.host
-    expected_commit.project = api.src_state.external_manifest.project
 
   api.assertions.assertEqual(expected_commit,
                              api.cros_infra_config.gitiles_commit)
@@ -92,10 +88,10 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   i_manifest = api.src_state.internal_manifest
+  e_manifest = api.src_state.external_manifest
 
-  def builder(build_target='amd64-generic', is_staging=None,
-              expected_is_staging=False, expected_gitiles_commit=None,
-              **kwargs):
+  def builder(build_target='grunt', is_staging=None, expected_is_staging=False,
+              expected_gitiles_commit=None, **kwargs):
     kwargs['exe'] = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
                                           cipd_version='prod')
     build = api.test_util.test_child_build(build_target, **kwargs)
@@ -115,12 +111,13 @@ def GenTests(api):
   yield api.test('basic', builder())
 
   # This has (default) changes, and no commit.
-  yield api.test('cq-build', builder(cq=True))
+  yield api.test('cq-build', builder(build_target='coral', cq=True))
 
   # This has (default) changes, and our commit.
   yield api.test(
       'has_commit_and_changes',
-      builder(cq=True, revision='993335c91267d304d44f712209139e8b84a87d8c'))
+      builder(build_target='coral', cq=True,
+              revision='993335c91267d304d44f712209139e8b84a87d8c'))
 
   # This has specified changes only, and no commit.
   yield api.test(
@@ -156,11 +153,12 @@ def GenTests(api):
 
   yield api.test(
       'public_has_no_commit_and_no_changes',
-      api.properties(
-          **{
-              '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(switch_to_external_manifest=True)
-          }), builder(build_target='amd64-generic', revision=None))
+      builder(
+          build_target='amd64-generic', revision=None,
+          expected_gitiles_commit=common_pb2.GitilesCommit(
+              host=e_manifest.host,
+              project=e_manifest.project,
+          )))
 
   yield api.test(
       'branch_ref',
@@ -198,8 +196,13 @@ def GenTests(api):
 
   yield api.test(
       'staging',
-      builder(bucket='staging', builder='staging-amd64-generic-cq',
-              expected_is_staging=True))
+      builder(
+          bucket='staging', builder='staging-amd64-generic-cq',
+          expected_is_staging=True,
+          expected_gitiles_commit=common_pb2.GitilesCommit(
+              host=e_manifest.host,
+              project=e_manifest.project,
+          )))
 
   yield api.test('forced-staging',
                  builder(is_staging=True, expected_is_staging=True))

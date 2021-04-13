@@ -59,12 +59,10 @@ def GenTests(api):
       expected_package_indexes.extend(data_dict[sha][target][p_name].values())
     return expected_package_indexes
 
-  # TODO(crbug/1179353): Remove switch_to_manifest after public builder rollout.
   def test_data(private=False, use_staging=False,
                 enable_snapshot_prebuilts=True, send_snapshot_prebuilts=4,
                 disable_overlay_commits=False, profile=None,
-                expected_package_indexes=None, dirty_source=False,
-                switch_to_external_manifest=False):
+                expected_package_indexes=None, dirty_source=False):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     target = 'amd64-generic'
 
@@ -74,10 +72,6 @@ def GenTests(api):
 
     if expected_package_indexes is None:
       count = send_snapshot_prebuilts
-      # TODO(crbug/1179353): Remove once public builders are rolled out.
-      if (send_snapshot_prebuilts and not private and
-          switch_to_external_manifest):
-        count = 1
       expected_package_indexes = make_package_indexes(gs_bucket, target,
                                                       profile=profile,
                                                       count=count)
@@ -105,10 +99,6 @@ def GenTests(api):
       props['$chromeos/cros_source'] = CrosSourceProperties(
           snapshot_cas=CrosSourceProperties.SnapshotCas(digest='xxx'))
 
-    # TODO(crbug/1179353): Remove once public builders are rolled out.
-    if switch_to_external_manifest:
-      props['$chromeos/cros_infra_config'] = CrosInfraConfigProperties(
-          switch_to_external_manifest=True)
     ret += api.properties(**props)
 
     ret += api.post_check(
@@ -164,7 +154,3 @@ def GenTests(api):
   # upload_target_prebuilts skipping binhost commit and metadata
   # upload.
   yield api.test('dirty-source', test_data(dirty_source=True))
-
-  # TODO(crbug/1179353): Remove once public builders are rolled out.
-  yield api.test('switch-to-external',
-                 test_data(switch_to_external_manifest=True))

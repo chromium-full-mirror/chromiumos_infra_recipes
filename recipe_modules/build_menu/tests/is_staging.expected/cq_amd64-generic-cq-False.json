@@ -23,29 +23,6 @@
   },
   {
     "cmd": [],
-    "name": "read builder configs"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
@@ -98,6 +75,32 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "configure builder.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -155,7 +158,7 @@
     ],
     "infra_step": true,
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -178,7 +181,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -186,7 +189,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -544,10 +547,10 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -560,7 +563,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -575,7 +578,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [

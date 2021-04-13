@@ -868,7 +868,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#248)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#247)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -882,7 +882,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#416)(self, builder_name):**
+&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#415)(self, builder_name):**
 
 Returns to the name of the full variant of the builder.
 
@@ -893,7 +893,7 @@ Args:
 Returns:
    A string of the full builder name.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#401)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#400)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -904,7 +904,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#320)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#319)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -1814,7 +1814,7 @@ A module for accessing data in the chromeos/infra/config repo
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#580)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#572)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -1825,7 +1825,7 @@ Args:
 
 Returns: a dict(str, Build) of build_target names.
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#118)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#110)(self):**
 
 Return the config for this builder.
 
@@ -1835,7 +1835,7 @@ which caches the data.
 Returns:
   BuilderConfig for this builder.
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#131)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#123)(self):**
 
 Config or default config.
 
@@ -1845,7 +1845,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#480)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#472)(self, commit=None, changes=None, is_staging=None, name='configure builder'):**
 
 Configure the builder.
 
@@ -1866,32 +1866,32 @@ Args:
 Returns:
   BuilderConfig or None
 
-&emsp; **@property**<br>&mdash; **def [current\_builder\_group](/recipe_modules/cros_infra_config/api.py#179)(self):**
+&emsp; **@property**<br>&mdash; **def [current\_builder\_group](/recipe_modules/cros_infra_config/api.py#171)(self):**
 
 Get the builder group for the currently running builder.
 
-&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#101)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#97)(self):**
 
 Return the list of experiments active for this build.
 
-&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#108)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#104)(self):**
 
 Return value for bb schedule_request experiments arg.
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#305)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#297)(self):**
 
 Force a reload of the config map from ToT.
 
-&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#152)(self):**
+&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#144)(self):**
 
 Return a freshly loaded config for this builder.
 
 Returns:
   BuilderConfig for this builder, freshly reloaded.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#97)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#93)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#315)(self, application='ChromeOS'):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#307)(self, application='ChromeOS'):**
 
 Get BotPolicies as defined in infra/config.
 If application is Chrome, BotPolicies will be fetched from infradata/config.
@@ -1899,7 +1899,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#541)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#533)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -1910,7 +1910,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#566)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#558)(self, build=None):**
 
 Return the build target name from input properties.
 
@@ -1921,7 +1921,7 @@ Args:
 Returns:
   (str) The name of the build target, or None.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#255)(self, builder_name, missing_ok=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#247)(self, builder_name, missing_ok=False):**
 
 Gets the BuilderConfig for the specified builder from HEAD.
 
@@ -1944,41 +1944,41 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#343)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#335)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#332)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#324)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
 Returns:
   SuiteRetryCfg as defined in the config repo.
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#93)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#89)(self):**
 
-&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#65)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#63)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#85)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#81)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#148)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#140)(self):**
 
-&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#89)(self):**
+&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#85)(self):**
 
-&emsp; **@property**<br>&mdash; **def [parent\_builder\_group](/recipe_modules/cros_infra_config/api.py#186)(self):**
+&emsp; **@property**<br>&mdash; **def [parent\_builder\_group](/recipe_modules/cros_infra_config/api.py#178)(self):**
 
 Get the builder group for the parent builder.
 
-&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#164)(self):**
+&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#156)(self):**
 
 Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#283)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#275)(self, builder_names):**
 
 Gets the BuilderConfigs for the specified builder names from HEAD.
 
@@ -1992,15 +1992,11 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#312)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#304)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#309)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#301)(self, run_spec):**
 
-&emsp; **@property**<br>&mdash; **def [switch\_to\_external\_manifest](/recipe_modules/cros_infra_config/api.py#113)(self):**
-
-Returns whether public builders should use the public manifest.
-
-&emsp; **@property**<br>&mdash; **def [target\_builder\_group](/recipe_modules/cros_infra_config/api.py#191)(self):**
+&emsp; **@property**<br>&mdash; **def [target\_builder\_group](/recipe_modules/cros_infra_config/api.py#183)(self):**
 
 Get the builder group for the target builder.
 
@@ -2199,7 +2195,7 @@ API for uploading CrOS prebuilts to Google Storage.
 
 A module for uploading package prebuilts.
 
-&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#147)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
+&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#136)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
 
 Return the PackageIndexInfo for this build.
 
@@ -2216,11 +2212,7 @@ Args:
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
 
-&mdash; **def [initialize](/recipe_modules/cros_prebuilts/api.py#32)(self):**
-
-Initialization that follows all module loading.
-
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#416)(self, target, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#405)(self, target, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 

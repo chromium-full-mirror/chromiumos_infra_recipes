@@ -23,29 +23,6 @@
   },
   {
     "cmd": [],
-    "name": "read builder configs"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "create releasespec"
   },
   {
@@ -262,6 +239,32 @@
     "name": "push images",
     "~followup_annotations": [
       "@@@STEP_TEXT@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-release/R99-1234.56.0@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push images.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "push images.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

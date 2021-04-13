@@ -39,11 +39,3 @@ def GenTests(api):
                   CrosInfraConfigProperties(
                       config_ref='refs/changes/33/123433/1')
           }))
-
-  yield api.test(
-      'other_properties_given',
-      api.properties(
-          **{
-              '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(switch_to_external_manifest=True)
-          }))

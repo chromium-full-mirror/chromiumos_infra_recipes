@@ -267,33 +267,3 @@ def GenTests(api):
           'buildbucket.search'),
   )
 
-  yield api.test(
-      'public-builders-sync-public-manifest',
-      cq_orchestrator_build_with_gerrit_change(),
-      api.properties(
-          expected_build_requests=[
-              'atlas-slim-cq',
-              'atlas-cq',
-              'arm64-generic-cq',
-          ], expected_completed_builds=[
-              'amd64-generic-cq',
-              'cave-cq',
-          ], **{
-              '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(switch_to_external_manifest=True)
-          }),
-      api.git_footers.simulated_get_footers([], 'get build history'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-slim-cq',
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-slim-cq',
-          'cave-cq',
-      ]),
-      api.buildbucket.simulated_search_results(
-          builds, 'get build history.get completed builds.'
-          'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
-          builds, 'get build history.find matching builds.'
-          'buildbucket.search'),
-  )

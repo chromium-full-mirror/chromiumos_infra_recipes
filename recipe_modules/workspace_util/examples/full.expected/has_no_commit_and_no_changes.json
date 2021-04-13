@@ -137,7 +137,7 @@
     ],
     "infra_step": true,
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -160,7 +160,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -168,7 +168,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -295,339 +295,6 @@
   },
   {
     "cmd": [],
-    "name": "sync cached directory"
-  },
-  {
-    "cmd": [],
-    "name": "sync cached directory.set initial_repo_state",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
-    ],
-    "infra_step": true,
-    "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_END@.recipes_state.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync cached directory.ensure synced checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CACHE]/chromiumos"
-    ],
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.ensure root path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.remove .repo/manifests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests.git"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.remove .repo/manifests.git",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
-      "--repo-rev=stable"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.repo init",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync cached directory.ensure synced checkout.repo binary update",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.repo binary update.repo version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "selfupdate"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.repo binary update.repo selfupdate",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.repo binary update.repo version (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.clear repo locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".",
-      "-type",
-      "f",
-      "-path",
-      "./.git/*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.clear git locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync cached directory.ensure synced checkout.ensure clean checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "git",
-      "clean",
-      "-d",
-      "-f"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--force-sync",
-      "--detach",
-      "--current-branch",
-      "--jobs",
-      "8",
-      "--no-tags",
-      "--optimized-fetch",
-      "--retry-fetches",
-      "8"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.repo sync",
-    "timeout": 3600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
-    ],
-    "infra_step": true,
-    "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_END@.recipes_state.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "remote",
-      "update"
-    ],
-    "cwd": "[CACHE]/chromiumos/manifest-internal",
-    "infra_step": true,
-    "name": "sync cached directory.sync chromeos/manifest-internal branches",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "mount overlay workspace"
   },
   {
@@ -704,6 +371,296 @@
   },
   {
     "cmd": [],
+    "name": "set initial_repo_state",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"https://chromium.googlesource.com/chromiumos/manifest\", \"state\": \"STATE_DIRTY\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+    ],
+    "infra_step": true,
+    "name": "Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chromium.googlesource.com/chromiumos/manifest\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure synced checkout"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "ensure synced checkout.ensure root path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]/chromiumos_workspace/.repo/manifests"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]/chromiumos_workspace/.repo/manifests.git"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests.git",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "--groups",
+      "all",
+      "--repo-rev=stable"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure synced checkout.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure synced checkout.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure synced checkout.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure synced checkout.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure synced checkout.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure synced checkout.ensure clean checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "clean",
+      "-d",
+      "-f"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure synced checkout.ensure clean checkout.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "8",
+      "--no-tags",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure synced checkout.repo sync",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+    ],
+    "infra_step": true,
+    "name": "Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chromium.googlesource.com/chromiumos/manifest\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifest branches"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifest branches.sync chromiumos/manifest branches",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifest branches.sync chromiumos/manifest branches (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "sync to gitiles commit"
   },
   {
@@ -714,7 +671,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
+      "https://chromium.googlesource.com/chromiumos/manifest/+/snapshot-HEAD-SHA/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -752,7 +709,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "--groups",
       "all",
       "--repo-rev=stable",
@@ -834,7 +791,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}}@@@"
     ]
   },
   {
@@ -964,10 +921,6 @@
     "name": "git config (4)"
   },
   {
-    "cmd": [],
-    "name": "sync cached directory (2)"
-  },
-  {
     "cmd": [
       "vpython",
       "-u",
@@ -975,24 +928,22 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CACHE]/chromiumos/.recipes_state.json",
+      "[START_DIR]/chromiumos_workspace/.recipes_state.json",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "sync cached directory (2).Read proto from [CACHE]/chromiumos/.recipes_state.json",
+    "name": "Read proto from [START_DIR]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chromium.googlesource.com/chromiumos/manifest\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "sync cached directory (2).set initial_repo_state",
+    "name": "set initial_repo_state (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"https://chromium.googlesource.com/chromiumos/manifest\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1003,24 +954,20 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
+      "{\n\"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "sync cached directory (2).Write proto to [CACHE]/chromiumos/.recipes_state.json",
+    "name": "Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chromium.googlesource.com/chromiumos/manifest\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "sync cached directory (2).ensure synced checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "ensure synced checkout (2)"
   },
   {
     "cmd": [
@@ -1032,12 +979,12 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos"
+      "[START_DIR]/chromiumos_workspace"
     ],
     "infra_step": true,
-    "name": "sync cached directory (2).ensure synced checkout.ensure root path",
+    "name": "ensure synced checkout (2).ensure root path",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1048,13 +995,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests"
+      "[START_DIR]/chromiumos_workspace/.repo/manifests"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync cached directory (2).ensure synced checkout.remove .repo/manifests",
+    "name": "ensure synced checkout (2).remove .repo/manifests",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1065,13 +1012,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/chromiumos/.repo/manifests.git"
+      "[START_DIR]/chromiumos_workspace/.repo/manifests.git"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync cached directory (2).ensure synced checkout.remove .repo/manifests.git",
+    "name": "ensure synced checkout (2).remove .repo/manifests.git",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1079,12 +1026,12 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "--groups",
       "all",
       "--repo-rev=stable"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1094,67 +1041,17 @@
       ]
     },
     "infra_step": true,
-    "name": "sync cached directory (2).ensure synced checkout.repo init",
+    "name": "ensure synced checkout (2).repo init",
     "timeout": 900,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "infra_step": true,
-    "name": "sync cached directory (2).ensure synced checkout.clear repo locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".",
-      "-type",
-      "f",
-      "-path",
-      "./.git/*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CACHE]/chromiumos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync cached directory (2).ensure synced checkout.clear git locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "sync cached directory (2).ensure synced checkout.ensure clean checkout",
+    "name": "ensure synced checkout (2).ensure clean checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1170,7 +1067,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1180,9 +1077,9 @@
       ]
     },
     "infra_step": true,
-    "name": "sync cached directory (2).ensure synced checkout.ensure clean checkout.repo forall",
+    "name": "ensure synced checkout (2).ensure clean checkout.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1200,7 +1097,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1210,10 +1107,10 @@
       ]
     },
     "infra_step": true,
-    "name": "sync cached directory (2).ensure synced checkout.repo sync",
+    "name": "ensure synced checkout (2).repo sync",
     "timeout": 3600,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1224,16 +1121,32 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
+      "{\n\"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "sync cached directory (2).Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
+    "name": "Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json (4)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chromium.googlesource.com/chromiumos/manifest\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifest branches (2)"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifest branches (2).sync chromiumos/manifest branches",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1242,85 +1155,9 @@
       "remote",
       "update"
     ],
-    "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "sync cached directory (2).sync chromeos/manifest-internal branches",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "mount overlay workspace (2)"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace (2).create upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/overlayfs/workspace/workdir/workspace"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace (2).create workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace (2).create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "-n",
-      "mount",
-      "-t",
-      "overlay",
-      "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
-      "overlay",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "mount overlay workspace (2).mount",
+    "name": "sync manifest branches (2).sync chromiumos/manifest branches (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1368,6 +1205,27 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
       "@@@STEP_LOG_END@tmp_manifest@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/.recipes_state.json",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "sync to specified manifest.Read proto from [START_DIR]/chromiumos_workspace/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
   {
@@ -1669,17 +1527,6 @@
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts (2).unmount overlay chromiumos",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "clean up overlayfs mounts (2).unmount overlay workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

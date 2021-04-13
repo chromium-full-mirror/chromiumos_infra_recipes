@@ -59,8 +59,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Is the builder configured?
     self._is_configured = False
 
-    # Should public builders switch to the external manifest?
-    self._switch_to_external_manifest = properties.switch_to_external_manifest
 
   def initialize(self):
     # If the builder is in the staging bucket, or has a name that begins
@@ -75,9 +73,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._properties.honor_gitiles_commit_ref |= (
         'chromeos.cros_infra_config.honor_gitiles_commit_ref' in
         self.experiments)
-    self._switch_to_external_manifest |= (
-        'chromeos.cros_infra_config.switch_to_external_manifest' in
-        self.experiments)
+
 
     # Hold off on the other fields until they are used, to avoid unnecessary
     # clutter in the expectations files.
@@ -110,10 +106,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """Return value for bb schedule_request experiments arg."""
     return {k: True for k in self.experiments}
 
-  @property
-  def switch_to_external_manifest(self):
-    """Returns whether public builders should use the public manifest."""
-    return self._switch_to_external_manifest
 
   @property
   def config(self):
@@ -395,7 +387,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # either luci-scheduler (no changes), luci-cq (changes), or a user.
     # The builder is private unless the config says otherwise.  Builders with no
     # builder config can pass a commit, or default to the internal.
-    private = not (config and self._switch_to_external_manifest and
+    private = not (config and
                    config.general.manifest == BuilderConfig.General.PUBLIC)
 
     # Determine which manifest this builder should be using.

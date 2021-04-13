@@ -178,8 +178,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         child_build_snapshot = internal_snapshot
         if (child_builder_config.general.manifest ==
-            BuilderConfig.General.PUBLIC and
-            self.m.cros_infra_config.switch_to_external_manifest):
+            BuilderConfig.General.PUBLIC):
           child_build_snapshot = external_snapshot
 
         tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
