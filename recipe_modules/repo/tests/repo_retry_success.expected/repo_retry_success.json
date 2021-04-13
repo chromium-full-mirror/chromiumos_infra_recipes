@@ -52,6 +52,40 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/ensure/.repo/manifests"
+    ],
+    "cwd": "[CLEANUP]/ensure",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/ensure/.repo/manifests.git"
+    ],
+    "cwd": "[CLEANUP]/ensure",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests.git",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
@@ -86,6 +120,40 @@
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,
     "name": "ensure synced checkout.sleep 10 min, try repo again",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/ensure/.repo/manifests"
+    ],
+    "cwd": "[CLEANUP]/ensure",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/ensure/.repo/manifests.git"
+    ],
+    "cwd": "[CLEANUP]/ensure",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests.git (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -182,6 +250,42 @@
     "name": "ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ensure synced checkout.ensure clean checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "clean",
+      "-d",
+      "-f"
+    ],
+    "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure synced checkout.ensure clean checkout.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

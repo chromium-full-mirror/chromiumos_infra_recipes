@@ -267,6 +267,21 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += projects
     self._step(cmd, name=None, timeout=timeout)
 
+  def create_tmp_manifest(self, manifest_data):
+    """Write manifest_data to a temporary manifest file inside the repo root.
+
+    Returns (string): path of tmp manifest relative.
+    """
+    repo_root = self._find_root()
+    if repo_root is None:
+      raise recipe_api.StepFailure('no repo root found')
+
+    manifest_path = repo_root.join('.repo', 'tmp_manifest')
+    self.m.file.write_raw('write manifest', manifest_path, manifest_data)
+
+    repo_manifests_path = repo_root.join('.repo', 'manifests')
+    return manifest_path
+
   def sync_manifest(self, manifest_url, manifest_data, **kwargs):
     """Sync to the given manifest file data.
 
@@ -278,11 +293,10 @@ class RepoApi(recipe_api.RecipeApi):
     repo_root = self._find_root()
     assert repo_root is not None, 'no repo root found'
 
-    manifest_path = repo_root.join('.repo', 'tmp_manifest')
-    self.m.file.write_raw('write manifest', manifest_path, manifest_data)
-
     repo_manifests_path = repo_root.join('.repo', 'manifests')
+    manifest_path = self.create_tmp_manifest(manifest_data)
     manifest_relpath = self.m.path.relpath(manifest_path, repo_manifests_path)
+
     init_opts = {"projects": kwargs.get("projects", None)}
     self.init(manifest_url, manifest_name=manifest_relpath, **init_opts)
     self.sync(**kwargs)
@@ -748,24 +762,23 @@ class RepoApi(recipe_api.RecipeApi):
 
         for retries in range(2):
           try:
-            if not clean:
-              # Remove .repo/manifests and .repo/manifests.git to avoid
-              # potential problems when switching to a different manifest
-              # repo or branch.
-              for manifest_dir in ('manifests', 'manifests.git'):
-                self.m.file.rmtree('remove .repo/%s' % manifest_dir,
-                                   root_path.join('.repo', manifest_dir))
+            # Remove .repo/manifests and .repo/manifests.git to avoid
+            # potential problems when switching to a different manifest
+            # repo or branch.
+            for manifest_dir in ('manifests', 'manifests.git'):
+              self.m.file.rmtree('remove .repo/%s' % manifest_dir,
+                                 root_path.join('.repo', manifest_dir))
 
-              self.init(manifest_url, **init_opts)
+            self.init(manifest_url, **init_opts)
+            if not clean:
               self._git_clean_checkout(root_path, projects)
-            else:
-              self.init(manifest_url, **init_opts)
             self.sync(**sync_opts)
             break
           except recipe_api.StepFailure:
             if retries >= 1:
               raise
             self.m.step('sleep 10 min, try repo again', ['sleep', '600'])
+            clean = False
 
       # Verify that root_path/.repo exists, since repo will happily reuse a
       # repository in the cwd's ancestor directories.

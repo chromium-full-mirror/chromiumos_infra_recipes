@@ -226,6 +226,40 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/temp_cache_tmp_1/.repo/manifests"
+    ],
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/temp_cache_tmp_1/.repo/manifests.git"
+    ],
+    "cwd": "[CLEANUP]/temp_cache_tmp_1",
+    "infra_step": true,
+    "name": "ensure synced checkout.remove .repo/manifests.git",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
