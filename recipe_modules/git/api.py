@@ -519,7 +519,10 @@ class GitApi(recipe_api.RecipeApi):
         return is_reachable
 
     cmd = ['merge-base', '--is-ancestor', revision, head]
-    return self._step(cmd, ok_ret=(0, 1, 128)).retcode == 0
+    try:
+      return bool(1 - self._step(cmd, ok_ret=(0, 1)).retcode)
+    except recipe_api.StepFailure:
+      return False
 
   def merge_base(self, *args, **kwargs):
     """Return the output from `git merge-base`.

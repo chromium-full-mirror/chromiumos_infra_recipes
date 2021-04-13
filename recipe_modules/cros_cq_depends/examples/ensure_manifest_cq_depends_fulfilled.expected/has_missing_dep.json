@@ -809,7 +809,8 @@
     "infra_step": true,
     "name": "ensure manifest cq-depend fulfilled (2).git merge-base",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {

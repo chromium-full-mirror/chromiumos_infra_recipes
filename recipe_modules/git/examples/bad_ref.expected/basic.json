@@ -1,0 +1,19 @@
+[
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "abcdef",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
