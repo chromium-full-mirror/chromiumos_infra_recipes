@@ -113,8 +113,7 @@
       "http://manifest_url",
       "--groups",
       "all",
-      "--repo-rev=stable",
-      "--verbose"
+      "--repo-rev=stable"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -238,8 +237,7 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--verbose"
+      "sync"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -311,8 +309,7 @@
       "all",
       "--repo-rev=stable",
       "--manifest-name",
-      "../tmp_manifest",
-      "--verbose"
+      "../tmp_manifest"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "env_suffixes": {
@@ -337,8 +334,7 @@
       "--detach",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "--verbose"
+      "8"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "env_suffixes": {

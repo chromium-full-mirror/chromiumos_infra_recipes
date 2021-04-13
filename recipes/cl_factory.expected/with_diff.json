@@ -688,8 +688,7 @@
       "all",
       "--manifest-branch",
       "release-R12-34567.B",
-      "--repo-rev=stable",
-      "--verbose"
+      "--repo-rev=stable"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -716,8 +715,7 @@
       "8",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "--verbose"
+      "8"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {

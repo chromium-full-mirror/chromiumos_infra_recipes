@@ -184,8 +184,7 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--repo-rev=stable']
     if manifest_name:
       cmd += ['--manifest-name', manifest_name]
-    # TODO(b/176082897) Force --verbose while debugging.
-    if verbose or True:
+    if verbose:
       cmd += ['--verbose']
     self._step(cmd, timeout=15 * 60)
     self._binary_selfupdate(self.m.context.cwd)
@@ -258,8 +257,7 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--cache-dir', cache_dir]
     if retry_fetches:
       cmd += ['--retry-fetches', '%d' % retry_fetches]
-    # TODO(b/176082897) Force --verbose while debugging.
-    if verbose or True:
+    if verbose:
       cmd += ['--verbose']
     if no_manifest_update:
       cmd += ['--no-manifest-update']

@@ -372,8 +372,7 @@
       "all",
       "--repo-rev=stable",
       "--manifest-name",
-      "../tmp_manifest",
-      "--verbose"
+      "../tmp_manifest"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "env_suffixes": {
@@ -398,8 +397,7 @@
       "--detach",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "--verbose"
+      "8"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "env_suffixes": {

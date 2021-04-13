@@ -270,8 +270,7 @@
       "release-R123",
       "--groups",
       "group1,group2",
-      "--repo-rev=stable",
-      "--verbose"
+      "--repo-rev=stable"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "env_suffixes": {
@@ -368,8 +367,7 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "--verbose"
+      "8"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "env_suffixes": {

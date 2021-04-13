@@ -536,8 +536,7 @@
       "all",
       "--repo-branch",
       "main",
-      "--no-repo-verify",
-      "--verbose"
+      "--no-repo-verify"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -720,8 +719,7 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "--verbose"
+      "8"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -908,8 +906,7 @@
       "--groups",
       "all",
       "--manifest-name",
-      "../tmp_manifest",
-      "--verbose"
+      "../tmp_manifest"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -934,8 +931,7 @@
       "--detach",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "--verbose"
+      "8"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -6060,8 +6056,7 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
-      "all",
-      "--verbose"
+      "all"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -6177,8 +6172,7 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "--verbose"
+      "8"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {

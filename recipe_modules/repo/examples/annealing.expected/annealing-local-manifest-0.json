@@ -109,8 +109,7 @@
       "http://manifest_url",
       "--groups",
       "all",
-      "--repo-rev=stable",
-      "--verbose"
+      "--repo-rev=stable"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -351,8 +350,7 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--verbose"
+      "sync"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {

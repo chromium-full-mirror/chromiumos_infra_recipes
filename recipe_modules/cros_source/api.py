@@ -659,13 +659,10 @@ class CrosSourceApi(RecipeApi):
                               i_branch == manifests.intern.branch else i_branch)
       branch = e_branch if external else i_branch
 
-      if e_branch == i_branch:
-        self.m.easy.set_properties_step(manifest_branch=branch)
-      else:  # pragma: nocover
-        # TODO(crbug/1152875): the branches are the same now.
-        self.m.easy.set_properties_step(manifest_branch=branch,
-                                        external_manifest_branch=e_branch,
-                                        internal_manifest_branch=i_branch)
+      branches_dict = dict(manifest_branch=branch)
+      branches_dict.update({} if e_branch == i_branch else dict(
+          external_manifest_branch=e_branch, internal_manifest_branch=i_branch))
+      self.m.easy.set_properties_step(**branches_dict)
 
       # Now we know what branch we need to be on, and we need the manifest
       # repo(s) to be on that branch so that the CLs will apply.

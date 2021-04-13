@@ -143,8 +143,7 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-rev=stable",
-      "--verbose"
+      "--repo-rev=stable"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -240,8 +239,7 @@
       "8",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "--verbose"
+      "8"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -613,8 +611,7 @@
       "main",
       "--repo-rev=stable",
       "--manifest-name",
-      "../../manifest-internal/default.xml",
-      "--verbose"
+      "../../manifest-internal/default.xml"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -731,7 +728,6 @@
       "--optimized-fetch",
       "--retry-fetches",
       "2",
-      "--verbose",
       "--no-manifest-update"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",

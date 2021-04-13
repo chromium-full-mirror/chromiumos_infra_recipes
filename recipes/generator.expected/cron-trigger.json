@@ -401,8 +401,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
-      "--repo-rev=stable",
-      "--verbose"
+      "--repo-rev=stable"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -585,8 +584,7 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8",
-      "--verbose"
+      "8"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
