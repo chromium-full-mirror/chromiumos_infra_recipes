@@ -1178,11 +1178,11 @@ Args:
     with utf8, as it will be sent to the publish-message binary via JSON.
 ### *recipe_modules* / [cloudready](/recipe_modules/cloudready)
 
-[DEPS](/recipe_modules/cloudready/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cloudready/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CloudreadyApi](/recipe_modules/cloudready/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CloudreadyApi](/recipe_modules/cloudready/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [setup\_cloudready\_workspace](/recipe_modules/cloudready/api.py#27)(self):**
+&mdash; **def [setup\_cloudready\_workspace](/recipe_modules/cloudready/api.py#36)(self):**
 
 Perform additional Cloudready-specific workspace instructions.
 

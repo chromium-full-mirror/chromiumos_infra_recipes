@@ -1162,6 +1162,14 @@
       "https://s3.amazonaws.com/neverware-dev/.gclient"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "name": "cloudready specific setup.download cloudready .gclient file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1180,6 +1188,14 @@
       "[START_DIR]/chromiumos_workspace/src/browser/src"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "cloudready specific setup.create src dir",
     "~followup_annotations": [
@@ -1202,8 +1218,23 @@
     "env": {
       "GIT_HTTP_LOW_SPEED_LIMIT": "0"
     },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "cloudready specific setup.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cloudready specific setup.update deps file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1212,13 +1243,70 @@
     "cmd": [
       "sed",
       "-i",
-      "'s#git@gitlab.neverware.com:neverware/skia#https://chrome-internal.googlesource.com/external/gitlab.neverware.com/neverware/skia#g'",
+      "s#git@gitlab.neverware.com:neverware/#https://chrome-internal.googlesource.com/external/gitlab.neverware.com/neverware/#g",
       "src/tools/neverware/neverware_deps.conf"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
-    "name": "cloudready specific setup.update deps file",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cloudready specific setup.update deps file.replace git@gitlab.neverware.com:neverware/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sed",
+      "-i",
+      "s#git@github.com:neverware/#https://chrome-internal.googlesource.com/external/github.com/neverware/#g",
+      "src/tools/neverware/neverware_deps.conf"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cloudready specific setup.update deps file.replace git@github.com:neverware/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cloudready specific setup.modify update_deps.py",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sed",
+      "-i",
+      "s#git#/usr/bin/git#g",
+      "src/tools/neverware/update_deps.py"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "cloudready specific setup.modify update_deps.py.use usr/bin/git",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1227,6 +1315,14 @@
       "sync"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "name": "cloudready specific setup.gclient sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

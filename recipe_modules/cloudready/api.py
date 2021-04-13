@@ -13,12 +13,21 @@ NEVERWARE_BROWSER_REPO_URL = (
     'external/gitlab.neverware.com/neverware/chromium-browser')
 
 # Temporary hack, see go/build-cloudready for context.
-EXISTING_SKIA_SRC = 'git@gitlab.neverware.com:neverware/skia'
-NEW_SKIA_SRC = 'https://chrome-internal.googlesource.com/external/gitlab.neverware.com/neverware/skia'
+
+EXISTING_DEPS_SRC = [
+    'git@gitlab.neverware.com:neverware/',
+    'git@github.com:neverware/',
+]
+NEW_DEPS_SRC = [
+    'https://chrome-internal.googlesource.com/external/gitlab.neverware.com/neverware/',
+    'https://chrome-internal.googlesource.com/external/github.com/neverware/'
+]
 NEVERWARE_DEPS_FILE = 'src/tools/neverware/neverware_deps.conf'
-SKIA_CMD = [
-    'sed', '-i', "'s#{}#{}#g'".format(EXISTING_SKIA_SRC, NEW_SKIA_SRC),
-    NEVERWARE_DEPS_FILE
+
+DEPS_CMDS = [
+    (old_src,
+     ['sed', '-i', 's#{}#{}#g'.format(old_src, new_src), NEVERWARE_DEPS_FILE])
+    for old_src, new_src in zip(EXISTING_DEPS_SRC, NEW_DEPS_SRC)
 ]
 
 
@@ -35,7 +44,7 @@ class CloudreadyApi(recipe_api.RecipeApi):
       browser_dir = self.m.cros_source.workspace_path.join('src/browser')
       self.m.file.ensure_directory('create src/browser', browser_dir)
 
-      with self.m.context(cwd=browser_dir):
+      with self.m.context(cwd=browser_dir), self.m.depot_tools.on_path():
         self.m.step('download cloudready .gclient file', [
             'wget',
             'https://s3.amazonaws.com/neverware-dev/.gclient',
@@ -50,6 +59,16 @@ class CloudreadyApi(recipe_api.RecipeApi):
                            progress=True)
 
         # Temporary hack, see go/build-cloudready for context.
-        self.m.step('update deps file', SKIA_CMD)
+        with self.m.step.nest('update deps file'):
+          for old_src, cmd in DEPS_CMDS:
+            self.m.step('replace {}'.format(old_src), cmd)
+
+        # For somer reason using the default CIPD git wrapper makes
+        # `gclient sync` fail.
+        with self.m.step.nest('modify update_deps.py'):
+          self.m.step('use usr/bin/git', [
+              'sed', '-i', 's#git#/usr/bin/git#g',
+              'src/tools/neverware/update_deps.py'
+          ])
 
         self.m.step('gclient sync', ['gclient', 'sync'])
