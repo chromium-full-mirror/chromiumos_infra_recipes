@@ -262,7 +262,7 @@
       "--buildroot",
       "[CACHE]/cbuild",
       "--branch",
-      "master",
+      "main",
       "--buildbucket-id",
       "8945511751514863184",
       "--git-cache-dir",

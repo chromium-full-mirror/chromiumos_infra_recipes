@@ -1,4 +1,4 @@
-# Copyright 2020 The Chromium Authors. All rights reserved.
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -37,7 +37,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     defaults = {
         'CBB_CONFIG': self.m.properties.get('cbb_config'),
         'CBB_BRANCH': self.m.properties.get('cbb_branch'),
-        'CBB_MASTER_BUILD_ID': self.m.properties.get('cbb_master_build_id'),
+        'CBB_MAIN_BUILD_ID': self.m.properties.get('cbb_master_build_id'),
         'CBB_DEBUG': self.m.properties.get('cbb_debug') is not None,
         'CBB_CLOBBER': 'clobber' in self.m.properties,
     }
@@ -72,7 +72,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     soln = cfg.solutions.add()
     soln.name = 'chromite'
     soln.url = self.chromite_url
-    soln.revision = 'master'
+    soln.revision = 'main'
 
     soln = cfg.solutions.add()
     soln.name = 'depot_tools'
@@ -156,7 +156,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     builder = self.m.buildbucket.builder_name
 
     if builder_group is None:
-      self.set_config('master_swarming', **KWARGS)
+      self.set_config('main_swarming', **KWARGS)
       return
 
   def checkout_chromite(self):
@@ -253,7 +253,7 @@ class ChromiteApi(recipe_api.RecipeApi):
       cbb_args.extend(['--chrome_version', self.c.cbb.chrome_version])
     if self.c.cbb.buildbucket_id:
       cbb_args.extend(['--buildbucket-id', self.c.cbb.buildbucket_id])
-    # Set the CIDB master build ID, if specified.
+    # Set the CIDB main build ID, if specified.
     if self.c.cbb.build_id:
       cbb_args.extend(['--master-build-id', self.c.cbb.build_id])
 

@@ -1,4 +1,4 @@
-# Copyright 2020 The Chromium Authors. All rights reserved.
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -57,7 +57,7 @@ def GenTests(api):
       'chromiumos_coverage',
       api.properties(clobber=None,
                      cbb_config='cros-x86-generic-tot-chrome-pfq-informational',
-                     cbb_master_build_id='24601', cbb_branch='master',
+                     cbb_master_build_id='24601', cbb_branch='main',
                      config_repo='https://fake.googlesource.com/myconfig/repo'),
       api.buildbucket.try_build(
           'chromiumos.coverage', build_number=12345,

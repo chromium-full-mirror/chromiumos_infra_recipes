@@ -1,4 +1,4 @@
-# Copyright 2020 The Chromium Authors. All rights reserved.
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -20,13 +20,13 @@ _VERSION_RE = re.compile(r'^.*-(\d+)\.(\d+\.)?B$')
 
 def BaseConfig(CBB_CONFIG=None, CBB_BRANCH=None, CBB_BUILD_NUMBER=None,
                CBB_DEBUG=False, CBB_CLOBBER=False, CBB_BUILDBUCKET_ID=None,
-               CBB_MASTER_BUILD_ID=None, CBB_EXTRA_ARGS=None, **_kwargs):
+               CBB_MAIN_BUILD_ID=None, CBB_EXTRA_ARGS=None, **_kwargs):
   cgrp = ConfigGroup(
       # Base mapping of repository key to repository name.
       repositories=Dict(value_type=Set(basestring)),
 
       # Checkout Chromite at this branch. "origin/" will be prepended.
-      chromite_branch=Single(basestring, empty_val=CBB_BRANCH or 'master'),
+      chromite_branch=Single(basestring, empty_val=CBB_BRANCH or 'main'),
 
       # Should the Chrome version be supplied to cbuildbot?
       use_chrome_version=Single(bool),
@@ -41,7 +41,7 @@ def BaseConfig(CBB_CONFIG=None, CBB_BRANCH=None, CBB_BUILD_NUMBER=None,
           config=Single(basestring, empty_val=CBB_CONFIG),
 
           # If supplied, forward to cbuildbot as '--master-build-id'.
-          build_id=Single(basestring, empty_val=CBB_MASTER_BUILD_ID),
+          build_id=Single(basestring, empty_val=CBB_MAIN_BUILD_ID),
 
           # If supplied, forward to cbuildbot as '--buildnumber'.
           build_number=Single(int, empty_val=CBB_BUILD_NUMBER),
@@ -96,11 +96,6 @@ def base(c):
   # Resolve branch version, if available.
   assert c.chromite_branch, "A Chromite branch must be configured."
 
-  # If running on a testing slave, enable "--debug" so Chromite doesn't cause
-  # actual production effects.
-  if 'TESTING_MASTER_HOST' in os.environ:  # pragma: no cover
-    c.cbb.debug = True
-
 
 @config_ctx(includes=['base'])
 def cros(_):
@@ -120,17 +115,17 @@ def external(c):
       'https://chromium.googlesource.com/chromiumos/manifest-versions')
 
 
-@config_ctx(group='master', includes=['external'])
-def master_swarming(_):
+@config_ctx(group='main', includes=['external'])
+def main_swarming(_):
   pass
 
 
-@config_ctx(group='master', includes=['external'])
-def master_chromiumos(_):
+@config_ctx(group='main', includes=['external'])
+def main_chromiumos(_):
   pass
 
 
-@config_ctx(includes=['master_chromiumos'])
+@config_ctx(includes=['main_chromiumos'])
 def chromiumos_coverage(c):
   c.use_chrome_version = True
   c.cbb.config_repo = 'https://example.com/repo.git'
