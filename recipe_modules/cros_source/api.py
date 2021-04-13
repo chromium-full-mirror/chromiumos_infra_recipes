@@ -1022,12 +1022,10 @@ class CrosSourceApi(RecipeApi):
                                commit=MessageToDict(gitiles_commit))
       projects = kwargs.get('projects', None)
       snapshot_xml = self._get_manifest(gitiles_commit, projects=projects)
-      sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8)
+      # Force_sync to ensure that we get the snapshot that we want.
+      sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8,
+                       force_sync=True)
       sync_opts.update(kwargs)
-      # TODO(b/179913081): workaround for bisector to sync legacy versions
-      # delete if no longer needed.
-      if self._snapshot_cas:
-        sync_opts.update(force_sync=True)
       self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
                                 **sync_opts)
       # TODO(crbug/1168649): Create partial manifest if projects is not None.
