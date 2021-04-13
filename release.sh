@@ -21,6 +21,11 @@ function usage() {
   exit 1
 }
 
+function urlencode() {
+  # The sed magic strips color codes.
+  echo "$1" | sed 's/\x1b\[[0-9;]*m//g' | jq -sRr @uri
+}
+
 function check_bb_auth() {
   if ! bb auth-info > /dev/null; then
     bb auth-login
@@ -129,3 +134,17 @@ cipd set-ref "${bundle}" -version="${cipd_target}" \
   -ref="release_$(TZ='America/Los_Angeles' date +%Y/%m/%d-%H)"
 
 cipd set-ref "${bundle}" -version="${cipd_target}" -ref=prod
+
+email_subject="Recipes Release - $(TZ='America/Los_Angeles' date)"
+email_message="We've deployed Recipes to prod!
+
+Here is a summary of the changes:
+
+${pending}"
+
+email_link="https://mail.google.com/mail/?view=cm&fs=1&bcc=chromeos-infra-releases@google.com&to=chromeos-continuous-integration-team@google.com&su=$(urlencode "${email_subject}")&body=$(urlencode "${email_message}")"
+
+echo
+echo "Please click this link and send an email to chromeos-infra-releases!"
+echo
+echo "${email_link}"
