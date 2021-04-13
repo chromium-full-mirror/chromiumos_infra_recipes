@@ -993,11 +993,16 @@ class CrosSourceApi(RecipeApi):
                                manifest_url=manifest_url,
                                manifest_path=manifest_path,
                                manifest_branch=manifest_branch)
+      manifest_relpath = self.m.repo.create_tmp_manifest(manifest_xml)
+      init_opts = dict(manifest_name=manifest_relpath)
       sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8,
-                       force_sync=True)
+                       force_sync=True, manifest_name=manifest_relpath)
       sync_opts.update(kwargs)
-      self.m.repo.sync_manifest(manifest_url, manifest_data=manifest_xml,
-                                **sync_opts)
+
+      self.m.repo.ensure_synced_checkout(self.m.src_state.workspace_path,
+                                         manifest_url, init_opts=init_opts,
+                                         sync_opts=sync_opts)
+
       self._pinned_manifest = (
           self.m.repo.ensure_pinned_manifest(test_data='') or manifest_xml)
 
