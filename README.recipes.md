@@ -295,6 +295,7 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
+  * [libchrome_upstream](#recipes-libchrome_upstream) &mdash; Recipe for updating libchrome upstream branch.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [lvfs_mirror](#recipes-lvfs_mirror) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results)
@@ -7412,6 +7413,13 @@ Returns:
 Validate the remote stable version config file.
 
 Returns: JSON response with validation result
+### *recipes* / [libchrome\_upstream](/recipes/libchrome_upstream.py)
+
+[DEPS](/recipes/libchrome_upstream.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for updating libchrome upstream branch
+
+&mdash; **def [RunSteps](/recipes/libchrome_upstream.py#24)(api):**
 ### *recipes* / [local\_manifest\_presubmit](/recipes/local_manifest_presubmit.py)
 
 [DEPS](/recipes/local_manifest_presubmit.py#20): [cros\_infra\_config](#recipe_modules-cros_infra_config), [git](#recipe_modules-git), [gs\_step\_logging](#recipe_modules-gs_step_logging), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
