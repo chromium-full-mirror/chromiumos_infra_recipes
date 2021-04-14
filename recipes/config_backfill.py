@@ -380,6 +380,56 @@ def backfill_project(api, properties, config):
       return None
 
 
+def format_output_markdown(commits, errors):
+  """Generate markdown to be shown for the build status.
+
+  Args:
+    commits: list of (program, project, hash) values for commits
+    errors: list of string-formattable errors
+
+  Return:
+    Formatted markdown string suitable to return via RawResult proto.
+  """
+
+  # create summary markdown
+  COMMIT_TEMPLATE = \
+    "- {program}/{project} [{commit_short}]("                      \
+      "https://chrome-internal.googlesource.com/chromeos/project/" \
+      "{program}/{project}/+/{commit_sha}"                         \
+    ")"
+
+  lines = ["{} changes made".format(len(commits))]
+  for commit in sorted(commits):
+    program, project, commit_sha = commit
+    lines.append(
+        COMMIT_TEMPLATE.format(
+            program=program,
+            project=project,
+            commit_short=commit_sha[:8],
+            commit_sha=commit_sha,
+        ),
+    )
+  lines.append("")
+
+  if errors:
+    lines.append("{} errors".format(len(errors)))
+    for error in errors:
+      lines.append("- {}".format(error))
+
+  # Truncate the list of failures per section to keep the summary under
+  # Buildbucket's 4000 byte limit on the summary_markdown field.
+  markdown = lines[0]
+  for line in lines[1:]:
+    if len(markdown) + len(line) < 3990:
+      markdown += '  \n' + line
+    else:  # pragma: nocover
+      # Abruptly truncate to avoid INFRA_FAILURE.
+      markdown += '  \n...'
+      break
+
+  return markdown
+
+
 def RunSteps(api, properties):
   api.cros_infra_config.configure_builder()
 
@@ -429,35 +479,9 @@ def RunSteps(api, properties):
       # save results in output properties
       api.easy.set_properties_step(commits=output_commits)
 
-      # create summary markdown
-      COMMIT_TEMPLATE = \
-        "- {program}/{project} [{commit_short}]("                      \
-          "https://chrome-internal.googlesource.com/chromeos/project/" \
-          "{program}/{project}/+/{commit_sha}"                         \
-        ")"
-
-      lines = ["{} changes made".format(len(commits))]
-      for commit in sorted(commits):
-        program, project, commit_sha = commit
-        lines.append(
-            COMMIT_TEMPLATE.format(
-                program=program,
-                project=project,
-                commit_short=commit_sha[:8],
-                commit_sha=commit_sha,
-            ),
-        )
-      lines.append("")
-
-      if errors:
-        lines.append("{} errors".format(len(errors)))
-        for error in errors:
-          lines.append("- {}".format(error))
-
       return result_pb2.RawResult(
           status=common_pb2.FAILURE if errors else common_pb2.SUCCESS,
-          summary_markdown="\n".join(lines),
-      )
+          summary_markdown=format_output_markdown(commits, errors))
 
 
 def mock_workspace_path(api, path):
