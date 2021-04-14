@@ -1544,7 +1544,16 @@
                 ]
               }
             ]
-          }
+          },
+	  "image": {
+	    "outputArtifacts": [
+	      {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+		]
+	      }
+	    ]
+	  }
         }
       },
       "chrome": {

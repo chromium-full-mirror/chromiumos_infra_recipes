@@ -305,11 +305,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     funcs = collections.defaultdict(list)
     for _, service in artifacts_info.ListFields():
       for art_info in getattr(service, 'output_artifacts', []):
+        # The individual functions only exist for Toolchain and Legacy.
+        # FirmwareService is a special case immediately below, and the others
+        # are only handled by ArtifactsService.Get().
         if service.DESCRIPTOR.name == 'Toolchain':
           funcs[self._bundle_toolchain].extend(art_info.artifact_types)
-        elif service.DESCRIPTOR.name != 'Firmware':
-          # If it's not Toolchain, then it's legacy.  1.0.0 only supports those
-          # two services having artifacts.
+        elif service.DESCRIPTOR.name == 'Legacy':
           funcs[self._bundle_legacy_artifacts].extend(art_info.artifact_types)
 
     files = {}
