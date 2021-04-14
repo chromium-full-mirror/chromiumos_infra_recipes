@@ -395,8 +395,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # either luci-scheduler (no changes), luci-cq (changes), or a user.
     # The builder is private unless the config says otherwise.  Builders with no
     # builder config can pass a commit, or default to the internal.
-    private = (not config or not self._switch_to_external_manifest or
-               config.general.manifest == BuilderConfig.General.PRIVATE)
+    private = not (config and self._switch_to_external_manifest and
+                   config.general.manifest == BuilderConfig.General.PUBLIC)
 
     # Determine which manifest this builder should be using.
     manifest = self.m.src_state.external_manifest

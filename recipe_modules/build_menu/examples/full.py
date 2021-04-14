@@ -163,7 +163,7 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'code-coverage-build', builder='sarien-code-coverage-postsubmit',
-      input_properties={
+      build_target='sarien', input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True)
       })
 
@@ -174,7 +174,8 @@ def GenTests(api):
           retcode=1),
       api.post_check(post_process.MustRun,
                      'run ebuild tests.process code coverage data'),
-      builder='sarien-code-coverage-postsubmit', input_properties={
+      builder='sarien-code-coverage-postsubmit', build_target='sarien',
+      input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True),
           '$chromeos/code_coverage': dict(branch='refs/heads/main')
       })
@@ -184,7 +185,7 @@ def GenTests(api):
       api.step_data(
           'run ebuild tests.process code coverage data.upload coverage to chromium coverage.converting metadata for test coverage',
           retcode=1), builder='sarien-code-coverage-postsubmit',
-      input_properties={
+      build_target='sarien', input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True),
           '$chromeos/code_coverage': dict(branch='refs/heads/main')
       })

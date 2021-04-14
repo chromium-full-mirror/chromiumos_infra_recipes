@@ -551,6 +551,25 @@
     },
     {
       "id": {
+        "name": "sarien-bisect",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": true
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN_EXIT",
+          "dependencies": "ALL_DEPENDENCIES"
+        },
+        "applyGerritChanges": false
+      }
+    },
+    {
+      "id": {
         "name": "arm-generic-postsubmit",
         "type": "POSTSUBMIT"
       },
