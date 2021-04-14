@@ -28,4 +28,7 @@ message BuildLegacyFwProperties {
 
   // Whether to bump the version.
   bool bump_version = 6;
+
+  // Feature flag: whether to set suite_scheduling=True
+  bool set_suite_scheduling = 7;
 }

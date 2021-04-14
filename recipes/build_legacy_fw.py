@@ -77,6 +77,8 @@ class FirmwareBuilder(object):
     self._bcs_version = None
     self._firmware_version = None
     self._is_staging = True
+    # Whether suite_scheduling should consider our firmware tarball.
+    self._suite_scheduling = False
 
   def __call__(self, name, sdk_args=(), cmd=(), **kwargs):
     """Run cros_sdk with the given command"""
@@ -125,6 +127,9 @@ class FirmwareBuilder(object):
                 'buildspecs',
                 branch='rubik-staging' if self._is_staging else None,
                 step_name='create buildspec')
+            # Only these builds are valid for suite_scheduling to find.
+            self._suite_scheduling = (
+                self.properties.set_suite_scheduling and not self._is_staging)
 
         self._bcs_version = self.m.cros_version.version
         with self.m.depot_tools.on_path(), self._setup_chroot():
@@ -277,9 +282,9 @@ class FirmwareBuilder(object):
       tmpdir = self._chroot.join('tmp', self.m.path.basename(tmppath))
       tarball = self._build_firmware_archive(build_target, tmpdir)
       if tarball:
-        dest_name = ('{}.{}'.format(build_target.name, _FIRMWARE_TARBALL_NAME)
-                     if len(self.properties.build_targets) > 1 else
-                     _FIRMWARE_TARBALL_NAME)
+        dest_name = '{}/{}'.format(build_target.name, _FIRMWARE_TARBALL_NAME)
+        self.m.file.ensure_directory('create {}'.format(build_target.name),
+                                     outpath.join(build_target.name))
         self.m.file.copy('bundle tarball', tarball, outpath.join(dest_name))
         ret['FIRMWARE_TARBALL'].append(dest_name)
 
@@ -303,6 +308,8 @@ class FirmwareBuilder(object):
         self._setup_board_and_install_packages(bt)
       self.m.build_menu.upload_artifacts(
           private_bundle_func=self._bundle_firmware)
+      # Mark whether the suite_scheduling query for firmware should find this.
+      self.m.easy.set_properties_step(suite_scheduling=self._suite_scheduling)
 
 
 def RunSteps(api, properties):
