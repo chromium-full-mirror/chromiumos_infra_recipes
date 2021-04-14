@@ -15,7 +15,7 @@ Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 """
 
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
@@ -28,6 +28,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/raw_io',
     'cros_source',
+    'easy',
     'gerrit',
     'git',
     'git_txn',
@@ -112,6 +113,7 @@ def _flatten_configs(api, _properties, project_infos):
   flat_files = []
 
   # generated a temporary flattened.jsonproto in each project
+  empty_flatten_payload = []
   for project_info in project_infos:
     with api.step.nest('processing %s' % project_info.name) as presentation,\
          api.context(api.context.cwd.join(project_info.path)):
@@ -135,9 +137,23 @@ def _flatten_configs(api, _properties, project_infos):
           "--output",
           flat_config,
       ]
-      api.step('generate flat payload', ['vpython'] + cmd)
+
+      result = api.step(
+          'generate flat payload',
+          ['vpython'] + cmd,
+          stdout=api.raw_io.output_text(),
+      )
+
+      # note if we had no flattened entries for project
+      nflat = int(result.stdout.strip())
+      if nflat == 0:
+        program, project = project_info.name.split("/")[2:4]
+        empty_flatten_payload.append([program, project])
 
       flat_files.append(api.context.cwd.join(flat_config))
+
+  # store empty flattened payloads into the output properties
+  api.easy.set_properties_step(empty_flatten_payload=empty_flatten_payload)
 
   # now merge and import into config-internal
   cwd = api.context.cwd
@@ -155,7 +171,8 @@ def _flatten_configs(api, _properties, project_infos):
         '-o',
         output_path,
     ] + flat_files
-    api.step('merge flattened configs to config-internal', ['vpython'] + cmd)
+    result = api.step('merge flattened configs to config-internal',
+                      ['vpython'] + cmd)
 
     with api.step.nest("diffing to find changes") as presentation:
       if not api.git.diff_check(output_path):
@@ -558,6 +575,16 @@ def GenTests(api):
         'chromiumos_workspace/src/project/galaxy/milkyway/generated/%s' %
         fname))
 
+  def flatten_step_data(value):
+    """Returns StepData for the call to flatten_config_payload.py call."""
+    data = api.step_data(
+        'Do flatten_configs and create CL'               \
+          '.processing chromeos/project/galaxy/milkyway' \
+          '.generate flat payload',
+        stdout=api.raw_io.output_text(str(value) + '\n'),
+    )
+    return data
+
   yield api.test(
       'flattening_basic',
       default_properties(),
@@ -565,6 +592,7 @@ def GenTests(api):
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
       api.git.diff_check(True),
+      flatten_step_data(1),
       api.post_process(
           post_process.MustRun,
           'Do flatten_configs and create CL'                 \
@@ -580,6 +608,21 @@ def GenTests(api):
   )
 
   yield api.test(
+      'flattening_no_entries',
+      default_properties(),
+      config_repos_step_data(api),
+      config_dlm_step_data(api),
+      mock_payloads("config.jsonproto"),
+      api.git.diff_check(True),
+      flatten_step_data(0),
+      api.post_process(
+          post_process.PropertyEquals,
+          "empty_flatten_payload",
+          [["galaxy", "milkyway"]],
+      ),
+  )
+
+  yield api.test(
       'no_flattening_changes',
       default_properties(),
       config_repos_step_data(api),
@@ -587,6 +630,7 @@ def GenTests(api):
       mock_payloads("config.jsonproto"),
       mock_payloads("joined.jsonproto"),
       api.git.diff_check(False),
+      flatten_step_data(1),
       api.post_process(
           post_process.DoesNotRun,
           'Do flatten_configs and create CL'   \
@@ -607,6 +651,7 @@ def GenTests(api):
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_payloads("config.jsonproto"),
+      flatten_step_data(1),
       api.step_data(
           'Do flatten_configs and create CL'   \
               '.aggregating flattened configs' \

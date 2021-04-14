@@ -644,6 +644,14 @@
   },
   {
     "cmd": [],
+    "name": "Do flatten_configs and create CL.set empty_flatten_payload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@empty_flatten_payload@[]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "Do flatten_configs and create CL.aggregating flattened configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
