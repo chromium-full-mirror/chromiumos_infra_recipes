@@ -318,7 +318,10 @@
       "HEAD"
     ],
     "infra_step": true,
-    "name": "git merge-base"
+    "name": "git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@commit is reachable@@@"
+    ]
   },
   {
     "cmd": [

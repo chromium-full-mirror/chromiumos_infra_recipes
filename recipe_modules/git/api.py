@@ -513,15 +513,22 @@ class GitApi(recipe_api.RecipeApi):
     Returns:
       (bool): Whether the revision is reachable from (is an ancestor of) |head|.
     """
+    test_retcode = None
     if self._test_data.enabled:
       is_reachable = self._test_data.get('is_reachable', None)
       if is_reachable is not None:
-        return is_reachable
+        test_retcode = 0 if is_reachable else 1
 
     cmd = ['merge-base', '--is-ancestor', revision, head]
     try:
-      return bool(1 - self._step(cmd, ok_ret=(0, 1)).retcode)
+      retcode = test_retcode or self._step(cmd, ok_ret=(0, 1)).retcode
+      self.m.step.active_result.presentation.step_text = (
+          'commit is %sreachable' % ('NOT ' if retcode == 1 else ''))
+      return not retcode
     except recipe_api.StepFailure:
+      self.m.step.active_result.presentation.step_text = (
+          'call failed with an exception')
+      self.m.step.active_result.presentation.status = self.m.step.WARNING
       return False
 
   def merge_base(self, *args, **kwargs):

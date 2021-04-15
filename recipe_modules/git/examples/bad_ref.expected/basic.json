@@ -10,7 +10,8 @@
     "infra_step": true,
     "name": "git merge-base",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_TEXT@call failed with an exception@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {

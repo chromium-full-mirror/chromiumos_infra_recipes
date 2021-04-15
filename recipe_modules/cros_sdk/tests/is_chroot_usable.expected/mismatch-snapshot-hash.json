@@ -54,6 +54,7 @@
     "name": "is chroot usable.read sdk cache state json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@commit is NOT reachable@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@version: 1@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_branch: \"snapshot\"@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",

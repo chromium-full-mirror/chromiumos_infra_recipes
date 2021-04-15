@@ -1343,7 +1343,8 @@
     "infra_step": true,
     "name": "diff remote and local manifest.validate NAME.git merge-base",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@commit is reachable@@@"
     ]
   },
   {
@@ -1376,7 +1377,8 @@
     "infra_step": true,
     "name": "check reachability.git merge-base",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@commit is reachable@@@"
     ]
   },
   {

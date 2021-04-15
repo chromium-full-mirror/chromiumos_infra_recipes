@@ -537,7 +537,7 @@
       "@@@STEP_LOG_LINE@dep local@Unsatisfied dep: deadbeef does not exist at src/project-c on branch main (chromium:1)@@@",
       "@@@STEP_LOG_LINE@dep local@change chromium:2 in non-Chrome OS repo not-a-project@@@",
       "@@@STEP_LOG_END@dep local@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -809,7 +809,8 @@
     "name": "ensure manifest cq-depend fulfilled (2).git merge-base",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_TEXT@call failed with an exception@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {

@@ -808,7 +808,8 @@
     "name": "ensure manifest cq-depend fulfilled (2).git merge-base",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_TEXT@call failed with an exception@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
