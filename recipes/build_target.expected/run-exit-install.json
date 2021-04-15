@@ -5288,6 +5288,7 @@
       "-m",
       "----",
       "rsync",
+      "-r",
       "[CLEANUP]/artifacts_tmp_1",
       "gs://chromeos-image-archive/arm64-generic-kernel-v5-4-buildtest-postsubmit/R99-1234.56.0-101-8945511751514863184"
     ],

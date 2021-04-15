@@ -4307,6 +4307,7 @@
       "-m",
       "----",
       "rsync",
+      "-r",
       "[CLEANUP]/artifacts_tmp_1",
       "gs://chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184"
     ],

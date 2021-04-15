@@ -478,6 +478,7 @@
       "-m",
       "----",
       "rsync",
+      "-r",
       "[CLEANUP]/artifacts_tmp_1",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184"
     ],

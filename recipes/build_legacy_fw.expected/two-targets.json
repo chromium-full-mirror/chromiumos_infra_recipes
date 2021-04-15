@@ -1772,6 +1772,7 @@
       "-m",
       "----",
       "rsync",
+      "-r",
       "[CLEANUP]/artifacts_tmp_1",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R86-13434.100.9-101-8945511751514863184"
     ],

@@ -542,8 +542,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
       for retries in range(3):
         try:
-          self.m.gsutil(['rsync', outpath, upload_uri], parallel_upload=True,
-                        multithreaded=True,
+          self.m.gsutil(['rsync', '-r', outpath, upload_uri],
+                        parallel_upload=True, multithreaded=True,
                         timeout=self.test_api.gsutil_timeout_seconds)
           break
         except recipe_api.StepFailure as ex:

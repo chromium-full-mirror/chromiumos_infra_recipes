@@ -6456,6 +6456,7 @@
       "-m",
       "----",
       "rsync",
+      "-r",
       "[CLEANUP]/artifacts_tmp_1",
       "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184"
     ],
