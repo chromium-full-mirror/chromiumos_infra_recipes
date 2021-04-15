@@ -1234,28 +1234,6 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
-      "./setup_board",
-      "--board=target",
-      "--accept_licenses=@CHROMEOS",
-      "--skip_chroot_upgrade"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "setup board: target"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "USE=chrome_internal -cros-debug chromeless_tty",
-      "--",
       "../platform/ec/util/getversion.sh"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1293,6 +1271,35 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "build target"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "USE=chrome_internal -cros-debug chromeless_tty",
+      "--",
+      "./setup_board",
+      "--board=target",
+      "--accept_licenses=@CHROMEOS",
+      "--skip_chroot_upgrade"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "build target.setup board",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "USE=chrome_internal -cros-debug chromeless_tty",
@@ -1314,7 +1321,10 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "install packages: target"
+    "name": "build target.install packages",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],

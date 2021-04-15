@@ -10,7 +10,6 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',
-    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/depot_tools',
@@ -28,7 +27,8 @@ from collections import defaultdict
 from contextlib import contextmanager
 import re
 
-from recipe_engine.post_process import MustRun, DoesNotRun, StatusSuccess
+from recipe_engine.post_process import (DoesNotRun, MustRun, PropertyEquals,
+                                        StatusSuccess, StepCommandContains)
 
 from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
 from PB.chromite.api.firmware import FirmwareArtifactInfo
@@ -79,8 +79,9 @@ class FirmwareBuilder(object):
     self._is_staging = True
     # Whether suite_scheduling should consider our firmware tarball.
     self._suite_scheduling = False
+    self._old_setup_board = False
 
-  def __call__(self, name, sdk_args=(), cmd=(), **kwargs):
+  def sdk_call(self, name, sdk_args=(), cmd=(), **kwargs):
     """Run cros_sdk with the given command"""
     command = [self.m.cros_sdk.cros_sdk_path] + list(sdk_args)
     # Pass in any USE flags from the builder config.
@@ -113,6 +114,8 @@ class FirmwareBuilder(object):
       with self.m.build_menu.setup_workspace(), \
           self.m.context(cwd=self.m.src_state.workspace_path):
         self._uprev()
+        self._old_setup_board = self.m.path.exists(
+            self.m.src_state.workspace_path.join('src/scripts/setup_board'))
         if self.properties.bump_version:
           self.m.cros_version.bump_version(production=True,
                                            dry_run=self._is_staging)
@@ -133,6 +136,7 @@ class FirmwareBuilder(object):
 
         self._bcs_version = self.m.cros_version.version
         with self.m.depot_tools.on_path(), self._setup_chroot():
+          self._set_firmware_version()
           yield
 
   def _uprev(self):
@@ -180,15 +184,15 @@ class FirmwareBuilder(object):
   @contextmanager
   def _setup_chroot(self):
     try:
-      self('init SDK', sdk_args=['--delete', '--create'])
-      self('update SDK', cmd=['./update_chroot'])
+      self.sdk_call('init SDK', sdk_args=['--delete', '--create'])
+      self.sdk_call('update SDK', cmd=['./update_chroot'])
       yield
     finally:
-      self('delete SDK', sdk_args=['--delete'])
+      self.sdk_call('delete SDK', sdk_args=['--delete'])
 
   def _set_firmware_version(self):
     """Determine the firmware version."""
-    result = self(
+    result = self.sdk_call(
         'determine firmware_version', cmd=['../platform/ec/util/getversion.sh'],
         infra_step=False, stdout=self.m.raw_io.output(add_output_log=True),
         step_test_data=lambda: self.m.raw_io.test_api.stream_output(
@@ -206,37 +210,33 @@ class FirmwareBuilder(object):
 
   def _setup_board_and_install_packages(self, build_target):
     board = build_target.name
-    board_arg = '--board={}'.format(board)
-    if self.m.path.exists(
-        self.m.src_state.workspace_path.join('src', 'scripts', 'setup_board')):
+    with self.m.step.nest("build {}".format(board)):
+      board_arg = '--board={}'.format(board)
+      if self._old_setup_board:
+        cmd = [
+            './setup_board', board_arg, '--accept_licenses=@CHROMEOS',
+            '--skip_chroot_upgrade'
+        ]
+      else:
+        cmd = [
+            'setup_board', board_arg, '--accept-licenses=@CHROMEOS',
+            '--skip-chroot-upgrade'
+        ]
+      self.sdk_call('setup board', cmd=cmd)
+
       cmd = [
-          './setup_board', board_arg, '--accept_licenses=@CHROMEOS',
-          '--skip_chroot_upgrade'
+          './build_packages', board_arg, '--accept_licenses=@CHROMEOS',
+          '--skip_chroot_upgrade', '--nousepkg'
       ]
-    else:
-      cmd = [
-          'setup_board', board_arg, '--accept-licenses=@CHROMEOS',
-          '--skip-chroot-upgrade'
+      # --withdebugsymbols was added to build_packages in 6302.0.0
+      if self._is_after('6302.0.0'):
+        cmd.append('--withdebugsymbols')
+
+      cmd += [
+          '{}/{}'.format(x.category, x.package_name)
+          for x in self.properties.packages
       ]
-    self('setup board: {}'.format(board), cmd=cmd)
-
-    self._set_firmware_version()
-
-    # TODO(b/179154813): We probably need to include USE flags from properties
-    # or builder_config.
-    cmd = [
-        './build_packages', board_arg, '--accept_licenses=@CHROMEOS',
-        '--skip_chroot_upgrade', '--nousepkg'
-    ]
-    # --withdebugsymbols was added to build_packages in 6302.0.0
-    if self._is_after('6302.0.0'):
-      cmd.append('--withdebugsymbols')
-
-    cmd += [
-        '{}/{}'.format(x.category, x.package_name)
-        for x in self.properties.packages
-    ]
-    self('install packages: {}'.format(board), cmd=cmd, infra_step=False)
+      self.sdk_call('install packages', cmd=cmd, infra_step=False)
 
   def _build_firmware_archive(self, build_target, out_path):
     with self.m.step.nest('create firmware archive'):
@@ -264,7 +264,8 @@ class FirmwareBuilder(object):
       # The list of files is generally too long.
       cmd += ['--null', '-T', '/dev/stdin']
       file_list = '\0'.join(self.m.path.relpath(x, root) for x in source_list)
-      self('create tarball', cmd=cmd, stdin=self.m.raw_io.input(data=file_list))
+      self.sdk_call('create tarball', cmd=cmd,
+                    stdin=self.m.raw_io.input(data=file_list))
       return tarball
 
   def _bundle_firmware(self, _chroot, _sysroot, _artifacts_info, outpath,
@@ -321,83 +322,84 @@ def GenTests(api):
   def test(name, *args, **kwargs):
     version_str = kwargs.pop('version', 'R86-13434.100.99')
     version = api.cros_version.workspace_version(version_str)
-    kwargs.setdefault('builder', 'fw-atlas-postsubmit')
+    cq = kwargs.get('cq', False)
+    kwargs.setdefault('builder',
+                      'fw-atlas-{}'.format('cq' if cq else 'postsubmit'))
     kwargs.setdefault('revision', None)
     input_props = dict(firmware_location=1,
                        manifest_branch='firmware-board-9999.B')
     input_props.update(**kwargs.get('input_properties', {}))
+    targets = kwargs.pop('build_targets', None)
+    if targets:
+      input_props['build_targets'] = targets
     kwargs['input_properties'] = input_props
     build = api.test_util.test_child_build('target', **kwargs).build
     return api.test(name, build, version, *args)
 
-  legacy_setup_board = api.path.exists(api.path['start_dir'].join(
-      'chromiumos_workspace', 'src', 'scripts', 'setup_board'))
+  exists = lambda *x: api.path.exists(api.src_state.workspace_path.join(*x))
 
-  def no_withdebugsymbols(check, steps, name):
-    return check('--withdebugsymbols' not in steps[name].cmd)
+  def StepCommandLacks(check, steps, name, arg):
+    return check(arg not in steps[name].cmd)
 
-  def withdebugsymbols(check, steps, name):
-    return check('--withdebugsymbols' in steps[name].cmd)
+  def suite_scheduling(value):
+    return api.post_check(PropertyEquals, 'suite_scheduling', value)
 
-  yield test('release',
-             api.post_check(MustRun, 'upload artifacts.bundle tarball'),
-             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
-             api.post_check(MustRun, 'bump version'),
-             api.post_check(MustRun, 'create buildspec'),
-             api.post_check(withdebugsymbols, 'install packages: target'),
-             api.post_check(StatusSuccess),
-             input_properties=dict(bump_version=True))
+  yield test(
+      'release', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(MustRun, 'bump version'),
+      api.post_check(MustRun, 'create buildspec'), suite_scheduling(True),
+      api.post_check(StepCommandContains, 'build target.install packages',
+                     ['--withdebugsymbols']), api.post_check(StatusSuccess),
+      input_properties=dict(bump_version=True, set_suite_scheduling=True))
 
-  yield test('postsubmit',
-             api.post_check(MustRun, 'upload artifacts.bundle tarball'),
-             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
-             api.post_check(DoesNotRun, 'bump version'),
-             api.post_check(DoesNotRun, 'create buildspec'),
-             api.post_check(withdebugsymbols, 'install packages: target'),
-             api.post_check(StatusSuccess))
+  yield test(
+      'postsubmit', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(DoesNotRun, 'bump version'),
+      api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
+      api.post_check(StepCommandContains, 'build target.install packages',
+                     ['--withdebugsymbols']), api.post_check(StatusSuccess))
 
-  yield test('old-postsubmit',
-             api.post_check(MustRun, 'upload artifacts.bundle tarball'),
-             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
-             api.post_check(DoesNotRun, 'bump version'),
-             api.post_check(DoesNotRun, 'create buildspec'),
-             api.post_check(no_withdebugsymbols, 'install packages: target'),
-             api.post_check(StatusSuccess), version='R39-6301.202.44')
+  yield test(
+      'old-postsubmit',
+      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(DoesNotRun, 'bump version'),
+      api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
+      api.post_check(StepCommandLacks,
+                     'build target.install packages', '--withdebugsymbols'),
+      api.post_check(StatusSuccess), version='R39-6301.202.44')
 
   yield test('cq', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
              api.post_check(DoesNotRun, 'bump version'),
              api.post_check(DoesNotRun, 'create buildspec'),
-             api.post_check(StatusSuccess), cq=True, builder='fw-atlas-cq')
-
-  yield test('cq-bump',
-             api.post_check(MustRun, 'upload artifacts.bundle tarball'),
-             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
-             api.post_check(MustRun, 'bump version'),
-             api.post_check(DoesNotRun, 'create buildspec'),
-             api.post_check(StatusSuccess), cq=True, builder='fw-atlas-cq',
-             input_properties=dict(bump_version=True))
+             suite_scheduling(False), api.post_check(StatusSuccess), cq=True)
 
   yield test(
-      'two-targets',
-      api.post_check(MustRun, 'setup board: board1'),
-      api.post_check(MustRun, 'setup board: board2'),
-      api.post_check(DoesNotRun, 'bump version'),
-      api.post_check(StatusSuccess),
-      input_properties=dict(
-          build_targets=[dict(
-              name='board1'), dict(name='board2')]),
-  )
+      'cq-bump', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(MustRun, 'bump version'),
+      api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
+      api.post_check(StatusSuccess), cq=True,
+      input_properties=dict(bump_version=True, set_suite_scheduling=True))
+
+  yield test('two-targets', api.post_check(MustRun, 'build board1.setup board'),
+             api.post_check(MustRun, 'build board2.setup board'),
+             api.post_check(DoesNotRun, 'bump version'),
+             api.post_check(StatusSuccess), suite_scheduling(False),
+             build_targets=[dict(name='board1'),
+                            dict(name='board2')])
 
   yield test(
       'no-firmware',
       api.step_data('upload artifacts.create firmware archive.list files',
-                    api.file.listdir()),
+                    api.file.listdir()), suite_scheduling(False),
       api.post_check(DoesNotRun, 'upload artifacts.bundle tarball'),
       api.post_check(DoesNotRun, 'upload artifacts.gsutil rsync'),
       api.post_check(DoesNotRun, 'bump version'), api.post_check(StatusSuccess))
 
-  yield test('chroot-exists',
-             api.path.exists(api.src_state.workspace_path.join('chroot')))
+  yield test('chroot-exists', exists('chroot'))
 
-  yield test('old-cq', legacy_setup_board, cq=True, builder='fw-atlas-cq')
+  yield test('old-cq', exists('src', 'scripts', 'setup_board'), cq=True)
