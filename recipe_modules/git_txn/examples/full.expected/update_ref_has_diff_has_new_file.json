@@ -1,14 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "update ref"
-  },
-  {
-    "cmd": [],
-    "name": "update ref.git transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "git transaction"
   },
   {
     "cmd": [
@@ -16,38 +9,25 @@
       "push",
       "--porcelain",
       "remote",
-      "HEAD:refs/heads/ref"
+      "HEAD:refs/for/refs/heads/ref%notify=NONE,submit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.git transaction.git push",
+    "name": "git transaction.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update ref (2)"
-  },
-  {
-    "cmd": [],
-    "name": "update ref (2).git transaction",
+    "name": "git transaction (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update ref (3)"
-  },
-  {
-    "cmd": [],
-    "name": "update ref (3).git transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "git transaction (3)"
   },
   {
     "cmd": [
@@ -59,11 +39,10 @@
       "remove",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref (3).git transaction.try remove existing file",
+    "name": "git transaction (3).try remove existing file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -77,20 +56,19 @@
       "data",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref (3).git transaction.write file",
+    "name": "git transaction (3).write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@path.txt@data@@@",
       "@@@STEP_LOG_END@path.txt@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update ref (3).git transaction.diff check",
+    "name": "git transaction (3).diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -100,26 +78,10 @@
       "--error-unmatch",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref (3).git transaction.diff check.git ls-files",
+    "name": "git transaction (3).diff check.git ls-files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--quiet",
-      "HEAD",
-      "file/path.txt"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
-    "infra_step": true,
-    "name": "update ref (3).git transaction.diff check.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -128,11 +90,10 @@
       "add",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref (3).git transaction.git add",
+    "name": "git transaction (3).git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -146,11 +107,10 @@
       "Update file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref (3).git transaction.write commit message",
+    "name": "git transaction (3).write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update file@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
@@ -164,11 +124,10 @@
       "--",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref (3).git transaction.git commit",
+    "name": "git transaction (3).git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -179,11 +138,10 @@
       "remote",
       "HEAD:refs/heads/ref"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref (3).git transaction.git push",
+    "name": "git transaction (3).git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

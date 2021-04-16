@@ -27,6 +27,7 @@
 #   Commit the resulting diff (if any) back to config-internal.
 
 import os
+from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
 
 from PB.recipes.chromeos.test_plan_filtering import TestPlanFilteringProperties
@@ -274,8 +275,9 @@ Cr-Automation-Id: {}""" \
     # Update the repo atomically
     with api.context(cwd=config_internal):
       config_project_info = api.repo.project_info()
-      api.git_txn.update_ref(config_project_info.remote, _filter_all_test_plans,
-                             ref=api.git.remote_head(), automerge=True)
+      api.git_txn.update_ref(config_project_info.remote,
+                             update_callback=_filter_all_test_plans,
+                             ref=api.git.remote_head())
 
 
 def GenTests(api):
@@ -284,34 +286,26 @@ def GenTests(api):
       'basic',
       # Mocking to make it seem there are 3 star files
       api.step_data(
-          'update ref.gerrit transaction.find test plans',
+          'git transaction.find test plans',
           stdout=api.raw_io.output("\n".join([
               '[START_DIR]/base1/file1.jsonproto',
               '[START_DIR]/base2/file2.jsonproto',
               '[START_DIR]/base3/file3.jsonproto'
           ]))),
       # Mocking git diff step to show differences so transaction is called
-      api.step_data(
-          'update ref.gerrit transaction.diffing to find changes.git diff',
-          stdout=api.raw_io.output('changes')),
-      api.post_check(post_process.MustRun, 'update ref.gerrit transaction.'
-                     'git push'),
-  )
+      api.step_data('git transaction.diffing to find changes.git diff',
+                    stdout=api.raw_io.output('changes')))
 
   yield api.test(
       'no_changes_produced_in_diff_causes_no_push',
       # Mocking to make it seem there are 3 star files
       api.step_data(
-          'update ref.gerrit transaction.find test plans',
+          'git transaction.find test plans',
           stdout=api.raw_io.output("\n".join([
               '[START_DIR]/base1/file1.jsonproto',
               '[START_DIR]/base2/file2.jsonproto',
               '[START_DIR]/base3/file3.jsonproto'
           ]))),
       # Mocking git diff step to show no differences so transaction cancelled
-      api.step_data(
-          'update ref.gerrit transaction.diffing to find changes.git diff',
-          stdout=api.raw_io.output('')),
-      api.post_check(post_process.DoesNotRun, 'update ref.gerrit transaction.'
-                     'git push'),
-  )
+      api.step_data('git transaction.diffing to find changes.git diff',
+                    stdout=api.raw_io.output('')))

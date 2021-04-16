@@ -1669,8 +1669,7 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
+      "--force-rebase"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
@@ -2763,8 +2762,7 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
+      "--force-rebase"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
