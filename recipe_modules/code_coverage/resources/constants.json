@@ -157,10 +157,6 @@
       "prefix": "tmp/portage/chromeos-base/chromeos-installer-[^/]*/work/chromeos-installer-[^/]*/installer"
     },
     {
-      "src_path": "ippusb_manager",
-      "prefix": "tmp/portage/chromeos-base/ippusb_manager-[^/]*/work/ippusb_manager-[^/]*/ippusb_manager"
-    },
-    {
       "src_path": "kerberos",
       "prefix": "tmp/portage/chromeos-base/kerberos-[^/]*/work/kerberos-[^/]*/kerberos"
     },
