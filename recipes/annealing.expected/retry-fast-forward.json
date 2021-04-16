@@ -1736,9 +1736,16 @@
   },
   {
     "cmd": [],
-    "name": "publish external snapshot.git transaction",
+    "name": "publish external snapshot.update ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish external snapshot.update ref.git transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
     ]
   },
@@ -1754,9 +1761,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "publish external snapshot.git transaction.try remove existing file",
+    "name": "publish external snapshot.update ref.git transaction.try remove existing file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1772,18 +1779,18 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "publish external snapshot.git transaction.write file",
+    "name": "publish external snapshot.update ref.git transaction.write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@snapshot.xml@<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@snapshot.xml@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "publish external snapshot.git transaction.diff check",
+    "name": "publish external snapshot.update ref.git transaction.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1795,9 +1802,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "publish external snapshot.git transaction.diff check.git ls-files",
+    "name": "publish external snapshot.update ref.git transaction.diff check.git ls-files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1810,9 +1817,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest",
     "infra_step": true,
-    "name": "publish external snapshot.git transaction.diff check.git diff",
+    "name": "publish external snapshot.update ref.git transaction.diff check.git diff",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1927,9 +1934,16 @@
   },
   {
     "cmd": [],
-    "name": "publish internal snapshot.git transaction",
+    "name": "publish internal snapshot.update ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish internal snapshot.update ref.git transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
     ]
   },
@@ -1945,9 +1959,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "publish internal snapshot.git transaction.try remove existing file",
+    "name": "publish internal snapshot.update ref.git transaction.try remove existing file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1963,18 +1977,18 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "publish internal snapshot.git transaction.write file",
+    "name": "publish internal snapshot.update ref.git transaction.write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@snapshot.xml@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@snapshot.xml@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "publish internal snapshot.git transaction.diff check",
+    "name": "publish internal snapshot.update ref.git transaction.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1986,9 +2000,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "publish internal snapshot.git transaction.diff check.git ls-files",
+    "name": "publish internal snapshot.update ref.git transaction.diff check.git ls-files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -2001,9 +2015,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "publish internal snapshot.git transaction.diff check.git diff",
+    "name": "publish internal snapshot.update ref.git transaction.diff check.git diff",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

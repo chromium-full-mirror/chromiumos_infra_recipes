@@ -1,28 +1,32 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The Chromium OS Authors. All rights reserved.
+# Copyright 2021 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/step',
+    'recipe_engine/context',
     'recipe_engine/raw_io',
+    'src_state',
     'git_txn',
 ]
 
 
 def RunSteps(api):
-  api.git_txn.update_ref('remote', lambda: None, ref='ref', retries=2,
-                         automerge=True)
-  api.git_txn.update_ref('remote', lambda: False, ref='ref')
-  api.git_txn.update_ref_write_file('remote', 'Update file', 'file/path.txt',
-                                    'data', ref='ref')
+  with api.context(cwd=api.src_state.workspace_path.join('src/project')):
+    api.git_txn.update_ref('remote', lambda: None, ref='ref', retries=1)
+    api.git_txn.update_ref('remote', lambda: False, ref='ref')
+    api.git_txn.update_ref_write_file('remote', 'Update file', 'file/path.txt',
+                                      'data', ref='ref')
 
 
 def GenTests(api):
 
   def attempt_git_step(attempt, git_subcmd, retcode=0, stdout=None):
-    message = 'git transaction'
+    message = 'update ref.git transaction'
     if attempt > 1:
-      message += ' retry 1 of 1'
+      message += ' attempt 1 of 2'
     return api.step_data('%s.git %s' % (message, git_subcmd), retcode=retcode,
                          stdout=api.raw_io.output(stdout))
 
@@ -49,13 +53,23 @@ def GenTests(api):
           stdout='deadbeef2',
       ),
       attempt_git_step(2, 'push', retcode=1,
+                       stdout='! HEAD:refs/fake [remote rejected]'),
+      attempt_git_step(
+          3,
+          'rev-parse',
+          stdout='deadbeef22',
+      ),
+      attempt_git_step(3, 'push', retcode=1,
                        stdout='! HEAD:refs/fake [remote rejected]'))
 
   yield api.test(
       'update_ref_has_diff_has_new_file',
-      api.step_data('git transaction (3).diff check.git ls-files', retcode=1))
+      api.step_data('update ref (3).git transaction.diff check.git ls-files',
+                    retcode=1))
 
   yield api.test(
       'update_ref_has_diff_has_change',
-      api.step_data('git transaction (3).diff check.git ls-files', retcode=0),
-      api.step_data('git transaction (3).diff check.git diff', retcode=1))
+      api.step_data('update ref (3).git transaction.diff check.git ls-files',
+                    retcode=0),
+      api.step_data('update ref (3).git transaction.diff check.git diff',
+                    retcode=1))

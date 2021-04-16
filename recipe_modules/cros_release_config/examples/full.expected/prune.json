@@ -481,7 +481,8 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase"
+      "--force-rebase",
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
@@ -682,7 +683,8 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase"
+      "--force-rebase",
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
     "infra_step": true,
