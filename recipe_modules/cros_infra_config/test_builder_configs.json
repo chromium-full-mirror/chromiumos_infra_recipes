@@ -2010,6 +2010,46 @@
     },
     {
       "id": {
+        "name": "firmware-board-5555-cq",
+        "type": "CQ"
+      },
+      "general": {
+	"critical": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          },
+          {
+            "flag": "chromeless_tty"
+          }
+        ]
+      },
+      "artifacts": {
+        "prebuilts": "PRIVATE",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuiltsGsBucket": "chromeos-prebuilt",
+        "artifactsGsBucket": "chromeos-image-archive"
+      }
+    },
+    {
+      "id": {
         "name": "fw-atlas-cq",
         "type": "CQ"
       },
