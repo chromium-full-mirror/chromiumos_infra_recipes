@@ -310,7 +310,8 @@ class FirmwareBuilder(object):
       self.m.build_menu.upload_artifacts(
           private_bundle_func=self._bundle_firmware)
       # Mark whether the suite_scheduling query for firmware should find this.
-      self.m.easy.set_properties_step(suite_scheduling=self._suite_scheduling)
+      self.m.easy.set_properties_step(
+          suite_scheduling=str(self._suite_scheduling))
 
 
 def RunSteps(api, properties):
@@ -342,7 +343,7 @@ def GenTests(api):
     return check(arg not in steps[name].cmd)
 
   def suite_scheduling(value):
-    return api.post_check(PropertyEquals, 'suite_scheduling', value)
+    return api.post_check(PropertyEquals, 'suite_scheduling', str(value))
 
   yield test(
       'release', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
