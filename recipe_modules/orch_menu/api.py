@@ -554,6 +554,7 @@ class OrchMenuApi(RecipeApi):
       # from our builder config, rather than buildbucket properties.  Pass the
       # actual answers to schedule_request.
       props = self.m.cros_infra_config.props_for_child_build
+      props.update(self.m.cq.props_for_child_build)
       props.update(properties or {})
       tags = self.m.cros_tags.make_schedule_tags(self.gitiles_commit)
       exps = self.m.cros_infra_config.experiments_for_child_build

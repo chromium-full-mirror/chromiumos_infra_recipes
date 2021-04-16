@@ -4715,7 +4715,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#590)(self, testable_builds=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#591)(self, testable_builds=None):**
 
 Plan, schedule, and run tests.
 
