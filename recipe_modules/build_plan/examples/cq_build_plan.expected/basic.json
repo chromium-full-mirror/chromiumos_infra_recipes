@@ -286,7 +286,7 @@
       "@@@STEP_LOG_LINE@planner_input@}@@@",
       "@@@STEP_LOG_END@planner_input@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
-      "@@@STEP_LOG_LINE@planner_output@  name: \"amd64-generic-slim-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"amd64-generic-cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"arm-generic-cq\"@@@",
@@ -295,7 +295,7 @@
       "@@@STEP_LOG_LINE@planner_output@  name: \"arm64-generic-cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
-      "@@@STEP_LOG_LINE@planner_output@  name: \"atlas-slim-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"atlas-cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"cave-cq\"@@@",
@@ -722,9 +722,9 @@
     "cmd": [],
     "name": "filter builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@need 3 new builds (filtered 5)@@@",
+      "@@@STEP_TEXT@need 2 new builds (filtered 5)@@@",
       "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
-      "@@@STEP_LOG_LINE@filter log@amd64-generic-cq already passed@@@",
+      "@@@STEP_LOG_LINE@filter log@amd64-generic already passed@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-cq is non-critical and this is a CQ rerun@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
       "@@@STEP_LOG_LINE@filter log@cave already passed@@@",
@@ -821,13 +821,13 @@
     "name": "filter builds.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@3@@@",
+      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@2@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_already_passed@2@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_noncritical_on_rerun@1@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@2@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_wait_on_other_run@0@@@",
-      "@@@SET_BUILD_PROPERTY@count_scheduled_slim_builds@1@@@",
-      "@@@SET_BUILD_PROPERTY@slim_eligible_run@true@@@"
+      "@@@SET_BUILD_PROPERTY@count_scheduled_slim_builds@0@@@",
+      "@@@SET_BUILD_PROPERTY@slim_eligible_run@false@@@"
     ]
   },
   {

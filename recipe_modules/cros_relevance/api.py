@@ -53,6 +53,11 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         self._properties.pointless_build_checker_cipd_ref.encode('utf-8') or
         default_ref)
 
+    # TODO(crbug.com/1123776): Remove after go/cros-slim-rollout.
+    self._enable_slim_builds = self._properties.enable_slim_builds or (
+        'chromeos.cros_relevance.enable_slim_builds' in
+        self.m.cros_infra_config.experiments)
+
   @property
   def toolchain_cls_applied(self):
     """Whether there are toolchain CLs applied to the source tree."""
@@ -131,6 +136,9 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
               len(result.builds_to_run),
               len(result.skip_for_global_build_irrelevance) +
               len(result.skip_for_run_when_rules)))
+      # TODO(crbug.com/1123776): Remove after go/cros-slim-rollout.
+      if not self._enable_slim_builds:
+        return [b.name.replace('-slim-cq', '-cq') for b in result.builds_to_run]
       return [b.name for b in result.builds_to_run]
 
   def is_build_pointless(self, gerrit_changes, gitiles_commit, dep_graph,

@@ -24,4 +24,7 @@ message CrosRelevanceProperties {
     // Cipd ref to use for pointless build checker.
     // Defaults to "staging" or "prod".
     string pointless_build_checker_cipd_ref = 5;
+
+    // Whether to allow slim builds to be scheduled.
+    bool enable_slim_builds = 6;
 }

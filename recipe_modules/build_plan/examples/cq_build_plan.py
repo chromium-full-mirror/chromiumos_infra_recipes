@@ -38,8 +38,6 @@ def RunSteps(api, properties):
   actual_completed_builds = [x.builder.builder for x in completed_builds]
   api.assertions.assertItemsEqual(actual_completed_builds,
                                   properties.expected_completed_builds)
-  # TODO(crbug.com/1123776): Restore assertions to only expect the slim builder
-  # after go/cros-slim-rollout parallel adoption.
   actual_build_requests = [x.builder.builder for x in new_requests]
   api.assertions.assertItemsEqual(actual_build_requests,
                                   properties.expected_build_requests)
@@ -107,7 +105,6 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
-              'atlas-slim-cq',
               'atlas-cq',
               'arm64-generic-cq',
           ],
@@ -118,10 +115,10 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers([], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-slim-cq',
+          'amd64-generic-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
-          'atlas-slim-cq',
+          'atlas-cq',
           'cave-cq',
       ]),
       api.buildbucket.simulated_search_results(
@@ -137,7 +134,6 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
-              'atlas-slim-cq',
               'atlas-cq',
               'arm64-generic-cq',
               'coral-cq',
@@ -149,10 +145,10 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(['coral-cq'], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-slim-cq',
+          'amd64-generic-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
-          'atlas-slim-cq',
+          'atlas-cq',
           'coral-cq',
           'cave-cq',
       ]),
@@ -169,21 +165,19 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
-              'atlas-slim-cq',
               'atlas-cq',
               'arm64-generic-cq',
               'coral-cq',
               'amd64-generic-cq',
-              'amd64-generic-slim-cq',
               'arm-generic-cq',
               'cave-cq',
           ], expected_completed_builds=[]),
       api.git_footers.simulated_get_footers(['all'], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-slim-cq',
+          'amd64-generic-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
-          'atlas-slim-cq',
+          'atlas-cq',
           'coral-cq',
           'cave-cq',
       ]),
@@ -204,7 +198,6 @@ def GenTests(api):
               'named-experiment-from-cq', 'named-exp-from-cl'
           ],
           expected_build_requests=[
-              'atlas-slim-cq',
               'atlas-cq',
               'arm64-generic-cq',
           ],
@@ -217,10 +210,10 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(['named-exp-from-cl'],
                                             'filter builds'),
       api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-slim-cq',
+          'amd64-generic-cq',
           'arm-generic-cq',
           'arm64-generic-cq',
-          'atlas-slim-cq',
+          'atlas-cq',
           'cave-cq',
       ]),
       api.buildbucket.simulated_search_results(
@@ -238,7 +231,6 @@ def GenTests(api):
           bucket='staging', builder='staging-cq-orchestrator'),
       api.properties(
           expected_build_requests=[
-              'atlas-slim-cq',
               'atlas-cq',
               'arm64-generic-cq',
           ], expected_completed_builds=[
@@ -251,6 +243,39 @@ def GenTests(api):
       api.cros_infra_config.override_builder_configs_test_data(
           api.cros_infra_config.builder_configs_test_data, ref=config_ref,
           binaryproto=False),
+      api.git_footers.simulated_get_footers([], 'get build history'),
+      api.cros_relevance.simulated_get_necessary_builders([
+          'amd64-generic-cq',
+          'arm-generic-cq',
+          'arm64-generic-cq',
+          'atlas-cq',
+          'cave-cq',
+      ]),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+  )
+
+  # TODO(crbug.com/1123776): Restore assertions to only expect the slim builder
+  # after go/cros-slim-rollout parallel adoption.
+  yield api.test(
+      'slim-enabled',
+      cq_orchestrator_build_with_gerrit_change(
+          experiments=['enable_slim_builds']),
+      api.properties(
+          expected_experiments=['enable_slim_builds'], expected_build_requests=[
+              'atlas-slim-cq',
+              'atlas-cq',
+              'arm64-generic-cq',
+          ], expected_completed_builds=[
+              'amd64-generic-cq',
+              'cave-cq',
+          ], **{"$chromeos/cros_relevance": {
+              "enable_slim_builds": True
+          }}),
       api.git_footers.simulated_get_footers([], 'get build history'),
       api.cros_relevance.simulated_get_necessary_builders([
           'amd64-generic-slim-cq',
@@ -266,4 +291,3 @@ def GenTests(api):
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
-

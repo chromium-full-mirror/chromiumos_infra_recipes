@@ -119,3 +119,20 @@ def GenTests(api):
       #    post_process.MustRun,
       #    'pointless build check.depgraph relevance check.run check'),
   )
+
+  yield api.test(
+      'slim-enabled',
+      api.properties(
+          BuildPlanTest(
+              test_builder_ids=[BuilderConfig.Id(name='amd64-generic-slim-cq')],
+              expected_builders=['amd64-generic-slim-cq']),
+          **{"$chromeos/cros_relevance": {
+              "enable_slim_builds": True
+          }}))
+
+  yield api.test(
+      'slim-not-enabled',
+      api.properties(
+          BuildPlanTest(
+              test_builder_ids=[BuilderConfig.Id(name='amd64-generic-slim-cq')],
+              expected_builders=['amd64-generic-cq'])))
