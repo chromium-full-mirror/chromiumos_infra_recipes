@@ -18,24 +18,4 @@ message ConfigBackfillProperties {
     }
 
     repeated ProjectConfig configs = 7;
-
-    // TODO(crbug.com/1193491): remove when migrated to new config
-    // Destination repo for changes
-    string dest_repo = 1 [deprecated = true];
-
-    // Repo and path to public model.yaml (optional)
-    RepoPath public_yaml = 2 [deprecated = true];
-
-    // Repo and path to private model.yaml (optional)
-    RepoPath private_yaml = 3 [deprecated = true];
-
-    // Key for HWID database (optional)
-    string hwid_key = 4 [deprecated = true];
-
-    // When no input config data is available, the project
-    // name to use when generating the output.
-    string project_name = 5 [deprecated = true];
-
-    // Program name
-    string program_name = 6 [deprecated = true];
 }

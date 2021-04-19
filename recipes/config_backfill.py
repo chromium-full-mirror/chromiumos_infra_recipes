@@ -433,17 +433,6 @@ def format_output_markdown(commits, errors):
 def RunSteps(api, properties):
   api.cros_infra_config.configure_builder()
 
-  configs = properties.configs
-
-  # TODO(crbug.com/1193491): remove once migrated to the new config format
-  if properties.dest_repo:
-    config = configs.add()
-    config.public_yaml_path = properties.public_yaml.path
-    config.private_yaml.MergeFrom(properties.private_yaml)
-    config.hwid_key = properties.hwid_key
-    config.project_name = properties.project_name
-    config.program_name = properties.program_name
-
   # setup overlays, sync projects and move to tip-of-tree
   with api.cros_source.checkout_overlays_context():
     api.cros_source.ensure_synced_cache()
@@ -456,7 +445,7 @@ def RunSteps(api, properties):
 
       futures = [
           api.futures.spawn(backfill_project, api, properties, config)
-          for config in configs
+          for config in properties.configs
       ]
       api.futures.wait(futures)
 
@@ -513,18 +502,16 @@ def GenTests(api):
       'basic',
       api.properties(
           **{
-              'dest_repo': 'https://example.com/some/project/repo',
-              'public_yaml': {
-                  'repo': 'https://example.com/public/',
-                  'path': 'some/model.yaml'
-              },
-              'private_yaml': {
-                  'repo': CROS_INTERNAL + '/private/',
-                  'path': 'some/model.yaml'
-              },
-              'hwid_key': 'some_key',
-              'project_name': 'test_project',
-              'program_name': 'test_program',
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
           }),
       mock_workspace_path(api, 'src/project/test_program/test_project'),
       api.post_process(post_process.StatusSuccess),
@@ -534,18 +521,16 @@ def GenTests(api):
       'backfill_error',
       api.properties(
           **{
-              'dest_repo': 'https://example.com/some/project/repo',
-              'public_yaml': {
-                  'repo': 'https://example.com/public/',
-                  'path': 'some/model.yaml'
-              },
-              'private_yaml': {
-                  'repo': CROS_INTERNAL + '/private/',
-                  'path': 'some/model.yaml'
-              },
-              'hwid_key': 'some_key',
-              'project_name': 'test_project',
-              'program_name': 'test_program',
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
           }),
       api.step_data(
           'processing test_program/test_project'
@@ -560,18 +545,16 @@ def GenTests(api):
       api.buildbucket.generic_build(builder="staging-backfiller"),
       api.properties(
           **{
-              'dest_repo': 'https://example.com/some/project/repo',
-              'public_yaml': {
-                  'repo': 'https://example.com/public/',
-                  'path': 'some/model.yaml'
-              },
-              'private_yaml': {
-                  'repo': CROS_INTERNAL + '/private/',
-                  'path': 'some/model.yaml'
-              },
-              'hwid_key': 'some_key',
-              'project_name': 'test_project',
-              'program_name': 'test_program',
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
           }),
       mock_workspace_path(api, 'src/project/test_program/test_project'),
       api.post_process(
@@ -588,18 +571,16 @@ def GenTests(api):
       'not_checked_out',
       api.properties(
           **{
-              'dest_repo': 'https://example.com/some/project/repo',
-              'public_yaml': {
-                  'repo': 'https://example.com/public/',
-                  'path': 'some/model.yaml'
-              },
-              'private_yaml': {
-                  'repo': CROS_INTERNAL + '/private/',
-                  'path': 'some/model.yaml'
-              },
-              'hwid_key': 'some_key',
-              'project_name': 'test_project',
-              'program_name': 'test_program',
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
           }),
       api.post_process(
           StepSummaryEquals,
@@ -613,18 +594,16 @@ def GenTests(api):
       'no_changed_files',
       api.properties(
           **{
-              'dest_repo': 'https://example.com/some/project/repo',
-              'public_yaml': {
-                  'repo': 'https://example.com/public/',
-                  'path': 'some/model.yaml'
-              },
-              'private_yaml': {
-                  'repo': CROS_INTERNAL + '/private/',
-                  'path': 'some/model.yaml'
-              },
-              'hwid_key': 'some_key',
-              'project_name': 'test_project',
-              'program_name': 'test_program',
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
           }),
       mock_workspace_path(api, 'src/project/test_program/test_project'),
       api.step_data(
