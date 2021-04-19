@@ -10,6 +10,7 @@ DEPS = [
     'tast_exec',
 ]
 
+
 def RunSteps(api):
   test_artifacts = api.path.mkdtemp(prefix='temp')
   api.tast_exec.download_tast('bucket', 'path', test_artifacts)
@@ -37,4 +38,10 @@ def GenTests(api):
   yield api.test(
       'basic', api.properties(**{'$chromeos/tast_exec': {
           'should_retry': True
+      }}))
+
+  yield api.test(
+      'public',
+      api.properties(**{'$chromeos/tast_exec': {
+          'public_builder': True
       }}))

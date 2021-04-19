@@ -291,6 +291,9 @@ class TastExecApi(RecipeApi):
                  build_artifacts_url, test_results_dir, extra_args):
     private_builder = 'false' if self._public_builder else 'true'
     private_bundles_str = '-downloadprivatebundles={}'.format(private_builder)
+    maybemissingvars_args = []
+    if self._public_builder:
+      maybemissingvars_args = [r'-maybemissingvars=.+\..+']
     keyfile_args = []
     if private_key_path is not None:
       keyfile_args = ['-keyfile={}'.format(private_key_path)]
@@ -315,6 +318,7 @@ class TastExecApi(RecipeApi):
         '-remoterunner={}'.format(
             str(tast_dir.join('remote_test_runner')))] + \
         keyfile_args + \
+        maybemissingvars_args + \
         extra_args + \
         [dut_name] + \
         list(expressions), ok_ret='any', timeout=self._exec_timeout)
