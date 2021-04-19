@@ -357,6 +357,7 @@ def summarize_results(api, prejob_response, run_test_responses, result):
 def _result_contains_no_failures(result):
   return not _result_contains_failures(result)
 
+
 def _result_contains_failures(result):
   verdicts = [
       p.verdict != Result.Prejob.Step.VERDICT_PASS for p in result.prejob.step
@@ -659,7 +660,6 @@ def execution_steps(api, properties):
               result=result,
           )
 
-
         run_test_responses[test_id] = run_test_response
 
   for test_id, test_result in autotest_results.items():
@@ -774,7 +774,6 @@ def GenTests(api):
     return (api.properties(
         TestRunnerProperties(request=_canned_multitest_request())))
 
-
   def _canned_test_runner_request():
     return {
         'prejob': {
@@ -798,7 +797,6 @@ def GenTests(api):
 
   def _canned_request_missing_name():
     return {'test': {'autotest': {'display_name': 'name'}}}
-
 
   def _canned_multitest_request():
     return {
@@ -905,14 +903,16 @@ def GenTests(api):
 
   yield api.test(
       'deadline_passed',
+      api.time.seed(current_time_sec),
       _misc_properties(),
       api.properties(TestRunnerProperties(request=r_with_passed_deadline)),
       _mock_load_step(),
       _successful_logs_archive_step(),
-  ) + api.time.seed(current_time_sec)
+  )
 
   yield api.test(
       'success_with_build_deadline',
+      api.time.seed(current_time_sec),
       api.buildbucket.build(_build_with_execution_timeout(30)),
       _misc_properties(),
       api.properties(TestRunnerProperties(request=r_with_deadline)),
@@ -921,10 +921,11 @@ def GenTests(api):
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
-  ) + api.time.seed(current_time_sec)
+  )
 
   yield api.test(
       'success_with_request_deadline',
+      api.time.seed(current_time_sec),
       api.buildbucket.build(_build_with_execution_timeout(66)),
       _misc_properties(),
       api.properties(TestRunnerProperties(request=r_with_deadline)),
@@ -933,7 +934,7 @@ def GenTests(api):
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
-  ) + api.time.seed(current_time_sec)
+  )
 
   yield api.test(
       'prejob_crash',

@@ -7639,7 +7639,7 @@ Recipe for scaling bots in Chrome and Chrome OS pools.
 
 Recipe for signing ChromeOS images.
 
-&mdash; **def [RunSteps](/recipes/sign_image.py#98)(api, properties):**
+&mdash; **def [RunSteps](/recipes/sign_image.py#102)(api, properties):**
 
 Run steps.
 ### *recipes* / [sign\_paygen](/recipes/sign_paygen.py)
@@ -7968,7 +7968,7 @@ Returns:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#577)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#578)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -8029,7 +8029,7 @@ Returns:
 Raises:
   * InfraFailure if prejob fails.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#546)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#547)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -8058,7 +8058,7 @@ Raises:
   * StepFailure if test crashes.
     (No exception is raised if test fails without a crash.)
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#377)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#378)(api, result=None):**
 
 Set the output properties that are part of the test_runner API.
 

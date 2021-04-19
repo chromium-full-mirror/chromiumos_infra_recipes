@@ -47,6 +47,7 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'basic',
+      api.time.seed(4321),
       api.properties(
           DutLeaserProperties(
               lease_length_minutes=123,
@@ -75,7 +76,7 @@ def GenTests(api):
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
                       results_dir='dummy-results-dir')))),
-  ) + api.time.seed(4321)
+  )
 
   yield api.test(
       'invalid service version',

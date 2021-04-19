@@ -40,14 +40,14 @@ PROPERTIES = SignImageProperties
 
 
 class _BucketBase(object):
+
   def __init__(self, bucket, base):
     self.bucket = bucket.strip('/')
     self.base = base.lstrip('/')
 
   def gs_path(self, *args):
     """Returns the full gs:// path for |name|."""
-    path = os.path.join(self.bucket, self.base,
-                        *[x.strip('/') for x in args])
+    path = os.path.join(self.bucket, self.base, *[x.strip('/') for x in args])
     return 'gs://' + path
 
   def rel_path(self, path=None):
@@ -75,10 +75,12 @@ class _BucketBase(object):
 
 
 _signer_buckets = {
-    sign_image_os.SIGNER_PRODUCTION: _BucketBase('chromeos-releases/', '/'),
+    sign_image_os.SIGNER_PRODUCTION:
+        _BucketBase('chromeos-releases/', '/'),
     sign_image_os.SIGNER_STAGING:
         _BucketBase('chromeos-releases-test/', '/staging/'),
-    sign_image_os.SIGNER_DEV: _BucketBase('chromeos-releases-test/', '/dev/'),
+    sign_image_os.SIGNER_DEV:
+        _BucketBase('chromeos-releases-test/', '/dev/'),
 }
 
 # Map gsc_instructions.target to the text value for instructions.
@@ -92,8 +94,10 @@ _target_type_to_name = {
 }
 
 # Map channel numbers to names.
-_channel_to_name = {v: k.lower().replace('channel_', '')
-                    for k, v in common_os.Channel.items()}
+_channel_to_name = {
+    v: k.lower().replace('channel_', '') for k, v in common_os.Channel.items()
+}
+
 
 def RunSteps(api, properties):
   """Run steps."""
@@ -106,9 +110,8 @@ def RunSteps(api, properties):
     # permitted image_types.  Today, only gsc_firmware is permitted.
     if image_type != common_os.GSC_FIRMWARE:
       return result_pb2.RawResult(
-          status=common_pb2.FAILURE,
-          summary_markdown='illegal image type %s' % (
-              ImageType.Name(image_type)))
+          status=common_pb2.FAILURE, summary_markdown='illegal image type %s' %
+          (ImageType.Name(image_type)))
 
     if properties.signer_type == sign_image_os.SIGNER_UNSPECIFIED:
       signer_type = sign_image_os.SIGNER_PRODUCTION
@@ -136,8 +139,8 @@ def RunSteps(api, properties):
     # GSC specific handling.
     gsc = properties.gsc_instructions
     if gsc.target == GscInstructions.NODE_LOCKED and not gsc.device_id:
-      return result_pb2.RawResult(
-          status=common_pb2.FAILURE, summary_markdown='must set device_id')
+      return result_pb2.RawResult(status=common_pb2.FAILURE,
+                                  summary_markdown='must set device_id')
 
     presentation.step_text = 'all properties good'
 
@@ -181,16 +184,15 @@ def RunSteps(api, properties):
   with api.step.nest('upload gsc instructions') as presentation:
     content = str('\n'.join(insns) + '\n')
     # crbug.com/1025023: Don't clobber other pending instructions files.
-    random_suffix = ''.join(api.random.choice(string.ascii_letters)
-                            for n in range(8))
+    random_suffix = ''.join(
+        api.random.choice(string.ascii_letters) for n in range(8))
     insn_basename = 'ChromeOS-%s-%s-%s-%s.instructions' % (
         image_type_name, versionrev, properties.keyset, random_suffix)
     local_insn = local_dir.join(insn_basename)
     insn_path = os.path.join(os.path.dirname(archive), insn_basename)
     rel_insn_path = gs.rel_path(insn_path)
 
-    api.file.write_raw(
-        name='instructions file', dest=local_insn, data=content)
+    api.file.write_raw(name='instructions file', dest=local_insn, data=content)
 
     api.gsutil(['cp', local_insn, insn_path])
     presentation.step_text = 'instructions uploaded'
@@ -202,51 +204,60 @@ def RunSteps(api, properties):
     trigger_path = gs.gs_path('tobesigned', trigger_base)
 
     local_trigger = local_dir.join(trigger_base)
-    api.file.write_raw(
-        name='trigger file', dest=local_trigger, data=trigger_data)
+    api.file.write_raw(name='trigger file', dest=local_trigger,
+                       data=trigger_data)
     api.gsutil(['cp', local_trigger, trigger_path])
     presentation.step_text = 'trigger uploaded'
 
+
 def GenTests(api):
+
+  def props(**kwargs):
+    return api.properties(SignImageProperties(**kwargs))
+
   yield api.test('basic')
 
-  yield (api.test('gsc') + api.properties(
-      SignImageProperties(
+  yield api.test(
+      'gsc',
+      props(
           image_type=common_os.GSC_FIRMWARE, keyset='cr50-accessory-mp',
           channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
-                   'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'))))
+                   'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')))
 
-  yield (api.test('gsc_bad_path') + api.properties(
-      SignImageProperties(
+  yield api.test(
+      'gsc_bad_path',
+      props(
           image_type=common_os.GSC_FIRMWARE, keyset='cr50-accessory-mp',
           channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases-test/canary-channel/eve/12499.10.0/'
-                   'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'))))
+                   'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')))
 
-  yield (api.test('gsc_staging_with_prod_path') + api.properties(
-      SignImageProperties(
+  yield api.test(
+      'gsc_staging_with_prod_path',
+      props(
           signer_type=sign_image_os.SIGNER_STAGING,
           image_type=common_os.GSC_FIRMWARE,
           build_target=BuildTarget(name='board'), keyset='cr50-accessory-mp',
           channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
-                   'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'))))
+                   'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')))
 
-  yield (api.test('gsc_NodeLocked_no_device_id') + api.properties(
-      SignImageProperties(
+  yield api.test(
+      'gsc_NodeLocked_no_device_id',
+      props(
           image_type=common_os.GSC_FIRMWARE, keyset='cr50-accessory-mp',
           channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'),
           gsc_instructions=GscInstructions(target=GscInstructions.NODE_LOCKED)))
-        )
 
-  yield (api.test('gsc_NodeLocked') + api.properties(
-      SignImageProperties(
+  yield api.test(
+      'gsc_NodeLocked',
+      props(
           image_type=common_os.GSC_FIRMWARE, channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'),
-          keyset='cr50-accessory-mp', gsc_instructions=GscInstructions(
-              target=GscInstructions.NODE_LOCKED,
-              device_id='12345678-11223344'))))
+          keyset='cr50-accessory-mp',
+          gsc_instructions=GscInstructions(target=GscInstructions.NODE_LOCKED,
+                                           device_id='12345678-11223344')))

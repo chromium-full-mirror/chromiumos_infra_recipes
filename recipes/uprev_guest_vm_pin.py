@@ -636,7 +636,8 @@ def GenTests(api):
   yield api.test(
       'no-acls',
       api.properties(**sludge_properties),
-      api.properties(userAcls=[], groupAcls=[]) + api.git.diff_check(True),
+      api.properties(userAcls=[], groupAcls=[]),
+      api.git.diff_check(True),
       mock_sludge_build_search,
       api.post_check(post_process.StatusSuccess),
   )

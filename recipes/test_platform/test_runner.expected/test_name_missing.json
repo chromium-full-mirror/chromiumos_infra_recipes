@@ -73,7 +73,7 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 677, in RunSteps",
       "    prejob_response, run_test_responses, result = execution_steps(api, properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 621, in execution_steps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 622, in execution_steps",
       "    validate_request(api, test)",
       "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/test_runner.py\", line 58, in validate_request",
       "    raise ValueError(\"Test name must be specified\")",

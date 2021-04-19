@@ -130,6 +130,7 @@ def GenTests(api):
 
   yield api.test(
       'basic with release tagging',
+      api.time.seed(123),
       api.properties(
           ctp_uprev.Properties(
               config=ctp_uprev.Config(
@@ -142,7 +143,7 @@ def GenTests(api):
                           package_name='infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
                           ref='foo-recipe-ref', version='foo-recipe-version'),
                   ], tag_release_version=True))),
-  ) + api.time.seed(123)
+  )
 
   yield api.test(
       'missing ref',

@@ -160,6 +160,7 @@ def GenTests(api):
 
   yield api.test(
       'basic with release tagging',
+      api.time.seed(123),
       api.properties(
           cipd_uprev.Properties(
               config=cipd_uprev.Config(
@@ -172,10 +173,11 @@ def GenTests(api):
                           package_name='infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
                           ref='foo-recipe-ref', version='foo-recipe-version'),
                   ], tag_release_version=True))),
-  ) + api.time.seed(123)
+  )
 
   yield api.test(
       'CI packages with release tagging',
+      api.time.seed(123),
       api.properties(
           cipd_uprev.Properties(
               config=cipd_uprev.Config(
@@ -185,7 +187,7 @@ def GenTests(api):
                           ref='foo-version_bumper-ref',
                           version='foo-version_bumper-version'),
                   ], tag_release_version=True))),
-  ) + api.time.seed(123)
+  )
 
   yield api.test(
       'missing ref',

@@ -64,7 +64,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.phosphorus.properties(dut_name='placeholder') + api.step_data(
+      api.phosphorus.properties(dut_name='placeholder'),
+      api.step_data(
           'call `phosphorus` (12).load', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
