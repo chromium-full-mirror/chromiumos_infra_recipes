@@ -5021,7 +5021,7 @@ Write manifest_data to a temporary manifest file inside the repo root.
 
 Returns (string): path of tmp manifest relative.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#501)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#502)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -5039,7 +5039,7 @@ Returns:
   List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#608)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#609)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -5047,7 +5047,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#459)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#460)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -5069,7 +5069,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#67)(self):**
 
-&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#401)(self, projects=None, regexes=None, test_data=None, step_name=None):**
+&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#402)(self, projects=None, regexes=None, test_data=None, step_name=None):**
 
 Ensure that we know the revision info for all projects.
 
@@ -5087,7 +5087,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#659)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#660)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
 
 &mdash; **def [init](/recipe_modules/repo/api.py#145)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
 
@@ -5111,7 +5111,7 @@ Args:
 
 &mdash; **def [initialize](/recipe_modules/repo/api.py#57)(self):**
 
-&mdash; **def [manifest](/recipe_modules/repo/api.py#428)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#429)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
 Uses repo to create a manifest and returns it as a string.
 
@@ -5128,11 +5128,11 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#653)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#654)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#386)(self, project=None):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#387)(self, project=None):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -5143,7 +5143,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#330)(self, projects=None, regexes=None, test_data=None):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#330)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
 
 Uses 'repo forall' to gather project information.
 
@@ -5158,6 +5158,7 @@ Args:
     is the same as in `repo forall --regex regexes...`.
   test_data (str): Test data for the step: the output from repo forall, or
       None for the default.
+  ignore_missing (bool): If True, skip missing projects and continue
 
 Returns:
   List[ProjectInfo]: Requested project infos.
@@ -6498,7 +6499,7 @@ For more details on the input properties, see cl_factory.proto.
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#433)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#436)(api, properties):**
 
 &mdash; **def [backfill\_project](/recipes/config_backfill.py#331)(api, properties, config):**
 
@@ -6536,18 +6537,19 @@ Hack around needing a full portage environment for reef/fizz.
 Reef/fizz require their baseboard overlay to include common files.  We can
 work around this by using symlinks to simulate the overlay.
 
-&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#383)(commits, errors):**
+&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#378)(commits, errors, missing=None):**
 
 Generate markdown to be shown for the build status.
 
 Args:
   commits: list of (program, project, hash) values for commits
   errors: list of string-formattable errors
+  missing: list of project configs not found in the manifest
 
 Return:
   Formatted markdown string suitable to return via RawResult proto.
 
-&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#476)(api, path):**
+&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#507)(api, path):**
 
 &mdash; **def [require](/recipes/config_backfill.py#70)(cond, message):**
 

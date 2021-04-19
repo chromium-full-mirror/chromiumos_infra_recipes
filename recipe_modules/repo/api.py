@@ -327,7 +327,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd.append('--all')
     self._step(cmd)
 
-  def project_infos(self, projects=None, regexes=None, test_data=None):
+  def project_infos(self, projects=None, regexes=None, test_data=None,
+                    ignore_missing=False):
     """Uses 'repo forall' to gather project information.
 
     Note that if both projects and regexes are specified the resultant
@@ -341,21 +342,21 @@ class RepoApi(recipe_api.RecipeApi):
         is the same as in `repo forall --regex regexes...`.
       test_data (str): Test data for the step: the output from repo forall, or
           None for the default.
+      ignore_missing (bool): If True, skip missing projects and continue
 
     Returns:
       List[ProjectInfo]: Requested project infos.
     """
-    projects = projects or []
-    regexes = regexes or []
-
     if test_data is None:
       test_data = self.test_api.project_infos_test_data(
           [dict(project=p) for p in projects or self.test_api.test_projects])
     step_test_data = lambda: self.m.raw_io.test_api.stream_output(test_data)
 
-    cmd = ['forall'] + projects
-    if regexes:
-      cmd += ['--regex'] + regexes
+    cmd = []
+    cmd += ['forall']
+    cmd += ['--ignore-missing'] if ignore_missing else []
+    cmd += (['--regex'] + regexes) if regexes is not None else []
+    cmd += projects if projects is not None else []
     cmd += [
         '-c',
         'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV\|$REPO_UPSTREAM'

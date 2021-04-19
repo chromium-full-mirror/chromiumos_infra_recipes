@@ -350,11 +350,6 @@ def backfill_project(api, properties, config):
 
   with api.step.nest("processing {}/{}".format(program,
                                                project)) as presentation:
-    # Check that project is checked out
-    if not api.path.exists(path_project_repo):
-      presentation.step_summary_text = "project not checked out"
-      return None
-
     # Update the repo atomically
     with api.context(cwd=path_project_repo):
       project_info = api.repo.project_info()
@@ -380,12 +375,13 @@ def backfill_project(api, properties, config):
       return None
 
 
-def format_output_markdown(commits, errors):
+def format_output_markdown(commits, errors, missing=None):
   """Generate markdown to be shown for the build status.
 
   Args:
     commits: list of (program, project, hash) values for commits
     errors: list of string-formattable errors
+    missing: list of project configs not found in the manifest
 
   Return:
     Formatted markdown string suitable to return via RawResult proto.
@@ -415,6 +411,13 @@ def format_output_markdown(commits, errors):
     lines.append("{} errors".format(len(errors)))
     for error in errors:
       lines.append("- {}".format(error))
+    lines.append("")
+
+  if missing:
+    lines.append("{} missing from manifest".format(len(missing)))
+    for program, project in missing:
+      lines.append("- {}/{}".format(program, project))
+    lines.append("")
 
   # Truncate the list of failures per section to keep the summary under
   # Buildbucket's 4000 byte limit on the summary_markdown field.
@@ -438,14 +441,37 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()
 
-    # run backfill
     with api.context(cwd=api.cros_source.workspace_path):
       with api.step.nest("create portage workaround symlinks"):
         create_portage_workaround(api)
 
+      # check for projects that were configured but missing from manifest
+      present_configs = []
+      missing_projects = []
+      with api.step.nest("gathering project information"):
+        infos = api.repo.project_infos(
+            regexes=["src/project"],
+            ignore_missing=True,
+        )
+
+        projects = set()
+        for info in infos:
+          program, project = info.path.split('/')[-2:]
+          projects.add((program, project))
+
+        for config in properties.configs:
+          program = config.program_name.lower()
+          project = config.project_name.lower()
+
+          if (program, project) in projects:
+            present_configs.append(config)
+          else:
+            missing_projects.append((program, project))
+
+      # run backfill
       futures = [
           api.futures.spawn(backfill_project, api, properties, config)
-          for config in properties.configs
+          for config in present_configs
       ]
       api.futures.wait(futures)
 
@@ -470,33 +496,33 @@ def RunSteps(api, properties):
 
       return result_pb2.RawResult(
           status=common_pb2.FAILURE if errors else common_pb2.SUCCESS,
-          summary_markdown=format_output_markdown(commits, errors))
+          summary_markdown=format_output_markdown(
+              commits,
+              errors,
+              sorted(missing_projects),
+          ),
+      )
 
 
 def mock_workspace_path(api, path):
-  return api.path.exists(
-      api.path["start_dir"].join(
-          "chromiumos_workspace",
-          path,
+  return api.test(
+      'ignored',
+      api.path.exists(
+          api.path["start_dir"].join(
+              "chromiumos_workspace",
+              path,
+          ),
+      ),
+      api.step_data(
+          'gathering project information.repo forall',
+          stdout=api.raw_io.output_text(
+              '{path}|{path}|main||'.format(path=path),
+          ),
       ),
   )
 
 
 def GenTests(api):
-
-  def StepSummaryEquals(check, step_odict, step, expected):
-    """Check that the step's step_summary_text equals given value.
-
-    Args:
-      step (str) - The step to check the step_text of
-      expected (str) - The expected value of the step_text
-
-    Usage:
-      yield TEST + api.post_process(
-          StepSummaryEquals, 'step-name', 'expected-text'
-      )
-    """
-    check(step_odict[step].step_summary_text == expected)
 
   yield api.test(
       'basic',
@@ -583,9 +609,8 @@ def GenTests(api):
               }]
           }),
       api.post_process(
-          StepSummaryEquals,
+          post_process.DoesNotRun,
           'processing test_program/test_project',
-          'project not checked out',
       ),
       api.post_process(post_process.StatusSuccess),
   )
