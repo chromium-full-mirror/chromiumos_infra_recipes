@@ -8,7 +8,7 @@
 # by a -i instanceid argument. The script will prompt before doing
 # the release unless provided the -f argument.
 
-set -e
+set -eu
 
 no_changes="No changes pending."
 infra_recipes_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -33,6 +33,7 @@ function check_bb_auth() {
 }
 
 function check_staging() {
+  ignore_errors="${1}"
   check_bb_auth
   checks=("staging-Annealing" "staging-StarDoctor" "staging-DutTracker"
           "staging-amd64-generic-postsubmit" "staging-RoboCrop"
@@ -54,9 +55,13 @@ function check_staging() {
     fi
   done
   if [[ ${#baddies[@]} -ne 0 ]]; then
-    echo "Please address the failures in the above builders."
-    echo "When you're certain staging is OK, you may use -s to continue."
-    exit 1
+    if [[ -n ${ignore_errors} ]]; then
+      echo "Ignoring errors in builders, as requested."
+    else
+      echo "Please address the failures in the above builders."
+      echo "When you're certain staging is OK, you may use -s to continue."
+      return 1
+    fi
   fi
 }
 
@@ -88,6 +93,7 @@ recipe-pending() {
 # "Main" function.
 prompt="yes"
 cipd_target=""
+skip_staging_check=""
 
 # Update to remote.
 git -C "${infra_recipes_root}" remote update > /dev/null
@@ -96,14 +102,10 @@ while getopts "fi:s" opt; do
   case $opt in
     f) prompt="no";;
     i) cipd_target=$OPTARG;;
-    s) skip_check="true";;
+    s) skip_staging_check="yes";;
     *) usage;;
   esac
 done
-
-if [[ ! ${skip_check} == "true" ]]; then
-  check_staging
-fi
 
 git_prod=$(cipd_version_to_githash "prod")
 
@@ -119,6 +121,9 @@ echo "CIPD versions can be found here: https://chrome-infra-packages.appspot.com
 printf "Here are the changes from the provided (or default main) environment:\n"
 pending=$(recipe-pending)
 echo "${pending}"
+
+check_staging "${skip_staging_check}"
+
 if [[ $pending == "$no_changes" ]]; then
     exit 0
 fi
