@@ -41,7 +41,7 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = qs_account
 
   def schedule_ctp_requests(self, tagged_requests, swarming_parent_run_id=None,
-                            bb_tags=None):
+                            bb_tags=None, **kwargs):
     """Schedule a cros_test_platform build.
 
     Args:
@@ -52,7 +52,8 @@ class SkylabApi(recipe_api.RecipeApi):
       bb_tags (dict or list[StringPair]): If of the type list[StringPair], will
         be used directly as a bb_tag list. If a dict, used to map keys to values.
         If the value is a list, multiple tags for the same key will be created.
-
+      kwargs: List of extra named parameters to pass to
+        buildbucket.schedule_request.
     Returns:
       The scheduled buildbucket build.
     """
@@ -68,7 +69,8 @@ class SkylabApi(recipe_api.RecipeApi):
         gerrit_changes=[],
         swarming_parent_run_id=swarming_parent_run_id,
         # Disable inheriting the version from the parent builder.
-        exe_cipd_version='')
+        exe_cipd_version='',
+        **kwargs)
     return self.m.buildbucket.schedule([bb_request])[0]
 
   def schedule_suites(self, unit_hw_tests, timeout, name=None,
@@ -121,7 +123,7 @@ class SkylabApi(recipe_api.RecipeApi):
       swarming_parent_run_id = None if async_suite_run else self.m.swarming.task_id
       build = self.schedule_ctp_requests(
           tagged_requests=reqs, swarming_parent_run_id=swarming_parent_run_id,
-          bb_tags=bb_tags)
+          bb_tags=bb_tags, inherit_buildsets=False)
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
       presentation.links['suite link'] = build_url

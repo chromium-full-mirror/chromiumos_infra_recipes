@@ -5262,7 +5262,7 @@ Validate the caller's service version if they sent one.
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#149)(self, test, unit, timeout, name=None, async_suite_run=False):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#151)(self, test, unit, timeout, name=None, async_suite_run=False):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -5276,7 +5276,7 @@ Args:
 Returns:
   SkylabTask: with buildbucket_id of the recipe launched.
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#43)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#43)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -5288,11 +5288,12 @@ Args:
   bb_tags (dict or list[StringPair]): If of the type list[StringPair], will
     be used directly as a bb_tag list. If a dict, used to map keys to values.
     If the value is a list, multiple tags for the same key will be created.
-
+  kwargs: List of extra named parameters to pass to
+    buildbucket.schedule_request.
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#74)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#76)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -5310,7 +5311,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#229)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#231)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
