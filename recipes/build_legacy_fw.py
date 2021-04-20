@@ -116,28 +116,30 @@ class FirmwareBuilder(object):
         self._uprev()
         self._old_setup_board = self.m.path.exists(
             self.m.src_state.workspace_path.join('src/scripts/setup_board'))
-        if self.properties.bump_version:
-          self.m.cros_version.bump_version(production=True,
-                                           dry_run=self._is_staging)
-          if self.m.cq.active:
-            with self.m.step.nest('CQ run: not pushing buildspec'):
-              pass
-          else:
-            # Use 'rubik-staging' if we are on staging.  manifest-versions has
-            # not migrated to main yet, so we pass create_releasespec
-            # branch=None to use the default branch, whatever it is.
-            self.m.cros_release.create_releasespec(
-                'buildspecs',
-                branch='rubik-staging' if self._is_staging else None,
-                step_name='create buildspec')
-            # Only these builds are valid for suite_scheduling to find.
-            self._suite_scheduling = (
-                self.properties.set_suite_scheduling and not self._is_staging)
 
+        if self.properties.bump_version:
+          self._bump_version()
         self._bcs_version = self.m.cros_version.version
         with self.m.depot_tools.on_path(), self._setup_chroot():
           self._set_firmware_version()
           yield
+
+  def _bump_version(self):
+    dry_run = self._is_staging or self.m.cq.active
+    self.m.cros_version.bump_version(production=True, dry_run=dry_run)
+    if self.m.cq.active:
+      with self.m.step.nest('CQ run: not pushing buildspec'):
+        return
+
+    # Use 'rubik-staging' if we are on staging.  manifest-versions has
+    # not migrated to main yet, so we pass create_releasespec
+    # branch=None to use the default branch, whatever it is.
+    self.m.cros_release.create_releasespec(
+        'buildspecs', branch='rubik-staging' if self._is_staging else None,
+        step_name='create buildspec')
+    # Only these builds are valid for suite_scheduling to find.
+    self._suite_scheduling = (
+        self.properties.set_suite_scheduling and not dry_run)
 
   def _uprev(self):
     # TODO(b/181786185): Once we have a good "push the uprevs" method, we should

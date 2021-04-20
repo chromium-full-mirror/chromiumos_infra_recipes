@@ -1194,7 +1194,10 @@
   },
   {
     "cmd": [],
-    "name": "bump version"
+    "name": "bump version",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@dry-run only@@@"
+    ]
   },
   {
     "cmd": [],
@@ -1387,6 +1390,7 @@
     "cmd": [
       "git",
       "push",
+      "--dry-run",
       "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay",
       "HEAD:refs/heads/firmware-board-9999.B"
     ],
