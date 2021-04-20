@@ -288,7 +288,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                          output_properties=_output_properties()),
     ]
     bisect_build = _child_build_msg('amd64-generic')
-    self.m.cros_bisect.add_output_props(bisect_build, 'amd64-generic')
+    self.m.cros_bisect.add_properties(bisect_build, 'amd64-generic')
 
     process_child = _child_build_msg('chell', build_id=8922054662172514501,
                                      status='SUCCESS', bucket='toolchain',

@@ -35,17 +35,11 @@ def RunSteps(api):
       status=common_pb2.SUCCESS)
   # Here we set up the completed builds with the properties needed by
   # cros_bisect to do the BuildPayload fix up.
-  api.cros_bisect.test_api.add_output_props(
-      build=build1,
-      build_target_name='foo',
-      gs_bucket='bucket1',
-      gs_path='path1')
-  api.cros_bisect.test_api.add_output_props(
-      build=build2,
-      build_target_name='bar',
-      gs_bucket='bucket2',
-      gs_path='path2',
-      files_by_artifact={
+  api.cros_bisect.test_api.add_properties(build=build1, build_target_name='foo',
+                                          gs_bucket='bucket1', gs_path='path1')
+  api.cros_bisect.test_api.add_properties(
+      build=build2, build_target_name='bar', gs_bucket='bucket2',
+      gs_path='path2', files_by_artifact={
           'IMAGE_ZIP': ['zeimage.zip'],
           'TAST_FILES': ['zetast.zip'],
           'AUTOTEST_FILES': ['a1.zip', 'a2.zip'],

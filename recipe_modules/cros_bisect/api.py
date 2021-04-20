@@ -18,6 +18,7 @@ from PB.testplans.target_test_requirements_config import HwTestCfg
 
 from recipe_engine import recipe_api
 
+
 class CrosBisectApi(recipe_api.RecipeApi):
   """A module for interacting with FindIt."""
 
@@ -80,9 +81,11 @@ class CrosBisectApi(recipe_api.RecipeApi):
       # Strip version off PackageInfo, breaks bisect invoked install packages.
       failures.append({
           'rule': 'emerge',
-          'output_targets': [jsonpb.MessageToJson(
-              PackageInfo(category=pkg.category, package_name=pkg.package_name)
-          )],
+          'output_targets': [
+              jsonpb.MessageToJson(
+                  PackageInfo(category=pkg.category,
+                              package_name=pkg.package_name))
+          ],
           'needs_bisection': needs_bisection,
       })
     return {
@@ -107,8 +110,8 @@ class CrosBisectApi(recipe_api.RecipeApi):
     """
     if not failed_packages:
       return
-    payload = self._create_failures_payload(
-        failed_packages, failed_step, needs_bisection)
+    payload = self._create_failures_payload(failed_packages, failed_step,
+                                            needs_bisection)
     self.m.easy.set_properties_step(compile_failures=payload)
 
   def set_test_failures(self, hw_results, needs_bisection):
@@ -137,10 +140,12 @@ class CrosBisectApi(recipe_api.RecipeApi):
       unit = HwTestUnit(common=result.task.unit.common, hw_test_cfg=hw_test_cfg)
       hw_test_failures.append({
           # This must match the step name as known by sherrif-o-matic.
-          'failed_step': 'check test results|hw test results|'
-          + test.common.display_name,
-          'test_spec': jsonpb.MessageToJson(unit),
-          'suite': test.suite,
+          'failed_step':
+              'check test results|hw test results|' + test.common.display_name,
+          'test_spec':
+              jsonpb.MessageToJson(unit),
+          'suite':
+              test.suite,
       })
     if hw_test_failures:
       payload = {
@@ -201,25 +206,24 @@ class CrosBisectApi(recipe_api.RecipeApi):
       # conversion for the key while grouping.
       key = jsonpb.MessageToJson(hw_test_unit.common)
       hw_test_units[key].append(hw_test_unit)
-    if not hw_test_units: # pragma: no cover
+    if not hw_test_units:  # pragma: no cover
       return None
 
     build_payloads = {}
+    failures = []
     for build in builds:
       try:
-        build_target_name = build.output.properties['build_target']['name']
+        build_target_name = build.input.properties['build_target']['name']
         artifacts = build.output.properties['artifacts']
         build_payload = BuildPayload(
-            artifacts_gs_bucket = artifacts['gs_bucket'],
-            artifacts_gs_path = artifacts['gs_path'],
-            files_by_artifact = artifacts['files_by_artifact'],
+            artifacts_gs_bucket=artifacts['gs_bucket'],
+            artifacts_gs_path=artifacts['gs_path'],
+            files_by_artifact=artifacts['files_by_artifact'],
         )
         build_payloads[build_target_name] = build_payload
-      except ValueError: # pragma: no cover
-        # Here we just pass if we weren't able to map to a BuildPayload. Below
-        # a ValueError will be raised if we cannot find the BuildPayload needed
-        # for a build target.
-        pass
+      except ValueError as ex:  # pragma: no cover
+        # Save any exception that occurred so we can log it properly later.
+        failures.append(ex)
 
     response = GenerateTestPlanResponse()
     for _, units in hw_test_units.iteritems():
@@ -228,9 +232,19 @@ class CrosBisectApi(recipe_api.RecipeApi):
       test_unit_common = units[0].common
       build_target_name = test_unit_common.build_target.name
       build_payload = build_payloads.get(build_target_name, None)
-      if not build_payload: # pragma: no cover
-        raise ValueError('Unable to resolve a BuildPayload for {}.'.format(
-            build_target_name))
+      if not build_payload:  # pragma: no cover
+        msg = 'Unable to resolve a BuildPayload for {}.'.format(
+            build_target_name,
+        )
+
+        if failures:
+          msg += "\n"
+          msg += "Saw one or more failures querying BuildPayloads:\n"
+          for failure in failures:
+            msg += str(failure) + "\n"
+
+        raise ValueError(msg)
+
       test_unit_common.build_payload.CopyFrom(build_payload)
       hw_test_unit = HwTestUnit(common=test_unit_common)
       hw_test_cfg = HwTestCfg()
