@@ -3163,7 +3163,7 @@ Checks if cros_test_runner is enabled for use.
 Returns: bool
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
-[DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS version numbers.
 
@@ -7066,9 +7066,9 @@ Tests for api.cros_version.Version.
 &mdash; **def [RunSteps](/recipe_modules/cros_version/examples/version.py#14)(api):**
 ### *recipes* / [cros\_version:tests/bad\_version](/recipe_modules/cros_version/tests/bad_version.py)
 
-[DEPS](/recipe_modules/cros_version/tests/bad_version.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
+[DEPS](/recipe_modules/cros_version/tests/bad_version.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_version/tests/bad_version.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_version/tests/bad_version.py#16)(api):**
 ### *recipes* / [cts\_results\_archive:examples/full](/recipe_modules/cts_results_archive/examples/full.py)
 
 [DEPS](/recipe_modules/cts_results_archive/examples/full.py#8): [cts\_results\_archive](#recipe_modules-cts_results_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

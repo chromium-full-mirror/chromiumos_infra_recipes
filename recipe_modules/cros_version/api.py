@@ -7,7 +7,7 @@
 
 import re
 
-from recipe_engine import recipe_api
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 from .version import Version
 
 CHROMIUMOS_OVERLAY_REPO = 'src/third_party/chromiumos-overlay'
@@ -29,7 +29,7 @@ CHROMIUMOS_OVERLAY_REMOTE = (
 CHROMIUMOS_OVERLAY_RUBIK_BRANCH = 'rubik-staging'
 
 
-class CrosVersionApi(recipe_api.RecipeApi):
+class CrosVersionApi(RecipeApi):
   """A module for steps that manipulate Chrome OS versions."""
 
   Version = Version
@@ -147,6 +147,8 @@ class CrosVersionApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('bump version') as pres:
       old_version = self.read_workspace_version()
+      if self.m.cq.active and not dry_run:
+        raise StepFailure('CQ must set dry_run')
 
       # The luciexe module only makes local file changes.
       self._ensure_version_bumper()
