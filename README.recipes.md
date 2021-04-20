@@ -6501,9 +6501,9 @@ For more details on the input properties, see cl_factory.proto.
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#436)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#448)(api, properties):**
 
-&mdash; **def [backfill\_project](/recipes/config_backfill.py#331)(api, properties, config):**
+&mdash; **def [backfill\_project](/recipes/config_backfill.py#336)(api, properties, config):**
 
 Backfill an individual project.
 
@@ -6513,10 +6513,10 @@ Args:
   config (ConfigBackfillProperties.ProjectConfig) - configuration for project
 
 Return:
-  (program, project, commit_hash)
-  or None if no commit made
+  BackfillStatus with results of backfill.  commit hash if empty if no commit
+  is made.
 
-&mdash; **def [config\_merger](/recipes/config_backfill.py#169)(api, config, path_cros_repo, step_pres):**
+&mdash; **def [config\_merger](/recipes/config_backfill.py#174)(api, config, path_cros_repo, step_pres):**
 
 Create a closure to merge configs.
 
@@ -6532,32 +6532,32 @@ Args:
 Return:
   closure to execute merge operation
 
-&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#86)(api):**
+&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#91)(api):**
 
 Hack around needing a full portage environment for reef/fizz.
 
 Reef/fizz require their baseboard overlay to include common files.  We can
 work around this by using symlinks to simulate the overlay.
 
-&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#378)(commits, errors, missing=None):**
+&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#391)(commits, errors, nmissing):**
 
 Generate markdown to be shown for the build status.
 
 Args:
   commits: list of (program, project, hash) values for commits
   errors: list of string-formattable errors
-  missing: list of project configs not found in the manifest
+  nmissing: number of projects missing from manifest
 
 Return:
   Formatted markdown string suitable to return via RawResult proto.
 
-&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#507)(api, path):**
+&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#502)(api, path):**
 
-&mdash; **def [require](/recipes/config_backfill.py#70)(cond, message):**
+&mdash; **def [require](/recipes/config_backfill.py#75)(cond, message):**
 
 Require a given condition be true or throw a ValueError.
 
-&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#76)(api, repo):**
+&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#81)(api, repo):**
 
 Take a private overlay URL and parse out project name.
 ### *recipes* / [config\_postsubmit](/recipes/config_postsubmit.py)

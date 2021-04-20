@@ -766,19 +766,21 @@
   },
   {
     "cmd": [],
-    "name": "gathering project information"
+    "name": "processing test_program/test_project",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@not in manifest@@@"
+    ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "--ignore-missing",
-      "--regex",
-      "src/project",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -788,12 +790,9 @@
       ]
     },
     "infra_step": true,
-    "name": "gathering project information.repo forall",
+    "name": "processing test_program/test_project.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

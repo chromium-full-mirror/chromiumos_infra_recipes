@@ -66,6 +66,11 @@ JOIN_SCRIPT_PATH = 'payload_utils/join_config_payloads.py'
 # path to cloud credentials
 CLOUD_CREDS_PATH = '/creds/service_accounts/service-account-chromeos.json'
 
+BackfillStatus = collections.namedtuple(
+    'BackfillStatus',
+    ['missing', 'program', 'project', 'commit'],
+)
+
 
 def require(cond, message):
   """Require a given condition be true or throw a ValueError."""
@@ -337,8 +342,8 @@ def backfill_project(api, properties, config):
     config (ConfigBackfillProperties.ProjectConfig) - configuration for project
 
   Return:
-    (program, project, commit_hash)
-    or None if no commit made
+    BackfillStatus with results of backfill.  commit hash if empty if no commit
+    is made.
   """
 
   program = config.program_name.lower()
@@ -352,8 +357,16 @@ def backfill_project(api, properties, config):
                                                project)) as presentation:
     # Update the repo atomically
     with api.context(cwd=path_project_repo):
-      project_info = api.repo.project_info()
+      infos = api.repo.project_infos(
+          projects=[api.context.cwd],
+          ignore_missing=True,
+      )
 
+      if not infos:
+        presentation.step_summary_text = "not in manifest"
+        return BackfillStatus(True, program, project, "")
+
+      project_info = infos[0]
       updated = api.git_txn.update_ref(
           project_info.remote,
           config_merger(api, config, path_cros_repo, presentation),
@@ -361,6 +374,7 @@ def backfill_project(api, properties, config):
           dry_run=api.cros_infra_config.is_staging,
       )
 
+      commit_hash = ""
       if updated:
         commit_hash = api.git.head_commit()
 
@@ -371,17 +385,16 @@ def backfill_project(api, properties, config):
           url = api.git.remote_url(project_info.remote) + "/+/" + commit_hash
           presentation.step_summary_text = "[%s](%s)" % (commit_hash[:8], url)
 
-        return (program, project, commit_hash)
-      return None
+      return BackfillStatus(False, program, project, commit_hash)
 
 
-def format_output_markdown(commits, errors, missing=None):
+def format_output_markdown(commits, errors, nmissing):
   """Generate markdown to be shown for the build status.
 
   Args:
     commits: list of (program, project, hash) values for commits
     errors: list of string-formattable errors
-    missing: list of project configs not found in the manifest
+    nmissing: number of projects missing from manifest
 
   Return:
     Formatted markdown string suitable to return via RawResult proto.
@@ -394,18 +407,20 @@ def format_output_markdown(commits, errors, missing=None):
       "{program}/{project}/+/{commit_sha}"                         \
     ")"
 
-  lines = ["{} changes made".format(len(commits))]
-  for commit in sorted(commits):
-    program, project, commit_sha = commit
-    lines.append(
-        COMMIT_TEMPLATE.format(
-            program=program,
-            project=project,
-            commit_short=commit_sha[:8],
-            commit_sha=commit_sha,
-        ),
-    )
-  lines.append("")
+  lines = [""]
+  if commits:
+    lines = ["{} changes made".format(len(commits))]
+    for commit in sorted(commits):
+      program, project, commit_sha = commit
+      lines.append(
+          COMMIT_TEMPLATE.format(
+              program=program,
+              project=project,
+              commit_short=commit_sha[:8],
+              commit_sha=commit_sha,
+          ),
+      )
+    lines.append("")
 
   if errors:
     lines.append("{} errors".format(len(errors)))
@@ -413,21 +428,18 @@ def format_output_markdown(commits, errors, missing=None):
       lines.append("- {}".format(error))
     lines.append("")
 
-  if missing:
-    lines.append("{} missing from manifest".format(len(missing)))
-    for program, project in missing:
-      lines.append("- {}/{}".format(program, project))
-    lines.append("")
+  if nmissing > 0:
+    lines.append("{} missing from manifest".format(nmissing))
 
   # Truncate the list of failures per section to keep the summary under
   # Buildbucket's 4000 byte limit on the summary_markdown field.
   markdown = lines[0]
   for line in lines[1:]:
     if len(markdown) + len(line) < 3990:
-      markdown += '  \n' + line
+      markdown += '\n\n' + line
     else:  # pragma: nocover
       # Abruptly truncate to avoid INFRA_FAILURE.
-      markdown += '  \n...'
+      markdown += '\n\n...'
       break
 
   return markdown
@@ -445,37 +457,15 @@ def RunSteps(api, properties):
       with api.step.nest("create portage workaround symlinks"):
         create_portage_workaround(api)
 
-      # check for projects that were configured but missing from manifest
-      present_configs = []
-      missing_projects = []
-      with api.step.nest("gathering project information"):
-        infos = api.repo.project_infos(
-            regexes=["src/project"],
-            ignore_missing=True,
-        )
-
-        projects = set()
-        for info in infos:
-          program, project = info.path.split('/')[-2:]
-          projects.add((program, project))
-
-        for config in properties.configs:
-          program = config.program_name.lower()
-          project = config.project_name.lower()
-
-          if (program, project) in projects:
-            present_configs.append(config)
-          else:
-            missing_projects.append((program, project))
-
       # run backfill
       futures = [
           api.futures.spawn(backfill_project, api, properties, config)
-          for config in present_configs
+          for config in properties.configs
       ]
       api.futures.wait(futures)
 
       # parse results
+      nmissing = 0
       output_commits = collections.defaultdict(dict)
       commits = []
       errors = []
@@ -486,10 +476,15 @@ def RunSteps(api, properties):
           continue
 
         result = f.result()
-        if result:
-          commits.append(result)
-          program, project, commit = result
-          output_commits[program][project] = commit
+        missing, program, project, commit = result
+
+        commits.append((program, project, commit))
+
+        if missing:
+          nmissing += 1
+        else:
+          if commit:
+            output_commits[program][project] = commit
 
       # save results in output properties
       api.easy.set_properties_step(commits=output_commits)
@@ -499,30 +494,35 @@ def RunSteps(api, properties):
           summary_markdown=format_output_markdown(
               commits,
               errors,
-              sorted(missing_projects),
+              nmissing,
           ),
       )
 
 
 def mock_workspace_path(api, path):
-  return api.test(
-      'ignored',
-      api.path.exists(
-          api.path["start_dir"].join(
-              "chromiumos_workspace",
-              path,
-          ),
-      ),
-      api.step_data(
-          'gathering project information.repo forall',
-          stdout=api.raw_io.output_text(
-              '{path}|{path}|main||'.format(path=path),
-          ),
+  return api.path.exists(
+      api.path["start_dir"].join(
+          "chromiumos_workspace",
+          path,
       ),
   )
 
 
 def GenTests(api):
+
+  def StepSummaryEquals(check, step_odict, step, expected):
+    """Check that the step's step_summary_text equals given value.
+
+    Args:
+      step (str) - The step to check the step_text of
+      expected (str) - The expected value of the step_text
+
+    Usage:
+      yield TEST + api.post_process(
+          StepSummaryEquals, 'step-name', 'expected-text'
+      )
+    """
+    check(step_odict[step].step_summary_text == expected)
 
   yield api.test(
       'basic',
@@ -608,9 +608,15 @@ def GenTests(api):
                   'program_name': 'test_program',
               }]
           }),
+      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      api.step_data(
+          'processing test_program/test_project.repo forall',
+          stdout=api.raw_io.output_text(''),
+      ),
       api.post_process(
-          post_process.DoesNotRun,
+          StepSummaryEquals,
           'processing test_program/test_project',
+          'not in manifest',
       ),
       api.post_process(post_process.StatusSuccess),
   )
