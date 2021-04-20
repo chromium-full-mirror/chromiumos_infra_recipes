@@ -2234,7 +2234,7 @@ An API for providing release related operations (e.g. paygen, signing).
 
 #### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#69)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec'):**
+&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#69)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False):**
 
 Create a pinned manifest and upload to manifest-versions/releasespecs.
 
@@ -2244,6 +2244,7 @@ Args:
   branch (str): The branch of manifest-versions that will be used, or None
     to use the default branch.
   step_name (str): The step name to use.
+  dry_run (bool): Whether the git push is --dry-run.
 
 Returns:
   Full URL path to newly-uploaded manifest.
@@ -2252,7 +2253,7 @@ Returns:
 
 Takes an array of common_pb2.Channel & validates & strings them.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#162)(self):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#164)(self):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2265,7 +2266,7 @@ context of a build.
 
 Return the releasespec as created by this module, or None.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#123)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#125)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 

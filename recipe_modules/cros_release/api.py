@@ -67,7 +67,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     return self._releasespec
 
   def create_releasespec(self, specs_dir='releasespecs', branch='release',
-                         step_name='create releasespec'):
+                         step_name='create releasespec', dry_run=False):
     """Create a pinned manifest and upload to manifest-versions/releasespecs.
 
     Args:
@@ -76,6 +76,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       branch (str): The branch of manifest-versions that will be used, or None
         to use the default branch.
       step_name (str): The step name to use.
+      dry_run (bool): Whether the git push is --dry-run.
 
     Returns:
       Full URL path to newly-uploaded manifest.
@@ -114,7 +115,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         with self.m.step.nest('commit {} to {}'.format(manifest_file, branch)):
           self.m.git.add([manifest_file])
           self.m.git.commit(commit_message)
-          self.m.git.push('origin', 'HEAD:refs/for/{}%submit'.format(branch))
+          self.m.git.push('origin', 'HEAD:refs/for/{}%submit'.format(branch),
+                          dry_run=dry_run)
 
       self._releasespec = ManifestLocation(
           manifest_repo_url=MANIFEST_VERSIONS_URL, branch=branch,
