@@ -535,6 +535,16 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
         for commit in commits:
           reviewed_on_footers = api.git_footers.from_message(
               commit.message, key='Reviewed-on')
+
+          # We have seen bad Reviewed-On footers before (usually from
+          # third_party repos pulled from partners with on-premise gerrit
+          # instances).  Filter for our gerrit instances explicitly and ignore
+          # the rest.
+          reviewed_on_footers = [
+              footer for footer in reviewed_on_footers
+              if "googlesource.com" in footer
+          ]
+
           if reviewed_on_footers:
             gerrit_change_url = reviewed_on_footers[0]
             gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
