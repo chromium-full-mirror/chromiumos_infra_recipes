@@ -26,11 +26,11 @@ from recipe_engine.post_process import (PropertyEquals, StatusSuccess,
 
 
 def RunSteps(api):
-  branch_fmt = (r'(?P<base>firmware-'
+  branch_fmt = (r'(?P<branch>(?P<base>firmware-'
                 r'(?P<device>[-a-z_0-9.]+)-'
                 r'(?P<version>[0-9.]+)'
-                r')\.B'
-                r'(?P<branch>-.+)?$')
+                r')\.B)'
+                r'(?P<parent_branch>-.+)?$')
   valid_branch = lambda b: re.match(branch_fmt, b)
 
   with api.bot_cost.build_cost_context():
@@ -42,6 +42,7 @@ def RunSteps(api):
       if len(branches) != 1 or not valid_branch(branch):
         raise StepFailure('Expected valid firmware branch, got: {}'.format(
             ' '.join(branches)))
+      branch = re.sub(branch_fmt, r'\g<branch>', branch)
       api.easy.set_properties_step(manifest_branch=branch)
       presentation.step_text = branch
 
@@ -95,7 +96,7 @@ def GenTests(api):
   yield test(
       'cq-tagged', StatusSuccess,
       api.post_check(PropertyEquals, 'manifest_branch',
-                     '{}-main'.format(test_branch)),
+                     '{}'.format(test_branch)),
       api.post_check(PropertyEquals, 'child_verifier', test_builder),
       branch='{}-main'.format(test_branch))
 

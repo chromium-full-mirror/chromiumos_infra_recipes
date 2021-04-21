@@ -70,14 +70,15 @@ def _FullCheckout(api):
       if branch.startswith(branch_prefix):
         # Override gitiles_commit to use the appropriate ref/id.
         with api.step.nest('set src_state.gitiles_commit'):
+          if not branch.endswith('.B'):
+            branch = branch[:branch.find('.B') + 2]
           gitiles_commit = api.src_state.gitiles_commit
           test_data = dict(
               branch=dict(revision='%s-HEAD-SHA' %
                           gitiles_commit.ref.split('/')[-1]))
           gitiles_id = api.gitiles.fetch_revision(
               gitiles_commit.host, gitiles_commit.project,
-              api.git.get_branch_refspec(patch_set.branch),
-              test_output_data=test_data)
+              api.git.get_branch_refspec(branch), test_output_data=test_data)
 
           api.src_state.gitiles_commit = GitilesCommit(
               host=gitiles_commit.host, project=gitiles_commit.project,
@@ -216,6 +217,33 @@ def GenTests(api):
 
   yield api.test(
       'success-release-branch', test_builder(gerrit_changes=changes),
+      api.repo.project_infos_step_data(
+          'get project info', data=[
+              dict(project='chromium/src', remote='cros-internal',
+                   rrev='refs/heads/main', upstream='refs/heads/main'),
+              dict(project='chromium/src', remote='cros-internal',
+                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
+          ]),
+      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict))
+
+  value_dict = {
+      1: {
+          'change_id': '1',
+          'created': '2020-10-22 18:54:00.000000000',
+          'branch': 'refs/heads/release-R89-13729.B-main',
+          'revision_info': {
+              '_number': 1,
+              'ref': 'refs/change/foo',
+              'files': {
+                  "foo.ebuild": {},
+                  "bar.sh": {},
+              }
+          },
+      },
+  }
+
+  yield api.test(
+      'success-release-branch-extended', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
           'get project info', data=[
               dict(project='chromium/src', remote='cros-internal',
