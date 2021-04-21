@@ -101,6 +101,10 @@ class Version(object):
     return self >= version
 
   @property
+  def milestone(self):
+    return self.chrome_branch
+
+  @property
   def platform_version(self):
     return '%d.%d.%d' % (self.build, self.branch, self.patch)
 

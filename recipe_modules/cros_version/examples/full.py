@@ -29,6 +29,7 @@ def RunSteps(api, properties):
       properties.expected_version_snapshot or
       api.cros_version.test_api.test_snapshot)
   v = api.cros_version.version
+  api.assertions.assertEqual(v.chrome_branch, v.milestone)
   if not properties.remove_snapshot:
     api.assertions.assertEqual(
         str(v), '{}-{}'.format(expected_version, expected_snapshot))
