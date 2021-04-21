@@ -19,6 +19,7 @@ DEPS = [
     'cros_version',
     'easy',
     'git',
+    'metadata_json',
     'src_state',
     'test_util',
 ]
@@ -120,6 +121,23 @@ class FirmwareBuilder(object):
         if self.properties.bump_version:
           self._bump_version()
         self._bcs_version = self.m.cros_version.version
+
+        entries = dict(
+            boards=[x.name for x in self.properties.build_targets],
+            version=dict(
+                full=str(self._bcs_version),
+                milestone=self._bcs_version.milestone,
+                platform=self._bcs_version.platform_version))
+        # Today's board-metadata may include firmware versions, though that is
+        # unpopulated for many (if not all) of the current firmware builders.
+        entries['board-metadata'] = {
+            x.name: {} for x in self.properties.build_targets
+        }
+        self.m.metadata_json.add_entries(**entries)
+        self.m.metadata_json.upload_to_gs(config,
+                                          self.properties.build_targets[0],
+                                          partial=True)
+
         with self.m.depot_tools.on_path(), self._setup_chroot():
           self._set_firmware_version()
           yield
