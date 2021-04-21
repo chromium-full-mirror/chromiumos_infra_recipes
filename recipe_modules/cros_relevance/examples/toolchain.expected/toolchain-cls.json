@@ -106,6 +106,7 @@
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"some/other/dir\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@ignore_known_non_portage_directories: true@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
@@ -162,7 +163,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0007my hash:\u0004\n\u0002\u0018{:\u0005\n\u0003\u0018\ufffd\u0003B\u000b\n\t\u001a\u0007my hashJ\u0010\n\u000esome/other/dir",
+      "2\u0007my hash:\u0004\n\u0002\u0018{:\u0005\n\u0003\u0018\ufffd\u0003B\u000b\n\t\u001a\u0007my hashJ\u0010\n\u000esome/other/dirP\u0001",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -173,7 +174,7 @@
       "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0018{:\u0005@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\u0003B\u000b@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\t\u001a\u0007my hashJ\u0010@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dir@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dirP\u0001@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },

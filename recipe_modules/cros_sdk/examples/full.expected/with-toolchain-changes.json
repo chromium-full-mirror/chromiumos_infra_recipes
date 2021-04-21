@@ -635,6 +635,7 @@
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"some/other/dir\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@ignore_known_non_portage_directories: true@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
@@ -689,7 +690,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      ":\u0013\n\u0011\u0012\fchromium/src\u0018\ufffd\tB\u0000J\u0010\n\u000esome/other/dir",
+      ":\u0013\n\u0011\u0012\fchromium/src\u0018\ufffd\tB\u0000J\u0010\n\u000esome/other/dirP\u0001",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -698,7 +699,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@:\u0013@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0011\u0012\fchromium/src\u0018\ufffd\tB\u0000J\u0010@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dir@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dirP\u0001@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },
@@ -864,6 +865,7 @@
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"some/other/dir\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@ignore_known_non_portage_directories: true@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
@@ -879,7 +881,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      ":\u0005\n\u0003\u0018\ufffd\tB\u0000J\u0010\n\u000esome/other/dir",
+      ":\u0005\n\u0003\u0018\ufffd\tB\u0000J\u0010\n\u000esome/other/dirP\u0001",
       "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto"
     ],
     "infra_step": true,
@@ -888,7 +890,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@:\u0005@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\tB\u0000J\u0010@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dir@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dirP\u0001@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },

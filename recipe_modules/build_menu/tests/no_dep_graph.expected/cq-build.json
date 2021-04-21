@@ -1770,6 +1770,7 @@
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"some/other/dir\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@ignore_known_non_portage_directories: true@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
@@ -1827,7 +1828,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0019staging-snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshotJ\u0010\n\u000esome/other/dir",
+      "2\u0019staging-snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshotJ\u0010\n\u000esome/other/dirP\u0001",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -1840,7 +1841,7 @@
       "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@h@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshotJ\u0010@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dir@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dirP\u0001@@@",
       "@@@STEP_LOG_END@input.binaryproto@@@"
     ]
   },

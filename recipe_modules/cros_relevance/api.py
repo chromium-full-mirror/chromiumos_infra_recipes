@@ -193,7 +193,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       return not relevant
 
   def _are_paths_affected(self, gerrit_changes, gitiles_commit, relevant_paths,
-                          test_value=None, name=None):
+                          test_value=None, name=None,
+                          ignore_known_non_portage=False):
     """Determines if a Gerrit Change affects any files in relevant paths.
 
     Args:
@@ -206,7 +207,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       test_value (bool): The answer to use for testing, or None.
       name (str): The step name to display, defaults to 'path relevance
           check'.
-
+      ignore_known_non_portage (bool): If we should ignore the known non
+          portage paths when determining relevancy.
     Returns:
       bool: Whether the given Gerrit Change affects any of the relevant paths.
     """
@@ -218,6 +220,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
               serialized_proto=bbcommon_pb2.GitilesCommit.SerializeToString(
                   gitiles_commit)),
           manifest_commit=gitiles_commit.id,
+          ignore_known_non_portage_directories=ignore_known_non_portage,
       )
 
       for source_path in relevant_paths:
@@ -315,7 +318,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     self._toolchain_cls_applied |= self._are_paths_affected(
         gerrit_changes, gitiles_commit,
         relevant_paths=(x.path for x in toolchain_paths_response.paths),
-        test_value=test_value)
+        test_value=test_value, ignore_known_non_portage=True)
     return self._toolchain_cls_applied
 
   def get_dependency_graph(self, sysroot, chroot, packages=None):
