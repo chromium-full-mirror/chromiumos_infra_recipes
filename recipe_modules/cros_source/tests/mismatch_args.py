@@ -11,8 +11,6 @@ DEPS = [
     'src_state',
 ]
 
-from recipe_engine import post_process
-
 from PB.recipe_modules.chromeos.cros_source.tests.mismatch_args import (
     MismatchArgsProperties)
 

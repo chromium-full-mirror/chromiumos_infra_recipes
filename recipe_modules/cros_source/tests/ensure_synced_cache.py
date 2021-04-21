@@ -6,16 +6,12 @@
 DEPS = [
     'cros_source',
     'repo',
-    'recipe_engine/path',
     'recipe_engine/context',
-    'recipe_engine/assertions',
     'recipe_engine/properties',
 ]
 
 from recipe_engine import post_process
-from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties)
-from PB.recipe_modules.chromeos.repo.repo import (RepoProperties)
+from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 
 
 def RunSteps(api):

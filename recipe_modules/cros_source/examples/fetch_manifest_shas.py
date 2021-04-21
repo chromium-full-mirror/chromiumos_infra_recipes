@@ -13,7 +13,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  config = api.cros_infra_config.configure_builder()
+  _ = api.cros_infra_config.configure_builder()
 
   count = 10
   api.assertions.assertEqual(

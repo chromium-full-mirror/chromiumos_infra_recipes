@@ -3,9 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties)
-
 from recipe_engine import recipe_test_api
 
 

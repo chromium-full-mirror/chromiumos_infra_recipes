@@ -26,6 +26,7 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache(manifest_url=properties.manifest_url,
                                         cache_path_override=path)
 
+
 def GenTests(api):
 
   def verify_manifest_url(check, steps, expected, name=None):

@@ -55,7 +55,8 @@ def RunSteps(api, properties):
       # or sync to a manifest.
       api.cros_source.checkout_tip_of_tree()
       api.cros_source.sync_to_gitiles_commit(api.buildbucket.gitiles_commit)
-      manifest_internal_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
+      manifest_internal_url = (
+          'https://chrome-internal.googlesource.com/chromeos/manifest-versions')
       api.cros_source.sync_to_pinned_manifest(manifest_internal_url, 'release',
                                               'releasespecs/91/13818.0.0.xml')
       _ = api.cros_source.pinned_manifest

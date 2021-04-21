@@ -11,7 +11,6 @@ import json
 from collections import defaultdict, namedtuple
 from google.protobuf.json_format import MessageToDict
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
@@ -149,7 +148,7 @@ class CrosSourceApi(RecipeApi):
   @property
   def snapshot_cas_digest(self):
     """Returns the snapshot digest in use or None."""
-    return (self._snapshot_cas.digest if self._snapshot_cas else None)
+    return self._snapshot_cas.digest if self._snapshot_cas else None
 
   def _validate_args(self, manifest_url, local_manifests, groups, cache_path,
                      manifest_branch):
@@ -630,7 +629,6 @@ class CrosSourceApi(RecipeApi):
 
       # Determine the branches for each of the (three) manifests, propagating
       # the build manifest to internal/external as appropriate.
-      b_branches = {x.branch for x in patches.build}
       e_branches = {
           x.branch for x in (patches.build if external else patches.extern)
       }
@@ -710,7 +708,7 @@ class CrosSourceApi(RecipeApi):
           clean_msg = 'nothing to commit, working tree clean'
           if clean_msg in res.stdout.splitlines():
             return False
-          elif res.retcode:
+          if res.retcode:
             raise StepFailure('git commit', result=res)
           return True
 
@@ -767,7 +765,7 @@ class CrosSourceApi(RecipeApi):
         self.m.step('push', [
             'git', 'push', new_dir,
             '+refs/remotes/{}/*:refs/heads/*'.format(remote),
-            '+refs/heads/{}:refs/heads/{}'.format(branch, branch)
+            '+refs/heads/{branch}:refs/heads/{branch}'.format(branch=branch)
         ])
 
       # 3. Switch to the newly cloned mirror.  Tip-of-tree for for the original
@@ -871,11 +869,10 @@ class CrosSourceApi(RecipeApi):
         project_path (str): The repo path, relative to the workspace_path.  Only
           use this if patching a repo that is not found in the manifest.
       """
-      if not patch_sets:
-        return []
-      name = '%s: apply gerrit patch sets' % patch_sets[0].project
-      self._apply_gerrit_patch_sets(patch_sets, name=name,
-                                    project_path=project_path)
+      if patch_sets:
+        name = '%s: apply gerrit patch sets' % patch_sets[0].project
+        self._apply_gerrit_patch_sets(patch_sets, name=name,
+                                      project_path=project_path)
 
     _apply(patches.build)
     _apply(patches.extern)
