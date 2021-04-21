@@ -57,7 +57,8 @@ def RunSteps(api, properties):
 
     with api.step.nest('sync to snapshot'):
       api.repo.sync_manifest(manifest_url, manifest_data=manifest_data,
-                             detach=True, optimized_fetch=True, retry_fetches=8)
+                             current_branch=True, detach=True,
+                             optimized_fetch=True, retry_fetches=8)
 
 
 def WithManifestNameTest(api, state_name, state):

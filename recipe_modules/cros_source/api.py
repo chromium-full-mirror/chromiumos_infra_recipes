@@ -25,8 +25,9 @@ DEFAULT_CACHE_SYNC_OPTS = dict(current_branch=True, detach=True,
 STAGING_INIT_OPTS = dict(repo_branch='main')
 
 # Default options for checking out a branch.
-DEFAULT_CHECKOUT_SYNC_OPTS = dict(jobs=8, optimized_fetch=True, timeout=3600,
-                                  force_sync=True, retry_fetches=8)
+DEFAULT_CHECKOUT_SYNC_OPTS = dict(current_branch=True, force_sync=True, jobs=8,
+                                  optimized_fetch=True, retry_fetches=8,
+                                  timeout=3600)
 
 # Manifest repositories that sync_to_pinned_manifest is allowed to pull from.
 ALLOWED_MANIFEST_SOURCES = [
@@ -1020,8 +1021,7 @@ class CrosSourceApi(RecipeApi):
       projects = kwargs.get('projects', None)
       snapshot_xml = self._get_manifest(gitiles_commit, projects=projects)
       # Force_sync to ensure that we get the snapshot that we want.
-      sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8,
-                       force_sync=True)
+      sync_opts = dict(detach=True, **DEFAULT_CHECKOUT_SYNC_OPTS)
       sync_opts.update(kwargs)
       self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
                                 **sync_opts)

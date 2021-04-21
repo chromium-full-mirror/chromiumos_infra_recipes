@@ -644,6 +644,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
+      "--current-branch",
       "--verbose",
       "chromeos/program/galaxy",
       "chromiumos/config",
@@ -711,6 +712,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--force-sync",
+      "--current-branch",
       "--jobs",
       "8",
       "--optimized-fetch",

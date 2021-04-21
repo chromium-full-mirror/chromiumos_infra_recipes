@@ -381,6 +381,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--detach",
+      "--current-branch",
       "--optimized-fetch",
       "--retry-fetches",
       "8"

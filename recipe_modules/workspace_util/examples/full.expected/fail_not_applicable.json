@@ -780,6 +780,9 @@
       "sync",
       "--force-sync",
       "--detach",
+      "--current-branch",
+      "--jobs",
+      "8",
       "--optimized-fetch",
       "--retry-fetches",
       "8"
@@ -795,6 +798,7 @@
     },
     "infra_step": true,
     "name": "sync to gitiles commit.repo sync",
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

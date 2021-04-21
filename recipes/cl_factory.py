@@ -96,7 +96,7 @@ def RunSteps(api, properties):
       with api.step.nest('find additional repos to sync'):
         sync_projects = _determine_sync_projects(api, gc_infos, cl_infos,
                                                  properties)
-        api.repo.sync(projects=sync_projects, verbose=True)
+        api.repo.sync(projects=sync_projects, current_branch=True, verbose=True)
 
       if properties.manifest_branch:
         api.cros_source.checkout_branch(api.src_state.internal_manifest.url,

@@ -642,6 +642,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
+      "--current-branch",
       "--verbose",
       "a",
       "c",

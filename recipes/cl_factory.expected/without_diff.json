@@ -644,6 +644,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
+      "--current-branch",
       "--verbose",
       "chromeos/program/galaxy",
       "chromiumos/config",

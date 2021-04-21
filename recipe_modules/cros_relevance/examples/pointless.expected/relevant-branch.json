@@ -111,6 +111,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--force-sync",
+      "--current-branch",
       "--jobs",
       "8",
       "--optimized-fetch",
