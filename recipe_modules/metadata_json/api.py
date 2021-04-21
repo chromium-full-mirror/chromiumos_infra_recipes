@@ -86,8 +86,6 @@ class MetadataJsonApi(RecipeApi):
                              test_data='some start time')
     }
 
-    build_target = self.m.cros_infra_config.get_build_target_name(build)
-    self._metadata['boards'] = [build_target]
     config = self.m.cros_infra_config.config
     self._metadata['unibuild'] = config.general.unibuild
 
@@ -107,6 +105,14 @@ class MetadataJsonApi(RecipeApi):
         'milestone': version_dict.get('milestoneVersion', ''),
         'platform': version_dict.get('platformVersion', ''),
     }
+
+  def add_entries(self, **kwargs):
+    """Add elements to metadata.
+
+    Args:
+      kwargs (dict): dictionary of key-values to update.
+    """
+    self._metadata.update(kwargs)
 
   def get_metadata(self):
     """Get the metadata dict. Should only be used for unittesting.
@@ -235,6 +241,8 @@ class MetadataJsonApi(RecipeApi):
     try:
       with self.m.step.nest('metadata setup'):
         self.add_default_entries()
+        self.add_entries(
+            boards=[target.name] if target and target.name else [None])
 
       yield
 

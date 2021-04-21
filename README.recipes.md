@@ -302,7 +302,6 @@
   * [metadata_json:examples/default_entries](#recipes-metadata_json_examples_default_entries)
   * [metadata_json:examples/finalize_build](#recipes-metadata_json_examples_finalize_build)
   * [metadata_json:examples/finalize_build_crashing_out](#recipes-metadata_json_examples_finalize_build_crashing_out)
-  * [metadata_json:examples/upload_to_gs](#recipes-metadata_json_examples_upload_to_gs)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full)
@@ -4512,18 +4511,25 @@ A module to write metadata.json into GS for GoldenEye consumption.
 
 These fields are available at the start of the build.
 
-&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#177)(self):**
+&mdash; **def [add\_entries](/recipe_modules/metadata_json/api.py#109)(self, \*\*kwargs):**
+
+Add elements to metadata.
+
+Args:
+  kwargs (dict): dictionary of key-values to update.
+
+&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#183)(self):**
 
 Add stage results for DebugSymbols and Unittest stages.
 
-&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#98)(self, version_dict):**
+&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#96)(self, version_dict):**
 
 Update metadata with version info.
 
 Args:
   version_dict (dict): Map containing version info.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#227)(self, config, target):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#233)(self, config, target):**
 
 Returns a context that upload final metadata.json to GS.
 
@@ -4531,7 +4537,7 @@ Args:
   config (BuilderConfig): builder config of this builder.
   target (BuildTarget): The build target of this builder.
 
-&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#205)(self, config, target, success):**
+&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#211)(self, config, target, success):**
 
 Finish the build stats and upload metadata.json.
 
@@ -4540,13 +4546,13 @@ Args:
   target (BuildTarget): The build target of this builder.
   success (bool): Did this build pass.
 
-&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#111)(self):**
+&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#117)(self):**
 
 Get the metadata dict. Should only be used for unittesting.
 
 Returns: dict, metadata info.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#133)(self, config, build_target, partial=False):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#139)(self, config, build_target, partial=False):**
 
 Upload metadata to GS at its current state.
 
@@ -4555,7 +4561,7 @@ Args:
   target (BuildTarget): The build target of this builder.
   partial (bool): whether the metadata is incomplete.
 
-&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#118)(self, filename):**
+&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#124)(self, filename):**
 
 Write metadata dict to a tempfile.
 
@@ -7445,11 +7451,6 @@ Recipe for syncing to our local cache LVFS files (https://fwupd.org/).
 [DEPS](/recipe_modules/metadata_json/examples/finalize_build_crashing_out.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/finalize_build_crashing_out.py#19)(api):**
-### *recipes* / [metadata\_json:examples/upload\_to\_gs](/recipe_modules/metadata_json/examples/upload_to_gs.py)
-
-[DEPS](/recipe_modules/metadata_json/examples/upload_to_gs.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [metadata\_json](#recipe_modules-metadata_json)
-
-&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/upload_to_gs.py#15)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
