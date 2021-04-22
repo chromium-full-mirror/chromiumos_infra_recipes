@@ -202,7 +202,6 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
           config_project_info.remote,
           _merge_flattened,
           ref=config_project_info.branch,
-          automerge=True,
       )
     except StepFailure:
       presentation.status = 'FAILURE'  # swallow StepFailure and keep going
@@ -271,8 +270,11 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
   with api.context(config_internal),\
        api.step.nest("aggregating configs") as presentation:
     try:
-      api.git_txn.update_ref(config_project_info.remote, _merge_configs,
-                             ref=config_project_info.branch, automerge=True)
+      api.git_txn.update_ref(
+          config_project_info.remote,
+          _merge_configs,
+          ref=config_project_info.branch,
+      )
     except StepFailure:
       presentation.status = 'FAILURE'  # swallow StepFailure and keep going
 
@@ -633,13 +635,13 @@ def GenTests(api):
           post_process.DoesNotRun,
           'Do flatten_configs and create CL'   \
               '.aggregating flattened configs' \
-              '.update ref.gerrit transaction.git push'
+              '.git transaction.git push'
       ),
       api.post_process(
           post_process.DoesNotRun,
           'Do flatten_configs and create CL'   \
               '.aggregating flattened configs' \
-              '.update ref.gerrit transaction.git push'
+              '.git transaction.git push'
       ),
   )
 
@@ -651,15 +653,15 @@ def GenTests(api):
       mock_payloads("config.jsonproto"),
       flatten_step_data(1),
       api.step_data(
-          'Do flatten_configs and create CL'
-          '.aggregating flattened configs'
-          '.update ref.gerrit transaction.'
-          'merge flattened configs to config-internal', retcode=1),
+          'Do flatten_configs and create CL'   \
+              '.aggregating flattened configs' \
+              '.git transaction.merge flattened configs to config-internal',
+          retcode=1),
       api.post_process(
           post_process.DoesNotRun,
-          'Do flatten_configs and create CL'
-          '.aggregating flattened configs'
-          '.update ref.gerrit transaction.git push',
+          'Do flatten_configs and create CL'   \
+              '.aggregating flattened configs' \
+              '.git transaction.git push',
       ),
   )
 
@@ -686,17 +688,15 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_process(
           post_process.MustRun,
-          'Do copy_to_internal and create CL'
-          '.aggregating configs'
-          '.update ref.gerrit transaction.merge joined configs'
-          ' to config-internal',
+          'Do copy_to_internal and create CL' \
+              '.aggregating configs'          \
+              '.git transaction.merge joined configs to config-internal',
       ),
       api.post_process(
           post_process.DoesNotRun,
-          'Do copy_to_internal and create CL'
-          '.aggregating configs'
-          '.update ref.gerrit transaction.merge flattened configs'
-          ' to config-internal',
+          'Do copy_to_internal and create CL' \
+              '.aggregating configs'          \
+              '.git transaction.merge flattened configs to config-internal',
       ),
   )
 
@@ -709,9 +709,10 @@ def GenTests(api):
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(False),
       api.post_process(
-          StepSummaryEquals, 'Do copy_to_internal and create CL'
-          '.aggregating configs'
-          '.update ref.gerrit transaction.diffing to find changes',
+          StepSummaryEquals,
+          'Do copy_to_internal and create CL' \
+              '.aggregating configs'          \
+              '.git transaction.diffing to find changes',
           "No changes to commit"),
   )
 
@@ -724,10 +725,10 @@ def GenTests(api):
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
-          'Do copy_to_internal and create CL'
-          '.aggregating configs'
-          '.update ref.gerrit transaction.merge '
-          'joined configs to config-internal', retcode=1),
+          'Do copy_to_internal and create CL' \
+              '.aggregating configs'          \
+              '.git transaction.merge joined configs to config-internal',
+          retcode=1),
   )
 
   yield api.test(

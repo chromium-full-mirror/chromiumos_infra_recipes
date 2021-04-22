@@ -698,16 +698,9 @@
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.git transaction",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
     ]
   },
@@ -724,24 +717,24 @@
       "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway/generated/flattened.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.merge flattened configs to config-internal",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.git transaction.merge flattened configs to config-internal",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.diffing to find changes",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.git transaction.diffing to find changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_SUMMARY_TEXT@No changes to commit@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.diffing to find changes.diff check",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.git transaction.diffing to find changes.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -782,16 +775,9 @@
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
     ]
   },
@@ -808,24 +794,24 @@
       "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway/generated/joined.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.merge joined configs to config-internal",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.merge joined configs to config-internal",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.diffing to find changes",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_SUMMARY_TEXT@No changes to commit@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.diffing to find changes.diff check",
+    "name": "Do copy_to_internal and create CL.aggregating configs.git transaction.diffing to find changes.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1127,8 +1113,7 @@
     "cmd": [
       "git",
       "rebase",
-      "--force-rebase",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
+      "--force-rebase"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project_public",
     "infra_step": true,

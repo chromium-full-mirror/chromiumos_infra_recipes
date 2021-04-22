@@ -799,17 +799,9 @@
   },
   {
     "cmd": [],
-    "name": "processing test_program/test_project.update ref",
+    "name": "processing test_program/test_project.git transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "processing test_program/test_project.update ref.git transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -827,9 +819,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported directory exists",
+    "name": "processing test_program/test_project.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported directory exists",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -845,9 +837,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.copy public model.yaml",
+    "name": "processing test_program/test_project.git transaction.copy public model.yaml",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -858,9 +850,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.git add",
+    "name": "processing test_program/test_project.git transaction.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -876,9 +868,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.copy private model.yaml",
+    "name": "processing test_program/test_project.git transaction.copy private model.yaml",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -889,9 +881,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.git add (2)",
+    "name": "processing test_program/test_project.git transaction.git add (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -907,9 +899,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.copy HWID database",
+    "name": "processing test_program/test_project.git transaction.copy HWID database",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -920,9 +912,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.git add (3)",
+    "name": "processing test_program/test_project.git transaction.git add (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -939,9 +931,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated directory exists",
+    "name": "processing test_program/test_project.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated directory exists",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -970,9 +962,9 @@
     "env": {
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
     },
-    "name": "processing test_program/test_project.update ref.git transaction.Generate imported configuration",
+    "name": "processing test_program/test_project.git transaction.Generate imported configuration",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -1019,7 +1011,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "\n\n1 errors\n\n- Step('processing test_program/test_project.update ref.git transaction.Generate imported configuration') (retcode: 1)\n\n"
+      "humanReason": "\n\n1 errors\n\n- Step('processing test_program/test_project.git transaction.Generate imported configuration') (retcode: 1)\n\n"
     },
     "name": "$result"
   }

@@ -17,9 +17,7 @@
       "foo-refactoring",
       "--hashtag",
       "bar-feature",
-      "--send-mail",
-      "--target-branch",
-      "HEAD"
+      "--send-mail"
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [

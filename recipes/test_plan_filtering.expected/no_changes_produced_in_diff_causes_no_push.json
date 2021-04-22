@@ -552,13 +552,8 @@
   },
   {
     "cmd": [],
-    "name": "update ref"
-  },
-  {
-    "cmd": [],
-    "name": "update ref.gerrit transaction",
+    "name": "git transaction",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
     ]
   },
@@ -570,9 +565,9 @@
       "[START_DIR]/chromiumos_workspace/src/config-internal/test/plans"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "name": "update ref.gerrit transaction.find test plans",
+    "name": "git transaction.find test plans",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -589,9 +584,9 @@
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json",
       "PYTHONPATH": "[START_DIR]/chromiumos_workspace/src/config/payload_utils:[START_DIR]/chromiumos_workspace/infra/config:[START_DIR]/chromiumos_workspace/src/config-internal"
     },
-    "name": "update ref.gerrit transaction.filter test plans by availability step",
+    "name": "git transaction.filter test plans by availability step",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -602,9 +597,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.git add",
+    "name": "git transaction.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -617,9 +612,9 @@
       "[START_DIR]/base1/test_plans"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "name": "update ref.gerrit transaction.generate test plan summary step",
+    "name": "git transaction.generate test plan summary step",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -630,9 +625,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.git add (2)",
+    "name": "git transaction.git add (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -649,9 +644,9 @@
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json",
       "PYTHONPATH": "[START_DIR]/chromiumos_workspace/src/config/payload_utils:[START_DIR]/chromiumos_workspace/infra/config:[START_DIR]/chromiumos_workspace/src/config-internal"
     },
-    "name": "update ref.gerrit transaction.filter test plans by availability step (2)",
+    "name": "git transaction.filter test plans by availability step (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -662,9 +657,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.git add (3)",
+    "name": "git transaction.git add (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -677,9 +672,9 @@
       "[START_DIR]/base2/test_plans"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "name": "update ref.gerrit transaction.generate test plan summary step (2)",
+    "name": "git transaction.generate test plan summary step (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -690,9 +685,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.git add (4)",
+    "name": "git transaction.git add (4)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -709,9 +704,9 @@
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json",
       "PYTHONPATH": "[START_DIR]/chromiumos_workspace/src/config/payload_utils:[START_DIR]/chromiumos_workspace/infra/config:[START_DIR]/chromiumos_workspace/src/config-internal"
     },
-    "name": "update ref.gerrit transaction.filter test plans by availability step (3)",
+    "name": "git transaction.filter test plans by availability step (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -722,9 +717,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.git add (5)",
+    "name": "git transaction.git add (5)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -737,9 +732,9 @@
       "[START_DIR]/base3/test_plans"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "name": "update ref.gerrit transaction.generate test plan summary step (3)",
+    "name": "git transaction.generate test plan summary step (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -750,16 +745,16 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.git add (6)",
+    "name": "git transaction.git add (6)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update ref.gerrit transaction.diffing to find changes",
+    "name": "git transaction.diffing to find changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -771,9 +766,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.diffing to find changes.git diff",
+    "name": "git transaction.diffing to find changes.git diff",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

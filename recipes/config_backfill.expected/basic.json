@@ -766,9 +766,378 @@
   },
   {
     "cmd": [],
+    "name": "processing test_program/test_project",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@[deadbeef](https://chromium.googlesource.com/+/deadbeefdeadbeefdeadbeefdeadbeefdeadbeef)@@@",
+      "@@@STEP_LOG_LINE@changed files@a/b/text.txt, other_test.txt@@@",
+      "@@@STEP_LOG_END@changed files@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "processing test_program/test_project.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project/test_program/test_project|src/[START_DIR]/chromiumos_workspace/src/project/test_program/test_project|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "processing test_program/test_project.git transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported directory exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/public_model.yaml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.copy public model.yaml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/public_model.yaml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/private_model.yaml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.copy private model.yaml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/private_model.yaml"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.git add (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/hwid"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.copy HWID database",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/hwid"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.git add (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated directory exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
+      "--log",
+      "DEBUG",
+      "--project-name",
+      "test_project",
+      "--program-name",
+      "test_program",
+      "--public-model",
+      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
+      "--private-model",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
+      "--hwid",
+      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
+      "--config-bundle",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/config.jsonproto",
+      "--import-only",
+      "--output",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/imported.jsonproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "env": {
+      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
+    },
+    "name": "processing test_program/test_project.git transaction.Generate imported configuration",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/imported.jsonproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "env": {
+      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
+    },
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.git add (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
+      "--log",
+      "DEBUG",
+      "--project-name",
+      "test_project",
+      "--program-name",
+      "test_program",
+      "--public-model",
+      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
+      "--private-model",
+      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
+      "--hwid",
+      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
+      "--config-bundle",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/config.jsonproto",
+      "--output",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/joined.jsonproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "env": {
+      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
+    },
+    "name": "processing test_program/test_project.git transaction.Generate joined configuration",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/joined.jsonproto"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "env": {
+      "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
+    },
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.git add (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "processing test_program/test_project.git transaction.diffing repo to find changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.diffing repo to find changes.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Merging legacy configs.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_backfill",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.diffing repo to find changes.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Merging legacy configs.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: config_backfill@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.diffing repo to find changes.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "cros",
+      "HEAD:refs/heads/main"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git transaction.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "get-url",
+      "cros"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set commits",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@commits@{}@@@"
+      "@@@SET_BUILD_PROPERTY@commits@{\"test_program\": {\"test_project\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"}}@@@"
     ]
   },
   {

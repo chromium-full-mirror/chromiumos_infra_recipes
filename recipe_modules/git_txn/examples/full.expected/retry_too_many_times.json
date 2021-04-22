@@ -1,17 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "update ref",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update ref.git transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "git transaction"
   },
   {
     "cmd": [
@@ -19,13 +9,12 @@
       "push",
       "--porcelain",
       "remote",
-      "HEAD:refs/heads/ref"
+      "HEAD:refs/for/refs/heads/ref%notify=NONE,submit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.git transaction.git push",
+    "name": "git transaction.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@! HEAD:refs/fake [remote rejected]@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -37,11 +26,10 @@
       "remote",
       "refs/heads/ref:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.git transaction.git fetch",
+    "name": "git transaction.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -50,11 +38,10 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.git transaction.git rev-parse",
+    "name": "git transaction.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -64,19 +51,15 @@
       "--force",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.git transaction.git checkout",
+    "name": "git transaction.git checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update ref.git transaction attempt 1 of 2",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "git transaction retry 1 of 1"
   },
   {
     "cmd": [
@@ -84,13 +67,12 @@
       "push",
       "--porcelain",
       "remote",
-      "HEAD:refs/heads/ref"
+      "HEAD:refs/for/refs/heads/ref%notify=NONE,submit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.git transaction attempt 1 of 2.git push",
+    "name": "git transaction retry 1 of 1.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@! HEAD:refs/fake [remote rejected]@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -102,11 +84,10 @@
       "remote",
       "refs/heads/ref:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.git transaction attempt 1 of 2.git fetch",
+    "name": "git transaction retry 1 of 1.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -115,11 +96,10 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.git transaction attempt 1 of 2.git rev-parse",
+    "name": "git transaction retry 1 of 1.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -129,11 +109,10 @@
       "--force",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.git transaction attempt 1 of 2.git checkout",
+    "name": "git transaction retry 1 of 1.git checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
