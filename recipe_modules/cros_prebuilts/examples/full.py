@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'cros_infra_config',
     'cros_prebuilts',
     'git',
@@ -15,10 +16,6 @@ DEPS = [
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget, Profile
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
-# TODO(crbug/1179353): Remove once public builders are rolled out.
-from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
-    CrosInfraConfigProperties)
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
     CrosPrebuiltsProperties)
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
@@ -27,7 +24,6 @@ from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import (
     FullProperties)
 
 from recipe_engine.post_process import MustRun, DoesNotRun
-
 PROPERTIES = FullProperties
 
 
@@ -114,20 +110,8 @@ def GenTests(api):
     if expect_commit:
       ret += api.step_data(
           'upload prebuilts.update binhost conf file.'
-          'git transaction.diff check.git diff', retcode=1)
-      ret += api.post_check(
-          verify_branch,
-          'staging' if use_staging else api.src_state.default_branch)
+          'update ref.gerrit transaction.diff check.git diff', retcode=1)
     return ret
-
-  def verify_branch(check, steps, branch):
-    expected = [
-        'git', 'push', '--porcelain', 'cros',
-        'HEAD:refs/for/refs/heads/{}%notify=NONE,submit'.format(branch)
-    ]
-    return check(steps[
-        'upload prebuilts.update binhost conf file.git transaction.git push']
-                 .cmd == expected)
 
   for private in False, True:
     for use_staging in False, True:
@@ -142,7 +126,17 @@ def GenTests(api):
           yield api.test(
               name,
               test_data(private, use_staging, enable_snapshot_prebuilts,
-                        send_snapshot_prebuilts))
+                        send_snapshot_prebuilts),
+              api.post_check(
+                  MustRun,
+                  'upload prebuilts.update binhost conf file.update ref'
+                  '.gerrit transaction'),
+              api.step_data(
+                  ('upload prebuilts.update binhost conf file.update ref'
+                   '.gerrit transaction.git push'),
+                  stderr=api.raw_io.output(
+                      ('remote:   https://chromium-review.googlesource'
+                       '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))
 
   yield api.test('disable-overlay-commits',
                  test_data(disable_overlay_commits=True))
@@ -154,3 +148,15 @@ def GenTests(api):
   # upload_target_prebuilts skipping binhost commit and metadata
   # upload.
   yield api.test('dirty-source', test_data(dirty_source=True))
+
+  # TODO(crbug/1179353): Remove once public builders are rolled out.
+  yield api.test(
+      'switch-to-external', test_data(),
+      api.post_check(
+          MustRun, 'upload prebuilts.update binhost conf file.update ref'
+          '.gerrit transaction'),
+      api.step_data(
+          'upload prebuilts.update binhost conf file.update ref'
+          '.gerrit transaction.git push', stderr=api.raw_io.output(
+              ('remote:   https://chromium-review.googlesource'
+               '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))

@@ -443,6 +443,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       # Only buildbucket launched builds with the default profile should commit
       # BINHOST.conf updates.  Which can be explicitly disabled with the feature
       # flag.
+
       overlay_commit = (
           self.m.buildbucket.build.id and not self._disable_overlay_commits and
           self._profile_or_default(profile) == self._profile_or_default(None))

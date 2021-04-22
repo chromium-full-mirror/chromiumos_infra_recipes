@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -18,17 +19,39 @@ def RunSteps(api):
       change=12345678,
       patchset=3,
   )
+  gerrit_change_remote = GerritChange(
+      host='chromium-review.googlesource.com',
+      project='project',
+      change=123,
+      patchset=3,
+  )
   labels = {
       api.gerrit.Label.CODE_REVIEW: 2,
       api.gerrit.Label.VERIFIED: 1,
   }
   ref = api.gerrit.set_change_labels(gerrit_change, labels)
-  api.assertions.assertEqual(ref, 'refs/for/main%l=Code-Review+2,l=Verified+1')
+  api.assertions.assertEqual(ref,
+                             'HEAD:refs/for/main%l=Code-Review+2,l=Verified+1')
 
-  ref = api.gerrit.set_change_labels_remote(gerrit_change,
-                                            'refs/change/78/12345678/3', labels)
-  api.assertions.assertEqual(ref, 'refs/for/main%l=Code-Review+2,l=Verified+1')
+  ref = api.gerrit.set_change_labels_remote(gerrit_change_remote,
+                                            'refs/change/78/123/3', labels)
+  api.assertions.assertEqual(
+      ref, 'HEAD:refs/change/78/123/3%l=Code-Review+2,l=Verified+1')
 
 
 def GenTests(api):
   yield api.test('basic')
+
+  yield api.test(
+      'retry-succeed',
+      api.step_data('set labels on CL 12345678.git push', retcode=1),
+      api.step_data('set labels on CL 12345678.git push (2)', retcode=1),
+      api.post_check(post_process.MustRun,
+                     'set labels on CL 12345678.git push (3)'))
+
+  yield api.test(
+      'retry-fail',
+      api.step_data('set labels on CL 12345678.git push', retcode=1),
+      api.step_data('set labels on CL 12345678.git push (2)', retcode=1),
+      api.step_data('set labels on CL 12345678.git push (3)', retcode=1),
+      api.post_check(post_process.StepException, 'set labels on CL 12345678'))

@@ -42,7 +42,7 @@ def RunSteps(api):
   api.assertions.assertEqual(api.git.remote_url(),
                              "https://chromium.googlesource.com")
   api.git.push('origin', 'HEAD:main', dry_run=True, capture_stdout=True,
-               force=True, infra_step=False, timeout=30)
+               capture_stderr=True, force=True, infra_step=False, timeout=30)
 
   with api.step.nest('check diffs') as presentation:
     has_diffs = api.git.diff_check('some/file/path')

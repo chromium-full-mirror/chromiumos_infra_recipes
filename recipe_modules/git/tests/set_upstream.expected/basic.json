@@ -1,0 +1,35 @@
+[
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://mygithost.google.com/somerepo",
+      "."
+    ],
+    "infra_step": true,
+    "name": "git clone"
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "-b",
+      "test",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git checkout"
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "--set-upstream-to=https://mygithost.google.com/somerepo/test"
+    ],
+    "infra_step": true,
+    "name": "git branch"
+  },
+  {
+    "name": "$result"
+  }
+]

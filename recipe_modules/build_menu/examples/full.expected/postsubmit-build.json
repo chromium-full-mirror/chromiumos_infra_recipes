@@ -6005,10 +6005,45 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.git transaction",
+    "name": "upload prebuilts.update binhost conf file.update ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "-b",
+      "main",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "--set-upstream-to=cros/main"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -6023,9 +6058,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts.update binhost conf file.git transaction.try remove existing file",
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.try remove existing file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -6041,17 +6076,17 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts.update binhost conf file.git transaction.write file",
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@BINHOST.conf@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.git transaction.diff check",
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -6063,9 +6098,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts.update binhost conf file.git transaction.diff check.git ls-files",
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check.git ls-files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -6078,9 +6113,9 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
-    "name": "upload prebuilts.update binhost conf file.git transaction.diff check.git diff",
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check.git diff",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {

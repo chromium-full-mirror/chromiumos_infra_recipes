@@ -246,7 +246,7 @@ class GitApi(recipe_api.RecipeApi):
     """
     self._step(['remote', 'update'], name=step_name, timeout=timeout_sec)
 
-  def checkout(self, commit, force=False):
+  def checkout(self, commit, force=False, branch=None):
     """Runs 'git checkout'.
 
     Args:
@@ -256,6 +256,8 @@ class GitApi(recipe_api.RecipeApi):
     args = ['checkout']
     if force:
       args += ['--force']
+    if branch:
+      args += ['-b', branch]
     args += [commit]
     self._step(args)
 
@@ -340,7 +342,8 @@ class GitApi(recipe_api.RecipeApi):
       cmd.extend(files)
     return self._step(cmd, **kwargs)
 
-  def _push(self, remote, refspec, dry_run, capture_stdout, force, **kwargs):
+  def _push(self, remote, refspec, dry_run, capture_stdout, capture_stderr,
+            force, **kwargs):
     """Runs 'git push'.
 
     Args:
@@ -348,6 +351,7 @@ class GitApi(recipe_api.RecipeApi):
       refspec (str): The refspec to push.
       dry_run (bool): If true, set --dry-run on git command.
       capture_stdout (bool): If True, return stdout in step data.
+      capture_stderr (bool): If True, return stderr in step data.
       force (bool): add force flag for git push
       kwargs (dict): Passed to api.step.
 
@@ -360,14 +364,18 @@ class GitApi(recipe_api.RecipeApi):
     if force:
       args += ['--force']
     stdout = None
-    if capture_stdout:
+    stderr = None
+    if capture_stdout or capture_stderr:
       args += ['--porcelain']
+    if capture_stdout:
       stdout = self.m.raw_io.output(add_output_log=True)
+    if capture_stderr:
+      stderr = self.m.raw_io.output(add_output_log=True)
     args += [remote, refspec]
-    return self._step(args, stdout=stdout, **kwargs)
+    return self._step(args, stdout=stdout, stderr=stderr, **kwargs)
 
   def push(self, remote, refspec, dry_run=False, capture_stdout=False,
-           retry=True, force=False, **kwargs):
+           capture_stderr=False, retry=True, force=False, **kwargs):
     """Runs 'git push'.
 
     Args:
@@ -375,6 +383,7 @@ class GitApi(recipe_api.RecipeApi):
       refspec (str): The refspec to push.
       dry_run (bool): If true, set --dry-run on git command.
       capture_stdout (bool): If True, return stdout in step data.
+      capture_stderr (bool): If True, return stderr in step data.
       retry (bool): Whether to retry.  Default: True
       force (bool): add force flag for git push
       kwargs (dict): Passed to api.step.
@@ -386,7 +395,8 @@ class GitApi(recipe_api.RecipeApi):
     if retry:
       func = exponential_retry(retries=3, delay=timedelta(seconds=2))(
           self._push)
-    return func(remote, refspec, dry_run, capture_stdout, force, **kwargs)
+    return func(remote, refspec, dry_run, capture_stdout, capture_stderr, force,
+                **kwargs)
 
   def current_branch(self):
     """Returns the currently checked out branch name.
@@ -734,3 +744,19 @@ class GitApi(recipe_api.RecipeApi):
         test_stdout="https://chromium.googlesource.com",
     )
     return result.stdout.strip()
+
+  def set_upstream(self, remote, branch):
+    """ Set the upretrem for the given branch.
+
+    Args:
+      remote (str): The remote repository to track.
+      branch (str): The remote branch to push to.
+
+    Returns:
+      (StepData): See 'step.__call__'.
+    """
+    result = self._step(
+        ['branch', '--set-upstream-to=%s/%s' % (remote, branch)],
+        stdout=self.m.raw_io.output())
+
+    return result

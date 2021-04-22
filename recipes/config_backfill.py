@@ -17,12 +17,12 @@ import collections
 import textwrap
 import urlparse
 
-from PB.recipes.chromeos.config_backfill import ConfigBackfillProperties
 from recipe_engine import post_process
 
 # import protos
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.config_backfill import ConfigBackfillProperties
 
 # Recipe dependencies
 DEPS = [
@@ -333,7 +333,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
   return merge
 
 
-def backfill_project(api, properties, config):
+def backfill_project(api, config):
   """Backfill an individual project.
 
   Expects to be run in the root of the chromeos checkout.
@@ -463,7 +463,7 @@ def RunSteps(api, properties):
 
       # run backfill
       futures = [
-          api.futures.spawn(backfill_project, api, properties, config)
+          api.futures.spawn(backfill_project, api, config)
           for config in properties.configs
       ]
       api.futures.wait(futures)
@@ -533,16 +533,39 @@ def GenTests(api):
       'basic',
       api.properties(
           **{
-              'configs': [{
-                  'public_yaml_path': 'some/model.yaml',
-                  'private_yaml': {
-                      'repo': CROS_INTERNAL + '/private/',
-                      'path': 'some/model.yaml'
-                  },
-                  'hwid_key': 'some_key',
-                  'project_name': 'test_project',
-                  'program_name': 'test_program',
-              }]
+              'dest_repo': 'https://example.com/some/project/repo',
+              'public_yaml': {
+                  'repo': 'https://example.com/public/',
+                  'path': 'some/model.yaml'
+              },
+              'private_yaml': {
+                  'repo': CROS_INTERNAL + '/private/',
+                  'path': 'some/model.yaml'
+              },
+              'hwid_key': 'some_key',
+              'project_name': 'test_project',
+              'program_name': 'test_program',
+          }),
+      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      api.post_process(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'basic-staging',
+      api.properties(
+          **{
+              'dest_repo': 'https://example.com/some/project/repo',
+              'public_yaml': {
+                  'repo': 'https://example.com/public/',
+                  'path': 'some/model.yaml'
+              },
+              'private_yaml': {
+                  'repo': CROS_INTERNAL + '/private/',
+                  'path': 'some/model.yaml'
+              },
+              'hwid_key': 'some_key',
+              'project_name': 'test_project',
+              'program_name': 'test_program',
           }),
       mock_workspace_path(api, 'src/project/test_program/test_project'),
       api.post_process(post_process.StatusSuccess),
@@ -565,7 +588,7 @@ def GenTests(api):
           }),
       api.step_data(
           'processing test_program/test_project'
-          '.git transaction'
+          '.update ref.git transaction'
           '.Generate imported configuration', retcode=1),
       mock_workspace_path(api, 'src/project/test_program/test_project'),
       api.post_process(post_process.StatusFailure),
@@ -591,7 +614,7 @@ def GenTests(api):
       api.post_process(
           post_process.StepCommandContains,
           "processing test_program/test_project"
-          ".git transaction"
+          ".update ref.git transaction"
           ".git push",
           ["git", "push", "--dry-run"],
       ),
@@ -667,7 +690,33 @@ def GenTests(api):
       mock_workspace_path(api, 'src/project/test_program/test_project'),
       api.step_data(
           'processing test_program/test_project'
-          '.git transaction'
+          '.update ref.git transaction'
           '.diffing repo to find changes.git diff',
           stdout=api.raw_io.output('')),
   )
+
+  yield api.test(
+      'changed_files',
+      api.properties(
+          **{
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
+          }), mock_workspace_path(api, 'src/project/test_program/test_project'),
+      api.step_data(
+          'processing test_program/test_project'
+          '.update ref.git transaction'
+          '.diffing repo to find changes.git diff',
+          stdout=api.raw_io.output('dfdsaf')),
+      api.step_data(
+          'processing test_program/test_project.update ref.git transaction'
+          '.git push', stdout=api.raw_io.output(
+              ('remote:   https://example.com/c/some/project/repo/+/123 '
+               'config_backfill: test'))))

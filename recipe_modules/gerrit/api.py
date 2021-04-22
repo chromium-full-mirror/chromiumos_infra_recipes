@@ -5,15 +5,12 @@
 
 """APIs for managing Gerrit changes."""
 
-import collections
 import enum
 import functools
 import re
-import urllib
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
-from google.protobuf import json_format as jsonpb
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 # Strip these suffixes from hosts for "short" host display.
@@ -419,7 +416,7 @@ class GerritApi(RecipeApi):
       return
 
   def create_change(self, project, reviewers=None, ccs=None, topic=None,
-                    hashtags=None):
+                    branch=None, hashtags=None):
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
@@ -432,6 +429,7 @@ class GerritApi(RecipeApi):
       ccs (list[str]): List of cc emails. If specified, gerrit will cc the
           individuals.
       topic (str): Topic to set for the CL.
+      branch: Branch argument to be passed to git cl upload
       hashtags (list[str]): List of hashtags to set for the CL.
 
     Returns:
@@ -444,7 +442,8 @@ class GerritApi(RecipeApi):
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
-                             hashtags=hashtags, send_mail=True)
+                             hashtags=hashtags, send_mail=True,
+                             target_branch=branch)
         gerrit_change_url = self.m.git_cl.status(
             field='url', fast=True, step_test_data=functools.partial(
                 self.m.raw_io.test_api.stream_output,
@@ -456,7 +455,8 @@ class GerritApi(RecipeApi):
         change.project = project_info.name
         return change
 
-  def set_change_labels_remote(self, gerrit_change, fetch_ref, labels):
+  def set_change_labels_remote(self, gerrit_change, fetch_ref, labels,
+                               branch=None):
     """Set the given labels for the given Gerrit change.
       set_change_labels only works when the change exists in the local checkout.
       This function should be used in other cases.
@@ -465,6 +465,7 @@ class GerritApi(RecipeApi):
       gerrit_change (GerritChange): The change of interest.
       fetch_ref (str): The ref at which the change can be fetched.
       labels (dict): Mapping from label (Label) to value (int).
+      branch (str): The remote branch to update.
 
     Returns:
       str: The new label ref (primarily for testing).
@@ -473,13 +474,15 @@ class GerritApi(RecipeApi):
       project_info = self.m.repo.project_info(gerrit_change.project)
 
     with self.m.git.head_context():
-      # Fetch the the given Gerrit change.
-      self.m.git.fetch(project_info.remote, [fetch_ref], timeout_sec=60)
-      # Temporarily checkout the fetched ref.
-      self.m.git.checkout("FETCH_HEAD")
+      if not branch:
+        # Fetch the the given Gerrit change.
+        self.m.git.fetch(project_info.remote, [fetch_ref], timeout_sec=60)
+        # Temporarily checkout the fetched ref.
+        self.m.git.checkout("FETCH_HEAD")
 
       ref = self._set_change_labels(gerrit_change, labels,
-                                    rebase_from_remote=True)
+                                    rebase_from_remote=True, branch=branch,
+                                    ref=fetch_ref)
 
       return ref
 
@@ -495,39 +498,44 @@ class GerritApi(RecipeApi):
     """
     return self._set_change_labels(gerrit_change, labels)
 
-  def _set_change_labels(self, gerrit_change, labels, rebase_from_remote=False):
+  def _set_change_labels(self, gerrit_change, labels, rebase_from_remote=False,
+                         branch=None, ref=None):
     """Set the given labels for the given Gerrit change.
 
     Args:
       gerrit_change (GerritChange): The change of interest.
       labels (dict): Mapping from label (Label) to value (int).
       rebase_from_remote (bool): If true, sets the rebase branch to the equiv.
-        of origin/main (usually cros/main).
+        of origin/master (usually cros/master).
+      branch (str): The remote branch to update.
+      ref (str): The remote ref to update.
 
     Returns:
-      str: The new label ref (primarily for testing).
+      str: The refspec used to push the labels.
     """
     with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as pres:
       full_labels = sorted(
           ['%s+%d' % (label.key, value) for label, value in labels.iteritems()])
       pres.step_text = ','.join(full_labels)
       pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
-
       with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
 
-      branch = project_info.branch.split('/')[-1]
-      ref = 'refs/for/%s%%%s' % (branch, ','.join(
-          ['l=%s' % label for label in full_labels]))
-      refspec = 'HEAD:%s' % ref
+      if branch is None:
+        branch = project_info.branch.split('/')[-1]
+      ref = ref or 'refs/for/%s' % branch
+      ref = '%s%%%s' % (ref, ','.join(['l=%s' % label for label in full_labels
+                                      ]))
+
+      if not ref.startswith('HEAD:'):
+        ref = 'HEAD:%s' % ref
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         # Rebase before pushing so Gerrit does not complain there was no change.
         rebase_branch = branch = "%s/%s" % (
             project_info.remote, branch) if rebase_from_remote else None
         self.m.git.rebase(force=True, branch=rebase_branch)
-        self.m.git.push(project_info.remote, refspec)
-
+        self.m.git.push(project_info.remote, ref)
       return ref
 
   def add_change_comment(self, gerrit_change, comment):
@@ -616,7 +624,7 @@ class GerritApi(RecipeApi):
           self.parse_qualified_gerrit_host(gerrit_change), gerrit_change.change,
           message=message)
 
-  def submit_change(self, gerrit_change):
+  def submit_change(self, gerrit_change, retries=0):
     """Submits the given change.
 
     Args:
@@ -630,7 +638,15 @@ class GerritApi(RecipeApi):
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         self.m.git_cl('issue', [gerrit_change.change])
-        self.m.git_cl('land', ['-f', gerrit_change.change])
+        # If retries are requested, attempt `git cl land` until it lands or we
+        # run out of tries.
+        for attempt in range(retries + 1):
+          try:
+            self.m.git_cl('land', ['-f', gerrit_change.change])
+            return
+          except StepFailure as ex:
+            if attempt == retries:
+              raise ex
 
   def query_changes(self, host, query_params):
     """Query gerrit for the given changes.
