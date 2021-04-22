@@ -478,7 +478,8 @@ def RunSteps(api, properties):
         result = f.result()
         missing, program, project, commit = result
 
-        commits.append((program, project, commit))
+        if commit:
+          commits.append((program, project, commit))
 
         if missing:
           nmissing += 1

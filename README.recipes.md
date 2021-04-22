@@ -6557,7 +6557,7 @@ Args:
 Return:
   Formatted markdown string suitable to return via RawResult proto.
 
-&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#502)(api, path):**
+&mdash; **def [mock\_workspace\_path](/recipes/config_backfill.py#503)(api, path):**
 
 &mdash; **def [require](/recipes/config_backfill.py#75)(cond, message):**
 
