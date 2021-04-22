@@ -355,6 +355,10 @@ def backfill_project(api, properties, config):
 
   with api.step.nest("processing {}/{}".format(program,
                                                project)) as presentation:
+    if not api.path.exists(path_project_repo):
+      presentation.step_summary_text = "not checked out"
+      return BackfillStatus(True, program, project, "")
+
     # Update the repo atomically
     with api.context(cwd=path_project_repo):
       infos = api.repo.project_infos(
@@ -595,7 +599,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'not_checked_out',
+      'not_in_manifest',
       api.properties(
           **{
               'configs': [{
@@ -618,6 +622,29 @@ def GenTests(api):
           StepSummaryEquals,
           'processing test_program/test_project',
           'not in manifest',
+      ),
+      api.post_process(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'not_checked_out',
+      api.properties(
+          **{
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
+          }),
+      api.post_process(
+          StepSummaryEquals,
+          'processing test_program/test_project',
+          'not checked out',
       ),
       api.post_process(post_process.StatusSuccess),
   )
