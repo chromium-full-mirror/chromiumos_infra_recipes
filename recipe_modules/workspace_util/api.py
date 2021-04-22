@@ -6,13 +6,8 @@
 """API for various support functions for building."""
 
 import contextlib
-import json
-
-from google.protobuf import json_format as json_pb
 
 from recipe_engine import recipe_api
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 
 class WorkspaceUtilApi(recipe_api.RecipeApi):
@@ -78,13 +73,18 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     commit = commit or self.m.src_state.gitiles_commit
 
     manifest_url = self.m.src_state.build_manifest.url
-    cache_path_override = (
-        self.m.cros_source.cache_path
-        if self.m.src_state.manifest_name == 'internal' else
-        self.m.cros_source.workspace_path)
-    self.m.cros_source.ensure_synced_cache(
-        manifest_url=manifest_url, is_staging=staging, gitiles_commit=commit,
-        cache_path_override=cache_path_override, projects=projects)
+    sync_args = dict(manifest_url=manifest_url, is_staging=staging,
+                     gitiles_commit=commit, projects=projects)
+    branch = commit.ref.split('/', 2)[-1]
+    on_branch = not branch in ('', 'main', 'snapshot', 'staging-snapshot')
+    if on_branch:
+      sync_args['init_opts'] = dict(manifest_branch=branch)
+      sync_args['projects'] = [self.m.src_state.build_manifest.project]
+
+    if on_branch or self.m.src_state.manifest_name != 'internal':
+      sync_args['cache_path_override'] = self.m.cros_source.workspace_path
+
+    self.m.cros_source.ensure_synced_cache(**sync_args)
 
     with self.m.context(cwd=self.m.cros_source.workspace_path):
       if sync_to_manifest and sync_to_manifest.manifest_repo_url:
@@ -111,7 +111,6 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
           (e.g. because of Cq-Depend grouping); the changes will be discarded
           instead of failing during application.
     """
-    patch_sets = []
     changes = self.m.src_state.gerrit_changes if changes is None else changes
     if not changes:
       return
@@ -214,11 +213,13 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     manifest_url = self.m.src_state.external_manifest.url
 
     if local_manifests:
-      assert not manifest_branch, 'manifest_branch and local_manifests cannot be specified at the same time'
+      assert not manifest_branch, (
+          'manifest_branch and local_manifests cannot be specified together')
       init_opts['local_manifests'] = local_manifests
 
     if manifest_branch:
-      assert not local_manifests, 'manifest_branch and local_manifests cannot be specified at the same time'
+      assert not local_manifests, (
+          'manifest_branch and local_manifests cannot be specified together')
       init_opts['manifest_branch'] = manifest_branch
       manifest_url = self.m.src_state.internal_manifest.url
 

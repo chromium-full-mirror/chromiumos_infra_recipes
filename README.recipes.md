@@ -6117,7 +6117,7 @@ Includable utilities.
 
 API for various support functions for building.
 
-#### **class [WorkspaceUtilApi](/recipe_modules/workspace_util/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [WorkspaceUtilApi](/recipe_modules/workspace_util/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module workspace setup and manipulation.
 
@@ -6136,9 +6136,9 @@ Args:
       (e.g. because of Cq-Depend grouping); the changes will be discarded
       instead of failing during application.
 
-&emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#36)(self):**
+&emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#31)(self):**
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#129)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#128)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -6158,11 +6158,11 @@ Args:
 Returns:
   (bool) whether there are toolchain patches applied.
 
-&mdash; **def [initialize](/recipe_modules/workspace_util/api.py#25)(self):**
+&mdash; **def [initialize](/recipe_modules/workspace_util/api.py#20)(self):**
 
-&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#32)(self):**
+&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#27)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#49)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#44)(self):**
 
 Prepare the source checkout for building.
 
@@ -6171,7 +6171,7 @@ Returns:
   workspace path.  Note that api.cros_source.cleanup_context() is generally
   going to be needed.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#61)(self, commit=None, sync_to_manifest=None, staging=False, projects=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#56)(self, commit=None, sync_to_manifest=None, staging=False, projects=None):**
 
 Sync the source tree.
 
@@ -6186,7 +6186,7 @@ Args:
   projects (List[str]): Project names or paths to return info for. Defaults
     to all projects.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#166)(self, manifest_groups, local_manifests=None, cache_path_override=None, gitiles_commit=None, manifest_branch=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#165)(self, manifest_groups, local_manifests=None, cache_path_override=None, gitiles_commit=None, manifest_branch=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
@@ -6227,11 +6227,11 @@ Args:
       public manifest along with a local manifest will mean some repos are
       on branches, some are not.
 
-&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/workspace_util/api.py#40)(self):**
+&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/workspace_util/api.py#35)(self):**
 
 Whether there are toolchain CLs applied to the source tree.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/workspace_util/api.py#45)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/workspace_util/api.py#40)(self):**
 ## Recipes
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)

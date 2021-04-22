@@ -114,3 +114,6 @@ def GenTests(api):
   yield test('has_no_commit_and_no_changes', revision=None)
 
   yield test('has_toolchain_changes', cq=True, toolchain_cls_applied=True)
+
+  yield test('release', git_repo=api.src_state.external_manifest.url,
+             git_ref='refs/heads/release-R86.13421.B')
