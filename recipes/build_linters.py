@@ -1,0 +1,330 @@
+# -*- coding: utf-8 -*-
+# Copyright 2021 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Recipe for linting CLs with Cargo Clippy."""
+
+import json
+
+from PB.chromite.api.depgraph import ListRequest, SourcePath
+from PB.chromite.api.toolchain import LinterRequest
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipes.chromeos.build_target import BuildTargetProperties
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
+
+DEPS = [
+    'recipe_engine/step',
+    'recipe_engine/tricium',
+    'build_menu',
+    'chromite',
+    'cros_build_api',
+    'cros_source',
+    'gerrit',
+    'repo',
+    'src_state',
+    'test_util',
+    'workspace_util',
+]
+
+# TODO(crbug/1099259): Drop our properties.
+# Our properties are processed and used by both the build_menu module, as well
+# as various downstream dashboards and other consumers of buildbucket output
+# properties.  They are not used directly within the recipe.
+PROPERTIES = BuildTargetProperties
+
+
+class Error(Exception):
+  """Base error class for full linters recipe."""
+
+
+class ValidateGerritError(Error):
+  """Raised when there is not exactly one Gerrit Change provided."""
+
+
+def _ValidateGerritChanges(api):
+  """Ensures there is exactly one Gerrit Change provided."""
+  with api.step.nest('validate inputs') as presentation:
+    gerrit_changes = api.src_state.gerrit_changes
+    if not gerrit_changes:
+      presentation.status = api.step.FAILURE
+      presentation.step_text = 'No changes given: Build is POINTLESS.'
+      raise ValidateGerritError()
+
+
+def _GetRustFiles(api):
+  """Returns a list of rust files with changes in provided CL."""
+  with api.step.nest('get rust files') as presentation:
+    with api.step.nest('get patch sets'):
+      patch_sets = [
+          api.gerrit.fetch_patch_set_from_change(commit, include_files=True)
+          for commit in api.src_state.gerrit_changes
+      ]
+    rust_files = []
+    with api.step.nest('filter rust files'):
+      for patch_set in patch_sets:
+        src_paths = api.cros_source.find_project_paths(patch_set.project,
+                                                       patch_set.branch)
+        for src_path in src_paths:
+          for path in patch_set.file_infos.keys():
+            if path.endswith('.rs'):
+              rust_file_path = SourcePath()
+              rust_file_path.path = '%s/%s' % (src_path, path)
+              rust_files.append(rust_file_path)
+    presentation.logs['output'] = [str(rust_files)]
+    presentation.step_text = 'found %d Rust changes.' % len(rust_files)
+    return list(rust_files)
+
+
+def _GetAffectedPackages(api, filepaths):
+  """Get a list of packages affected by changes to some list of files."""
+  with api.step.nest('get affected packages'):
+    return api.cros_build_api.DependencyService.List(
+        ListRequest(sysroot=api.build_menu.sysroot,
+                    chroot=api.build_menu.chroot,
+                    src_paths=filepaths)).package_deps
+
+
+def _LintRustFiles(api, rust_files):
+  """Emerges relevant packages and retrieves generated lints."""
+  with api.step.nest('getting rust lints'):
+    affected_packages = _GetAffectedPackages(api, rust_files)
+    test_data = json.dumps({
+        'findings': [{
+            'message':
+                'test message',
+            'locations': [{
+                'filepath': 'path/file.rs',
+                'line_start': 1,
+                'line_end': 1
+            }]
+        }]
+    })
+    return api.cros_build_api.ToolchainService.GetClippyLints(
+        LinterRequest(packages=affected_packages,
+                      sysroot=api.build_menu.sysroot,
+                      chroot=api.build_menu.chroot),
+        test_output_data=test_data).findings
+
+
+def _WriteComments(api, findings):
+  """Write comments with Tricium for linter findings."""
+  with api.step.nest('write comments for linter findings') as presentation:
+    comment_count = 0
+    for finding in findings:
+      for location in finding.locations:
+        comment_count += 1
+        api.tricium.add_comment('CargoClippy', finding.message,
+                                location.filepath,
+                                start_line=location.line_start,
+                                end_line=location.line_start)
+    presentation.step_text = 'Wrote %d ' % comment_count
+  api.tricium.write_comments()
+
+
+def RunSteps(api, properties):
+  with api.build_menu.configure_builder() as config:
+    try:
+      _ValidateGerritChanges(api)
+    except ValidateGerritError:
+      return None
+    with api.build_menu.setup_workspace_and_chroot():
+      return DoRunSteps(api, config, properties)
+
+
+def DoRunSteps(api, config, _properties):
+  rust_files = _GetRustFiles(api)
+  if not rust_files:
+    return None
+
+  packages = api.build_menu.setup_sysroot_and_determine_relevance().packages
+  raise_upload_failure = True
+  try:
+    api.build_menu.bootstrap_sysroot(config)
+    if api.build_menu.install_packages(config, packages):
+      api.cros_source.ensure_synced_cache(
+          projects=['chromiumos/chromite'],
+          cache_path_override=api.src_state.workspace_path)
+      findings = _LintRustFiles(api, rust_files)
+      _WriteComments(api, findings)
+  except StepFailure:
+    raise_upload_failure = False
+    raise
+  finally:
+    api.build_menu.upload_artifacts(config,
+                                    failing_build=not raise_upload_failure)
+
+
+def GenTests(api):
+  changes = [
+      GerritChange(host='chromium-review.googlesource.com', change=1,
+                   project='fake-project', patchset=1),
+      GerritChange(host='chromium-review.googlesource.com', change=2,
+                   project='fake-project', patchset=2),
+  ]
+
+  rust_edits = {
+      1: {
+          'change_id': '1',
+          'created': '2020-10-22 18:54:00.000000000',
+          'branch': 'fake-branch',
+          'revision_info': {
+              '_number': 1,
+              'ref': 'refs/change/foo',
+              'files': {
+                  'foo.rs': {},
+                  'bar.rs': {}
+              }
+          }
+      },
+      2: {
+          'change_id': '2',
+          'created': '2020-10-22 18:54:00.000000000',
+          'branch': 'fake-branch',
+          'revision_info': {
+              '_number': 2,
+              'ref': 'refs/change/foo',
+              'files': {
+                  'foo.rs': {},
+                  'bar2.rs': {}
+              }
+          }
+      }
+  }
+
+  project_info = [
+      dict(project='fake-project', path='src/foo',
+           upstream='refs/heads/fake-branch')
+  ]
+
+  def BuildTestArgs(**kwargs):
+    """Generate kwargs for a test build."""
+    kwargs.setdefault('cq', True)
+    kwargs.setdefault('build_target', 'atlas')
+    kwargs.setdefault('gerrit_changes', changes[:1])
+    return kwargs
+
+  # Invalid Inputs
+  yield api.build_menu.test(
+      'no-changes', api.post_check(post_process.StepFailure, 'validate inputs'),
+      api.post_check(post_process.StatusSuccess), revision=None, cq=False)
+
+  # Normal build with rust changes
+  yield api.build_menu.test(
+      'one-change', api.post_check(post_process.StepSuccess, 'validate inputs'),
+      api.post_check(post_process.StepSuccess, 'get rust files'),
+      api.post_check(post_process.StepSuccess, 'getting rust lints'),
+      api.post_check(post_process.StepSuccess,
+                     'write comments for linter findings'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', changes[:1], rust_edits),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info),
+      api.post_check(post_process.StatusSuccess), **BuildTestArgs())
+
+  # Multiple change lists with rust changes
+  yield api.build_menu.test(
+      'multiple-changes',
+      api.post_check(post_process.StepSuccess, 'validate inputs'),
+      api.post_check(post_process.MustRun, 'get rust files.filter rust files'),
+      api.post_check(post_process.StepSuccess, 'get rust files'),
+      api.post_check(post_process.StepSuccess, 'getting rust lints'),
+      api.post_check(post_process.StepSuccess,
+                     'write comments for linter findings'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info, iteration=2),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', [changes[0]], rust_edits),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', [changes[1]], rust_edits,
+          iteration=2), **BuildTestArgs(gerrit_changes=changes))
+
+  # Normal build no relevant changes
+  yield api.build_menu.test(
+      'no-relevant-changes',
+      api.post_check(post_process.MustRun, 'get rust files'),
+      api.post_check(post_process.DoesNotRun, 'getting rust lints'),
+      api.post_check(post_process.StatusSuccess),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', changes[:1], {
+              1: {
+                  'change_id': '1',
+                  'created': '2020-10-22 18:54:00.000000000',
+                  'branch': 'fake-branch',
+                  'revision_info': {
+                      '_number': 1,
+                      'ref': 'refs/change/foo',
+                      'files': {
+                          'foo.ebuild': {},
+                          'bar.sh': {}
+                      }
+                  }
+              }
+          }), **BuildTestArgs())
+
+  # No source paths for project api.cros_source.find_project_paths
+  yield api.build_menu.test(
+      'no-source-path',
+      api.post_check(post_process.StepSuccess, 'validate inputs'),
+      api.post_check(post_process.StepFailure, 'get rust files'),
+      api.post_check(post_process.DoesNotRun,
+                     'write comments for linter findings'),
+      api.post_check(post_process.StatusFailure),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', changes[:1], {
+              1: {
+                  'change_id': '1',
+                  'created': '2020-10-22 18:54:00.000000000',
+                  'branch': 'not-the-usual-fake-branch',
+                  'revision_info': {
+                      '_number': 1,
+                      'ref': 'refs/change/foo',
+                      'files': {
+                          'foo.rs': {},
+                          'bar.rs': {}
+                      }
+                  }
+              }
+          }), **BuildTestArgs())
+
+  # CROS Build API failure in DependencyService.List
+  yield api.build_menu.test(
+      'get-packages-failure',
+      api.post_check(post_process.StepFailure, 'getting rust lints'),
+      api.post_check(post_process.DoesNotRun,
+                     'write comments for linter findings'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusFailure),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', changes[:1], rust_edits),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info),
+      api.build_menu.set_build_api_return(
+          'getting rust lints.get affected packages', 'DependencyService/List',
+          retcode=1), **BuildTestArgs())
+
+  # CROS Build API failure in ToolchainService.GetClippyLints
+  yield api.build_menu.test(
+      'get-clipy-lints-failure',
+      api.post_check(post_process.StepFailure, 'getting rust lints'),
+      api.post_check(post_process.DoesNotRun,
+                     'write comments for linter findings'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusFailure),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', changes[:1], rust_edits),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info),
+      api.build_menu.set_build_api_return('getting rust lints',
+                                          'ToolchainService/GetClippyLints',
+                                          retcode=1), **BuildTestArgs())
