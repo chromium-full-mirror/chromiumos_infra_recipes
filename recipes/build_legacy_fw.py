@@ -73,6 +73,7 @@ class FirmwareBuilder(object):
     assert len(properties.build_targets), 'No build_targets specified.'
 
     self.properties = properties
+    self._boards = [x.name for x in properties.build_targets]
     self._chroot = self.m.src_state.workspace_path.join('chroot')
     self._config = None
     self._bcs_version = None
@@ -123,16 +124,13 @@ class FirmwareBuilder(object):
         self._bcs_version = self.m.cros_version.version
 
         entries = dict(
-            boards=[x.name for x in self.properties.build_targets],
-            version=dict(
+            boards=self._boards, version=dict(
                 full=str(self._bcs_version),
                 milestone=self._bcs_version.milestone,
                 platform=self._bcs_version.platform_version))
         # Today's board-metadata may include firmware versions, though that is
         # unpopulated for many (if not all) of the current firmware builders.
-        entries['board-metadata'] = {
-            x.name: {} for x in self.properties.build_targets
-        }
+        entries['board-metadata'] = {x: {} for x in self._boards}
         self.m.metadata_json.add_entries(**entries)
         self.m.metadata_json.upload_to_gs(config,
                                           self.properties.build_targets[0],
@@ -180,7 +178,6 @@ class FirmwareBuilder(object):
     no_push = bool(self.m.cq.active or self._is_staging or
                    self.m.src_state.gerrit_changes)
     drop_file = self.m.path.mkstemp()
-    boards = ':'.join(x.name for x in self.properties.build_targets)
     manifest = 0 if not self._config else self._config.general.manifest
 
     cmd = [tot_chromite.join('bin/cros_mark_as_stable')]
@@ -190,8 +187,8 @@ class FirmwareBuilder(object):
       cmd.append('push')
     cmd.extend([
         '--all',
-        '--boards=%s' % boards, '--drop_file', drop_file, '--buildroot',
-        workspace, '--overlay-type',
+        '--boards=%s' % ':'.join(self._boards), '--drop_file', drop_file,
+        '--buildroot', workspace, '--overlay-type',
         'public' if manifest == BuilderConfig.General.PUBLIC else 'both'
     ])
 
@@ -205,7 +202,11 @@ class FirmwareBuilder(object):
   def _setup_chroot(self):
     try:
       self.sdk_call('init SDK', sdk_args=['--delete', '--create'])
-      self.sdk_call('update SDK', cmd=['./update_chroot'])
+      cmd = ['./update_chroot']
+      if self._is_after('6480.0.0'):
+        if not self.properties.disable_toolchain_boards:
+          cmd.extend(['--toolchain_boards', ','.join(self._boards)])
+      self.sdk_call('update SDK', cmd=cmd)
       yield
     finally:
       self.sdk_call('delete SDK', sdk_args=['--delete'])

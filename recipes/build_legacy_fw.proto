@@ -31,4 +31,7 @@ message BuildLegacyFwProperties {
 
   // Feature flag: whether to set suite_scheduling=True
   bool set_suite_scheduling = 7;
+
+  // Mitigation flag: whether to disable --toolchain_boards to update_chroot
+  bool disable_toolchain_boards = 8;
 }

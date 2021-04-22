@@ -1215,7 +1215,9 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
-      "./update_chroot"
+      "./update_chroot",
+      "--toolchain_boards",
+      "target"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
