@@ -14,6 +14,7 @@ DEPS = [
     'cros_infra_config',
     'cros_tags',
     'easy',
+    'src_state',
 ]
 
 PROPERTIES = SkylabProperties

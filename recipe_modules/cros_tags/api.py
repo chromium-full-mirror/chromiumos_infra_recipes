@@ -28,16 +28,19 @@ class CrosTagsApi(recipe_api.RecipeApi):
         commit_position=str(snapshot.position),
     )
 
+    # TODO(b/186218358): Reevaluate if we need to create buildsets.
     if inherit_buildsets:
       buildsets = [
           x.value
           for x in self.m.buildbucket.build.tags
           if x.key == 'buildset' and not x.value.startswith('commit/gitiles/')
       ]
+      # TODO(b/186218358): Remove handling of buildset tags.
       if snapshot.host and snapshot.project and snapshot.id:
         buildsets.append('commit/gitiles/%s/%s/+/%s' %
                          (snapshot.host, snapshot.project, snapshot.id))
-      tag_dict['buildset'] = buildsets
+      if buildsets:
+        tag_dict['buildset'] = buildsets
 
     if self.cq_cl_group_key:
       tag_dict['cq_cl_group_key'] = self.cq_cl_group_key

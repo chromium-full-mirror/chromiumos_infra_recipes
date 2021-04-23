@@ -3014,21 +3014,21 @@ API for generating tags.
 
 A module for generating tags.
 
-&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#72)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#75)(self):**
 
 Return the cq_cl_group_key, if any.
 
 Returns:
   (str) cq_cl_group_key, or None
 
-&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#55)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#58)(self):**
 
 Return the cq_equivalent_cl_group_key, if any.
 
 Returns:
   (str) cq_equivalent_cl_group_key, or None
 
-&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#48)(self, key, value, tags):**
+&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#51)(self, key, value, tags):**
 
 Returns whether tags contains a tag with key and value.
 
@@ -3043,7 +3043,7 @@ Args:
 Returns:
   list[StringPair] to pass as buildbucket tags
 
-&mdash; **def [tags](/recipe_modules/cros_tags/api.py#89)(self, \*\*tags):**
+&mdash; **def [tags](/recipe_modules/cros_tags/api.py#92)(self, \*\*tags):**
 
 Helper for generating a list of StringPair messages.
 
@@ -5431,13 +5431,13 @@ Module for issuing ServiceVersion commands
 Validate the caller's service version if they sent one.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
-[DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 #### **class [SkylabApi](/recipe_modules/skylab/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#151)(self, test, unit, timeout, name=None, async_suite_run=False):**
+&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#154)(self, test, unit, timeout, name=None, async_suite_run=False):**
 
 Schedule a HW test suite by invoking the cros_test_platform recipe.
 
@@ -5468,7 +5468,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#76)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#79)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -5486,7 +5486,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#233)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#236)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 

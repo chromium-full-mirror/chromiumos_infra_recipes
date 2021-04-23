@@ -66,7 +66,10 @@ class SkylabApi(recipe_api.RecipeApi):
             'requests': tagged_requests,
         },
         tags=bb_tags if bb_tags else [],
-        gerrit_changes=[],
+        # TODO(b/186217519,b/186218358): Pass in gerrit_changes and
+        # gitiles_commit from src_state to create CTP tile. Relying on buildset
+        # tags here is incorrect according to buildbucket V2.
+        gerrit_changes=self.m.src_state.gerrit_changes,
         swarming_parent_run_id=swarming_parent_run_id,
         # Disable inheriting the version from the parent builder.
         exe_cipd_version='',
