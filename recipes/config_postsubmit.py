@@ -106,6 +106,10 @@ def _flatten_configs(api, _properties, project_infos):
   flatten_script = api.context.cwd.join(
       'src/config/payload_utils/flatten_config_payload.py')
 
+  allowed_projects = [
+      project.repo_name for project in _properties.allowed_projects
+  ]
+
   joined_config = 'generated/joined.jsonproto'
   config_bundle = 'generated/config.jsonproto'
   flat_config = 'generated/flattened.jsonproto'
@@ -117,6 +121,10 @@ def _flatten_configs(api, _properties, project_infos):
   for project_info in project_infos:
     with api.step.nest('processing %s' % project_info.name) as presentation,\
          api.context(api.context.cwd.join(project_info.path)):
+
+      if not project_info.name in allowed_projects:
+        presentation.step_summary_text = "skipping, not in allowed projects"
+        continue
 
       # if no joined configuration (not backfilled), use the ConfigBundle
       input_config = joined_config
@@ -171,8 +179,7 @@ def _flatten_configs(api, _properties, project_infos):
         '-o',
         output_path,
     ] + flat_files
-    result = api.step('merge flattened configs to config-internal',
-                      ['vpython'] + cmd)
+    api.step('merge flattened configs to config-internal', ['vpython'] + cmd)
 
     with api.step.nest("diffing to find changes") as presentation:
       if not api.git.diff_check(output_path):
@@ -209,7 +216,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
   return []
 
 
-def _copy_to_internal(api, _properties, project_infos):
+def _copy_to_internal(api, properties, project_infos):
   """Aggregate config messages and copy them to config-internal
 
   This provides a single centralized location from which services can read all
@@ -225,6 +232,10 @@ def _copy_to_internal(api, _properties, project_infos):
       ),
   ]
 
+  allowed_projects = [
+      project.repo_name for project in properties.allowed_projects
+  ]
+
   # get project info for internal config repo
   config_project_info = api.repo.project_info("chromeos/config-internal")
 
@@ -238,6 +249,9 @@ def _copy_to_internal(api, _properties, project_infos):
       # find all the input config files
       files = []
       for project_info in project_infos:
+        if not project_info.name in allowed_projects:
+          continue
+
         path = cwd.join(project_info.path, config.input_path)
 
         if api.path.exists(path):
@@ -471,7 +485,10 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def default_properties():
+  def default_properties(allowed_projects=None):
+    if allowed_projects is None:
+      allowed_projects = [{"repo_name": "chromeos/project/galaxy/milkyway"}]
+
     aclc = PROPERTIES.ActionCLConfig(
         reviewers='test1@google.com',
         ccs=['test2@google.com', 'test3@google.com'], topic='test topic',
@@ -484,7 +501,9 @@ def GenTests(api):
                 "COPY_TO_INTERNAL": aclc,
                 "REPLICATE_PUBLIC_CONFIG": aclc,
                 "REGENERATE_TEST_PLAN": aclc,
-            }))
+            },
+            allowed_projects=allowed_projects,
+        ))
 
   def config_dlm_step_data(api):
     return api.step_data(
@@ -605,6 +624,19 @@ def GenTests(api):
               '.processing chromeos/program/galaxy' \
               '.generate flat payload'
       ),
+  )
+
+  yield api.test(
+      'flattening_not_allowed_project',
+      default_properties(allowed_projects=[]),
+      config_repos_step_data(api),
+      config_dlm_step_data(api),
+      api.git.diff_check(True),
+      api.post_process(
+          StepSummaryEquals,
+          'Do flatten_configs and create CL' \
+              '.processing chromeos/project/galaxy/milkyway',
+          'skipping, not in allowed projects'),
   )
 
   yield api.test(

@@ -43,6 +43,16 @@ message ConfigPostsubmitProperties {
     bool send_to_cq = 5;
   }
 
+  message AllowedProjects {
+      string repo_name = 1; // all_projects_configs.json repo name
+  }
+
   // Map from ActionType string representation to ActionCLConfig.
   map<string, ActionCLConfig> cl_configs = 1;
+
+  // List of allowed project repos to process.  We can end up with old repos
+  // with out of date configs (think projects that were backfilled but are now
+  // cancelled), which can break things.  Let's be explicit about which project
+  // repos we're going to process.
+  repeated AllowedProjects allowed_projects = 2;
 }
