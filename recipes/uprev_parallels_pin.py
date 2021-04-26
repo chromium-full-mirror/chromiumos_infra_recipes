@@ -25,9 +25,12 @@ from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipes.chromeos.build_parallels_image import \
-  BuildParallelsImageProperties
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
+from PB.recipes.chromeos.build_parallels_image import (
+    BuildParallelsImageProperties)
 from PB.recipes.chromeos.uprev_parallels_pin import UprevParallelsPinProperties
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 DEPS = [
     'depot_tools/gsutil',
@@ -58,6 +61,7 @@ PROPERTIES = UprevParallelsPinProperties
 _PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 _BUILD_STEP_NAME = 'build chromiumos with upreved Parallels'
 _IMAGE_STEP_NAME = 'build VM image'
+_SNAPSHOT_STEP_NAME = 'find latest green snapshot'
 
 BuildPath = namedtuple('BuildPath', ['bucket', 'path'])
 VersionPin = namedtuple('VersionPin', ['version', 'test_image'])
@@ -109,7 +113,9 @@ def build_os_with_uprev(api, properties, package, upstream_version):
     BuildPath: where the build artifacts were uploaded.
   """
   with api.step.nest(_BUILD_STEP_NAME) as presentation:
-    with api.build_menu.configure_builder() as config, \
+    commit = get_latest_green_snapshot_commit(api,
+                                              api.build_menu.build_target.name)
+    with api.build_menu.configure_builder(commit=commit) as config, \
         api.build_menu.setup_workspace_and_chroot():
 
       version_pin = get_version_pin(api, properties)
@@ -186,6 +192,7 @@ def uprev_package(api, properties, package, to_version):
     return
 
 
+@exponential_retry(retries=2)
 def build_vm_image(api, properties, artifacts_path, parallels_version):
   """Builds a new VM image for testing.
 
@@ -394,6 +401,38 @@ def is_version_after(version, previous_version):
   return parts > previous_parts
 
 
+def get_latest_green_snapshot_commit(api, build_target):
+  """Finds the latest green snapshot build for the given build target
+  and returns the corresponding manifest gitiles (input) commit.
+
+  Args:
+    build_target (str): The name of the build target."""
+  with api.step.nest(_SNAPSHOT_STEP_NAME) as presentation:
+    fields = frozenset({'id', 'builder', 'status', 'input'})
+    # Returns the latest green snapshot build (limited to
+    # the last two weeks). Search always returns the newest build
+    # first.
+    builds = api.buildbucket.search(
+        predicate=builds_service_pb2.BuildPredicate(
+            builder=builder_pb2.BuilderID(
+                project=api.buildbucket.build.builder.project,
+                bucket='postsubmit',
+                builder='{}-snapshot'.format(build_target),
+            ), create_time=common_pb2.TimeRange(
+                start_time=timestamp_pb2.Timestamp(
+                    seconds=api.buildbucket.build.create_time.ToSeconds() -
+                    14 * 24 * 60 * 60)), status=common_pb2.SUCCESS),
+        fields=fields, limit=1)
+
+    if not builds:
+      raise StepFailure(
+          'unable to find builds for {}-snapshot'.format(build_target))
+
+    presentation.links['latest green snapshot'] = api.buildbucket.build_url(
+        build_id=builds[0].id)
+    return builds[0].input.gitiles_commit
+
+
 def GenTests(api):
   good_props = {
       '$chromeos/overlayfs': {
@@ -421,6 +460,25 @@ def GenTests(api):
       'user_acls': ['owner@google.com:OWNER', 'reader@google.com:READ'],
       'group_acls': ['aclgroup@google.com:READ']
   }
+
+  snapshot_builds = []
+  snapshot_builds.append(
+      build_pb2.Build(
+          id=18101, status=common_pb2.SUCCESS, input=build_pb2.Build.Input(
+              gitiles_commit={
+                  'host': 'chrome-internal.googlesource.com',
+                  'ref': 'refs/heads/snapshot',
+                  'project': 'chromeos/manifest-internal',
+                  'id': 'latest-green-snapshot-SHA'
+              })))
+
+  good_snapshot_search = api.buildbucket.simulated_search_results(
+      snapshot_builds,
+      step_name='{}.{}.buildbucket.search'.format(_BUILD_STEP_NAME,
+                                                  _SNAPSHOT_STEP_NAME))
+  bad_snapshot_search = api.buildbucket.simulated_search_results(
+      [], step_name='{}.{}.buildbucket.search'.format(_BUILD_STEP_NAME,
+                                                      _SNAPSHOT_STEP_NAME))
 
   props = good_props.copy()
   del props['package_info']
@@ -479,9 +537,14 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure))
 
+  yield api.build_menu.test(
+      'snapshot-not-found', api.properties(**good_props), bad_snapshot_search,
+      api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      api.post_check(post_process.StatusAnyFailure))
+
   # Upstream version is the same as in Chrome OS (nothing to do).
   yield api.build_menu.test(
-      'uprev-not-required', api.properties(**good_props),
+      'uprev-not-required', api.properties(**good_props), good_snapshot_search,
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.step_data(
           _BUILD_STEP_NAME + '.read pinned version file.VERSION-PIN',
@@ -495,7 +558,7 @@ def GenTests(api):
   # Various build errors
   yield api.build_menu.test(
       'install-packages-fail', api.properties(**good_props),
-      api.git.diff_check(True),
+      good_snapshot_search, api.git.diff_check(True),
       api.post_check(post_process.DoesNotRun,
                      _BUILD_STEP_NAME + '.build images'),
       api.post_check(post_process.DoesNotRun,
@@ -512,6 +575,7 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'bundle-fail', api.properties(**good_props), api.git.diff_check(True),
+      good_snapshot_search,
       api.post_check(post_process.MustRun, _BUILD_STEP_NAME + '.build images'),
       api.post_check(post_process.MustRun,
                      _BUILD_STEP_NAME + '.run ebuild tests'),
@@ -525,7 +589,7 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'install-packages-and-bundle-fail', api.properties(**good_props),
-      api.git.diff_check(True),
+      good_snapshot_search, api.git.diff_check(True),
       api.post_check(post_process.DoesNotRun,
                      _BUILD_STEP_NAME + '.build images'),
       api.post_check(post_process.DoesNotRun,
@@ -545,9 +609,14 @@ def GenTests(api):
   yield api.build_menu.test(
       'build-image-schedule-failure',
       api.properties(**good_props),
+      good_snapshot_search,
       api.git.diff_check(True),
       api.override_step_data(
-          _IMAGE_STEP_NAME + '.run build-parallels-image.schedule',
+          '{}.run build-parallels-image.schedule'.format(_IMAGE_STEP_NAME),
+          api.json.invalid(None), retcode=1),
+      # Failure is permanant, so persists after retry.
+      api.override_step_data(
+          '{} (2).run build-parallels-image.schedule'.format(_IMAGE_STEP_NAME),
           api.json.invalid(None), retcode=1),
       api.post_check(post_process.StatusException),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
@@ -557,11 +626,19 @@ def GenTests(api):
   yield api.build_menu.test(
       'build-image-collect-failure',
       api.properties(**good_props),
+      good_snapshot_search,
       api.git.diff_check(True),
       api.buildbucket.simulated_collect_output([
           api.buildbucket.try_build_message(build_id=8922054662172514000,
                                             status='FAILURE'),
-      ], step_name=_IMAGE_STEP_NAME + '.run build-parallels-image.collect'),
+      ], step_name='{}.run build-parallels-image.collect'.format(
+          _IMAGE_STEP_NAME)),
+      # Failure is permanant, so persists after retry.
+      api.buildbucket.simulated_collect_output([
+          api.buildbucket.try_build_message(build_id=8922054662172514001,
+                                            status='FAILURE'),
+      ], step_name='{} (2).run build-parallels-image.collect'.format(
+          _IMAGE_STEP_NAME)),
       api.post_check(post_process.StatusFailure),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
   )
@@ -585,6 +662,7 @@ def GenTests(api):
   })
   yield api.build_menu.test(
       'uprev-success', api.properties(**good_props), api.git.diff_check(True),
+      good_snapshot_search,
       api.buildbucket.simulated_collect_output(
           [build_success],
           step_name=_IMAGE_STEP_NAME + '.run build-parallels-image.collect'),
@@ -616,7 +694,8 @@ def GenTests(api):
   })
   yield api.build_menu.test(
       'uprev-success-staging', api.properties(**good_props),
-      # Simulate no uprev required.
+      good_snapshot_search,
+      # Simulate no uprev required. Staging builder should still run.
       api.step_data(
           _BUILD_STEP_NAME + '.read pinned version file.VERSION-PIN',
           api.file.read_json({

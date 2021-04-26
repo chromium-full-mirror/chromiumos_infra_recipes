@@ -62,6 +62,38 @@
   },
   {
     "cmd": [],
+    "name": "build chromiumos with upreved Parallels.find latest green snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@latest green snapshot@https://cr-buildbucket.appspot.com/build/18101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,id,input,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-11T23:50:17Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.find latest green snapshot.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"gitilesCommit\": {\"project\": \"chromeos/manifest-internal\", \"host\": \"chrome-internal.googlesource.com\", \"ref\": \"refs/heads/snapshot\", \"id\": \"latest-green-snapshot-SHA\"}}, \"id\": \"18101\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@18101@https://cr-buildbucket.appspot.com/build/18101@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build chromiumos with upreved Parallels.configure builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
