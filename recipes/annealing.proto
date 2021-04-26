@@ -59,6 +59,9 @@ message AnnealingProperties {
 
   // Feature flag used to signal where to uprev. b/179496445
   bool uprev_first = 8;
+
+  // Whether we should ignore errors from ensure_cq_dependencies_fulfilled
+  bool ignore_cq_depends_failure = 9;
 }
 
 // Annealing determines what Gerrit changes have landed since its last run,

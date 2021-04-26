@@ -194,7 +194,12 @@ def RunSteps(api, properties):
             reach_pres.step_text = 'some downrevs occurred'
 
         # Otherwise we need to ensure all of those diffs have fulfilled deps.
-        api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(manifest_diffs)
+        try:
+          api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(
+              manifest_diffs)
+        except StepFailure as ex:
+          if not properties.ignore_cq_depends_failure:
+            raise
 
         # Then, get the diffs. We are specifically interested in what
         # gerrit changes have landed.
@@ -1166,4 +1171,25 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
       api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'cq-deps-failure',
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output('<manifest visibility="external">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output('<manifest visibility="internal">'
+                                   '<project name="NAME" revision="TO_REV"/>'
+                                   '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.step_data('ensure manifest cq-depend fulfilled.git log', retcode=3),
+      api.post_check(post_process.StatusAnyFailure),
   )
