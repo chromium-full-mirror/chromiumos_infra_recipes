@@ -350,12 +350,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Returns:
       Dictionary of key:value pairs for building a gs_path.
     """
+    # If there is a branch name in the builder_name, then we need to preserve
+    # the builder name.
     ret = {
         'label': BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-'),
         'version': self.m.cros_version.read_workspace_version(),
         'build_id': self.m.buildbucket.build.id,
         'target': target.name,
-        'builder_name': builder_name.lower().replace('_', '-'),
+        'builder_name': builder_name.replace('_', '-'),
     }
     ret['gs_path'] = '%s/%s-%d' % (ret['builder_name'], ret['version'],
                                    ret['build_id'])

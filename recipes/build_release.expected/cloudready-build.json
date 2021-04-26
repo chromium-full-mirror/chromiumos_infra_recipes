@@ -2445,7 +2445,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/partial_metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/partial_metadata.json@@@"
     ]
   },
   {
@@ -2578,7 +2578,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial_metadata.json",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/partial_metadata.json"
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/partial_metadata.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -4257,7 +4257,7 @@
       "@@@STEP_LOG_LINE@request@  \"imageTypes\": [@@@",
       "@@@STEP_LOG_LINE@request@    3@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
-      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\", @@@",
@@ -4300,7 +4300,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"cloudready-release-R90-13816.B\"\n  }, \n  \"version\": \"R99-1234.56.0-101\", \n  \"imageTypes\": [\n    3\n  ], \n  \"builderPath\": \"cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184\", \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"-postscript\"\n        }\n      ]\n    }\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"cloudready-release-R90-13816.B\"\n  }, \n  \"version\": \"R99-1234.56.0-101\", \n  \"imageTypes\": [\n    3\n  ], \n  \"builderPath\": \"cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184\", \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"-postscript\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -4316,7 +4316,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@  \"imageTypes\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"builderPath\": \"cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"builderPath\": \"cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\", @@@",
@@ -4422,7 +4422,7 @@
       "@@@STEP_LOG_LINE@published event@    \"imageTypes\": [@@@",
       "@@@STEP_LOG_LINE@published event@      \"TEST\"@@@",
       "@@@STEP_LOG_LINE@published event@    ], @@@",
-      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\", @@@",
@@ -4465,7 +4465,7 @@
     },
     "infra_step": true,
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIB6wEKIAoeY2xvdWRyZWFkeS1yZWxlYXNlLVI5MC0xMzgx\\nNi5CEgEDIhFSOTktMTIzNC41Ni4wLTEwMTJMY2xvdWRyZWFkeS1yZWxlYXNlLXI5MC0xMzgxNi5i\\nLXJlbGVhc2UvUjk5LTEyMzQuNTYuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NDpjChpbQ0FDSEVd\\nL2Nyb3NfY2hyb290L2Nocm9vdBoxChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZwoN\\nCgstcG9zdHNjcmlwdCISW1NUQVJUX0RJUl0vY2hyb21lqgFACAESPAoWL2J1aWxkL2ltYWdlcy90\\nZXN0LmJpbhADGiAKHmNsb3VkcmVhZHktcmVsZWFzZS1SOTAtMTM4MTYuQtAC0OyA2a7xtZJ82gJI\\nYnVpbGQgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBi\\ndWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIB6wEKIAoeY2xvdWRyZWFkeS1yZWxlYXNlLVI5MC0xMzgx\\nNi5CEgEDIhFSOTktMTIzNC41Ni4wLTEwMTJMY2xvdWRyZWFkeS1yZWxlYXNlLVI5MC0xMzgxNi5C\\nLXJlbGVhc2UvUjk5LTEyMzQuNTYuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NDpjChpbQ0FDSEVd\\nL2Nyb3NfY2hyb290L2Nocm9vdBoxChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZwoN\\nCgstcG9zdHNjcmlwdCISW1NUQVJUX0RJUl0vY2hyb21lqgFACAESPAoWL2J1aWxkL2ltYWdlcy90\\nZXN0LmJpbhADGiAKHmNsb3VkcmVhZHktcmVsZWFzZS1SOTAtMTM4MTYuQtAC0OyA2a7xtZJ82gJI\\nYnVpbGQgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBi\\ndWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4683,7 +4683,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184@@@",
       "@@@STEP_LINK@gs publish dir: EBUILD_LOGS@https://console.cloud.google.com/storage/browser/chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: IMAGE_ZIP@https://console.cloud.google.com/storage/browser/chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: AUTOTEST_FILES@https://console.cloud.google.com/storage/browser/chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101@@@",
@@ -6557,7 +6557,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184"
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "infra_step": true,
@@ -6572,7 +6572,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"DEBUG_SYMBOLS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-releases-test\", \"gs_path\": \"cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"DEBUG_SYMBOLS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-releases-test\", \"gs_path\": \"cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -6674,7 +6674,7 @@
       "-m",
       "----",
       "cp",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -6695,7 +6695,7 @@
       "-m",
       "----",
       "cp",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -6716,7 +6716,7 @@
       "-m",
       "----",
       "cp",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -6737,7 +6737,7 @@
       "-m",
       "----",
       "cp",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -6758,7 +6758,7 @@
       "-m",
       "----",
       "cp",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/log.tar.gz",
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/log.tar.gz",
       "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -6779,7 +6779,7 @@
       "-m",
       "----",
       "cp",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -6800,7 +6800,7 @@
       "-m",
       "----",
       "cp",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -7339,7 +7339,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
     ]
   },
   {
@@ -7497,7 +7497,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs://chromeos-releases-test/cloudready-release-r90-13816.b-release/R99-1234.56.0-101-8945511751514863184/metadata.json"
+      "gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
     "infra_step": true,
     "name": "finalize metadata.upload metadata.gsutil cp",
