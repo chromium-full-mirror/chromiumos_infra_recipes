@@ -31,7 +31,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython",
       "-u",
       "RECIPE_MODULE[chromeos::cros_lvfs_mirror]/resources/sync-pulp.py",
       "address",

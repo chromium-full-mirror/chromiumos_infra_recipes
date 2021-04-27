@@ -55,7 +55,8 @@ class LvfsMirror(recipe_api.RecipeApi):
     # avoid failures due to file changes referenced from any existing
     # repository manifest that we pinned to a given OS release.
     self.m.python('run sync-pulp.py', self.resource('sync-pulp.py'),
-                  args=[self.mirror_address, self.local_cache, gs_file])
+                  args=[self.mirror_address, self.local_cache,
+                        gs_file], venv=True)
     self._rsync_to_gs()
 
   @property

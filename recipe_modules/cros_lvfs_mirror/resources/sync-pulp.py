@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env vpython
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020 Richard Hughes <richard@hughsie.com>
@@ -7,8 +7,57 @@
 #
 # pylint: disable=too-few-public-methods
 #
-# The machine that runs this script must have the 'requests' module installed,
-# for example `yum install -y python-requests`
+# [VPYTHON:BEGIN]
+# python_version: "2.7"
+# wheel: <
+#   name: "infra/python/wheels/requests-py2_py3"
+#   version: "version:2.21.0"
+# >
+# wheel: <
+#   name: "infra/python/wheels/urllib3-py2_py3"
+#   version: "version:1.24.3"
+# >
+# wheel: <
+#   name: "infra/python/wheels/certifi-py2_py3"
+#   version: "version:2019.3.9"
+# >
+# wheel: <
+#   name: "infra/python/wheels/chardet-py2_py3"
+#   version: "version:3.0.4"
+# >
+# wheel: <
+#   name: "infra/python/wheels/idna-py2_py3"
+#   version: "version:2.8"
+# >
+# wheel: <
+#   name: "infra/python/wheels/pyopenssl-py2_py3"
+#   version: "version:19.0.0"
+# >
+# wheel: <
+#   name: "infra/python/wheels/cryptography/${vpython_platform}"
+#   version: "version:2.9.2"
+# >
+# wheel: <
+#   name: "infra/python/wheels/enum34-py2"
+#   version: "version:1.1.6"
+# >
+# wheel: <
+#   name: "infra/python/wheels/ipaddress-py2"
+#   version: "version:1.0.18"
+# >
+# wheel: <
+#   name: "infra/python/wheels/cffi/${vpython_platform}"
+#   version: "version:1.12.3"
+# >
+# wheel: <
+#   name: "infra/python/wheels/pycparser-py2_py3"
+#   version: "version:2.19"
+# >
+# wheel: <
+#   name: "infra/python/wheels/six-py2_py3"
+#   version: "version:1.10.0"
+# >
+# [VPYTHON:END]
 
 import os
 import hashlib

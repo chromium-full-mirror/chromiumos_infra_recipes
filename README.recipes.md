@@ -2020,11 +2020,11 @@ Configure the LvfsMirror script module.
 Args:
   * mirror_address: The mirror address for the LVFS repository.
 
-&emsp; **@property**<br>&mdash; **def [gs\_uri](/recipe_modules/cros_lvfs_mirror/api.py#65)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_uri](/recipe_modules/cros_lvfs_mirror/api.py#66)(self):**
 
-&emsp; **@property**<br>&mdash; **def [local\_cache](/recipe_modules/cros_lvfs_mirror/api.py#69)(self):**
+&emsp; **@property**<br>&mdash; **def [local\_cache](/recipe_modules/cros_lvfs_mirror/api.py#70)(self):**
 
-&emsp; **@property**<br>&mdash; **def [mirror\_address](/recipe_modules/cros_lvfs_mirror/api.py#61)(self):**
+&emsp; **@property**<br>&mdash; **def [mirror\_address](/recipe_modules/cros_lvfs_mirror/api.py#62)(self):**
 
 &mdash; **def [run](/recipe_modules/cros_lvfs_mirror/api.py#50)(self):**
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
