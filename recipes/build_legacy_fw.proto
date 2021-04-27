@@ -34,4 +34,7 @@ message BuildLegacyFwProperties {
 
   // Mitigation flag: whether to disable --toolchain_boards to update_chroot
   bool disable_toolchain_boards = 8;
+
+  // sign_types for push_image.
+  repeated chromiumos.ImageType sign_types = 9;
 }

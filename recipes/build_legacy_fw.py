@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'build_menu',
+    'cros_artifacts',
     'cros_release',
     'cros_sdk',
     'cros_version',
@@ -34,6 +35,7 @@ from recipe_engine.post_process import (DoesNotRun, MustRun, PropertyEquals,
 from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos import common as common_pb2
 
 PROPERTIES = BuildLegacyFwProperties
 _FIRMWARE_TARBALL_NAME = 'firmware_from_source.tar.bz2'
@@ -91,13 +93,13 @@ class FirmwareBuilder(object):
       if self._config and self._config.build.use_flags:
         command.append('USE={}'.format(' '.join(
             x.flag for x in self._config.build.use_flags)))
-      command += ['--'] + list(cmd)
+      command.extend(['--'] + list(cmd))
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, command, **kwargs)
 
   def _is_after(self, version_str):
     """Return whether the workspace version is >= |version_str|."""
-    return self.m.cros_version.version.is_after(version_str)
+    return self._bcs_version.is_after(version_str)
 
   @contextmanager
   def _setup(self):
@@ -125,7 +127,8 @@ class FirmwareBuilder(object):
 
         entries = dict(
             boards=self._boards, version=dict(
-                full=str(self._bcs_version),
+                with_snapshot=str(self._bcs_version),
+                full=self._bcs_version.legacy_version,
                 milestone=self._bcs_version.milestone,
                 platform=self._bcs_version.platform_version))
         # Today's board-metadata may include firmware versions, though that is
@@ -253,10 +256,10 @@ class FirmwareBuilder(object):
       if self._is_after('6302.0.0'):
         cmd.append('--withdebugsymbols')
 
-      cmd += [
+      cmd.extend([
           '{}/{}'.format(x.category, x.package_name)
           for x in self.properties.packages
-      ]
+      ])
       self.sdk_call('install packages', cmd=cmd, infra_step=False)
 
   def _build_firmware_archive(self, build_target, out_path):
@@ -283,7 +286,7 @@ class FirmwareBuilder(object):
       tarball = out_path.join(_FIRMWARE_TARBALL_NAME)
       cmd = ['tar', 'cvjf', chroot_path(tarball), '-C', chroot_path(root)]
       # The list of files is generally too long.
-      cmd += ['--null', '-T', '/dev/stdin']
+      cmd.extend(['--null', '-T', '/dev/stdin'])
       file_list = '\0'.join(self.m.path.relpath(x, root) for x in source_list)
       self.sdk_call('create tarball', cmd=cmd,
                     stdin=self.m.raw_io.input(data=file_list))
@@ -324,12 +327,59 @@ class FirmwareBuilder(object):
       ret['FIRMWARE_TARBALL_INFO'].append(_FIRMWARE_METADATA_NAME)
     return ret
 
+  def _push_image(self, build_target):
+    """Push images."""
+    # TODO(b/181786185): As cros_artifacts.push_image evolves, this code should
+    # be updated to use that where the Build API exists.
+    #
+    # For now, call `pushimage` directly:
+    # - Rubik will be completely restructuring that workflow (moving the
+    #   uploads and such to the recipes side of the API boundary)
+    # - most firmware branches lack the Build API.
+    with self.m.step.nest('push image'):
+      board = build_target.name
+      staging = self._is_staging
+      sign_types = self.properties.sign_types or [
+          common_pb2.IMAGE_TYPE_FIRMWARE, common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG
+      ]
+      dest = 'gs://{}chromeos-releases'.format('staging-' if staging else '')
+      profile = lambda x: ['--profile={}'.format(x)] if x else []
+      has_dest_bucket = self._is_after('13682.0.0')
+      dry_run = self.m.cq.active or not self.properties.bump_version
+      dry_run = dry_run or (staging and not has_dest_bucket)
+
+      cmd = [
+          'pushimage', '--yes', '--board={}'.format(board),
+          '--version={}'.format(self._bcs_version.legacy_version)
+      ]
+      if dry_run:
+        cmd.append('-n')
+      cmd.extend(profile(self._config.build.portage_profile.profile))
+      cmd.extend([
+          '--sign-types={}'.format(
+              common_pb2.ImageType.Name(x).lower().replace('image_type_', ''))
+          for x in sign_types
+      ])
+      if has_dest_bucket:
+        cmd.append('--dest-bucket={}'.format(dest))
+      cmd.append('gs://{}/{}'.format(
+          self._config.artifacts.artifacts_gs_bucket,
+          self.m.cros_artifacts.artifacts_gs_path(self._config.id.name,
+                                                  build_target,
+                                                  self._config.id.type)))
+
+      self.sdk_call('call pushimage', cmd=cmd)
+
   def run(self):
     with self._setup():
       for bt in self.properties.build_targets:
         self._setup_board_and_install_packages(bt)
       self.m.build_menu.upload_artifacts(
           private_bundle_func=self._bundle_firmware)
+      # Push any firmware images for use.
+      for bt in self.properties.build_targets:
+        self._push_image(bt)
+
       # Mark whether the suite_scheduling query for firmware should find this.
       self.m.easy.set_properties_step(
           suite_scheduling=str(self._suite_scheduling))
@@ -342,7 +392,7 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def test(name, *args, **kwargs):
-    version_str = kwargs.pop('version', 'R86-13434.100.99')
+    version_str = kwargs.pop('version', 'R91-13874.10.0')
     version = api.cros_version.workspace_version(version_str)
     cq = kwargs.get('cq', False)
     kwargs.setdefault('builder',
@@ -373,6 +423,35 @@ def GenTests(api):
       api.post_check(MustRun, 'create buildspec'), suite_scheduling(True),
       api.post_check(StepCommandContains, 'build target.install packages',
                      ['--withdebugsymbols']), api.post_check(StatusSuccess),
+      input_properties=dict(bump_version=True, set_suite_scheduling=True))
+
+  yield test(
+      'staging-release',
+      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(MustRun, 'bump version'),
+      api.post_check(MustRun, 'create buildspec'), suite_scheduling(False),
+      api.post_check(StepCommandContains, 'build target.install packages',
+                     ['--withdebugsymbols']),
+      api.post_check(StepCommandLacks, 'push image.call pushimage', ['-n']),
+      api.post_check(StepCommandContains, 'push image.call pushimage',
+                     ['--dest-bucket=gs://staging-chromeos-releases']),
+      api.post_check(StatusSuccess), bucket='staging',
+      input_properties=dict(bump_version=True, set_suite_scheduling=True))
+
+  yield test(
+      'old-staging-release',
+      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(MustRun, 'bump version'),
+      api.post_check(MustRun, 'create buildspec'), suite_scheduling(False),
+      api.post_check(StepCommandLacks, 'build target.install packages',
+                     ['--withdebugsymbols']),
+      api.post_check(StepCommandContains, 'push image.call pushimage', ['-n']),
+      api.post_check(StepCommandLacks, 'push image.call pushimage',
+                     ['--dest-bucket=gs://staging-chromeos-releases']),
+      api.post_check(StatusSuccess), bucket='staging',
+      version='R39-6301.202.44',
       input_properties=dict(bump_version=True, set_suite_scheduling=True))
 
   yield test(
