@@ -58,8 +58,12 @@ class Version(object):
     self.patch = patch
     self.snapshot = snapshot
 
+  @property
+  def legacy_version(self):
+    return 'R%d-%s' % (self.milestone, self.platform_version)
+
   def __str__(self):
-    version = 'R%d-%s' % (self.chrome_branch, self.platform_version)
+    version = self.legacy_version
     if self.snapshot is not None:
       version += '-%s' % self.snapshot
     return version
