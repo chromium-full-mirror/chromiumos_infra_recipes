@@ -203,8 +203,8 @@
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"flags\": {}@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:23Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:24.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"createResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"version\": 123@@@",
@@ -293,7 +293,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BMIBIAoAEhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nygEECgIIe9oCQmluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvQ3JlYXRlfGNh\\nbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBIAoAEhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nygEECgIIe9oCQmluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvQ3JlYXRlfGNh\\nbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -446,7 +446,7 @@
       "@@@STEP_LOG_LINE@published event@  \"stepExecutionResult\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"retcode\": 1@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:24.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:26Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"update sdk|call chromite.api.SdkService/Update|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"updateRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
@@ -454,7 +454,7 @@
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"flags\": {}@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:26Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:27.500Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -477,7 +477,7 @@
     },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNIBIAoAGhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\n2gEA2gJEdXBkYXRlIHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL1VwZGF0ZXxjYWxs\\nIGJ1aWxkIEFQSSBzY3JpcHSiAwIIAQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdIBIAoAGhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\n2gEA2gJEdXBkYXRlIHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL1VwZGF0ZXxjYWxs\\nIGJ1aWxkIEFQSSBzY3JpcHSiAwIIAQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

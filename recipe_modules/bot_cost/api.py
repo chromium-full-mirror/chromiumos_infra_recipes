@@ -33,6 +33,19 @@ class BotCostApi(RecipeApi):
     self._start_time = self.m.time.time()
     self._cq_run_cost = 0
 
+  @property
+  def bot_size(self):
+    if not self._bot_size:
+      swarming = self.m.buildbucket.build.infra.swarming
+      for dimension in swarming.bot_dimensions or swarming.task_dimensions:
+        if dimension.key == 'bot_size':
+          if dimension.value not in BOT_COST:
+            raise StepFailure('bot_size:{} not supported'.format(
+                dimension.value))
+          self._bot_size = dimension.value
+          break
+    return self._bot_size
+
   @contextlib.contextmanager
   def build_cost_context(self):
     """Set build cost after running.
@@ -81,19 +94,10 @@ class BotCostApi(RecipeApi):
     Returns:
       A float representing the cost (USD) of building this image.
     """
-    if not self._bot_size:
-      swarming = self.m.buildbucket.build.infra.swarming
-      for dimension in swarming.bot_dimensions or swarming.task_dimensions:
-        if dimension.key == 'bot_size':
-          if dimension.value not in BOT_COST:
-            raise StepFailure('bot_size:{} not supported'.format(
-                dimension.value))
-          self._bot_size = dimension.value
-          break
     # If we didn't get a bot_size, give it a zero cost.
     # TODO(lamontjones): consider fetching bot_policy.cfg and using the
     # hourlyCost field.
-    daily_cost = BOT_COST.get(self._bot_size, 0.0)
+    daily_cost = BOT_COST.get(self.bot_size, 0.0)
 
     build = self.m.buildbucket.build
     if self.m.led.run_id or build.status == common_pb2.STATUS_UNSPECIFIED:

@@ -131,7 +131,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:23Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload artifacts|bundle EBUILD_LOGS for upload|call chromite.api.ArtifactsService/BundleEbuildLogs|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"bundleRequest\": {@@@",
@@ -156,7 +156,7 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:24.500Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -240,7 +240,7 @@
     },
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BCpQCgcKBWJvYXJkEhlbQ0xFQU5VUF0vYXJ0aWZhY3RzX3Rt\\ncF8xGhEKDy9wYXRoL3RvL2Nocm9vdCIXCgwvYnVpbGQvYm9hcmQSBwoFYm9hcmQyIwohCh9bU1RB\\nUlRfRElSXS90bXAvYXJ0aWZhY3QudGFyLmd60ALQ7IDZrvG1knzaAnh1cGxvYWQgYXJ0aWZhY3Rz\\nfGJ1bmRsZSBFQlVJTERfTE9HUyBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0\\nc1NlcnZpY2UvQnVuZGxlRWJ1aWxkTG9nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuASpQCgcKBWJvYXJkEhlbQ0xFQU5VUF0vYXJ0aWZhY3RzX3Rt\\ncF8xGhEKDy9wYXRoL3RvL2Nocm9vdCIXCgwvYnVpbGQvYm9hcmQSBwoFYm9hcmQyIwohCh9bU1RB\\nUlRfRElSXS90bXAvYXJ0aWZhY3QudGFyLmd60ALQ7IDZrvG1knzaAnh1cGxvYWQgYXJ0aWZhY3Rz\\nfGJ1bmRsZSBFQlVJTERfTE9HUyBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0\\nc1NlcnZpY2UvQnVuZGxlRWJ1aWxkTG9nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

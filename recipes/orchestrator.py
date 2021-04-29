@@ -57,7 +57,7 @@ def GenTests(api):
                            api.post_check(post_process.StatusSuccess),
                            builder='main-release-orchestrator',
                            with_history=True, collect_builds=data.builds,
-                           with_manifest_refs=True)
+                           with_manifest_refs=True, bot_size='medium')
 
   yield api.orch_menu.test('builds_with_history', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess), cq=True,

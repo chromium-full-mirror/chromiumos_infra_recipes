@@ -120,7 +120,7 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test')),
       builder='main-release-orchestrator', with_manifest_refs=True,
-      with_history=True)
+      with_history=True, bot_size='medium')
 
   yield api.orch_menu.test(
       'branch', data.ctp_normal, api.post_check(post_process.StatusSuccess),

@@ -2086,7 +2086,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:21Z\"}}"
+      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}}"
     ],
     "infra_step": true,
     "name": "run tests.schedule tests.get change test history.find matching builds.buildbucket.search",
@@ -3904,7 +3904,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\"}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/project-a/+/COMMIT_SHA\"}]}"
+      "{\"builder\": {\"bucket\": \"postsubmit\"}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:24Z\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/project-a/+/COMMIT_SHA\"}]}"
     ],
     "infra_step": true,
     "name": "run baseline tests.find baseline builds.get snapshot builds.buildbucket.search",

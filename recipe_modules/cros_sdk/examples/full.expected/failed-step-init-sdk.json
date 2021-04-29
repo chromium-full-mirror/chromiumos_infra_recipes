@@ -169,7 +169,7 @@
       "@@@STEP_LOG_LINE@published event@  \"stepExecutionResult\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"retcode\": 1@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:23Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"init sdk|call chromite.api.SdkService/Create|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"createResponse\": {}, @@@",
       "@@@STEP_LOG_LINE@published event@  \"createRequest\": {@@@",
@@ -178,7 +178,7 @@
       "@@@STEP_LOG_LINE@published event@    }, @@@",
       "@@@STEP_LOG_LINE@published event@    \"flags\": {}@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:24.500Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -262,7 +262,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BMIBIAoAEhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nygEA2gJCaW5pdCBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9DcmVhdGV8Y2FsbCBi\\ndWlsZCBBUEkgc2NyaXB0ogMCCAE=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBIAoAEhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nygEA2gJCaW5pdCBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9DcmVhdGV8Y2FsbCBi\\ndWlsZCBBUEkgc2NyaXB0ogMCCAE=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

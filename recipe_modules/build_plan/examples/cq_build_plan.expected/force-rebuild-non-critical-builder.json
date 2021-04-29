@@ -472,7 +472,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:21Z\"}, \"gerritChanges\": [{\"change\": \"1234\", \"host\": \"chromium-review.googlesource.com\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}, \"gerritChanges\": [{\"change\": \"1234\", \"host\": \"chromium-review.googlesource.com\"}]}"
     ],
     "infra_step": true,
     "name": "get build history.find matching builds.buildbucket.search",
@@ -667,7 +667,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}, \"gerritChanges\": [{\"change\": \"1234\", \"host\": \"chromium-review.googlesource.com\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:24Z\"}, \"gerritChanges\": [{\"change\": \"1234\", \"host\": \"chromium-review.googlesource.com\"}]}"
     ],
     "infra_step": true,
     "name": "get build history.get completed builds.get change build history.buildbucket.search",
@@ -712,7 +712,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:24Z\"}, \"gerritChanges\": [{\"change\": \"1234\", \"host\": \"chromium-review.googlesource.com\"}], \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles///+/\"}]}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:26Z\"}, \"gerritChanges\": [{\"change\": \"1234\", \"host\": \"chromium-review.googlesource.com\"}], \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles///+/\"}]}"
     ],
     "infra_step": true,
     "name": "get snapshot builds.buildbucket.search",

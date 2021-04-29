@@ -220,6 +220,11 @@ class CrosSourceApi(RecipeApi):
     # See crbug.com/1165775.
     assert self._have_overlayfs_cleanup_context, 'no overlayfs cleanup context'
 
+    # This is purely a bug catcher to ease detection of the issue when someone
+    # configures a builder incorrectly.
+    assert self.m.bot_cost.bot_size != 'small' or projects, (
+        'cannot sync full tree on small bot.')
+
     with self.m.context(cwd=self.m.path['cleanup']):
       # There are a few things we want to make sure are set globally for git.
       # Do them here to help protect the named cache from corruption due to
