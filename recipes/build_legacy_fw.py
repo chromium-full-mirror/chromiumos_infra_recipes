@@ -165,37 +165,37 @@ class FirmwareBuilder(object):
     # switch to calling cros_sdk.uprev_packages, and pushing them, for branches
     # that are new enough.
 
-    # The build team supports using the tip-of-tree cros_mark_as_stable to uprev
-    # older branches until such time as they have a long-term answer.  This is
-    # not true for other chromite commands.
-    workspace = self.m.src_state.workspace_path
-    tot_chromite = self.m.path.mkdtemp().join('chromite')
-    self.m.step('clone tip-of-tree chromite', [
-        'git', 'clone', '--local', '--shared', '--config',
-        'remote.origin.fetch=+refs/remotes/cros/main:refs/heads/main',
-        workspace.join('chromite'), tot_chromite
-    ])
-    with self.m.context(cwd=tot_chromite):
-      self.m.git.checkout('main', force=True)
-
-    no_push = bool(self.m.cq.active or self._is_staging or
-                   self.m.src_state.gerrit_changes)
-    drop_file = self.m.path.mkstemp()
-    manifest = 0 if not self._config else self._config.general.manifest
-
-    cmd = [tot_chromite.join('bin/cros_mark_as_stable')]
-    if no_push:
-      cmd.extend(['commit', '--dryrun'])
-    else:
-      cmd.append('push')
-    cmd.extend([
-        '--all',
-        '--boards=%s' % ':'.join(self._boards), '--drop_file', drop_file,
-        '--buildroot', workspace, '--overlay-type',
-        'public' if manifest == BuilderConfig.General.PUBLIC else 'both'
-    ])
-
     with self.m.step.nest('uprev packages') as pres:
+      # The build team supports using the tip-of-tree cros_mark_as_stable to
+      # uprev older branches until such time as they have a long-term answer.
+      # This is not true for other chromite commands.
+      workspace = self.m.src_state.workspace_path
+      tot_chromite = self.m.path.mkdtemp().join('chromite')
+      self.m.step('clone tip-of-tree chromite', [
+          'git', 'clone', '--local', '--shared', '--config',
+          'remote.origin.fetch=+refs/remotes/cros/main:refs/heads/main',
+          workspace.join('chromite'), tot_chromite
+      ])
+      with self.m.context(cwd=tot_chromite):
+        self.m.git.checkout('main', force=True)
+
+      no_push = bool(self.m.cq.active or self._is_staging or
+                     self.m.src_state.gerrit_changes)
+      drop_file = self.m.path.mkstemp()
+      manifest = 0 if not self._config else self._config.general.manifest
+
+      cmd = [tot_chromite.join('bin/cros_mark_as_stable')]
+      if no_push:
+        cmd.extend(['commit', '--dryrun'])
+      else:
+        cmd.append('push')
+      cmd.extend([
+          '--all',
+          '--boards=%s' % ':'.join(self._boards), '--drop_file', drop_file,
+          '--buildroot', workspace, '--overlay-type',
+          'public' if manifest == BuilderConfig.General.PUBLIC else 'both'
+      ])
+
       self.m.step('call cros_mark_as_stable', cmd)
       pres.logs['packages'] = self.m.file.read_raw(
           'read uprevved packages', drop_file,
@@ -216,21 +216,22 @@ class FirmwareBuilder(object):
 
   def _set_firmware_version(self):
     """Determine the firmware version."""
-    result = self.sdk_call(
-        'determine firmware_version', cmd=['../platform/ec/util/getversion.sh'],
-        infra_step=False, stdout=self.m.raw_io.output(add_output_log=True),
-        step_test_data=lambda: self.m.raw_io.test_api.stream_output(
-            _GETVERSION_TEST_DATA))
+    with self.m.step.nest('determine ec firmware_version'):
+      result = self.sdk_call(
+          'call getversion.sh', cmd=['../platform/ec/util/getversion.sh'],
+          infra_step=False, stdout=self.m.raw_io.output(add_output_log=True),
+          step_test_data=lambda: self.m.raw_io.test_api.stream_output(
+              _GETVERSION_TEST_DATA))
 
-    versions = {}
-    # For completeness grab all of the defines.
-    for line in result.stdout.splitlines():
-      match = re.match(r'#define\s+(?P<key>[\w]+)\s+"(?P<value>[^"]+)"', line)
-      if match:
-        versions[match.groupdict()['key']] = match.groupdict()['value']
-    self.m.easy.set_properties_step(
-        bcs_version=str(self._bcs_version), firmware_version=versions)
-    self._firmware_version = versions['VERSION'][1:]
+      versions = {}
+      # For completeness grab all of the defines.
+      for line in result.stdout.splitlines():
+        match = re.match(r'#define\s+(?P<key>[\w]+)\s+"(?P<value>[^"]+)"', line)
+        if match:
+          versions[match.groupdict()['key']] = match.groupdict()['value']
+      self.m.easy.set_properties_step(
+          bcs_version=str(self._bcs_version), firmware_version=versions)
+      self._firmware_version = versions['VERSION'][1:]
 
   def _setup_board_and_install_packages(self, build_target):
     board = build_target.name
@@ -295,8 +296,10 @@ class FirmwareBuilder(object):
   def _bundle_firmware(self, _chroot, _sysroot, _artifacts_info, outpath,
                        _test_data):
     """Returns a dictionary of files by artifact_type."""
-    # We always provide FIRMWARE_TARBALL and FIRMWARE_TARBALL_INFO.
+    # This is called from beneath cros_artifacts.upload_artifacts as a private
+    # bundler.
 
+    # We always provide FIRMWARE_TARBALL and FIRMWARE_TARBALL_INFO.
     ret = defaultdict(list)
     # We need a directory inside of the chroot.  Use mkdtemp() to get a name, so
     # that test expectations are constant.
@@ -339,10 +342,15 @@ class FirmwareBuilder(object):
     with self.m.step.nest('push image'):
       board = build_target.name
       staging = self._is_staging
-      sign_types = self.properties.sign_types or [
-          common_pb2.IMAGE_TYPE_FIRMWARE, common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG
-      ]
-      dest = 'gs://{}chromeos-releases'.format('staging-' if staging else '')
+      # Defaults have changed over time. Other types are only signed based on
+      # builder config.
+      default_types = [common_pb2.IMAGE_TYPE_FIRMWARE]
+      if self._is_after('7618.0.0'):
+        default_types.append(common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG)
+      sign_types = self.properties.sign_types or default_types
+
+      dest = ('gs://chromeos-throw-away-bucket'
+              if staging else 'gs://chromeos-releases')
       profile = lambda x: ['--profile={}'.format(x)] if x else []
       has_dest_bucket = self._is_after('13682.0.0')
       dry_run = self.m.cq.active or not self.properties.bump_version
@@ -423,6 +431,8 @@ def GenTests(api):
       api.post_check(MustRun, 'create buildspec'), suite_scheduling(True),
       api.post_check(StepCommandContains, 'build target.install packages',
                      ['--withdebugsymbols']), api.post_check(StatusSuccess),
+      api.post_check(StepCommandContains, 'push image.call pushimage',
+                     ['--dest-bucket=gs://chromeos-releases']),
       input_properties=dict(bump_version=True, set_suite_scheduling=True))
 
   yield test(
@@ -435,7 +445,7 @@ def GenTests(api):
                      ['--withdebugsymbols']),
       api.post_check(StepCommandLacks, 'push image.call pushimage', ['-n']),
       api.post_check(StepCommandContains, 'push image.call pushimage',
-                     ['--dest-bucket=gs://staging-chromeos-releases']),
+                     ['--dest-bucket=gs://chromeos-throw-away-bucket']),
       api.post_check(StatusSuccess), bucket='staging',
       input_properties=dict(bump_version=True, set_suite_scheduling=True))
 
@@ -449,7 +459,7 @@ def GenTests(api):
                      ['--withdebugsymbols']),
       api.post_check(StepCommandContains, 'push image.call pushimage', ['-n']),
       api.post_check(StepCommandLacks, 'push image.call pushimage',
-                     ['--dest-bucket=gs://staging-chromeos-releases']),
+                     ['--dest-bucket=gs://chromeos-throw-away-bucket']),
       api.post_check(StatusSuccess), bucket='staging',
       version='R39-6301.202.44',
       input_properties=dict(bump_version=True, set_suite_scheduling=True))
