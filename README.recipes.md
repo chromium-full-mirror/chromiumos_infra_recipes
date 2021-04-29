@@ -2785,7 +2785,7 @@ Returns a context where overlays can be mounted.
 Args:
   mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1141)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1145)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2802,7 +2802,7 @@ Returns:
 
 Check out the tip-of-tree in the workspace.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1098)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1102)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 

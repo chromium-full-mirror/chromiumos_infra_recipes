@@ -1022,6 +1022,10 @@ class CrosSourceApi(RecipeApi):
       snapshot_xml = self._get_manifest(gitiles_commit, projects=projects)
       # Force_sync to ensure that we get the snapshot that we want.
       sync_opts = dict(detach=True, **DEFAULT_CHECKOUT_SYNC_OPTS)
+      if gitiles_commit.ref not in ('refs/heads/snapshot', 'refs/heads/main',
+                                    'refs/heads/staging-snapshot'):
+        # TODO(b/186770501): Changing branches can take a while.
+        sync_opts['timeout'] = 7200
       sync_opts.update(kwargs)
       self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
                                 **sync_opts)
