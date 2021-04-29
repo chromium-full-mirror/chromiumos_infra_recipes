@@ -239,7 +239,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     but robocrop changes should stop at 6:55 PM to avoid race conditions with
     the scheduled gce config changes at 7 PM.
 
-    See resize_on_mtv_workday() in chrome-internal.googlesource.com/infradata/config.git/+/refs/heads/master/starlark/common/envs/chrome.star
+    See resize_on_mtv_workday() in chrome-internal.googlesource.com/infradata/config.git/+/HEAD/starlark/common/envs/chrome.star
     """
     utc_now = self.m.time.utcnow()
     pst_now = utc_now - timedelta(hours=8)
@@ -258,7 +258,7 @@ class BotScalingApi(recipe_api.RecipeApi):
 
     for schedule in schedules:
       # Weekday daytime schedules always start at 8:00
-      # See resize_on_mtv_workday() in chrome-internal.googlesource.com/infradata/config.git/+/refs/heads/master/starlark/common/envs/chrome.star
+      # See resize_on_mtv_workday() in chrome-internal.googlesource.com/infradata/config.git/+/HEAD/starlark/common/envs/chrome.star
       if schedule.start.time != '8:00':
         continue
 

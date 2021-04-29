@@ -488,7 +488,7 @@ class GerritApi(RecipeApi):
       gerrit_change (GerritChange): The change of interest.
       labels (dict): Mapping from label (Label) to value (int).
       rebase_from_remote (bool): If true, sets the rebase branch to the equiv.
-        of origin/master (usually cros/master).
+        of origin/main (usually cros/main).
 
     Returns:
       str: The new label ref (primarily for testing).

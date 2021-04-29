@@ -89,7 +89,7 @@ def add_git_revisions_to_coverage_files_metadata(files_coverage_data, src_path):
   """Add git revisions to a list File in coverage metadata format.
 
   Coverage metadata format:
-  https://chromium.googlesource.com/infra/infra/+/refs/heads/master/appengine/findit/model/proto/code_coverage.proto
+  https://chromium.googlesource.com/infra/infra/+/HEAD/appengine/findit/model/proto/code_coverage.proto
 
   Args:
     files_coverage_data (list): A list of File in coverage metadata format, and

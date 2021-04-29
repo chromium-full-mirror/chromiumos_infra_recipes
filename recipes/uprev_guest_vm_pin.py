@@ -651,7 +651,7 @@ def _generate_postsubmit_build_set(ids, board):
         'gs_path': 'postsubmit-{0}/R80-1.2.{1}-{1}'.format(board, bb_id),
         'gs_bucket': 'chromeos-image-archive'
     }
-    gitiles_commit = {'ref': 'refs/heads/master'}
+    gitiles_commit = {'ref': 'refs/heads/main'}
     properties = Struct()
     properties['chromeos_version'] = 'R80-1.2.{0}'.format(bb_id)
     properties['artifacts'] = build_artifacts

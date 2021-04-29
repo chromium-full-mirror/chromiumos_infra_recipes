@@ -6,7 +6,7 @@
 """A script to aggregate files coverage data to directories and components.
 
 The code coverage data format is defined at:
-https://chromium.googlesource.com/infra/infra/+/refs/heads/master/appengine/findit/model/proto/code_coverage.proto
+https://chromium.googlesource.com/infra/infra/+/HEAD/appengine/findit/model/proto/code_coverage.proto
 """
 
 from collections import defaultdict

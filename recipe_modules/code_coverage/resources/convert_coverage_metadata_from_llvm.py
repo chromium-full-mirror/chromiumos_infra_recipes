@@ -210,7 +210,7 @@ def _to_compressed_file_record(file_coverage_data, constants_file, build_target,
   """Converts the given Clang file coverage data to coverage metadata format.
 
   Coverage metadata format:
-  https://chromium.googlesource.com/infra/infra/+/refs/heads/master/appengine/findit/model/proto/code_coverage.proto
+  https://chromium.googlesource.com/infra/infra/+/HEAD/appengine/findit/model/proto/code_coverage.proto
 
   Args:
     file_coverage_data (dict): The file coverage data from clang with format
@@ -354,7 +354,7 @@ def _convert_clang_summary_to_metadata(clang_summary):
 
   Returns:
     A list that conforms to the summaries in coverage metadata format:
-    https://chromium.googlesource.com/infra/infra/+/refs/heads/master/appengine/findit/model/proto/code_coverage.proto
+    https://chromium.googlesource.com/infra/infra/+/HEAD/appengine/findit/model/proto/code_coverage.proto
   """
   # Clang uses 'lines', 'regions', 'functions', whereas it's preferrable to use
   # singular forms in metadata format.

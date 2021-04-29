@@ -98,13 +98,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                           self.m.depot_gitiles.make_encoded_file(data))
 
   def current_builder_group(self, group):
-    """Set the builder group for the currently running builder.
-
-    This also sets the legacy mastername property so existing code
-    continues to work.
-    """
-    # TODO(https://crbug.com/1109276) Do not set the mastername property
-    return self.m.properties(builder_group=group, mastername=group)
+    """Set the builder group for the currently running builder."""
+    return self.m.properties(builder_group=group)
 
   def parent_builder_group(self, group):
     """Set the builder group for the parent builder."""

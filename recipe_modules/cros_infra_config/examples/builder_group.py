@@ -19,12 +19,6 @@ def RunSteps(api):
   api.assertions.assertEqual(api.cros_infra_config.target_builder_group,
                              'target-group')
 
-  # TODO(https://crbug.com/1109276) Remove these assertions
-  # Until all existing uses are gone, make sure that the legacy properties
-  # are still set
-  api.assertions.assertEqual(api.properties['mastername'], 'current-group')
-
-
 def GenTests(api):
   yield api.test(
       'full',
