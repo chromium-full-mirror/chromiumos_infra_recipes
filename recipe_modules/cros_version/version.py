@@ -13,16 +13,26 @@ import re
 # extract a Version instantance. The constructor is called with the lambda
 # provided (based upon groups found).
 def int_or_none(n):
-  if n is None:
-    return None
-  return int(n)
+  return None if n is None else int(n)
+
+
+def int_or_zero(n):
+  return 0 if n is None else int(n)
 
 
 CHROMEOS_VERSION_STRING_RES = [
     (re.compile(r'^(R(?P<chrome_branch>\d+)-)?(?P<build>\d+)'
-                r'\.(?P<branch>\d+).(?P<patch>\d)+$'), lambda cls, grps: cls(
+                r'\.(?P<branch>\d+)(.(?P<patch>\d)+)?$'), lambda cls, grps: cls(
                     int_or_none(grps['chrome_branch']), int(grps['build']),
                     int(grps['branch']), int(grps['patch']), None))
+]
+
+CHROMEOS_BRANCH_VERSION_STRING_RES = [
+    (re.compile(r'^[-_a-z]+(R(?P<chrome_branch>\d+))?-(?P<build>\d+)'
+                r'(\.(?P<branch>\d+))?\.B(-(?P<main_name>[-_a-zA-Z.]+))?$'),
+     lambda cls, grps: cls(
+         int_or_none(grps['chrome_branch']), int(grps['build']),
+         int_or_zero(grps['branch']), 0, None))
 ]
 
 
@@ -41,12 +51,31 @@ class Version(object):
       version (str): The version string to parse.
         This supports the following formats:
           "13505.0.0"
-          "R88.13505.0.0"
+          "R88-13505.0.0"
 
     Returns: A constructed Version, or None.
     """
     for (r, l) in CHROMEOS_VERSION_STRING_RES:
       m = re.match(r, version_string)
+      if m:
+        return l(cls, m.groupdict())
+    return None
+
+  @classmethod
+  def from_branch_name(cls, branch_name):
+    """Construct a Version from a branch_name.
+
+    Args:
+      branch_name (str): The branch name
+        This supports the following formats:
+          "stabilize-foo-13505.B"
+          "stabilize-bar-13505.101.B"
+          "release-R88-13505.B"
+
+    Returns: A constructed Version, or None.
+    """
+    for (r, l) in CHROMEOS_BRANCH_VERSION_STRING_RES:
+      m = re.match(r, branch_name)
       if m:
         return l(cls, m.groupdict())
     return None
@@ -60,7 +89,8 @@ class Version(object):
 
   @property
   def legacy_version(self):
-    return 'R%d-%s' % (self.milestone, self.platform_version)
+    return '%s%s' % ('R%d-' % self.milestone if self.milestone else '',
+                     self.platform_version)
 
   def __str__(self):
     version = self.legacy_version
