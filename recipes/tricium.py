@@ -5,7 +5,8 @@
 
 """Recipe for running tricium on CLs."""
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange, GitilesCommit
+from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
+                                                              GitilesCommit)
 from recipe_engine import post_process
 
 DEPS = [
@@ -19,6 +20,7 @@ DEPS = [
     'cros_infra_config',
     'cros_sdk',
     'cros_source',
+    'cros_version',
     'gerrit',
     'git',
     'gitiles',
@@ -52,8 +54,8 @@ def _FullCheckout(api):
     if len(gerrit_changes) == 0:
       presentation.step_text = "No changes given:  Build is POINTLESS."
       return
-    # If there is more than one gerrit_change, this recipe was invoked incorrectly,
-    # as the Tricium service only passes singletons.
+    # If there is more than one gerrit_change, this recipe was invoked
+    # incorrectly, as the Tricium service only passes singletons.
     if len(gerrit_changes) != 1:
       presentation.status = api.step.FAILURE
       presentation.step_text = "More than one change given."
@@ -62,8 +64,8 @@ def _FullCheckout(api):
   commit = api.src_state.gerrit_changes[0]
   patch_set = api.gerrit.fetch_patch_set_from_change(commit, include_files=True)
 
-  # If the change is on what looks like a valid branch, use that for the checkout.
-  # TODO(crbug/1168841): Move this code to a more appropriate home.
+  # If the change is on what looks like a valid branch, use that for the
+  # checkout. TODO(crbug/1168841): Move this code to a more appropriate home.
   if not api.buildbucket.gitiles_commit.ref:
     branch = api.git.extract_branch(patch_set.branch, patch_set.branch)
     for branch_prefix in ["release-", "factory-", "firmware-", "stabilize-"]:
@@ -85,6 +87,14 @@ def _FullCheckout(api):
               ref=api.git.get_branch_refspec(patch_set.branch), id=gitiles_id)
           break
 
+  if '.B' in api.src_state.gitiles_commit.ref:
+    with api.step.nest('check branch version') as pres:
+      version = api.cros_version.Version.from_branch_name(
+          api.src_state.gitiles_commit.ref[len('refs/heads/'):])
+      if version < api.cros_version.Version.from_string('13421.0.0'):
+        pres.step_text = '{} is too old'.format(str(version))
+        return
+
   analyzers = [
       api.tricium.LegacyAnalyzer(
           name='ShellcheckPortage',
@@ -96,7 +106,8 @@ def _FullCheckout(api):
               # ebuilds don't export variables or use a shebang (always bash).
               '--exclude=SC2148',
               '--shell=bash',
-              '--enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces',
+              ('--enable=avoid-nullary-conditions,check-unassigned-uppercase,'
+               'require-variable-braces'),
           ]),
       api.tricium.LegacyAnalyzer(
           name='Shellcheck',
@@ -105,16 +116,19 @@ def _FullCheckout(api):
           path_filters=['*.sh'],
           extra_args=[
               '--path_filters=*.sh',
-              # SC1091: Tricium doesn't include the necessary files to follow source commands.
+              # SC1091: Tricium doesn't include the necessary files to follow
+              # source commands.
               # SC3043: Don't warn about local in /bin/sh
               '--exclude=SC1091,SC3043',
-              '--enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces,quote-safe-variables',
+              ('--enable=avoid-nullary-conditions,check-unassigned-uppercase,'
+               'require-variable-braces,quote-safe-variables'),
           ]),
       api.tricium.analyzers.SPELLCHECKER,
   ]
 
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context(), \
-      api.workspace_util.sync_to_commit(staging=is_staging, projects=[commit.project]):
+      api.workspace_util.sync_to_commit(staging=is_staging,
+                                        projects=[commit.project]):
     api.workspace_util.apply_changes()
     workpath = api.workspace_util.workspace_path
 
@@ -251,4 +265,24 @@ def GenTests(api):
               dict(project='chromium/src', remote='cros-internal',
                    rrev='refs/heads/foo', upstream='refs/heads/foo'),
           ]),
+      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict))
+
+  value_dict = {
+      1: {
+          'change_id': '1',
+          'created': '2020-10-22 18:54:00.000000000',
+          'branch': 'refs/heads/stabilize-555.B',
+          'revision_info': {
+              '_number': 1,
+              'ref': 'refs/changes/foo',
+              'files': {
+                  "foo.ebuild": {},
+                  "bar.sh": {},
+              }
+          },
+      },
+  }
+
+  yield api.test(
+      'old-branch', test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict))

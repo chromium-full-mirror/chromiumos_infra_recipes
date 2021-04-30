@@ -267,6 +267,10 @@
   },
   {
     "cmd": [],
+    "name": "check branch version"
+  },
+  {
+    "cmd": [],
     "name": "mount overlay chromiumos"
   },
   {
