@@ -370,11 +370,11 @@ class FirmwareBuilder(object):
       ])
       if has_dest_bucket:
         cmd.append('--dest-bucket={}'.format(dest))
-      cmd.append('gs://{}/{}'.format(
+      cmd.append('gs://{}/{}/{}'.format(
           self._config.artifacts.artifacts_gs_bucket,
           self.m.cros_artifacts.artifacts_gs_path(self._config.id.name,
                                                   build_target,
-                                                  self._config.id.type)))
+                                                  self._config.id.type), board))
 
       self.sdk_call('call pushimage', cmd=cmd)
 
