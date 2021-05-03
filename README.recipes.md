@@ -4347,28 +4347,28 @@ Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 ### *recipe_modules* / [gitiles](/recipe_modules/gitiles)
 
-[DEPS](/recipe_modules/gitiles/__init__.py#1): [support](#recipe_modules-support)
+[DEPS](/recipe_modules/gitiles/__init__.py#6): [easy](#recipe_modules-easy), [support](#recipe_modules-support), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 APIs for dealing with Gitiles.
 
-#### **class [GitilesApi](/recipe_modules/gitiles/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitilesApi](/recipe_modules/gitiles/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gitiles helpers.
 
-&mdash; **def [fetch\_revision](/recipe_modules/gitiles/api.py#14)(self, host, project, branch, test_output_data=None):**
+&mdash; **def [fetch\_revision](/recipe_modules/gitiles/api.py#19)(self, host, project, branch, test_output_data=None):**
 
 Call gitiles-fetch-ref support tool.
 
 Args:
-  host (str): Gerrit host, e.g. chrome-internal
-  project (str): Gerrit project, e.g. chromiumos/chromite
-  branch (str): Gerrit branch, e.g. main
+  host (str): Gerrit host, e.g. 'chrome-internal'.
+  project (str): Gerrit project, e.g. 'chromiumos/chromite'.
+  branch (str): Gerrit branch, e.g. 'main'.
   test_output_data (dict): Test output for gitiles-fetch-ref.
 
 Returns:
   str: the current revision hash of the specified branch
 
-&mdash; **def [file\_url](/recipe_modules/gitiles/api.py#54)(self, commit, file_path=None):**
+&mdash; **def [file\_url](/recipe_modules/gitiles/api.py#59)(self, commit, file_path=None):**
 
 Return the url for a file in a GitilesCommit.
 
@@ -4379,7 +4379,31 @@ Args:
 Returns:
   (str) The url for the file.
 
-&mdash; **def [repo\_url](/recipe_modules/gitiles/api.py#43)(self, commit):**
+&mdash; **def [get\_file](/recipe_modules/gitiles/api.py#72)(self, host, project, path, ref=None, public=True, credential_cookie_location=None, test_output_data=None):**
+
+Return the contents of a file hosted on Gitiles.
+
+Curl will return a zero exit status on many occasions if the server
+responded even if the response isn't what you expected. When this succeeds
+the server returns base64, so not being able to decode this is a good
+indication something is wrong.
+
+Args:
+  host (str): Gerrit host, e.g. chrome-internal.
+  project (str): Gerrit project, e.g. chromiumos/chromite.
+  path: (str): The path to the file e.g. api/controller/something.py.
+  ref: (str): The ref you should return the file from, default: HEAD.
+  public: (bool): If False, will look in .git-credential-cache for an
+      authorization cookie and use it in the curl. Default: True.
+  credential_cookie_location: (str): The credential cookie location.
+      Default: '~/.git-credential-cache/cookie'.
+  test_output_data (str): Test output for curl.
+
+Returns:
+  (str) The contents of the file as a string or raise StepFailure on
+      unexpected curl return.
+
+&mdash; **def [repo\_url](/recipe_modules/gitiles/api.py#48)(self, commit):**
 
 Return the url for the repo in a GitilesCommit.
 
@@ -7337,7 +7361,7 @@ Test git_footers calls.
 
 [DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#16)(api):**
 ### *recipes* / [gitiles\_triggerer](/recipes/gitiles_triggerer.py)
 
 [DEPS](/recipes/gitiles_triggerer.py#8): [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -79,6 +79,45 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@data@{\"abc\":123}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT"
+    ],
+    "name": "fetch gitiles file.curl https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "fetch gitiles file (2)",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT"
+    ],
+    "name": "fetch gitiles file (2).curl https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "non base64 data returned from gitiles"
+    },
     "name": "$result"
   }
 ]

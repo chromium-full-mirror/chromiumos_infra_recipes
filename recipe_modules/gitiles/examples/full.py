@@ -8,6 +8,8 @@ DEPS = [
     'gitiles',
 ]
 
+from recipe_engine.recipe_api import StepFailure
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 
@@ -24,6 +26,18 @@ def RunSteps(api):
       api.gitiles.file_url(commit, 'path/to/file'),
       'https://host.example.com/project/name/+/snap/path/to/file')
 
+  api.assertions.assertEqual(
+      api.gitiles.get_file('testgerrit', 'my/project',
+                           'chromite/api/somefile.txt',
+                           ref='refs/heads/coolref'), '{"abc":123}')
+
+  api.assertions.assertRaises(
+      StepFailure,
+      api.gitiles.get_file('testgerrit', 'my/project',
+                           'chromite/api/somefile.txt',
+                           ref='refs/heads/coolref',
+                           test_output_data='not base64 yo'))
+
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic', api.gitiles.get_file('{"abc":123}'))
