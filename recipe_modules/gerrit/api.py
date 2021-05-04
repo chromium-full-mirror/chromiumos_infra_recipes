@@ -201,6 +201,18 @@ class GerritApi(RecipeApi):
     """Initialize GerritApi."""
     super(GerritApi, self).__init__(*args, **kwargs)
     self._buildbucket_patch_sets = None
+    self._gerrit_patch_sets = None
+
+  @property
+  def gerrit_patch_sets(self):
+    """The gerrit patches last fetched.
+
+    These may or may not include files, but always include commit info.
+    """
+    if self._gerrit_patch_sets is None:
+      self.fetch_patch_sets(self.m.src_state.gerrit_changes,
+                            include_commit_info=True)
+    return self._gerrit_patch_sets
 
   def _gerrit_fetch_changes(self, input, gerrit_changes, test_output_data=None):
     """Call gerrit-fetch-changes support tool.
@@ -270,6 +282,8 @@ class GerritApi(RecipeApi):
           for r in missing_responses
       ]
       raise StepFailure('missing gerrit patch(es)')
+    if include_commit_info:
+      self._gerrit_patch_sets = patch_sets
     return patch_sets
 
   def fetch_patch_set_from_change(self, change, include_files=False,
