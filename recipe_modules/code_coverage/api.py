@@ -77,7 +77,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     result.presentation.properties['gitiles_commit_ref'] = self._branch
     result.presentation.properties['gitiles_commit_id'] = self._commit_id
 
-  def process_coverage_data(self, build_target):
+  def process_coverage_data(self, build_target, chroot):
     """Processes the coverage data for metadata."""
     with self.m.step.nest('process code coverage data'):
       try:
@@ -85,9 +85,9 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                                                         self._project,
                                                         self._branch)
         with self.m.step.nest('upload coverage to ZOSS'):
-          self._upload_to_zoss(build_target)
+          self._upload_to_zoss(build_target, chroot)
         with self.m.step.nest('upload coverage to chromium coverage'):
-          self._generate_and_upload_metadata(build_target)
+          self._generate_and_upload_metadata(build_target, chroot)
       except StepFailure:
         self.m.step.active_result.presentation.properties[
             'process_coverage_data_failure'] = True
@@ -108,7 +108,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         data_type,
     )
 
-  def _generate_and_upload_metadata(self, build_target):
+  def _generate_and_upload_metadata(self, build_target, chroot):
     """Generates the coverage info in metadata format."""
     # The old coverage service does not support gerrit changes.
     # Just skip it if there are gerrit changes.
@@ -117,7 +117,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
     args = [
         '--chroot-dir',
-        self.m.cros_sdk.chroot.path,
+        chroot.path,
         '--checkout-dir',
         self.m.cros_source.workspace_path,
         '--project-dir',
@@ -147,13 +147,13 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           (self._gs_bucket, gs_path))
       self._coverage_metadata_gs_paths.append(gs_path)
 
-  def _upload_to_zoss(self, build_target):
+  def _upload_to_zoss(self, build_target, chroot):
     """Cleans up the coverage results and uploads them to ZOSS."""
     # For now skip this in CQ.
     if self.m.buildbucket.build.input.gerrit_changes:
       return
 
-    coverage_path = self.m.path.abs_to_path(self.m.cros_sdk.chroot.path).join(
+    coverage_path = self.m.path.abs_to_path(chroot.path).join(
         'build', build_target.name, 'build', 'coverage_data')
 
     coverage_files = self.m.file.glob_paths('find coverage files',

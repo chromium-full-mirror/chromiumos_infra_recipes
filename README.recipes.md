@@ -820,7 +820,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#463)(self, config=None, failing_build=False, private_bundle_func=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#464)(self, config=None, failing_build=False, private_bundle_func=None):**
 
 Upload artifacts from the build.
 
@@ -832,7 +832,7 @@ Args:
       as when there is no Build API on the branch), this will be called
       instead of the internal bundling method.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#485)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#486)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1191,7 +1191,7 @@ Perform additional Cloudready-specific workspace instructions.
 Assumes that the current working directory is the workspace root.
 ### *recipe_modules* / [code\_coverage](/recipe_modules/code_coverage)
 
-[DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -1203,7 +1203,7 @@ A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#80)(self, build_target):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#80)(self, build_target, chroot):**
 
 Processes the coverage data for metadata.
 

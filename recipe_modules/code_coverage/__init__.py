@@ -4,15 +4,16 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'cros_sdk',
-    'cros_source',
-    'depot_tools/gsutil',
-    'gitiles',
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/python',
     'recipe_engine/step',
+    'depot_tools/gsutil',
+    'cros_source',
+    'gerrit',
+    'gitiles',
 ]
 
 from PB.recipe_modules.chromeos.code_coverage.code_coverage import (

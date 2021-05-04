@@ -453,7 +453,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
         finally:
           if self._test_with_code_coverage:
             try:
-              self.m.code_coverage.process_coverage_data(self.build_target)
+              self.m.code_coverage.process_coverage_data(self.build_target,
+                                                         self.chroot)
             except StepFailure:
               if raise_coverage_failure:
                 raise
