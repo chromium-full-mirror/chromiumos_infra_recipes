@@ -599,6 +599,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # failing_build to _publish_artifacts and publish if the build is
       # not failing or if ArtifactInfo.publish_conditions = PUBLISH_ALWAYS.
 
+      # TODO(b/187794906): Switch to using updated ArtifactInfo fields.
+      for fname in files_by_artifact.get('FIRMWARE_LCOV', []):
+        self.m.code_coverage.upload_tarfile_to_zoss(outpath.join(fname))
+
       # Builders that publish artifacts should not recycyle dry-run builds,
       # since we treat them differently here.
       if self.m.cq.active and self.m.cq.run_mode == self.m.cq.DRY_RUN:

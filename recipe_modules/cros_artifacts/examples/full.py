@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
     'cros_artifacts',
@@ -47,6 +48,7 @@ def RunSteps(api, properties):
               artifact_types=[
                   common.ArtifactsByService.Firmware.FIRMWARE_TARBALL,
                   common.ArtifactsByService.Firmware.FIRMWARE_TARBALL_INFO,
+                  common.ArtifactsByService.Firmware.FIRMWARE_LCOV,
               ], acl_name='public-read')
       ]),
   )
@@ -89,6 +91,15 @@ def GenTests(api):
                      'upload artifacts.publish artifacts'))
 
   yield api.test(
+      'firmware-cq', api.cq(run_mode=api.cq.FULL_RUN),
+      api.buildbucket.try_build(),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          data=('{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'
+                '"paths": [{"path":"[START_DIR]/coverage.tbz2","location":2}],'
+                '"location": "PLATFORM_EC"}]}}')))
+
+  yield api.test(
       'failing-build', api.properties(TestInputProperties(failing_build=True)),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'))
@@ -100,5 +111,5 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'upload artifacts.publish artifacts'))
 
-  yield api.test('no ArtifactsService/Get',
+  yield api.test('no-ArtifactsService/Get',
                  api.cros_build_api.remove_endpoints(['ArtifactsService/Get']))

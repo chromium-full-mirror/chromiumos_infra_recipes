@@ -16,13 +16,22 @@ DEFAULT_CODE_BRANCH = 'refs/heads/main'
 PUBLIC_CODE_HOST = 'chromium'
 CODESEARCH_PROJECT = 'chromiumos/codesearch'
 
+# TODO(b/189356506): Remove experimental path after auto deploy is implemented.
+INCREMENTAL_COVERAGE_CIPD_PACKAGE = 'experimental/chromiumos/infra/code_coverage/manual/incremental_code_coverage'
+INCREMENTAL_COVERAGE_CIPD_VERSION = 'incremental_code_coverage:353038870'
+INCREMENTAL_COVERAGE_CIPD_FILE = 'incremental_code_coverage'
+
+ABSOLUTE_COVERAGE_CIPD_PACKAGE = 'experimental/chromiumos/infra/code_coverage/manual/absolute_code_coverage'
+ABSOLUTE_COVERAGE_CIPD_VERSION = 'absolute_code_coverage:362552734'
+ABSOLUTE_COVERAGE_CIPD_FILE = 'absolute_code_coverage'
+
 
 class CodeCoverageApi(recipe_api.RecipeApi):
   """This module contains apis to generate code coverage data."""
 
   def __init__(self, props, *args, **kwargs):
     super(CodeCoverageApi, self).__init__(*args, **kwargs)
-    # Temp dir for metadata
+    # Temp dir for metadata.
     self._metadata_dir = None
     # The list of coverage metadata gs paths to be uploaded.
     self._coverage_metadata_gs_paths = []
@@ -34,8 +43,12 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     self._branch = props.branch or DEFAULT_CODE_BRANCH
     # The commit id of branch for the project.
     self._commit_id = None
-    # Temp dir for zoss
+    # Temp dir for zoss.
     self._zoss_dir = None
+    # Path to incremental coverage client.
+    self._incremental_coverage_tool = None
+    # Path to absolute coverage client.
+    self._absolute_coverage_tool = None
 
   @property
   def metadata_dir(self):
@@ -56,6 +69,25 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     if not self._zoss_dir:
       self._zoss_dir = self.m.path.mkdtemp(prefix='code-coverage-zoss')
     return self._zoss_dir
+
+  def _ensure_binaries(self):
+    """Ensure this module's binaries are installed."""
+    if not self._incremental_coverage_tool:
+      with self.m.step.nest('ensure binaries'):
+        with self.m.context(infra_steps=True):
+          cipd_dir = self.m.path['start_dir'].join('cipd')
+
+          pkgs = self.m.cipd.EnsureFile()
+          pkgs.add_package(INCREMENTAL_COVERAGE_CIPD_PACKAGE,
+                           INCREMENTAL_COVERAGE_CIPD_VERSION)
+          pkgs.add_package(ABSOLUTE_COVERAGE_CIPD_PACKAGE,
+                           ABSOLUTE_COVERAGE_CIPD_VERSION)
+          self.m.cipd.ensure(cipd_dir, pkgs)
+
+          self._incremental_coverage_tool = cipd_dir.join(
+              INCREMENTAL_COVERAGE_CIPD_FILE)
+          self._absolute_coverage_tool = cipd_dir.join(
+              ABSOLUTE_COVERAGE_CIPD_FILE)
 
   def _set_builder_output_properties_for_uploads(self):
     """Sets the output property of the builder."""
@@ -153,6 +185,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     if self.m.buildbucket.build.input.gerrit_changes:
       return
 
+    self._ensure_binaries()
+
     coverage_path = self.m.path.abs_to_path(chroot.path).join(
         'build', build_target.name, 'build', 'coverage_data')
 
@@ -218,27 +252,84 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     codesearch_commit_id = self.m.gitiles.fetch_revision(
         PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
     build = self.m.buildbucket.build
-    self.m.step('absolute coverage upload for {}'.format(out_file), [
-        'luci-auth',
-        'context',
-        '--',
-        self.resource('vomfass_llvm_cloud_uploader'),
-        '--vomfass_service_addr',
-        'bifrost-vomfassupdateservice-c2p.googleapis.com',
-        '--timeout',
-        '10m',
-        '--host',
-        PUBLIC_CODE_HOST,
-        '--project',
-        CODESEARCH_PROJECT,
-        '--commit_id',
-        codesearch_commit_id,
-        '--ref',
-        self._branch,
-        '--uploader_name',
-        build.builder.builder,
-        '--uploader_id',
-        codesearch_commit_id + '_' + str(build.id),
-        '--llvm_json_file',
-        out_file,
-    ])
+    self.m.step(
+        'absolute coverage upload for {}'.format(out_file),
+        [
+            'luci-auth',
+            'context',
+            '--',
+            self._absolute_coverage_tool,
+            '--absolute_coverage_service_env',
+            'prod',
+            '--timeout',
+            '10m',
+            '--host',
+            PUBLIC_CODE_HOST,
+            '--project',
+            CODESEARCH_PROJECT,
+            '--commit_id',
+            codesearch_commit_id,
+            '--ref',
+            # self._branch,
+            # TODO(b/189193947): must be master for code search integration.
+            'refs/heads/master',
+            '--uploader_name',
+            build.builder.builder,
+            '--uploader_id',
+            codesearch_commit_id + '_' + str(build.id),
+            '--format',
+            'LLVM',
+            '--coverage_file',
+            out_file,
+        ])
+
+  def upload_tarfile_to_zoss(self, tarfile, step_name='upload to zoss'):
+    """Upload a tarfile to zoss.
+
+    Args:
+       tarfile (Path): path to tarfile.
+       step_name (str): name for the step.
+    """
+    with self.m.step.nest(step_name):
+      self._ensure_binaries()
+      # Untar the tarfile, and upload each file found therein.
+      workdir = self.m.path.mkdtemp(prefix='ccov-upload')
+      with self.m.context(cwd=workdir):
+        self.m.step('untar {}'.format(self.m.path.basename(tarfile)),
+                    ['tar', 'xvf', str(tarfile)])
+        self.m.path.mock_add_paths(workdir.join('lcov.info'))
+        for fpath in self.m.file.listdir('listdir', workdir,
+                                         test_data=('lcov.info',)):
+          if self.m.path.basename(fpath) == 'lcov.info':
+            # Coverage was already calculated - upload it for each patch set.
+            for change in self.m.gerrit.gerrit_patch_sets:
+              self.m.step(
+                  'upload {} for {} (ps #{})'.format(
+                      self.m.path.basename(fpath), change.change_id,
+                      change.patch_set),
+                  wrapper=['luci-auth', 'context', '--'],
+                  cmd=[
+                      self._incremental_coverage_tool,
+                      '--env',
+                      'prod',
+                      '--host',
+                      change.host,
+                      '--project',
+                      change.project,
+                      '--change_id',
+                      change.change_id,
+                      '--patchset',
+                      change.patch_set,
+                      '--uploader_name',
+                      self.m.buildbucket.build.builder.builder,
+                      '--uploader_id',
+                      '{}_{}_{}'.format(change.change_id, change.patch_set,
+                                        str(self.m.buildbucket.build.id)),
+                      '--format',
+                      'LCOV',
+                      '--coverage_file',
+                      str(fpath),
+                  ],
+                  stdout=self.m.raw_io.output(add_output_log=True),
+                  stderr=self.m.raw_io.output(add_output_log=True),
+              )

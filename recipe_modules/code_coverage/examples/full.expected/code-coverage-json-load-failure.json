@@ -3526,6 +3526,48 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS.ensure binaries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd",
+      "-ensure-file",
+      "experimental/chromiumos/infra/code_coverage/manual/incremental_code_coverage incremental_code_coverage:353038870\nexperimental/chromiumos/infra/code_coverage/manual/absolute_code_coverage absolute_code_coverage:362552734",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "run ebuild tests.process code coverage data.upload coverage to ZOSS.ensure binaries.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-absolute_code_co\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"experimental/chromiumos/infra/code_coverage/manual/absolute_code_coverage\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-incremental_code\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"experimental/chromiumos/infra/code_coverage/manual/incremental_code_coverage\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -3634,9 +3676,9 @@
       "luci-auth",
       "context",
       "--",
-      "RECIPE_MODULE[chromeos::code_coverage]/resources/vomfass_llvm_cloud_uploader",
-      "--vomfass_service_addr",
-      "bifrost-vomfassupdateservice-c2p.googleapis.com",
+      "[START_DIR]/cipd/absolute_code_coverage",
+      "--absolute_coverage_service_env",
+      "prod",
       "--timeout",
       "10m",
       "--host",
@@ -3646,12 +3688,14 @@
       "--commit_id",
       "abcd1234",
       "--ref",
-      "refs/heads/main",
+      "refs/heads/master",
       "--uploader_name",
       "sarien-code-coverage-postsubmit",
       "--uploader_id",
       "abcd1234_8945511751514863184",
-      "--llvm_json_file",
+      "--format",
+      "LLVM",
+      "--coverage_file",
       "[CLEANUP]/code-coverage-zoss_tmp_1/coverage.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

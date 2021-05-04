@@ -1,0 +1,3342 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@builder config@id {@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"fw-ec-cq\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  type: CQ@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@general {@@@",
+      "@@@STEP_LOG_LINE@builder config@  firmware_location: PLATFORM_EC@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
+      "@@@STEP_LOG_LINE@builder config@  prebuilts: PRIVATE@@@",
+      "@@@STEP_LOG_LINE@builder config@  prebuilts_gs_bucket: \"chromeos-prebuilt\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-image-archive\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  artifacts_info {@@@",
+      "@@@STEP_LOG_LINE@builder config@    firmware {@@@",
+      "@@@STEP_LOG_LINE@builder config@      output_artifacts {@@@",
+      "@@@STEP_LOG_LINE@builder config@        artifact_types: FIRMWARE_TARBALL@@@",
+      "@@@STEP_LOG_LINE@builder config@        artifact_types: FIRMWARE_TARBALL_INFO@@@",
+      "@@@STEP_LOG_LINE@builder config@      }@@@",
+      "@@@STEP_LOG_LINE@builder config@    }@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_LINE@builder config@build {@@@",
+      "@@@STEP_LOG_LINE@builder config@  apply_gerrit_changes: true@@@",
+      "@@@STEP_LOG_LINE@builder config@}@@@",
+      "@@@STEP_LOG_END@builder config@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.set recipes_git_revision",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "configure builder.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "name": "configure builder.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "configure builder.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
+    ],
+    "infra_step": true,
+    "name": "configure builder.gitiles-fetch-ref",
+    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.update src_state.gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.update src_state.build_manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.update src_state.gerrit_changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.update src_state.gerrit_changes.set gerrit_changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@changes@\"[{\\\"project\\\": \\\"project-a\\\", \\\"host\\\": \\\"chromium-review.googlesource.com\\\", \\\"patchset\\\": \\\"7\\\", \\\"change\\\": \\\"123456\\\"}]\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set BISECT_BUILDER",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"amd64-generic-bisect\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay chromiumos"
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay chromiumos.set chromiumos_warm_cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@chromiumos_warm_cache@false@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/upperdir/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "mount overlay chromiumos.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos/workdir/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "mount overlay chromiumos.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "mount overlay chromiumos.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
+      "overlay",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "mount overlay chromiumos.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/cros_chroot/chroot"
+    ],
+    "infra_step": true,
+    "name": "ensure chroot directory"
+  },
+  {
+    "cmd": [],
+    "name": "metadata setup"
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "metadata setup.buildbucket.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.auto",
+      "0"
+    ],
+    "cwd": "[CLEANUP]",
+    "infra_step": true,
+    "name": "git config"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.packRefs",
+      "false"
+    ],
+    "cwd": "[CLEANUP]",
+    "infra_step": true,
+    "name": "git config (2)"
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory"
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.set initial_repo_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "[CACHE]/chromiumos/.recipes_state.json"
+    ],
+    "infra_step": true,
+    "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.ensure root path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--groups",
+      "all",
+      "--repo-rev=stable"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.clear repo locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.clear git locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout.ensure clean checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "clean",
+      "-d",
+      "-f"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "8",
+      "--no-tags",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo sync",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "[CACHE]/chromiumos/.recipes_state.json"
+    ],
+    "infra_step": true,
+    "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "infra_step": true,
+    "name": "sync cached directory.sync chromeos/manifest-internal branches",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay workspace"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/workspace/workdir/workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "overlay",
+      "[CLEANUP]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "mount overlay workspace.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync to gitiles commit"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
+      "--format",
+      "text",
+      "--accept-statuses",
+      "200,404"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "<manifest></manifest>",
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "sync to gitiles commit.write manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@tmp_manifest@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--groups",
+      "all",
+      "--repo-rev=stable",
+      "--manifest-name",
+      "../tmp_manifest"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "8",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.repo sync",
+    "timeout": 10800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync to gitiles commit.ensure manifest is pinned",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.ensure manifest is pinned.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project-a\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "project-a",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/project-a",
+      "refs/changes/56/123456/7:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
+    "infra_step": true,
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
+    "infra_step": true,
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "-m",
+      "merge gerrit changes"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
+    "infra_step": true,
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set chromeos_version",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@chromeos_version@\"R99-1234.56.0-101\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages"
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.call chromite.api.PackageService/Uprev",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"overlayType\": 1\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"overlayType\": 1@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/Uprev"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.call build API script",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"uprevPackagesRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"overlayType\": \"OVERLAYTYPE_BOTH\"@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:23Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"uprev packages|call chromite.api.PackageService/Uprev|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"uprevPackagesResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"modifiedEbuilds\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }, @@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ], @@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"1.2.3\"@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJLdXByZXYgcGFja2FnZXN8Y2FsbCBj\\naHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gIC\\nGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28u\\nZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1vdmVy\\nbGF5L2Jhci5lYnVpbGQSBTEuMi4z\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@sdk version@123@@@",
+      "@@@STEP_LOG_END@sdk version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "u=rwx,g=rx,o=rx,-t",
+      "[CACHE]/cros_chroot/chroot"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.changing permissions of [CACHE]/cros_chroot/chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.check SDK in named cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
+      "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
+      "@@@STEP_LOG_END@sdk cache version@@@",
+      "@@@STEP_LOG_LINE@sdk manifest url@Url in config: https://chrome-internal.googlesource.com/chromeos/manifest-internal@@@",
+      "@@@STEP_LOG_LINE@sdk manifest url@Url on disk: @@@",
+      "@@@STEP_LOG_END@sdk manifest url@@@",
+      "@@@STEP_LOG_LINE@sdk manifest branch@Branch in config: @@@",
+      "@@@STEP_LOG_LINE@sdk manifest branch@Branch on disk: @@@",
+      "@@@STEP_LOG_END@sdk manifest branch@@@",
+      "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash in config: snapshot-HEAD-SHA@@@",
+      "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash on disk: @@@",
+      "@@@STEP_LOG_END@sdk snapshot hash@@@",
+      "@@@SET_BUILD_PROPERTY@sdk_cache@\"none\"@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/cros_chroot/sdk_cache_state.json",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.check SDK in named cache.read sdk cache state json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@@@@",
+      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.call chromite.api.SdkService/Create",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"noUseImage\": true@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"flags\": {\n    \"noUseImage\": true\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.call chromite.api.SdkService/Create.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"noUseImage\": true@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SdkService/Create"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
+    "timeout": 5400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "init sdk.call chromite.api.SdkService/Create.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.call chromite.api.SdkService/Create.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.call chromite.api.SdkService/Create.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:26Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"init sdk|call chromite.api.SdkService/Create|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"createResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"version\": 123@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"createRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }, @@@",
+      "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"noUseImage\": true@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:27.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAcIBIgoCGAESHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJv\\nb3TKAQQKAgh70ALQ7IDZrvG1knzaAkJpbml0IHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2\\naWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"snapshot_hash\": \"snapshot-HEAD-SHA\", \n\"version\": 1\n}",
+      "[CACHE]/cros_chroot/sdk_cache_state.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.write sdk cache state file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@version: 1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_branch: \"snapshot\"@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@snapshot_hash: \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.link chroot in chromiumos_workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/chromiumos_workspace"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.link chroot in chromiumos_workspace.ensure chromiumos_workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "symlink",
+      "[CACHE]/cros_chroot/chroot",
+      "[CLEANUP]/chromiumos_workspace/chroot"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.link chroot in chromiumos_workspace.link chromiumos_workspace to chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.detect toolchain change",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no change@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.detect toolchain change.determine toolchain paths",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"paths\": [{\"path\": \"some/other/dir\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.DependencyService/GetToolchainPaths"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.detect toolchain change.path relevancy check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\tproject-a\\030\\300\\304\\007 \\007\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chrome-internal.googlesource.com\\022\\032chromeos/manifest-internal\\032\\021snapshot-HEAD-SHA\\\"\\023refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  path: \"some/other/dir\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@ignore_known_non_portage_directories: true@@@",
+      "@@@STEP_LOG_END@relevance_input@@@",
+      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
+      "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
+      "@@@STEP_LOG_LINE@relevance_output@}@@@",
+      "@@@STEP_LOG_END@relevance_output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.detect toolchain change.path relevancy check.ensure binaries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd",
+      "-ensure-file",
+      "chromiumos/infra/build_plan_generator/${platform} prod\nchromiumos/infra/pointless_build_checker/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.detect toolchain change.path relevancy check.ensure binaries.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/build_plan_generator/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/pointless_build_checker/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "2\u0011snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0010\n\u000esome/other/dirP\u0001",
+      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.detect toolchain change.path relevancy check.write input binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@2\u0011snapshot-HEAD-SHA:5@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@3@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@f@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0010@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dirP\u0001@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/pointless_build_checker",
+      "check-build",
+      "--input_binary_pb",
+      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.detect toolchain change.path relevancy check.run check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "init sdk.detect toolchain change.path relevancy check.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "init sdk.detect toolchain change.set testing_toolchain",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update sdk"
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.call chromite.api.SdkService/Update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"toolchainTargets\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ], @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"flags\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"toolchainTargets\": [\n    {\n      \"name\": \"amd64-generic\"\n    }\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"flags\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "update sdk.call chromite.api.SdkService/Update.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"toolchainTargets\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"flags\": {}@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SdkService/Update"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
+    "timeout": 5400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "update sdk.call chromite.api.SdkService/Update.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.call chromite.api.SdkService/Update.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.call chromite.api.SdkService/Update.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"updateResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"version\": 123@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:32Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"update sdk|call chromite.api.SdkService/Update|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"updateRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"toolchainTargets\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ], @@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }, @@@",
+      "@@@STEP_LOG_LINE@published event@    \"flags\": {}@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:33.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdIBMQoAEg8KDWFtZDY0LWdlbmVyaWMaHAoaW0NBQ0hFXS9j\\ncm9zX2Nocm9vdC9jaHJvb3TaAQQKAgh70ALQ7IDZrvG1knzaAkR1cGRhdGUgc2RrfGNhbGwgY2hy\\nb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-ec-cq/R99-1234.56.0-101-8945511751514863184@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "upload artifacts.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "upload artifacts.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "upload artifacts.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "upload artifacts.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.call chromite.api.FirmwareService/BundleFirmwareArtifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@      {@@@",
+      "@@@STEP_LOG_LINE@request@        \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@          30, @@@",
+      "@@@STEP_LOG_LINE@request@          31@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    ]@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"bcsVersionInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"versionString\": \"R99-1234.56.0-101\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/artifacts_tmp_1\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"artifacts\": [{\"artifact_type\":\"FIRMWARE_LCOV\",\"paths\": [{\"path\":\"[START_DIR]/coverage.tbz2\",\"location\":2}],\"location\": \"PLATFORM_EC\"}]}}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"artifacts\": {\n    \"outputArtifacts\": [\n      {\n        \"artifactTypes\": [\n          30, \n          31\n        ]\n      }\n    ]\n  }, \n  \"bcsVersionInfo\": {\n    \"versionString\": \"R99-1234.56.0-101\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\", \n      \"location\": 2\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "upload artifacts.call chromite.api.FirmwareService/BundleFirmwareArtifacts.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          30, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          31@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"bcsVersionInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"versionString\": \"R99-1234.56.0-101\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"[CLEANUP]/artifacts_tmp_1\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.FirmwareService/BundleFirmwareArtifacts"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload artifacts.call chromite.api.FirmwareService/BundleFirmwareArtifacts.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload artifacts.call chromite.api.FirmwareService/BundleFirmwareArtifacts.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.call chromite.api.FirmwareService/BundleFirmwareArtifacts.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.call chromite.api.ArtifactsService/Get",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/artifacts_tmp_1\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"artifactInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"firmware\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            30, @@@",
+      "@@@STEP_LOG_LINE@request@            31@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"legacy\": {\"artifacts\": [{\"artifact_type\": \"EBUILD_LOGS\", \"paths\": [{\"path\": \"[START_DIR]/log.tar.gz\", \"location\": 2}]}]}, \"toolchain\": {\"artifacts\": [{\"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \"paths\": [{\"path\": \"[START_DIR]/orderfile\", \"location\": 2}]}]}}}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\", \n      \"location\": 2\n    }\n  }, \n  \"artifactInfo\": {\n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            30, \n            31\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "upload artifacts.call chromite.api.ArtifactsService/Get.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"[CLEANUP]/artifacts_tmp_1\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"artifactInfo\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"firmware\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            30, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            31@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ArtifactsService/Get"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload artifacts.call chromite.api.ArtifactsService/Get.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload artifacts.call chromite.api.ArtifactsService/Get.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.call chromite.api.ArtifactsService/Get.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.read chromeos version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "upload artifacts.read chromeos version (2).read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.read chromeos version (2).read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "upload artifacts.read chromeos version (2).read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "upload artifacts.read chromeos version (2).read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "upload artifacts.read chromeos version (2).read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/artifacts_tmp_1",
+      "gs://chromeos-image-archive/fw-ec-cq/R99-1234.56.0-101-8945511751514863184"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "upload artifacts.gsutil rsync",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.output artifact GS paths",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_LCOV\": [\"../../[START_DIR]/coverage.tbz2\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-ec-cq/R99-1234.56.0-101-8945511751514863184\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.upload to zoss",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.upload to zoss.ensure binaries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd",
+      "-ensure-file",
+      "experimental/chromiumos/infra/code_coverage/manual/incremental_code_coverage incremental_code_coverage:353038870\nexperimental/chromiumos/infra/code_coverage/manual/absolute_code_coverage absolute_code_coverage:362552734",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "upload artifacts.upload to zoss.ensure binaries.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-absolute_code_co\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"experimental/chromiumos/infra/code_coverage/manual/absolute_code_coverage\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-incremental_code\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"experimental/chromiumos/infra/code_coverage/manual/incremental_code_coverage\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "xvf",
+      "[CLEANUP]/artifacts_tmp_1/../../[START_DIR]/coverage.tbz2"
+    ],
+    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
+    "name": "upload artifacts.upload to zoss.untar coverage.tbz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/ccov-upload_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
+    "infra_step": true,
+    "name": "upload artifacts.upload to zoss.listdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/ccov-upload_tmp_1/lcov.info@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
+    ],
+    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
+    "infra_step": true,
+    "name": "upload artifacts.upload to zoss.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project-a\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "context",
+      "--",
+      "[START_DIR]/cipd/incremental_code_coverage",
+      "--env",
+      "prod",
+      "--host",
+      "chromium-review.googlesource.com",
+      "--project",
+      "project-a",
+      "--change_id",
+      "123456",
+      "--patchset",
+      "7",
+      "--uploader_name",
+      "fw-ec-cq",
+      "--uploader_id",
+      "123456_7_8945511751514863184",
+      "--format",
+      "LCOV",
+      "--coverage_file",
+      "[CLEANUP]/ccov-upload_tmp_1/lcov.info"
+    ],
+    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
+    "name": "upload artifacts.upload to zoss.upload lcov.info for 123456 (ps #7)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "finalize metadata"
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "finalize metadata.buildbucket.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "finalize metadata.buildbucket.get (2)",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "finalize metadata.upload metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/fw-ec-cq/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"fw-ec-cq\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-ec-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:41\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false\n}",
+      "[CLEANUP]/metadata_tmp_1/metadata.json"
+    ],
+    "infra_step": true,
+    "name": "finalize metadata.upload metadata.writing metadata.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@metadata.json@{@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"board-metadata\": {}, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"boards\": [@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"fw-ec-cq\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"build-number\": 0, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"build_id\": 0, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 8945511751514863184, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"fw-ec-cq\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"cq\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"child-configs\": [], @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"master_build_id\": 0, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"metadata-version\": \"2\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"results\": [@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        {@@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"board\": \"\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"description\": \"\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"duration\": \"00:00:00\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"log\": \"\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"name\": \"DebugSymbols\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"status\": \"pass\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"summary\": \"stage was successful\"@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        }, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        {@@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"board\": \"\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"description\": \"\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"duration\": \"-1 day, 22:03:20\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"log\": \"\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"name\": \"UnitTest\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"status\": \"pass\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"summary\": \"stage was successful\"@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        }@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"status\": {@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"current-time\": null, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"status\": \"pass\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:53:41\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"unibuild\": false@@@",
+      "@@@STEP_LOG_LINE@metadata.json@}@@@",
+      "@@@STEP_LOG_END@metadata.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "finalize metadata.upload metadata.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "finalize metadata.upload metadata.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "finalize metadata.upload metadata.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/metadata_tmp_1/metadata.json",
+      "gs://chromeos-image-archive/fw-ec-cq/R99-1234.56.0-101-8945511751514863184/metadata.json"
+    ],
+    "infra_step": true,
+    "name": "finalize metadata.upload metadata.gsutil cp",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation"
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_packages\": [{\"category\": \"chromeos-base\", \"version\": \"1-r52\", \"package_name\": \"chrome-icu\"}], \"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.DependencyService/GetBuildDependencyGraph"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"getBuildDependencyGraphResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"depGraph\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"packageDeps\": [@@@",
+      "@@@STEP_LOG_LINE@published event@        {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"dependencySourcePaths\": [@@@",
+      "@@@STEP_LOG_LINE@published event@            {@@@",
+      "@@@STEP_LOG_LINE@published event@              \"path\": \"some/source/dir\"@@@",
+      "@@@STEP_LOG_LINE@published event@            }@@@",
+      "@@@STEP_LOG_LINE@published event@          ], @@@",
+      "@@@STEP_LOG_LINE@published event@          \"dependencyPackages\": [@@@",
+      "@@@STEP_LOG_LINE@published event@            {@@@",
+      "@@@STEP_LOG_LINE@published event@              \"category\": \"chromeos-base\", @@@",
+      "@@@STEP_LOG_LINE@published event@              \"packageName\": \"chrome-icu\", @@@",
+      "@@@STEP_LOG_LINE@published event@              \"version\": \"1-r52\"@@@",
+      "@@@STEP_LOG_LINE@published event@            }@@@",
+      "@@@STEP_LOG_LINE@published event@          ]@@@",
+      "@@@STEP_LOG_LINE@published event@        }@@@",
+      "@@@STEP_LOG_LINE@published event@      ]@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"getBuildDependencyGraphRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  }, @@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"dependency graph calculation|call chromite.api.DependencyService/GetBuildDependencyGraph|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:42.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:44Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwI1oDE/QQQgMq17gEiBgjYgMT9BJIBHhIcChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdJoB\\nOwo5EjcSIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTIaEQoPc29tZS9zb3VyY2Uv\\nZGly0ALQ7IDZrvG1knzaAm5kZXBlbmRlbmN5IGdyYXBoIGNhbGN1bGF0aW9ufGNhbGwgY2hyb21p\\ndGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNlL0dldEJ1aWxkRGVwZW5kZW5jeUdyYXBofGNhbGwgYnVp\\nbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate SDK reuse"
+  },
+  {
+    "cmd": [],
+    "name": "validate SDK reuse.depgraph relevance check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\tproject-a\\030\\300\\304\\007 \\007\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chrome-internal.googlesource.com\\022\\032chromeos/manifest-internal\\032\\021snapshot-HEAD-SHA\\\"\\023refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_END@relevance_input@@@",
+      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
+      "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
+      "@@@STEP_LOG_LINE@relevance_output@}@@@",
+      "@@@STEP_LOG_END@relevance_output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "2\u0011snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "validate SDK reuse.depgraph relevance check.write input binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@2\u0011snapshot-HEAD-SHA:5@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@3@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@f@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot@@@",
+      "@@@STEP_LOG_END@input.binaryproto@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/pointless_build_checker",
+      "check-build",
+      "--input_binary_pb",
+      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto",
+      "--output_binary_pb",
+      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "validate SDK reuse.depgraph relevance check.run check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "validate SDK reuse.depgraph relevance check.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot"
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.removing sysroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SdkService/Clean"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.unmounting chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
+      "@@@STEP_LOG_END@input_proto.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SdkService/Unmount"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/chromiumos_workspace/chroot"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace.remove original chroot link",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "a+rwX,-t",
+      "[CACHE]/cros_chroot/chroot"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot/chroot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set source_sync_target",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up overlayfs mounts"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CACHE]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CLEANUP]/chromiumos_workspace"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set build cost",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0028@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

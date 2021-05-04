@@ -146,6 +146,7 @@
   * [cl_factory](#recipes-cl_factory) &mdash; Used to create sweeping changes by creating CLs in many repos.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [cloudready:examples/full](#recipes-cloudready_examples_full)
+  * [code_coverage:examples/firmware](#recipes-code_coverage_examples_firmware)
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full)
   * [config_backfill](#recipes-config_backfill) &mdash; Copy legacy configuration and generate backfilled configuration.
   * [config_postsubmit](#recipes-config_postsubmit) &mdash; Run miscellaneous actions on project repos.
@@ -1248,30 +1249,38 @@ Perform additional Cloudready-specific workspace instructions.
 Assumes that the current working directory is the workspace root.
 ### *recipe_modules* / [code\_coverage](/recipe_modules/code_coverage)
 
-[DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This module contains apis to generate code coverage data.
 
-&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#40)(self):**
+&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#53)(self):**
 
 A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#80)(self, build_target, chroot):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#112)(self, build_target, chroot):**
 
 Processes the coverage data for metadata.
 
-&emsp; **@property**<br>&mdash; **def [zoss\_dir](/recipe_modules/code_coverage/api.py#50)(self):**
+&mdash; **def [upload\_tarfile\_to\_zoss](/recipe_modules/code_coverage/api.py#286)(self, tarfile, step_name='upload to zoss'):**
+
+Upload a tarfile to zoss.
+
+Args:
+   tarfile (Path): path to tarfile.
+   step_name (str): name for the step.
+
+&emsp; **@property**<br>&mdash; **def [zoss\_dir](/recipe_modules/code_coverage/api.py#63)(self):**
 
 A temporary directory for the zoss coverage data.
 
 Temp dir is created on first access to this property.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
-[DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [code\_coverage](#recipe_modules-code_coverage), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for uploading CrOS build artifacts to Google Storage.
 
@@ -1297,7 +1306,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#646)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#650)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1312,7 +1321,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#680)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#684)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1337,14 +1346,14 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#623)(self, properties):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#627)(self, properties):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#700)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#704)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1365,7 +1374,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#818)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#822)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
 
 Call the PushImage build API endpoint.
 
@@ -6829,6 +6838,11 @@ For more details on the input properties, see cl_factory.proto.
 [DEPS](/recipe_modules/cloudready/examples/full.py#6): [cloudready](#recipe_modules-cloudready)
 
 &mdash; **def [RunSteps](/recipe_modules/cloudready/examples/full.py#15)(api):**
+### *recipes* / [code\_coverage:examples/firmware](/recipe_modules/code_coverage/examples/firmware.py)
+
+[DEPS](/recipe_modules/code_coverage/examples/firmware.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api)
+
+&mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/firmware.py#14)(api):**
 ### *recipes* / [code\_coverage:examples/full](/recipe_modules/code_coverage/examples/full.py)
 
 [DEPS](/recipe_modules/code_coverage/examples/full.py#6): [build\_menu](#recipe_modules-build_menu)
@@ -6920,9 +6934,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/download_artifacts.py#17)(api):**
 ### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#26)(api, properties):**
 ### *recipes* / [cros\_artifacts:examples/prepare\_for\_build](/recipe_modules/cros_artifacts/examples/prepare_for_build.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/prepare_for_build.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
