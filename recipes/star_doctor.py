@@ -9,6 +9,7 @@ Automatically updates binary config files and updates Goldeneye config
 json files.
 """
 
+import base64
 import functools
 import json
 from google.protobuf.text_format import MessageToString
@@ -35,11 +36,14 @@ DEPS = [
     'gerrit',
     'git',
     'git_cl',
+    'gitiles',
 ]
 
 CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
-INTERNAL_HOST = 'https://chrome-internal.googlesource.com'
-EXTERNAL_HOST = 'https://chromium.googlesource.com'
+INTERNAL_HOST_DOMAIN = 'chrome-internal.googlesource.com'
+EXTERNAL_HOST_DOMAIN = 'chromium.googlesource.com'
+INTERNAL_HOST = 'https://' + INTERNAL_HOST_DOMAIN
+EXTERNAL_HOST = 'https://' + EXTERNAL_HOST_DOMAIN
 INTERNAL_REVIEW_HOST = 'https://chrome-internal-review.googlesource.com'
 EXTERNAL_REVIEW_HOST = 'https://chromium-review.googlesource.com'
 INFRA_CONFIG_PROJECT = 'chromeos/infra/config'
@@ -114,6 +118,18 @@ def RunSteps(api, properties):
                                                         fetch_n=fetch_n))
       api.file.write_text('write textproto', schedule_fname,
                           MessageToString(mstones))
+
+    with api.step.nest('fetch and write keyset configuration'):
+      keyset_json = api.gitiles.get_file(
+          INTERNAL_HOST_DOMAIN, 'chromeos/platform/release-keys',
+          'generated/keyset.json', public=False,
+          test_output_data=base64.b64encode('{"abc": 123}'))
+      # Ensure it's json afterall, then write.
+      validated_keys = json.dumps(
+          json.loads(keyset_json), sort_keys=True, indent=2)
+      keyset_fname = api.path.join(infra_config_dir,
+                                   'release/signing/keyset.json')
+      api.file.write_text('write keyset json', keyset_fname, validated_keys)
 
     # Update the release configuration time.
     tl_file = 'release/timeline_configuration.json'

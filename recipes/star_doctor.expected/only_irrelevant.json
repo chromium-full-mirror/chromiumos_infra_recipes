@@ -2283,6 +2283,55 @@
   },
   {
     "cmd": [],
+    "name": "generate binary config.fetch and write keyset configuration",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate binary config.fetch and write keyset configuration.fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@data@{\"abc\": 123}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/platform/release-keys/+/HEAD/generated/keyset.json?format=TEXT"
+    ],
+    "name": "generate binary config.fetch and write keyset configuration.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/platform/release-keys/+/HEAD/generated/keyset.json?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"abc\": 123\n}",
+      "[CLEANUP]/tmp_tmp_1/release/signing/keyset.json"
+    ],
+    "infra_step": true,
+    "name": "generate binary config.fetch and write keyset configuration.write keyset json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@keyset.json@{@@@",
+      "@@@STEP_LOG_LINE@keyset.json@  \"abc\": 123@@@",
+      "@@@STEP_LOG_LINE@keyset.json@}@@@",
+      "@@@STEP_LOG_END@keyset.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate binary config.update configured release time",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

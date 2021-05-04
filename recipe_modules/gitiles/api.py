@@ -6,7 +6,6 @@
 """APIs for dealing with Gitiles."""
 
 import base64
-import os
 import urlparse
 
 from recipe_engine import recipe_api
@@ -96,7 +95,7 @@ class GitilesApi(recipe_api.RecipeApi):
     test_output_data = test_output_data or self._test_data.get('get_file')
     credential_cookie_location = (
         credential_cookie_location or
-        os.path.expanduser('~/.git-credential-cache/cookie'))
+        self.m.path.join(self.m.path['home'], '.git-credential-cache/cookie'))
     cred_cache_cmd = [] if public else ['-b', credential_cookie_location]
     ref = ref or 'HEAD'
     file_url_part = '/'.join((project, '+', ref, path))
