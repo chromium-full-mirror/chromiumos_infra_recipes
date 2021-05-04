@@ -132,7 +132,7 @@ def GenTests(api):
   for private in False, True:
     for use_staging in False, True:
       for enable_snapshot_prebuilts in False, True:
-        for send_snapshot_prebuilts in False, True:
+        for send_snapshot_prebuilts in 0, 1:
           name = '%s%s%s%s' % (
               'staging-' if use_staging else '',
               'private' if private else 'public',

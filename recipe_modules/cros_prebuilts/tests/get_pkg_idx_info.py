@@ -77,7 +77,7 @@ def GenTests(api):
     return data
 
   def test_data(use_staging=False, test_data_dict=None,
-                send_snapshot_prebuilts=True, snapshots=None, build_target=None,
+                send_snapshot_prebuilts=1, snapshots=None, build_target=None,
                 profile=None, expected_package_index_info=None):
 
     expected_package_index_info = expected_package_index_info or []
@@ -104,7 +104,7 @@ def GenTests(api):
 
     return ret
 
-  yield api.test('disabled', test_data(send_snapshot_prebuilts=False))
+  yield api.test('disabled', test_data(send_snapshot_prebuilts=0))
 
   yield api.test('nothing-found', test_data())
 

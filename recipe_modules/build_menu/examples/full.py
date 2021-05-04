@@ -104,7 +104,7 @@ def GenTests(api):
           '$chromeos/build_menu':
               dict(artifact_build=True),
           '$chromeos/cros_prebuilts':
-              dict(enable_snapshot_prebuilts=True, send_snapshot_prebuilts=True)
+              dict(enable_snapshot_prebuilts=True, send_snapshot_prebuilts=1)
       })
 
   for forced in False, True:
