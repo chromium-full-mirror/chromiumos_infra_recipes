@@ -16,7 +16,6 @@ from recipe_engine import recipe_api
 
 import itertools
 import json
-import math
 
 TASK_STATES = ['RUNNING', 'PENDING']
 EXECUTION_HOUR_PERCENTILE = .16
@@ -136,16 +135,21 @@ class BotScalingApi(recipe_api.RecipeApi):
       list[RegionalAction], region wise distribution of bots requested.
     """
     # TODO(dhanyaganesh): Make this function aware of budgets.
-    total_weight = sum(
-        [restriction.weight for restriction in region_restrictions])
-    actions = [
-        ScalingAction.RegionalAction(
-            region=restriction.region,
-            prefix=restriction.prefix,
-            bots_requested=int(
-                math.ceil(restriction.weight * bots_requested / total_weight)),
-        ) for restriction in region_restrictions
-    ]
+    total_weight = int(
+        sum([restriction.weight for restriction in region_restrictions]))
+    actions = []
+    for restriction in region_restrictions:
+      num_bots = 0
+      quotient, remainder = divmod(restriction.weight * bots_requested,
+                                   total_weight)
+      if remainder >= 5:
+        num_bots = quotient + 1  # pragma: nocover, implemented as part of python3 upgrade.
+      else:
+        num_bots = quotient
+      actions.append(
+          ScalingAction.RegionalAction(region=restriction.region,
+                                       prefix=restriction.prefix,
+                                       bots_requested=int(num_bots)))
     return actions
 
   def get_swarming_demand(self, swarming_stats, bot_group):
