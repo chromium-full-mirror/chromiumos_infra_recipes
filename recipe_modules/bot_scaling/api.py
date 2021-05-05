@@ -16,6 +16,7 @@ from recipe_engine import recipe_api
 
 import itertools
 import json
+import math
 
 TASK_STATES = ['RUNNING', 'PENDING']
 EXECUTION_HOUR_PERCENTILE = .16
@@ -142,7 +143,7 @@ class BotScalingApi(recipe_api.RecipeApi):
             region=restriction.region,
             prefix=restriction.prefix,
             bots_requested=int(
-                round(restriction.weight * bots_requested / total_weight)),
+                math.ceil(restriction.weight * bots_requested / total_weight)),
         ) for restriction in region_restrictions
     ]
     return actions
