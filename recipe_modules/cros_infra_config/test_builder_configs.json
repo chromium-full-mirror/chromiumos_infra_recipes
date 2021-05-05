@@ -17,9 +17,9 @@
         },
         "buildImages": {
           "imageTypes": [
-            "TEST",
-            "TEST_VM",
-            "BASE"
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_TEST_VM",
+            "IMAGE_TYPE_BASE"
           ]
         }
       }
@@ -55,8 +55,8 @@
       "build": {
         "buildImages": {
           "imageTypes": [
-            "BASE",
-            "TEST"
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
           ]
         },
         "installPackages": {
@@ -304,8 +304,8 @@
         },
         "buildImages": {
           "imageTypes": [
-            "BASE",
-            "TEST"
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
           ]
         },
         "installPackages": {
@@ -515,8 +515,8 @@
         ],
         "buildImages": {
           "imageTypes": [
-            "TEST",
-            "BASE"
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_BASE"
           ]
         },
         "installPackages": {
@@ -722,8 +722,8 @@
         "applyGerritChanges": true,
         "buildImages": {
           "imageTypes": [
-            "BASE",
-            "TEST"
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
           ]
         },
         "installPackages": {
@@ -1188,8 +1188,8 @@
         },
         "buildImages": {
           "imageTypes": [
-            "TEST",
-            "BASE"
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_BASE"
           ]
         }
       },
@@ -1512,9 +1512,9 @@
         ],
         "buildImages": {
           "imageTypes": [
-            "BASE",
-            "TEST",
-            "RECOVERY"
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_RECOVERY"
           ]
         },
         "installPackages": {
@@ -1596,7 +1596,7 @@
         ],
         "buildImages": {
           "imageTypes": [
-            "TEST"
+            "IMAGE_TYPE_TEST"
           ]
         },
         "installPackages": {
@@ -1843,8 +1843,8 @@
         },
         "buildImages": {
           "imageTypes": [
-            "TEST",
-            "BASE"
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_BASE"
           ]
         }
       },
@@ -1943,8 +1943,8 @@
         },
         "buildImages": {
           "imageTypes": [
-            "TEST",
-            "BASE"
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_BASE"
           ]
         }
       },

@@ -11,16 +11,16 @@ DEPS = [
 
 from PB.chromite.api.image import Image
 from PB.chromiumos.common import BuildTarget
-from PB.chromiumos.common import TEST
+from PB.chromiumos.common import IMAGE_TYPE_TEST
 
 
 def RunSteps(api):
   api.failures.raise_failed_image_tests([])
   api.assertions.assertRaises(
-      api.step.StepFailure, api.failures.raise_failed_image_tests,
-      [Image(path='path',
-             type=TEST,
-             build_target=BuildTarget(name='build_target'))])
+      api.step.StepFailure, api.failures.raise_failed_image_tests, [
+          Image(path='path', type=IMAGE_TYPE_TEST,
+                build_target=BuildTarget(name='build_target'))
+      ])
 
 
 def GenTests(api):

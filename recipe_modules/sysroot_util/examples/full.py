@@ -23,7 +23,9 @@ PROPERTIES = FullTestProperties
 
 
 def RunSteps(api, properties):
-  image_types = properties.image_types or [common.BASE, common.TEST]
+  image_types = properties.image_types or [
+      common.IMAGE_TYPE_BASE, common.IMAGE_TYPE_TEST
+  ]
   image_test_json = properties.image_test_json
 
   config = api.cros_infra_config.get_builder_config('amd64-generic-postsubmit')
@@ -124,5 +126,6 @@ def GenTests(api):
   yield api.test('failed-image-test', test_build(),
                  api.properties(FullTestProperties(image_test_json='{}')))
 
-  yield api.test('no-base-image', test_build(),
-                 api.properties(FullTestProperties(image_types=[common.TEST])))
+  yield api.test(
+      'no-base-image', test_build(),
+      api.properties(FullTestProperties(image_types=[common.IMAGE_TYPE_TEST])))

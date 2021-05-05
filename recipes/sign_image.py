@@ -15,6 +15,7 @@
 # sign the image, instead of uploading instructions files.
 
 import os
+import re
 import string
 
 from PB.chromiumos import sign_image as sign_image_os
@@ -105,10 +106,12 @@ def RunSteps(api, properties):
 
   with api.step.nest('validate request') as presentation:
     image_type = properties.image_type
-    image_type_name = ImageType.Name(image_type).lower()
+    # We operate here on image type names sans IMAGE_TYPE_ prefix.
+    image_type_name = re.sub('image_type_', '',
+                             ImageType.Name(image_type).lower())
     # TODO(lamontjones): Extend this to checking the config for the list of
     # permitted image_types.  Today, only gsc_firmware is permitted.
-    if image_type != common_os.GSC_FIRMWARE:
+    if image_type != common_os.IMAGE_TYPE_GSC_FIRMWARE:
       return result_pb2.RawResult(
           status=common_pb2.FAILURE, summary_markdown='illegal image type %s' %
           (ImageType.Name(image_type)))
@@ -220,16 +223,16 @@ def GenTests(api):
   yield api.test(
       'gsc',
       props(
-          image_type=common_os.GSC_FIRMWARE, keyset='cr50-accessory-mp',
-          channel=common_os.CHANNEL_CANARY,
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
+          keyset='cr50-accessory-mp', channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')))
 
   yield api.test(
       'gsc_bad_path',
       props(
-          image_type=common_os.GSC_FIRMWARE, keyset='cr50-accessory-mp',
-          channel=common_os.CHANNEL_CANARY,
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
+          keyset='cr50-accessory-mp', channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases-test/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')))
 
@@ -237,7 +240,7 @@ def GenTests(api):
       'gsc_staging_with_prod_path',
       props(
           signer_type=sign_image_os.SIGNER_STAGING,
-          image_type=common_os.GSC_FIRMWARE,
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
           build_target=BuildTarget(name='board'), keyset='cr50-accessory-mp',
           channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
@@ -246,8 +249,8 @@ def GenTests(api):
   yield api.test(
       'gsc_NodeLocked_no_device_id',
       props(
-          image_type=common_os.GSC_FIRMWARE, keyset='cr50-accessory-mp',
-          channel=common_os.CHANNEL_CANARY,
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
+          keyset='cr50-accessory-mp', channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'),
           gsc_instructions=GscInstructions(target=GscInstructions.NODE_LOCKED)))
@@ -255,7 +258,8 @@ def GenTests(api):
   yield api.test(
       'gsc_NodeLocked',
       props(
-          image_type=common_os.GSC_FIRMWARE, channel=common_os.CHANNEL_CANARY,
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
+          channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'),
           keyset='cr50-accessory-mp',

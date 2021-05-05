@@ -58,7 +58,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
           bucket='b', channel='stable'),
-      image_type=common_pb2.RECOVERY,
+      image_type=common_pb2.IMAGE_TYPE_RECOVERY,
       key='mp-v2',
   )
 
@@ -66,7 +66,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
           bucket='b', channel='beta'),
-      image_type=common_pb2.TEST,
+      image_type=common_pb2.IMAGE_TYPE_TEST,
       key='mp-v2',
   )
 
@@ -74,7 +74,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
           bucket='b', channel='stable'),
-      image_type=common_pb2.RECOVERY,
+      image_type=common_pb2.IMAGE_TYPE_RECOVERY,
       key='mp-v2',
   )
 
@@ -83,7 +83,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
           bucket='b', channel='stable'),
       milestone='86',
-      image_type=common_pb2.TEST,
+      image_type=common_pb2.IMAGE_TYPE_TEST,
   )
 
   UNSIGNED_TGT = UnsignedImage_pb2(
@@ -91,7 +91,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
           bucket='b', channel='stable'),
       milestone='86',
-      image_type=common_pb2.TEST,
+      image_type=common_pb2.IMAGE_TYPE_TEST,
   )
 
   DLC_SRC = DLCImage_pb2(

@@ -18,12 +18,14 @@ def RunSteps(api):
                                                      '13337.0.1')
   test_unsigned_image = (
       api.cros_storage.UnsignedImage(test_artifact_root,
-                                     ImageType.Value('RECOVERY'), 'R82'))
+                                     ImageType.Value('IMAGE_TYPE_RECOVERY'),
+                                     'R82'))
   src_test_artifact_root = api.cros_storage.ArtifactRoot(
       'test-bucket', 'canary-channel', 'zork', '13336.0.1')
   src_test_unsigned_image = (
       api.cros_storage.UnsignedImage(src_test_artifact_root,
-                                     ImageType.Value('RECOVERY'), 'R82'))
+                                     ImageType.Value('IMAGE_TYPE_RECOVERY'),
+                                     'R82'))
   test_dlc_image = (
       api.cros_storage.DLCImage(test_artifact_root, 'termina-dlc', 'package',
                                 'dlc.img'))

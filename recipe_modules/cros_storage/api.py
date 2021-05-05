@@ -334,7 +334,8 @@ class DLCImage(Image):
       dlc_package (str): The DLC package name (e.g. 'package').
       dlc_image (str): The name of the dlc image (e.g. 'dlc.img').
     """
-    super(DLCImage, self).__init__(artifact_root, ImageType.Value('DLC'))
+    super(DLCImage, self).__init__(artifact_root,
+                                   ImageType.Value('IMAGE_TYPE_DLC'))
     self._artifact_root = artifact_root
     self._dlc_id = dlc_id
     self._dlc_package = dlc_package
@@ -387,10 +388,11 @@ class FullPayload(Payload):
       return None
     values = m.groupdict()
     if values['signed_ext'] == '.signed':
-      tgt_image = SignedImage(ar, image_type=ImageType.Value('TEST'),
+      tgt_image = SignedImage(ar, image_type=ImageType.Value('IMAGE_TYPE_TEST'),
                               key=values['key'])
     elif values['signed_ext'] == '':
-      tgt_image = UnsignedImage(ar, image_type=ImageType.Value('TEST'),
+      tgt_image = UnsignedImage(ar,
+                                image_type=ImageType.Value('IMAGE_TYPE_TEST'),
                                 milestone=milestone)
     # Filter out .json and .log files.
     else:
@@ -453,14 +455,18 @@ class DeltaPayload(Payload):
     src_ar.version = values['src_version']
 
     if values['signed_ext'] == '.signed':
-      tgt_image = SignedImage(tgt_ar, image_type=ImageType.Value('TEST'),
+      tgt_image = SignedImage(tgt_ar,
+                              image_type=ImageType.Value('IMAGE_TYPE_TEST'),
                               key=values['key'])
-      src_image = SignedImage(src_ar, image_type=ImageType.Value('TEST'),
+      src_image = SignedImage(src_ar,
+                              image_type=ImageType.Value('IMAGE_TYPE_TEST'),
                               key=values['key'])
     elif values['signed_ext'] == '':
-      tgt_image = UnsignedImage(tgt_ar, image_type=ImageType.Value('TEST'),
+      tgt_image = UnsignedImage(tgt_ar,
+                                image_type=ImageType.Value('IMAGE_TYPE_TEST'),
                                 milestone=milestone)
-      src_image = UnsignedImage(src_ar, image_type=ImageType.Value('TEST'),
+      src_image = UnsignedImage(src_ar,
+                                image_type=ImageType.Value('IMAGE_TYPE_TEST'),
                                 milestone=milestone)
     # Filter out .json and .log files.
     else:

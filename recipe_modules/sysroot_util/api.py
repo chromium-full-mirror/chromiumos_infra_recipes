@@ -5,6 +5,8 @@
 
 """API for various support functions for building."""
 
+import re
+
 from recipe_engine import recipe_api
 
 from google.protobuf import json_format
@@ -20,7 +22,7 @@ from PB.chromite.api.sysroot import Profile as OldProfile
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateResponse
-from PB.chromiumos.common import BASE
+from PB.chromiumos.common import IMAGE_TYPE_BASE
 from PB.chromiumos.common import ImageType
 from PB.chromiumos.common import Profile
 
@@ -34,6 +36,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
   @property
   def sysroot(self):
     return self._sysroot
+
+  def _image_type_to_fname(self, image_type):
+    """Strip the IMAGE_TYPE_ prefix and provide a string image path."""
+    rep_name = re.sub('^IMAGE_TYPE_', '', ImageType.Name(image_type))
+    return '/build/images/%s.bin' % rep_name.lower()
 
   def update_for_artifact_build(self, chroot, artifacts, force_relevance=False,
                                 test_data=None, name=None):
@@ -262,7 +269,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
               success=True, images=[
                   Image(
                       type=x, path=str(self.m.path['start_dir'].join(
-                          '/build/images/%s.bin' % ImageType.Name(x).lower())),
+                          self._image_type_to_fname(x))),
                       build_target=self.sysroot.build_target)
                   for x in image_types
               ]))
@@ -281,8 +288,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             test_output_data=build_test_data)
         self.m.failures.set_failed_packages(pres, response.failed_packages)
 
-        to_test = [image for image in response.images if image.type == BASE]
-        if BASE not in image_types or not to_test:
+        to_test = [
+            image for image in response.images if image.type == IMAGE_TYPE_BASE
+        ]
+        if IMAGE_TYPE_BASE not in image_types or not to_test:
           # For now, as in legacy CQ, we only test base images. Images created
           # as a sideeffect (not explicitly requested in image_types) are not
           # tested.

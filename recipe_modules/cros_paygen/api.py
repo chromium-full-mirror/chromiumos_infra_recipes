@@ -423,7 +423,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     """
     reqs = []
     for tgt in tgt_artifacts:
-      if (tgt.image_type == common_pb2.ImageType.Value('TEST') and
+      if (tgt.image_type == common_pb2.IMAGE_TYPE_TEST and
           isinstance(tgt, UnsignedImage_pb2)):
         reqs.append(
             GenerationRequest(src_unsigned_image=tgt, tgt_unsigned_image=tgt,
@@ -483,7 +483,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
                                 dryrun=dryrun))
         elif isinstance(src, UnsignedImage_pb2):
           # We don't create delta paygens for unsigned recovery images.
-          if src.image_type == common_pb2.ImageType.Value('RECOVERY'):
+          if src.image_type == common_pb2.IMAGE_TYPE_RECOVERY:
             continue  # pragma: nocover
           reqs.append(
               GenerationRequest(src_unsigned_image=src, tgt_unsigned_image=tgt,
@@ -520,7 +520,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
                               dryrun=dryrun))
       elif isinstance(tgt, UnsignedImage_pb2):
         # We don't create full payloads for unsigned recovery images.
-        if tgt.image_type == common_pb2.ImageType.Value('RECOVERY'):
+        if tgt.image_type == common_pb2.IMAGE_TYPE_RECOVERY:
           continue  #  pragma: nocover
         reqs.append(
             GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
@@ -693,12 +693,10 @@ class CrosPaygenApi(recipe_api.RecipeApi):
 
     for req in gen_reqs:
       if (req.WhichOneof('src_image_oneof') == 'src_unsigned_image' and
-          req.src_unsigned_image.image_type == common_pb2.ImageType.Value(
-              'TEST')):
+          req.src_unsigned_image.image_type == common_pb2.IMAGE_TYPE_TEST):
         delta_test_reqs.append(req)
       elif (req.WhichOneof('tgt_image_oneof') == 'tgt_unsigned_image' and
-            req.tgt_unsigned_image.image_type == common_pb2.ImageType.Value(
-                'TEST')):
+            req.tgt_unsigned_image.image_type == common_pb2.IMAGE_TYPE_TEST):
         full_test_reqs.append(req)
       else:
         non_test_reqs.append(req)
@@ -771,7 +769,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           version=src_version)
       src_image = self.m.cros_storage.UnsignedImage(
           artifact_root=src_artifact_root, milestone=tgt_image._milestone,
-          image_type=common_pb2.ImageType.Value('TEST'))
+          image_type=common_pb2.IMAGE_TYPE_TEST)
     else:
       # Invalid Payload type given.
       raise StepFailure(
