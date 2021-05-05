@@ -141,6 +141,9 @@
       "cache_dir = '[CLEANUP]/gclient'\nsolutions = [{'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromiumos/infra/recipes'}]"
     ],
     "cwd": "[CLEANUP]/recipes",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/infra/test-recipes/8945511751514863184"
+    },
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
@@ -172,6 +175,9 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/recipes",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/infra/test-recipes/8945511751514863184"
+    },
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
@@ -203,6 +209,9 @@
       "local_bot"
     ],
     "cwd": "[CLEANUP]/recipes",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/infra/test-recipes/8945511751514863184"
+    },
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
@@ -226,6 +235,9 @@
       "local_bot@example.com"
     ],
     "cwd": "[CLEANUP]/recipes",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/infra/test-recipes/8945511751514863184"
+    },
     "env_suffixes": {
       "PATH": [
         "RECIPE_REPO[depot_tools]"
