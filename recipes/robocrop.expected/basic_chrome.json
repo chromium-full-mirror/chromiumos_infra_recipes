@@ -175,7 +175,7 @@
       "@@@STEP_LOG_LINE@bot_policy_config@      \"swarmingInstance\": \"chromium-swarm.appspot.com\", @@@",
       "@@@STEP_LOG_LINE@bot_policy_config@      \"botType\": {@@@",
       "@@@STEP_LOG_LINE@bot_policy_config@        \"coresPerBot\": 8.0, @@@",
-      "@@@STEP_LOG_LINE@bot_policy_config@        \"hourlyCost\": 0.0803999975323677, @@@",
+      "@@@STEP_LOG_LINE@bot_policy_config@        \"hourlyCost\": 0.0804, @@@",
       "@@@STEP_LOG_LINE@bot_policy_config@        \"botSize\": \"e2-standard-8\", @@@",
       "@@@STEP_LOG_LINE@bot_policy_config@        \"memoryGb\": 32.0@@@",
       "@@@STEP_LOG_LINE@bot_policy_config@      }, @@@",
@@ -357,7 +357,7 @@
       "@@@STEP_LOG_LINE@robocrop_action@    {@@@",
       "@@@STEP_LOG_LINE@robocrop_action@      \"botType\": {@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        \"coresPerBot\": 8.0, @@@",
-      "@@@STEP_LOG_LINE@robocrop_action@        \"hourlyCost\": 0.0803999975323677, @@@",
+      "@@@STEP_LOG_LINE@robocrop_action@        \"hourlyCost\": 0.0804, @@@",
       "@@@STEP_LOG_LINE@robocrop_action@        \"botSize\": \"e2-standard-8\", @@@",
       "@@@STEP_LOG_LINE@robocrop_action@        \"memoryGb\": 32.0@@@",
       "@@@STEP_LOG_LINE@robocrop_action@      }, @@@",
@@ -391,7 +391,7 @@
     "name": "scale bot groups.compute scaling actions.set robocrop_action",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"applResourceUtilization\": [{\"application\": \"chrome\", \"resourceUtilization\": [{\"region\": \"global\"}]}], \"scalingActions\": [{\"actionable\": \"NO\", \"application\": \"chrome\", \"botGroup\": \"try-test\", \"botType\": {\"botSize\": \"e2-standard-8\", \"coresPerBot\": 8.0, \"hourlyCost\": 0.0803999975323677, \"memoryGb\": 32.0}, \"regionalActions\": [{\"prefix\": \"chrome-robocrop-xenial-us-central1-c\", \"region\": \"us-central1-c\"}]}]}@@@"
+      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"applResourceUtilization\": [{\"application\": \"chrome\", \"resourceUtilization\": [{\"region\": \"global\"}]}], \"scalingActions\": [{\"actionable\": \"NO\", \"application\": \"chrome\", \"botGroup\": \"try-test\", \"botType\": {\"botSize\": \"e2-standard-8\", \"coresPerBot\": 8.0, \"hourlyCost\": 0.0804, \"memoryGb\": 32.0}, \"regionalActions\": [{\"prefix\": \"chrome-robocrop-xenial-us-central1-c\", \"region\": \"us-central1-c\"}]}]}@@@"
     ]
   },
   {
