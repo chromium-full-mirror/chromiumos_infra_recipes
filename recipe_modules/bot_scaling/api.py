@@ -135,12 +135,12 @@ class BotScalingApi(recipe_api.RecipeApi):
       list[RegionalAction], region wise distribution of bots requested.
     """
     # TODO(dhanyaganesh): Make this function aware of budgets.
-    total_weight = int(
-        sum([restriction.weight for restriction in region_restrictions]))
+    total_weight = round(
+        sum([restriction.weight for restriction in region_restrictions]), 2)
     actions = []
     for restriction in region_restrictions:
       num_bots = 0
-      quotient, remainder = divmod(restriction.weight * bots_requested,
+      quotient, remainder = divmod(bots_requested * restriction.weight,
                                    total_weight)
       if remainder >= 5:
         num_bots = quotient + 1  # pragma: nocover, implemented as part of python3 upgrade.

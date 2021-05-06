@@ -515,7 +515,7 @@ Args:
   child_builds (list[build_pb2.Build]): The child builds for this cq run.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
-[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
