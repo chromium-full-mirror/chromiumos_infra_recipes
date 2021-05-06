@@ -738,7 +738,23 @@
     "cmd": [],
     "name": "try uprev chromeos-base/chromite",
     "~followup_annotations": [
-      "@@@STEP_TEXT@skipping uprev for chromeos-base/chromite. no modified files@@@"
+      "@@@STEP_TEXT@skipping uprev for chromeos-base/chromite. no modified files@@@",
+      "@@@STEP_LOG_LINE@request@chroot {@@@",
+      "@@@STEP_LOG_LINE@request@  path: \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@package_info {@@@",
+      "@@@STEP_LOG_LINE@request@  package_name: \"chromite\"@@@",
+      "@@@STEP_LOG_LINE@request@  category: \"chromeos-base\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@versions {@@@",
+      "@@@STEP_LOG_LINE@request@  repository: \"chromiumos/chromite\"@@@",
+      "@@@STEP_LOG_LINE@request@  ref: \"refs/heads/main\"@@@",
+      "@@@STEP_LOG_LINE@request@  revision: \"deadbeef\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@build_targets {@@@",
+      "@@@STEP_LOG_LINE@request@  name: \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

@@ -165,6 +165,19 @@ message BranchPolicy {
   RetryClPolicy retry_cl_policy = 8;
 }
 
+// Holds information needed for packages who need to fetch a file from the
+// Gitiles API.
+message GitilesFetchInfo {
+  // Gerrit host to use. e.g chromium or chrome-internal
+  string host = 1;
+
+  // Gerrit project to target.
+  string project = 2;
+
+  // Path to the file, relative to project root.
+  string path = 3;
+}
+
 message GeneratorProperties {
   // The package to generate CLs for.
   chromiumos.PackageInfo package_info = 1;
@@ -190,4 +203,9 @@ message GeneratorProperties {
 
   // Ref to use for scheduled retries.
   RetryRef retry_ref = 12;
+
+  // Retrieval information required by the Gitiles API.
+  // If set this will fetch the version file and overwrite the revision field in
+  // git ref sent to the uprev handler.
+  GitilesFetchInfo gitiles_info = 14;
 }

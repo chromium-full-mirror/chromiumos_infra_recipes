@@ -738,7 +738,23 @@
     "cmd": [],
     "name": "try uprev chromeos-base/chromeos-chrome",
     "~followup_annotations": [
-      "@@@STEP_TEXT@skipping uprev for chromeos-base/chromeos-chrome. no modified files@@@"
+      "@@@STEP_TEXT@skipping uprev for chromeos-base/chromeos-chrome. no modified files@@@",
+      "@@@STEP_LOG_LINE@request@chroot {@@@",
+      "@@@STEP_LOG_LINE@request@  path: \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@package_info {@@@",
+      "@@@STEP_LOG_LINE@request@  package_name: \"chromeos-chrome\"@@@",
+      "@@@STEP_LOG_LINE@request@  category: \"chromeos-base\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@versions {@@@",
+      "@@@STEP_LOG_LINE@request@  repository: \"/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@request@  ref: \"refs/tags/79.0.3945.20\"@@@",
+      "@@@STEP_LOG_LINE@request@  revision: \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@build_targets {@@@",
+      "@@@STEP_LOG_LINE@request@  name: \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

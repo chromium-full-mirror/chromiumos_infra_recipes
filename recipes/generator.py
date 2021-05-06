@@ -25,7 +25,8 @@ from PB.recipes.chromeos.generator import (
     SendToCqPolicy, DO_NOTHING, DRY_RUN, FULL_RUN, ABANDON, SUBMIT,
     OutdatedClsPolicy, OUTDATED_DO_NOTHING, OUTDATED_LEAVE_COMMENT,
     OUTDATED_ABANDON, RetryClPolicy, NO_RETRY, RETRY_LATEST_OR_LATEST_PINNED,
-    RETRY_LATEST_PINNED, BranchPolicy, Reviewer, GeneratorProperties, RetryRef)
+    RETRY_LATEST_PINNED, BranchPolicy, Reviewer, GeneratorProperties, RetryRef,
+    GitilesFetchInfo)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
     CronTrigger, GitilesTrigger, Trigger, WebUITrigger)
@@ -52,6 +53,7 @@ DEPS = [
     'gerrit',
     'git',
     'git_footers',
+    'gitiles',
     'naming',
     'pupr',
     'repo',
@@ -72,6 +74,13 @@ def RunSteps(api, properties):
   with api.step.nest('validate properties') as presentation:
     if not properties.HasField('package_info'):
       raise StepFailure('must set package_info')
+
+    # Retrieve version information from Gitiles API.
+    if properties.HasField('gitiles_info'):
+      if not (properties.gitiles_info.host and
+              properties.gitiles_info.project and properties.gitiles_info.path):
+        raise StepFailure('gitiles fetch requested with no fetch '
+                          'infomation supplied')
 
     for policy in policies:
       if not policy.pattern:
@@ -374,17 +383,27 @@ def _do_uprev(api, properties, workspace_path, triggers, package, cpv, topic,
     (dict): ebuilds_by_pinfo. If None, pupr should return immediately.
   """
   with api.step.nest('try uprev {}'.format(cpv)) as presentation:
+    # Fetch from Gitiles API if the flag is set.
+    revision = None
+    if properties.HasField('gitiles_info'):
+      revision = api.gitiles.get_file(properties.gitiles_info.host,
+                                      properties.gitiles_info.project,
+                                      properties.gitiles_info.path,
+                                      test_output_data='MTIzLjQ1Ni43ODkuMAo=')
+
     request = UprevVersionedPackageRequest(
         chroot=api.cros_sdk.chroot,
         package_info=package,
         versions=[
             UprevVersionedPackageRequest.GitRef(
                 repository=urlparse.urlparse(trigger.gitiles.repo).path,
-                ref=trigger.gitiles.ref, revision=trigger.gitiles.revision)
+                ref=trigger.gitiles.ref, revision=(revision or
+                                                   trigger.gitiles.revision))
             for trigger in triggers
         ],
         build_targets=properties.build_targets,
     )
+    presentation.logs['request'] = str(request)
     response = api.cros_build_api.PackageService.UprevVersionedPackage(
         request, name='uprev versioned package')
 
@@ -564,6 +583,7 @@ def GenTests(api):
         PackageInfo(category='chromeos-base', package_name='chromite'))
     kwargs.setdefault('build_targets', [BuildTarget(name='build_target')])
     kwargs.setdefault('branch_policies', [_policy()])
+    kwargs.setdefault('gitiles_info', None)
     return api.properties(GeneratorProperties(**kwargs))
 
   chromite_gitiles_trigger = Trigger(
@@ -655,6 +675,11 @@ def GenTests(api):
   )
 
   yield api.test(
+      'fail-validate-props-on-gitiles-fetch-info',
+      _props(gitiles_info=GitilesFetchInfo()),
+  )
+
+  yield api.test(
       'no-matching-policy',
       _props(branch_policies=[]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
@@ -727,6 +752,24 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_check(post_process.MustRun,
                      'apply gerrit changes.update policy'),
+      api.test_util.test_build(
+          revision=None, extra_changes=[
+              GerritChange(host='chromium-review.googlesource.com', change=1234)
+          ], created_by='user:lamontjones@chromium.org').build)
+
+  yield _with_infos(
+      'with-gerrit-changes_with_revision_override',
+      _props(
+          gitiles_info=GitilesFetchInfo(host='chromium', project='chrome/src',
+                                        path='foo/bar.txt')),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.post_check(post_process.MustRun,
+                     'apply gerrit changes.update policy'),
+      api.post_check(
+          post_process.MustRun, 'try uprev chromeos-base/chromite.'
+          'fetch gitiles file.'
+          'curl https://chromium/chrome/src/+/HEAD/foo/bar.txt?format=TEXT'),
       api.test_util.test_build(
           revision=None, extra_changes=[
               GerritChange(host='chromium-review.googlesource.com', change=1234)
