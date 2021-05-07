@@ -1,0 +1,18 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.metadata_json;
+
+message MetadataJsonProperties {
+  // In addition to publishing the metadata.json file with all of the other
+  // build artifacts, we may need to push it elsewhere.
+  message PublishLocation {
+    // metadata.json will be uploaded to this path as well.
+    // This is the entire path, minus the "gs://".
+    string gs_location = 1;
+  }
+  repeated PublishLocation additional_publish_locations = 1;
+}

@@ -6,6 +6,8 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import step as step_pb2
+from PB.recipe_modules.chromeos.metadata_json.metadata_json import (
+    MetadataJsonProperties)
 from google.protobuf import timestamp_pb2
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
@@ -20,10 +22,11 @@ import time
 class MetadataJsonApi(RecipeApi):
   """A module to write metadata.json into GS for GoldenEye consumption."""
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, properties, *args, **kwargs):
     super(MetadataJsonApi, self).__init__(*args, **kwargs)
     self._metadata = {}
     self._add_defunct_entries()
+    self._properties = properties
 
   def _add_defunct_entries(self):
     """These fields are no longer available."""
@@ -158,6 +161,11 @@ class MetadataJsonApi(RecipeApi):
       upload_uri = 'gs://{}/{}/{}'.format(gs_bucket, gs_path, filename)
       self._upload(file_path, upload_uri)
       presentation.links['gs_link'] = self.m.urls.get_gs_path_url(upload_uri)
+      for location in self._properties.additional_publish_locations:
+        upload_location = self.m.cros_artifacts.artifacts_gs_path(
+            config.id.name, build_target, config.id.type,
+            template=location.gs_location)
+        self._upload(file_path, 'gs://{}/{}'.format(upload_location, filename))
 
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))

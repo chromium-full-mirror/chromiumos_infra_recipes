@@ -19,3 +19,7 @@ DEPS = [
     'urls',
     'util',
 ]
+from PB.recipe_modules.chromeos.metadata_json.metadata_json import (
+    MetadataJsonProperties)
+
+PROPERTIES = MetadataJsonProperties
