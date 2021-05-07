@@ -928,27 +928,63 @@
   },
   {
     "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/chromium/src",
-      "refs/heads/main:"
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      ".git/objects/info"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
-    "name": "generate new upstream branch locally.git fetch",
+    "name": "generate new upstream branch locally.ensure .git/objects/info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
-      "git",
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/preload/chrome/src/.git/objects",
+      ".git/objects/info/alternates"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "infra_step": true,
+    "name": "generate new upstream branch locally.create chrome git reference",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@alternates@/preload/chrome/src/.git/objects@@@",
+      "@@@STEP_LOG_END@alternates@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/git",
+      "fetch",
+      "https://chromium.googlesource.com/chromium/src"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "name": "generate new upstream branch locally.git fetch chromium",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/git",
       "rev-parse",
       "FETCH_HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
-    "infra_step": true,
-    "name": "generate new upstream branch locally.git rev-parse",
+    "name": "generate new upstream branch locally.get chromium head",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -958,7 +994,7 @@
       "vpython3",
       "libchrome_tools/developer-tools/uprev/update_upstream.py",
       "cros/upstream",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "cb10da20a312790d1d2421ae2f8dc2ea831cffa3",
       "--forward"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",

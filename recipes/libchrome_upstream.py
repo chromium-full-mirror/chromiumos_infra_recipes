@@ -15,6 +15,7 @@ DEPS = [
     'src_state',
     'git',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'repo',
@@ -34,9 +35,18 @@ def RunSteps(api):
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
         with api.step.nest('generate new upstream branch locally'):
-          chromium_heads = api.git.fetch_ref(
-              'https://chromium.googlesource.com/chromium/src',
-              'refs/heads/main')
+          api.file.ensure_directory('ensure .git/objects/info',
+                                    '.git/objects/info')
+          api.file.write_text('create chrome git reference',
+                              '.git/objects/info/alternates',
+                              '/preload/chrome/src/.git/objects')
+          api.step('git fetch chromium', [
+              '/usr/bin/git', 'fetch',
+              'https://chromium.googlesource.com/chromium/src'
+          ])
+          chromium_heads = api.step('get chromium head',
+                                    ['/usr/bin/git', 'rev-parse', 'FETCH_HEAD'],
+                                    stdout=api.raw_io.output()).stdout.strip()
           step_data = api.step(
               'generate new upstream head',
               [
@@ -67,10 +77,18 @@ def GenTests(api):
       api.step_data(
           'generate new upstream branch locally.generate new upstream head',
           stdout=api.raw_io.output(
-              '49d1e4a4a6ca65114208c498416be3b85e10cc8e\n')))
+              '49d1e4a4a6ca65114208c498416be3b85e10cc8e\n')),
+      api.step_data(
+          'generate new upstream branch locally.get chromium head',
+          stdout=api.raw_io.output(
+              'cb10da20a312790d1d2421ae2f8dc2ea831cffa3\n')))
 
   yield api.test(
       'script unexpected',
       api.step_data(
           'generate new upstream branch locally.generate new upstream head',
-          stdout=api.raw_io.output('Unexpected Result')))
+          stdout=api.raw_io.output('Unexpected Result')),
+      api.step_data(
+          'generate new upstream branch locally.get chromium head',
+          stdout=api.raw_io.output(
+              'cb10da20a312790d1d2421ae2f8dc2ea831cffa3\n')))
