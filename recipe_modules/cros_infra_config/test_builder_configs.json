@@ -1545,15 +1545,15 @@
               }
             ]
           },
-	  "image": {
-	    "outputArtifacts": [
-	      {
+          "image": {
+            "outputArtifacts": [
+              {
                 "artifactTypes": [
                   "DLC_IMAGE"
-		]
-	      }
-	    ]
-	  }
+                ]
+              }
+            ]
+          }
         }
       },
       "chrome": {
@@ -2014,7 +2014,7 @@
         "type": "CQ"
       },
       "general": {
-	"critical": true
+        "critical": true
       },
       "build": {
         "applyGerritChanges": true,
@@ -2091,7 +2091,7 @@
     {
       "id": {
         "name": "fw-atlas-postsubmit",
-        "type": "CQ"
+        "type": "POSTSUBMIT"
       },
       "general": {
         "firmwareLocation": "PLATFORM_EC"
@@ -2118,6 +2118,9 @@
                 "artifactTypes": [
                   "FIRMWARE_TARBALL",
                   "FIRMWARE_TARBALL_INFO"
+                ],
+                "gsLocations": [
+                  "chromeos-image-archive/{target}-firmware/{legacy_version}"
                 ]
               }
             ]
