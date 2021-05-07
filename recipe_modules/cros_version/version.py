@@ -28,7 +28,7 @@ CHROMEOS_VERSION_STRING_RES = [
 ]
 
 CHROMEOS_BRANCH_VERSION_STRING_RES = [
-    (re.compile(r'^[-_a-z]+(R(?P<chrome_branch>\d+))?-(?P<build>\d+)'
+    (re.compile(r'^[^.]+(R(?P<chrome_branch>\d+))?-(?P<build>\d+)'
                 r'(\.(?P<branch>\d+))?\.B(-(?P<main_name>[-_a-zA-Z.]+))?$'),
      lambda cls, grps: cls(
          int_or_none(grps['chrome_branch']), int(grps['build']),

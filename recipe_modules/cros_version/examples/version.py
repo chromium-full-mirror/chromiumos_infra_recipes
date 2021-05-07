@@ -51,7 +51,7 @@ def RunSteps(api):
   api.assertions.assertFalse(v.is_after('135.0.0'))
 
   # Test from_branch_name.
-  api.assertions.assertIsNone(version.from_branch_name('release-R86.13421.B'))
+  api.assertions.assertIsNone(version.from_branch_name('foo-86-R86.13421.B'))
   v = version.from_branch_name('release-R86-13421.B')
   api.assertions.assertEqual(v, version(86, 13421, 0, 0, None))
   v = version.from_branch_name('release-R86-13421.B-chromeos')
