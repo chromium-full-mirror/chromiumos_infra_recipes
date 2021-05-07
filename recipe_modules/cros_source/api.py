@@ -384,8 +384,9 @@ class CrosSourceApi(RecipeApi):
         # dirty.
         for path in self.mirrored_manifest_files:
           self.m.path.mock_add_paths(i_manifest.path.join(path))
-          self.m.file.copy('copy {}'.format(path), i_manifest.path.join(path),
-                           e_manifest.path.join(path))
+          if self.m.path.exists(i_manifest.path.join(path)):
+            self.m.file.copy('copy {}'.format(path), i_manifest.path.join(path),
+                             e_manifest.path.join(path))
 
         # Generate a manifest file, and save the path.
         manifest_file = self.m.path.mkstemp(prefix='manifest')
