@@ -352,9 +352,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     # If there is a branch name in the builder_name, then we need to preserve
     # the builder name.
+    version = self.m.cros_version.read_workspace_version()
     ret = {
         'label': BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-'),
-        'version': self.m.cros_version.read_workspace_version(),
+        'version': str(version),
+        'legacy_version': version.legacy_version,
         'build_id': self.m.buildbucket.build.id,
         'target': target.name,
         'builder_name': builder_name.replace('_', '-'),
@@ -363,7 +365,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                                    ret['build_id'])
     return ret
 
-  def artifacts_gs_path(self, builder_name, target, kind):
+  def artifacts_gs_path(self, builder_name, target, kind, template='{gs_path}'):
     """Returns the GS path for artifacts of the given kind for the given target.
 
     The resulting path will NOT include the GS bucket.
@@ -373,11 +375,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       target (BuildTarget): The target whose artifacts will be uploaded.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. Used as a descriptor in the GS path.
+      template (str): The string to format.
 
     Returns:
       The GS path at which artifacts should be uploaded.
     """
-    return self._artifacts_gs_path_dict(builder_name, target, kind)['gs_path']
+    return template.format(
+        **self._artifacts_gs_path_dict(builder_name, target, kind))
 
   def _publish_artifacts(self, builder_name, target, kind, artifacts_info,
                          upload_uri, files_by_artifact, name=None,
