@@ -308,9 +308,11 @@ def RunSteps(api, properties):
                   repository_path = api.path.join(workspace_path,
                                                   project_info.path)
                   with api.context(cwd=api.path.abs_to_path(repository_path)):
-                    api.gerrit.set_change_labels_remote(retry_cl,
-                                                        retry_ci.git_fetch_ref,
-                                                        labels)
+                    api.gerrit.set_change_labels_remote(
+                        retry_cl,
+                        labels,
+                        fetch_ref=retry_ci.git_fetch_ref,
+                    )
     if not retry_only_run:
       _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
                         existing_cls)

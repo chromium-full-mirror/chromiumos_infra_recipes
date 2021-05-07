@@ -200,7 +200,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/change/78/123/3%l=Code-Review+2,l=Verified+1"
+      "HEAD:refs/for/main%l=Code-Review+2,l=Verified+1"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/project",
     "infra_step": true,

@@ -86,7 +86,7 @@ class GitTxnApi(recipe_api.RecipeApi):
         change_url = self._get_change_url(push_stderr)
         change = self.m.gerrit.parse_gerrit_change(change_url)
         label = {self.m.gerrit.Label.BOT_COMMIT: 1}
-        self.m.gerrit.set_change_labels_remote(change, dest_ref, label,
+        self.m.gerrit.set_change_labels_remote(change, label, dest_ref=dest_ref,
                                                branch=branch)
         self.m.gerrit.submit_change(change, retries=3)
       return True

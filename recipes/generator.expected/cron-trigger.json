@@ -1262,7 +1262,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/change/foo%l=Bot-Commit+1,l=Commit-Queue+2"
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,

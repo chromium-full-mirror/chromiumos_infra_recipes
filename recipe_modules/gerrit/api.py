@@ -455,16 +455,17 @@ class GerritApi(RecipeApi):
         change.project = project_info.name
         return change
 
-  def set_change_labels_remote(self, gerrit_change, fetch_ref, labels,
-                               branch=None):
+  def set_change_labels_remote(self, gerrit_change, labels, fetch_ref=None,
+                               dest_ref=None, branch=None):
     """Set the given labels for the given Gerrit change.
       set_change_labels only works when the change exists in the local checkout.
       This function should be used in other cases.
 
     Args:
       gerrit_change (GerritChange): The change of interest.
-      fetch_ref (str): The ref at which the change can be fetched.
       labels (dict): Mapping from label (Label) to value (int).
+      fetch_ref (str): The ref at which the change can be fetched.
+      dest_ref (str): The ref at which the change can be pushed.
       branch (str): The remote branch to update.
 
     Returns:
@@ -474,7 +475,9 @@ class GerritApi(RecipeApi):
       project_info = self.m.repo.project_info(gerrit_change.project)
 
     with self.m.git.head_context():
-      if not branch:
+      # If no fetch_ref is provided we assume the checkout work has been handled
+      # outside this method
+      if fetch_ref:
         # Fetch the the given Gerrit change.
         self.m.git.fetch(project_info.remote, [fetch_ref], timeout_sec=60)
         # Temporarily checkout the fetched ref.
@@ -482,7 +485,7 @@ class GerritApi(RecipeApi):
 
       ref = self._set_change_labels(gerrit_change, labels,
                                     rebase_from_remote=True, branch=branch,
-                                    ref=fetch_ref)
+                                    ref=dest_ref)
 
       return ref
 
