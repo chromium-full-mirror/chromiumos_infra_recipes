@@ -77,8 +77,7 @@ class MetadataJsonApi(RecipeApi):
     self._metadata['bot-config'] = builder_name
     # For now consider builder_type = bucket.
     self._metadata['builder_type'] = build.builder.bucket
-    # Branch is always the tip-of-tree branch for now.
-    self._metadata['branch'] = self.m.src_state.default_branch
+    self._metadata['branch'] = self.m.cros_source.manifest_push
 
     self._metadata['time'] = {
         'start':
@@ -145,7 +144,9 @@ class MetadataJsonApi(RecipeApi):
       partial (bool): whether the metadata is incomplete.
     """
     with self.m.step.nest('upload metadata') as presentation:
-      filename = 'partial_metadata.json' if partial else 'metadata.json'
+      # Update the branch to what is actually being used.
+      self.add_entries(branch=self.m.cros_source.manifest_push)
+      filename = 'partial-metadata.json' if partial else 'metadata.json'
       file_path = self.write_to_file(filename)
       gs_bucket = config.artifacts.artifacts_gs_bucket
       try:
@@ -219,7 +220,7 @@ class MetadataJsonApi(RecipeApi):
     current_secs = int(self.m.time.time())
     self._metadata['status'] = {
         'status': 'pass' if success else 'fail',
-        'create-time': self._print_time(current_secs),
+        'current-time': self._print_time(current_secs),
         'summary': '',
     }
 
