@@ -116,8 +116,8 @@ class FirmwareBuilder(object):
       commit = self.m.src_state.internal_manifest.as_gitiles_commit_proto
       commit.ref = 'refs/heads/{}'.format(self.properties.manifest_branch)
 
-    with self.m.build_menu.configure_builder(
-        commit=commit, disable_sdk=True, targets=targets) as config:
+    with self.m.build_menu.configure_builder(commit=commit, disable_sdk=True,
+                                             targets=targets) as config:
       self._config = config
       with self.m.build_menu.setup_workspace(), \
           self.m.context(cwd=self.m.src_state.workspace_path):
