@@ -114,7 +114,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   @contextlib.contextmanager
   def configure_builder(self, is_staging=None, missing_ok=False,
-                        disable_sdk=False, commit=None):
+                        disable_sdk=False, commit=None, targets=()):
     """Initial setup steps for the builder.
 
     This context manager returns with all of the contexts that an image builder
@@ -128,6 +128,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       disable_sdk (bool): This builder will not be using the SDK at all. Only
           for branches with broken or no Build API.
       commit (GitilesCommit): The GitilesCommit for the build, or None.
+      targets (list[build_target]): List of build_targets for metadata_json to
+          use instead of our build_target.
 
     Returns:
       BuilderConfig or None, with an active context.
@@ -147,6 +149,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       commit = commit or self.m.buildbucket.gitiles_commit
       config = self.m.cros_infra_config.configure_builder(
           commit, changes, is_staging=is_staging)
+      targets = targets or [self.build_target]
       if (changes and config and not config.build.apply_gerrit_changes):
         raise recipe_api.StepFailure(
             'Changes provided, but builder does not apply changes')
@@ -159,7 +162,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
             _maybe_context(None if disable_sdk
                            else self.m.cros_sdk.cleanup_context):
           with _maybe_context(self.m.metadata_json.context if config else None,
-                              config, self.build_target):
+                              config, targets):
             yield config
 
           # If we have applied patches and the SDK was not validated, then we
@@ -300,7 +303,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.easy.set_properties_step(target_versions=target_versions)
       if self.m.cros_artifacts.has_output_artifacts(artifacts.artifacts_info):
         self.m.metadata_json.add_version_entries(target_versions)
-        self.m.metadata_json.upload_to_gs(config, self.build_target,
+        self.m.metadata_json.upload_to_gs(config, [self.build_target],
                                           partial=True)
 
     # TODO(crbug/1081828): After 2020-11-12, if there is no sysroot, that's ok.
@@ -453,8 +456,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
         finally:
           if self._test_with_code_coverage:
             try:
-              self.m.code_coverage.process_coverage_data(self.build_target,
-                                                         self.chroot)
+              self.m.code_coverage.process_coverage_data(
+                  self.build_target, self.chroot)
             except StepFailure:
               if raise_coverage_failure:
                 raise

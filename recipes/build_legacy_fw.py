@@ -111,12 +111,13 @@ class FirmwareBuilder(object):
     # has manifest_branch, use that branch of the internal manifest.
     self._is_staging = self.m.build_menu.is_staging
     commit = self.m.src_state.gitiles_commit
+    targets = self.properties.build_targets
     if not commit.project and self.properties.manifest_branch:
       commit = self.m.src_state.internal_manifest.as_gitiles_commit_proto
       commit.ref = 'refs/heads/{}'.format(self.properties.manifest_branch)
 
-    with self.m.build_menu.configure_builder(commit=commit,
-                                             disable_sdk=True) as config:
+    with self.m.build_menu.configure_builder(
+        commit=commit, disable_sdk=True, targets=targets) as config:
       self._config = config
       with self.m.build_menu.setup_workspace(), \
           self.m.context(cwd=self.m.src_state.workspace_path):
@@ -138,9 +139,7 @@ class FirmwareBuilder(object):
         # unpopulated for many (if not all) of the current firmware builders.
         entries['board-metadata'] = {x: {} for x in self._boards}
         self.m.metadata_json.add_entries(**entries)
-        self.m.metadata_json.upload_to_gs(config,
-                                          self.properties.build_targets[0],
-                                          partial=True)
+        self.m.metadata_json.upload_to_gs(config, targets, partial=True)
 
         with self.m.depot_tools.on_path(), self._setup_chroot():
           self._set_firmware_version()

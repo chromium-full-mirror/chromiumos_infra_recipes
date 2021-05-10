@@ -699,7 +699,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#351)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#354)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -716,7 +716,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#395)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#398)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -737,7 +737,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#76)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#115)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#115)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None, targets=()):**
 
 Initial setup steps for the builder.
 
@@ -752,6 +752,8 @@ Args:
   disable_sdk (bool): This builder will not be using the SDK at all. Only
       for branches with broken or no Build API.
   commit (GitilesCommit): The GitilesCommit for the build, or None.
+  targets (list[build_target]): List of build_targets for metadata_json to
+      use instead of our build_target.
 
 Returns:
   BuilderConfig or None, with an active context.
@@ -766,7 +768,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#88)(self):**
 
-&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#221)(self, no_chroot_timeout=False):**
+&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#224)(self, no_chroot_timeout=False):**
 
 Setup the chroot for the builder.
 
@@ -777,7 +779,7 @@ Args:
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#261)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#264)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -792,11 +794,11 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#194)(self, sync_to_manifest=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#197)(self, sync_to_manifest=None):**
 
 Setup the workspace for the builder.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#175)(self, no_chroot_timeout=False, sync_to_manifest=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#178)(self, no_chroot_timeout=False, sync_to_manifest=None):**
 
 Setup the workspace and chroot for the builder.
 
@@ -822,7 +824,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#464)(self, config=None, failing_build=False, private_bundle_func=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#467)(self, config=None, failing_build=False, private_bundle_func=None):**
 
 Upload artifacts from the build.
 
@@ -834,7 +836,7 @@ Args:
       as when there is no Build API on the branch), this will be called
       instead of the internal bundling method.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#486)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#489)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -4568,7 +4570,7 @@ Add elements to metadata.
 Args:
   kwargs (dict): dictionary of key-values to update.
 
-&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#192)(self):**
+&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#195)(self):**
 
 Add stage results for DebugSymbols and Unittest stages.
 
@@ -4579,21 +4581,21 @@ Update metadata with version info.
 Args:
   version_dict (dict): Map containing version info.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#242)(self, config, target):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#246)(self, config, targets=()):**
 
 Returns a context that upload final metadata.json to GS.
 
 Args:
   config (BuilderConfig): builder config of this builder.
-  target (BuildTarget): The build target of this builder.
+  targets (list[BuildTarget]): The build targets of this builder.
 
-&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#220)(self, config, target, success):**
+&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#223)(self, config, targets, success):**
 
 Finish the build stats and upload metadata.json.
 
 Args:
   config (BuilderConfig): builder config of this builder.
-  target (BuildTarget): The build target of this builder.
+  targets (list[BuildTarget]): The build target of this builder.
   success (bool): Did this build pass.
 
 &mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#119)(self):**
@@ -4602,13 +4604,15 @@ Get the metadata dict. Should only be used for unittesting.
 
 Returns: dict, metadata info.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#141)(self, config, build_target, partial=False):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#141)(self, config, targets, partial=False):**
 
 Upload metadata to GS at its current state.
 
 Args:
   config (BuilderConfig): builder config of this builder.
-  target (BuildTarget): The build target of this builder.
+  targets (list[BuildTarget]): The build targets of this builder.
+      The first element should be the build_target for the build, the entire
+      list is used for additional publication locations.
   partial (bool): whether the metadata is incomplete.
 
 &mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#126)(self, filename):**
@@ -6244,7 +6248,7 @@ builder profiles.
 
 Recipe that builds chromeos-firmware on a firmware branch.
 
-&mdash; **def [RunSteps](/recipes/build_legacy_fw.py#399)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_legacy_fw.py#398)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

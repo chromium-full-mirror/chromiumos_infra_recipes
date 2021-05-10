@@ -138,12 +138,14 @@ class MetadataJsonApi(RecipeApi):
                            indent=4)
     return str(file_path)
 
-  def upload_to_gs(self, config, build_target, partial=False):
+  def upload_to_gs(self, config, targets, partial=False):
     """Upload metadata to GS at its current state.
 
     Args:
       config (BuilderConfig): builder config of this builder.
-      target (BuildTarget): The build target of this builder.
+      targets (list[BuildTarget]): The build targets of this builder.
+          The first element should be the build_target for the build, the entire
+          list is used for additional publication locations.
       partial (bool): whether the metadata is incomplete.
     """
     with self.m.step.nest('upload metadata') as presentation:
@@ -154,18 +156,19 @@ class MetadataJsonApi(RecipeApi):
       gs_bucket = config.artifacts.artifacts_gs_bucket
       try:
         gs_path = self.m.cros_artifacts.artifacts_gs_path(
-            config.id.name, build_target, config.id.type)
-      except Exception:  # pragma: nocover # pylint: disable=broad-except
-        presentation.step_text = 'could not get GS path, exiting'
+            config.id.name, targets[0], config.id.type)
+      except Exception as ex:  # pragma: nocover # pylint: disable=broad-except
+        presentation.step_text = 'could not get GS path: {}'.format(ex)
         return
       upload_uri = 'gs://{}/{}/{}'.format(gs_bucket, gs_path, filename)
       self._upload(file_path, upload_uri)
       presentation.links['gs_link'] = self.m.urls.get_gs_path_url(upload_uri)
-      for location in self._properties.additional_publish_locations:
-        upload_location = self.m.cros_artifacts.artifacts_gs_path(
-            config.id.name, build_target, config.id.type,
-            template=location.gs_location)
-        self._upload(file_path, 'gs://{}/{}'.format(upload_location, filename))
+      for target in targets:
+        for location in self._properties.additional_publish_locations:
+          upload_location = self.m.cros_artifacts.artifacts_gs_path(
+              config.id.name, target, config.id.type,
+              template='gs://{}/{}'.format(location.gs_location, filename))
+          self._upload(file_path, upload_location)
 
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
@@ -217,41 +220,42 @@ class MetadataJsonApi(RecipeApi):
           'board': '',
       })
 
-  def finalize_build(self, config, target, success):
+  def finalize_build(self, config, targets, success):
     """Finish the build stats and upload metadata.json.
 
     Args:
       config (BuilderConfig): builder config of this builder.
-      target (BuildTarget): The build target of this builder.
+      targets (list[BuildTarget]): The build target of this builder.
       success (bool): Did this build pass.
     """
-    current_secs = int(self.m.time.time())
-    self._metadata['status'] = {
-        'status': 'pass' if success else 'fail',
-        'current-time': self._print_time(current_secs),
-        'summary': '',
-    }
+    if targets and targets[0] and targets[0].name:
+      now = int(self.m.time.time())
+      self._metadata['status'] = {
+          'status': 'pass' if success else 'fail',
+          'current-time': self._print_time(now),
+          'summary': '',
+      }
 
-    build = self._safe_buildbucket_get_self()
-    self._metadata['time'].update({
-        'finish': self._print_time(current_secs),
-        'duration': self._get_duration(current_secs, build.start_time.seconds),
-    })
-    self.upload_to_gs(config, target, partial=False)
+      build = self._safe_buildbucket_get_self()
+      self._metadata['time'].update({
+          'finish': self._print_time(now),
+          'duration': self._get_duration(now, build.start_time.seconds),
+      })
+      self.upload_to_gs(config, targets, partial=False)
 
   @contextlib.contextmanager
-  def context(self, config, target):
+  def context(self, config, targets=()):
     """Returns a context that upload final metadata.json to GS.
 
     Args:
       config (BuilderConfig): builder config of this builder.
-      target (BuildTarget): The build target of this builder.
+      targets (list[BuildTarget]): The build targets of this builder.
     """
     try:
+      boards = [x.name for x in targets]
       with self.m.step.nest('metadata setup'):
         self.add_default_entries()
-        self.add_entries(
-            boards=[target.name] if target and target.name else [None])
+        self.add_entries(boards=boards)
 
       yield
 
@@ -259,12 +263,12 @@ class MetadataJsonApi(RecipeApi):
         if self.m.cros_artifacts.has_output_artifacts(
             config.artifacts.artifacts_info):
           self.add_stage_results()
-          self.finalize_build(config, target, success=True)
+          self.finalize_build(config, targets, success=True)
     except StepFailure:
       with self.m.step.nest('finalize metadata'):
         if self.m.cros_artifacts.has_output_artifacts(
             config.artifacts.artifacts_info):
           self.add_stage_results()
-          self.finalize_build(config, target, success=False)
+          self.finalize_build(config, targets, success=False)
 
       raise
