@@ -1358,6 +1358,9 @@
       "--create"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1379,6 +1382,9 @@
       "target"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1402,6 +1408,9 @@
       "../platform/ec/util/getversion.sh"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1452,6 +1461,9 @@
       "--skip_chroot_upgrade"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1480,6 +1492,9 @@
       "virtual/chromeos-firmware"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1606,6 +1621,9 @@
       "/dev/stdin"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1988,6 +2006,9 @@
       "gs://chromeos-image-archive/fw-atlas-cq/R91-13874.10.0-101-8945511751514863184/target"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2015,6 +2036,9 @@
       "--delete"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"

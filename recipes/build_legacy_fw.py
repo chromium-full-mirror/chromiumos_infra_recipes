@@ -90,12 +90,15 @@ class FirmwareBuilder(object):
     command = [self.m.cros_sdk.cros_sdk_path] + list(sdk_args)
     # Pass in any USE flags from the builder config.
     if cmd:
-      if self._config and self._config.build.use_flags:
+      if self._config:
         command.append('USE={}'.format(' '.join(
             x.flag for x in self._config.build.use_flags)))
       command.extend(['--'] + list(cmd))
     kwargs.setdefault('infra_step', True)
-    return self.m.step(name, command, **kwargs)
+    # Tell chromite that this is an official build, so that chromeos_version.sh
+    # reports the same version as cros_version.
+    with self.m.context(env=dict(CHROMEOS_OFFICIAL='1')):
+      return self.m.step(name, command, **kwargs)
 
   def _is_after(self, version_str):
     """Return whether the workspace version is >= |version_str|."""
