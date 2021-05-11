@@ -146,7 +146,6 @@ class CrosVersionApi(RecipeApi):
         dry_run (bool): Whether the git push is --dry-run.
     """
     with self.m.step.nest('bump version') as pres:
-      old_version = self.read_workspace_version()
       if self.m.cq.active and not dry_run:
         raise StepFailure('CQ must set dry_run')
 
@@ -183,7 +182,9 @@ class CrosVersionApi(RecipeApi):
 
       # Update the version in output properties.
       new_version = self.read_workspace_version(name='read updated version')
-      self.m.easy.set_properties_step(chromeos_version=str(new_version))
+      self.m.easy.set_properties_step(
+          chromeos_version=str(new_version),
+          full_version=new_version.legacy_version)
 
       # Stage, commit, and push changes.
       with self.m.context(cwd=overlay_path):
