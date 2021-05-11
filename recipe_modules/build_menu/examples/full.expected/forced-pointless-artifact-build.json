@@ -5196,9 +5196,9 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.publish artifacts.publish artifact GS paths",
+    "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [{\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"chromeos-toolchain-artifacts/orderfile/unvetted\"}, {\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"}]}@@@"
     ]
   },

@@ -477,10 +477,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                   'files': files
               })
 
-      self.m.easy.set_properties_step(published=published,
-                                      step_name='publish artifact GS paths')
+    self.m.easy.set_properties_step(published=published,
+                                    step_name='publish artifact GS paths')
 
-      return links
+    return links
 
   def has_output_artifacts(self, artifacts_info):
     """Return whether there are output artifacts.

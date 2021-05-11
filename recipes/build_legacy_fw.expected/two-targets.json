@@ -2158,9 +2158,9 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.publish artifacts.publish artifact GS paths",
+    "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"board1/firmware_from_source.tar.bz2\", \"board2/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/target-firmware/R91-13874.10.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/target-firmware/R91-13874.10.0\"}]}@@@"
     ]
   },

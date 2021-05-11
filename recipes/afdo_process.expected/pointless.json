@@ -2892,9 +2892,9 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.publish artifacts.publish artifact GS paths",
+    "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@published@{}@@@"
     ]
   },
