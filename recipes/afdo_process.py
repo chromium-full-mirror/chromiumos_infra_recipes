@@ -42,11 +42,7 @@ def DoRunSteps(api, config, properties):
                                              force_relevance=True,
                                              name='prepare artifacts final')
 
-  api.cros_artifacts.upload_artifacts(
-      config.id.name, api.build_menu.build_target, config.id.type,
-      config.artifacts.artifacts_gs_bucket,
-      artifacts_info=config.artifacts.artifacts_info, sysroot=None,
-      chroot=api.cros_sdk.chroot)
+  api.build_menu.upload_artifacts(config)
 
 
 def GenTests(api):

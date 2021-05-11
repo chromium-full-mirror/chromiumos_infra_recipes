@@ -21,15 +21,15 @@ def RunSteps(api):
   target.name = 'target'
   api.assertions.assertRaises(
       StepFailure, api.cros_artifacts.upload_artifacts, 'target-postsubmit',
-      target, BuilderConfig.Id.POSTSUBMIT, 'artifacts_gs_bucket',
+      BuilderConfig.Id.POSTSUBMIT, 'artifacts_gs_bucket',
       artifacts_info=common.ArtifactsByService(
           legacy=dict(output_artifacts=[
               dict(
                   artifact_types=[common.ArtifactsByService.Legacy.EBUILD_LOGS],
                   gs_locations=['publish_gs_bucket']),
           ])), chroot=common.Chroot(path='/path/to/chroot'),
-      sysroot=sysroot.Sysroot(path='/build/target',
-                              build_target=common.BuildTarget(name='target')),
+      sysroot=sysroot.Sysroot(path='/build/{}'.format(target.name),
+                              build_target=target),
       test_data='{"artifacts":{"legacy":{"artifacts":[{"paths":['
       '{"path":"@@DIR@@/foo","location":2},{"path":"@@DIR@@/bar","location":2}'
       '],"artifactType":"EBUILD_LOGS"}]}}}')

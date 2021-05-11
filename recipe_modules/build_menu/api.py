@@ -15,12 +15,12 @@ from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
+from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromiumos.common import IMAGE_TYPE_RECOVERY, IMAGE_TYPE_ACCESSORY_RWSIG
 from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import Profile
-from PB.chromite.api.sysroot import Sysroot
 
 
 class BuildMenuApi(recipe_api.RecipeApi):
@@ -465,7 +465,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 
   def upload_artifacts(self, config=None, failing_build=False,
-                       private_bundle_func=None):
+                       private_bundle_func=None, sysroot=None):
     """Upload artifacts from the build.
 
     Args:
@@ -475,16 +475,23 @@ class BuildMenuApi(recipe_api.RecipeApi):
       private_bundle_func (func): If a private bundling method is needed (such
           as when there is no Build API on the branch), this will be called
           instead of the internal bundling method.
+      sysroot (Sysroot): Use this sysroot.  Defaults to the primary Sysroot for
+          the build.
+
+    Returns:
+       dictionary of uploaded artifacts.
     """
     config = config or self.config_or_default
+    sysroot = sysroot or self.sysroot or Sysroot(build_target=self.build_target)
 
     if self.m.cros_artifacts.has_output_artifacts(
         config.artifacts.artifacts_info):
-      self.m.cros_artifacts.upload_artifacts(
-          config.id.name, self.build_target, config.id.type,
-          config.artifacts.artifacts_gs_bucket, sysroot=self.sysroot,
-          chroot=self.chroot, artifacts_info=config.artifacts.artifacts_info,
-          failing_build=failing_build, private_bundle_func=private_bundle_func)
+      return self.m.cros_artifacts.upload_artifacts(
+          config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
+          artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
+          sysroot=sysroot, failing_build=failing_build,
+          private_bundle_func=private_bundle_func)
+    return {}
 
   def upload_prebuilts(self, config=None):
     """Upload prebuilts from the build.

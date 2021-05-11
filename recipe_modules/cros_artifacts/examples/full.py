@@ -56,13 +56,12 @@ def RunSteps(api, properties):
   # the API 1.0.0 case.
   api.cros_artifacts.upload_artifacts(
       'target-toolchain',
-      target,
       BuilderConfig.Id.TOOLCHAIN,
       'artifacts_gs_bucket',
       artifacts_info=artifacts_info,
       chroot=common.Chroot(path='/path/to/chroot'),
-      sysroot=sysroot.Sysroot(path='/build/target',
-                              build_target=common.BuildTarget(name='target')),
+      sysroot=sysroot.Sysroot(path='/build/{}'.format(target.name),
+                              build_target=target),
       failing_build=properties.failing_build,
   )
 

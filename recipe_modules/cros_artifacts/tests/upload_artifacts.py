@@ -9,6 +9,7 @@ DEPS = [
     'cros_build_api',
 ]
 
+from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from recipe_engine import post_process
@@ -18,9 +19,10 @@ def RunSteps(api):
   config = BuilderConfig()
 
   api.cros_artifacts.upload_artifacts(
-      'builder', BuildTarget(name='target'), config.id.type,
-      config.artifacts.artifacts_gs_bucket,
-      artifacts_info=config.artifacts.artifacts_info)
+      'builder', config.id.type, config.artifacts.artifacts_gs_bucket,
+      artifacts_info=config.artifacts.artifacts_info,
+      sysroot=Sysroot(path='/build/target',
+                      build_target=BuildTarget(name='target')))
 
 
 def GenTests(api):

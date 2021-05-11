@@ -35,6 +35,7 @@ from recipe_engine.post_process import (DoesNotRun, MustRun, PropertyEquals,
 
 from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
 from PB.chromite.api.firmware import FirmwareArtifactInfo
+from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb2
 
@@ -406,10 +407,9 @@ class FirmwareBuilder(object):
     with self._setup():
       for bt in self.properties.build_targets:
         self._setup_board_and_install_packages(bt)
-      self.m.build_menu.upload_artifacts(
-          private_bundle_func=self._bundle_firmware)
-      # Push any firmware images for use.
-      for bt in self.properties.build_targets:
+        self.m.build_menu.upload_artifacts(
+            private_bundle_func=self._bundle_firmware,
+            sysroot=Sysroot(path='/build/{}'.format(bt.name), build_target=bt))
         self._push_image(bt)
 
       # Mark whether the suite_scheduling query for firmware should find this.

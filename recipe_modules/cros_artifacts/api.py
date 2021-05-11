@@ -345,7 +345,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       builder_name (str): The builder name, e.g. octopus-cq.
       target (BuildTarget): The target whose artifacts will be uploaded.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
-          e.g. POSTSUBMIT. Used as a descriptor in the GS path.
+          e.g. POSTSUBMIT. May be used as a descriptor in formatting paths.
 
     Returns:
       Dictionary of key:value pairs for building a gs_path.
@@ -354,18 +354,22 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     # the builder name.
     version = self.m.cros_version.read_workspace_version()
     ret = {
-        'label': BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-'),
         'version': str(version),
         'legacy_version': version.legacy_version,
         'build_id': self.m.buildbucket.build.id,
         'target': target.name,
         'builder_name': builder_name.replace('_', '-'),
     }
+    if kind:
+      ret['kind'] = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
+      ret['label'] = ret['kind']
     ret['gs_path'] = '%s/%s-%d' % (ret['builder_name'], ret['version'],
                                    ret['build_id'])
     return ret
 
-  def artifacts_gs_path(self, builder_name, target, kind, template='{gs_path}'):
+  def artifacts_gs_path(self, builder_name, target,
+                        kind=BuilderConfig.Id.TYPE_UNSPECIFIED,
+                        template='{gs_path}'):
     """Returns the GS path for artifacts of the given kind for the given target.
 
     The resulting path will NOT include the GS bucket.
@@ -374,11 +378,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       builder_name (str): The builder name, e.g. octopus-cq.
       target (BuildTarget): The target whose artifacts will be uploaded.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
-          e.g. POSTSUBMIT. Used as a descriptor in the GS path.
+          e.g. POSTSUBMIT. May be used as a descriptor in formatting paths.
+          Required if '{label}' or '{kind}' are present in |template|.
       template (str): The string to format.
 
     Returns:
-      The GS path at which artifacts should be uploaded.
+      The formatted template.  Default: The GS path at which artifacts should
+          be uploaded.
     """
     return template.format(
         **self._artifacts_gs_path_dict(builder_name, target, kind))
@@ -405,7 +411,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       builder_name (str): The builder name, e.g. octopus-cq.
       target (BuildTarget): The build target with artifacts of interest.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
-          e.g. POSTSUBMIT. This affects where the artifacts are placed in
+          e.g. POSTSUBMIT. This may affect where the artifacts are placed in
           Google Storage.
       artifacts_info (ArtifactsByService): Artifact information.
       upload_uri (string): gs path were the artifacts were uploaded.
@@ -425,12 +431,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     #   ...
     # ]
     to_publish = []
+    PUBLISH_ALWAYS = ArtifactsByService.PublishCondition.Name(
+        ArtifactsByService.PUBLISH_ALWAYS)
     for service in json_format.MessageToDict(artifacts_info).values():
       for out_info in service.get('outputArtifacts', []):
         if out_info.get('gsLocations') and out_info.get('artifactTypes') and (
             not failing_build or
-            out_info.get('publishCondition') == ArtifactsByService
-            .PublishCondition.Name(ArtifactsByService.PUBLISH_ALWAYS)):
+            out_info.get('publishCondition') == PUBLISH_ALWAYS):
           to_publish.append(out_info)
     if not to_publish:
       return links
@@ -499,10 +506,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           return True
     return False
 
-  def upload_artifacts(self, builder_name, target, kind, gs_bucket,
+  def upload_artifacts(self, builder_name, kind, gs_bucket, _kwonly=(),
                        artifacts_info=None, chroot=None, sysroot=None,
-                       failing_build=False, name=None, test_data=None,
-                       private_bundle_func=None):
+                       failing_build=False, name='upload artifacts',
+                       test_data=None, private_bundle_func=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -512,14 +519,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     Args:
       builder_name (str): The builder name, e.g. octopus-cq.
-      target (BuildTarget): The build target with artifacts of interest.
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. This affects where the artifacts are placed in
           Google Storage.
       gs_bucket (str): Google storage bucket to upload artifacts to.
       artifacts_info (ArtifactsByService): Information about artifacts.
       chroot (Chroot): chroot to use
-      sysroot (Sysroot): sysroot to use
+      sysroot (Sysroot): sysroot to use (this contains the build target.)
       failing_build (bool): whether or not the build is failing, used (in part)
           to decide whether or not to upload artifacts.
       name (str): The step name. Defaults to 'upload artifacts'.
@@ -530,7 +536,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           as when there is no Build API on the branch), this will be called
           instead of the internal bundling method.
     """
-    with self.m.step.nest(name or 'upload artifacts') as presentation:
+    assert _kwonly == (), 'keyword parameters passed as positional'
+    with self.m.step.nest(name) as presentation:
       outpath = self.m.path.mkdtemp(prefix='artifacts')
       func = private_bundle_func or self._bundle_artifacts
       files_by_artifact = func(chroot, sysroot, artifacts_info, outpath,
@@ -541,7 +548,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         return
 
       # Upload all of the artifacts to the archive bucket/path.
-      gs_path = self.artifacts_gs_path(builder_name, target, kind)
+      gs_path = self.artifacts_gs_path(builder_name, sysroot.build_target, kind)
       presentation.links['gs upload dir'] = (
           'https://console.cloud.google.com/storage/browser/%s/%s' %
           (gs_bucket, gs_path))
@@ -588,7 +595,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # successfully, and can therefore copy them GS->GS, and avoid
       # re-uploading. Publishing is intentionally nested under upload
       # artifacts.
-      links = self._publish_artifacts(builder_name, target, kind,
+      links = self._publish_artifacts(builder_name, sysroot.build_target, kind,
                                       artifacts_info, upload_uri,
                                       files_by_artifact,
                                       failing_build=failing_build)
