@@ -35,10 +35,11 @@ def RunSteps(api):
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
         with api.step.nest('generate new upstream branch locally'):
+          git_objects_info_dir = project_dir.join('.git/objects/info')
           api.file.ensure_directory('ensure .git/objects/info',
-                                    '.git/objects/info')
+                                    git_objects_info_dir)
           api.file.write_text('create chrome git reference',
-                              '.git/objects/info/alternates',
+                              git_objects_info_dir.join('alternates'),
                               '/preload/chrome/src/.git/objects')
           api.step('git fetch chromium', [
               '/usr/bin/git', 'fetch',

@@ -933,7 +933,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      ".git/objects/info"
+      "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome/.git/objects/info"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
@@ -951,7 +951,7 @@
       "/path/to/tmp/json",
       "copy",
       "/preload/chrome/src/.git/objects",
-      ".git/objects/info/alternates"
+      "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome/.git/objects/info/alternates"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
