@@ -909,6 +909,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "output artifact GS paths",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\", \"../../[START_DIR]/tmp/artifact.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\", \"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\", \"../../[START_DIR]/fw_metadata.json\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../my_output_artifact\", \"../../my_output_artifact\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-0\"}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

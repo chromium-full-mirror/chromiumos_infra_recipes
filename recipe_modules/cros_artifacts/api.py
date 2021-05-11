@@ -43,8 +43,24 @@ _LEGACY_ENDPOINTS_BY_ARTIFACT = {
 }
 
 
+class UploadedArtifacts(
+    collections.namedtuple('UploadedArtifacts',
+                           'gs_bucket gs_path files_by_artifact')):
+  __slots__ = ()
+
+  def union(self, other):
+    assert self.gs_bucket == other.gs_bucket
+    assert self.gs_path == other.gs_path
+    value = lambda inst, key: inst.files_by_artifact.get(key, [])
+    keys = set(self.files_by_artifact.keys() + other.files_by_artifact.keys())
+    result = {k: (value(self, k) + value(other, k)) for k in sorted(keys)}
+    return UploadedArtifacts(self.gs_bucket, self.gs_path, result)
+
+
 class CrosArtifactsApi(recipe_api.RecipeApi):
   """A module for bundling and uploading build artifacts."""
+
+  UploadedArtifacts = UploadedArtifacts
 
   def _get_legacy_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
@@ -535,8 +551,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       private_bundle_func (func): If a private bundling method is needed (such
           as when there is no Build API on the branch), this will be called
           instead of the internal bundling method.
+
+    Returns:
+      (UploadedArtifacts) information about uploaded artifacts.
     """
     assert _kwonly == (), 'keyword parameters passed as positional'
+    uploaded_artifacts = {}
     with self.m.step.nest(name) as presentation:
       outpath = self.m.path.mkdtemp(prefix='artifacts')
       func = private_bundle_func or self._bundle_artifacts
@@ -545,7 +565,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       if not files_by_artifact:
         presentation.step_text = 'No artifacts found.'
-        return
+        return uploaded_artifacts
 
       # Upload all of the artifacts to the archive bucket/path.
       gs_path = self.artifacts_gs_path(builder_name, sysroot.build_target, kind)
@@ -565,12 +585,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           else:
             raise
 
-      self.m.easy.set_properties_step(
-          artifacts={
-              'gs_bucket': gs_bucket,
-              'gs_path': gs_path,
-              'files_by_artifact': files_by_artifact,
-          }, step_name='output artifact GS paths')
+      uploaded_artifacts = UploadedArtifacts(gs_bucket, gs_path,
+                                             files_by_artifact)
+      self._set_artifacts_property(uploaded_artifacts)
 
       # We upload artifacts whether the build passed or failed (see
       # crbug/1086630).
@@ -587,7 +604,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       if self.m.cq.active and self.m.cq.run_mode == self.m.cq.DRY_RUN:
         with self.m.step.nest('skip publish artifacts') as presentation:
           presentation.step_text = 'Not publishing artifacts in dry run'
-          return
+          return uploaded_artifacts
 
       # Now publish any artifacts that have publishing information.  This is
       # done here (rather than adding api.cros_artifacts.publish_artifacts)
@@ -601,6 +618,30 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                                       failing_build=failing_build)
       for k, v in links.items():
         presentation.links[k] = v
+    return uploaded_artifacts
+
+  def merge_artifacts_properties(self, properties):
+    """Combine uploaded artifacts to produce a final value.
+
+    Args:
+      properties (list[UploadedArtifacts]): the values to merge.
+    """
+    assert properties
+    ret = properties[0]
+    for prop in properties[1:]:
+      ret = ret.union(prop)
+    self._set_artifacts_property(ret)
+    return ret
+
+  def _set_artifacts_property(self, uploaded_artifacts):
+    """Set output property.
+
+    Args:
+      uploaded_artifacts (UploadedArtifacts): The uploaded artifacts
+    """
+    artifacts = {k: v for k, v in uploaded_artifacts._asdict().items()}
+    self.m.easy.set_properties_step(artifacts=artifacts,
+                                    step_name='output artifact GS paths')
 
   def download_artifact(self, build_payload, artifact, name=None):
     """Download the given artfiact from the given build payload.

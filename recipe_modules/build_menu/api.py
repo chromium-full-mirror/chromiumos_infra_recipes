@@ -479,7 +479,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           the build.
 
     Returns:
-       dictionary of uploaded artifacts.
+      (UploadedArtifacts) information about uploaded artifacts.
     """
     config = config or self.config_or_default
     sysroot = sysroot or self.sysroot or Sysroot(build_target=self.build_target)

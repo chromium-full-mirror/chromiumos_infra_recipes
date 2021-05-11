@@ -54,7 +54,7 @@ def RunSteps(api, properties):
   # This verifies that we can upload artifacts, some of which get an acl
   # applied.  Legacy and Toolchain artifacts get us coverage of both paths in
   # the API 1.0.0 case.
-  api.cros_artifacts.upload_artifacts(
+  uploaded = api.cros_artifacts.upload_artifacts(
       'target-toolchain',
       BuilderConfig.Id.TOOLCHAIN,
       'artifacts_gs_bucket',
@@ -70,6 +70,11 @@ def RunSteps(api, properties):
       gs_image_dir="gs://chromeos-image-archive/atlas-release/R89-13604.0.0",
       sysroot=sysroot.Sysroot(build_target=common.BuildTarget(name='atlas')),
       dryrun=True)
+
+  # The uploaded properties should reflect calls to upload_artifacts with
+  # different sysroots.  Currently, this is only used by some builders
+  # supporting legacy branches.
+  api.cros_artifacts.merge_artifacts_properties([uploaded, uploaded])
 
 
 def GenTests(api):
