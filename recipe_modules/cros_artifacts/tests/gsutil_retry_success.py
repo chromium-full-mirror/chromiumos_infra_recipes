@@ -28,8 +28,8 @@ def RunSteps(api):
                   artifact_types=[common.ArtifactsByService.Legacy.EBUILD_LOGS])
           ])),
       chroot=common.Chroot(path='/path/to/chroot'),
-      sysroot=sysroot.Sysroot(path='/build/board',
-                              build_target=common.BuildTarget(name='board')),
+      sysroot=sysroot.Sysroot(path='/build/target',
+                              build_target=common.BuildTarget(name='target')),
   )
 
 

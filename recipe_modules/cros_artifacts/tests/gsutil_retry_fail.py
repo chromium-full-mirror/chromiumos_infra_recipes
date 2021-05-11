@@ -10,10 +10,10 @@ DEPS = [
 ]
 
 from PB.chromite.api import sysroot
-
-from recipe_engine.recipe_api import StepFailure
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
+
+from recipe_engine.recipe_api import StepFailure
 
 
 def RunSteps(api):
@@ -28,8 +28,8 @@ def RunSteps(api):
                   artifact_types=[common.ArtifactsByService.Legacy.EBUILD_LOGS],
                   gs_locations=['publish_gs_bucket']),
           ])), chroot=common.Chroot(path='/path/to/chroot'),
-      sysroot=sysroot.Sysroot(path='/build/board',
-                              build_target=common.BuildTarget(name='board')),
+      sysroot=sysroot.Sysroot(path='/build/target',
+                              build_target=common.BuildTarget(name='target')),
       test_data='{"artifacts":{"legacy":{"artifacts":[{"paths":['
       '{"path":"@@DIR@@/foo","location":2},{"path":"@@DIR@@/bar","location":2}'
       '],"artifactType":"EBUILD_LOGS"}]}}}')

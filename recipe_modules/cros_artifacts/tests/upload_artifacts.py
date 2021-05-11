@@ -9,11 +9,9 @@ DEPS = [
     'cros_build_api',
 ]
 
-import json
-
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import ArtifactsByService
 from PB.chromiumos.common import BuildTarget
+from recipe_engine import post_process
 
 
 def RunSteps(api):
@@ -29,7 +27,6 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.post_check(lambda check, steps: check('upload artifacts.gsutil rsync'
-                                                not in steps)),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts.gsutil rsync'),
       api.cros_build_api.set_api_return('upload artifacts',
                                         'ArtifactsService/Get', '{}'))

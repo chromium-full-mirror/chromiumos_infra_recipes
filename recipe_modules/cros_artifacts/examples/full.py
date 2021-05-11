@@ -61,8 +61,8 @@ def RunSteps(api, properties):
       'artifacts_gs_bucket',
       artifacts_info=artifacts_info,
       chroot=common.Chroot(path='/path/to/chroot'),
-      sysroot=sysroot.Sysroot(path='/build/board',
-                              build_target=common.BuildTarget(name='board')),
+      sysroot=sysroot.Sysroot(path='/build/target',
+                              build_target=common.BuildTarget(name='target')),
       failing_build=properties.failing_build,
   )
 

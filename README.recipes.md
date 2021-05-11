@@ -6681,7 +6681,7 @@ returns a list of repos to make commits to.
 
 [DEPS](/recipe_modules/cros_artifacts/tests/upload_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_artifacts.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_artifacts.py#17)(api):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
