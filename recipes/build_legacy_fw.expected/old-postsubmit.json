@@ -985,6 +985,31 @@
   },
   {
     "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "uprev packages.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/main|refs/heads/firmware-target-6301.202.B@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
       "git",
       "clone",
       "--local",
@@ -2025,7 +2050,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
-      "pushimage",
+      "[CLEANUP]/tmp_tmp_1/chromite/bin/pushimage",
       "--yes",
       "--board=target",
       "--version=R39-6301.202.4",

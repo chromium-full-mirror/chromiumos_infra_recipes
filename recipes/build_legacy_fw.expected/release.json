@@ -985,43 +985,38 @@
   },
   {
     "cmd": [
-      "git",
-      "clone",
-      "--local",
-      "--shared",
-      "--config",
-      "remote.origin.fetch=+refs/remotes/cros/main:refs/heads/main",
-      "[START_DIR]/chromiumos_workspace/chromite",
-      "[CLEANUP]/tmp_tmp_1/chromite"
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/chromite",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "uprev packages.clone tip-of-tree chromite",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "main"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_1/chromite",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
-    "name": "uprev packages.git checkout",
+    "name": "uprev packages.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|chromite|cros|refs/heads/main|refs/heads/firmware-target-99999.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|infra/chromite-HEAD|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
     "cmd": [
-      "[CLEANUP]/tmp_tmp_1/chromite/bin/cros_mark_as_stable",
+      "[START_DIR]/chromiumos_workspace/infra/chromite-HEAD/bin/cros_mark_as_stable",
       "push",
       "--all",
       "--boards=target",
       "--drop_file",
-      "[CLEANUP]/tmp_tmp_2",
+      "[CLEANUP]/tmp_tmp_1",
       "--buildroot",
       "[START_DIR]/chromiumos_workspace",
       "--overlay-type",
@@ -1041,7 +1036,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/tmp_tmp_2",
+      "[CLEANUP]/tmp_tmp_1",
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2494,7 +2489,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
-      "pushimage",
+      "[START_DIR]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
       "--yes",
       "--board=target",
       "--version=R91-13874.10.0",

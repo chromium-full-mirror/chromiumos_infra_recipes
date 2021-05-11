@@ -21,6 +21,7 @@ DEPS = [
     'easy',
     'git',
     'metadata_json',
+    'repo',
     'src_state',
     'test_util',
 ]
@@ -84,6 +85,7 @@ class FirmwareBuilder(object):
     # Whether suite_scheduling should consider our firmware tarball.
     self._suite_scheduling = False
     self._old_setup_board = False
+    self._tot_chromite = None
 
   def sdk_call(self, name, sdk_args=(), cmd=(), **kwargs):
     """Run cros_sdk with the given command"""
@@ -171,22 +173,13 @@ class FirmwareBuilder(object):
       # The build team supports using the tip-of-tree cros_mark_as_stable to
       # uprev older branches until such time as they have a long-term answer.
       # This is not true for other chromite commands.
-      workspace = self.m.src_state.workspace_path
-      tot_chromite = self.m.path.mkdtemp().join('chromite')
-      self.m.step('clone tip-of-tree chromite', [
-          'git', 'clone', '--local', '--shared', '--config',
-          'remote.origin.fetch=+refs/remotes/cros/main:refs/heads/main',
-          workspace.join('chromite'), tot_chromite
-      ])
-      with self.m.context(cwd=tot_chromite):
-        self.m.git.checkout('main', force=True)
-
+      self._ensure_chromite_main()
       no_push = bool(self.m.cq.active or self._is_staging or
                      self.m.src_state.gerrit_changes)
       drop_file = self.m.path.mkstemp()
       manifest = 0 if not self._config else self._config.general.manifest
 
-      cmd = [tot_chromite.join('bin/cros_mark_as_stable')]
+      cmd = [self._tot_chromite.join('bin/cros_mark_as_stable')]
       if no_push:
         cmd.extend(['commit', '--dryrun'])
       else:
@@ -194,7 +187,7 @@ class FirmwareBuilder(object):
       cmd.extend([
           '--all',
           '--boards=%s' % ':'.join(self._boards), '--drop_file', drop_file,
-          '--buildroot', workspace, '--overlay-type',
+          '--buildroot', self.m.src_state.workspace_path, '--overlay-type',
           'public' if manifest == BuilderConfig.General.PUBLIC else 'both'
       ])
 
@@ -202,6 +195,33 @@ class FirmwareBuilder(object):
       pres.logs['packages'] = self.m.file.read_raw(
           'read uprevved packages', drop_file,
           test_data='sys-boot/depthcharge sys-apps/coreboot-utils')
+
+  def _ensure_chromite_main(self):
+    if self._tot_chromite:
+      return
+
+    workspace = self.m.src_state.workspace_path
+    with self.m.context(cwd=workspace):
+      for info in self.m.repo.project_infos(
+          projects=['chromiumos/chromite'],
+          test_data=self.m.repo.test_api.project_infos_test_data(data=[
+              dict(project='chromiumos/chromite', path='chromite',
+                   upstream='refs/heads/firmware-target-99999.B'),
+              dict(project='chromiumos/chromite', path='infra/chromite-HEAD',
+                   upstream='refs/heads/main'),
+          ])):
+        if info.branch_name == 'main':
+          self._tot_chromite = workspace.join(info.path)
+
+    if not self._tot_chromite:
+      self._tot_chromite = self.m.path.mkdtemp().join('chromite')
+      self.m.step('clone tip-of-tree chromite', [
+          'git', 'clone', '--local', '--shared', '--config',
+          'remote.origin.fetch=+refs/remotes/cros/main:refs/heads/main',
+          workspace.join('chromite'), self._tot_chromite
+      ])
+      with self.m.context(cwd=self._tot_chromite):
+        self.m.git.checkout('main', force=True)
 
   @contextmanager
   def _setup_chroot(self):
@@ -342,6 +362,7 @@ class FirmwareBuilder(object):
     #   uploads and such to the recipes side of the API boundary)
     # - most firmware branches lack the Build API.
     with self.m.step.nest('push image'):
+      self._ensure_chromite_main()
       board = build_target.name
       staging = self._is_staging
       # Defaults have changed over time. Other types are only signed based on
@@ -359,7 +380,8 @@ class FirmwareBuilder(object):
       dry_run = dry_run or (staging and not has_dest_bucket)
 
       cmd = [
-          'pushimage', '--yes', '--board={}'.format(board),
+          self._tot_chromite.join('bin', 'pushimage'), '--yes',
+          '--board={}'.format(board),
           '--version={}'.format(self._bcs_version.legacy_version)
       ]
       if dry_run:
@@ -479,10 +501,15 @@ def GenTests(api):
       api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(DoesNotRun, 'bump version'),
-      api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
-      api.post_check(StepCommandLacks,
-                     'build target.install packages', '--withdebugsymbols'),
-      api.post_check(StatusSuccess), version='R39-6301.202.44')
+      api.post_check(DoesNotRun, 'create buildspec'),
+      api.post_check(StepCommandLacks, 'build target.install packages',
+                     '--withdebugsymbols'),
+      api.repo.project_infos_step_data(
+          'uprev packages', data=[
+              dict(project='chromiumos/chromite',
+                   upstream='refs/heads/firmware-target-6301.202.B')
+          ]), api.post_check(StatusSuccess), suite_scheduling(False),
+      version='R39-6301.202.44')
 
   yield test('cq', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
              api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
