@@ -2013,7 +2013,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"bcs_version_info\": {\n\"version_string\": \"R91-13874.10.0-101\"\n}, \n\"objects\": [\n{\n\"file_name\": \"target/firmware_from_source.tar.bz2\", \n\"tarball_info\": {\n\"firmware_image_name\": \"target\", \n\"firmware_version_info\": {\n\"version_string\": \"v0.0.3733-0612ae7\"\n}, \n\"type\": \"EC\"\n}\n}\n]\n}",
-      "[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb"
+      "[CLEANUP]/artifacts_tmp_1/target/firmware_metadata.jsonpb"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
     "env_suffixes": {
@@ -2188,7 +2188,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"target/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"target/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"target/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -2346,7 +2346,7 @@
       "-m",
       "----",
       "cp",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/firmware_metadata.jsonpb",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/target/firmware_metadata.jsonpb",
       "gs://chromeos-image-archive/target-firmware/R91-13874.10.0/"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
@@ -2370,7 +2370,7 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"target/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/target-firmware/R91-13874.10.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/target-firmware/R91-13874.10.0\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"target/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/target-firmware/R91-13874.10.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"target/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/target-firmware/R91-13874.10.0\"}]}@@@"
     ]
   },
   {

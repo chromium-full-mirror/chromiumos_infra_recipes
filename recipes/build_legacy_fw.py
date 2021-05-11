@@ -286,11 +286,11 @@ class FirmwareBuilder(object):
       ])
       self.sdk_call('install packages', cmd=cmd, infra_step=False)
 
-  def _build_firmware_archive(self, build_target, out_path):
+  def _build_firmware_archive(self, sysroot, out_path):
     with self.m.step.nest('create firmware archive'):
       # This code replicates chromite/service/artifacts.BuildFirmwareArchive.
       self.m.file.ensure_directory('create tempdir', out_path)
-      root = self._chroot.join('build', build_target.name, 'firmware')
+      root = self._chroot.join(sysroot.path.strip('/'), 'firmware')
 
       private_dirs = self.m.file.glob_paths(
           'glob private', root, '**/ec-private/fingerprint',
@@ -316,7 +316,7 @@ class FirmwareBuilder(object):
                     stdin=self.m.raw_io.input(data=file_list))
       return tarball
 
-  def _bundle_firmware(self, _chroot, _sysroot, _artifacts_info, outpath,
+  def _bundle_firmware(self, _chroot, sysroot, _artifacts_info, outpath,
                        _test_data):
     """Returns a dictionary of files by artifact_type."""
     # This is called from beneath cros_artifacts.upload_artifacts as a private
@@ -328,29 +328,29 @@ class FirmwareBuilder(object):
     # that test expectations are constant.
     metadata = FirmwareArtifactInfo()
     metadata.bcs_version_info.version_string = str(self._bcs_version)
-    for build_target in self.properties.build_targets:
-      tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
-      tmpdir = self._chroot.join('tmp', self.m.path.basename(tmppath))
-      tarball = self._build_firmware_archive(build_target, tmpdir)
-      if tarball:
-        dest_name = '{}/{}'.format(build_target.name, _FIRMWARE_TARBALL_NAME)
-        self.m.file.ensure_directory('create {}'.format(build_target.name),
-                                     outpath.join(build_target.name))
-        self.m.file.copy('bundle tarball', tarball, outpath.join(dest_name))
-        ret['FIRMWARE_TARBALL'].append(dest_name)
+    target = sysroot.build_target.name
+    tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
+    tmpdir = self._chroot.join('tmp', self.m.path.basename(tmppath))
+    tarball = self._build_firmware_archive(sysroot, tmpdir)
+    if tarball:
+      dest_name = '{}/{}'.format(target, _FIRMWARE_TARBALL_NAME)
+      self.m.file.ensure_directory('create {}'.format(target),
+                                   outpath.join(target))
+      self.m.file.copy('bundle tarball', tarball, outpath.join(dest_name))
+      ret['FIRMWARE_TARBALL'].append(dest_name)
 
-        info = metadata.objects.add()
-        info.file_name = dest_name
-        tb_info = info.tarball_info
-        tb_info.type = metadata.TarballInfo.FirmwareType.EC
-        tb_info.firmware_image_name = build_target.name
-        tb_info.firmware_version_info.version_string = self._firmware_version
+      info = metadata.objects.add()
+      info.file_name = dest_name
+      tb_info = info.tarball_info
+      tb_info.type = metadata.TarballInfo.FirmwareType.EC
+      tb_info.firmware_image_name = target
+      tb_info.firmware_version_info.version_string = self._firmware_version
 
     if metadata.objects:
+      metadata_name = '{}/{}'.format(target, _FIRMWARE_METADATA_NAME)
       self.m.file.write_proto('write firmware metadata',
-                              outpath.join(_FIRMWARE_METADATA_NAME), metadata,
-                              'JSONPB')
-      ret['FIRMWARE_TARBALL_INFO'].append(_FIRMWARE_METADATA_NAME)
+                              outpath.join(metadata_name), metadata, 'JSONPB')
+      ret['FIRMWARE_TARBALL_INFO'].append(metadata_name)
     return ret
 
   def _push_image(self, build_target):
@@ -403,18 +403,34 @@ class FirmwareBuilder(object):
 
       self.sdk_call('call pushimage', cmd=cmd)
 
+  @contextmanager
+  def _maybe_step(self, name, cond):
+    if cond:
+      with self.m.step.nest(name):
+        yield
+    else:
+      yield
+
   def run(self):
+    uploaded = []
     with self._setup():
       for bt in self.properties.build_targets:
-        self._setup_board_and_install_packages(bt)
-        self.m.build_menu.upload_artifacts(
-            private_bundle_func=self._bundle_firmware,
-            sysroot=Sysroot(path='/build/{}'.format(bt.name), build_target=bt))
-        self._push_image(bt)
+        with self._maybe_step(bt.name, len(self.properties.build_targets) > 1):
+          self._setup_board_and_install_packages(bt)
+          uploaded.append(
+              self.m.build_menu.upload_artifacts(
+                  private_bundle_func=self._bundle_firmware,
+                  sysroot=Sysroot(path='/build/{}'.format(bt.name),
+                                  build_target=bt)))
+          self._push_image(bt)
 
       # Mark whether the suite_scheduling query for firmware should find this.
       self.m.easy.set_properties_step(
           suite_scheduling=str(self._suite_scheduling))
+      # Update the artifacts property for the build, to reflect our multi-target
+      # nature.
+      if len(self.properties.build_targets) > 1:
+        self.m.cros_artifacts.merge_artifacts_properties(uploaded)
 
 
 def RunSteps(api, properties):
@@ -525,8 +541,9 @@ def GenTests(api):
       api.post_check(StatusSuccess), cq=True,
       input_properties=dict(bump_version=True, set_suite_scheduling=True))
 
-  yield test('two-targets', api.post_check(MustRun, 'build board1.setup board'),
-             api.post_check(MustRun, 'build board2.setup board'),
+  yield test('two-targets',
+             api.post_check(MustRun, 'board1.build board1.setup board'),
+             api.post_check(MustRun, 'board2.build board2.setup board'),
              api.post_check(DoesNotRun, 'bump version'),
              api.post_check(StatusSuccess), suite_scheduling(False),
              build_targets=[dict(name='board1'),
