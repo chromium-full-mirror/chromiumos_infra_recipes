@@ -194,7 +194,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           coverage_path = os.path.normpath(filename)
           for mapping in constants[self._project]:
             pre = os.path.join('/build', build_target.name, mapping['prefix'])
-            if re.match(pre, filename):
+            if re.match(pre, coverage_path):
               coverage_path = re.sub(pre, mapping['src_path'], coverage_path)
               # Hard-coded /src/platform2 is a temporary work around
               # while we still use the old service.
