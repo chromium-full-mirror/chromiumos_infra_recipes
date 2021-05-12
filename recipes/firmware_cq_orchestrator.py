@@ -54,7 +54,9 @@ def RunSteps(api):
     api.cros_infra_config.configure_builder(commit=commit)
 
     # Turn the branch name into the cq builder name.
-    builder = re.sub(branch_fmt, r'\g<base>-cq', branch)
+    builder = '{}{}'.format(
+        'staging-' if api.cros_infra_config.is_staging else '',
+        re.sub(branch_fmt, r'\g<base>-cq', branch))
     api.easy.set_properties_step(child_verifier=builder)
     child_config = api.cros_infra_config.get_builder_config(
         builder, missing_ok=True)
@@ -92,6 +94,13 @@ def GenTests(api):
   yield test('cq', StatusSuccess,
              api.post_check(PropertyEquals, 'manifest_branch', test_branch),
              api.post_check(PropertyEquals, 'child_verifier', test_builder))
+
+  yield test(
+      'staging-cq', StatusSuccess,
+      api.post_check(PropertyEquals, 'manifest_branch', test_branch),
+      api.post_check(PropertyEquals, 'child_verifier',
+                     'staging-{}'.format(test_builder)),
+      builder='staging-firmware-cq-orchestrator', bucket='staging')
 
   yield test(
       'cq-tagged', StatusSuccess,
