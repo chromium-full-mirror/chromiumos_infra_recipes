@@ -22,7 +22,7 @@
     ],
     "infra_step": true,
     "name": "run Infra Presubmit.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"Infra Presubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/master\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/project-a/+/2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"Infra Presubmit\", \"project\": \"chromeos\"}, \"critical\": \"YES\", \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/project-a/+/2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -61,7 +61,7 @@
       "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"project-a\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/master\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", @@@",
