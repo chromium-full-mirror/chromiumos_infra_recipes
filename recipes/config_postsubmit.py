@@ -209,7 +209,6 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
           config_project_info.remote,
           _merge_flattened,
           ref=config_project_info.branch,
-          automerge=True,
       )
     except StepFailure:
       presentation.status = 'FAILURE'  # swallow StepFailure and keep going
@@ -286,7 +285,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
        api.step.nest("aggregating configs") as presentation:
     try:
       api.git_txn.update_ref(config_project_info.remote, _merge_configs,
-                             ref=config_project_info.branch, automerge=True)
+                             ref=config_project_info.branch)
     except StepFailure:
       presentation.status = 'FAILURE'  # swallow StepFailure and keep going
 
@@ -665,13 +664,13 @@ def GenTests(api):
           post_process.DoesNotRun,
           'Do flatten_configs and create CL'   \
               '.aggregating flattened configs' \
-              '.update ref.gerrit transaction.git push'
+              '.update ref.git transaction.git push'
       ),
       api.post_process(
           post_process.DoesNotRun,
           'Do flatten_configs and create CL'   \
               '.aggregating flattened configs' \
-              '.update ref.gerrit transaction.git push'
+              '.update ref.git transaction.git push'
       ),
   )
 
@@ -685,13 +684,13 @@ def GenTests(api):
       api.step_data(
           'Do flatten_configs and create CL'
           '.aggregating flattened configs'
-          '.update ref.gerrit transaction.'
+          '.update ref.git transaction.'
           'merge flattened configs to config-internal', retcode=1),
       api.post_process(
           post_process.DoesNotRun,
           'Do flatten_configs and create CL'
           '.aggregating flattened configs'
-          '.update ref.gerrit transaction.git push',
+          '.update ref.git transaction.git push',
       ),
   )
 
@@ -720,14 +719,14 @@ def GenTests(api):
           post_process.MustRun,
           'Do copy_to_internal and create CL'
           '.aggregating configs'
-          '.update ref.gerrit transaction.merge joined configs'
+          '.update ref.git transaction.merge joined configs'
           ' to config-internal',
       ),
       api.post_process(
           post_process.DoesNotRun,
           'Do copy_to_internal and create CL'
           '.aggregating configs'
-          '.update ref.gerrit transaction.merge flattened configs'
+          '.update ref.git transaction.merge flattened configs'
           ' to config-internal',
       ),
   )
@@ -743,7 +742,7 @@ def GenTests(api):
       api.post_process(
           StepSummaryEquals, 'Do copy_to_internal and create CL'
           '.aggregating configs'
-          '.update ref.gerrit transaction.diffing to find changes',
+          '.update ref.git transaction.diffing to find changes',
           "No changes to commit"),
   )
 
@@ -758,7 +757,7 @@ def GenTests(api):
       api.step_data(
           'Do copy_to_internal and create CL'
           '.aggregating configs'
-          '.update ref.gerrit transaction.merge '
+          '.update ref.git transaction.merge '
           'joined configs to config-internal', retcode=1),
   )
 

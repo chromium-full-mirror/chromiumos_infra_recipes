@@ -888,10 +888,7 @@
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "Do flatten_configs and create CL"
   },
   {
     "cmd": [],
@@ -913,8 +910,7 @@
     "cmd": [],
     "name": "Do flatten_configs and create CL.aggregating flattened configs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -946,44 +942,14 @@
     "cmd": [],
     "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "-b",
-      "main",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "branch",
-      "--set-upstream-to=cros/main"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.git branch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -998,21 +964,21 @@
       "[START_DIR]/chromiumos_workspace/src/config-internal/hw_design/generated/flattened.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.merge flattened configs to config-internal",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.merge flattened configs to config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.diffing to find changes",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.diffing to find changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.diffing to find changes.diff check",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.diffing to find changes.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -1025,7 +991,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.git add",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1043,7 +1009,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.write commit message",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Automerging and importing flattened configs.@@@",
@@ -1062,7 +1028,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.git commit",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1073,11 +1039,11 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/for/refs/heads/main"
+      "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.gerrit transaction.git push",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
@@ -1085,10 +1051,7 @@
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "Do copy_to_internal and create CL"
   },
   {
     "cmd": [
@@ -1119,52 +1082,21 @@
     "cmd": [],
     "name": "Do copy_to_internal and create CL.aggregating configs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Do copy_to_internal and create CL.aggregating configs.update ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction",
+    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "-b",
-      "main",
-      "HEAD"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "branch",
-      "--set-upstream-to=cros/main"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.git branch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1179,21 +1111,21 @@
       "hw_design/generated/configs.jsonproto"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.merge joined configs to config-internal",
+    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.diffing to find changes",
+    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.diffing to find changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.diffing to find changes.diff check",
+    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.diffing to find changes.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -1206,7 +1138,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.git add",
+    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1224,7 +1156,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.write commit message",
+    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@Automerging and importing config changes.@@@",
@@ -1243,7 +1175,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.git commit",
+    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1254,11 +1186,11 @@
       "push",
       "--porcelain",
       "cros",
-      "HEAD:refs/for/refs/heads/main"
+      "HEAD:refs/heads/main"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.gerrit transaction.git push",
+    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
