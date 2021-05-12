@@ -1384,6 +1384,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "1 steps failed:\n\n\n- Step('Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.merge flattened configs to config-internal') (retcode: 1)\n"
+    },
     "name": "$result"
   }
 ]

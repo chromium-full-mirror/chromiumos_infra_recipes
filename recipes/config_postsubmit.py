@@ -18,6 +18,8 @@ returns a list of repos to make commits to.
 from collections import namedtuple, defaultdict
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -204,16 +206,13 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
 
     config_project_info = api.repo.project_info("chromeos/config-internal")
 
-    try:
-      api.git_txn.update_ref(
-          config_project_info.remote,
-          _merge_flattened,
-          ref=config_project_info.branch,
-      )
-    except StepFailure:
-      presentation.status = 'FAILURE'  # swallow StepFailure and keep going
+    api.git_txn.update_ref(
+        config_project_info.remote,
+        _merge_flattened,
+        ref=config_project_info.branch,
+    )
 
-  return []
+    return []
 
 
 def _copy_to_internal(api, properties, project_infos):
@@ -282,14 +281,11 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
     return True
 
   with api.context(config_internal),\
-       api.step.nest("aggregating configs") as presentation:
-    try:
-      api.git_txn.update_ref(config_project_info.remote, _merge_configs,
-                             ref=config_project_info.branch)
-    except StepFailure:
-      presentation.status = 'FAILURE'  # swallow StepFailure and keep going
+       api.step.nest("aggregating configs"):
 
-  return []
+    api.git_txn.update_ref(config_project_info.remote, _merge_configs,
+                           ref=config_project_info.branch)
+    return []
 
 
 def _regenerate_suite_scheduler_configs(api, _properties, _project_infos):
@@ -319,20 +315,17 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 
   with api.step.nest('regenerating suite scheduler configs') as presentation, \
       api.context(cfg_int_ss):
-    try:
-      api.step('run regenerate_configs.sh', ['./regenerate_configs.sh'])
 
-      with api.step.nest('diffing to find changes'):
-        nothing_changed = not any(
-            api.git.diff_check(x) for x in regenerated_files)
-        if nothing_changed:
-          presentation.step_text = 'no changes'
-          return []
+    api.step('run regenerate_configs.sh', ['./regenerate_configs.sh'])
 
-      return [CommitInfo(config_internal, message, regenerated_files)]
-    except StepFailure:
-      presentation.status = 'FAILURE'  # swallow StepFailure and keep going
-      return []
+    with api.step.nest('diffing to find changes'):
+      nothing_changed = not any(
+          api.git.diff_check(x) for x in regenerated_files)
+      if nothing_changed:
+        presentation.step_text = 'no changes'
+        return []
+
+    return [CommitInfo(config_internal, message, regenerated_files)]
 
 
 def _regenerate_test_plan(api, _properties, _project_infos):
@@ -356,17 +349,14 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 
   with api.step.nest('regenerating test plans') as presentation, \
       api.context(config_internal_test):
-    try:
-      api.step('run generate', ['./generate'])
-      with api.step.nest('diffing to find changes'):
-        if not api.git.diff_check(config_internal_test_plans):
-          presentation.step_text = 'no changes'
-          return []
 
-      return [CommitInfo(config_internal_test_plans, message, [])]
-    except StepFailure:
-      presentation.status = 'FAILURE'  # swallow StepFailure and keep going
-      return []
+    api.step('run generate', ['./generate'])
+    with api.step.nest('diffing to find changes'):
+      if not api.git.diff_check(config_internal_test_plans):
+        presentation.step_text = 'no changes'
+        return []
+
+    return [CommitInfo(config_internal_test_plans, message, [])]
 
 
 # A map of CL configurations -> their functions which run on config repos.
@@ -473,11 +463,26 @@ def RunSteps(api, properties):
           except StepFailure as e:
             step_failures.append(e)
 
-      # If there were any step failures, raise now.
+      # format markdown
+      markdown = ""
       if step_failures:
-        msg = '{} steps failed:'.format(len(step_failures))
-        msg += ', '.join((f.reason or f.name) for f in step_failures)
-        raise StepFailure(msg)
+        lines = ["%d steps failed:\n" % len(step_failures)]
+        for failure in step_failures:
+          lines += ["- %s\n" % failure.reason or failure.name]
+
+        # truncate markdown to 4K to avoid INFRA_FAILURE
+        markdown = lines[0]
+        for line in lines[1:]:
+          if len(markdown) + len(line) < 3990:
+            markdown += '\n\n' + line
+          else:  #pragma: nocover
+            markdown += '\n\n...'
+            break
+
+      # return RawResult directly to set the markdown (only with luciexe)
+      return result_pb2.RawResult(
+          status=common_pb2.FAILURE if step_failures else common_pb2.SUCCESS,
+          summary_markdown=markdown)
 
 
 def GenTests(api):
@@ -564,10 +569,10 @@ def GenTests(api):
       api.post_process(post_process.StatusFailure),
       api.post_process(
           post_process.ResultReason,
-          "1 steps failed:Infra Failure: "                      \
+          "1 steps failed:\n\n\n- Infra Failure: "              \
                "Step('Do replicate_public_config and create CL" \
                    ".chromeos/project/galaxy/milkyway"          \
-                   ".copy public config') (retcode: 1)"
+                   ".copy public config') (retcode: 1)\n"
       ),
       api.post_process(post_process.DropExpectation),
   )

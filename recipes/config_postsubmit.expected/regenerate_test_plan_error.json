@@ -1579,6 +1579,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "1 steps failed:\n\n\n- Step('Do regenerate_test_plan and create CL.regenerating test plans.run generate') (retcode: 1)\n"
+    },
     "name": "$result"
   }
 ]

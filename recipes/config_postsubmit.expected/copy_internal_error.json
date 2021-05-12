@@ -1791,6 +1791,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "1 steps failed:\n\n\n- Step('Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal') (retcode: 1)\n"
+    },
     "name": "$result"
   }
 ]

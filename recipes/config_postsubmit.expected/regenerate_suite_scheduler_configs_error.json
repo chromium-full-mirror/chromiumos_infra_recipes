@@ -1576,6 +1576,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "1 steps failed:\n\n\n- Step('Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.run regenerate_configs.sh') (retcode: 1)\n"
+    },
     "name": "$result"
   }
 ]
