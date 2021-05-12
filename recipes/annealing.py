@@ -197,7 +197,7 @@ def RunSteps(api, properties):
         try:
           api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(
               manifest_diffs)
-        except StepFailure as ex:
+        except StepFailure:
           if not properties.ignore_cq_depends_failure:
             raise
 
@@ -245,7 +245,7 @@ def RunSteps(api, properties):
         _schedule_triggered_builds(api, internal_snapshot_commit, jobs)
 
 
-def _sync_manifest(api, properties, manifest_ref, prior_internal,
+def _sync_manifest(api, _properties, manifest_ref, prior_internal,
                    prior_external, internal_manifest, external_manifest):
   """Find and push local manifest differences
 
@@ -253,7 +253,7 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
 
   Args:
       api (object):       See RunSteps documentation
-      properties:         Properties of current annealing run
+      _properties:         Properties of current annealing run
       manifest_ref:       The name of the git branch to create snapshots on
       prior_internal:     Previous commit of internal manifest
       prior_external:     Previous commit of external manifest
@@ -263,8 +263,6 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
   Return:
     diff_paths(dict): Dictionary containing paths to manifest changes
   """
-  is_staging = not properties.publish_uprevs
-
   with api.step.nest('sync manifests') as presentation:
     presentation.logs['prior versions'] = [
         'internal {}: {}'.format(manifest_ref, prior_internal),
@@ -272,18 +270,23 @@ def _sync_manifest(api, properties, manifest_ref, prior_internal,
     ]
 
     diff_paths = {}
-    files = api.cros_source.mirrored_manifest_files
-    external_paths = [external_manifest.path.join(p) for p in files]
-    for path in files:
-      api.file.copy('Copy manifest-internal/{}'.format(path),
-                    internal_manifest.path.join(path),
-                    external_manifest.path.join(path))
+    m_files = api.cros_source.mirrored_manifest_files
+    e_paths = []
+    for m_file in m_files:
+      i_path = internal_manifest.path.join(m_file.src)
+      e_path = external_manifest.path.join(m_file.dest)
+      if m_file.src != 'external_full.xml':
+        api.path.mock_add_paths(i_path)
+      if api.path.exists(i_path):
+        e_paths.append(e_path)
+        api.file.copy('Copy manifest-internal/{}'.format(m_file.src), i_path,
+                      e_path)
 
     repo = api.git.repository_root()
     diff_paths = collections.defaultdict(list)
-    for f in external_paths:
-      if api.git.diff_check(f):
-        diff_paths[repo].append(api.path.abspath(f))
+    for e_path in e_paths:
+      if api.git.diff_check(e_path):
+        diff_paths[repo].append(api.path.abspath(e_path))
     presentation.logs['diffs'] = [str(diff_paths)]
     return diff_paths
 
@@ -322,7 +325,7 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
   with api.step.nest('push uprevs') as push_uprevs_pres:
     for repository, ebuilds in ebuilds_by_repository.items():
       repo_name = api.path.relpath(repository, api.src_state.workspace_path)
-      with api.step.nest('push to {}'.format(repo_name)) as push_pres:
+      with api.step.nest('push to {}'.format(repo_name)):
         with api.context(cwd=api.path.abs_to_path(repository)):
           with api.step.nest('commit uprev changes in {}'.format(repo_name)):
             api.git.add(ebuilds)
@@ -648,9 +651,8 @@ def GenTests(api):
               '</manifest>')),
       api.step_data(
           'diff remote and local manifest.git show', stdout=api.raw_io.output(
-              '<manifest>'
-              '<project name="NAME" remote="cros-internal" revision="FROM_REV"/>'
-              '</manifest>')),
+              '<manifest><project name="NAME" remote="cros-internal" '
+              'revision="FROM_REV"/></manifest>')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.git_footers.step_data(

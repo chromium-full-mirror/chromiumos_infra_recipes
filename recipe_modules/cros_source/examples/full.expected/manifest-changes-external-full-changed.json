@@ -1374,7 +1374,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Changes must be made in manifest-internal: full.xml, _kernel_upstream.xml"
+      "humanReason": "Changes must be made in manifest-internal: _kernel_upstream.xml, full.xml"
     },
     "name": "$result"
   }

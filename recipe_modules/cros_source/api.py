@@ -78,9 +78,15 @@ class CrosSourceApi(RecipeApi):
     builders do it when applying manifest changes.
 
     Returns:
-      (tuple[str, ...]) names of files that we copy.
+      (list[MirroredManifestFile]) with files we mirror.
     """
-    return ('full.xml', '_kernel_upstream.xml')
+
+    MirroredManifestFile = namedtuple('MirroredManifestFile', 'src dest')
+    return [
+        MirroredManifestFile('full.xml', 'full.xml'),
+        MirroredManifestFile('external_full.xml', 'full.xml'),
+        MirroredManifestFile('_kernel_upstream.xml', '_kernel_upstream.xml'),
+    ]
 
   @property
   def pinned_manifest(self):
@@ -380,13 +386,15 @@ class CrosSourceApi(RecipeApi):
       if not self.m.path.exists(snapshot_xml):
         # If there is no snapshot.xml, then there is no reasonable way to
         # determine which revision of the external manifest corresponds to our
-        # commit.  Copy full.xml into the public manifest, and leave the tree
-        # dirty.
-        for path in self.mirrored_manifest_files:
-          self.m.path.mock_add_paths(i_manifest.path.join(path))
-          if self.m.path.exists(i_manifest.path.join(path)):
-            self.m.file.copy('copy {}'.format(path), i_manifest.path.join(path),
-                             e_manifest.path.join(path))
+        # commit.  Copy the mirrored files into the public manifest, and leave
+        # the tree dirty.
+        for m_file in self.mirrored_manifest_files:
+          i_path = i_manifest.path.join(m_file.src)
+          if m_file.src != 'external_full.xml':
+            self.m.path.mock_add_paths(i_path)
+          if self.m.path.exists(i_path):
+            self.m.file.copy('copy {}'.format(m_file.src), i_path,
+                             e_manifest.path.join(m_file.dest))
 
         # Generate a manifest file, and save the path.
         manifest_file = self.m.path.mkstemp(prefix='manifest')
@@ -674,14 +682,16 @@ class CrosSourceApi(RecipeApi):
       self.checkout_branch(manifests.build.url, branch,
                            sync_opts=dict(current_branch=True, detach=True))
 
-      _changes_mirrored_file = lambda p: any(
-          n in x.file_infos for x in p for n in self.mirrored_manifest_files)
+      _changes_mirrored_file = lambda p, ext: any((
+          n.dest if ext else n.src) in x.file_infos for x in p for n in self.
+                                                  mirrored_manifest_files)
 
-      # If there are changes to the external copy of full.xml, that is an error.
-      if _changes_mirrored_file(patches.build if external else patches.extern):
+      # Changes to the external copy of mirrored files is an error.
+      if _changes_mirrored_file(patches.build if external else patches.extern,
+                                True):
         raise StepFailure(
             'Changes must be made in manifest-internal: {}'.format(', '.join(
-                self.mirrored_manifest_files)))
+                sorted(set(x.dest for x in self.mirrored_manifest_files)))))
 
       # If patches.intern is non-empty, then
       # 1. We do not have the internal manifest checked out, and
@@ -700,13 +710,16 @@ class CrosSourceApi(RecipeApi):
             self.m.git.checkout(i_branch)
 
       def _copy_mirrored_files():
-        for path in self.mirrored_manifest_files:
+        for m_file in self.mirrored_manifest_files:
           # Copy the file from internal to external manifest and commit
-          i_path = manifests.intern.path.join(path)
-          e_path = manifests.extern.path.join(path)
-          self.m.file.copy('copy {}'.format(path), i_path, e_path)
-          with self.m.context(cwd=manifests.extern.path):
-            self.m.git.add([e_path])
+          i_path = manifests.intern.path.join(m_file.src)
+          e_path = manifests.extern.path.join(m_file.dest)
+          if m_file.src != 'external_full.xml':
+            self.m.path.mock_add_paths(i_path)
+          if self.m.path.exists(i_path):
+            self.m.file.copy('copy {}'.format(m_file.src), i_path, e_path)
+            with self.m.context(cwd=manifests.extern.path):
+              self.m.git.add([e_path])
         with self.m.context(cwd=manifests.extern.path):
           res = self.m.git.commit(
               'Syncing with internal manifest.',
@@ -720,7 +733,7 @@ class CrosSourceApi(RecipeApi):
           return True
 
       changed = self._apply_partitioned_manifest_patches(manifests, patches)
-      if _changes_mirrored_file(patches.intern + patches.build):
+      if _changes_mirrored_file(patches.intern + patches.build, False):
         changed |= _copy_mirrored_files()
       if not changed:
         return
