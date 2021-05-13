@@ -38,6 +38,6 @@ message BuildLegacyFwProperties {
   // sign_types for push_image.
   repeated chromiumos.ImageType sign_types = 9;
 
-  // Feature flag: use pushimage from head
-  bool use_pushimage_from_head = 10;
+  // Anti-feature flag: use pushimage from tree
+  bool use_pushimage_from_tree = 10;
 }

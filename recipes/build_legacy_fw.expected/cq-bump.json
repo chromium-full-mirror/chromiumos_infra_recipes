@@ -2209,10 +2209,7 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "USE=chrome_internal -cros-debug chromeless_tty",
-      "--",
-      "pushimage",
+      "[START_DIR]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
       "--yes",
       "--board=target",
       "--version=R91-13874.10.0",
@@ -2225,9 +2222,6 @@
       "gs://chromeos-image-archive/fw-atlas-cq/R91-13874.10.0-101-8945511751514863184/target"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
