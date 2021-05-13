@@ -213,16 +213,13 @@ class FirmwareBuilder(object):
           ])):
         if info.branch_name == 'main':
           self._tot_chromite = workspace.join(info.path)
+          break
 
     if not self._tot_chromite:
       self._tot_chromite = self.m.path.mkdtemp().join('chromite')
-      self.m.step('clone tip-of-tree chromite', [
-          'git', 'clone', '--local', '--shared', '--config',
-          'remote.origin.fetch=+refs/remotes/cros/main:refs/heads/main',
-          workspace.join('chromite'), self._tot_chromite
-      ])
-      with self.m.context(cwd=self._tot_chromite):
-        self.m.git.checkout('main', force=True)
+      self.m.git.clone('https://chromium.googlesource.com/chromiumos/chromite',
+                       target_path=self._tot_chromite, single_branch=True,
+                       reference=workspace.join('chromite'))
 
   @contextmanager
   def _setup_chroot(self):
@@ -380,10 +377,13 @@ class FirmwareBuilder(object):
       dry_run = self.m.cq.active or not self.properties.bump_version
       dry_run = dry_run or (staging and not has_dest_bucket)
 
+      pushimage = 'pushimage'
+      if self.properties.use_pushimage_from_head:
+        pushimage = self._tot_chromite.join('bin', 'pushimage')
       cmd = [
-          self._tot_chromite.join('bin', 'pushimage'), '--yes',
-          '--board={}'.format(board),
-          '--version={}'.format(self._bcs_version.legacy_version)
+          pushimage, '--yes', '--board={}'.format(board),
+          '--version={}'.format(self._bcs_version.legacy_version),
+          '--buildroot', self.m.src_state.workspace_path
       ]
       if dry_run:
         cmd.append('-n')
@@ -401,7 +401,10 @@ class FirmwareBuilder(object):
                                                   build_target,
                                                   self._config.id.type), board))
 
-      self.sdk_call('call pushimage', cmd=cmd)
+      if self.properties.use_pushimage_from_head:
+        self.m.step('call pushimage', cmd=cmd, infra_step=True)
+      else:
+        self.sdk_call('call pushimage', cmd=cmd)
 
   @contextmanager
   def _maybe_step(self, name, cond):
@@ -511,6 +514,16 @@ def GenTests(api):
       api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
       api.post_check(StepCommandContains, 'build target.install packages',
                      ['--withdebugsymbols']), api.post_check(StatusSuccess))
+
+  yield test(
+      'pushimage-from-head',
+      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(DoesNotRun, 'bump version'),
+      api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
+      api.post_check(StepCommandContains, 'build target.install packages',
+                     ['--withdebugsymbols']), api.post_check(StatusSuccess),
+      input_properties=dict(use_pushimage_from_head=True))
 
   yield test(
       'old-postsubmit',

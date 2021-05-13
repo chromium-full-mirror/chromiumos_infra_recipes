@@ -2479,10 +2479,12 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
-      "[START_DIR]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
+      "pushimage",
       "--yes",
       "--board=target",
       "--version=R39-6301.202.4",
+      "--buildroot",
+      "[START_DIR]/chromiumos_workspace",
       "-n",
       "--sign-types=firmware",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R39-6301.202.4-101-8945511751514863184/target"

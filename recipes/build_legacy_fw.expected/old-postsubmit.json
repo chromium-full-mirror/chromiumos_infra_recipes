@@ -1012,29 +1012,15 @@
     "cmd": [
       "git",
       "clone",
-      "--local",
-      "--shared",
-      "--config",
-      "remote.origin.fetch=+refs/remotes/cros/main:refs/heads/main",
+      "--reference",
       "[START_DIR]/chromiumos_workspace/chromite",
+      "--single-branch",
+      "https://chromium.googlesource.com/chromiumos/chromite",
       "[CLEANUP]/tmp_tmp_1/chromite"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "uprev packages.clone tip-of-tree chromite",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "main"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_1/chromite",
     "infra_step": true,
-    "name": "uprev packages.git checkout",
+    "name": "uprev packages.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2050,10 +2036,12 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
-      "[CLEANUP]/tmp_tmp_1/chromite/bin/pushimage",
+      "pushimage",
       "--yes",
       "--board=target",
       "--version=R39-6301.202.4",
+      "--buildroot",
+      "[START_DIR]/chromiumos_workspace",
       "-n",
       "--sign-types=firmware",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R39-6301.202.4-101-8945511751514863184/target"
