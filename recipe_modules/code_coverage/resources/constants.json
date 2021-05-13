@@ -50,7 +50,15 @@
     },
     {
       "src_path": "camera",
-      "prefix": "tmp/portage/media-libs/cros-camera-libs-[^/]*/work/cros-camera-libs-[^/]*/camera"
+      "prefix": "tmp/portage/chromeos-base/cros-camera-libs-[^/]*/work/cros-camera-libs-[^/]*/camera"
+    },
+    {
+      "src_path": "camera",
+      "prefix": "tmp/portage/chromeos-base/cros-camera-[^/]*/work/cros-camera-[^/]*/camera"
+    },
+    {
+      "src_path": "camera",
+      "prefix": "tmp/portage/media-libs/cros-camera-hal-usb-[^/]*/work/cros-camera-hal-usb-[^/]*/camera"
     },
     {
       "src_path": "cfm-dfu-notification",
