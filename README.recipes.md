@@ -90,6 +90,7 @@
   * [afdo_process](#recipes-afdo_process) &mdash; Recipe for building an AFDO benchmark profile.
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
   * [android:examples/full](#recipes-android_examples_full)
+  * [android:examples/uprev](#recipes-android_examples_uprev)
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
   * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost)
@@ -456,35 +457,33 @@ Args:
   step_output (str): Output for the step.
 ### *recipe_modules* / [android](/recipe_modules/android)
 
-[DEPS](/recipe_modules/android/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/android/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [AndroidApi](/recipe_modules/android/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AndroidApi](/recipe_modules/android/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [requires\_uprev](/recipe_modules/android/api.py#30)(self, chroot, sysroot, patch_sets):**
+&emsp; **@property**<br>&mdash; **def [android\_package](/recipe_modules/android/api.py#34)(self):**
 
-Check if an android uprev is required.
+&emsp; **@property**<br>&mdash; **def [android\_version](/recipe_modules/android/api.py#38)(self):**
+
+&mdash; **def [uprev](/recipe_modules/android/api.py#131)(self, chroot, sysroot):**
+
+Uprev the Android package.
+
+Args:
+  chroot (chromiumos.Chroot): Information on the chroot for the build.
+  sysroot (Sysroot): The Sysroot being used.
+
+Returns:
+  bool: If the android package has been uprevved.
+
+&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#98)(self, chroot, sysroot, patch_sets):**
+
+Uprev Android if changes are found in the unstable ebuild.
 
 Args:
   chroot (chromiumos.Chroot): Information on the chroot for the build.
   sysroot (Sysroot): The Sysroot being used.
   patch_sets (list[gerrit.PatchSet]): List of patch sets (with FileInfo).
-
-Returns:
-  None|AndroidUprev
-  Returns None if uprev is not required.
-  Returns (android_version, android_branch, android_package), otherwise.
-
-&mdash; **def [try\_uprev](/recipe_modules/android/api.py#91)(self, chroot, sysroot, patch_sets):**
-
-Try to uprev android
-
-Args:
-  chroot (chromiumos.Chroot): Information on the chroot for the build.
-  sysroot (Sysroot): The Sysroot being used.
-  patch_sets (list[gerrit.PatchSet]): List of patch sets (with FileInfo).
-
-Returns:
-  bool: If we upreved the android package.
 ### *recipe_modules* / [bot\_cost](/recipe_modules/bot_cost)
 
 [DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -6293,9 +6292,14 @@ Recipe for building an AFDO benchmark profile.
 &mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#43)(api, properties):**
 ### *recipes* / [android:examples/full](/recipe_modules/android/examples/full.py)
 
-[DEPS](/recipe_modules/android/examples/full.py#12): [android](#recipe_modules-android), [gerrit](#recipe_modules-gerrit), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/android/examples/full.py#13): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/android/examples/full.py#23)(api, properties):**
+### *recipes* / [android:examples/uprev](/recipe_modules/android/examples/uprev.py)
+
+[DEPS](/recipe_modules/android/examples/uprev.py#11): [android](#recipe_modules-android)
+
+&mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#16)(api):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
 [DEPS](/recipes/annealing.py#29): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

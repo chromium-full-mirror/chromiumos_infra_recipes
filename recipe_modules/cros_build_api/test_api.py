@@ -5,7 +5,6 @@
 
 """Test responses for build API endpoints."""
 
-from collections import namedtuple
 import json
 
 from recipe_engine import recipe_test_api
@@ -51,7 +50,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def android_service_responses(self):
     """Generate responses for AndroidService."""
     ret = {
-        'MarkStable': jsonify(status='MARK_STABLE_STATUS_SUCCESS'),
+        'MarkStable':
+            jsonify(
+                status='MARK_STABLE_STATUS_SUCCESS', android_atom={
+                    'category': 'chromeos-base',
+                    'package_name': 'android-vm-rvc',
+                    'version': '7123456-r1',
+                }),
     }
     return ret
 
@@ -251,6 +256,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     """Generate responses for PackageService."""
     responses = {}
     responses['BuildsChrome'] = jsonify(builds_chrome=True,)
+    responses['GetAndroidMetadata'] = jsonify(
+        android_package='android-vm-rvc',
+        android_branch='git_rvc-arc',
+        android_version='7123456',
+    )
     responses['GetBestVisible'] = jsonify(package_info={
         'package_name': 'package',
         'category': 'category',

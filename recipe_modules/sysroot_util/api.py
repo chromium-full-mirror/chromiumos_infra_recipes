@@ -210,9 +210,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
               self.m.cros_sdk.configure_goma(chrome_root)
 
         if self.m.cq.active:
-          self.m.android.try_uprev(chroot=self.m.cros_sdk.chroot,
-                                   sysroot=self.sysroot,
-                                   patch_sets=self.m.workspace_util.patch_sets)
+          self.m.android.uprev_if_unstable_ebuild_changed(
+              chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
+              patch_sets=self.m.workspace_util.patch_sets)
 
         # Final round of preparation to build artifacts.  Some artifacts need
         # to use portage (or a chroot and/or sysroot) in order to fully prepare,

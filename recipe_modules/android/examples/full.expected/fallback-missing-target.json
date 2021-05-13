@@ -1,8 +1,16 @@
 [
   {
     "cmd": [],
-    "name": "get android version information",
+    "name": "check if an android uprev is required",
     "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check if an android uprev is required.call chromite.api.PackageService/GetTargetVersions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"build_target\"@@@",
@@ -10,15 +18,7 @@
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"androidTargetVersion\": \"bertha\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"androidVersion\": \"7002143\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"chromeVersion\": \"89.0.4339.0\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"fullVersion\": \"R89-13635.0.0\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"milestoneVersion\": \"89\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"platformVersion\": \"13635.0.0\"@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_LINE@response@{\"android_branch_version\": \"git_rvc-arc\", \"android_target_version\": \"\", \"android_version\": \"7123456\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -34,9 +34,9 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
-    "name": "get android version information.write input file",
+    "name": "check if an android uprev is required.call chromite.api.PackageService/GetTargetVersions.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"build_target\"@@@",
@@ -62,9 +62,9 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "get android version information.call build API script",
+    "name": "check if an android uprev is required.call chromite.api.PackageService/GetTargetVersions.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -84,16 +84,16 @@
       ]
     },
     "infra_step": true,
-    "name": "get android version information.read output file",
+    "name": "check if an android uprev is required.call chromite.api.PackageService/GetTargetVersions.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "get android version information.call response",
+    "name": "check if an android uprev is required.call chromite.api.PackageService/GetTargetVersions.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
@@ -101,7 +101,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "No android_branch provided"
+      "humanReason": "No android_target provided"
     },
     "name": "$result"
   }

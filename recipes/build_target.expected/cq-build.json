@@ -3648,9 +3648,17 @@
   },
   {
     "cmd": [],
-    "name": "install packages.get android version information",
+    "name": "install packages.check if an android uprev is required",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no file diffs caused an android uprev@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
@@ -3668,7 +3676,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"android_target_version\": \"bertha\", \"chrome_version\": \"chrome_version\", \"full_version\": \"full_version\", \"android_branch_version\": \"git_rvc-arc\", \"platform_version\": \"platform_version\", \"android_version\": \"1\", \"milestone_version\": \"milestone_version\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"android_version\": \"7123456\", \"android_branch\": \"git_rvc-arc\", \"android_package\": \"android-vm-rvc\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3685,9 +3693,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "install packages.get android version information.write input file",
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"amd64-generic\"@@@",
@@ -3716,7 +3724,7 @@
       "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
       "--log-level",
       "debug",
-      "chromite.api.PackageService/GetTargetVersions"
+      "chromite.api.PackageService/GetAndroidMetadata"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3724,9 +3732,9 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "install packages.get android version information.call build API script",
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3747,26 +3755,18 @@
       ]
     },
     "infra_step": true,
-    "name": "install packages.get android version information.read output file",
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "install packages.get android version information.call response",
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "install packages.check if an android uprev is required",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no file diffs caused an android uprev@@@"
     ]
   },
   {

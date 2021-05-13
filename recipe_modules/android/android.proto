@@ -1,0 +1,15 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.android;
+
+message AndroidProperties {
+  // The Android package which uprev is performed against.
+  string android_package = 1;
+
+  // The Android version to uprev to.
+  string android_version = 2;
+}

@@ -102,7 +102,7 @@
     "cmd": [],
     "name": "uprev android",
     "~followup_annotations": [
-      "@@@STEP_TEXT@android-vm-rvc revved to 7123456-r1@@@"
+      "@@@STEP_TEXT@android-vm-rvc not revved@@@"
     ]
   },
   {
@@ -122,7 +122,9 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"status\": \"MARK_STABLE_STATUS_SUCCESS\", \"android_atom\": {\"category\": \"chromeos-base\", \"version\": \"7123456-r1\", \"package_name\": \"android-vm-rvc\"}}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"status\": \"MARK_STABLE_STATUS_EARLY_EXIT\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -208,6 +210,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "Android did not uprev, check log for details"
+    },
     "name": "$result"
   }
 ]

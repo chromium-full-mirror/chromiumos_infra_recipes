@@ -3,17 +3,17 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
+
 from PB.recipe_modules.chromeos.android.examples.test import TestProperties
-from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
 
 DEPS = [
-    'recipe_engine/file',
     'recipe_engine/properties',
-    'recipe_engine/step',
     'android',
+    'cros_build_api',
     'gerrit',
 ]
 
@@ -42,154 +42,45 @@ def RunSteps(api, properties):
   if properties.changes:
     files += ['chromeos-base/android-vm-rvc/android-vm-rvc-9999.ebuild']
   patch_sets = [patch_set(files)]
-  api.android.try_uprev(chroot, sysroot, patch_sets)
-
-
-TARGET_VERSIONS_WITH_ANDROID_PI = """
-{
-  "androidBranchVersion": "git_pi-arc",
-  "androidTargetVersion": "cheets",
-  "androidVersion": "7002143",
-  "chromeVersion": "89.0.4339.0",
-  "fullVersion": "R89-13635.0.0",
-  "milestoneVersion": "89",
-  "platformVersion": "13635.0.0"
-}
-"""
-TARGET_VERSIONS_WITH_ANDROID_RVC = """
-{
-  "androidBranchVersion": "git_rvc-arc",
-  "androidTargetVersion": "bertha",
-  "androidVersion": "7002143",
-  "chromeVersion": "89.0.4339.0",
-  "fullVersion": "R89-13635.0.0",
-  "milestoneVersion": "89",
-  "platformVersion": "13635.0.0"
-}
-"""
-TARGET_VERSIONS_WITH_ANDROID_SC = """
-{
-  "androidBranchVersion": "git_sc-arc-dev",
-  "androidTargetVersion": "bertha",
-  "androidVersion": "7002143",
-  "chromeVersion": "89.0.4339.0",
-  "fullVersion": "R89-13635.0.0",
-  "milestoneVersion": "89",
-  "platformVersion": "13635.0.0"
-}
-"""
-TARGET_VERSIONS_WITH_ANDROID_MAIN = """
-{
-  "androidBranchVersion": "git_master-arc-dev",
-  "androidTargetVersion": "bertha",
-  "androidVersion": "7002143",
-  "chromeVersion": "89.0.4339.0",
-  "fullVersion": "R89-13635.0.0",
-  "milestoneVersion": "89",
-  "platformVersion": "13635.0.0"
-}
-"""
-TARGET_VERSIONS_WITHOUT_ANDROID = """
-{
-  "androidBranchVersion": "",
-  "androidTargetVersion": "",
-  "androidVersion": "",
-  "chromeVersion": "89.0.4339.0",
-  "fullVersion": "R89-13635.0.0",
-  "milestoneVersion": "89",
-  "platformVersion": "13635.0.0"
-}
-"""
-TARGET_VERSIONS_WITH_BAD_ANDROID = """
-{
-  "androidBranchVersion": "git_pi-arc",
-  "androidTargetVersion": "bertha",
-  "androidVersion": "7002143",
-  "chromeVersion": "89.0.4339.0",
-  "fullVersion": "R89-13635.0.0",
-  "milestoneVersion": "89",
-  "platformVersion": "13635.0.0"
-}
-"""
-TARGET_VERSIONS_WITH_MISSING_ANDROID_BRANCH = """
-{
-  "androidTargetVersion": "bertha",
-  "androidVersion": "7002143",
-  "chromeVersion": "89.0.4339.0",
-  "fullVersion": "R89-13635.0.0",
-  "milestoneVersion": "89",
-  "platformVersion": "13635.0.0"
-}
-"""
-TARGET_VERSIONS_WITH_MISSING_ANDROID_TARGET = """
-{
-  "androidBranchVersion": "git_pi-arc",
-  "androidVersion": "7002143",
-  "chromeVersion": "89.0.4339.0",
-  "fullVersion": "R89-13635.0.0",
-  "milestoneVersion": "89",
-  "platformVersion": "13635.0.0"
-}
-"""
+  api.android.uprev_if_unstable_ebuild_changed(chroot, sysroot, patch_sets)
 
 
 def GenTests(api):
-  android_pi_version = api.step_data(
-      'get android version information.read output file',
-      api.file.read_raw(TARGET_VERSIONS_WITH_ANDROID_PI))
-  android_rvc_version = api.step_data(
-      'get android version information.read output file',
-      api.file.read_raw(TARGET_VERSIONS_WITH_ANDROID_RVC))
-  android_sc_version = api.step_data(
-      'get android version information.read output file',
-      api.file.read_raw(TARGET_VERSIONS_WITH_ANDROID_SC))
-  android_main_version = api.step_data(
-      'get android version information.read output file',
-      api.file.read_raw(TARGET_VERSIONS_WITH_ANDROID_MAIN))
-  no_android_version = api.step_data(
-      'get android version information.read output file',
-      api.file.read_raw(TARGET_VERSIONS_WITHOUT_ANDROID))
-  bad_android_version = api.step_data(
-      'get android version information.read output file',
-      api.file.read_raw(TARGET_VERSIONS_WITH_BAD_ANDROID))
-  missing_android_branch_version = api.step_data(
-      'get android version information.read output file',
-      api.file.read_raw(TARGET_VERSIONS_WITH_MISSING_ANDROID_BRANCH))
-  missing_android_target_version = api.step_data(
-      'get android version information.read output file',
-      api.file.read_raw(TARGET_VERSIONS_WITH_MISSING_ANDROID_TARGET))
+  yield api.test('no-changes-with-android')
+  yield api.test('changes-with-android', api.properties(changes=True))
+  yield api.test(
+      'without-android',
+      api.cros_build_api.set_api_return('check if an android uprev is required',
+                                        'PackageService/GetAndroidMetadata',
+                                        '{}'))
+  yield api.test(
+      'missing-api',
+      api.cros_build_api.remove_endpoints(['PackageService/GetAndroidMetadata'
+                                          ]))
+  yield api.test('changes-no-uprev', api.properties(changes=True),
+                 api.android.set_mark_stable_early_exit())
 
-  def test_data(changes=True, with_android=True,
-                android_steps=android_rvc_version):
-    data = api.properties(TestProperties(changes=changes))
-    data += android_steps if with_android else no_android_version
-    return data
-
-  yield api.test('changes-with-android',
-                 test_data(changes=True, with_android=True))
-  yield api.test('no-changes-with-android',
-                 test_data(changes=False, with_android=True))
-  yield api.test(
-      'changes-with-android-p',
-      test_data(changes=True, with_android=True,
-                android_steps=android_pi_version))
-  yield api.test(
-      'changes-with-android-sc',
-      test_data(changes=True, with_android=True,
-                android_steps=android_sc_version))
-  yield api.test(
-      'changes-with-android-main',
-      test_data(changes=True, with_android=True,
-                android_steps=android_main_version))
-  yield api.test(
-      'with-missing-android-branch',
-      test_data(changes=True, with_android=True,
-                android_steps=missing_android_branch_version))
-  yield api.test(
-      'with-missing-android-target',
-      test_data(changes=True, with_android=True,
-                android_steps=missing_android_target_version))
-  yield api.test('without-android', test_data(with_android=False))
-  yield api.test(
-      'with-bad-android',
-      test_data(with_android=True, android_steps=bad_android_version))
+  # TODO(b/187888777): Remove when _get_android_metadata_fallback is removed.
+  fallback_testcases = [
+      ('android-pi', 'git_pi-arc', 'cheets', '7123456'),
+      ('android-rvc', 'git_rvc-arc', 'bertha', '7123456'),
+      ('android-sc', 'git_sc-arc-dev', 'bertha', '7123456'),
+      ('android-mst', 'git_master-arc-dev', 'bertha', '7123456'),
+      ('bad-android', 'git_pi-arc', 'bertha', '7123456'),
+      ('missing-branch', '', 'bertha', '7123456'),
+      ('missing-target', 'git_rvc-arc', '', '7123456'),
+      ('no-android', '', '', ''),
+  ]
+  for name, branch, target, version in fallback_testcases:
+    target_versions = {
+        'android_branch_version': branch,
+        'android_target_version': target,
+        'android_version': version,
+    }
+    yield api.test(
+        'fallback-' + name, api.properties(changes=True),
+        api.cros_build_api.remove_endpoints(
+            ['PackageService/GetAndroidMetadata']),
+        api.cros_build_api.set_api_return(
+            'check if an android uprev is required',
+            'PackageService/GetTargetVersions', json.dumps(target_versions)))
