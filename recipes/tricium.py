@@ -84,7 +84,7 @@ def _FullCheckout(api):
 
           api.src_state.gitiles_commit = GitilesCommit(
               host=gitiles_commit.host, project=gitiles_commit.project,
-              ref=api.git.get_branch_refspec(patch_set.branch), id=gitiles_id)
+              ref=api.git.get_branch_refspec(branch), id=gitiles_id)
           break
 
   if '.B' in api.src_state.gitiles_commit.ref:
@@ -137,10 +137,11 @@ def _FullCheckout(api):
         project_infos = api.repo.project_infos([commit.project])
         project_path = None
         for project in project_infos:
-          if api.git.extract_branch(project.branch,
-                                    project.branch) == api.git.extract_branch(
-                                        patch_set.branch, patch_set.branch):
+          if project.branch and api.git.extract_branch(
+              project.branch, project.branch) == api.git.extract_branch(
+                  patch_set.branch, patch_set.branch):
             project_path = workpath.join(project.path)
+            break
         if not project_path:
           presentation.status = api.step.FAILURE
           presentation.step_text = 'Project for branch {} not found.'.format(
