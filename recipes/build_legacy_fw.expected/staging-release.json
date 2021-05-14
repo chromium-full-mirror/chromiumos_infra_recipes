@@ -1657,6 +1657,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
       "--delete",
       "--create"
     ],
@@ -1678,6 +1680,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
       "./update_chroot",
@@ -1706,6 +1710,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
       "../platform/ec/util/getversion.sh"
@@ -1756,6 +1762,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
       "setup_board",
@@ -1784,6 +1792,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
       "./build_packages",
@@ -1914,6 +1924,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
       "tar",
@@ -2515,6 +2527,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
       "--delete"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace",
