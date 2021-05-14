@@ -432,9 +432,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
       with self.m.step.nest('run ebuild tests') as presentation:
         relevant_testable_packages = unit_tests.packages
         testable_packages_optional = False
+        filter_only_cros_workon = False
         if (config.unit_tests.dependencies ==
             BuilderConfig.CL_AFFECTED_DEPENDENCIES):
           testable_packages_optional = True
+          filter_only_cros_workon = True
           relevant_testable_packages = self._cl_affected_sysroot_packages
           # If the config specifies packages to test, only test the specified
           # packages which were affected by the CL.
@@ -460,7 +462,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
                   flags=BuildTargetUnitTestRequest.Flags(
                       code_coverage=self._test_with_code_coverage,
                       empty_sysroot=unit_tests.empty_sysroot,
-                      testable_packages_optional=testable_packages_optional)),
+                      testable_packages_optional=testable_packages_optional,
+                      filter_only_cros_workon=filter_only_cros_workon)),
               # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.
               timeout=3 * 60 * 60,
               response_lambda=self.m.cros_build_api.failed_pkg_names)
