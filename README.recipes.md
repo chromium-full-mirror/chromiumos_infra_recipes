@@ -302,6 +302,7 @@
   * [libchrome_upstream](#recipes-libchrome_upstream) &mdash; Recipe for updating libchrome upstream branch.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [lvfs_mirror](#recipes-lvfs_mirror) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
+  * [manifest_doctor](#recipes-manifest_doctor) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
   * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results)
   * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries)
   * [metadata_json:examples/default_entries](#recipes-metadata_json_examples_default_entries)
@@ -7544,6 +7545,15 @@ Runs the presubmit for a project with checkout per local manifest.
 Recipe for syncing to our local cache LVFS files (https://fwupd.org/).
 
 &mdash; **def [RunSteps](/recipes/lvfs_mirror.py#13)(api):**
+### *recipes* / [manifest\_doctor](/recipes/manifest_doctor.py)
+
+[DEPS](/recipes/manifest_doctor.py#11): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for performing various manipulations on ChromeOS manifests.
+
+&mdash; **def [RunSteps](/recipes/manifest_doctor.py#50)(api, properties):**
+
+&mdash; **def [ensure\_manifest\_doctor](/recipes/manifest_doctor.py#30)(api, properties):**
 ### *recipes* / [metadata\_json:examples/add\_stage\_results](/recipe_modules/metadata_json/examples/add_stage_results.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/add_stage_results.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
