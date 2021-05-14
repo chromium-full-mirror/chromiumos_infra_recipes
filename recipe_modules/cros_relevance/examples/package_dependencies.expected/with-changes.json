@@ -55,7 +55,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"package_deps\": [{\"category\": \"chromeos-base\", \"version\": \"1-r52\", \"package_name\": \"chrome-icu\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"package_deps\": [{\"category\": \"chromeos-base\", \"version\": \"1-r52\", \"package_name\": \"chrome-icu\"}, {\"category\": \"chromeos-base\", \"version\": \"1-r123\", \"package_name\": \"arc-setup\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

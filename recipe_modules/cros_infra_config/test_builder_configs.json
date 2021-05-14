@@ -689,7 +689,17 @@
       },
       "unitTests": {
         "ebuildsRunSpec": "RUN_EXIT",
-        "dependencies": "CL_AFFECTED_DEPENDENCIES"
+        "dependencies": "CL_AFFECTED_DEPENDENCIES",
+        "packages": [
+          {
+            "packageName": "bash",
+            "category": "app-shells"
+          },
+          {
+            "packageName": "chrome-icu",
+            "category": "chromeos-base"
+          }
+        ]
       }
     },
     {

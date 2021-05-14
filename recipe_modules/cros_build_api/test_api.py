@@ -166,6 +166,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                 "package_name": "chrome-icu",
                 "version": "1-r52"
             },
+            {
+                "category": "chromeos-base",
+                "package_name": "arc-setup",
+                "version": "1-r123"
+            },
         ],
     )
     return responses

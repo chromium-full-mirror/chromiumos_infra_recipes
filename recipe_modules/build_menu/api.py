@@ -18,6 +18,7 @@ from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromiumos.common import IMAGE_TYPE_RECOVERY, IMAGE_TYPE_ACCESSORY_RWSIG
+from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import Profile
@@ -59,6 +60,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
 
     self._is_cloudready = props.is_cloudready
+
+    self._cl_affected_sysroot_packages = None
 
   def initialize(self):
     self._force_empty_toolchain_targets |= (
@@ -382,6 +385,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
           patch_sets=self.m.workspace_util.patch_sets, packages=packages,
           include_rev_deps=True)
+      self._cl_affected_sysroot_packages = list(relevant_packages)
       # Ensure implicit dependencies are installed.
       relevant_packages.add(category='virtual', package_name='implicit-system')
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
@@ -431,6 +435,18 @@ class BuildMenuApi(recipe_api.RecipeApi):
         if (config.unit_tests.dependencies ==
             BuilderConfig.CL_AFFECTED_DEPENDENCIES):
           testable_packages_optional = True
+          relevant_testable_packages = self._cl_affected_sysroot_packages
+          # If the config specifies packages to test, only test the specified
+          # packages which were affected by the CL.
+          # The PackageInfo objects returned by the depgraph contain versions
+          # while the ones in the config do not, therefore only compare category
+          # and package_name fields.
+          if unit_tests.packages:
+            relevant_testable_packages = [
+                x for x in self._cl_affected_sysroot_packages
+                if PackageInfo(category=x.category, package_name=x.package_name)
+                in list(unit_tests.packages)
+            ]
         raise_coverage_failure = True
         # Wrap this in a try so that we can upload code coverage results even if
         # tests fail or timeout.
