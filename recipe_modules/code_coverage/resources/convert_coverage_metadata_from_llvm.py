@@ -256,7 +256,7 @@ def _to_compressed_file_record(file_coverage_data, constants_file, build_target,
   matched = False
   for mapping in constants[project_name]:
     pre = os.path.join('/build', build_target, mapping['prefix'])
-    if re.match(pre, filename):
+    if re.match(pre, coverage_path):
       matched = True
       coverage_path = re.sub(pre, mapping['src_path'], coverage_path)
       break
