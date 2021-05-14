@@ -9,6 +9,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from google.protobuf import struct_pb2
+from google.protobuf import timestamp_pb2
 
 DEPS = [
     'recipe_engine/assertions',
@@ -60,13 +61,20 @@ def GenTests(api):
       api.buildbucket.simulated_search_results([
           _build_with_changes(
               build_pb2.Build(id=123, builder=builder_pb2.BuilderID(
-                  builder='betty'), status=common_pb2.SUCCESS)),
+                  builder='betty'), status=common_pb2.SUCCESS,
+                              start_time=timestamp_pb2.Timestamp(seconds=122))),
+          _build_with_changes(
+              build_pb2.Build(id=122, builder=builder_pb2.BuilderID(
+                  builder='betty'), status=common_pb2.SUCCESS,
+                              start_time=timestamp_pb2.Timestamp(seconds=124))),
           _build_with_changes(
               build_pb2.Build(id=231, builder=builder_pb2.BuilderID(
-                  builder='reef'), status=common_pb2.SUCCESS)),
+                  builder='reef'), status=common_pb2.SUCCESS,
+                              start_time=timestamp_pb2.Timestamp(seconds=122))),
           _build_with_changes(
               build_pb2.Build(id=312, builder=builder_pb2.BuilderID(
-                  builder='cq-orch'), status=common_pb2.SUCCESS)),
+                  builder='cq-orch'), status=common_pb2.SUCCESS,
+                              start_time=timestamp_pb2.Timestamp(seconds=124))),
       ], 'get change build history.buildbucket.search'),
       api.properties(
           GetPassedBuildsProperties(
@@ -75,9 +83,12 @@ def GenTests(api):
           GetPassedBuildsProperties(output_builds=[
               _build_with_changes(
                   build_pb2.Build(
-                      id=123, builder=builder_pb2.BuilderID(
-                          builder='betty'), status=common_pb2.SUCCESS)),
+                      id=122, builder=builder_pb2.BuilderID(
+                          builder='betty'), status=common_pb2.SUCCESS,
+                      start_time=timestamp_pb2.Timestamp(seconds=124))),
               _build_with_changes(
-                  build_pb2.Build(id=231, builder=builder_pb2.BuilderID(
-                      builder='reef'), status=common_pb2.SUCCESS))
+                  build_pb2.Build(
+                      id=231, builder=builder_pb2.BuilderID(
+                          builder='reef'), status=common_pb2.SUCCESS,
+                      start_time=timestamp_pb2.Timestamp(seconds=122)))
           ])))

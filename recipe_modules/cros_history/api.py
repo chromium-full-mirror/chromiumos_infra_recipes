@@ -43,11 +43,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       tags (list[common_pb2.StringPair]): Get builds with these tags.
 
     Returns:
-      list([build_pb2.Build]): Passed builds with at most one build per builder.
+      list([build_pb2.Build]): Passed builds with the most recent build per builder.
     """
     with self.m.step.nest('get change build history') as presentation:
       build = self.m.buildbucket.build
-      passed_builds = []
+      latest_passed_builds = []
       # Start with cq-orchestrator so we don't add it to the result.
       current_builder_id = build.builder
       passed_builders = set([current_builder_id.builder])
@@ -55,22 +55,27 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       # We don't want to specify the builder, but, we should specify the bucket
       builder_shell = builder_pb2.BuilderID(project=current_builder_id.project,
                                             bucket=current_builder_id.bucket)
-      for build in self._get_patch_history(patches, builder=builder_shell,
-                                           statuses=[common_pb2.SUCCESS],
-                                           tags=tags):
+      all_passed_builds = self._get_patch_history(patches,
+                                                  builder=builder_shell,
+                                                  statuses=[common_pb2.SUCCESS],
+                                                  tags=tags)
+      all_passed_builds.sort(key=lambda build: build.start_time.seconds,
+                             reverse=True)
+      for build in all_passed_builds:
         if build.builder.builder not in passed_builders:
           passed_builders.add(build.builder.builder)
-          passed_builds.append(build)
+          latest_passed_builds.append(build)
 
-      presentation.step_text = ('some builds already completed' if passed_builds
-                                else 'found no completed builds')
-      passed_builds.sort(key=lambda build: build.builder.builder)
-      for build in passed_builds:
+      presentation.step_text = ('some builds already completed'
+                                if latest_passed_builds else
+                                'found no completed builds')
+      latest_passed_builds.sort(key=lambda build: build.builder.builder)
+      for build in latest_passed_builds:
         title = self.m.naming.get_build_title(build)
         url = self.m.buildbucket.build_url(build_id=build.id)
         presentation.links[title] = url
 
-      return passed_builds
+      return latest_passed_builds
 
   def get_test_failure_builders(self):
     """Get builders with the given patches that failed HW tests in the last run.
