@@ -36,6 +36,7 @@ from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
 
 
 def RunSteps(api):
+  _ = api.cros_build_api.log_level
   input_proto = binhost.PrepareBinhostUploadsRequest(
       build_target=BuildTarget(name='target'))
   output_type = binhost.PrepareBinhostUploadsResponse.DESCRIPTOR

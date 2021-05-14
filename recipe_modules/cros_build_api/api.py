@@ -204,6 +204,11 @@ class CrosBuildApiApi(RecipeApi):
     self._version = None
 
   @property
+  def log_level(self):
+    """Log level used when calling Build API"""
+    return self._log_level
+
+  @property
   def _endpoints(self):
     """Endpoints for internal use."""
     if not self._api_endpoints:
