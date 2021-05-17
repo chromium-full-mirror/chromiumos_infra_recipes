@@ -266,10 +266,8 @@ def RunSteps(api, properties):
 
         version_map[branch] = (build_index, sanitized_common_version)
 
-  for branch, (version, sanitized_version) in version_map.items():
-    with api.step.nest('upreving pin for branch {}'.format(branch)):
-      with api.cros_source.checkout_overlays_context():
-        api.cros_source.ensure_synced_cache()
+    for branch, (version, sanitized_version) in version_map.items():
+      with api.step.nest('upreving pin for branch {}'.format(branch)):
         api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
                                         branch)
 
