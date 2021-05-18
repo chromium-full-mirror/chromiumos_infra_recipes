@@ -50,8 +50,10 @@ def RunSteps(api, properties):
     gitiles_commit = api.src_state.gitiles_commit
     gerrit_changes = api.src_state.gerrit_changes
 
-    with api.step.nest('cherry-pick gerrit changes'):
-      commits = api.cros_source.apply_gerrit_changes(gerrit_changes)
+    commits = []
+    if gerrit_changes:
+      with api.step.nest('cherry-pick gerrit changes'):
+        commits = api.cros_source.apply_gerrit_changes(gerrit_changes)
 
     # If we get this far, we were successful in syncing to the manifest that was
     # provided by buildbucket (generally emtpy for CQ), or builder-config (if
