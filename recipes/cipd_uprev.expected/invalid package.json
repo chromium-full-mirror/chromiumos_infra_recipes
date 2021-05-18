@@ -124,7 +124,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/branch_util/linux-amd64', 'chromiumos/infra/build_plan_generator/linux-amd64', 'chromiumos/infra/test_plan_generator/linux-amd64', 'chromiumos/infra/pointless_build_checker/linux-amd64', 'chromiumos/infra/version_bumper/linux-amd64']"
+      "humanReason": "Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64', 'chromiumos/infra/branch_util/linux-amd64', 'chromiumos/infra/build_plan_generator/linux-amd64', 'chromiumos/infra/manifest_doctor/linux-amd64', 'chromiumos/infra/test_plan_generator/linux-amd64', 'chromiumos/infra/pointless_build_checker/linux-amd64', 'chromiumos/infra/version_bumper/linux-amd64']"
     },
     "name": "$result"
   }

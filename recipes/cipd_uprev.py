@@ -23,6 +23,7 @@ _CTP_GO_BINARIES = ['cros_test_platform', 'phosphorus']
 _CI_GO_BINARIES = [
     'branch_util',
     'build_plan_generator',
+    'manifest_doctor',
     'test_plan_generator',
     'pointless_build_checker',
     'version_bumper',
