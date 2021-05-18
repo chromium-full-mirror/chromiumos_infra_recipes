@@ -4456,7 +4456,7 @@ the server returns base64, so not being able to decode this is a good
 indication something is wrong.
 
 Args:
-  host (str): Gerrit host, e.g. chrome-internal.
+  host (str): Gerrit host, e.g. chrome-internal.googlesource.com.
   project (str): Gerrit project, e.g. chromiumos/chromite.
   path: (str): The path to the file e.g. api/controller/something.py.
   ref: (str): The ref you should return the file from, default: HEAD.
