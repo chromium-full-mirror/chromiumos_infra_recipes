@@ -120,16 +120,35 @@ def RunSteps(api, properties):
   package = properties.package_info
   cpv = api.naming.get_package_title(package)
 
+  # If we see gitiles_info populated in the recipe properties, we will be
+  # performing a fetch from the Gitiles API for the package's target uprev
+  # version. This information will be used in branch determination and sent to
+  # the uprev handler.
+  gitiles_response = None
+
   with api.cros_source.checkout_overlays_context(), \
       api.cros_sdk.cleanup_context():
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()
 
     # Check out the appropriate branch, and use the appropriate policy.
+    # If gitiles_info is given to us then we will determine the branch based on
+    # the information returned by the Gitiles API. Otherwise, use the gitles.ref
+    # seen in the trigger.
     with api.step.nest('determine branch') as pres:
       trigger_policies = []
       for trigger in triggers:
-        policy_info = _get_policy(api, trigger, policies)
+        # Retrieve version information from Gitiles API.
+        if properties.HasField('gitiles_info'):
+          gitiles_response = api.gitiles.get_file(
+              properties.gitiles_info.host, properties.gitiles_info.project,
+              properties.gitiles_info.path, ref=trigger.gitiles.ref,
+              test_output_data='MTIzLjQ1Ni43ODkuMAo=')
+
+        # If we we recieved a target version from Gitiles, override the tag
+        # argument.
+        policy_info = _get_policy(api, policies, gitiles_response or
+                                  trigger.gitiles.ref)
         if policy_info not in trigger_policies:
           trigger_policies.append(policy_info)
       # If we match more than one policy with the triggers, that is an error.
@@ -188,8 +207,11 @@ def RunSteps(api, properties):
     retry_cl_policy = policy.retry_cl_policy or NO_RETRY
 
     if not retry_only_run:
+      # If earlier we fetched for a target version through Gitiles, pass along
+      # the retrieved value.
       ebuilds_by_pinfo = _do_uprev(api, properties, workspace_path, triggers,
-                                   package, cpv, topic, Ebuilds)
+                                   package, cpv, topic, Ebuilds,
+                                   version_no_rev=gitiles_response)
       if ebuilds_by_pinfo is None:
         return
 
@@ -327,13 +349,18 @@ def RunSteps(api, properties):
                         existing_cls)
 
 
-def _get_policy(api, trigger, policies):
+def _get_policy(api, policies, tag):
   """Find the applicable policy for the trigger.
 
   The policy used is the first policy where policy.pattern matches the tag, and
   either:
   - the substitution result is the empty string (default branch, aka legacy), or
   - a remote reference is in manifest-internal for the substitution result.
+
+  Args:
+    policies (list(BranchPolicy): The package's branch policy.
+    tag (string): Version information used to generate the branch name.
+      (e.g. 123.456.789.0)
 
   Returns:
     (PolicyInfo) namedtuple with:
@@ -344,7 +371,6 @@ def _get_policy(api, trigger, policies):
   """
   PolicyInfo = namedtuple('PolicyInfo', ['policy', 'branch', 'reference'])
   manifest = api.src_state.internal_manifest
-  tag = trigger.gitiles.ref
   with api.context(cwd=manifest.path):
     for policy in policies:
       if re.match(policy.pattern, tag):
@@ -376,28 +402,34 @@ def response_has_changes(api, response):
 
 
 def _do_uprev(api, properties, workspace_path, triggers, package, cpv, topic,
-              Ebuilds):
+              Ebuilds, version_no_rev=None):
   """Try the uprev for the given package. If successful, commit the uprev.
+
+  Args:
+    properties (GeneratorProperties): Current properties for the recipe run.
+    workspace_path (string): Workspace checkout path where the build is
+      processed.
+    triggers (scheduler.Trigger): Triggers which invoked the recipe.
+    package (chromiumos.PackageInfo): Information describing the package.
+    cpv (string): Package title.
+    topic (string): Topic describing package. Defaults to package title.
+      can be same as cpv.
+    Ebuilds (namedtuple): Contains path and version.
+    version_no_rev (string): Target version for uperv. If populated this will
+      override trigger.gitiles.revision in the UprevVersionedPackageRequest sent
+      to the uprev handler.
 
   Returns:
     (dict): ebuilds_by_pinfo. If None, pupr should return immediately.
   """
   with api.step.nest('try uprev {}'.format(cpv)) as presentation:
-    # Fetch from Gitiles API if the flag is set.
-    revision = None
-    if properties.HasField('gitiles_info'):
-      revision = api.gitiles.get_file(properties.gitiles_info.host,
-                                      properties.gitiles_info.project,
-                                      properties.gitiles_info.path,
-                                      test_output_data='MTIzLjQ1Ni43ODkuMAo=')
-
     request = UprevVersionedPackageRequest(
         chroot=api.cros_sdk.chroot,
         package_info=package,
         versions=[
             UprevVersionedPackageRequest.GitRef(
                 repository=urlparse.urlparse(trigger.gitiles.repo).path,
-                ref=trigger.gitiles.ref, revision=(revision or
+                ref=trigger.gitiles.ref, revision=(version_no_rev or
                                                    trigger.gitiles.revision))
             for trigger in triggers
         ],
@@ -760,16 +792,23 @@ def GenTests(api):
   yield _with_infos(
       'with-gerrit-changes_with_revision_override',
       _props(
-          gitiles_info=GitilesFetchInfo(host='chromium', project='chrome/src',
+          gitiles_info=GitilesFetchInfo(host='chromium.googlesource.com',
+                                        project='chrome/src',
                                         path='foo/bar.txt')),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun,
                      'apply gerrit changes.update policy'),
       api.post_check(
-          post_process.MustRun, 'try uprev chromeos-base/chromite.'
-          'fetch gitiles file.'
-          'curl https://chromium/chrome/src/+/HEAD/foo/bar.txt?format=TEXT'),
+          post_process.MustRun, 'determine branch.fetch gitiles file.'
+          'curl https://chromium.googlesource.com'
+          '/chrome/src/+/refs/heads/main/foo/bar.txt?format=TEXT'),
+      api.step_data(
+          'determine branch.git ls-remote',
+          stdout=api.raw_io.output_text('\n'.join([
+              '9ed37bc6f515ef0ef42949d9f23e1180432649f5\t'
+              'refs/remotes/cros-internal/release-R79-5555.B',
+          ]))),
       api.test_util.test_build(
           revision=None, extra_changes=[
               GerritChange(host='chromium-review.googlesource.com', change=1234)
