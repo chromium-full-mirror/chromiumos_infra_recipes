@@ -38,6 +38,7 @@
   * [cros_storage](#recipe_modules-cros_storage) &mdash; API featuring shared helpers for locating and naming stored artifacts.
   * [cros_tags](#recipe_modules-cros_tags) &mdash; API for generating tags.
   * [cros_test_plan](#recipe_modules-cros_test_plan)
+  * [cros_test_plan_v2](#recipe_modules-cros_test_plan_v2)
   * [cros_test_platform](#recipe_modules-cros_test_platform)
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess)
   * [cros_test_proctor](#recipe_modules-cros_test_proctor)
@@ -230,6 +231,7 @@
   * [cros_storage:examples/full](#recipes-cros_storage_examples_full)
   * [cros_tags:examples/full](#recipes-cros_tags_examples_full)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
+  * [cros_test_plan_v2:examples/full](#recipes-cros_test_plan_v2_examples_full)
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full)
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full)
   * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full)
@@ -3070,6 +3072,26 @@ Returns:
   GenerateTestPlanResponse of test plan.
 
 &mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#29)(self):**
+### *recipe_modules* / [cros\_test\_plan\_v2](/recipe_modules/cros_test_plan_v2)
+
+[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [gerrit](#recipe_modules-gerrit), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for generating and parsing test plans for CTP v2.
+
+&mdash; **def [generate](/recipe_modules/cros_test_plan_v2/api.py#28)(self, gerrit_changes):**
+
+Call test_plan generate.
+
+Args:
+  * gerrit_changes (list[common_pb2.GerritChange]): Changes to test, must be
+      non-empty.
+
+Returns:
+  Generated CoverageRules
+
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#19)(self):**
 ### *recipe_modules* / [cros\_test\_platform](/recipe_modules/cros_test_platform)
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#9): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7108,6 +7130,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#12): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#20)(api):**
+### *recipes* / [cros\_test\_plan\_v2:examples/full](/recipe_modules/cros_test_plan_v2/examples/full.py)
+
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#15)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
