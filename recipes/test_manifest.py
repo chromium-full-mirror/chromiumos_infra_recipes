@@ -67,23 +67,25 @@ def RunSteps(api, properties):
     # chromite-cq, and/or run a recipe where the configuration specifies the
     # external manifest.
     projects = sorted(set(x.patch_set.project for x in commits))
-    project_infos = api.repo.project_infos(projects=projects)
-    for project_info in project_infos:
-      manifest_path = api.cros_source.workspace_path.join(
-          project_info.path, 'default.xml')
-      branch = project_info.branch_name
-      # Test cros branch on the listed projects, but only on the checked out
-      # branch.
-      manifest_branch = (
-          api.cros_source.manifest_branch or
-          api.src_state.internal_manifest.branch)
-      if (branch == manifest_branch and
-          project_info.name in test_branch_projects and
-          api.path.exists(manifest_path)):
-        # Test branching with cros_branch.  See go/cros-branch.
-        api.cros_branch.create_from_file(
-            manifest_path, Branch(type=Branch.CUSTOM, name='test-manifest'),
-            step_name='test branch_util for %s' % project_info.name, push=False)
+    if projects:
+      project_infos = api.repo.project_infos(projects=projects)
+      for project_info in project_infos:
+        manifest_path = api.cros_source.workspace_path.join(
+            project_info.path, 'default.xml')
+        branch = project_info.branch_name
+        # Test cros branch on the listed projects, but only on the checked out
+        # branch.
+        manifest_branch = (
+            api.cros_source.manifest_branch or
+            api.src_state.internal_manifest.branch)
+        if (branch == manifest_branch and
+            project_info.name in test_branch_projects and
+            api.path.exists(manifest_path)):
+          # Test branching with cros_branch.  See go/cros-branch.
+          api.cros_branch.create_from_file(
+              manifest_path, Branch(type=Branch.CUSTOM, name='test-manifest'),
+              step_name='test branch_util for %s' % project_info.name,
+              push=False)
 
 
 def GenTests(api):

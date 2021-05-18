@@ -793,31 +793,6 @@
     ]
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "repo forall",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-b|src/project-b|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@project-c|src/project-c|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
