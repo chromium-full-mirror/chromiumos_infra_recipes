@@ -517,8 +517,9 @@ class CrosSdkApi(RecipeApi):
         self.swarming_chmod_chroot()
         if self._mount_named_cache and self._preload_cache_path:
           self.m.overlayfs.unmount('cros_chroot', self._cache_path)
-      assert self._test_data.get('is_chroot_usable',
-                                 []) == [], ('not all input test data used')
+
+        if not self._test_data.get('is_chroot_usable', []) == []:
+          raise StepFailure('not all input test data used')
 
   @contextlib.contextmanager
   def snapshot(self, create_test_data=None, restore_test_data=None):

@@ -98,7 +98,10 @@
   },
   {
     "cmd": [],
-    "name": "clean up SDK chroot"
+    "name": "clean up SDK chroot",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -316,25 +319,9 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_sdk/examples/full.py\", line 35, in RunSteps",
-      "    chroot = api.cros_sdk.create_chroot(version=properties.sdk_cache_version)",
-      "  File \"PYTHON/lib/python2.7/contextlib.py\", in __exit__",
-      "    self.gen.throw(type, value, traceback)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_sdk/api.py\", line 521, in cleanup_context",
-      "    []) == [], ('not all input test data used')",
-      "AssertionError: not all input test data used"
-    ]
-  },
-  {
     "failure": {
-      "humanReason": "Uncaught Exception: AssertionError('not all input test data used',)"
+      "failure": {},
+      "humanReason": "not all input test data used"
     },
     "name": "$result"
   }
