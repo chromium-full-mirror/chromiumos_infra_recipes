@@ -41,8 +41,7 @@ INSTALL_PACKAGES_RESPONSE = """
 
 
 def RunSteps(api, properties):
-  test_step_data = api.step('basic_with_stdout',
-                            cmd=['echo', 'hello world'],
+  test_step_data = api.step('basic_with_stdout', cmd=['echo', 'hello world'],
                             stdout=api.raw_io.output(),
                             stderr=api.raw_io.output())
 
@@ -59,28 +58,31 @@ def RunSteps(api, properties):
   api.assertions.assertTrue(
       api.analysis_service.can_publish_event(
           request=install_packages_request, response=install_packages_response))
-  api.analysis_service.publish_event(
-      request=install_packages_request, response=install_packages_response,
-      request_time=request_time, response_time=response_time,
-      step_data=test_step_data,
-      step_output=test_step_data.stdout)
+  api.analysis_service.publish_event(request=install_packages_request,
+                                     response=install_packages_response,
+                                     request_time=request_time,
+                                     response_time=response_time,
+                                     step_data=test_step_data,
+                                     step_output=test_step_data.stdout)
 
   # Publish a step with non-zero retcode
   try:
     api.step('A test step with retcode', cmd=['echo', 'hello world'])
   except api.step.StepFailure as e:
-    api.analysis_service.publish_event(
-        request=install_packages_request, response=install_packages_response,
-        request_time=request_time, response_time=response_time,
-        step_data=e.result)
+    api.analysis_service.publish_event(request=install_packages_request,
+                                       response=install_packages_response,
+                                       request_time=request_time,
+                                       response_time=response_time,
+                                       step_data=e.result)
 
   try:
     api.step('A test step with timeout', cmd=['echo', 'hello world'], timeout=1)
   except api.step.StepFailure as e:
-    api.analysis_service.publish_event(
-        request=install_packages_request, response=install_packages_response,
-        request_time=request_time, response_time=response_time,
-        step_data=e.result)
+    api.analysis_service.publish_event(request=install_packages_request,
+                                       response=install_packages_response,
+                                       request_time=request_time,
+                                       response_time=response_time,
+                                       step_data=e.result)
 
   # Pass in the request and response backwards, shouldn't work in this case
   # because the types are wrong.
@@ -88,19 +90,22 @@ def RunSteps(api, properties):
       api.analysis_service.can_publish_event(request=install_packages_response,
                                              response=install_packages_request))
   # Try calling anyway, should raise an error.
-  api.assertions.assertRaises(
-      ValueError, api.analysis_service.publish_event,
-      request=install_packages_response, response=install_packages_request,
-      request_time=request_time, response_time=response_time,
-      step_data=test_step_data)
+  api.assertions.assertRaises(ValueError, api.analysis_service.publish_event,
+                              request=install_packages_response,
+                              response=install_packages_request,
+                              request_time=request_time,
+                              response_time=response_time,
+                              step_data=test_step_data)
 
   request_time.FromSeconds(300)
   # If request_time is after response_time, the call should fail.
-  api.assertions.assertRaises(
-      ValueError, api.analysis_service.publish_event,
-      request=install_packages_request, response=install_packages_response,
-      request_time=request_time, response_time=response_time,
-      step_data=test_step_data)
+  api.assertions.assertRaises(ValueError, api.analysis_service.publish_event,
+                              request=install_packages_request,
+                              response=install_packages_response,
+                              request_time=request_time,
+                              response_time=response_time,
+                              step_data=test_step_data)
+
 
 def GenTests(api):
   yield api.test(
@@ -111,23 +116,26 @@ def GenTests(api):
       api.step_data('basic_with_stdout',
                     stdout=api.raw_io.output('Test output'),
                     stderr=api.raw_io.output('Errors')),
-      api.properties(**{
-          '$chromeos/analysis_service':
-          AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
-      }),
+      api.properties(
+          **{
+              '$chromeos/analysis_service':
+                  AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
+          }),
   )
 
   yield api.test(
       'basic-nonascii',
       api.buildbucket.ci_build(),
-      api.step_data('basic_with_stdout',
-                    # coding: utf8
-                    stdout=api.raw_io.output('國華'),
-                    stderr=api.raw_io.output('Errors')),
-      api.properties(**{
-          '$chromeos/analysis_service':
-          AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
-      }),
+      api.step_data(
+          'basic_with_stdout',
+          # coding: utf8
+          stdout=api.raw_io.output('國華'),
+          stderr=api.raw_io.output('Errors')),
+      api.properties(
+          **{
+              '$chromeos/analysis_service':
+                  AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
+          }),
   )
 
   yield api.test(
@@ -136,8 +144,9 @@ def GenTests(api):
       api.step_data('basic_with_stdout',
                     stdout=api.raw_io.output('Test output'),
                     stderr=api.raw_io.output('Errors')),
-      api.properties(**{
-          '$chromeos/analysis_service':
-          AnalysisServiceProperties(max_stdout_stderr_bytes=4)
-      }),
+      api.properties(
+          **{
+              '$chromeos/analysis_service':
+                  AnalysisServiceProperties(max_stdout_stderr_bytes=4)
+          }),
   )

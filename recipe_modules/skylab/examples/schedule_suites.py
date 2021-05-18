@@ -24,8 +24,8 @@ def RunSteps(api):
   another_hw_test_unit = api.cros_test_plan.test_api.another_hw_test_unit
   another_hw_test = another_hw_test_unit.hw_test_cfg.hw_test[0]
   another_hw_test.common.display_name = 'my_second_little_hwtest'
-  another_unit_hw_test = api.skylab.UnitHwTest(
-    unit=another_hw_test_unit, hw_test=another_hw_test)
+  another_unit_hw_test = api.skylab.UnitHwTest(unit=another_hw_test_unit,
+                                               hw_test=another_hw_test)
 
   hw_test_unit_with_license = api.cros_test_plan.test_api.hw_test_unit
   hw_test_with_license = hw_test_unit_with_license.hw_test_cfg.hw_test[0]

@@ -59,7 +59,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Is the builder configured?
     self._is_configured = False
 
-
   def initialize(self):
     # If the builder is in the staging bucket, or has a name that begins
     # 'staging-', then assume we are in staging.
@@ -73,7 +72,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._properties.honor_gitiles_commit_ref |= (
         'chromeos.cros_infra_config.honor_gitiles_commit_ref' in
         self.experiments)
-
 
     # Hold off on the other fields until they are used, to avoid unnecessary
     # clutter in the expectations files.
@@ -105,7 +103,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   def experiments_for_child_build(self):
     """Return value for bb schedule_request experiments arg."""
     return {k: True for k in self.experiments}
-
 
   @property
   def config(self):

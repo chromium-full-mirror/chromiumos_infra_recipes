@@ -22,15 +22,11 @@ def GenTests(api):
       'invalid_recipe',
       api.step_data(
           'recipe analyze',
-          api.json.output({
-              'invalid_recipes': ['recipeA', 'recipeB']
-          })),
+          api.json.output({'invalid_recipes': ['recipeA', 'recipeB']})),
   )
 
   yield api.test(
       'analyze_error',
       api.step_data('recipe analyze',
-                    api.json.output({
-                        'error': 'Analyze failed'
-                    })),
+                    api.json.output({'error': 'Analyze failed'})),
   )

@@ -102,7 +102,6 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
     return set([test.common.builder_name for test in failed_hw_tests])
 
-
   def get_passed_tests(self):
     """Find all tests that have passed with the given patches.
 

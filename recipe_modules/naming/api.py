@@ -90,7 +90,6 @@ class NamingApi(recipe_api.RecipeApi):
     all_properties = vm_test.input.properties or vm_test.output.properties
     return all_properties['name']
 
-
   def get_vm_test_title(self, vm_test):
     """Get a string to describe the VM test.
 
@@ -102,8 +101,8 @@ class NamingApi(recipe_api.RecipeApi):
     """
     all_properties = vm_test.input.properties or vm_test.output.properties
     input_properties = json_format.Parse(
-        json_format.MessageToJson(all_properties),
-        TestVmProperties(), ignore_unknown_fields=True)
+        json_format.MessageToJson(all_properties), TestVmProperties(),
+        ignore_unknown_fields=True)
     assert input_properties.name, 'missing name: %r' % input_properties
     return input_properties.name
 

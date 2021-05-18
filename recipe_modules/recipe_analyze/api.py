@@ -36,17 +36,12 @@ class RecipeAnalyzeApi(RecipeApi):
         'recipes': [recipe],
     }
     step_data = self.m.step(
-        'recipe analyze',
-        [
-            './recipes.py',
-            'analyze',
+        'recipe analyze', [
+            './recipes.py', 'analyze',
             self.m.json.input(analyze_input),
             self.m.json.output()
-        ],
-        step_test_data=lambda: self.m.json.test_api.output(
-            {'recipes': ['recipeA', 'recipeB']}
-        )
-    )
+        ], step_test_data=lambda: self.m.json.test_api.output(
+            {'recipes': ['recipeA', 'recipeB']}))
 
     step_data.presentation.logs['input.json'] = [json.dumps(analyze_input)]
 

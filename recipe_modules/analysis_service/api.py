@@ -61,8 +61,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(AnalysisServiceApi, self).__init__(*args, **kwargs)
     self._pubsub_project_id = properties.pubsub_project_id or "chromeos-bot"
-    self._pubsub_topic_id = (properties.pubsub_topic_id or
-                             "analysis-service-events")
+    self._pubsub_topic_id = (
+        properties.pubsub_topic_id or "analysis-service-events")
     self._max_stdout_stderr_bytes = properties.max_stdout_stderr_bytes
 
   def _get_field_name_by_matching_type(self, oneof_name, message):
@@ -169,16 +169,18 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     step = self.m.step.active_result
     if step_output:
       truncated_stdout, bytes_removed = _truncate_output(
-         step_output, self._max_stdout_stderr_bytes)
+          step_output, self._max_stdout_stderr_bytes)
       analysis_service_event.stdout = truncated_stdout
       if bytes_removed == 0:
         step.presentation.logs['stdout_truncation'] = [
             'Full step output is {} bytes, no truncation'.format(
-                len(step_output))]
+                len(step_output))
+        ]
       else:
         step.presentation.logs['stdout_truncation'] = [
             'Full step output is {} bytes, truncated to {} bytes'.format(
-                len(step_output), self._max_stdout_stderr_bytes)]
+                len(step_output), self._max_stdout_stderr_bytes)
+        ]
 
   def can_publish_event(self, request, response):
     """Return whether 'request' and 'response' can be published.

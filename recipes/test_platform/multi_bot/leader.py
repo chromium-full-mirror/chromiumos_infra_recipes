@@ -11,11 +11,11 @@ from PB.test_platform.multibot.requests import LeaderRequest
 DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
-
     'ipc',
 ]
 
 PROPERTIES = LeaderRequest
+
 
 def RunSteps(api, properties):
   # Properties is a LeaderRequest object.
@@ -30,6 +30,7 @@ def RunSteps(api, properties):
     api.step('notify ready', ["ipc.send_string"])
   api.step('payload step', ['echo', 'execute payload'])
   api.step('cleanup step', ['echo', 'cleanup tasks'])
+
 
 def GenTests(api):
   yield api.test('basic')

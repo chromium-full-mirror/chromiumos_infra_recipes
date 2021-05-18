@@ -55,6 +55,7 @@ TEST_STDOUT = """
 2021/02/16 23:10:19 Repairing manifest project chromiumos/manifest
 """
 
+
 def GenTests(api):
   yield api.test(
       'basic',

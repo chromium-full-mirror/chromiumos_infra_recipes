@@ -16,6 +16,7 @@ def RunSteps(api):
                              send_mail=True, target_branch='HEAD')
   api.assertions.assertEqual(output, 'pytorch forever')
 
+
 def GenTests(api):
   yield api.test(
       'basic',

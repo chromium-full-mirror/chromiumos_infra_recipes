@@ -35,7 +35,7 @@ def RunSteps(api):
 
     in_failures = [
         api.failures.Failure(kind='build', title='title', link_map=link_map,
-                            fatal=True, id='critical builder')
+                             fatal=True, id='critical builder')
     ]
     out_failures = api.failures.update_non_critical_failures(
         step, in_failures, builder_configs)

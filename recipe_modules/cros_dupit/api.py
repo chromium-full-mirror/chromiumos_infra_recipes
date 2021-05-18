@@ -214,8 +214,8 @@ class DupItApi(recipe_api.RecipeApi):
       new_symlinked = self._tmp_distfile_lists_path.join('new_symlinked.txt')
       stdout = self.m.raw_io.output(leak_to=new_symlinked)
       cmd = [
-        'awk',
-        '{ print $NF }',
+          'awk',
+          '{ print $NF }',
       ]
       self.m.step(cmd=cmd, infra_step=True,
                   name='get list of symlinked distfiles', stdin=stdin,
@@ -223,7 +223,7 @@ class DupItApi(recipe_api.RecipeApi):
 
       rsync_cmd = self._get_rsync_cmd(new_symlinked)
       rsync_name = ('ensure symlinked distfiles from %s' %
-          self.rsync_mirror_address)
+                    self.rsync_mirror_address)
       self.m.step(cmd=rsync_cmd, infra_step=True, name=rsync_name)
 
   def _copy_new_distfiles_to_gs(self):

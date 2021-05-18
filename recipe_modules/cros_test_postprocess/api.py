@@ -10,6 +10,7 @@ from recipe_engine import recipe_api
 DownloadedTestResult = collections.namedtuple('DownloadedTestResult',
                                               ['gs_path', 'local_path'])
 
+
 class CrosTestPostProcessApi(recipe_api.RecipeApi):
   """Data structures used by the cros_test_postprocess recipe."""
 

@@ -18,8 +18,7 @@ def RunSteps(api):
     api.failures.set_failed_packages(test_step, [])
 
     api.assertions.assertRaises(api.step.StepFailure,
-                                api.failures.set_failed_packages,
-                                test_step,
+                                api.failures.set_failed_packages, test_step,
                                 [PackageInfo(package_name='package')])
   with api.step.nest('test2') as test_step:
     api.assertions.assertRaises(api.step.StepFailure,

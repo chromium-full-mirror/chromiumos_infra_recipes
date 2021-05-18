@@ -4,18 +4,18 @@
 # found in the LICENSE file.
 
 from PB.test_platform.multibot.common import MultiBotConfig, HostInfoStore
-from PB.test_platform.multibot.follower_transitions import (
-    FollowerStateChange, FollowerEvent)
+from PB.test_platform.multibot.follower_transitions import (FollowerStateChange,
+                                                            FollowerEvent)
 from PB.test_platform.multibot.requests import FollowerRequest
 
 DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
-
     'ipc',
 ]
 
 PROPERTIES = FollowerRequest
+
 
 def RunSteps(api, properties):
   # Properties is a FollowerRequest object.
@@ -28,6 +28,7 @@ def RunSteps(api, properties):
   api.step('wait to start step', ["ipc.receive"])
   api.step('wait to finish step', ["ipc.receive"])
   api.step('cleanup step', ['echo', 'cleanup tasks'])
+
 
 def GenTests(api):
   yield api.test('basic')

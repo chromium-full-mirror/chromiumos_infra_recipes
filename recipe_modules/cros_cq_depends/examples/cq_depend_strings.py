@@ -24,12 +24,10 @@ def RunSteps(api):
   )
 
   api.assertions.assertEqual(
-      api.cros_cq_depends.get_cq_depend_reference(gerrit_change),
-      'foo:123')
+      api.cros_cq_depends.get_cq_depend_reference(gerrit_change), 'foo:123')
 
   api.assertions.assertEqual(
-      api.cros_cq_depends.get_cq_depend([gerrit_change]),
-      'Cq-Depend: foo:123')
+      api.cros_cq_depends.get_cq_depend([gerrit_change]), 'Cq-Depend: foo:123')
 
   api.assertions.assertEqual(api.cros_cq_depends.get_cq_depend([]), '')
 

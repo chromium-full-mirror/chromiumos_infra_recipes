@@ -34,8 +34,7 @@ def _download_test_result_files(api, remote_test_results):
       gs_path = test_result.log_data.gs_url
       with api.step.nest('download {}'.format(gs_path)):
         test_result_local_path = api.path.mkdtemp(prefix='test_result')
-        step = api.gsutil.download_url(gs_path,
-                                       test_result_local_path, ['-r'],
+        step = api.gsutil.download_url(gs_path, test_result_local_path, ['-r'],
                                        multithreaded=True)
         step.presentation.links[gs_path] = api.urls.get_gs_path_url(gs_path)
 
@@ -47,8 +46,8 @@ def _download_test_result_files(api, remote_test_results):
 
 
 def RunSteps(api, properties):
-  downloaded_test_results = _download_test_result_files(
-      api, properties.test_results)
+  downloaded_test_results = _download_test_result_files(api,
+                                                        properties.test_results)
 
   api.breakpad.symbolicate_dump(properties.debug_symbols_archive_url,
                                 downloaded_test_results)
@@ -58,8 +57,7 @@ def GenTests(api):
   # Test of symbolicate dumps.
   tr = TestResult(log_data=TaskLogData(gs_url=TEST_RESULT_PATH))
   req = CrosTestPostprocessRequest(
-      debug_symbols_archive_url=
-          'gs://chromeos-image-archive/foox-release/R10-11.0.0',
+      debug_symbols_archive_url='gs://chromeos-image-archive/foox-release/R10-11.0.0',
       test_results=[tr],
   )
   dl_step = ('download test results.'
@@ -68,14 +66,11 @@ def GenTests(api):
       'basic',
       api.properties(req),
       api.breakpad.find_dmp_files_test_data(
-          test_result=tr,
-          filenames=['./a/b/c.dmp', './a/b/d.dmp']),
-      api.breakpad.minidump_stackwalk_test_data(
-          test_result=tr,
-          filename='./a/b/c.dmp'),
-      api.breakpad.minidump_stackwalk_test_data(
-          test_result=tr,
-          filename='./a/b/d.dmp'),
+          test_result=tr, filenames=['./a/b/c.dmp', './a/b/d.dmp']),
+      api.breakpad.minidump_stackwalk_test_data(test_result=tr,
+                                                filename='./a/b/c.dmp'),
+      api.breakpad.minidump_stackwalk_test_data(test_result=tr,
+                                                filename='./a/b/d.dmp'),
       # A download step should exist; contrast this with the never-offloaded
       # testcase below.
       api.post_check(lambda check, steps: check(dl_step in steps)),

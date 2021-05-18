@@ -17,6 +17,7 @@ DEPS = [
 
 PROPERTIES = SyncStableVersionProperties
 
+
 def fetch_and_commit(api):
   """Fetch the newest stable version and commit it to config file on git.
 
@@ -42,6 +43,7 @@ def RunSteps(api, properties):
   #   3. separate the whole process to individual steps.
   validate_stable_version(api)
   fetch_and_commit(api)
+
 
 def GenTests(api):
   yield api.test(

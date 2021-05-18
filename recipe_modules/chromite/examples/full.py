@@ -26,7 +26,6 @@ def RunSteps(api):
   api.chromite.cbuildbot('cbuildbot', 'amd64-generic-full',
                          args=['--clobber', '--build-dir', '/here/there'])
 
-
   # Update or install goma client via cipd.
   api.chromite.m.goma.initialize()
   api.chromite.m.goma.client_version = api.properties.get(

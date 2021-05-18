@@ -13,6 +13,7 @@ def RunSteps(api):
   output = api.git_cl.status(field='url', fast=True, step_name='git cl status')
   api.assertions.assertEqual(output, 'foo')
 
+
 def GenTests(api):
   yield api.test(
       'basic',

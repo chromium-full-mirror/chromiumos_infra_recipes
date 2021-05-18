@@ -15,12 +15,14 @@ from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.chromiumos.common import PackageInfo
 from PB.testplans.target_test_requirements_config import HwTestCfg
 
+
 def RunSteps(api):
   build = build_pb2.Build(
       builder=builder_pb2.BuilderID(project='foo', bucket='bar', builder='baz'))
   api.assertions.assertEqual(api.naming.get_build_title(build), 'baz')
 
-  commit = api.git.Commit('abcdef', '''
+  commit = api.git.Commit(
+      'abcdef', '''
 title
 
 ...and then a longer description. Have you heard the tragedy of Darth
@@ -32,12 +34,12 @@ Plagueis the Wise?
   api.assertions.assertEqual(api.naming.get_hw_test_title(hw_test), 'hw-test')
 
   skylab_task = api.skylab.test_api.skylab_task(test=hw_test)
-  api.assertions.assertEqual(api.naming.get_skylab_task_title(skylab_task),
-                             'hw-test')
+  api.assertions.assertEqual(
+      api.naming.get_skylab_task_title(skylab_task), 'hw-test')
 
   skylab_result = api.skylab.test_api.skylab_result(task=skylab_task)
-  api.assertions.assertEqual(api.naming.get_skylab_result_title(skylab_result),
-                             'hw-test')
+  api.assertions.assertEqual(
+      api.naming.get_skylab_result_title(skylab_result), 'hw-test')
   api.assertions.assertEqual(
       api.naming.get_test_title(skylab_result), 'hw-test')
 
@@ -55,8 +57,8 @@ Plagueis the Wise?
   api.assertions.assertEqual(api.naming.get_test_title(vm_test), 'vm-test')
 
   package = PackageInfo(category='cat', package_name='name', version='123')
-  api.assertions.assertEqual(api.naming.get_package_title(package),
-                             'cat/name-123')
+  api.assertions.assertEqual(
+      api.naming.get_package_title(package), 'cat/name-123')
 
 
 def GenTests(api):

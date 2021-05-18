@@ -34,12 +34,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     self._branch_util_cipd_ref = (
         self._properties.branch_util_cipd_ref.encode('utf-8') or default_ref)
 
-  def __call__(self,
-               cmd,
-               step_name=None,
-               force=False,
-               push=False,
-               **kwargs):
+  def __call__(self, cmd, step_name=None, force=False, push=False, **kwargs):
     """Call cros branch with the given args.
 
     Args:
@@ -162,7 +157,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
       raise StepFailure('New branch name is required.')
 
     kwargs.setdefault('step_name',
-      'rename branch %s to %s' % (branch.name, new_branch_name))
+                      'rename branch %s to %s' % (branch.name, new_branch_name))
     self(cmd, **kwargs)
 
   def delete(self, branch, **kwargs):

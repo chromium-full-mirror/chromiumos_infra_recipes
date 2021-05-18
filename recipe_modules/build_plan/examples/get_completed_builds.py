@@ -40,16 +40,18 @@ def RunSteps(api, forced_rebuilds, expected_completed):
 def GenTests(api):
   input_proto = api.build_plan.input_proto
   builds = [
-      build_pb2.Build(id=8922054662172514000, builder={
-          'builder': 'amd64-generic-cq'
-      }, status=common_pb2.SUCCESS, input=input_proto(None, 'amd64-generic')),
-      build_pb2.Build(id=8922054662172514001, builder={
-          'builder': 'arm-generic-cq'
-      }, status=common_pb2.STARTED, input=input_proto(None, 'arm-generic')),
+      build_pb2.Build(id=8922054662172514000,
+                      builder={'builder': 'amd64-generic-cq'},
+                      status=common_pb2.SUCCESS,
+                      input=input_proto(None, 'amd64-generic')),
+      build_pb2.Build(id=8922054662172514001,
+                      builder={'builder': 'arm-generic-cq'},
+                      status=common_pb2.STARTED,
+                      input=input_proto(None, 'arm-generic')),
       build_pb2.Build(id=8922054662172514002, builder={'builder': 'atlas-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562475245),
-                      status=common_pb2.SUCCESS, input=input_proto(
-                          None, 'atlas')),
+                      status=common_pb2.SUCCESS,
+                      input=input_proto(None, 'atlas')),
   ]
 
   yield api.test(

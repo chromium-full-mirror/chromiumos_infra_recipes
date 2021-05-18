@@ -69,7 +69,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                     skylab_board='target',
                     pool='my skylab pool',
                 ),
-            ],),
+            ],
+        ),
     )
 
   @property
@@ -116,7 +117,9 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                     common=TestSuiteCommon(display_name='vtarget.vm.auto'),
                     test_suite='autotest-suite',
                 ),
-            ],),)
+            ],
+        ),
+    )
 
   @property
   def generate_test_plan_response(self):

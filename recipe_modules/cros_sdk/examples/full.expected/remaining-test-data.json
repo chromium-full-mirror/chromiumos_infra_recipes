@@ -323,7 +323,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_sdk/examples/full.py\", line 34, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_sdk/examples/full.py\", line 35, in RunSteps",
       "    chroot = api.cros_sdk.create_chroot(version=properties.sdk_cache_version)",
       "  File \"PYTHON/lib/python2.7/contextlib.py\", in __exit__",
       "    self.gen.throw(type, value, traceback)",

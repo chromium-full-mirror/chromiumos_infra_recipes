@@ -15,6 +15,7 @@ from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 
+
 class CrosBisectTestApi(recipe_test_api.RecipeTestApi):
 
   def serialized_package_info(self, package, category, version):
@@ -35,9 +36,8 @@ class CrosBisectTestApi(recipe_test_api.RecipeTestApi):
 
   def _hw_test_config(self, build_target_name):
     hw_test = HwTestCfg.HwTest(
-        common=TestSuiteCommon(
-            display_name='kip.hw.bvt-cq',
-            critical={'value': True}),
+        common=TestSuiteCommon(display_name='kip.hw.bvt-cq',
+                               critical={'value': True}),
         suite='bvt-cq',
         skylab_board=build_target_name,
         pool='bisect test pool',

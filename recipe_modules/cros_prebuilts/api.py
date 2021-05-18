@@ -29,7 +29,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts
     self._disable_overlay_commits = properties.disable_overlay_commits
 
-
   @property
   def _build_id(self):
     """Get our build id, or swarming task_id."""

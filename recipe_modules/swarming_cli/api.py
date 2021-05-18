@@ -39,9 +39,9 @@ class SwarmingCli(recipe_api.RecipeApi):
       cmd (list[str]): swarming client subcommand to run.
     """
     self._ensure_checkout()
-    return self.m.easy.stdout_json_step(
-        name,
-        [self._client] + list(cmd), test_stdout=test_stdout, infra_step=True)
+    return self.m.easy.stdout_json_step(name, [self._client] + list(cmd),
+                                        test_stdout=test_stdout,
+                                        infra_step=True)
 
   def get_bot_counts(self, swarming_instance, dimensions=None):
     """Retrieves the count of bots from Swarming based on dimensions.
@@ -60,9 +60,8 @@ class SwarmingCli(recipe_api.RecipeApi):
         'bots/count?' + '&'.join(dim_args)
     ]
     step = self._run(
-        'get bot query result', cmd,
-        test_stdout=lambda: self.test_api.swarming_bot_step_test_data(dimensions)
-    )
+        'get bot query result', cmd, test_stdout=lambda: self.test_api.
+        swarming_bot_step_test_data(dimensions))
     return step
 
   def _swarming_time_to_datetime(self, time_str):
@@ -140,8 +139,8 @@ class SwarmingCli(recipe_api.RecipeApi):
         'tasks/count?' + '&'.join(dim_args)
     ]
     step = self._run(
-        'get task query result', cmd, test_stdout=
-        lambda: self.test_api.swarming_task_step_test_data(dimensions))
+        'get task query result', cmd, test_stdout=lambda: self.test_api.
+        swarming_task_step_test_data(dimensions))
     return step
 
   def _calculate_epoch_start(self, lookback_hours=-24):

@@ -15,5 +15,6 @@ def RunSteps(api):
   resp = api.stable_version.fetch_and_commit()
   api.assertions.assertEqual(resp, 'http://CL/123')
 
+
 def GenTests(api):
   yield api.test('basic')

@@ -26,6 +26,7 @@ GsDestination = namedtuple('GsDestination', ['bucket', 'path'])
 # GomaResults includes GSDestination fields and BigQuery errors (str|None).
 GomaResults = namedtuple('GomaResults', ['bucket', 'path', 'bq_errors'])
 
+
 class GomaApi(recipe_api.RecipeApi):
   """A module for working with goma."""
 
@@ -34,8 +35,7 @@ class GomaApi(recipe_api.RecipeApi):
     self._client_version = properties.client_version or 'release'
     self._goma_approach = properties.goma_approach or common.GomaConfig.DEFAULT
     self._upload_goma_logs = not properties.disable_goma_logs_upload
-    self._upload_stats_counterz = (
-        not properties.disable_stats_counterz_upload)
+    self._upload_stats_counterz = (not properties.disable_stats_counterz_upload)
     self._bigquery_project_id = properties.bigquery_project_id or 'goma-logs'
     self._bigquery_dataset_id = (
         properties.bigquery_dataset_id or 'client_events')
@@ -46,7 +46,6 @@ class GomaApi(recipe_api.RecipeApi):
   def initialize(self, also_bq_upload=False):
     self._also_bq_upload = also_bq_upload
     self._goma_dir = None
-
 
   @property
   def goma_client_json(self):
@@ -109,11 +108,11 @@ class GomaApi(recipe_api.RecipeApi):
       return None
 
     # Skip if we don't have goma artifacts and a goma_log dir for them.
-    if (not install_pkg_response.HasField('goma_artifacts')
-        or not goma_log_dir):
+    if (not install_pkg_response.HasField('goma_artifacts') or
+        not goma_log_dir):
       with self.m.step.nest('process_goma_artifacts') as presentation:
         presentation.logs['NoGomaArtifacts'] = [
-          str(install_pkg_response.goma_artifacts)
+            str(install_pkg_response.goma_artifacts)
         ]
       return None
 
@@ -137,7 +136,7 @@ class GomaApi(recipe_api.RecipeApi):
     return GomaResults(gs_bucket, gs_path, bq_errors)
 
   def _process_counterz_and_stats(self, install_pkg_response, goma_log_dir,
-                        build_target_name, is_staging):
+                                  build_target_name, is_staging):
     """Process counterz and stats, uploading data to BigQuery.
 
     Args:
@@ -161,11 +160,9 @@ class GomaApi(recipe_api.RecipeApi):
           # Populate MachineInfo in GomaStats since it has an enum type, which
           # is important to display for BigQuery type conversion.
           test_goma_stats_proto = GomaStats(
-              time_stats=TimeStats(uptime=1234),
-              machine_info=MachineInfo(
+              time_stats=TimeStats(uptime=1234), machine_info=MachineInfo(
                   goma_revision="953240d2c4512d99191488cc98fc6f99@1586141662",
-                  os=MachineInfo.OSType.Value('LINUX'),
-                  ncpus=32,
+                  os=MachineInfo.OSType.Value('LINUX'), ncpus=32,
                   memory_size=67242942464))
           stats_filename = os.path.join(
               goma_log_dir, install_pkg_response.goma_artifacts.stats_file)
@@ -209,9 +206,8 @@ class GomaApi(recipe_api.RecipeApi):
 
     return None
 
-
   def _process_log_files(self, install_pkg_response, goma_log_dir,
-                        build_target_name, is_staging):
+                         build_target_name, is_staging):
     """Upload goma log files specified by the response with gsutil.
 
     Args:

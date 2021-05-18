@@ -5,6 +5,7 @@
 
 from recipe_engine import recipe_api
 
+
 class StableVersionApi(recipe_api.RecipeApi):
   """Module for issuing stable_version commands"""
 
@@ -39,8 +40,8 @@ class StableVersionApi(recipe_api.RecipeApi):
     with self.m.step.nest('call stable_version2') as pres:
       self._ensure_stable_version()
       cmd = [
-        self._cmd,
-        "update-with-omaha",
+          self._cmd,
+          "update-with-omaha",
       ]
       response = self.m.easy.stdout_step(
           'update-with-omaha',

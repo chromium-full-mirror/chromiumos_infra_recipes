@@ -15,6 +15,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
 from google.protobuf import duration_pb2
 
+
 def RunSteps(api):
   # Unused, but needed for coverage
   api.skylab.test_api.hw_test()
@@ -23,8 +24,8 @@ def RunSteps(api):
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.common.display_name = 'please_wait_on_me'
   task = api.skylab.test_api.skylab_task(
-      id=1234, url=
-      'https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b8899866335707109280',
+      id=1234,
+      url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b8899866335707109280',
       test=hw_test, unit=hw_test_unit)
 
   another_hw_test_unit = api.cros_test_plan.test_api.another_hw_test_unit
@@ -37,8 +38,8 @@ def RunSteps(api):
       unit=another_hw_test_unit,
   )
 
-  responses = api.skylab.wait_on_suites([task, another_task],
-                                        timeout=duration_pb2.Duration(seconds=3600))
+  responses = api.skylab.wait_on_suites(
+      [task, another_task], timeout=duration_pb2.Duration(seconds=3600))
   api.assertions.assertEqual(len(responses), 2)
 
   expected_tasks = [r.task for r in responses]
@@ -63,7 +64,8 @@ def GenTests(api):
       'basic_without_JSON_output',
       api.buildbucket.simulated_collect_output([
           api.skylab.test_with_multi_response(
-              1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
+              1234,
+              names=['please_wait_on_me', 'please_wait_on_me_too'],
               task_state=TaskState(verdict=TaskState.VERDICT_PASSED),
               exclude_json=True,
           ),

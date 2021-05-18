@@ -73,8 +73,9 @@ def RunSteps(api):
       expected.get_or_create_list('TAST_FILES').append('zetast.zip')
       expected.get_or_create_list('AUTOTEST_FILES').extend(['a1.zip', 'a2.zip'])
       api.assertions.assertEqual(build_payload.files_by_artifact, expected)
-    else: # pragma: no cover
+    else:  # pragma: no cover
       api.assertions.fail('Expected to find build_target name foo or bar.')
+
 
 def GenTests(api):
   hw_test_unit1 = api.cros_bisect.hw_test_unit('foo')
@@ -84,14 +85,21 @@ def GenTests(api):
   yield api.test(
       'with-test-plan',
       api.properties(
-          **{'$chromeos/cros_bisect':
-             CrosBisectProperties(test={'hw_test_failures': [
-                 CrosBisectProperties.TestFailures.TestFailure(
-                     test_spec=jsonpb.MessageToJson(hw_test_unit1)),
-                 CrosBisectProperties.TestFailures.TestFailure(
-                     test_spec=jsonpb.MessageToJson(hw_test_unit2)),
-                 CrosBisectProperties.TestFailures.TestFailure(
-                     test_spec=jsonpb.MessageToJson(hw_test_unit3)),
-             ]})}
-      ),
+          **{
+              '$chromeos/cros_bisect':
+                  CrosBisectProperties(
+                      test={
+                          'hw_test_failures': [
+                              CrosBisectProperties.TestFailures.TestFailure(
+                                  test_spec=jsonpb.MessageToJson(
+                                      hw_test_unit1)),
+                              CrosBisectProperties.TestFailures.TestFailure(
+                                  test_spec=jsonpb.MessageToJson(
+                                      hw_test_unit2)),
+                              CrosBisectProperties.TestFailures.TestFailure(
+                                  test_spec=jsonpb.MessageToJson(
+                                      hw_test_unit3)),
+                          ]
+                      })
+          }),
   )

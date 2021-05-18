@@ -300,7 +300,6 @@ def RunSteps(api):
   # is properly detected.
   api.assertions.assertEqual(cq_label, 1)
 
-
   changes = [{
       "info": {
           "_number":

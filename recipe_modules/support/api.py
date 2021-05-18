@@ -27,9 +27,11 @@ class SupportApi(recipe_api.RecipeApi):
 
       step_data = self.m.json.read(
           'read deploy_cipd.json', deploy_version_file,
-          step_test_data=lambda: self.m.json.test_api.output({
-            'result': {'package': 'pkg', 'instance_id': 'inst'}
-          }))
+          step_test_data=lambda: self.m.json.test_api.output(
+              {'result': {
+                  'package': 'pkg',
+                  'instance_id': 'inst'
+              }}))
       version = step_data.json.output['result']
 
       ensure_file = self.m.cipd.EnsureFile()
@@ -53,7 +55,7 @@ class SupportApi(recipe_api.RecipeApi):
     """
     self.ensure_package_installed()
     tool_path = self._support_root.join('cipd-bin', tool)
-    return self.m.easy.stdout_json_step(tool,
-                                        [tool_path], stdin_json=input_data,
+    return self.m.easy.stdout_json_step(tool, [tool_path],
+                                        stdin_json=input_data,
                                         test_stdout=test_output_data,
                                         infra_step=infra_step, timeout=timeout)

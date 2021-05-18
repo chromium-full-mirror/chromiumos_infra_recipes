@@ -21,6 +21,7 @@ DEPS = [
 
 PROPERTIES = RoboCropProperties
 
+
 def RunSteps(api, properties):
   pools_to_monitor = properties.pools_to_monitor or ['cq', 'postsubmit']
   application = properties.application or 'ChromeOS'

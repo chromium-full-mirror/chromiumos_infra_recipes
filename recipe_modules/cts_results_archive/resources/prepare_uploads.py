@@ -111,7 +111,6 @@ def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
   return instructions
 
 
-
 def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
                               apfe_gs_bucket):
   instructions = []

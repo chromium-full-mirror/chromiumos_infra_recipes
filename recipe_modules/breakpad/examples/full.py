@@ -18,11 +18,12 @@ TEST_RESULT_PATH = 'gs://chromeos-autotest-results/swarming-1234'
 
 def RunSteps(api):
   stackwalk_output_paths = api.breakpad.symbolicate_dump(
-      image_archive_path=
-      'gs://chromeos-image-archive/test-board-release/R10-11.0.0',
-      test_results=[api.cros_test_postprocess.downloaded_test_result(
-          gs_path=TEST_RESULT_PATH, local_path=api.path.mkdtemp('test_result'))]
-  )
+      image_archive_path='gs://chromeos-image-archive/test-board-release/R10-11.0.0',
+      test_results=[
+          api.cros_test_postprocess.downloaded_test_result(
+              gs_path=TEST_RESULT_PATH,
+              local_path=api.path.mkdtemp('test_result'))
+      ])
 
   api.assertions.assertEqual(len(stackwalk_output_paths), 2)
   api.assertions.assertEqual(stackwalk_output_paths[0].pieces[-1],
@@ -38,13 +39,11 @@ def GenTests(api):
       api.breakpad.find_dmp_files_test_data(
           test_result=tr,
           filenames=['./a/b/c.dmp', './a/b/d.dmp', './a/b/corrupted.dmp']),
-      api.breakpad.minidump_stackwalk_test_data(
-          test_result=tr,
-          filename='./a/b/c.dmp'),
-      api.breakpad.minidump_stackwalk_test_data(
-          test_result=tr,
-          filename='./a/b/d.dmp'),
-      api.breakpad.minidump_stackwalk_test_data(
-          test_result=tr,
-          filename='./a/b/corrupted.dmp', retcode=1),
+      api.breakpad.minidump_stackwalk_test_data(test_result=tr,
+                                                filename='./a/b/c.dmp'),
+      api.breakpad.minidump_stackwalk_test_data(test_result=tr,
+                                                filename='./a/b/d.dmp'),
+      api.breakpad.minidump_stackwalk_test_data(test_result=tr,
+                                                filename='./a/b/corrupted.dmp',
+                                                retcode=1),
   )

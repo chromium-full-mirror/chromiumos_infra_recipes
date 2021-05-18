@@ -41,8 +41,9 @@ class IPCApi(recipe_api.RecipeApi):
       attributes = {}
     json_attributes = self.m.json.input(attributes)
 
-    self._execute("publish", ["-topic", topic, "-file", '/dev/stdin',
-                   "-attributes", json_attributes], stdin_data=message_body)
+    self._execute("publish", [
+        "-topic", topic, "-file", '/dev/stdin', "-attributes", json_attributes
+    ], stdin_data=message_body)
 
   def receive(self, topic, sub_name, filter_attributes=None):
     """Receive one message from the filtered subscription specified.
@@ -59,8 +60,9 @@ class IPCApi(recipe_api.RecipeApi):
     if not filter_attributes:
       filter_attributes = {}
     json_filter = self.m.json.input(filter_attributes)
-    return self._execute("subscribe", ["-topic", topic, "-sub-name", sub_name,
-                                "-attributes", json_filter])
+    return self._execute(
+        "subscribe",
+        ["-topic", topic, "-sub-name", sub_name, "-attributes", json_filter])
 
   def _ensure_binary_present(self):
     """Ensure the IPC pubsub CLI is installed."""
@@ -72,8 +74,7 @@ class IPCApi(recipe_api.RecipeApi):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'ipcpubsub')
 
         pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package('chromiumos/infra/ipcpubsub/${version}',
-                         self._version)
+        pkgs.add_package('chromiumos/infra/ipcpubsub/${version}', self._version)
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._bin = cipd_dir.join('ipcpubsub')
@@ -84,6 +85,6 @@ class IPCApi(recipe_api.RecipeApi):
     if not stdin_data:
       stdin_data = ''
     cmd = [self._bin, subcommand] + args
-    return self.m.easy.stdout_step(
-        'ipc_pubsub: %s' % subcommand, cmd, infra_step=True,
-        stdin=self.m.raw_io.input(stdin_data))
+    return self.m.easy.stdout_step('ipc_pubsub: %s' % subcommand, cmd,
+                                   infra_step=True,
+                                   stdin=self.m.raw_io.input(stdin_data))

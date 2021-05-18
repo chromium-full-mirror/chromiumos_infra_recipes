@@ -48,12 +48,12 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
         raise ValueError('request is not of type %s' % request_type)
       self._ensure_cros_test_platform()
       cmd = [
-        self._cmd,
-        subcommand,
-        '-input_json',
-        '/dev/stdin',
-        '-output_json',
-        '/dev/stdout',
+          self._cmd,
+          subcommand,
+          '-input_json',
+          '/dev/stdin',
+          '-output_json',
+          '/dev/stdout',
       ]
 
       # Pre-execution logging is in a nested step so that the step closes before

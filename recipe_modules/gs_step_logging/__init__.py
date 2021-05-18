@@ -4,10 +4,10 @@
 # found in the LICENSE file.
 
 DEPS = [
-  'urls',
-  'depot_tools/gsutil',
-  'recipe_engine/buildbucket',
-  'recipe_engine/file',
-  'recipe_engine/path',
-  'recipe_engine/step',
+    'urls',
+    'depot_tools/gsutil',
+    'recipe_engine/buildbucket',
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/step',
 ]

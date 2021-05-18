@@ -24,6 +24,7 @@ from recipe_engine import post_process
 
 PROPERTIES = TestInputProperties
 
+
 def RunSteps(api, properties):
   workspace = api.path['cleanup'].join('workspace')
 
