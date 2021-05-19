@@ -648,7 +648,9 @@
       "@@@STEP_LINK@arm64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
       "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
       "@@@STEP_LINK@atlas-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
-      "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+      "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@SET_BUILD_PROPERTY@cq_equivalent_cl_group_key@null@@@",
+      "@@@SET_BUILD_PROPERTY@use_group_key@true@@@"
     ]
   },
   {

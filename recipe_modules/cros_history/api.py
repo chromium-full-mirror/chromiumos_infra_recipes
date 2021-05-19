@@ -46,6 +46,10 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       list([build_pb2.Build]): Passed builds with the most recent build per builder.
     """
     with self.m.step.nest('get change build history') as presentation:
+      # TODO(b/186520766): Debug information. Remove after bug is resolved.
+      presentation.properties['use_group_key'] = self._use_group_key
+      presentation.properties['cq_equivalent_cl_group_key'] = (
+          self.m.cros_tags.cq_equivalent_cl_group_key)
       build = self.m.buildbucket.build
       latest_passed_builds = []
       # Start with cq-orchestrator so we don't add it to the result.

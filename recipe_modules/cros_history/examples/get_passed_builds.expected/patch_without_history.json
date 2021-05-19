@@ -3,7 +3,9 @@
     "cmd": [],
     "name": "get change build history",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found no completed builds@@@"
+      "@@@STEP_TEXT@found no completed builds@@@",
+      "@@@SET_BUILD_PROPERTY@cq_equivalent_cl_group_key@null@@@",
+      "@@@SET_BUILD_PROPERTY@use_group_key@true@@@"
     ]
   },
   {
