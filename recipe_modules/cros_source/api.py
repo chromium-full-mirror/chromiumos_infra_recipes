@@ -27,7 +27,7 @@ STAGING_INIT_OPTS = dict(repo_branch='main')
 # Default options for checking out a branch.
 DEFAULT_CHECKOUT_SYNC_OPTS = dict(current_branch=True, force_sync=True, jobs=8,
                                   optimized_fetch=True, retry_fetches=8,
-                                  timeout=3600)
+                                  timeout=5400)
 
 # Manifest repositories that sync_to_pinned_manifest is allowed to pull from.
 ALLOWED_MANIFEST_SOURCES = [
@@ -66,6 +66,15 @@ class CrosSourceApi(RecipeApi):
     self._enable_custom_overlays |= (
         'chromeos.cros_source.enable_custom_overlays' in
         self.m.cros_infra_config.experiments)
+    # Check if there is already a workspace directory, and note that.
+    # See b/188555398.
+    workspace = self.m.path['start_dir'].join('chromiumos_workspace')
+    if self.m.path.exists(workspace):
+      with self.m.step.nest('found pre-existing {}'.format(str(workspace))):
+        self.m.easy.set_properties_step(preexisting_workspace=True)
+        with self.m.context(cwd=workspace):
+          self.m.step('ls', ['ls', '-l'])
+          self.m.step('mounts', ['cat', '/proc/mounts'])
 
   @property
   def mirrored_manifest_files(self):

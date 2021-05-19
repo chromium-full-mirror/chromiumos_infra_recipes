@@ -4,10 +4,11 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/context',
+    'recipe_engine/path',
+    'recipe_engine/properties',
     'cros_source',
     'repo',
-    'recipe_engine/context',
-    'recipe_engine/properties',
 ]
 
 from recipe_engine import post_process
@@ -27,6 +28,7 @@ def RunSteps(api):
 def GenTests(api):
   yield api.cros_source.test(
       'basic', api.post_check(post_process.StatusSuccess),
+      api.path.exists(api.path['start_dir'].join('chromiumos_workspace')),
       api.properties(
           **
           {'$chromeos/repo': RepoProperties(disable_source_cache_health=True)}),

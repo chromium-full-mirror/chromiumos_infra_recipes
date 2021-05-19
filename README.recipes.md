@@ -2737,7 +2737,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#583)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#592)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
@@ -2753,11 +2753,11 @@ Args:
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
-&emsp; **@property**<br>&mdash; **def [branch\_manifest\_file](/recipe_modules/cros_source/api.py#99)(self):**
+&emsp; **@property**<br>&mdash; **def [branch\_manifest\_file](/recipe_modules/cros_source/api.py#108)(self):**
 
 Returns the Path to the manifest_file for this build.
 
-&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#136)(self):**
+&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#145)(self):**
 
 The cached checkout path.
 
@@ -2765,7 +2765,7 @@ This is the cached version of source (the internal manifest checkout),
 usually updated once at the beginning of a build and then mounted into the
 workspace path.
 
-&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#428)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
+&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#437)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
 
 Check out a branch of the current manifest.
 
@@ -2782,7 +2782,7 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
   * step_name (str): Name for the step, or None for default.
 
-&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#322)(self, commit=None, is_staging=False, checkout_external=False, test_footers=None):**
+&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#331)(self, commit=None, is_staging=False, checkout_external=False, test_footers=None):**
 
 Check out the manifest projects.
 
@@ -2808,14 +2808,14 @@ Args:
 Returns:
   (GitilesCommit) The GitilesCommit to use for the external manifest.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#533)(self, mount_cache=True):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#542)(self, mount_cache=True):**
 
 Returns a context where overlays can be mounted.
 
 Args:
   mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1164)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1173)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -2828,11 +2828,11 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#473)(self):**
+&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#482)(self):**
 
 Check out the tip-of-tree in the workspace.
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1121)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1130)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -2846,7 +2846,7 @@ Args:
   project_commits (List[ProjectCommit]): Commits to add to archive. Must be
     in patch application order.
 
-&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#208)(self, manifest_url=None, init_opts=None, sync_opts=None, cache_path_override=None, is_staging=False, projects=None, gitiles_commit=None):**
+&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#217)(self, manifest_url=None, init_opts=None, sync_opts=None, cache_path_override=None, is_staging=False, projects=None, gitiles_commit=None):**
 
 Ensure the configured repo cache exists and is synced.
 
@@ -2862,7 +2862,7 @@ Args:
   * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
   current value.
 
-&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#480)(self, count=((7 \* 24) \* 2)):**
+&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#489)(self, count=((7 \* 24) \* 2)):**
 
 Return snapshot SHAs for the manifest.
 
@@ -2876,7 +2876,7 @@ Args:
 Returns:
   (list[str]) The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#555)(self, project, branch, empty_ok=False):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#564)(self, project, branch, empty_ok=False):**
 
 Find the source paths for a given project in the workspace.
 
@@ -2896,7 +2896,7 @@ Returns:
 
 Initialization that follows all module loading.
 
-&emsp; **@property**<br>&mdash; **def [is\_source\_dirty](/recipe_modules/cros_source/api.py#117)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_source\_dirty](/recipe_modules/cros_source/api.py#126)(self):**
 
 Returns whether the source is dirty.
 
@@ -2904,15 +2904,15 @@ Returns whether the source is dirty. The source is dirty if it was checked
 out to a custom snapshot from isolate or has had patches applied or has
 been moved to a branch.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_branch](/recipe_modules/cros_source/api.py#105)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_branch](/recipe_modules/cros_source/api.py#114)(self):**
 
 Returns any non-default manifest branch that is checked out.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_push](/recipe_modules/cros_source/api.py#110)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_push](/recipe_modules/cros_source/api.py#119)(self):**
 
 Returns the manifest branch to push changes to.
 
-&emsp; **@property**<br>&mdash; **def [mirrored\_manifest\_files](/recipe_modules/cros_source/api.py#70)(self):**
+&emsp; **@property**<br>&mdash; **def [mirrored\_manifest\_files](/recipe_modules/cros_source/api.py#79)(self):**
 
 Returns the names of files that are mirrored into the public manifest.
 
@@ -2925,22 +2925,22 @@ builders do it when applying manifest changes.
 Returns:
   (list[MirroredManifestFile]) with files we mirror.
 
-&emsp; **@property**<br>&mdash; **def [pinned\_manifest](/recipe_modules/cros_source/api.py#91)(self):**
+&emsp; **@property**<br>&mdash; **def [pinned\_manifest](/recipe_modules/cros_source/api.py#100)(self):**
 
 Return the pinned manifest for this build.
 
-&emsp; **@property**<br>&mdash; **def [preload\_path](/recipe_modules/cros_source/api.py#127)(self):**
+&emsp; **@property**<br>&mdash; **def [preload\_path](/recipe_modules/cros_source/api.py#136)(self):**
 
 The cached image checkout path.
 
 This is the cached version of source that is included in the base image of
 the bot, used as an initial reference path.
 
-&emsp; **@property**<br>&mdash; **def [snapshot\_cas\_digest](/recipe_modules/cros_source/api.py#155)(self):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_cas\_digest](/recipe_modules/cros_source/api.py#164)(self):**
 
 Returns the snapshot digest in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1023)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1032)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -2951,7 +2951,7 @@ Args:
   manifest_url: URL of manifest repo.  Default: internal manifest
   kwargs (dict): additional args for repo.sync_manifest.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#976)(self, manifest_url, manifest_branch, manifest_path, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#985)(self, manifest_url, manifest_branch, manifest_path, \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -2965,7 +2965,7 @@ Args:
   manifest_path (string): Path (relative to repository root) of manifest
     file, e.g. releasespecs/90/....xml.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#146)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#155)(self):**
 
 The "workspace" checkout path.
 
@@ -5426,7 +5426,7 @@ Returns:
   list[SkylabResult]: The results for suites from provided tasks.
 ### *recipe_modules* / [src\_state](/recipe_modules/src_state)
 
-[DEPS](/recipe_modules/src_state/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/src_state/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API providing frequently needed values, that we sometimes override.
 
@@ -5450,7 +5450,7 @@ There are two classes of properties in this module.
 
 Source State related attributes for Chrome OS recipes.
 
-&emsp; **@build_manifest.setter**<br>&mdash; **def [build\_manifest](/recipe_modules/src_state/api.py#108)(self, build_manifest):**
+&emsp; **@build_manifest.setter**<br>&mdash; **def [build\_manifest](/recipe_modules/src_state/api.py#121)(self, build_manifest):**
 
 Set the manifest that will be used for the build.
 
@@ -5459,15 +5459,15 @@ Sets the manifest used by this builder.
 Args:
   (ManifestProject): information about the manifest for this build.
 
-&emsp; **@property**<br>&mdash; **def [default\_branch](/recipe_modules/src_state/api.py#47)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_branch](/recipe_modules/src_state/api.py#60)(self):**
 
 The default branch for Chrome OS repos
 
-&emsp; **@property**<br>&mdash; **def [default\_ref](/recipe_modules/src_state/api.py#42)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_ref](/recipe_modules/src_state/api.py#55)(self):**
 
 The default ref for Chrome OS repos
 
-&emsp; **@property**<br>&mdash; **def [external\_manifest](/recipe_modules/src_state/api.py#84)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_manifest](/recipe_modules/src_state/api.py#97)(self):**
 
 Information about external manifest.
 
@@ -5476,21 +5476,21 @@ Provides immutable information about the Chrome OS external manifest.
 Returns:
   (ManifestProject): information about the external manifest.
 
-&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#179)(self, gerrit_changes):**
+&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#192)(self, gerrit_changes):**
 
 Set the gerrit_changes that will be used for the build.
 
 Args:
   gerrit_changes (list[GerritChanges]): The gerrit_changes.
 
-&emsp; **@gitiles_commit.setter**<br>&mdash; **def [gitiles\_commit](/recipe_modules/src_state/api.py#149)(self, gitiles_commit):**
+&emsp; **@gitiles_commit.setter**<br>&mdash; **def [gitiles\_commit](/recipe_modules/src_state/api.py#162)(self, gitiles_commit):**
 
 Set the gitiles_commit that will be used for the build.
 
 Args:
   gitiles_commit (GitilesCommit): The value to use.
 
-&mdash; **def [gitiles\_commit\_to\_manifest](/recipe_modules/src_state/api.py#121)(self, gitiles_commit):**
+&mdash; **def [gitiles\_commit\_to\_manifest](/recipe_modules/src_state/api.py#134)(self, gitiles_commit):**
 
 Return the manifest corresponding to the gitiles_commit.
 
@@ -5500,9 +5500,9 @@ Args:
 Returns:
   (ManifestProject): Information about the corresponding manifest, or None.
 
-&mdash; **def [initialize](/recipe_modules/src_state/api.py#37)(self):**
+&mdash; **def [initialize](/recipe_modules/src_state/api.py#41)(self):**
 
-&emsp; **@property**<br>&mdash; **def [internal\_manifest](/recipe_modules/src_state/api.py#73)(self):**
+&emsp; **@property**<br>&mdash; **def [internal\_manifest](/recipe_modules/src_state/api.py#86)(self):**
 
 Information about internal manifest.
 
@@ -5511,15 +5511,15 @@ Provides immutable information about the Chrome OS internal manifest.
 Returns:
   (ManifestProject): information about the internal manifest.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_name](/recipe_modules/src_state/api.py#62)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_name](/recipe_modules/src_state/api.py#75)(self):**
 
 Return the name of the manifest.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_projects](/recipe_modules/src_state/api.py#68)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_projects](/recipe_modules/src_state/api.py#81)(self):**
 
 Return the manifest project names.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/src_state/api.py#52)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/src_state/api.py#65)(self):**
 
 The "workspace" checkout path.
 
@@ -7103,9 +7103,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_source/tests/apply_gerrit_changes_fail.py#16)(api):**
 ### *recipes* / [cros\_source:tests/ensure\_synced\_cache](/recipe_modules/cros_source/tests/ensure_synced_cache.py)
 
-[DEPS](/recipe_modules/cros_source/tests/ensure_synced_cache.py#6): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_source/tests/ensure_synced_cache.py#6): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_source/tests/ensure_synced_cache.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_source/tests/ensure_synced_cache.py#18)(api):**
 ### *recipes* / [cros\_source:tests/mismatch\_args](/recipe_modules/cros_source/tests/mismatch_args.py)
 
 [DEPS](/recipe_modules/cros_source/tests/mismatch_args.py#6): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -7836,7 +7836,7 @@ Recipe for signing ChromeOS images.
 
 [DEPS](/recipe_modules/src_state/examples/workspace_path.py#6): [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/src_state/examples/workspace_path.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/src_state/examples/workspace_path.py#19)(api, properties):**
 ### *recipes* / [src\_state:tests/test\_api](/recipe_modules/src_state/tests/test_api.py)
 
 [DEPS](/recipe_modules/src_state/tests/test_api.py#6): [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

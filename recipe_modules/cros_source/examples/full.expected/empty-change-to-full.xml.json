@@ -642,7 +642,7 @@
     },
     "infra_step": true,
     "name": "sync to gitiles commit.repo sync",
-    "timeout": 3600,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1309,7 +1309,7 @@
     },
     "infra_step": true,
     "name": "patch manifest.checkout branch main.repo sync",
-    "timeout": 3600,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

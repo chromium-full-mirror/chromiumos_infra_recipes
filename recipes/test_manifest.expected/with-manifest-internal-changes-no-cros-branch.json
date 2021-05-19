@@ -1,6 +1,40 @@
 [
   {
     "cmd": [],
+    "name": "found pre-existing [START_DIR]/chromiumos_workspace"
+  },
+  {
+    "cmd": [],
+    "name": "found pre-existing [START_DIR]/chromiumos_workspace.set preexisting_workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@preexisting_workspace@true@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ls",
+      "-l"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "found pre-existing [START_DIR]/chromiumos_workspace.ls",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cat",
+      "/proc/mounts"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace",
+    "name": "found pre-existing [START_DIR]/chromiumos_workspace.mounts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_TEXT@config not found, assuming deleted@@@"
@@ -757,7 +791,7 @@
     },
     "infra_step": true,
     "name": "sync to gitiles commit.repo sync",
-    "timeout": 3600,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -938,7 +972,7 @@
     },
     "infra_step": true,
     "name": "cherry-pick gerrit changes.patch manifest.checkout branch main.repo sync",
-    "timeout": 3600,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

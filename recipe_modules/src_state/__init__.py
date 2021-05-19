@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
 ]
 
@@ -15,3 +16,7 @@ DEPS = [
 # All of those have a '/' in the name.
 assert [x for x in DEPS if '/' not in x] == [], \
     'src_state depends on Chrome OS modules'
+
+from PB.recipe_modules.chromeos.src_state.src_state import SrcStateProperties
+
+PROPERTIES = SrcStateProperties

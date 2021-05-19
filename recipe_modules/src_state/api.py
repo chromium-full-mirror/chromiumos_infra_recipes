@@ -34,10 +34,23 @@ from . import common
 class SrcStateApi(recipe_api.RecipeApi):
   """Source State related attributes for Chrome OS recipes."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super(SrcStateApi, self).__init__(*args, **kwargs)
+    self.properties = properties
+
   def initialize(self):
     self._gitiles_commit = None
     self._gerrit_changes = None
     self._build_manifest = None
+
+    if (self.properties.workspace_in_cleanup or
+        'chromeos.src_state.workspace_in_cleanup' in [
+            x.encode('utf-8')
+            for x in self.m.buildbucket.build.input.experiments
+        ]):
+      self._workspace_base = 'cleanup'
+    else:
+      self._workspace_base = 'start_dir'
 
   @property
   def default_ref(self):
@@ -57,7 +70,7 @@ class SrcStateApi(recipe_api.RecipeApi):
     It will contain the base checkout and any modifications made by the build,
     and is discarded after the build.
     """
-    return self.m.path['start_dir'].join(common.WORKSPACE)
+    return self.m.path[self._workspace_base].join(common.WORKSPACE)
 
   @property
   def manifest_name(self):

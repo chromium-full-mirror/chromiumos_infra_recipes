@@ -1,0 +1,12 @@
+// Copyright 2019 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.src_state;
+
+message SrcStateProperties {
+  // Feature flag: move the workspace to cleanup dir
+  bool workspace_in_cleanup = 1;
+}

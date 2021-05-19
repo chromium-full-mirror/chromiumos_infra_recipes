@@ -829,7 +829,7 @@
     },
     "infra_step": true,
     "name": "determine branch.checkout branch release-R79-*.B.repo sync",
-    "timeout": 3600,
+    "timeout": 5400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

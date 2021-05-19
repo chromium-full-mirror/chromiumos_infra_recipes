@@ -10,11 +10,17 @@ DEPS = [
     'test_util',
 ]
 
+from PB.recipe_modules.chromeos.src_state.examples.workspace_path import (
+    WorkspacePathProperties)
 
-def RunSteps(api):
+PROPERTIES = WorkspacePathProperties
+
+
+def RunSteps(api, properties):
   workspace_path = api.src_state.workspace_path
 
-  api.assertions.assertEqual(api.path['start_dir'].join('chromiumos_workspace'),
+  base = 'cleanup' if properties.workspace_in_cleanup else 'start_dir'
+  api.assertions.assertEqual(api.path[base].join('chromiumos_workspace'),
                              workspace_path)
 
   try:
@@ -26,3 +32,15 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic', api.test_util.test_build().build)
+
+  api.src_state.workspace_path = api.path['cleanup'].join(
+      'chromiumos_workspace')
+  yield api.test(
+      'moved',
+      api.test_util.test_build(
+          input_properties={
+              "$chromeos/src_state": {
+                  "workspace_in_cleanup": True
+              },
+              "workspace_in_cleanup": True,
+          }).build)
