@@ -238,7 +238,9 @@ class ChromiteApi(recipe_api.RecipeApi):
 
     cbb_args = [
         '--buildroot',
-        self.m.path['cache'].join('cbuild'),
+        self.m.path['cleanup'].join('chromiumos'),
+        '--workspace',
+        self.m.path['start_dir'].join('chromiumos_workspace'),
     ]
 
     if self.c.chromite_branch:

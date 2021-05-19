@@ -12,6 +12,7 @@ import re
 DEPS = [
     'chromite',
     'cros_infra_config',
+    'cros_source',
     'depot_tools/gitiles',
     'recipe_engine/legacy_annotation',
     'recipe_engine/properties',
@@ -64,7 +65,8 @@ def DoRunSteps(api):
 
   # Use the system python, not "bundled python" so that we have access
   # to system python packages.
-  with api.chromite.with_system_python():
+  with api.chromite.with_system_python(), \
+       api.cros_source.checkout_overlays_context(legacy=True):
     api.chromite.run()
 
 
