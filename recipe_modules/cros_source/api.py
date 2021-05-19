@@ -144,16 +144,6 @@ class CrosSourceApi(RecipeApi):
     return self.m.path['cache'].join('chromiumos')
 
   @property
-  def legacy_cache_path(self):
-    """The legacy cached checkout path.
-
-    This is the cached version of source (the internal manifest checkout),
-    usually updated once at the beginning of a build and then mounted into the
-    workspace path.  For legacy this is not maintained.
-    """
-    return self.m.path['cleanup'].join('chromiumos')
-
-  @property
   def workspace_path(self):
     """The "workspace" checkout path.
 
@@ -541,25 +531,18 @@ class CrosSourceApi(RecipeApi):
         self.m.git.remote_update(step_name=step_name)
 
   @contextlib.contextmanager
-  def checkout_overlays_context(self, mount_cache=True, legacy=False):
+  def checkout_overlays_context(self, mount_cache=True):
     """Returns a context where overlays can be mounted.
 
     Args:
       mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
-      legacy (bool): Whether the overlayfs mount is a legacy recipe use.
-        Default: False.
     """
     with self.m.overlayfs.cleanup_context():
       self._have_overlayfs_cleanup_context = True
       if not self._enable_custom_overlays and mount_cache:
-        if legacy:
-          self.m.overlayfs.mount('chromiumos', self.preload_path,
-                                 self.legacy_cache_path, persist=False)
-          self.m.path.mock_add_paths(self.legacy_cache_path.join('.repo'))
-        else:
-          self.m.overlayfs.mount('chromiumos', self.preload_path,
-                                 self.cache_path, persist=True)
-          self.m.path.mock_add_paths(self.cache_path.join('.repo'))
+        self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
+                               persist=True)
+        self.m.path.mock_add_paths(self.cache_path.join('.repo'))
         # Explicitly do not mount the workspace overlay at this time, to prevent
         # recipes from accidentally trashing their view of the source tree by
         # accessing it before ensure_synced_cache() is called.
