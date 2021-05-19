@@ -1,140 +1,79 @@
 [
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chromium.googlesource.com/external/repo.git",
-      "--groups",
-      "all",
-      "--repo-rev=stable"
-    ],
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "repo init",
-    "timeout": 900
-  },
-  {
     "cmd": [],
-    "name": "repo binary update"
+    "name": "mount overlay chromiumos"
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/chromiumos/upperdir/chromiumos"
     ],
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "infra_step": true,
-    "name": "repo binary update.repo version",
+    "name": "mount overlay chromiumos.create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "selfupdate"
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/overlayfs/chromiumos/workdir/chromiumos"
     ],
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "infra_step": true,
-    "name": "repo binary update.repo selfupdate",
+    "name": "mount overlay chromiumos.create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/chromiumos"
     ],
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "infra_step": true,
-    "name": "repo binary update.repo version (2)",
+    "name": "mount overlay chromiumos.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync"
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=/preload/chromeos,upperdir=[CLEANUP]/overlayfs/chromiumos/upperdir/chromiumos,workdir=[CLEANUP]/overlayfs/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
+      "overlay",
+      "[CLEANUP]/chromiumos"
     ],
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "infra_step": true,
-    "name": "repo sync"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "[START_DIR]/chromite/bin/cros_sdk",
-      "--cache-dir",
-      ".cache",
-      "--",
-      "./setup_board",
-      "--board",
-      "amd64-generic"
-    ],
-    "name": "setup board"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "[START_DIR]/chromite/bin/cros_sdk",
-      "--",
-      "./build_packages",
-      "--board",
-      "amd64-generic"
-    ],
-    "name": "build packages"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "[START_DIR]/chromite/bin/cros_sdk",
-      "var1=value",
-      "--",
-      "echo",
-      "hello"
-    ],
-    "name": "cros_sdk"
+    "name": "mount overlay chromiumos.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
@@ -293,6 +232,28 @@
       "@@@STEP_LOG_LINE@step.sub_build@  \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@step.sub_build@}@@@",
       "@@@STEP_LOG_END@step.sub_build@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set source_sync_target",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up overlayfs mounts"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CLEANUP]/chromiumos"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
