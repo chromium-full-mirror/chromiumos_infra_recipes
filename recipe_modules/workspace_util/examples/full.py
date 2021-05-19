@@ -39,7 +39,7 @@ def RunSteps(api, properties):
   with api.workspace_util.setup_workspace(), \
       api.workspace_util.sync_to_commit():
     api.workspace_util.apply_changes(
-        fail_not_applicable=properties.fail_not_applicable)
+        ignore_missing_projects=properties.ignore_missing_projects)
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
     api.assertions.assertEqual(len(want), len(api.workspace_util.commits))
@@ -70,7 +70,7 @@ def GenTests(api):
 
     The following arguments are consumed by this method:
       toolchain_cls_applied (bool): Whether there are toolchain_cls.
-      fail_not_applicable (bool): Value to pass to apply_changes.
+      ignore_missing_projects (bool): Value to pass to apply_changes.
 
     Args:
       *args (list):  Arguments to pass to test_api.test.
@@ -82,7 +82,7 @@ def GenTests(api):
     # The combination of *args and **kwargs above makes this the least messy way
     # to have our own parameters, with defaults.
     toolchain_cls_applied = kwargs.pop('toolchain_cls_applied', False)
-    fail_not_applicable = kwargs.pop('fail_not_applicable', False)
+    ignore_missing_projects = kwargs.pop('ignore_missing_projects', False)
 
     cq = kwargs.get('cq', False)
     build_target = 'atlas' if cq else 'amd64-generic'
@@ -95,7 +95,7 @@ def GenTests(api):
     ret += api.properties(
         TestInputProperties(
             expected_toolchain_cls_applied=toolchain_cls_applied,
-            fail_not_applicable=fail_not_applicable))
+            ignore_missing_projects=ignore_missing_projects))
 
     if has_cls:
       ret += api.step_data(
@@ -109,7 +109,7 @@ def GenTests(api):
   # The default CQ build.
   yield test('has_changes_and_no_commit', cq=True)
 
-  yield test('fail_not_applicable', cq=True, fail_not_applicable=True)
+  yield test('ignore_missing_projects', cq=True, ignore_missing_projects=True)
 
   yield test('has_no_commit_and_no_changes', revision=None)
 

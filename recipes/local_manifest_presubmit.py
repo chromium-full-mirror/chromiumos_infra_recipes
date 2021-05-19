@@ -72,7 +72,7 @@ def RunSteps(api, properties):
           local_manifests=local_manifests,
           cache_path_override=api.src_state.workspace_path):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
-                                     fail_not_applicable=True)
+                                     ignore_missing_projects=True)
 
     project = api.repo.project_info(properties.project)
     workspace_path = api.src_state.workspace_path

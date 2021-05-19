@@ -84,7 +84,7 @@ def RunSteps(api, properties):
           cache_path_override=api.src_state.workspace_path,
           manifest_branch=properties.manifest_branch):
     api.workspace_util.apply_changes(api.buildbucket.build.input.gerrit_changes,
-                                     fail_not_applicable=True)
+                                     ignore_missing_projects=True)
 
     chromiumos_config_path = properties.chromiumos_config_checkout_path
 

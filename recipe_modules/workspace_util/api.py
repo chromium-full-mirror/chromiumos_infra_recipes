@@ -97,14 +97,14 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       yield
 
   def apply_changes(self, changes=None, name='cherry-pick gerrit changes',
-                    fail_not_applicable=False):
+                    ignore_missing_projects=False):
     """Apply gerrit changes.
 
     Args:
       changes (list[GerritChanges]): Changes to apply.  Default: changelist
           saved in cros_infra_config.configure_builder().
       name (string): Step name.  Default: "setup source".
-      fail_not_applicable (bool): If true, changes to projects that are
+      ignore_missing_projects (bool): If true, changes to projects that are
           not currently checked out (as determined by repo forall) will not be
           applied. An example of when this is useful: it is possible that
           changes includes changes to repos this builder is not allowed to read
@@ -119,7 +119,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     with self.m.step.nest(name):
       commits = self.m.cros_source.apply_gerrit_changes(
           changes, include_files=True,
-          ignore_missing_projects=fail_not_applicable)
+          ignore_missing_projects=ignore_missing_projects)
       self._commits.extend(commits)
       self._applied_changes.extend(
           c.patch_set.to_gerrit_change_proto() for c in commits)

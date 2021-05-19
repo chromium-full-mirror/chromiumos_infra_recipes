@@ -212,11 +212,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.cloudready.setup_cloudready_workspace()
 
       # Apply any appropriate gerrit changes.
-      fail_not_applicable = False
-      if config.general.manifest == BuilderConfig.General.PUBLIC:
-        fail_not_applicable = True
+      ignore_missing_projects = (
+          config.general.manifest == BuilderConfig.General.PUBLIC)
       self.m.workspace_util.apply_changes(
-          fail_not_applicable=fail_not_applicable)
+          ignore_missing_projects=ignore_missing_projects)
 
       # The Chrome OS verison can be reported once the workspace is synced.
       version = self.m.cros_version.read_workspace_version()

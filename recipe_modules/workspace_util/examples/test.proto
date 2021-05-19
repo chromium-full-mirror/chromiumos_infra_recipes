@@ -18,7 +18,7 @@ message TestInputProperties {
   // Expected value for toolchain_cls_applied.
   bool expected_toolchain_cls_applied = 3;
 
-  // Whether to pass fail_not_applicable to apply_changes.
-  bool fail_not_applicable = 4;
+  // Whether to pass ignore_missing_projects to apply_changes.
+  bool ignore_missing_projects = 4;
 }
 
