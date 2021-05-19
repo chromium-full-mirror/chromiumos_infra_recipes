@@ -1811,7 +1811,6 @@
       "--board=target",
       "--accept_licenses=@CHROMEOS",
       "--skip_chroot_upgrade",
-      "--nousepkg",
       "--withdebugsymbols",
       "virtual/chromeos-firmware"
     ],

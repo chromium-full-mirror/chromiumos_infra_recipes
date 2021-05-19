@@ -56,6 +56,9 @@
       "@@@STEP_LOG_LINE@builder config@  use_flags {@@@",
       "@@@STEP_LOG_LINE@builder config@    flag: \"chromeless_tty\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  install_packages {@@@",
+      "@@@STEP_LOG_LINE@builder config@    compile_source: true@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
     ]

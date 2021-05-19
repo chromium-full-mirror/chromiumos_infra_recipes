@@ -2157,7 +2157,10 @@
           {
             "flag": "chromeless_tty"
           }
-        ]
+        ],
+        "installPackages": {
+          "compileSource": true
+        }
       },
       "artifacts": {
         "prebuilts": "PRIVATE",
