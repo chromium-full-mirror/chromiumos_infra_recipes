@@ -269,7 +269,7 @@ def RunSteps(api, properties):
     for branch, (version, sanitized_version) in version_map.items():
       with api.step.nest('upreving pin for branch {}'.format(branch)):
         api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
-                                        branch)
+                                        branch, sync_opts={'detach': True})
 
         version_path = api.cros_source.workspace_path.join(
             properties.version_file)

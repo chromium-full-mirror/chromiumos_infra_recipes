@@ -645,6 +645,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--force-sync",
+      "--detach",
       "--current-branch",
       "--jobs",
       "8",
