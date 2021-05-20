@@ -995,6 +995,21 @@
   },
   {
     "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "infra_step": true,
+    "name": "generate new upstream branch locally.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython3",
       "libchrome_tools/developer-tools/uprev/update_upstream.py",
       "cros/upstream",

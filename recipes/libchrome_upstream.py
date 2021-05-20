@@ -49,6 +49,9 @@ def RunSteps(api):
                                     ['/usr/bin/git', 'rev-parse', 'FETCH_HEAD'],
                                     stdout=api.raw_io.output()).stdout.strip()
         with api.step.nest('generate new upstream branch locally'):
+          # Just print libchrome HEAD so we know which version of
+          # libchrome_tools is used.
+          api.git.head_commit()
           step_data = api.step(
               'generate new upstream head',
               [
