@@ -40,4 +40,7 @@ message BuildLegacyFwProperties {
 
   // Anti-feature flag: use pushimage from tree
   bool use_pushimage_from_tree = 10;
+
+  // Feature flag: chroot outside of tree
+  bool chroot_outside = 11;
 }

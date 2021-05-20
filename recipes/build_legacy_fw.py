@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/depot_tools',
@@ -89,7 +90,10 @@ class FirmwareBuilder(object):
 
     self.properties = properties
     self._boards = [x.name for x in properties.build_targets]
-    self._chroot = self.m.src_state.workspace_path.join('chroot')
+    if properties.chroot_outside:
+      self._chroot = self.m.path.mkdtemp().join('chroot')
+    else:
+      self._chroot = self.m.src_state.workspace_path.join('chroot')
     self._config = None
     self._bcs_version = None
     self._firmware_version = None
@@ -103,9 +107,13 @@ class FirmwareBuilder(object):
   def sdk_call(self, name, sdk_args=(), cmd=(), **kwargs):
     """Run cros_sdk with the given command"""
     command = [
-        self.m.cros_sdk.cros_sdk_path, '--log-level',
-        self.m.cros_build_api.log_level
-    ] + list(sdk_args)
+        self.m.cros_sdk.cros_sdk_path,
+        '--log-level',
+        self.m.cros_build_api.log_level,
+    ]
+    if self.properties.chroot_outside:
+      command.extend(['--chroot', str(self._chroot)])
+    command += list(sdk_args)
     # Pass in any USE flags from the builder config.
     if cmd:
       if self._config:
@@ -247,6 +255,9 @@ class FirmwareBuilder(object):
           self.m.step('df', ['df'])
           self.m.step('df -i', ['df', '-i'])
       self.sdk_call('init SDK', sdk_args=['--delete', '--create'])
+      if self.properties.chroot_outside:
+        self.m.cros_sdk.link_chroot(self.m.src_state.workspace_path,
+                                    self._chroot)
       cmd = ['./update_chroot']
       if self._is_after('6480.0.0'):
         if not self.properties.disable_toolchain_boards:
@@ -254,6 +265,8 @@ class FirmwareBuilder(object):
       self.sdk_call('update SDK', cmd=cmd)
       yield
     finally:
+      if self.properties.chroot_outside:
+        self.m.cros_sdk.unlink_chroot(self.m.src_state.workspace_path)
       self.sdk_call('delete SDK', sdk_args=['--delete'])
 
   def _set_firmware_version(self):
@@ -541,6 +554,15 @@ def GenTests(api):
 
   yield test(
       'postsubmit', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(DoesNotRun, 'bump version'),
+      api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
+      api.post_check(StepCommandContains, 'build target.install packages',
+                     ['--withdebugsymbols']), api.post_check(StatusSuccess))
+
+  yield test(
+      'postsubmit-outside', api.properties(chroot_outside=True),
+      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(DoesNotRun, 'bump version'),
       api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
