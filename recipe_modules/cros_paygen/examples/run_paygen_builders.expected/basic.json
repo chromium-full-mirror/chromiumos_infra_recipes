@@ -1,6 +1,28 @@
 [
   {
     "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "running children"
   },
   {
@@ -12,7 +34,7 @@
     ],
     "infra_step": true,
     "name": "running children.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"srcDlcImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13421.89.0\"}, \"dlcId\": \"termina-dlc\", \"dlcImage\": \"dlc.img\", \"dlcPackage\": \"package\"}, \"tgtDlcImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"dlcId\": \"termina-dlc\", \"dlcImage\": \"dlc.img\", \"dlcPackage\": \"package\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-00000000136d\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"keyset\": \"mp-v2\", \"srcSignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13421.89.0\"}, \"imageType\": \"IMAGE_TYPE_RECOVERY\", \"key\": \"mp-v2\"}, \"tgtSignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_RECOVERY\", \"key\": \"mp-v2\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001370\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"dryrun\": true, \"fullUpdate\": true, \"tgtDlcImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"dlcId\": \"termina-dlc\", \"dlcImage\": \"dlc.img\", \"dlcPackage\": \"package\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001373\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"dryrun\": true, \"fullUpdate\": true, \"keyset\": \"mp-v2\", \"tgtSignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_RECOVERY\", \"key\": \"mp-v2\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001376\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [{\"deltaType\": \"N2N\", \"srcChannel\": \"stable\", \"srcVersion\": \"13425.90.0\"}], \"request\": {\"bucket\": \"b\", \"dryrun\": true, \"fullUpdate\": true, \"tgtUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001379\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"srcUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13421.89.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"tgtUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-00000000137c\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [{\"deltaType\": \"N2N\"}], \"request\": {\"bucket\": \"b\", \"srcUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"tgtUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-00000000137f\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"chroot\": {\"path\": \"[CACHE]/cros_chroot/chroot\"}, \"srcDlcImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13421.89.0\"}, \"dlcId\": \"termina-dlc\", \"dlcImage\": \"dlc.img\", \"dlcPackage\": \"package\"}, \"tgtDlcImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"dlcId\": \"termina-dlc\", \"dlcImage\": \"dlc.img\", \"dlcPackage\": \"package\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-00000000136d\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"chroot\": {\"path\": \"[CACHE]/cros_chroot/chroot\"}, \"keyset\": \"mp-v2\", \"srcSignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13421.89.0\"}, \"imageType\": \"IMAGE_TYPE_RECOVERY\", \"key\": \"mp-v2\"}, \"tgtSignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_RECOVERY\", \"key\": \"mp-v2\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001370\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"chroot\": {\"path\": \"[CACHE]/cros_chroot/chroot\"}, \"dryrun\": true, \"fullUpdate\": true, \"tgtDlcImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"dlcId\": \"termina-dlc\", \"dlcImage\": \"dlc.img\", \"dlcPackage\": \"package\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001373\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"chroot\": {\"path\": \"[CACHE]/cros_chroot/chroot\"}, \"dryrun\": true, \"fullUpdate\": true, \"keyset\": \"mp-v2\", \"tgtSignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_RECOVERY\", \"key\": \"mp-v2\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001376\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [{\"deltaType\": \"N2N\", \"srcChannel\": \"stable\", \"srcVersion\": \"13425.90.0\"}], \"request\": {\"bucket\": \"b\", \"chroot\": {\"path\": \"[CACHE]/cros_chroot/chroot\"}, \"dryrun\": true, \"fullUpdate\": true, \"tgtUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001379\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [], \"request\": {\"bucket\": \"b\", \"chroot\": {\"path\": \"[CACHE]/cros_chroot/chroot\"}, \"srcUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13421.89.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"tgtUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-00000000137c\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"autoupdate_test_configs\": [{\"deltaType\": \"N2N\"}], \"request\": {\"bucket\": \"b\", \"chroot\": {\"path\": \"[CACHE]/cros_chroot/chroot\"}, \"srcUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"tgtUnsignedImage\": {\"build\": {\"bucket\": \"b\", \"buildTarget\": {\"name\": \"coral\"}, \"channel\": \"stable\", \"version\": \"13425.90.0\"}, \"imageType\": \"IMAGE_TYPE_TEST\", \"milestone\": \"86\"}, \"verify\": true}}, \"requestId\": \"0-00000000-0000-0000-0000-00000000137f\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -97,6 +119,9 @@
       "@@@STEP_LOG_LINE@request@          \"autoupdate_test_configs\": [], @@@",
       "@@@STEP_LOG_LINE@request@          \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@            }, @@@",
       "@@@STEP_LOG_LINE@request@            \"srcDlcImage\": {@@@",
       "@@@STEP_LOG_LINE@request@              \"build\": {@@@",
       "@@@STEP_LOG_LINE@request@                \"bucket\": \"b\", @@@",
@@ -147,6 +172,9 @@
       "@@@STEP_LOG_LINE@request@          \"autoupdate_test_configs\": [], @@@",
       "@@@STEP_LOG_LINE@request@          \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@            }, @@@",
       "@@@STEP_LOG_LINE@request@            \"keyset\": \"mp-v2\", @@@",
       "@@@STEP_LOG_LINE@request@            \"srcSignedImage\": {@@@",
       "@@@STEP_LOG_LINE@request@              \"build\": {@@@",
@@ -196,6 +224,9 @@
       "@@@STEP_LOG_LINE@request@          \"autoupdate_test_configs\": [], @@@",
       "@@@STEP_LOG_LINE@request@          \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@            }, @@@",
       "@@@STEP_LOG_LINE@request@            \"dryrun\": true, @@@",
       "@@@STEP_LOG_LINE@request@            \"fullUpdate\": true, @@@",
       "@@@STEP_LOG_LINE@request@            \"tgtDlcImage\": {@@@",
@@ -235,6 +266,9 @@
       "@@@STEP_LOG_LINE@request@          \"autoupdate_test_configs\": [], @@@",
       "@@@STEP_LOG_LINE@request@          \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@            }, @@@",
       "@@@STEP_LOG_LINE@request@            \"dryrun\": true, @@@",
       "@@@STEP_LOG_LINE@request@            \"fullUpdate\": true, @@@",
       "@@@STEP_LOG_LINE@request@            \"keyset\": \"mp-v2\", @@@",
@@ -280,6 +314,9 @@
       "@@@STEP_LOG_LINE@request@          ], @@@",
       "@@@STEP_LOG_LINE@request@          \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@            }, @@@",
       "@@@STEP_LOG_LINE@request@            \"dryrun\": true, @@@",
       "@@@STEP_LOG_LINE@request@            \"fullUpdate\": true, @@@",
       "@@@STEP_LOG_LINE@request@            \"tgtUnsignedImage\": {@@@",
@@ -318,6 +355,9 @@
       "@@@STEP_LOG_LINE@request@          \"autoupdate_test_configs\": [], @@@",
       "@@@STEP_LOG_LINE@request@          \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@            }, @@@",
       "@@@STEP_LOG_LINE@request@            \"srcUnsignedImage\": {@@@",
       "@@@STEP_LOG_LINE@request@              \"build\": {@@@",
       "@@@STEP_LOG_LINE@request@                \"bucket\": \"b\", @@@",
@@ -370,6 +410,9 @@
       "@@@STEP_LOG_LINE@request@          ], @@@",
       "@@@STEP_LOG_LINE@request@          \"request\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@            }, @@@",
       "@@@STEP_LOG_LINE@request@            \"srcUnsignedImage\": {@@@",
       "@@@STEP_LOG_LINE@request@              \"build\": {@@@",
       "@@@STEP_LOG_LINE@request@                \"bucket\": \"b\", @@@",

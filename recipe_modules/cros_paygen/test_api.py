@@ -112,92 +112,115 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
       dlc_image='dlc.img',
   )
 
-  EXAMPLE_GEN_REQUEST_DELTA_SIGNED = [
-      GenerationRequest_pb2(
-          src_signed_image=SIGNED_SRC,
-          tgt_signed_image=SIGNED_TGT,
-          bucket='b',
-          verify=True,
-          keyset='mp-v2',
-          dryrun=False,
-      )
-  ]
+  @property
+  def EXAMPLE_GEN_REQUEST_DELTA_SIGNED(self):
+    return [
+        GenerationRequest_pb2(
+            src_signed_image=self.SIGNED_SRC,
+            tgt_signed_image=self.SIGNED_TGT,
+            bucket='b',
+            verify=True,
+            keyset='mp-v2',
+            dryrun=False,
+            chroot=self.m.cros_sdk.chroot(),
+        )
+    ]
 
-  EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED = [
-      GenerationRequest_pb2(
-          src_unsigned_image=UNSIGNED_SRC,
-          tgt_unsigned_image=UNSIGNED_TGT,
-          bucket='b',
-          verify=True,
-          keyset='',
-          dryrun=False,
-      )
-  ]
+  @property
+  def EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED(self):
+    return [
+        GenerationRequest_pb2(
+            src_unsigned_image=self.UNSIGNED_SRC,
+            tgt_unsigned_image=self.UNSIGNED_TGT,
+            bucket='b',
+            verify=True,
+            keyset='',
+            dryrun=False,
+            chroot=self.m.cros_sdk.chroot(),
+        )
+    ]
 
-  EXAMPLE_GEN_REQUEST_DELTA_DLC = [
-      GenerationRequest_pb2(
-          src_dlc_image=DLC_SRC,
-          tgt_dlc_image=DLC_TGT,
-          bucket='b',
-          verify=True,
-          keyset='',
-          dryrun=False,
-      )
-  ]
+  @property
+  def EXAMPLE_GEN_REQUEST_DELTA_DLC(self):
+    return [
+        GenerationRequest_pb2(
+            src_dlc_image=self.DLC_SRC,
+            tgt_dlc_image=self.DLC_TGT,
+            bucket='b',
+            verify=True,
+            keyset='',
+            dryrun=False,
+            chroot=self.m.cros_sdk.chroot(),
+        )
+    ]
 
-  EXAMPLE_GEN_REQUEST_FULL_SIGNED = [
-      GenerationRequest_pb2(
-          full_update=True,
-          tgt_signed_image=SIGNED_TGT,
-          bucket='b',
-          verify=True,
-          keyset='mp-v2',
-          dryrun=True,
-      )
-  ]
+  @property
+  def EXAMPLE_GEN_REQUEST_FULL_SIGNED(self):
+    return [
+        GenerationRequest_pb2(
+            full_update=True,
+            tgt_signed_image=self.SIGNED_TGT,
+            bucket='b',
+            verify=True,
+            keyset='mp-v2',
+            dryrun=True,
+            chroot=self.m.cros_sdk.chroot(),
+        )
+    ]
 
-  EXAMPLE_GEN_REQUEST_FULL_UNSIGNED = [
-      GenerationRequest_pb2(
-          full_update=True,
-          tgt_unsigned_image=UNSIGNED_TGT,
-          bucket='b',
-          verify=True,
-          keyset='',
-          dryrun=True,
-      )
-  ]
+  @property
+  def EXAMPLE_GEN_REQUEST_FULL_UNSIGNED(self):
+    return [
+        GenerationRequest_pb2(
+            full_update=True,
+            tgt_unsigned_image=self.UNSIGNED_TGT,
+            bucket='b',
+            verify=True,
+            keyset='',
+            dryrun=True,
+            chroot=self.m.cros_sdk.chroot(),
+        )
+    ]
 
-  EXAMPLE_GEN_REQUEST_FULL_DLC = [
-      GenerationRequest_pb2(
-          full_update=True,
-          tgt_dlc_image=DLC_TGT,
-          bucket='b',
-          verify=True,
-          keyset='',
-          dryrun=True,
-      )
-  ]
+  @property
+  def EXAMPLE_GEN_REQUEST_FULL_DLC(self):
+    return [
+        GenerationRequest_pb2(
+            full_update=True,
+            tgt_dlc_image=self.DLC_TGT,
+            bucket='b',
+            verify=True,
+            keyset='',
+            dryrun=True,
+            chroot=self.m.cros_sdk.chroot(),
+        )
+    ]
 
-  EXAMPLE_GEN_REQUEST_DELTA_N2N = [
-      GenerationRequest_pb2(
-          src_unsigned_image=UNSIGNED_TGT,
-          tgt_unsigned_image=UNSIGNED_TGT,
-          bucket='b',
-          verify=True,
-          keyset='',
-          dryrun=False,
-      )
-  ]
+  @property
+  def EXAMPLE_GEN_REQUEST_DELTA_N2N(self):
+    return [
+        GenerationRequest_pb2(
+            src_unsigned_image=self.UNSIGNED_TGT,
+            tgt_unsigned_image=self.UNSIGNED_TGT,
+            bucket='b',
+            verify=True,
+            keyset='',
+            dryrun=False,
+            chroot=self.m.cros_sdk.chroot(),
+        )
+    ]
 
-  EXAMPLE_GEN_REQUESTS = [
-      EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-      EXAMPLE_GEN_REQUEST_DELTA_SIGNED[0],
-      EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED[0],
-      EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-      EXAMPLE_GEN_REQUEST_FULL_SIGNED[0],
-      EXAMPLE_GEN_REQUEST_FULL_UNSIGNED[0],
-      EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
-  ]
+  @property
+  def EXAMPLE_GEN_REQUESTS(self):
+    return [
+        self.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+        self.EXAMPLE_GEN_REQUEST_DELTA_SIGNED[0],
+        self.EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED[0],
+        self.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+        self.EXAMPLE_GEN_REQUEST_FULL_SIGNED[0],
+        self.EXAMPLE_GEN_REQUEST_FULL_UNSIGNED[0],
+        self.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
+    ]
 
   EXAMPLE_TEST_REQUEST_DELTA_OMAHA = AutoupdateTestConfig(
       delta_type='OMAHA',

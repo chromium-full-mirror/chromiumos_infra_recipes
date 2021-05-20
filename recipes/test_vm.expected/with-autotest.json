@@ -2850,6 +2850,9 @@
       "@@@STEP_LOG_LINE@request@        \"flag\": \"chrome_internal\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -2865,7 +2868,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"installRequest\": {\n    \"flags\": {}, \n    \"packages\": [\n      {\n        \"category\": \"chromeos-base\", \n        \"packageName\": \"autotest-all\"\n      }\n    ], \n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"amd64-generic\"\n      }, \n      \"path\": \"/build/amd64-generic\"\n    }, \n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot/chroot\"\n    }, \n    \"useFlags\": [\n      {\n        \"flag\": \"chrome_internal\"\n      }\n    ]\n  }\n}",
+      "{\n  \"installRequest\": {\n    \"flags\": {}, \n    \"packages\": [\n      {\n        \"category\": \"chromeos-base\", \n        \"packageName\": \"autotest-all\"\n      }\n    ], \n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"amd64-generic\"\n      }, \n      \"path\": \"/build/amd64-generic\"\n    }, \n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot/chroot\"\n    }, \n    \"useFlags\": [\n      {\n        \"flag\": \"chrome_internal\"\n      }\n    ]\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2896,6 +2899,9 @@
       "@@@STEP_LOG_LINE@input_proto.json@        \"flag\": \"chrome_internal\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"

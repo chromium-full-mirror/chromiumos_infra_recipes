@@ -4,6 +4,8 @@
 
 from recipe_engine import recipe_test_api
 
+from PB.chromiumos import common
+
 
 class CrosSdkApi(recipe_test_api.RecipeTestApi):
 
@@ -18,3 +20,13 @@ class CrosSdkApi(recipe_test_api.RecipeTestApi):
   def preload_path_exists(value):
     """Returns whether to assert that the preload path exists when testing."""
     return value
+
+  def chroot(self, use_flags=(), chrome_root=None):
+    """Return a chromiumos.common.Chroot."""
+    env = common.Chroot.ChrootEnv(use_flags=use_flags) if use_flags else None
+    chroot_path = self.m.path['cache'].join('cros_chroot', 'chroot')
+    # TODO(crbug/1215263): The Chroot() initialization can use str(chroot_path)
+    # once the test_api supports str().
+    abs_path = '/'.join([str(chroot_path.base)] +
+                        list(chroot_path.pieces or []))
+    return common.Chroot(path=abs_path, chrome_dir=chrome_root, env=env)

@@ -341,7 +341,8 @@ class ChromeApi(recipe_api.RecipeApi):
         'NeedsChromeSource'):  #pragma: nocover
       try:
         response = self.m.cros_build_api.PackageService.NeedsChromeSource(
-            NeedsChromeSourceRequest(install_request=request))
+            NeedsChromeSourceRequest(install_request=request,
+                                     chroot=self.m.cros_sdk.chroot))
       except Exception as e:
         with self.m.step.nest('ignored exception') as pres:
           pres.logs['caught exception'] = [repr(e)]

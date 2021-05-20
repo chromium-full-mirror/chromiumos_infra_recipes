@@ -989,7 +989,7 @@ Returns:
   The number of builds (int) in the given bucket with given status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
-[DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [ChromeApi](/recipe_modules/chrome/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -2076,7 +2076,7 @@ Args:
 &mdash; **def [run](/recipe_modules/cros_lvfs_mirror/api.py#50)(self):**
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
 
-[DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_storage](#recipe_modules-cros_storage), [cros\_version](#recipe_modules-cros_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_storage](#recipe_modules-cros_storage), [cros\_version](#recipe_modules-cros_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with Paygen and its config.
 
@@ -7142,7 +7142,7 @@ returns a list of repos to make commits to.
 
 [DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [goma](#recipe_modules-goma), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#29)(api, properties):**
 ### *recipes* / [cros\_sdk:tests/check\_sdk\_cache\_state](/recipe_modules/cros_sdk/tests/check_sdk_cache_state.py)
 
 [DEPS](/recipe_modules/cros_sdk/tests/check_sdk_cache_state.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

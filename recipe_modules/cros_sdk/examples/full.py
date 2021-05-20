@@ -21,12 +21,16 @@ from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
     TestInputProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 from recipe_engine import post_process
+from google.protobuf.json_format import MessageToDict
 
 PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
   workspace = api.path['cleanup'].join('workspace')
+
+  api.assertions.assertEqual(api.cros_sdk.chroot,
+                             api.cros_sdk.test_api.chroot())
 
   api.workspace_util.apply_changes(changes=properties.gerrit_changes or [])
   with api.cros_sdk.cleanup_context(checkout_path=workspace):

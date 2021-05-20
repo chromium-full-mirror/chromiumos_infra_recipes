@@ -428,7 +428,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         reqs.append(
             GenerationRequest(src_unsigned_image=tgt, tgt_unsigned_image=tgt,
                               bucket=bucket, verify=verify, keyset='',
-                              dryrun=dryrun))
+                              dryrun=dryrun, chroot=self.m.cros_sdk.chroot))
     return reqs
 
   def get_delta_requests(self, payload_def, src_artifacts, tgt_artifacts,
@@ -480,7 +480,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           reqs.append(
               GenerationRequest(src_signed_image=src, tgt_signed_image=tgt,
                                 bucket=bucket, verify=verify, keyset=keyset,
-                                dryrun=dryrun))
+                                dryrun=dryrun, chroot=self.m.cros_sdk.chroot))
         elif isinstance(src, UnsignedImage_pb2):
           # We don't create delta paygens for unsigned recovery images.
           if src.image_type == common_pb2.IMAGE_TYPE_RECOVERY:
@@ -488,14 +488,14 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           reqs.append(
               GenerationRequest(src_unsigned_image=src, tgt_unsigned_image=tgt,
                                 bucket=bucket, verify=verify, keyset='',
-                                dryrun=dryrun))
+                                dryrun=dryrun, chroot=self.m.cros_sdk.chroot))
         elif isinstance(src, DLCImage_pb2):
           if not self.m.cros_storage.DLCImage.compatible(tgt, src):
             continue  # pragma: nocover
           reqs.append(
               GenerationRequest(src_dlc_image=src, tgt_dlc_image=tgt,
                                 bucket=bucket, verify=verify, keyset='',
-                                dryrun=dryrun))
+                                dryrun=dryrun, chroot=self.m.cros_sdk.chroot))
     return reqs
 
   def get_full_requests(self, tgt_artifacts, bucket, verify, keyset, dryrun):
@@ -517,7 +517,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         reqs.append(
             GenerationRequest(full_update=True, tgt_signed_image=tgt,
                               bucket=bucket, verify=verify, keyset=keyset,
-                              dryrun=dryrun))
+                              dryrun=dryrun, chroot=self.m.cros_sdk.chroot))
       elif isinstance(tgt, UnsignedImage_pb2):
         # We don't create full payloads for unsigned recovery images.
         if tgt.image_type == common_pb2.IMAGE_TYPE_RECOVERY:
@@ -525,12 +525,12 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         reqs.append(
             GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
                               bucket=bucket, verify=verify, keyset='',
-                              dryrun=dryrun))
+                              dryrun=dryrun, chroot=self.m.cros_sdk.chroot))
       elif isinstance(tgt, DLCImage_pb2):
         reqs.append(
             GenerationRequest(full_update=True, tgt_dlc_image=tgt,
                               bucket=bucket, verify=verify, keyset='',
-                              dryrun=dryrun))
+                              dryrun=dryrun, chroot=self.m.cros_sdk.chroot))
 
     # TODO(crbug.com/1122854): The chromite code checks the number of mp and
     # premp signing requests here. We are generally more relaxed at enforcing

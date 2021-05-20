@@ -2380,6 +2380,9 @@
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"/build/grunt\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -2395,7 +2398,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"installRequest\": {\n    \"flags\": {}, \n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot/chroot\"\n    }, \n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"grunt\"\n      }, \n      \"path\": \"/build/grunt\"\n    }\n  }\n}",
+      "{\n  \"installRequest\": {\n    \"flags\": {}, \n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot/chroot\"\n    }, \n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"grunt\"\n      }, \n      \"path\": \"/build/grunt\"\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2415,6 +2418,9 @@
       "@@@STEP_LOG_LINE@input_proto.json@      }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"/build/grunt\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"

@@ -7,11 +7,12 @@ from PB.recipe_modules.chromeos.cros_paygen.cros_paygen import (
     CrosPaygenProperties)
 
 DEPS = [
-    'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'depot_tools/gsutil',
     'cros_infra_config',
+    'cros_sdk',
     'cros_storage',
     'cros_version',
     'skylab',

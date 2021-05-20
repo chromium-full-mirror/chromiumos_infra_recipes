@@ -15,6 +15,7 @@ DEPS = [
     'depot_tools/gclient',
     'cros_infra_config',
     'cros_build_api',
+    'cros_sdk',
     'easy',
     'portage',
     'workspace_util',
