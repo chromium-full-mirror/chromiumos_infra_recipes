@@ -196,7 +196,6 @@ class SysrootUtilApi(recipe_api.RecipeApi):
               use_flags=config.build.use_flags,
               goma_config=self.m.cros_sdk.goma_config())
 
-        # Final round of preparation to build artifacts.  Some artifacts need
         with self.m.step.nest('check chrome source needed') as check_pres:
           if self.m.chrome.needs_chrome_source(_InstallPackagesRequest(),
                                                dep_graph, check_pres):
@@ -208,10 +207,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             if not install_packages.disable_goma:
               self.m.cros_sdk.configure_goma(chrome_root)
 
-        self.m.android.try_uprev(chroot=self.m.cros_sdk.chroot,
-                                 sysroot=self.sysroot,
-                                 patch_sets=self.m.workspace_util.patch_sets)
+        if self.m.cq.active:
+          self.m.android.try_uprev(chroot=self.m.cros_sdk.chroot,
+                                   sysroot=self.sysroot,
+                                   patch_sets=self.m.workspace_util.patch_sets)
 
+        # Final round of preparation to build artifacts.  Some artifacts need
         # to use portage (or a chroot and/or sysroot) in order to fully prepare,
         # so they have to finish preparation inside the SDK.
         #
