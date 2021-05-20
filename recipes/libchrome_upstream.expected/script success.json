@@ -921,7 +921,7 @@
   },
   {
     "cmd": [],
-    "name": "generate new upstream branch locally"
+    "name": "fetch latest chromium"
   },
   {
     "cmd": [
@@ -937,7 +937,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
-    "name": "generate new upstream branch locally.ensure .git/objects/info",
+    "name": "fetch latest chromium.ensure .git/objects/info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -955,7 +955,7 @@
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
-    "name": "generate new upstream branch locally.create chrome git reference",
+    "name": "fetch latest chromium.create chrome git reference",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@alternates@/preload/chrome/src/.git/objects@@@",
@@ -969,7 +969,7 @@
       "https://chromium.googlesource.com/chromium/src"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
-    "name": "generate new upstream branch locally.git fetch chromium",
+    "name": "fetch latest chromium.git fetch chromium",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -981,10 +981,14 @@
       "FETCH_HEAD"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
-    "name": "generate new upstream branch locally.get chromium head",
+    "name": "fetch latest chromium.get chromium head",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "generate new upstream branch locally"
   },
   {
     "cmd": [

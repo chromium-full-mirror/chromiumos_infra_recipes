@@ -34,7 +34,7 @@ def RunSteps(api):
           'src/aosp/external/libchrome')
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
-        with api.step.nest('generate new upstream branch locally'):
+        with api.step.nest('fetch latest chromium'):
           git_objects_info_dir = project_dir.join('.git/objects/info')
           api.file.ensure_directory('ensure .git/objects/info',
                                     git_objects_info_dir)
@@ -48,6 +48,7 @@ def RunSteps(api):
           chromium_heads = api.step('get chromium head',
                                     ['/usr/bin/git', 'rev-parse', 'FETCH_HEAD'],
                                     stdout=api.raw_io.output()).stdout.strip()
+        with api.step.nest('generate new upstream branch locally'):
           step_data = api.step(
               'generate new upstream head',
               [
@@ -80,8 +81,7 @@ def GenTests(api):
           stdout=api.raw_io.output(
               '49d1e4a4a6ca65114208c498416be3b85e10cc8e\n')),
       api.step_data(
-          'generate new upstream branch locally.get chromium head',
-          stdout=api.raw_io.output(
+          'fetch latest chromium.get chromium head', stdout=api.raw_io.output(
               'cb10da20a312790d1d2421ae2f8dc2ea831cffa3\n')))
 
   yield api.test(
@@ -90,6 +90,5 @@ def GenTests(api):
           'generate new upstream branch locally.generate new upstream head',
           stdout=api.raw_io.output('Unexpected Result')),
       api.step_data(
-          'generate new upstream branch locally.get chromium head',
-          stdout=api.raw_io.output(
+          'fetch latest chromium.get chromium head', stdout=api.raw_io.output(
               'cb10da20a312790d1d2421ae2f8dc2ea831cffa3\n')))
