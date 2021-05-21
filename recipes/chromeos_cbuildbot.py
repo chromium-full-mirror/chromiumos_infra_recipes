@@ -2,7 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine.recipe_api import AggregatedStepFailure, InfraFailure, StepFailure
+from past.builtins import basestring
+from recipe_engine.recipe_api import AggregatedStepFailure, InfraFailure
+from recipe_engine.recipe_api import StepFailure
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 
@@ -10,12 +12,13 @@ import json
 import re
 
 DEPS = [
-    'chromite',
-    'cros_infra_config',
-    'depot_tools/gitiles',
     'recipe_engine/legacy_annotation',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'depot_tools/gitiles',
+    'chromite',
+    'cros_infra_config',
+    'cros_source',
 ]
 
 
@@ -64,7 +67,8 @@ def DoRunSteps(api):
 
   # Use the system python, not "bundled python" so that we have access
   # to system python packages.
-  with api.chromite.with_system_python():
+  with api.chromite.with_system_python(), \
+       api.cros_source.checkout_overlays_context(legacy=True):
     api.chromite.run()
 
 
@@ -77,7 +81,7 @@ def MakeSummaryMarkdown(api, failure):
     lines.append('builder: %s' % cbb_config)
 
   buildset = api.properties.get('buildset', '')
-  m = re.match('^cros/ma(in|ster)_buildbucket_id/(\d+)$', buildset)
+  m = re.match('^cros/ma(in|ster)_buildbucket_id/(\\d+)$', buildset)
   if m:
     lines.append('[main](https://ci.chromium.org/b/%s)' % m.groups()[0])
 

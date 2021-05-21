@@ -2,9 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import os
 import re
 
+from past.builtins import basestring
 from recipe_engine.config import config_item_context, ConfigGroup
 from recipe_engine.config import Dict, Single, List, Set
 
