@@ -77,14 +77,14 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.load local DUT state",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.load local DUT state.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -107,7 +107,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.load local DUT state.call `phosphorus`.ensure phosphorus",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -126,7 +126,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "execution steps.original_test.load local DUT state.call `phosphorus`.ensure phosphorus.ensure_installed",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -152,7 +152,7 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "name": "execution steps.original_test.load local DUT state.call `phosphorus`.load",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.load",
     "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -160,14 +160,14 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.mark local DUT state dirty",
+    "name": "execution steps.original_test.Phosphorus: mark local DUT state: needs_repair",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.mark local DUT state dirty.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -193,7 +193,7 @@
       "/dev/stdin"
     ],
     "infra_step": true,
-    "name": "execution steps.original_test.mark local DUT state dirty.call `phosphorus`.save",
+    "name": "execution steps.original_test.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
     "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"dutName\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -201,14 +201,14 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.check request deadline",
+    "name": "execution steps.original_test.DUTInterface: check request deadline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.run prejob",
+    "name": "execution steps.original_test.Phosphorus: run prejob",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_EXCEPTION@@@"
@@ -216,7 +216,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.run prejob.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: run prejob.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -235,7 +235,7 @@
       "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {}, @@@",
       "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {}@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:24Z\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:23Z\", @@@",
       "@@@STEP_LOG_LINE@request@  \"dutHostname\": \"dummy\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -252,8 +252,8 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "name": "execution steps.original_test.run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  }, \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:24Z\", \n  \"dutHostname\": \"dummy\"\n}",
+    "name": "execution steps.original_test.Phosphorus: run prejob.call `phosphorus`.prejob",
+    "stdin": "{\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  }, \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:23Z\", \n  \"dutHostname\": \"dummy\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_EXCEPTION@@@"
@@ -268,9 +268,16 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.archive all test logs to Google Storage.call `phosphorus`",
+    "name": "execution steps.original_test.archive all test logs to Google Storage.Phosphorus: upload to GS",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.original_test.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", @@@",
       "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"dummy-results-dir\", @@@",
@@ -302,10 +309,10 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "name": "execution steps.original_test.archive all test logs to Google Storage.call `phosphorus`.upload-to-gs",
+    "name": "execution steps.original_test.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
     "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n  \"localDirectory\": \"dummy-results-dir\", \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -374,14 +381,14 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.save local DUT state",
+    "name": "execution steps.original_test.Phosphorus: save local DUT state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.save local DUT state.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: save local DUT state.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -408,7 +415,7 @@
       "/dev/stdin"
     ],
     "infra_step": true,
-    "name": "execution steps.original_test.save local DUT state.call `phosphorus`.save",
+    "name": "execution steps.original_test.Phosphorus: save local DUT state.call `phosphorus`.save",
     "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutId\": \"dummy-dut-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -424,7 +431,7 @@
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('execution steps.original_test.run prejob.call `phosphorus`.prejob') (retcode: 1)"
+      "humanReason": "Infra Failure: Step('execution steps.original_test.Phosphorus: run prejob.call `phosphorus`.prejob') (retcode: 1)"
     },
     "name": "$result"
   }

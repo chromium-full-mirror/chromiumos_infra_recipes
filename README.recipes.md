@@ -46,6 +46,7 @@
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [cts_results_archive](#recipe_modules-cts_results_archive) &mdash; API to archive test results to CTS specific buckets.
   * [disk_usage](#recipe_modules-disk_usage)
+  * [dut_interface](#recipe_modules-dut_interface)
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gce_provider](#recipe_modules-gce_provider)
@@ -243,6 +244,7 @@
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
+  * [dut_interface:tests/full](#recipes-dut_interface_tests_full)
   * [dut_tracker](#recipes-dut_tracker) &mdash; Recipe for the Star Doctor.
   * [easy:examples/full](#recipes-easy_examples_full)
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step)
@@ -3295,6 +3297,21 @@ Args:
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [tracking\_context](/recipe_modules/disk_usage/api.py#14)(self):**
 
 A context wrapper for track().
+### *recipe_modules* / [dut\_interface](/recipe_modules/dut_interface)
+
+#### **class [DUTInterface](/recipe_modules/dut_interface/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [create](/recipe_modules/dut_interface/api.py#12)(self, api, properties):**
+
+Factory constructor for interfaces.
+TODO: glean from properties whether we should return phosphorus or other
+
+Args:
+* api (RecipeScriptApi): Ubiquitous recipe API
+* properties (TestRunnerProperties): Input recipe properties.
+
+Returns:
+  DUTInterface
 ### *recipe_modules* / [easy](/recipe_modules/easy)
 
 [DEPS](/recipe_modules/easy/__init__.py#6): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7195,6 +7212,11 @@ Tests for api.cros_version.Version.
 Recipe for syncing remote, distributed tarballs to our local cache.
 
 &mdash; **def [RunSteps](/recipes/dupit.py#13)(api):**
+### *recipes* / [dut\_interface:tests/full](/recipe_modules/dut_interface/tests/full.py)
+
+[DEPS](/recipe_modules/dut_interface/tests/full.py#6): [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+
+&mdash; **def [RunSteps](/recipe_modules/dut_interface/tests/full.py#21)(api, properties):**
 ### *recipes* / [dut\_tracker](/recipes/dut_tracker.py)
 
 [DEPS](/recipes/dut_tracker.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8080,147 +8102,94 @@ Raises:
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#28): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#25): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#671)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#347)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#227)(api, phosphorus_config, gs_dir, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#102)(api, interface, test_metadata, result):**
 
-Archive all test logs to Google Storage.
+Archive all test logs to Google Storage, updating result in the process.
 
 Args:
-  * phosphorus_config: phosphorus.Config instance
-  * gs_dir: str, path to Google Storage directory to archive to.
-  * result: test_runner.Result.
-Returns:
-  Updated test_runner.Result
+* api (RecipeScriptApi): Ubiquitous recipe api.
+* interface (DUTInterface): The interface to run commands on the DUT.
+* test_metadata (DUTTestMetadata): All metadata needed for the interface
+apposite a test.
+* result (DUTResult): The results of the test.
+
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#578)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#285)(api, properties):**
 
 Runs all the non-UI-related steps.
 
-Args:
-* properties: TestRunnerProperties instance.
+Runs all tests specified in properties, saving relevant data, and returning
+the overall results.
 
-Returns:
-  A tuple of three responses generated by the steps:
-  * phosphorus.PrejobResponse,
-  * dictionary of phosphorus.RunTestResponses,
-  * test_runner.Result.
+Args:
+* api (RecipeScriptApi): Ubiquitous recipe api.
+* properties (TestRunnerProperties): recipe input properties.
+
+Returns: DUTResult: The result for all tests run in this run.
 
 Raises:
 * InfraFailure.
 
-&mdash; **def [fetch\_crashes](/recipes/test_platform/test_runner.py#134)(api, config=None, request=None, output_config=None, dut_hostname='', upload_crashes=False, use_staging=False):**
+&mdash; **def [link](/recipes/test_platform/test_runner.py#60)(step, name, link):**
 
-Fetch crashes from the DUT via TLS API.
-
-Args:
-  * config: phosphorus.Config instance
-  * request: skylab_test_runner.Request instance.
-  * output_config: skylab_test_runner.Config.Output instance.
-  * dut_hostname: DUT hostname string.
-  * upload_crashes: Whether to upload crashes to http://crash.
-  * use_staging: If upload_crashes and use_staging are set, upload crashes to
-                 http://crash-staging instead.
-
-Returns:
-  * phosphorus.fetchcrashes.FetchCrashes
-
-&mdash; **def [get\_results](/recipes/test_platform/test_runner.py#291)(api, results_dir=''):**
-
-Parse test results.
+Add a link `link` named `link_name` to the `step` if it exists.
 
 Args:
-  * results_dir: Directory containing test results to be parsed.
+* step (StepPresentation): The step to add this link under.
+* name (str): Link name.
+* link (str): Like URI to add.
 
-Returns: skylab_test_runner.Result.
+&mdash; **def [log](/recipes/test_platform/test_runner.py#48)(step, name, log):**
 
-Raises:
-  * InfraFailure if binary call fails.
-
-&mdash; **def [prejob](/recipes/test_platform/test_runner.py#61)(api, config=None, request=None, dut_hostname='', load_response=None, max_duration_seconds=None):**
-
-Run a prejob (e.g. provision) against the DUT via `autoserv`.
+Add a `log` to a `step`'s log under `name` is it exists.
 
 Args:
-  * config: phosphorus.Config instance.
-  * request: skylab_test_runner.Request instance.
-  * dut_hostname: DUT hostname string.
-  * load_response: LoadStateResponse instance.
-  * max_duration_seconds: int.
+* step (StepPresentation): The step to add this log under.
+* name (str): Log name.
+* log (Any): Object to add to log.
 
-Returns:
-  * phosphorus.prejob.PrejobResponse
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#256)(api, config, request, should_poll_for_completion=False):**
 
-Raises:
-  * InfraFailure if prejob fails.
-
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#547)(api, config, request, should_poll_for_completion=False):**
-
-Publish build info to result_flow PubSub
+Publish build info to result_flow PubSub.
 
 Args:
-* config: test_runner.Config instance.
-* request: test_runner.Request instance.
-* should_poll_for_completion (bool): If true, the consumers should not ACK
+* api (RecipeScriptApi): Ubiquitous recipe api.
+* config (Config): Input test Config.
+* request (Request): Input test request.
+* should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_test](/recipes/test_platform/test_runner.py#98)(api, config=None, request=None, output_config=None, dut_hostname='', test=None, logs_gs_dir=''):**
-
-Run a test against the DUT via `autoserv`.
-
-Args:
-  * config: phosphorus.Config instance.
-  * request: skylab_test_runner.Request instance.
-  * output_config: skylab_test_runner.Config.Output instance.
-  * dut_hostname: DUT hostname string.
-  * test: skylab_test_runner.Request.Test instance.
-  * logs_gs_dir: The Google Storage directory where test logs will be uploaded.
-
-Returns:
-  * phosphorus.runtest.RunTestResponse
-
-Raises:
-  * StepFailure if test crashes.
-    (No exception is raised if test fails without a crash.)
-
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#378)(api, result=None):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#162)(api, result):**
 
 Set the output properties that are part of the test_runner API.
 
 Args:
-  * result: skylab_test_runner.Result instance.
+* api (RecipeScriptApi): Ubiquitous recipe api.
+* result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#307)(api, prejob_response, run_test_responses, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#122)(api, result):**
 
-Display test cases as recipe substeps.
-
-Args:
-  * prejob_response: phosphorus.prejob.PrejobResponse instance.
-  * run_test_responses: dictionary of phosphorus.runtest.RunTestResponse instances.
-  * result: skylab_test_runner.Result instance.
-
-&mdash; **def [upload\_to\_tko](/recipes/test_platform/test_runner.py#276)(api, config=None):**
-
-Upload test results to TKO via `tko/parse`.
+Display test cases (and failures) as recipe substeps through the api.
 
 Args:
-  * config: phosphorus.Config instance.
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * result (DUTResult): The result of all tests.
 
-Raises:
-  * InfraFailure if binary call fails.
-
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#47)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#87)(api, test):**
 
 Validate the TestRunnerProperties.
 
 Args:
-  * test: skylab_test_runner.Request.Test instance.
+* api (RecipeScriptApi): Ubiquitous recipe api.
+* test (Request.Test): Test instance.
 
 Raises:
   * ValueError if there are invalid properties.
