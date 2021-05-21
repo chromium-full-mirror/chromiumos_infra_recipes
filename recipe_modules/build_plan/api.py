@@ -19,7 +19,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     super(BuildPlanApi, self).__init__(*args, **kwargs)
     self._properties = properties
 
-  # A Git footer than can be included in commit messages to tell the cq run to not
+  # A Git footer that can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
   DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
 
@@ -108,7 +108,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('filter builds') as presentation:
       child_exps = self.m.cros_infra_config.experiments_for_child_build
-      footer_exps = self._get_footer_values(
+      footer_exps = self.m.git_footers.get_footer_values(
           gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
@@ -355,28 +355,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
     # return reduced list
     return best_builds_list
 
-  def _get_footer_values(self, gerrit_changes, key, **kwargs):
-    """Gets a list of values from a footer.
-
-    Fetches the named footer from the gerrit changes, and returns a set of all
-    of the (comma-separated) values found.
-
-    Args:
-      gerrit_changes ([common_pb2.GerritChange]): Gerrit changes applied to this
-        run.
-      key (str): The footer name (key) to fetch.
-      kwargs (dict): Other keyword arguements, passed to
-        git_footers.from_gerrit_change.
-
-    Returns:
-      values (set(str)): A set of values.  May be empty.
-    """
-    ret = set()
-    for gerrit_change in gerrit_changes:
-      values = self.m.git_footers.from_gerrit_change(gerrit_change, key=key,
-                                                     **kwargs)
-      ret.update(x.strip() for v in values for x in v.split(','))
-    return ret
 
   def _get_forced_rebuilds(self, gerrit_changes):
     """Gets a list of builders whose builds should not be reused.
@@ -393,8 +371,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
       builders (set(str)): A set of builder names or 'all' if no builds can be
         reused.
     """
-    builders = self._get_footer_values(gerrit_changes,
-                                       self.DISALLOW_RECYCLED_BUILDS_FOOTER)
+    builders = self.m.git_footers.get_footer_values(
+        gerrit_changes, self.DISALLOW_RECYCLED_BUILDS_FOOTER)
     return {'all'} if 'all' in builders else builders
 
   def get_slim_builder_name(self, builder_name):

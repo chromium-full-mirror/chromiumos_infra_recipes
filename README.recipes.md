@@ -693,7 +693,7 @@ Returns:
   A list[Path] of symbolicated files written.
 ### *recipe_modules* / [build\_menu](/recipe_modules/build_menu)
 
-[DEPS](/recipe_modules/build_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cloudready](#recipe_modules-cloudready), [code\_coverage](#recipe_modules-code_coverage), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata\_json](#recipe_modules-metadata_json), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/build_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cloudready](#recipe_modules-cloudready), [code\_coverage](#recipe_modules-code_coverage), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git\_footers](#recipe_modules-git_footers), [metadata\_json](#recipe_modules-metadata_json), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API providing a menu for build steps
 
@@ -704,7 +704,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#356)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#387)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
 
 Bootstrap the sysroot and install packages as appropriate.
 
@@ -721,7 +721,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#401)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#432)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -734,15 +734,15 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#71)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#75)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#110)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#114)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#75)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#79)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#79)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#83)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#118)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None, targets=()):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#122)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None, targets=()):**
 
 Initial setup steps for the builder.
 
@@ -763,17 +763,17 @@ Args:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#114)(self):**
+&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#118)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#87)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#91)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#83)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#87)(self):**
 
-&mdash; **def [initialize](/recipe_modules/build_menu/api.py#66)(self):**
+&mdash; **def [initialize](/recipe_modules/build_menu/api.py#70)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#91)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#95)(self):**
 
-&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#226)(self, no_chroot_timeout=False):**
+&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#230)(self, no_chroot_timeout=False):**
 
 Setup the chroot for the builder.
 
@@ -784,7 +784,7 @@ Args:
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#266)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#270)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -799,11 +799,11 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#200)(self, sync_to_manifest=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#204)(self, sync_to_manifest=None):**
 
 Setup the workspace for the builder.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#181)(self, no_chroot_timeout=False, sync_to_manifest=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#185)(self, no_chroot_timeout=False, sync_to_manifest=None):**
 
 Setup the workspace and chroot for the builder.
 
@@ -818,9 +818,9 @@ Args:
 Returns:
   (bool): Whether the build is relevant.
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#95)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#99)(self):**
 
-&emsp; **@property**<br>&mdash; **def [target\_versions](/recipe_modules/build_menu/api.py#99)(self):**
+&emsp; **@property**<br>&mdash; **def [target\_versions](/recipe_modules/build_menu/api.py#103)(self):**
 
 Get the current GetTargetVersionsResponse.
 
@@ -829,7 +829,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#485)(self, config=None, failing_build=False, private_bundle_func=None, sysroot=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#516)(self, config=None, failing_build=False, private_bundle_func=None, sysroot=None):**
 
 Upload artifacts from the build.
 
@@ -846,7 +846,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#514)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#545)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -899,7 +899,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#415)(self, builder_name):**
+&mdash; **def [get\_full\_builder\_name](/recipe_modules/build_plan/api.py#393)(self, builder_name):**
 
 Returns to the name of the full variant of the builder.
 
@@ -910,7 +910,7 @@ Args:
 Returns:
    A string of the full builder name.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#400)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#378)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -4352,6 +4352,23 @@ Args:
 
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
+
+&mdash; **def [get\_footer\_values](/recipe_modules/git_footers/api.py#151)(self, gerrit_changes, key, \*\*kwargs):**
+
+Gets a list of values from a footer.
+
+Fetches the named footer from the gerrit changes, and returns a set of all
+of the (comma-separated) values found.
+
+Args:
+  gerrit_changes ([common_pb2.GerritChange]): Gerrit changes applied to this
+    run.
+  key (str): The footer name (key) to fetch.
+  kwargs (dict): Other keyword arguements, passed to
+    git_footers.from_gerrit_change.
+
+Returns:
+  values (set(str)): A set of values.  May be empty.
 
 &mdash; **def [position\_num](/recipe_modules/git_footers/api.py#92)(self, ref, test_position_num=None, \*\*kwargs):**
 

@@ -2703,6 +2703,15 @@
   },
   {
     "cmd": [],
+    "name": "check force relevance",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@force relevant: False@@@",
+      "@@@STEP_LOG_LINE@found footer builders@found build(s): @@@",
+      "@@@STEP_LOG_END@found footer builders@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "install toolchain"
   },
   {

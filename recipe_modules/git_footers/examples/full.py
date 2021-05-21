@@ -41,17 +41,24 @@ Change-Id: ffffffffffffffff
 
 
 def RunSteps(api, invalid_cr_commit_position):
+  gerrit_change_a = GerritChange(
+      host='chromium-review.googlesource.com',
+      change=91827,
+      patchset=1,
+  )
+  gerrit_change_b = GerritChange(
+      host='chromium-review.googlesource.com',
+      change=91827,
+      patchset=1,
+  )
+  gerrit_changes = [gerrit_change_a, gerrit_change_b]
+
   api.assertions.assertEqual(
       api.git_footers.from_ref('HEAD', key='Reviewed-On'), ['HEAD:Reviewed-On'])
   api.assertions.assertEqual(
       api.git_footers.from_message('message', key='key'), ['message:key'])
   api.git_footers.position_num('HEAD')
-  api.git_footers.from_gerrit_change(
-      GerritChange(
-          host='chromium-review.googlesource.com',
-          change=91827,
-          patchset=1,
-      ))
+  api.git_footers.from_gerrit_change(gerrit_change_a)
 
   if invalid_cr_commit_position:
     api.assertions.assertEqual(api.git_footers.position_num('HEAD'), 1)
@@ -87,6 +94,9 @@ def RunSteps(api, invalid_cr_commit_position):
       api.git_footers.edit_add_change_description(description_nonexisting,
                                                   "Cq-Depend", "baz"),
       expected_description)
+  api.assertions.assertIn(
+      'Change-Id: deadbeef',
+      api.git_footers.get_footer_values(gerrit_changes, 'Change-Id'))
 
 
 def GenTests(api):

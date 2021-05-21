@@ -147,3 +147,26 @@ class GitFootersApi(recipe_api.RecipeApi):
     # Doesn't exist, add to start of footer block.
     footers = [new_footer] + footers
     return reassemble()
+
+  def get_footer_values(self, gerrit_changes, key, **kwargs):
+    """Gets a list of values from a footer.
+
+    Fetches the named footer from the gerrit changes, and returns a set of all
+    of the (comma-separated) values found.
+
+    Args:
+      gerrit_changes ([common_pb2.GerritChange]): Gerrit changes applied to this
+        run.
+      key (str): The footer name (key) to fetch.
+      kwargs (dict): Other keyword arguements, passed to
+        git_footers.from_gerrit_change.
+
+    Returns:
+      values (set(str)): A set of values.  May be empty.
+    """
+    ret = set()
+    for gerrit_change in gerrit_changes:
+      values = self.m.git_footers.from_gerrit_change(gerrit_change, key=key,
+                                                     **kwargs)
+      ret.update(x.strip() for v in values for x in v.split(','))
+    return ret

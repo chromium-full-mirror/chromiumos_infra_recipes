@@ -23,6 +23,7 @@ DEPS = [
     'cros_version',
     'easy',
     'failures',
+    'git_footers',
     'metadata_json',
     'sysroot_util',
     'test_util',
