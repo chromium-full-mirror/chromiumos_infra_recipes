@@ -21,7 +21,7 @@
       "remote",
       "HEAD:refs/heads/ref"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction.git push",
     "~followup_annotations": [
@@ -37,7 +37,7 @@
       "remote",
       "refs/heads/ref:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction.git fetch",
     "~followup_annotations": [
@@ -50,7 +50,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction.git rev-parse",
     "~followup_annotations": [
@@ -64,7 +64,7 @@
       "--force",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction.git checkout",
     "~followup_annotations": [
@@ -86,7 +86,7 @@
       "remote",
       "HEAD:refs/heads/ref"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction attempt 1 of 2.git push",
     "~followup_annotations": [
@@ -102,7 +102,7 @@
       "remote",
       "refs/heads/ref:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction attempt 1 of 2.git fetch",
     "~followup_annotations": [
@@ -115,7 +115,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction attempt 1 of 2.git rev-parse",
     "~followup_annotations": [
@@ -129,7 +129,7 @@
       "--force",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction attempt 1 of 2.git checkout",
     "~followup_annotations": [

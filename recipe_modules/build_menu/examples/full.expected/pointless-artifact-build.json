@@ -801,7 +801,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -819,7 +819,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -845,7 +845,7 @@
       "--accept-statuses",
       "200,404"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -861,9 +861,9 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
@@ -884,7 +884,7 @@
       "--manifest-name",
       "../tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -913,7 +913,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -943,7 +943,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -974,10 +974,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -998,7 +998,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -1011,7 +1011,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -1026,7 +1026,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -1121,7 +1121,7 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"chell\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"flags\": {\n    \"chrootCurrent\": true, \n    \"replace\": true\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "create sysroot.call chromite.api.SysrootService/Create.write input file",
     "~followup_annotations": [
@@ -1165,7 +1165,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
@@ -1174,10 +1174,10 @@
       "debug",
       "chromite.api.SysrootService/Create"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "create sysroot.call chromite.api.SysrootService/Create.call build API script",
@@ -1197,10 +1197,10 @@
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1285,10 +1285,10 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1358,7 +1358,7 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"chell\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\", \n      \"packageName\": \"chromeos-chrome\"\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "call chromite.api.PackageService/GetTargetVersions.write input file",
     "~followup_annotations": [
@@ -1404,7 +1404,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
@@ -1413,10 +1413,10 @@
       "debug",
       "chromite.api.PackageService/GetTargetVersions"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "call chromite.api.PackageService/GetTargetVersions.call build API script",
@@ -1435,10 +1435,10 @@
       "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1481,7 +1481,7 @@
       "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"chell\"\n    ], \n    \"bot-config\": \"orderfile-generate-toolchain\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"orderfile-generate-toolchain\", \n    \"builder_type\": \"toolchain\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload metadata.writing partial-metadata.json",
     "~followup_annotations": [
@@ -1531,10 +1531,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload metadata.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -1555,7 +1555,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload metadata.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -1568,7 +1568,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload metadata.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -1583,7 +1583,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload metadata.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -1602,7 +1602,7 @@
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
       "gs://chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184/partial-metadata.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload metadata.gsutil cp",
     "timeout": 600,
@@ -1677,7 +1677,7 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"chell\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"chell\"\n    }, \n    \"path\": \"/build/chell\"\n  }, \n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\", \n      \"packageName\": \"chromeos-chrome\"\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
     "~followup_annotations": [
@@ -1729,7 +1729,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
@@ -1738,10 +1738,10 @@
       "debug",
       "chromite.api.DependencyService/GetBuildDependencyGraph"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
@@ -1760,10 +1760,10 @@
       "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1868,10 +1868,10 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1925,7 +1925,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "validate SDK reuse.depgraph relevance check.ensure binaries.ensure_installed",
     "~followup_annotations": [
@@ -1958,7 +1958,7 @@
       "2\u0011snapshot-HEAD-SHABh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "validate SDK reuse.depgraph relevance check.write input binaryproto",
     "~followup_annotations": [
@@ -1978,7 +1978,7 @@
       "--output_binary_pb",
       "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "validate SDK reuse.depgraph relevance check.run check",
     "~followup_annotations": [
@@ -1996,7 +1996,7 @@
       "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "validate SDK reuse.depgraph relevance check.read output file",
     "~followup_annotations": [
@@ -2071,7 +2071,7 @@
       "{\n  \"flags\": {}, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"chell\"\n    }, \n    \"path\": \"/build/chell\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.write input file",
     "~followup_annotations": [
@@ -2115,7 +2115,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
@@ -2124,10 +2124,10 @@
       "debug",
       "chromite.api.SysrootService/InstallToolchain"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.call build API script",
@@ -2147,10 +2147,10 @@
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -2228,10 +2228,10 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -2336,7 +2336,7 @@
       "{\n  \"installRequest\": {\n    \"flags\": {\n      \"compileSource\": true\n    }, \n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot/chroot\", \n      \"env\": {\n        \"useFlags\": [\n          {\n            \"flag\": \"chrome_internal\"\n          }, \n          {\n            \"flag\": \"-cros-debug\"\n          }, \n          {\n            \"flag\": \"strict_toolchain_checks\"\n          }, \n          {\n            \"flag\": \"-orderfile_use\"\n          }, \n          {\n            \"flag\": \"orderfile_generate\"\n          }, \n          {\n            \"flag\": \"-strict_toolchain_checks\"\n          }\n        ]\n      }\n    }, \n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"chell\"\n      }, \n      \"path\": \"/build/chell\"\n    }, \n    \"useFlags\": [\n      {\n        \"flag\": \"chrome_internal\"\n      }, \n      {\n        \"flag\": \"-cros-debug\"\n      }, \n      {\n        \"flag\": \"strict_toolchain_checks\"\n      }, \n      {\n        \"flag\": \"-orderfile_use\"\n      }, \n      {\n        \"flag\": \"orderfile_generate\"\n      }, \n      {\n        \"flag\": \"-strict_toolchain_checks\"\n      }\n    ]\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.write input file",
     "~followup_annotations": [
@@ -2404,7 +2404,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
@@ -2413,10 +2413,10 @@
       "debug",
       "chromite.api.PackageService/NeedsChromeSource"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call build API script",
@@ -2435,10 +2435,10 @@
       "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -2525,7 +2525,7 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"chell\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
     "~followup_annotations": [
@@ -2565,7 +2565,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
@@ -2574,10 +2574,10 @@
       "debug",
       "chromite.api.PackageService/GetChromeVersion"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -2597,10 +2597,10 @@
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -2676,10 +2676,10 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -2705,7 +2705,7 @@
       "0777",
       "[START_DIR]/chrome"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "install packages.check chrome source needed.sync chrome.ensure chrome root",
     "~followup_annotations": [
@@ -2819,7 +2819,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "install packages.check chrome source needed.ensure goma client.ensure_installed",
     "~followup_annotations": [
@@ -2942,7 +2942,7 @@
       "{\n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\", \n    \"gomaApproach\": 1, \n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    }, \n    \"statsFile\": \"stats.binaryproto\", \n    \"counterzFile\": \"counterz.binaryproto\", \n    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\"\n  }, \n  \"flags\": {\n    \"useGoma\": true, \n    \"compileSource\": true\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"chell\"\n    }, \n    \"path\": \"/build/chell\"\n  }, \n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    }, \n    {\n      \"flag\": \"-cros-debug\"\n    }, \n    {\n      \"flag\": \"strict_toolchain_checks\"\n    }, \n    {\n      \"flag\": \"-orderfile_use\"\n    }, \n    {\n      \"flag\": \"orderfile_generate\"\n    }, \n    {\n      \"flag\": \"-strict_toolchain_checks\"\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.write input file",
     "~followup_annotations": [
@@ -3020,7 +3020,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
@@ -3029,10 +3029,10 @@
       "debug",
       "chromite.api.SysrootService/InstallPackages"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.call build API script",
@@ -3052,10 +3052,10 @@
       "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -3167,10 +3167,10 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -3208,10 +3208,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "read chromeos version (2).read chromeos_version.sh",
     "~followup_annotations": [
@@ -3232,7 +3232,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version (2).read snapshot.git fetch",
     "~followup_annotations": [
@@ -3245,7 +3245,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version (2).read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -3260,7 +3260,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version (2).read snapshot.read git footers",
     "~followup_annotations": [
@@ -3282,10 +3282,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "read chromeos version (3).read chromeos_version.sh",
     "~followup_annotations": [
@@ -3306,7 +3306,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version (3).read snapshot.git fetch",
     "~followup_annotations": [
@@ -3319,7 +3319,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version (3).read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -3334,7 +3334,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version (3).read snapshot.read git footers",
     "~followup_annotations": [
@@ -3356,10 +3356,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "read chromeos version (4).read chromeos_version.sh",
     "~followup_annotations": [
@@ -3380,7 +3380,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version (4).read snapshot.git fetch",
     "~followup_annotations": [
@@ -3393,7 +3393,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version (4).read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -3408,7 +3408,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version (4).read snapshot.read git footers",
     "~followup_annotations": [
@@ -3489,7 +3489,7 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"chell\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"chell\"\n    }, \n    \"path\": \"/build/chell\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"\n}",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.write input file",
     "~followup_annotations": [
@@ -3537,7 +3537,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
@@ -3546,10 +3546,10 @@
       "debug",
       "chromite.api.ArtifactsService/BundleEbuildLogs"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -3569,10 +3569,10 @@
       "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -3660,10 +3660,10 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -3739,7 +3739,7 @@
       "{\n  \"profileInfo\": {\n    \"chromeCwpProfile\": \"silvermont\"\n  }, \n  \"artifactTypes\": [\n    11\n  ], \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"chell\"\n    }, \n    \"path\": \"/build/chell\"\n  }, \n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload artifacts.call chromite.api.ToolchainService/BundleArtifacts.write input file",
     "~followup_annotations": [
@@ -3790,7 +3790,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
@@ -3799,10 +3799,10 @@
       "debug",
       "chromite.api.ToolchainService/BundleArtifacts"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -3822,10 +3822,10 @@
       "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -3942,7 +3942,7 @@
       "{\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\", \n      \"location\": 2\n    }\n  }, \n  \"artifactInfo\": {\n    \"profileInfo\": {\n      \"chromeCwpProfile\": \"silvermont\"\n    }, \n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            7\n          ]\n        }\n      ]\n    }, \n    \"toolchain\": {\n      \"inputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n            \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n          ], \n          \"artifactTypes\": [\n            11\n          ]\n        }\n      ], \n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-toolchain-artifacts/orderfile/unvetted\", \n            \"chromeos-prebuilt/afdo-job/orderfiles/unvetted\"\n          ], \n          \"artifactTypes\": [\n            11\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }, \n        {\n          \"flag\": \"strict_toolchain_checks\"\n        }, \n        {\n          \"flag\": \"-orderfile_use\"\n        }, \n        {\n          \"flag\": \"orderfile_generate\"\n        }, \n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"chell\"\n    }, \n    \"path\": \"/build/chell\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload artifacts.call chromite.api.ArtifactsService/Get.write input file",
     "~followup_annotations": [
@@ -4030,7 +4030,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
@@ -4039,10 +4039,10 @@
       "debug",
       "chromite.api.ArtifactsService/Get"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -4062,10 +4062,10 @@
       "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -4099,10 +4099,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload artifacts.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -4123,7 +4123,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -4136,7 +4136,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -4151,7 +4151,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -4174,7 +4174,7 @@
       "[CLEANUP]/artifacts_tmp_1",
       "gs://chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload artifacts.gsutil rsync",
     "timeout": 900,
@@ -4214,10 +4214,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -4238,7 +4238,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -4251,7 +4251,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -4266,7 +4266,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -4286,7 +4286,7 @@
       "gs://chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/orderfile",
       "gs://chromeos-toolchain-artifacts/orderfile/unvetted/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.gsutil cp",
     "timeout": 900,
@@ -4307,7 +4307,7 @@
       "gs://chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/orderfile",
       "gs://chromeos-prebuilt/afdo-job/orderfiles/unvetted/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.gsutil cp (2)",
     "timeout": 900,
@@ -4496,7 +4496,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -4519,7 +4519,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -4532,7 +4532,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -4547,7 +4547,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -4670,7 +4670,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
       "--output-json",
@@ -4681,7 +4681,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
@@ -4702,7 +4702,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -4813,7 +4813,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
       "--output-json",
@@ -4824,7 +4824,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call build API script",
@@ -4845,7 +4845,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -4909,7 +4909,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

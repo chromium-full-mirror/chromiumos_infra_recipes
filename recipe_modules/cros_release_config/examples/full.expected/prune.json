@@ -42,7 +42,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -72,10 +72,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite/config/chromeos_config.py",
+      "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite/config/chromeos_config.py",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
     "name": "update legacy config.read config/chromeos_config.py",
     "~followup_annotations": [
@@ -98,9 +98,9 @@
       "/path/to/tmp/json",
       "copy",
       "\n  ...\n  # BOT-TAG:RELEASES_START\n  RELEASES = [\n      ('release-R05-00004.B',\n       ['kevin-android-pi-pre-flight-branch',\n        'hatch-arc-r-android-rvc-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n\n      # This is a branch.\n      ('release-R04-13729.B',\n       ['grunt-android-pi-pre-flight-branch',\n        'hatch-arc-r-android-rvc-pre-flight-branch'],\n       '',\n       [],\n       [],\n       config_lib.LUCI_BUILDER_LEGACY_RELEASE),\n\n\n      # LTS branch, please do not delete. Contact: cros-lts-team@google.com.\n      # BOT-TAG:NO_PRUNE\n      ('release-R01-13421.B',\n       ['grunt-android-pi-pre-flight-branch'],\n       'chell-chrome-no-afdo-uprev-pre-flight-branch',\n       ['orderfile-generate-toolchain',\n        'orderfile-verify-toolchain'],\n       ['benchmark-afdo-generate',\n        'chrome-silvermont-release-afdo-verify',\n        'chrome-airmont-release-afdo-verify',\n        'chrome-broadwell-release-afdo-verify'],\n       config_lib.LUCI_BUILDER_LTS_RELEASE ),\n  ]\n  # BOT-TAG:RELEASES_END\n  ...\n",
-      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite/config/chromeos_config.py"
+      "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite/config/chromeos_config.py"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
     "name": "update legacy config.write config/chromeos_config.py",
     "~followup_annotations": [
@@ -149,7 +149,7 @@
     "cmd": [
       "./config/refresh_generated_files"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "name": "update legacy config../config/refresh_generated_files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -167,10 +167,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config/release/release_builders.textpb",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/release/release_builders.textpb",
       "/path/to/tmp/tpb"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "infra_step": true,
     "name": "update config.read release/release_builders.textpb",
     "~followup_annotations": [
@@ -225,9 +225,9 @@
       "/path/to/tmp/json",
       "copy",
       "builders {\n  milestone {\n    number: -1\n    branch_name: \"main\"\n  }\n  build_schedule: \"0 1 * * *\"\n}\nbuilders {\n  milestone {\n    number: 40\n    branch_name: \"release-R40-00040.B\"\n  }\n  build_schedule: \"0 11 * * *\"\n  expiration_date {\n    value: \"2100-01-01\"\n  }\n}\nbuilders {\n  milestone {\n    number: 5\n    branch_name: \"release-R05-00004.B\"\n  }\n  build_schedule: \"0 0 * * *\"\n}\nbuilders {\n  milestone {\n    number: 3\n    branch_name: \"release-R03-00003.B\"\n  }\n  build_schedule: \"0 * * * *\"\n}\n",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config/release/release_builders.textpb"
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/release/release_builders.textpb"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "infra_step": true,
     "name": "update config.write release/release_builders.textpb",
     "~followup_annotations": [
@@ -270,7 +270,7 @@
     "cmd": [
       "./regenerate_configs.sh"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "name": "update config../regenerate_configs.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -288,7 +288,7 @@
       "chromiumos/chromite",
       "chromeos/infra/config"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -314,9 +314,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite"
+      "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
     "name": "create CLs.commit in chromiumos/chromite.git add",
     "~followup_annotations": [
@@ -334,7 +334,7 @@
       "Update config to include release-R05-00004.B\n\nGenerated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=None\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
     "name": "create CLs.commit in chromiumos/chromite.write commit message",
     "~followup_annotations": [
@@ -355,7 +355,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
     "name": "create CLs.commit in chromiumos/chromite.git commit",
     "~followup_annotations": [
@@ -364,7 +364,7 @@
   },
   {
     "cmd": [],
-    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -374,11 +374,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -388,10 +388,10 @@
       ]
     },
     "infra_step": true,
-    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.repo forall",
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -405,7 +405,7 @@
       "--force",
       "--send-mail"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -414,7 +414,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.git_cl upload",
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -429,7 +429,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -438,7 +438,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromiumos/chromite.git_cl status",
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -449,18 +449,18 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+      "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -473,7 +473,7 @@
     "name": "create CLs.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -483,7 +483,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
     "name": "create CLs.set labels on CL 1.git rebase",
     "~followup_annotations": [
@@ -497,7 +497,7 @@
       "cros",
       "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "infra_step": true,
     "name": "create CLs.set labels on CL 1.git push",
     "~followup_annotations": [
@@ -515,9 +515,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config"
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "infra_step": true,
     "name": "create CLs.commit in chromeos/infra/config.git add",
     "~followup_annotations": [
@@ -535,7 +535,7 @@
       "Update config to include release-R05-00004.B\n\nGenerated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=None\n",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "infra_step": true,
     "name": "create CLs.commit in chromeos/infra/config.write commit message",
     "~followup_annotations": [
@@ -556,7 +556,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "infra_step": true,
     "name": "create CLs.commit in chromeos/infra/config.git commit",
     "~followup_annotations": [
@@ -565,7 +565,7 @@
   },
   {
     "cmd": [],
-    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -575,11 +575,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -589,10 +589,10 @@
       ]
     },
     "infra_step": true,
-    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromeos/infra/config.repo forall",
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -606,7 +606,7 @@
       "--force",
       "--send-mail"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -615,7 +615,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromeos/infra/config.git_cl upload",
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -630,7 +630,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -639,7 +639,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create CLs.create gerrit change for [START_DIR]/chromiumos_workspace/src/chromeos/infra/config.git_cl status",
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -650,18 +650,18 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -674,7 +674,7 @@
     "name": "create CLs.set labels on CL 1 (2).repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -684,7 +684,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "infra_step": true,
     "name": "create CLs.set labels on CL 1 (2).git rebase",
     "~followup_annotations": [
@@ -698,7 +698,7 @@
       "cros",
       "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/chromeos/infra/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "infra_step": true,
     "name": "create CLs.set labels on CL 1 (2).git push",
     "~followup_annotations": [

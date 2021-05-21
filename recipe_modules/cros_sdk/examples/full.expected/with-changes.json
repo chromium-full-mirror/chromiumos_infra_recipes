@@ -146,7 +146,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -170,7 +170,7 @@
       "https:///chromium/src",
       "refs/changes/34/1234/0:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -183,7 +183,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -198,7 +198,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -210,7 +210,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -352,7 +352,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
@@ -363,7 +363,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
@@ -385,7 +385,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -440,7 +440,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -492,7 +492,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "init sdk.link chroot in chromiumos_workspace.ensure chromiumos_workspace",
@@ -509,7 +509,7 @@
       "/path/to/tmp/json",
       "symlink",
       "[CACHE]/cros_chroot/chroot",
-      "[START_DIR]/chromiumos_workspace/chroot"
+      "[CLEANUP]/chromiumos_workspace/chroot"
     ],
     "infra_step": true,
     "name": "init sdk.link chroot in chromiumos_workspace.link chromiumos_workspace to chroot",
@@ -572,7 +572,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
@@ -583,7 +583,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call build API script",
@@ -604,7 +604,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -804,7 +804,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
@@ -815,7 +815,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call build API script",
@@ -836,7 +836,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -978,7 +978,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
@@ -989,7 +989,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "update sdk.call chromite.api.SdkService/Update.call build API script",
@@ -1011,7 +1011,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1066,7 +1066,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1093,7 +1093,7 @@
       "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1120,7 +1120,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
@@ -1131,7 +1131,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "uprev packages.call chromite.api.PackageService/Uprev.call build API script",
@@ -1153,7 +1153,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1185,10 +1185,10 @@
       "@@@STEP_LOG_LINE@published event@  \"uprevPackagesResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"modifiedEbuilds\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"@@@",
       "@@@STEP_LOG_LINE@published event@      }, @@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"path\": \"[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ], @@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": \"1.2.3\"@@@",
@@ -1211,12 +1211,12 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
     "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAdoCS3VwcmV2IHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBp\\nLlBhY2thZ2VTZXJ2aWNlL1VwcmV2fGNhbGwgYnVpbGQgQVBJIHNjcmlwdOICAhgB6gKFAQo5Cjdb\\nU1RBUlRfRElSXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28uZWJ1aWxkCkEK\\nP1tTVEFSVF9ESVJdL2Nocm9taXVtb3Nfd29ya3NwYWNlL3NyYy9wcml2YXRlLW92ZXJsYXkvYmFy\\nLmVidWlsZBIFMS4yLjM=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAdoCS3VwcmV2IHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBp\\nLlBhY2thZ2VTZXJ2aWNlL1VwcmV2fGNhbGwgYnVpbGQgQVBJIHNjcmlwdOICAhgB6gKBAQo3CjVb\\nQ0xFQU5VUF0vY2hyb21pdW1vc193b3Jrc3BhY2Uvc3JjL292ZXJsYXkvZm9vLmVidWlsZAo/Cj1b\\nQ0xFQU5VUF0vY2hyb21pdW1vc193b3Jrc3BhY2Uvc3JjL3ByaXZhdGUtb3ZlcmxheS9iYXIuZWJ1\\naWxkEgUxLjIuMw==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1319,7 +1319,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
@@ -1330,7 +1330,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "creating chroot snapshot.call chromite.api.SdkService/CreateSnapshot.call build API script",
@@ -1351,7 +1351,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1435,7 +1435,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
@@ -1446,7 +1446,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "restoring chroot from snapshot.call chromite.api.SdkService/RestoreSnapshot.call build API script",
@@ -1467,7 +1467,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1659,7 +1659,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
@@ -1670,7 +1670,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "unmounting chroot.call chromite.api.SdkService/Unmount.call build API script",
@@ -1691,7 +1691,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1807,7 +1807,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
@@ -1818,7 +1818,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
@@ -1839,7 +1839,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1920,7 +1920,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
@@ -1931,7 +1931,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call build API script",
@@ -1952,7 +1952,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,

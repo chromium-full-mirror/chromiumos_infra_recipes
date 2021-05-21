@@ -41,7 +41,7 @@
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh",
       "[CLEANUP]/build_api_messages_tmp_1/build_log.txt",
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
@@ -52,7 +52,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "call chromite.api.ArtifactsService/BundleFirmware.call build API script",
@@ -74,7 +74,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -122,7 +122,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -153,7 +153,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -179,7 +179,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,

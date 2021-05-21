@@ -208,7 +208,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -407,7 +407,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -431,7 +431,7 @@
       "https://chrome-internal.googlesource.com/chromiumos/config",
       "refs/changes/23/123/0:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/config",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -444,7 +444,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/config",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -459,7 +459,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/config",
     "name": "successful apply changes.apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -471,7 +471,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/config",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/config",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -488,7 +488,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -512,7 +512,7 @@
       "https://chrome-internal.googlesource.com/privateproject1",
       "refs/changes/56/456/0:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/privateproject1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/privateproject1",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git fetch (2)",
     "~followup_annotations": [
@@ -525,7 +525,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/privateproject1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/privateproject1",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse (3)",
     "~followup_annotations": [
@@ -540,7 +540,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/privateproject1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/privateproject1",
     "name": "successful apply changes.apply gerrit patch sets.git merge (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -552,7 +552,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/privateproject1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/privateproject1",
     "infra_step": true,
     "name": "successful apply changes.apply gerrit patch sets.git rev-parse (4)",
     "~followup_annotations": [

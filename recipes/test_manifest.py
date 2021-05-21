@@ -89,10 +89,11 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  internal_exists = api.path.exists(api.path['start_dir'].join(
-      'chromiumos_workspace/src/chromeos/manifest-internal/default.xml'))
-  external_exists = api.path.exists(api.path['start_dir'].join(
-      'chromiumos_workspace/src/chromiumos/manifest/default.xml'))
+  internal_exists = api.path.exists(
+      api.src_state.workspace_path.join(
+          'src/chromeos/manifest-internal/default.xml'))
+  external_exists = api.path.exists(
+      api.src_state.workspace_path.join('src/chromiumos/manifest/default.xml'))
   common_args = [
       api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(post_process.DoesNotRun,
@@ -109,9 +110,9 @@ def GenTests(api):
   yield api.test(
       'with-manifest-changes',
       api.buildbucket.try_build(project='chromiumos/manifest'),
-      api.path.exists(api.path['start_dir'].join(
-          'chromiumos_workspace/src/chromiumos/manifest/default.xml')),
-      *common_args)
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/chromiumos/manifest/default.xml')), *common_args)
 
   yield api.test(
       'with-manifest-internal-changes',

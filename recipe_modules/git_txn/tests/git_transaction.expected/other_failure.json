@@ -22,7 +22,7 @@
       "remote",
       "HEAD:refs/heads/ref"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction.git push",
     "~followup_annotations": [

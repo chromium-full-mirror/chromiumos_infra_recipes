@@ -122,7 +122,7 @@
       "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
       "[CACHE]/chromiumos/.recipes_state.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json",
     "~followup_annotations": [
@@ -151,7 +151,7 @@
       "0777",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.ensure root path",
     "~followup_annotations": [
@@ -412,7 +412,7 @@
       "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CACHE]/chromiumos/.recipes_state.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
     "~followup_annotations": [
@@ -451,7 +451,7 @@
       "0777",
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "mount overlay workspace.create upperdir",
     "~followup_annotations": [
@@ -470,7 +470,7 @@
       "0777",
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "mount overlay workspace.create workdir",
     "~followup_annotations": [
@@ -487,9 +487,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
     "~followup_annotations": [
@@ -506,9 +506,9 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "mount overlay workspace.mount",
     "~followup_annotations": [
@@ -539,7 +539,7 @@
       "staging-snapshot",
       "--repo-rev=stable"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -567,7 +567,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -597,7 +597,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -638,7 +638,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

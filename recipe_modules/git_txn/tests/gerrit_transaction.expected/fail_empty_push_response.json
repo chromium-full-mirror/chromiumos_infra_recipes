@@ -22,7 +22,7 @@
       "ref",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git checkout",
     "~followup_annotations": [
@@ -35,7 +35,7 @@
       "branch",
       "--set-upstream-to=remote/ref"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git branch",
     "~followup_annotations": [
@@ -50,7 +50,7 @@
       "remote",
       "HEAD:refs/for/refs/heads/ref"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git push",
     "~followup_annotations": [

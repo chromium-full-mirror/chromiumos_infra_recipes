@@ -675,7 +675,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -693,7 +693,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -719,7 +719,7 @@
       "--accept-statuses",
       "200,404"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -735,9 +735,9 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
@@ -758,7 +758,7 @@
       "--manifest-name",
       "../tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -787,7 +787,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -817,7 +817,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -841,7 +841,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 1235, \"host\": \"chrome-internal.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 2341, \"host\": \"chrome-internal.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
@@ -990,7 +990,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1014,7 +1014,7 @@
       "https://chromium.googlesource.com/p1",
       "refs/changes/34/1234/0:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -1027,7 +1027,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -1042,7 +1042,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1054,7 +1054,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -1071,7 +1071,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1095,7 +1095,7 @@
       "https://chrome-internal.googlesource.com/p1",
       "refs/changes/35/1235/0:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch (2)",
     "~followup_annotations": [
@@ -1108,7 +1108,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (3)",
     "~followup_annotations": [
@@ -1123,7 +1123,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1135,7 +1135,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (4)",
     "~followup_annotations": [
@@ -1152,7 +1152,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1176,7 +1176,7 @@
       "https://chrome-internal.googlesource.com/p2",
       "refs/changes/41/2341/0:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch (3)",
     "~followup_annotations": [
@@ -1189,7 +1189,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (5)",
     "~followup_annotations": [
@@ -1204,7 +1204,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1216,7 +1216,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (6)",
     "~followup_annotations": [
@@ -1239,7 +1239,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1272,7 +1272,7 @@
       "--short",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1296,7 +1296,7 @@
       "-b",
       "__presubmit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1317,7 +1317,7 @@
       "--set-upstream-to",
       "cros/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1338,7 +1338,7 @@
       "presubmit",
       "--verbose"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1358,7 +1358,7 @@
       "checkout",
       "main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1380,7 +1380,7 @@
       "-D",
       "__presubmit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p1",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1408,7 +1408,7 @@
       "--short",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1432,7 +1432,7 @@
       "-b",
       "__presubmit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1453,7 +1453,7 @@
       "--set-upstream-to",
       "cros/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1474,7 +1474,7 @@
       "presubmit",
       "--verbose"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1494,7 +1494,7 @@
       "checkout",
       "main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1516,7 +1516,7 @@
       "-D",
       "__presubmit"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/p2",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1581,7 +1581,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
@@ -1592,7 +1592,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
@@ -1613,7 +1613,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1678,7 +1678,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
@@ -1689,7 +1689,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call build API script",
@@ -1710,7 +1710,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1774,7 +1774,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

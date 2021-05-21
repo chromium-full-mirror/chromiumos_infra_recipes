@@ -149,7 +149,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -167,7 +167,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -191,10 +191,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_branch\": \"release-R88-13597.B\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
-      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+      "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json",
+    "name": "Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"release-R88-13597.B\"@@@",
@@ -216,7 +216,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "ensure synced checkout.ensure root path",
@@ -232,9 +232,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/.repo/manifests"
+      "[CLEANUP]/chromiumos_workspace/.repo/manifests"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests",
     "~followup_annotations": [
@@ -249,9 +249,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/.repo/manifests.git"
+      "[CLEANUP]/chromiumos_workspace/.repo/manifests.git"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.remove .repo/manifests.git",
     "~followup_annotations": [
@@ -270,7 +270,7 @@
       "release-R88-13597.B",
       "--repo-rev=stable"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -298,7 +298,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -318,7 +318,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -338,7 +338,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -364,7 +364,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -388,7 +388,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -425,7 +425,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -456,7 +456,7 @@
       "chromeos/manifest-internal",
       "chromiumos/manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -481,10 +481,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_branch\": \"release-R88-13597.B\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+      "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json (2)",
+    "name": "Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"release-R88-13597.B\"@@@",
@@ -502,7 +502,7 @@
       "remote",
       "update"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "sync manifest branches.sync chromeos/manifest-internal branches",
     "~followup_annotations": [
@@ -515,7 +515,7 @@
       "remote",
       "update"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "sync manifest branches.sync chromiumos/manifest branches",
     "~followup_annotations": [
@@ -529,7 +529,7 @@
       "--force",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "git checkout"
   },
@@ -541,10 +541,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/full.xml",
-      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/full.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest/full.xml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "copy full.xml"
   },
@@ -556,10 +556,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/_kernel_upstream.xml",
-      "[START_DIR]/chromiumos_workspace/manifest/_kernel_upstream.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/_kernel_upstream.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "copy _kernel_upstream.xml"
   },
@@ -568,7 +568,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -595,7 +595,7 @@
       "<manifest></manifest>",
       "[CLEANUP]/manifest_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "write manifest file",
     "~followup_annotations": [
@@ -628,7 +628,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

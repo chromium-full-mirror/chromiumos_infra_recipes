@@ -15,7 +15,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -38,7 +38,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "set labels on CL 12345678.git rebase",
     "~followup_annotations": [
@@ -52,7 +52,7 @@
       "cros",
       "HEAD:refs/for/main%l=Code-Review+2,l=Verified+1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "set labels on CL 12345678.git push",
     "~followup_annotations": [
@@ -67,7 +67,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -133,7 +133,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -157,7 +157,7 @@
       "--force-rebase",
       "cros/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "set labels on CL 123.git rebase",
     "~followup_annotations": [
@@ -171,7 +171,7 @@
       "cros",
       "HEAD:refs/for/main%l=Code-Review+2,l=Verified+1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "set labels on CL 123.git push",
     "~followup_annotations": [

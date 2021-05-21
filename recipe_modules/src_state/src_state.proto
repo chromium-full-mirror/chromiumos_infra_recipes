@@ -7,6 +7,5 @@ syntax = "proto3";
 package recipe_modules.chromeos.src_state;
 
 message SrcStateProperties {
-  // Feature flag: move the workspace to cleanup dir
-  bool workspace_in_cleanup = 1;
+  // Currently, there are no experiments in this module.
 }

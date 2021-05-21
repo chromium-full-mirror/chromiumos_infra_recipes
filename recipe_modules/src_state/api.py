@@ -42,15 +42,7 @@ class SrcStateApi(recipe_api.RecipeApi):
     self._gitiles_commit = None
     self._gerrit_changes = None
     self._build_manifest = None
-
-    if (self.properties.workspace_in_cleanup or
-        'chromeos.src_state.workspace_in_cleanup' in [
-            x.encode('utf-8')
-            for x in self.m.buildbucket.build.input.experiments
-        ]):
-      self._workspace_base = 'cleanup'
-    else:
-      self._workspace_base = 'start_dir'
+    self._workspace_base = 'cleanup'
 
   @property
   def default_ref(self):

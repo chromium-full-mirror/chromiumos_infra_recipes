@@ -634,7 +634,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -652,7 +652,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -679,10 +679,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[START_DIR]/chromiumos_workspace/src/overlays/baseboard-reef/chromeos-base/chromeos-config-bsp-baseboard/files",
-      "[START_DIR]/chromiumos_workspace/src/overlays/overlay-reef/chromeos-base/chromeos-config-bsp/files/include-public"
+      "[CLEANUP]/chromiumos_workspace/src/overlays/baseboard-reef/chromeos-base/chromeos-config-bsp-baseboard/files",
+      "[CLEANUP]/chromiumos_workspace/src/overlays/overlay-reef/chromeos-base/chromeos-config-bsp/files/include-public"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "create portage workaround symlinks.[reef] configuring public baseboard overlay.copying files",
     "~followup_annotations": [
@@ -704,10 +704,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/baseboard-reef-private/chromeos-base/chromeos-config-bsp-baseboard-private/files",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/overlay-reef-private/chromeos-base/chromeos-config-bsp-private/files/include-private"
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/baseboard-reef-private/chromeos-base/chromeos-config-bsp-baseboard-private/files",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/overlay-reef-private/chromeos-base/chromeos-config-bsp-private/files/include-private"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "create portage workaround symlinks.[reef] configuring private baseboard overlay.copying files",
     "~followup_annotations": [
@@ -729,10 +729,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[START_DIR]/chromiumos_workspace/src/overlays/baseboard-fizz/chromeos-base/chromeos-config-bsp-baseboard/files",
-      "[START_DIR]/chromiumos_workspace/src/overlays/overlay-fizz/chromeos-base/chromeos-config-bsp-fizz/files/include-public"
+      "[CLEANUP]/chromiumos_workspace/src/overlays/baseboard-fizz/chromeos-base/chromeos-config-bsp-baseboard/files",
+      "[CLEANUP]/chromiumos_workspace/src/overlays/overlay-fizz/chromeos-base/chromeos-config-bsp-fizz/files/include-public"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "create portage workaround symlinks.[fizz] configuring public baseboard overlay.copying files",
     "~followup_annotations": [
@@ -754,10 +754,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/baseboard-fizz-private/chromeos-base/chromeos-config-bsp-baseboard/files/include",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/overlay-fizz-private/chromeos-base/chromeos-config-bsp-fizz-private/files/include"
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/baseboard-fizz-private/chromeos-base/chromeos-config-bsp-baseboard/files/include",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/overlay-fizz-private/chromeos-base/chromeos-config-bsp-fizz-private/files/include"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "create portage workaround symlinks.[fizz] configuring private baseboard overlay.copying files",
     "~followup_annotations": [
@@ -803,7 +803,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

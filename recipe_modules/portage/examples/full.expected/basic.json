@@ -6,7 +6,7 @@
       "commit",
       "--all",
       "--buildroot",
-      "[START_DIR]/chromiumos_workspace",
+      "[CLEANUP]/chromiumos_workspace",
       "--overlay-type",
       "both"
     ],

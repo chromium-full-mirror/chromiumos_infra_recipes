@@ -721,7 +721,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -739,7 +739,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -765,7 +765,7 @@
       "--accept-statuses",
       "200,404"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -781,9 +781,9 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
@@ -804,7 +804,7 @@
       "--manifest-name",
       "../tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -834,7 +834,7 @@
       "8",
       "chromium/src"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -858,7 +858,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
@@ -927,7 +927,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -951,7 +951,7 @@
       "https://chromium.googlesource.com/chromium/src",
       "refs/changes/01/1/1:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -964,7 +964,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -979,7 +979,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -991,7 +991,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromium/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -1012,7 +1012,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1045,7 +1045,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "get CL 1 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
@@ -1109,9 +1109,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src/tricium/data"
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src/tricium/data"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "ensure tricium data dir"
   },
@@ -1124,9 +1124,9 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"files\": [\n    {\n      \"path\": \"bar.sh\"\n    }, \n    {\n      \"path\": \"foo.ebuild\"\n    }\n  ], \n  \"commitMessage\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"\n}",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src/tricium/data/files.json"
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src/tricium/data/files.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "write files.json",
     "~followup_annotations": [
@@ -1166,7 +1166,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "ShellcheckPortage.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1187,7 +1187,7 @@
     "cmd": [
       "[CLEANUP]/ShellcheckPortage/package/shellcheck_tricium",
       "-input",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src",
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src",
       "-output",
       "[CLEANUP]/ShellcheckPortage/out",
       "--path_filters=*.ebuild,*.eclass",
@@ -1199,7 +1199,7 @@
     "name": "ShellcheckPortage.run analyzer",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/ShellcheckPortage/package/shellcheck_tricium -input [START_DIR]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/ShellcheckPortage/out --path_filters=*.ebuild,*.eclass --exclude=SC2148 --shell=bash --enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/ShellcheckPortage/package/shellcheck_tricium -input [CLEANUP]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/ShellcheckPortage/out --path_filters=*.ebuild,*.eclass --exclude=SC2148 --shell=bash --enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces@@@",
       "@@@STEP_LOG_END@cmd@@@"
     ]
   },
@@ -1215,7 +1215,7 @@
       "0777",
       "[CLEANUP]/ShellcheckPortage/out/tricium/data"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "ShellcheckPortage.ensure tricium data dir",
     "~followup_annotations": [
@@ -1233,7 +1233,7 @@
       "[CLEANUP]/ShellcheckPortage/out/tricium/data/results.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "ShellcheckPortage.read results",
     "~followup_annotations": [
@@ -1264,7 +1264,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "Shellcheck.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1285,7 +1285,7 @@
     "cmd": [
       "[CLEANUP]/Shellcheck/package/shellcheck_tricium",
       "-input",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src",
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src",
       "-output",
       "[CLEANUP]/Shellcheck/out",
       "--path_filters=*.sh",
@@ -1296,7 +1296,7 @@
     "name": "Shellcheck.run analyzer",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/Shellcheck/package/shellcheck_tricium -input [START_DIR]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/Shellcheck/out --path_filters=*.sh --exclude=SC1091,SC3043 --enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces,quote-safe-variables@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/Shellcheck/package/shellcheck_tricium -input [CLEANUP]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/Shellcheck/out --path_filters=*.sh --exclude=SC1091,SC3043 --enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces,quote-safe-variables@@@",
       "@@@STEP_LOG_END@cmd@@@"
     ]
   },
@@ -1312,7 +1312,7 @@
       "0777",
       "[CLEANUP]/Shellcheck/out/tricium/data"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "Shellcheck.ensure tricium data dir",
     "~followup_annotations": [
@@ -1330,7 +1330,7 @@
       "[CLEANUP]/Shellcheck/out/tricium/data/results.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "Shellcheck.read results",
     "~followup_annotations": [
@@ -1361,7 +1361,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "Spellchecker.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1382,7 +1382,7 @@
     "cmd": [
       "[CLEANUP]/Spellchecker/package/spellchecker",
       "-input",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src",
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src",
       "-output",
       "[CLEANUP]/Spellchecker/out"
     ],
@@ -1390,7 +1390,7 @@
     "name": "Spellchecker.run analyzer",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/Spellchecker/package/spellchecker -input [START_DIR]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/Spellchecker/out@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/Spellchecker/package/spellchecker -input [CLEANUP]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/Spellchecker/out@@@",
       "@@@STEP_LOG_END@cmd@@@"
     ]
   },
@@ -1406,7 +1406,7 @@
       "0777",
       "[CLEANUP]/Spellchecker/out/tricium/data"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "Spellchecker.ensure tricium data dir",
     "~followup_annotations": [
@@ -1424,7 +1424,7 @@
       "[CLEANUP]/Spellchecker/out/tricium/data/results.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "Spellchecker.read results",
     "~followup_annotations": [
@@ -1441,9 +1441,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/src/chromium/src/tricium"
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src/tricium"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "clean up tricium data dir"
   },
@@ -1505,7 +1505,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
@@ -1516,7 +1516,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
@@ -1537,7 +1537,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1602,7 +1602,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
@@ -1613,7 +1613,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call build API script",
@@ -1634,7 +1634,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1698,7 +1698,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

@@ -489,7 +489,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -507,7 +507,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -634,7 +634,7 @@
       "release-R89-12345.B",
       "--repo-rev=stable"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -663,7 +663,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -695,7 +695,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -720,7 +720,7 @@
       "manifest",
       "-r"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -753,7 +753,7 @@
       "/path/to/tmp/json",
       "copy",
       "89.1.2.5",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
     "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.try uprev version file.version file",
@@ -783,7 +783,7 @@
       "rev-parse",
       "--show-toplevel"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.commit uprev.git rev-parse",
     "~followup_annotations": [
@@ -794,11 +794,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -811,7 +811,7 @@
     "name": "upreving pin for branch release-R89-12345.B.commit uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -820,9 +820,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "uprev-guest-vm-release-R89-12345.B",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc"
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -841,9 +841,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.commit uprev.git add",
     "~followup_annotations": [
@@ -861,7 +861,7 @@
       "termina-dlc: updating version pin to latest - 89.1.2.5\n\nCL generated by job https://cr-buildbucket.appspot.com/build/0",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.commit uprev.write commit message",
     "~followup_annotations": [
@@ -879,7 +879,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.commit uprev.git commit",
     "~followup_annotations": [
@@ -1042,7 +1042,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "name": "upreving pin for branch release-R89-12345.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -1052,11 +1052,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1066,10 +1066,10 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R89-12345.B.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
+    "name": "upreving pin for branch release-R89-12345.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1085,7 +1085,7 @@
       "termina-dlc",
       "--send-mail"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1094,7 +1094,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upreving pin for branch release-R89-12345.B.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
+    "name": "upreving pin for branch release-R89-12345.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1109,7 +1109,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1118,7 +1118,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upreving pin for branch release-R89-12345.B.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
+    "name": "upreving pin for branch release-R89-12345.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1129,18 +1129,18 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1153,7 +1153,7 @@
     "name": "upreving pin for branch release-R89-12345.B.generate CL.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1163,7 +1163,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.generate CL.set labels on CL 1.git rebase",
     "~followup_annotations": [
@@ -1177,7 +1177,7 @@
       "cros",
       "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.generate CL.set labels on CL 1.git push",
     "~followup_annotations": [
@@ -1215,7 +1215,7 @@
       "release-R88-12345.B",
       "--repo-rev=stable"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1244,7 +1244,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1276,7 +1276,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1301,7 +1301,7 @@
       "manifest",
       "-r"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1334,7 +1334,7 @@
       "/path/to/tmp/json",
       "copy",
       "88.1.2.4",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
     "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.try uprev version file.version file",
@@ -1364,7 +1364,7 @@
       "rev-parse",
       "--show-toplevel"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.commit uprev.git rev-parse",
     "~followup_annotations": [
@@ -1375,11 +1375,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1392,7 +1392,7 @@
     "name": "upreving pin for branch release-R88-12345.B.commit uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1401,9 +1401,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "uprev-guest-vm-release-R88-12345.B",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc"
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1422,9 +1422,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.commit uprev.git add",
     "~followup_annotations": [
@@ -1442,7 +1442,7 @@
       "termina-dlc: updating version pin to latest - 88.1.2.4\n\nCL generated by job https://cr-buildbucket.appspot.com/build/0",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.commit uprev.write commit message",
     "~followup_annotations": [
@@ -1460,7 +1460,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.commit uprev.git commit",
     "~followup_annotations": [
@@ -1623,7 +1623,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "name": "upreving pin for branch release-R88-12345.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -1633,11 +1633,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1647,10 +1647,10 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R88-12345.B.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
+    "name": "upreving pin for branch release-R88-12345.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1666,7 +1666,7 @@
       "termina-dlc",
       "--send-mail"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1675,7 +1675,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upreving pin for branch release-R88-12345.B.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
+    "name": "upreving pin for branch release-R88-12345.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1690,7 +1690,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1699,7 +1699,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upreving pin for branch release-R88-12345.B.generate CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
+    "name": "upreving pin for branch release-R88-12345.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1710,18 +1710,18 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1734,7 +1734,7 @@
     "name": "upreving pin for branch release-R88-12345.B.generate CL.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1744,7 +1744,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.generate CL.set labels on CL 1.git rebase",
     "~followup_annotations": [
@@ -1758,7 +1758,7 @@
       "cros",
       "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.generate CL.set labels on CL 1.git push",
     "~followup_annotations": [
@@ -1790,7 +1790,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

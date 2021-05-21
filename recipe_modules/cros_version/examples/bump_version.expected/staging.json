@@ -277,7 +277,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -300,7 +300,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "bump version.read updated version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -313,7 +313,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "bump version.read updated version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -328,7 +328,7 @@
       "2d72510e447ab60a9728aeea2362d8be2cbd7789",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "bump version.read updated version.read snapshot.read git footers",
     "~followup_annotations": [

@@ -1958,7 +1958,7 @@
       "--output_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
       "--manifest_file",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "infra_step": true,
     "name": "generate test plan.call test_planner",

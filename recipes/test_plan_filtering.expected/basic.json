@@ -488,7 +488,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -506,7 +506,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -518,11 +518,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/config-internal",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -534,7 +534,7 @@
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/config-internal|src/[START_DIR]/chromiumos_workspace/src/config-internal|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/config-internal|src/[CLEANUP]/chromiumos_workspace/src/config-internal|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -546,7 +546,7 @@
       ".",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "git ls-remote"
   },
@@ -573,7 +573,7 @@
       "main",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git checkout",
     "~followup_annotations": [
@@ -586,7 +586,7 @@
       "branch",
       "--set-upstream-to=cros/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git branch",
     "~followup_annotations": [
@@ -596,11 +596,11 @@
   {
     "cmd": [
       "vpython3",
-      "[START_DIR]/chromiumos_workspace/infra/config/scripts/device_usage/get_test_plans_to_be_filtered.py",
+      "[CLEANUP]/chromiumos_workspace/infra/config/scripts/device_usage/get_test_plans_to_be_filtered.py",
       "--repo",
-      "[START_DIR]/chromiumos_workspace/src/config-internal/test/plans"
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/plans"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "update ref.gerrit transaction.find test plans",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -609,16 +609,16 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/infra/config/scripts/device_usage/filter_test_plans_by_availability.py",
+      "[CLEANUP]/chromiumos_workspace/infra/config/scripts/device_usage/filter_test_plans_by_availability.py",
       "--input",
       "[START_DIR]/base1/file1.jsonproto",
       "--output",
       "[START_DIR]/base1/file1.filtered.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "env": {
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json",
-      "PYTHONPATH": "[START_DIR]/chromiumos_workspace/src/config/payload_utils:[START_DIR]/chromiumos_workspace/infra/config:[START_DIR]/chromiumos_workspace/src/config-internal"
+      "PYTHONPATH": "[CLEANUP]/chromiumos_workspace/src/config/payload_utils:[CLEANUP]/chromiumos_workspace/infra/config:[CLEANUP]/chromiumos_workspace/src/config-internal"
     },
     "name": "update ref.gerrit transaction.filter test plans by availability step",
     "~followup_annotations": [
@@ -631,7 +631,7 @@
       "add",
       "[START_DIR]/base1/file1.filtered.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git add",
     "~followup_annotations": [
@@ -641,13 +641,13 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config-internal/test/scripts/generate_test_plan_summary.py",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/scripts/generate_test_plan_summary.py",
       "--input",
       "[START_DIR]/base1/file1.filtered.jsonproto",
       "--output",
       "[START_DIR]/base1/test_plans"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "update ref.gerrit transaction.generate test plan summary step",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -659,7 +659,7 @@
       "add",
       "[START_DIR]/base1/test_plans"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git add (2)",
     "~followup_annotations": [
@@ -669,16 +669,16 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/infra/config/scripts/device_usage/filter_test_plans_by_availability.py",
+      "[CLEANUP]/chromiumos_workspace/infra/config/scripts/device_usage/filter_test_plans_by_availability.py",
       "--input",
       "[START_DIR]/base2/file2.jsonproto",
       "--output",
       "[START_DIR]/base2/file2.filtered.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "env": {
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json",
-      "PYTHONPATH": "[START_DIR]/chromiumos_workspace/src/config/payload_utils:[START_DIR]/chromiumos_workspace/infra/config:[START_DIR]/chromiumos_workspace/src/config-internal"
+      "PYTHONPATH": "[CLEANUP]/chromiumos_workspace/src/config/payload_utils:[CLEANUP]/chromiumos_workspace/infra/config:[CLEANUP]/chromiumos_workspace/src/config-internal"
     },
     "name": "update ref.gerrit transaction.filter test plans by availability step (2)",
     "~followup_annotations": [
@@ -691,7 +691,7 @@
       "add",
       "[START_DIR]/base2/file2.filtered.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git add (3)",
     "~followup_annotations": [
@@ -701,13 +701,13 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config-internal/test/scripts/generate_test_plan_summary.py",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/scripts/generate_test_plan_summary.py",
       "--input",
       "[START_DIR]/base2/file2.filtered.jsonproto",
       "--output",
       "[START_DIR]/base2/test_plans"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "update ref.gerrit transaction.generate test plan summary step (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -719,7 +719,7 @@
       "add",
       "[START_DIR]/base2/test_plans"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git add (4)",
     "~followup_annotations": [
@@ -729,16 +729,16 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/infra/config/scripts/device_usage/filter_test_plans_by_availability.py",
+      "[CLEANUP]/chromiumos_workspace/infra/config/scripts/device_usage/filter_test_plans_by_availability.py",
       "--input",
       "[START_DIR]/base3/file3.jsonproto",
       "--output",
       "[START_DIR]/base3/file3.filtered.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "env": {
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json",
-      "PYTHONPATH": "[START_DIR]/chromiumos_workspace/src/config/payload_utils:[START_DIR]/chromiumos_workspace/infra/config:[START_DIR]/chromiumos_workspace/src/config-internal"
+      "PYTHONPATH": "[CLEANUP]/chromiumos_workspace/src/config/payload_utils:[CLEANUP]/chromiumos_workspace/infra/config:[CLEANUP]/chromiumos_workspace/src/config-internal"
     },
     "name": "update ref.gerrit transaction.filter test plans by availability step (3)",
     "~followup_annotations": [
@@ -751,7 +751,7 @@
       "add",
       "[START_DIR]/base3/file3.filtered.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git add (5)",
     "~followup_annotations": [
@@ -761,13 +761,13 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config-internal/test/scripts/generate_test_plan_summary.py",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/scripts/generate_test_plan_summary.py",
       "--input",
       "[START_DIR]/base3/file3.filtered.jsonproto",
       "--output",
       "[START_DIR]/base3/test_plans"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "update ref.gerrit transaction.generate test plan summary step (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -779,7 +779,7 @@
       "add",
       "[START_DIR]/base3/test_plans"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git add (6)",
     "~followup_annotations": [
@@ -800,7 +800,7 @@
       "--name-only",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.diffing to find changes.git diff",
     "~followup_annotations": [
@@ -818,7 +818,7 @@
       "Updating test plans.\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: test_plan_filtering/filter",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.write commit message",
     "~followup_annotations": [
@@ -836,7 +836,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git commit",
     "~followup_annotations": [
@@ -851,7 +851,7 @@
       "cros",
       "HEAD:refs/for/refs/heads/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
     "name": "update ref.gerrit transaction.git push",
     "~followup_annotations": [
@@ -884,7 +884,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

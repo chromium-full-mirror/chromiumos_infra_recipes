@@ -1,40 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "found pre-existing [START_DIR]/chromiumos_workspace"
-  },
-  {
-    "cmd": [],
-    "name": "found pre-existing [START_DIR]/chromiumos_workspace.set preexisting_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@preexisting_workspace@true@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "ls",
-      "-l"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "found pre-existing [START_DIR]/chromiumos_workspace.ls",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cat",
-      "/proc/mounts"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "found pre-existing [START_DIR]/chromiumos_workspace.mounts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "mount overlay chromiumos"
   },
   {
@@ -516,7 +482,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -534,7 +500,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -554,10 +520,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/infra/config/project_config/all_programs_config.json",
+      "[CLEANUP]/chromiumos_workspace/infra/config/project_config/all_programs_config.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "find config repos.reading DLM config",
     "~followup_annotations": [
@@ -588,7 +554,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -622,7 +588,7 @@
     "cmd": [
       "./regenerate_configs.sh"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal/test/suite_scheduler",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler",
     "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.run regenerate_configs.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -699,7 +665,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -734,15 +700,15 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
       "-m",
       "chromiumos.config.payload.FlatConfigList",
       "-a",
       "chromiumos.config.payload.FlatConfigList",
       "-o",
-      "[START_DIR]/chromiumos_workspace/src/config-internal/hw_design/generated/flattened.jsonproto"
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/hw_design/generated/flattened.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.merge flattened configs to config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -775,7 +741,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -817,7 +783,7 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
       "-m",
       "chromiumos.config.payload.ConfigBundle",
       "-a",
@@ -825,7 +791,7 @@
       "-o",
       "hw_design/generated/configs.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -865,9 +831,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/src/project_public/galaxy/milkyway/sw_build_config"
+      "[CLEANUP]/chromiumos_workspace/src/project_public/galaxy/milkyway/sw_build_config"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.remove dest dir",
     "~followup_annotations": [
@@ -882,10 +848,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[START_DIR]/chromiumos_workspace/src/project/galaxy/milkyway/public_sw_build_config",
-      "[START_DIR]/chromiumos_workspace/src/project_public/galaxy/milkyway/sw_build_config"
+      "[CLEANUP]/chromiumos_workspace/src/project/galaxy/milkyway/public_sw_build_config",
+      "[CLEANUP]/chromiumos_workspace/src/project_public/galaxy/milkyway/sw_build_config"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config",
     "~followup_annotations": [
@@ -898,7 +864,7 @@
       "status",
       "--porcelain"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.git status",
     "~followup_annotations": [
@@ -910,9 +876,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "replicate_public_config",
-      "[START_DIR]/chromiumos_workspace/src/project_public"
+      "[CLEANUP]/chromiumos_workspace/src/project_public"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -931,9 +897,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/project_public"
+      "[CLEANUP]/chromiumos_workspace/src/project_public"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.git add",
     "~followup_annotations": [
@@ -951,7 +917,7 @@
       "Update with publically filtered configs.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_postsubmit/replicate_public",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.write commit message",
     "~followup_annotations": [
@@ -970,7 +936,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.git commit",
     "~followup_annotations": [
@@ -979,7 +945,7 @@
   },
   {
     "cmd": [],
-    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public",
+    "name": "Do replicate_public_config and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project_public",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -989,11 +955,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/project_public",
+      "[CLEANUP]/chromiumos_workspace/src/project_public",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1003,10 +969,10 @@
       ]
     },
     "infra_step": true,
-    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.repo forall",
+    "name": "Do replicate_public_config and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project_public.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project_public|src/[START_DIR]/chromiumos_workspace/src/project_public|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/project_public|src/[CLEANUP]/chromiumos_workspace/src/project_public|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1062,7 +1028,7 @@
       "ht2",
       "--send-mail"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1071,7 +1037,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.git_cl upload",
+    "name": "Do replicate_public_config and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project_public.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1086,7 +1052,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1095,7 +1061,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "Do replicate_public_config and create CL.create gerrit change for [START_DIR]/chromiumos_workspace/src/project_public.git_cl status",
+    "name": "Do replicate_public_config and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project_public.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1113,18 +1079,18 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[START_DIR]/chromiumos_workspace/src/project_public/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/project_public/+/1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/project_public",
+      "[CLEANUP]/chromiumos_workspace/src/project_public",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1137,7 +1103,7 @@
     "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project_public|src/[START_DIR]/chromiumos_workspace/src/project_public|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/project_public|src/[CLEANUP]/chromiumos_workspace/src/project_public|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -1147,7 +1113,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.git rebase",
     "~followup_annotations": [
@@ -1161,7 +1127,7 @@
       "cros",
       "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/chromiumos_workspace/src/project_public",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/project_public",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1.git push",
     "~followup_annotations": [
@@ -1184,7 +1150,7 @@
     "cmd": [
       "./generate"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/config-internal/test",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal/test",
     "name": "Do regenerate_test_plan and create CL.regenerating test plans.run generate",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1229,7 +1195,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

@@ -504,16 +504,10 @@ def RunSteps(api, properties):
       )
 
 
-def mock_workspace_path(api, path):
-  return api.path.exists(
-      api.path["start_dir"].join(
-          "chromiumos_workspace",
-          path,
-      ),
-  )
-
-
 def GenTests(api):
+
+  def mock_workspace_path(path):
+    return api.path.exists(api.src_state.workspace_path.join(path))
 
   def StepSummaryEquals(check, step_odict, step, expected):
     """Check that the step's step_summary_text equals given value.
@@ -546,7 +540,7 @@ def GenTests(api):
               'project_name': 'test_project',
               'program_name': 'test_program',
           }),
-      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      mock_workspace_path('src/project/test_program/test_project'),
       api.post_process(post_process.StatusSuccess),
   )
 
@@ -567,7 +561,7 @@ def GenTests(api):
               'project_name': 'test_project',
               'program_name': 'test_program',
           }),
-      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      mock_workspace_path('src/project/test_program/test_project'),
       api.post_process(post_process.StatusSuccess),
   )
 
@@ -590,7 +584,7 @@ def GenTests(api):
           'processing test_program/test_project'
           '.update ref.git transaction'
           '.Generate imported configuration', retcode=1),
-      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      mock_workspace_path('src/project/test_program/test_project'),
       api.post_process(post_process.StatusFailure),
   )
 
@@ -610,7 +604,7 @@ def GenTests(api):
                   'program_name': 'test_program',
               }]
           }),
-      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      mock_workspace_path('src/project/test_program/test_project'),
       api.post_process(
           post_process.StepCommandContains,
           "processing test_program/test_project"
@@ -636,7 +630,7 @@ def GenTests(api):
                   'program_name': 'test_program',
               }]
           }),
-      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      mock_workspace_path('src/project/test_program/test_project'),
       api.step_data(
           'processing test_program/test_project.repo forall',
           stdout=api.raw_io.output_text(''),
@@ -687,7 +681,7 @@ def GenTests(api):
                   'program_name': 'test_program',
               }]
           }),
-      mock_workspace_path(api, 'src/project/test_program/test_project'),
+      mock_workspace_path('src/project/test_program/test_project'),
       api.step_data(
           'processing test_program/test_project'
           '.update ref.git transaction'
@@ -709,7 +703,7 @@ def GenTests(api):
                   'project_name': 'test_project',
                   'program_name': 'test_program',
               }]
-          }), mock_workspace_path(api, 'src/project/test_program/test_project'),
+          }), mock_workspace_path('src/project/test_program/test_project'),
       api.step_data(
           'processing test_program/test_project'
           '.update ref.git transaction'

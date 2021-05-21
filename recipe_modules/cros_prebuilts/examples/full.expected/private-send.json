@@ -204,7 +204,7 @@
       "https://chromium.googlesource.com/chromiumos/manifest",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "find prebuilts.git fetch",
     "~followup_annotations": [
@@ -218,7 +218,7 @@
       "FETCH_HEAD~336..FETCH_HEAD",
       "--pretty=%H"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "find prebuilts.git log",
     "~followup_annotations": [
@@ -361,7 +361,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
@@ -372,7 +372,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -394,7 +394,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -456,7 +456,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -486,7 +486,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -509,7 +509,7 @@
       "https://chromium.googlesource.com/chromiumos/manifest",
       "snapshot-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -522,7 +522,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -537,7 +537,7 @@
       "snapshot-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "upload prebuilts.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -593,7 +593,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
@@ -604,7 +604,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -626,7 +626,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -689,7 +689,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -816,7 +816,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
@@ -827,7 +827,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -849,7 +849,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -922,7 +922,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1065,7 +1065,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
@@ -1076,7 +1076,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1098,7 +1098,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1154,7 +1154,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1232,7 +1232,7 @@
       "main",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git checkout",
     "~followup_annotations": [
@@ -1245,7 +1245,7 @@
       "branch",
       "--set-upstream-to=cros/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git branch",
     "~followup_annotations": [
@@ -1262,7 +1262,7 @@
       "remove",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.try remove existing file",
     "~followup_annotations": [
@@ -1280,7 +1280,7 @@
       "",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.write file",
     "~followup_annotations": [
@@ -1302,7 +1302,7 @@
       "--error-unmatch",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check.git ls-files",
     "~followup_annotations": [
@@ -1317,7 +1317,7 @@
       "HEAD",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check.git diff",
     "~followup_annotations": [
@@ -1330,7 +1330,7 @@
       "add",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git add",
     "~followup_annotations": [
@@ -1348,7 +1348,7 @@
       "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.write commit message",
     "~followup_annotations": [
@@ -1366,7 +1366,7 @@
       "--",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git commit",
     "~followup_annotations": [
@@ -1381,7 +1381,7 @@
       "cros",
       "HEAD:refs/for/refs/heads/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git push",
     "~followup_annotations": [
@@ -1398,7 +1398,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1422,7 +1422,7 @@
       "--short",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git symbolic-ref",
     "~followup_annotations": [
@@ -1448,7 +1448,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1472,7 +1472,7 @@
       "--force-rebase",
       "cros/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/infra/recipes",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/recipes",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.git rebase",
     "~followup_annotations": [
@@ -1486,7 +1486,7 @@
       "cros",
       "HEAD:refs/for/refs/heads/main%l=Bot-Commit+1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/infra/recipes",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/recipes",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.git push",
     "~followup_annotations": [
@@ -1499,7 +1499,7 @@
       "checkout",
       "main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "infra_step": true,
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git checkout (2)",
     "~followup_annotations": [
@@ -1522,7 +1522,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1547,7 +1547,7 @@
       "issue",
       "123"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/infra/recipes",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/recipes",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1570,7 +1570,7 @@
       "-f",
       "123"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromiumos/infra/recipes",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/recipes",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"

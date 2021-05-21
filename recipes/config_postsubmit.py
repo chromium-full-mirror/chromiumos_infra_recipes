@@ -35,6 +35,7 @@ DEPS = [
     'git',
     'git_txn',
     'repo',
+    'src_state',
 ]
 
 from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
@@ -547,9 +548,9 @@ def GenTests(api):
               '.copy public config',
           [
               'copytree',
-              '[START_DIR]/chromiumos_workspace/src/' \
+              '[CLEANUP]/chromiumos_workspace/src/' \
                   'project/galaxy/milkyway/public_sw_build_config',
-              '[START_DIR]/chromiumos_workspace/src/' \
+              '[CLEANUP]/chromiumos_workspace/src/' \
                   'project_public/galaxy/milkyway/sw_build_config',
           ],
       ),
@@ -592,9 +593,9 @@ def GenTests(api):
     check(step_odict[step].step_summary_text == expected)
 
   def mock_payloads(fname):
-    return api.path.exists(api.path['start_dir'].join(
-        'chromiumos_workspace/src/project/galaxy/milkyway/generated/%s' %
-        fname))
+    return api.path.exists(
+        api.src_state.workspace_path.join(
+            'src/project/galaxy/milkyway/generated/%s' % fname))
 
   def flatten_step_data(value):
     """Returns StepData for the call to flatten_config_payload.py call."""

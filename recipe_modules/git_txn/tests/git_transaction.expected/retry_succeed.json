@@ -18,7 +18,7 @@
       "remote",
       "HEAD:refs/heads/ref"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction.git push",
     "~followup_annotations": [
@@ -34,7 +34,7 @@
       "remote",
       "refs/heads/ref:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction.git fetch",
     "~followup_annotations": [
@@ -47,7 +47,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction.git rev-parse",
     "~followup_annotations": [
@@ -61,7 +61,7 @@
       "--force",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction.git checkout",
     "~followup_annotations": [
@@ -83,7 +83,7 @@
       "remote",
       "HEAD:refs/heads/ref"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref.git transaction attempt 1 of 2.git push",
     "~followup_annotations": [
@@ -126,7 +126,7 @@
       "remove",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref (3).git transaction.try remove existing file",
     "~followup_annotations": [
@@ -144,7 +144,7 @@
       "data",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref (3).git transaction.write file",
     "~followup_annotations": [
@@ -167,7 +167,7 @@
       "--error-unmatch",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref (3).git transaction.diff check.git ls-files",
     "~followup_annotations": [
@@ -182,7 +182,7 @@
       "HEAD",
       "file/path.txt"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
     "name": "update ref (3).git transaction.diff check.git diff",
     "~followup_annotations": [

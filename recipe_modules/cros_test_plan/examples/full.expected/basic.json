@@ -1989,7 +1989,7 @@
       "--output_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
       "--manifest_file",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/snapshot.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/snapshot.xml",
       "--local_config_dir",
       "[CLEANUP]/lts-configs_tmp_1"
     ],

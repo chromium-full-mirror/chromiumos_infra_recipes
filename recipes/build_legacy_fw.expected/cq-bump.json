@@ -736,7 +736,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -754,7 +754,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -780,7 +780,7 @@
       "--accept-statuses",
       "200,404"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "sync to gitiles commit.fetch firmware-board-9999.B-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -796,9 +796,9 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
@@ -819,7 +819,7 @@
       "--manifest-name",
       "../tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -848,7 +848,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -878,7 +878,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -902,7 +902,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
@@ -971,7 +971,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -995,7 +995,7 @@
       "https://chromium.googlesource.com/project-a",
       "refs/changes/56/123456/7:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -1008,7 +1008,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -1023,7 +1023,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1035,7 +1035,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project-a",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
     "infra_step": true,
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -1059,10 +1059,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -1083,7 +1083,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "firmware-board-9999.B-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -1096,7 +1096,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -1111,7 +1111,7 @@
       "firmware-board-9999.B-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -1141,7 +1141,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1161,7 +1161,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/infra/chromite-HEAD/bin/cros_mark_as_stable",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/cros_mark_as_stable",
       "commit",
       "--dryrun",
       "--all",
@@ -1169,11 +1169,11 @@
       "--drop_file",
       "[CLEANUP]/tmp_tmp_1",
       "--buildroot",
-      "[START_DIR]/chromiumos_workspace",
+      "[CLEANUP]/chromiumos_workspace",
       "--overlay-type",
       "both"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "uprev packages.call cros_mark_as_stable",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1190,7 +1190,7 @@
       "[CLEANUP]/tmp_tmp_1",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "uprev packages.read uprevved packages",
     "~followup_annotations": [
@@ -1224,7 +1224,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "bump version.ensure version_bumper.ensure_installed",
     "~followup_annotations": [
@@ -1247,11 +1247,11 @@
       "[START_DIR]/cipd/version_bumper/version_bumper",
       "bump-version",
       "--chromiumos_overlay_repo",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
       "--bump_from_branch_name",
       "firmware-board-9999.B"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "bump version.go version_bumper",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1273,10 +1273,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "bump version.read updated version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -1297,7 +1297,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "firmware-board-9999.B-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "bump version.read updated version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -1310,7 +1310,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "bump version.read updated version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -1325,7 +1325,7 @@
       "firmware-board-9999.B-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "bump version.read updated version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -1354,7 +1354,7 @@
       "add",
       "chromeos/config/chromeos_version.sh"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "name": "bump version.commit chromeos/config/chromeos_version.sh.git add",
     "~followup_annotations": [
@@ -1372,7 +1372,7 @@
       "Increment to version R91-13874.10.0-101\n\nGenerated by fw-atlas-cq.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_version/bump_version",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "name": "bump version.commit chromeos/config/chromeos_version.sh.write commit message",
     "~followup_annotations": [
@@ -1393,7 +1393,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "name": "bump version.commit chromeos/config/chromeos_version.sh.git commit",
     "~followup_annotations": [
@@ -1408,7 +1408,7 @@
       "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay",
       "HEAD:refs/heads/firmware-board-9999.B"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "name": "bump version.commit chromeos/config/chromeos_version.sh.git push",
     "~followup_annotations": [
@@ -1437,7 +1437,7 @@
       "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"fw-atlas-cq\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R91-13874.10.0\", \n        \"milestone\": 91, \n        \"platform\": \"13874.10.0\", \n        \"with_snapshot\": \"R91-13874.10.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload metadata.writing partial-metadata.json",
     "~followup_annotations": [
@@ -1489,10 +1489,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload metadata.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -1513,7 +1513,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "firmware-board-9999.B-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload metadata.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -1526,7 +1526,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload metadata.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -1541,7 +1541,7 @@
       "firmware-board-9999.B-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "upload metadata.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -1560,7 +1560,7 @@
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
       "gs://chromeos-image-archive/fw-atlas-cq/R91-13874.10.0-101-8945511751514863184/partial-metadata.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload metadata.gsutil cp",
     "timeout": 600,
@@ -1576,7 +1576,7 @@
     "cmd": [
       "ls"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1595,7 +1595,7 @@
       "cat",
       "/proc/mounts"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1614,7 +1614,7 @@
       "ps",
       "auxf"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1632,7 +1632,7 @@
     "cmd": [
       "df"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1651,7 +1651,7 @@
       "df",
       "-i"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1673,7 +1673,7 @@
       "--delete",
       "--create"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
       "CHROMEOS_OFFICIAL": "1"
     },
@@ -1699,7 +1699,7 @@
       "--toolchain_boards",
       "target"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
       "CHROMEOS_OFFICIAL": "1"
     },
@@ -1727,7 +1727,7 @@
       "--",
       "../platform/ec/util/getversion.sh"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
       "CHROMEOS_OFFICIAL": "1"
     },
@@ -1782,7 +1782,7 @@
       "--accept-licenses=@CHROMEOS",
       "--skip-chroot-upgrade"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
       "CHROMEOS_OFFICIAL": "1"
     },
@@ -1814,7 +1814,7 @@
       "--withdebugsymbols",
       "virtual/chromeos-firmware"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
       "CHROMEOS_OFFICIAL": "1"
     },
@@ -1855,9 +1855,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace/chroot/tmp/firmware-bundle_tmp_1"
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bundle_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1880,10 +1880,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "glob",
-      "[START_DIR]/chromiumos_workspace/chroot/build/target/firmware",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware",
       "**/ec-private/fingerprint"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1896,7 +1896,7 @@
     "name": "upload artifacts.create firmware archive.glob private",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@glob@[START_DIR]/chromiumos_workspace/chroot/build/target/firmware/foo/ec-private/fingerprint@@@",
+      "@@@STEP_LOG_LINE@glob@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/foo/ec-private/fingerprint@@@",
       "@@@STEP_LOG_END@glob@@@"
     ]
   },
@@ -1908,10 +1908,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[START_DIR]/chromiumos_workspace/chroot/build/target/firmware",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware",
       "--recursive"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1924,8 +1924,8 @@
     "name": "upload artifacts.create firmware archive.list files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@listdir@[START_DIR]/chromiumos_workspace/chroot/build/target/firmware/bar/file@@@",
-      "@@@STEP_LOG_LINE@listdir@[START_DIR]/chromiumos_workspace/chroot/build/target/firmware/foo/ec-private/fingerprint/bar@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/bar/file@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/foo/ec-private/fingerprint/bar@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -1945,7 +1945,7 @@
       "-T",
       "/dev/stdin"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
       "CHROMEOS_OFFICIAL": "1"
     },
@@ -1976,7 +1976,7 @@
       "0777",
       "[CLEANUP]/artifacts_tmp_1/target"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1999,10 +1999,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/chroot/tmp/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
       "[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2028,7 +2028,7 @@
       "{\n\"bcs_version_info\": {\n\"version_string\": \"R91-13874.10.0-101\"\n}, \n\"objects\": [\n{\n\"file_name\": \"target/firmware_from_source.tar.bz2\", \n\"tarball_info\": {\n\"firmware_image_name\": \"target\", \n\"firmware_version_info\": {\n\"version_string\": \"v0.0.3733-0612ae7\"\n}, \n\"type\": \"EC\"\n}\n}\n]\n}",
       "[CLEANUP]/artifacts_tmp_1/target/firmware_metadata.jsonpb"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2073,10 +2073,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2105,7 +2105,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "firmware-board-9999.B-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2126,7 +2126,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2149,7 +2149,7 @@
       "firmware-board-9999.B-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2180,7 +2180,7 @@
       "[CLEANUP]/artifacts_tmp_1",
       "gs://chromeos-image-archive/fw-atlas-cq/R91-13874.10.0-101-8945511751514863184"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2224,10 +2224,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2256,7 +2256,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "firmware-board-9999.B-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2277,7 +2277,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2300,7 +2300,7 @@
       "firmware-board-9999.B-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2317,19 +2317,19 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
       "--yes",
       "--board=target",
       "--version=R91-13874.10.0",
       "--buildroot",
-      "[START_DIR]/chromiumos_workspace",
+      "[CLEANUP]/chromiumos_workspace",
       "-n",
       "--sign-types=firmware",
       "--sign-types=accessory_rwsig",
       "--dest-bucket=gs://chromeos-releases",
       "gs://chromeos-image-archive/fw-atlas-cq/R91-13874.10.0-101-8945511751514863184/target"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2358,7 +2358,7 @@
       "debug",
       "--delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
       "CHROMEOS_OFFICIAL": "1"
     },
@@ -2548,7 +2548,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -2571,7 +2571,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "firmware-board-9999.B-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -2584,7 +2584,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -2599,7 +2599,7 @@
       "firmware-board-9999.B-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "finalize metadata.upload metadata.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -2650,7 +2650,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

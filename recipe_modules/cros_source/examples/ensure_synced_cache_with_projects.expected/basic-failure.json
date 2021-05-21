@@ -125,9 +125,9 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.unmount overlay workspace",
     "~followup_annotations": [
@@ -140,7 +140,7 @@
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.unmount overlay chromiumos",
     "~followup_annotations": [
@@ -157,7 +157,7 @@
       "rmtree",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.Destroying cache at [CACHE]/chromiumos",
     "~followup_annotations": [
@@ -183,7 +183,7 @@
       "0777",
       "[CACHE]/chromiumos/upperdir/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.mount overlay chromiumos.create upperdir",
     "~followup_annotations": [
@@ -202,7 +202,7 @@
       "0777",
       "[CACHE]/chromiumos/workdir/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.mount overlay chromiumos.create workdir",
     "~followup_annotations": [
@@ -221,7 +221,7 @@
       "0777",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.mount overlay chromiumos.create mount path",
     "~followup_annotations": [
@@ -240,7 +240,7 @@
       "overlay",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.mount overlay chromiumos.mount",
     "~followup_annotations": [
@@ -266,7 +266,7 @@
       "0777",
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.mount overlay workspace.create upperdir",
     "~followup_annotations": [
@@ -285,7 +285,7 @@
       "0777",
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.mount overlay workspace.create workdir",
     "~followup_annotations": [
@@ -302,9 +302,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.mount overlay workspace.create mount path",
     "~followup_annotations": [
@@ -321,9 +321,9 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.retry cache sync.mount overlay workspace.mount",
     "~followup_annotations": [
@@ -363,7 +363,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

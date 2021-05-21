@@ -13,7 +13,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace/src/browser"
+      "[CLEANUP]/chromiumos_workspace/src/browser"
     ],
     "infra_step": true,
     "name": "cloudready specific setup.create src/browser",
@@ -26,7 +26,7 @@
       "wget",
       "https://s3.amazonaws.com/neverware-dev/.gclient"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/browser",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -50,9 +50,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace/src/browser/src"
+      "[CLEANUP]/chromiumos_workspace/src/browser/src"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/browser",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -79,7 +79,7 @@
       "-v",
       "--progress"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/browser/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/browser/src",
     "env": {
       "GIT_HTTP_LOW_SPEED_LIMIT": "0"
     },
@@ -111,7 +111,7 @@
       "s#git@gitlab.neverware.com:neverware/#https://chrome-internal.googlesource.com/external/gitlab.neverware.com/neverware/#g",
       "src/tools/neverware/neverware_deps.conf"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/browser",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -132,7 +132,7 @@
       "s#git@github.com:neverware/#https://chrome-internal.googlesource.com/external/github.com/neverware/#g",
       "src/tools/neverware/neverware_deps.conf"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/browser",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -160,7 +160,7 @@
       "s#git#/usr/bin/git#g",
       "src/tools/neverware/update_deps.py"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/browser",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -179,7 +179,7 @@
       "gclient",
       "sync"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/browser",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/browser",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"

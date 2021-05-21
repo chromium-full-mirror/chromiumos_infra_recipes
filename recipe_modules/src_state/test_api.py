@@ -32,10 +32,6 @@ class SrcStateApi(recipe_test_api.RecipeTestApi):
   # This is here only for test coverage.
   _ManifestProject = common.ManifestProject
 
-  def __init__(self, properties, *args, **kwargs):
-    super(SrcStateApi, self).__init__(*args, **kwargs)
-    self._workspace_path = None
-
   @property
   def default_ref(self):
     """The default ref for Chrome OS repos"""
@@ -54,14 +50,7 @@ class SrcStateApi(recipe_test_api.RecipeTestApi):
     It will contain the base checkout and any modifications made by the build,
     and is discarded after the build.
     """
-    if not self._workspace_path:
-      self._workspace_path = self.m.path['start_dir'].join(common.WORKSPACE)
-    return self._workspace_path
-
-  @workspace_path.setter
-  def workspace_path(self, value):
-    """Set the workspace_path for testing."""
-    self._workspace_path = value
+    return self.m.path['cleanup'].join(common.WORKSPACE)
 
   @property
   def internal_manifest(self):

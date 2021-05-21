@@ -694,7 +694,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -712,7 +712,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -734,7 +734,7 @@
       ".",
       "release-R79-*.B"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "determine branch.git ls-remote",
     "~followup_annotations": [
@@ -768,7 +768,7 @@
       "release-R79-*.B",
       "--repo-rev=stable"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -796,7 +796,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -828,7 +828,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -853,7 +853,7 @@
       "manifest",
       "-r"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -928,7 +928,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -973,7 +973,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
@@ -984,7 +984,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "try uprev chromeos-base/chromeos-chrome.uprev versioned package.call build API script",
@@ -1005,7 +1005,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -1045,11 +1045,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/overlay",
+      "[CLEANUP]/chromiumos_workspace/src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1070,11 +1070,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/private-overlay",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1099,7 +1099,7 @@
       "src/private-overlay",
       "src/overlay"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1125,9 +1125,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/private-overlay/bar.ebuild"
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "commit uprev.commit in private-overlay.git add",
     "~followup_annotations": [
@@ -1145,7 +1145,7 @@
       "chromeos-chrome: Automatic uprev to 1.2.3.\n\nGenerated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=CQ\n\nCq-Cl-Tag: pupr:chromeos-base/chromeos-chrome\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "commit uprev.commit in private-overlay.write commit message",
     "~followup_annotations": [
@@ -1168,7 +1168,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
     "name": "commit uprev.commit in private-overlay.git commit",
     "~followup_annotations": [
@@ -1186,9 +1186,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/overlay/foo.ebuild"
+      "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "commit uprev.commit in overlay.git add",
     "~followup_annotations": [
@@ -1206,7 +1206,7 @@
       "chromeos-chrome: Automatic uprev to 1.2.3.\n\nGenerated by PUpr, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=CQ\n\nCq-Cl-Tag: pupr:chromeos-base/chromeos-chrome\n",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "commit uprev.commit in overlay.write commit message",
     "~followup_annotations": [
@@ -1229,7 +1229,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "commit uprev.commit in overlay.git commit",
     "~followup_annotations": [
@@ -1865,7 +1865,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1896,7 +1896,7 @@
       "dburger@chromium.org",
       "--send-mail"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1920,7 +1920,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1950,7 +1950,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1981,7 +1981,7 @@
       "dburger@chromium.org",
       "--send-mail"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2005,7 +2005,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2120,7 +2120,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2147,7 +2147,7 @@
       "-",
       "https://chromium-review.googlesource.com/c/src/overlay/+/1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2173,7 +2173,7 @@
       "a quick description\n\nCq-Depend: chromium:1\nChange-Id: deadbeef\n",
       "[CLEANUP]/commit_msg_tmp_3"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
     "infra_step": true,
     "name": "cq-depend generated CLs.set cq-depend for src/overlay CL.set CL 1 description.write commit message",
     "~followup_annotations": [
@@ -2193,7 +2193,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_3"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
     "infra_step": true,
     "name": "cq-depend generated CLs.set cq-depend for src/overlay CL.set CL 1 description.git commit",
     "~followup_annotations": [
@@ -2297,7 +2297,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2324,7 +2324,7 @@
       "-",
       "https://chromium-review.googlesource.com/c/src/private-overlay/+/1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2350,7 +2350,7 @@
       "a quick description\n\nCq-Depend: chromium:1\nChange-Id: deadbeef\n",
       "[CLEANUP]/commit_msg_tmp_4"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",
     "infra_step": true,
     "name": "cq-depend generated CLs.set cq-depend for src/private-overlay CL.set CL 1 description.write commit message",
     "~followup_annotations": [
@@ -2370,7 +2370,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_4"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",
     "infra_step": true,
     "name": "cq-depend generated CLs.set cq-depend for src/private-overlay CL.set CL 1 description.git commit",
     "~followup_annotations": [
@@ -2403,7 +2403,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2431,7 +2431,7 @@
       "-a",
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromeos-chrome:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DRY_RUN.\nTherefore, marking CL as CQ+1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2462,7 +2462,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2485,7 +2485,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
     "infra_step": true,
     "name": "update CL labels.set labels on CL 1.git rebase",
     "~followup_annotations": [
@@ -2499,7 +2499,7 @@
       "cros",
       "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
     "infra_step": true,
     "name": "update CL labels.set labels on CL 1.git push",
     "~followup_annotations": [
@@ -2528,7 +2528,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2556,7 +2556,7 @@
       "-a",
       "Found 2 open CL(s) for Gerrit topic chromeos-base/chromeos-chrome:\nhttps://chromium-review.googlesource.com/c/chromium/src/+/91827\nhttps://chrome-internal-review.googlesource.com/c/chromium/src/+/91827\nSend-to-cq policy for this case is DRY_RUN.\nTherefore, marking CL as CQ+1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2587,7 +2587,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2610,7 +2610,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",
     "infra_step": true,
     "name": "update CL labels.set labels on CL 1 (2).git rebase",
     "~followup_annotations": [
@@ -2624,7 +2624,7 @@
       "cros",
       "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/src/private-overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",
     "infra_step": true,
     "name": "update CL labels.set labels on CL 1 (2).git push",
     "~followup_annotations": [
@@ -2682,7 +2682,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
@@ -2693,7 +2693,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
@@ -2714,7 +2714,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -2779,7 +2779,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
@@ -2790,7 +2790,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.call build API script",
@@ -2811,7 +2811,7 @@
     ],
     "env_suffixes": {
       "PATH": [
-        "[START_DIR]/chromiumos_workspace/chromite/bin"
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
     "infra_step": true,
@@ -2875,7 +2875,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

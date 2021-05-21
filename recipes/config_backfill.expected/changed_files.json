@@ -1,40 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "found pre-existing [START_DIR]/chromiumos_workspace"
-  },
-  {
-    "cmd": [],
-    "name": "found pre-existing [START_DIR]/chromiumos_workspace.set preexisting_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@preexisting_workspace@true@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "ls",
-      "-l"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "found pre-existing [START_DIR]/chromiumos_workspace.ls",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cat",
-      "/proc/mounts"
-    ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
-    "name": "found pre-existing [START_DIR]/chromiumos_workspace.mounts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_TEXT@config not found, assuming deleted@@@"
@@ -668,7 +634,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -686,7 +652,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -713,10 +679,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[START_DIR]/chromiumos_workspace/src/overlays/baseboard-reef/chromeos-base/chromeos-config-bsp-baseboard/files",
-      "[START_DIR]/chromiumos_workspace/src/overlays/overlay-reef/chromeos-base/chromeos-config-bsp/files/include-public"
+      "[CLEANUP]/chromiumos_workspace/src/overlays/baseboard-reef/chromeos-base/chromeos-config-bsp-baseboard/files",
+      "[CLEANUP]/chromiumos_workspace/src/overlays/overlay-reef/chromeos-base/chromeos-config-bsp/files/include-public"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "create portage workaround symlinks.[reef] configuring public baseboard overlay.copying files",
     "~followup_annotations": [
@@ -738,10 +704,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/baseboard-reef-private/chromeos-base/chromeos-config-bsp-baseboard-private/files",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/overlay-reef-private/chromeos-base/chromeos-config-bsp-private/files/include-private"
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/baseboard-reef-private/chromeos-base/chromeos-config-bsp-baseboard-private/files",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/overlay-reef-private/chromeos-base/chromeos-config-bsp-private/files/include-private"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "create portage workaround symlinks.[reef] configuring private baseboard overlay.copying files",
     "~followup_annotations": [
@@ -763,10 +729,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[START_DIR]/chromiumos_workspace/src/overlays/baseboard-fizz/chromeos-base/chromeos-config-bsp-baseboard/files",
-      "[START_DIR]/chromiumos_workspace/src/overlays/overlay-fizz/chromeos-base/chromeos-config-bsp-fizz/files/include-public"
+      "[CLEANUP]/chromiumos_workspace/src/overlays/baseboard-fizz/chromeos-base/chromeos-config-bsp-baseboard/files",
+      "[CLEANUP]/chromiumos_workspace/src/overlays/overlay-fizz/chromeos-base/chromeos-config-bsp-fizz/files/include-public"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "create portage workaround symlinks.[fizz] configuring public baseboard overlay.copying files",
     "~followup_annotations": [
@@ -788,10 +754,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/baseboard-fizz-private/chromeos-base/chromeos-config-bsp-baseboard/files/include",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/overlay-fizz-private/chromeos-base/chromeos-config-bsp-fizz-private/files/include"
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/baseboard-fizz-private/chromeos-base/chromeos-config-bsp-baseboard/files/include",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/overlay-fizz-private/chromeos-base/chromeos-config-bsp-fizz-private/files/include"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "create portage workaround symlinks.[fizz] configuring private baseboard overlay.copying files",
     "~followup_annotations": [
@@ -812,11 +778,11 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "--ignore-missing",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -829,7 +795,7 @@
     "name": "processing test_program/test_project.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/project/test_program/test_project|src/[START_DIR]/chromiumos_workspace/src/project/test_program/test_project|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project|src/[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -857,11 +823,11 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported"
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/imported"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported directory exists",
+    "name": "processing test_program/test_project.update ref.git transaction.ensure [CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/imported directory exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -874,10 +840,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/public_model.yaml"
+      "[CLEANUP]/chromiumos_workspace/src/overlays/some/model.yaml",
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/imported/public_model.yaml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.copy public model.yaml",
     "~followup_annotations": [
@@ -888,9 +854,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/public_model.yaml"
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/imported/public_model.yaml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.git add",
     "~followup_annotations": [
@@ -905,10 +871,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/private_model.yaml"
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/some/model.yaml",
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/imported/private_model.yaml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.copy private model.yaml",
     "~followup_annotations": [
@@ -919,9 +885,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/private_model.yaml"
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/imported/private_model.yaml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.git add (2)",
     "~followup_annotations": [
@@ -936,10 +902,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/hwid"
+      "[CLEANUP]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/imported/hwid"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.copy HWID database",
     "~followup_annotations": [
@@ -950,9 +916,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/imported/hwid"
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/imported/hwid"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.git add (3)",
     "~followup_annotations": [
@@ -969,11 +935,11 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated"
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/generated"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.ensure [START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated directory exists",
+    "name": "processing test_program/test_project.update ref.git transaction.ensure [CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/generated directory exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -981,7 +947,7 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
       "--log",
       "DEBUG",
       "--project-name",
@@ -989,18 +955,18 @@
       "--program-name",
       "test_program",
       "--public-model",
-      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
+      "[CLEANUP]/chromiumos_workspace/src/overlays/some/model.yaml",
       "--private-model",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/some/model.yaml",
       "--hwid",
-      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
+      "[CLEANUP]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
       "--config-bundle",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/config.jsonproto",
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/generated/config.jsonproto",
       "--import-only",
       "--output",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/imported.jsonproto"
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/generated/imported.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "env": {
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
     },
@@ -1013,9 +979,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/imported.jsonproto"
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/generated/imported.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "env": {
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
     },
@@ -1028,7 +994,7 @@
   {
     "cmd": [
       "vpython",
-      "[START_DIR]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/join_config_payloads.py",
       "--log",
       "DEBUG",
       "--project-name",
@@ -1036,17 +1002,17 @@
       "--program-name",
       "test_program",
       "--public-model",
-      "[START_DIR]/chromiumos_workspace/src/overlays/some/model.yaml",
+      "[CLEANUP]/chromiumos_workspace/src/overlays/some/model.yaml",
       "--private-model",
-      "[START_DIR]/chromiumos_workspace/src/private-overlays/some/model.yaml",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/some/model.yaml",
       "--hwid",
-      "[START_DIR]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
+      "[CLEANUP]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
       "--config-bundle",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/config.jsonproto",
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/generated/config.jsonproto",
       "--output",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/joined.jsonproto"
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/generated/joined.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "env": {
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
     },
@@ -1059,9 +1025,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project/generated/joined.jsonproto"
+      "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project/generated/joined.jsonproto"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "env": {
       "GOOGLE_APPLICATION_CREDENTIALS": "/creds/service_accounts/service-account-chromeos.json"
     },
@@ -1085,7 +1051,7 @@
       "--name-only",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.diffing repo to find changes.git diff",
     "~followup_annotations": [
@@ -1103,7 +1069,7 @@
       "Merging legacy configs.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: config_backfill",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.diffing repo to find changes.write commit message",
     "~followup_annotations": [
@@ -1122,7 +1088,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.diffing repo to find changes.git commit",
     "~followup_annotations": [
@@ -1137,7 +1103,7 @@
       "cros",
       "HEAD:refs/heads/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.update ref.git transaction.git push",
     "~followup_annotations": [
@@ -1152,7 +1118,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.git rev-parse",
     "~followup_annotations": [
@@ -1168,7 +1134,7 @@
       "get-url",
       "cros"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/project/test_program/test_project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
     "infra_step": true,
     "name": "processing test_program/test_project.git remote",
     "~followup_annotations": [
@@ -1207,7 +1173,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

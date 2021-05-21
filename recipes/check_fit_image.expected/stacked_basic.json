@@ -642,7 +642,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -660,7 +660,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -678,7 +678,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -700,7 +700,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 3, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
@@ -855,7 +855,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -879,7 +879,7 @@
       "https://chromium.googlesource.com/chromeos/overlays/baseboard-foo-private",
       "refs/changes/01/1/1:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
     "infra_step": true,
     "name": "apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -892,7 +892,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -907,7 +907,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
     "name": "apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -919,7 +919,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -936,7 +936,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -960,7 +960,7 @@
       "https://chromium.googlesource.com/chromeos/overlays/baseboard-bar-private",
       "refs/changes/02/2/1:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
     "infra_step": true,
     "name": "apply gerrit patch sets.git fetch (2)",
     "~followup_annotations": [
@@ -973,7 +973,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse (3)",
     "~followup_annotations": [
@@ -988,7 +988,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
     "name": "apply gerrit patch sets.git merge (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1000,7 +1000,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse (4)",
     "~followup_annotations": [
@@ -1017,7 +1017,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1041,7 +1041,7 @@
       "https://chromium.googlesource.com/chromeos/overlays/baseboard-baz-private",
       "refs/changes/03/3/1:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-baz-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-baz-private",
     "infra_step": true,
     "name": "apply gerrit patch sets.git fetch (3)",
     "~followup_annotations": [
@@ -1054,7 +1054,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-baz-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-baz-private",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse (5)",
     "~followup_annotations": [
@@ -1069,7 +1069,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-baz-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-baz-private",
     "name": "apply gerrit patch sets.git merge (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1081,7 +1081,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-baz-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-baz-private",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse (6)",
     "~followup_annotations": [
@@ -1102,10 +1102,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/refs/fitimage-ref.txt",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/refs/fitimage-ref.txt",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
     "infra_step": true,
     "name": "checking change 1.read reference file",
     "~followup_annotations": [
@@ -1147,10 +1147,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/fitimage-foo-versions.txt",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private/fitimage-foo-versions.txt",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-foo-private",
     "infra_step": true,
     "name": "checking change 1.checking fitimage-foo-versions.txt.read modified file",
     "~followup_annotations": [
@@ -1203,10 +1203,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private/refs/fitimage-ref.txt",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private/refs/fitimage-ref.txt",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
     "infra_step": true,
     "name": "checking change 2.read reference file",
     "~followup_annotations": [
@@ -1248,10 +1248,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private/fitimage-bar-versions.txt",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private/fitimage-bar-versions.txt",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/overlays/baseboard-bar-private",
     "infra_step": true,
     "name": "checking change 2.checking fitimage-bar-versions.txt.read modified file",
     "~followup_annotations": [
@@ -1317,7 +1317,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

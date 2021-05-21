@@ -656,7 +656,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -674,7 +674,7 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -700,7 +700,7 @@
       "--accept-statuses",
       "200,404"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "sync to gitiles commit.fetch main-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -716,9 +716,9 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
@@ -739,7 +739,7 @@
       "--manifest-name",
       "../tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -768,7 +768,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -798,7 +798,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -829,10 +829,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -853,7 +853,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "main-HEAD-SHA:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -866,7 +866,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -881,7 +881,7 @@
       "main-HEAD-SHA",
       "--position-num"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -899,11 +899,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+      "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -915,7 +915,7 @@
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output@[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome|src/[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome|src/[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -933,9 +933,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome/.git/objects/info"
+      "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome/.git/objects/info"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
     "name": "fetch latest chromium.ensure .git/objects/info",
     "~followup_annotations": [
@@ -951,9 +951,9 @@
       "/path/to/tmp/json",
       "copy",
       "/preload/chrome/src/.git/objects",
-      "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome/.git/objects/info/alternates"
+      "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome/.git/objects/info/alternates"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
     "name": "fetch latest chromium.create chrome git reference",
     "~followup_annotations": [
@@ -968,7 +968,7 @@
       "fetch",
       "https://chromium.googlesource.com/chromium/src"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "name": "fetch latest chromium.git fetch chromium",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -980,7 +980,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "name": "fetch latest chromium.get chromium head",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -997,7 +997,7 @@
       "cros",
       "refs/heads/upstream:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
     "name": "sync upstream branch.git fetch",
     "~followup_annotations": [
@@ -1010,7 +1010,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
     "name": "sync upstream branch.git rev-parse",
     "~followup_annotations": [
@@ -1027,7 +1027,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
     "name": "generate new upstream branch locally.git rev-parse",
     "~followup_annotations": [
@@ -1044,7 +1044,7 @@
       "cb10da20a312790d1d2421ae2f8dc2ea831cffa3",
       "--all"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "name": "generate new upstream branch locally.generate new upstream head",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1057,7 +1057,7 @@
       "--pretty=%H%x1E%B%x00",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef...49d1e4a4a6ca65114208c498416be3b85e10cc8e"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
     "name": "generate new upstream branch locally.git log",
     "~followup_annotations": [
@@ -1073,7 +1073,7 @@
       "cros",
       "49d1e4a4a6ca65114208c498416be3b85e10cc8e:refs/heads/upstream"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,
     "name": "git push"
   },
@@ -1102,7 +1102,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",

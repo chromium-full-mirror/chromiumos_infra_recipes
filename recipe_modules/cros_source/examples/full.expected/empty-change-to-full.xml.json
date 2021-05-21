@@ -11,7 +11,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -150,7 +150,7 @@
       "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
       "[CACHE]/chromiumos/.recipes_state.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json",
     "~followup_annotations": [
@@ -179,7 +179,7 @@
       "0777",
       "[CACHE]/chromiumos"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.ensure root path",
     "~followup_annotations": [
@@ -442,7 +442,7 @@
       "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CACHE]/chromiumos/.recipes_state.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
     "~followup_annotations": [
@@ -481,7 +481,7 @@
       "0777",
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "mount overlay workspace.create upperdir",
     "~followup_annotations": [
@@ -500,7 +500,7 @@
       "0777",
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "mount overlay workspace.create workdir",
     "~followup_annotations": [
@@ -517,9 +517,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
     "~followup_annotations": [
@@ -536,9 +536,9 @@
       "--options",
       "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "mount overlay workspace.mount",
     "~followup_annotations": [
@@ -563,7 +563,7 @@
       "--accept-statuses",
       "200,404"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "sync to gitiles commit.fetch 2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -579,9 +579,9 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
@@ -602,7 +602,7 @@
       "--manifest-name",
       "../tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -631,7 +631,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -661,7 +661,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -695,7 +695,7 @@
       "--accept-statuses",
       "200"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "sync to specified manifest.fetch release:releasespecs/91/13818.0.0.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -711,9 +711,9 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[START_DIR]/chromiumos_workspace/.repo/tmp_manifest"
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to specified manifest.write manifest",
     "~followup_annotations": [
@@ -739,11 +739,11 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\", \n\"state\": \"STATE_DIRTY\"\n}",
-      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+      "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync to specified manifest.Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json",
+    "name": "sync to specified manifest.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
@@ -768,9 +768,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to specified manifest.ensure synced checkout.ensure root path",
     "~followup_annotations": [
@@ -785,9 +785,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/.repo/manifests"
+      "[CLEANUP]/chromiumos_workspace/.repo/manifests"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to specified manifest.ensure synced checkout.remove .repo/manifests",
     "~followup_annotations": [
@@ -802,9 +802,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/.repo/manifests.git"
+      "[CLEANUP]/chromiumos_workspace/.repo/manifests.git"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to specified manifest.ensure synced checkout.remove .repo/manifests.git",
     "~followup_annotations": [
@@ -823,7 +823,7 @@
       "--manifest-name",
       "../tmp_manifest"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -850,7 +850,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "sync to specified manifest.ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -874,7 +874,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -909,7 +909,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -937,7 +937,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -961,11 +961,11 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+      "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "sync to specified manifest.Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json (2)",
+    "name": "sync to specified manifest.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
@@ -987,7 +987,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1035,7 +1035,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",
@@ -1269,7 +1269,7 @@
       "main",
       "--repo-rev=stable"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1298,7 +1298,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1330,7 +1330,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1355,7 +1355,7 @@
       "manifest",
       "-r"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1387,7 +1387,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1412,7 +1412,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "refs/changes/55/555/3:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -1425,7 +1425,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -1440,7 +1440,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1452,7 +1452,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -1468,7 +1468,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "refs/changes/55/555/3:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets.git fetch (2)",
     "~followup_annotations": [
@@ -1481,7 +1481,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets.git rev-parse (3)",
     "~followup_annotations": [
@@ -1496,7 +1496,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets.git merge (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1508,7 +1508,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.chromeos/manifest-internal: apply gerrit patch sets.git rev-parse (4)",
     "~followup_annotations": [
@@ -1532,7 +1532,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1556,7 +1556,7 @@
       "https://chromium.googlesource.com/chromiumos/manifest",
       "refs/changes/56/556/3:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.chromiumos/manifest: apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -1569,7 +1569,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.chromiumos/manifest: apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -1584,7 +1584,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "name": "patch manifest.chromiumos/manifest: apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1596,7 +1596,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.chromiumos/manifest: apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -1613,8 +1613,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/full.xml",
-      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/full.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest/full.xml"
     ],
     "infra_step": true,
     "name": "patch manifest.copy full.xml",
@@ -1626,9 +1626,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/manifest/full.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest/full.xml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.git add",
     "~followup_annotations": [
@@ -1643,8 +1643,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/manifest-internal/_kernel_upstream.xml",
-      "[START_DIR]/chromiumos_workspace/manifest/_kernel_upstream.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/_kernel_upstream.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml"
     ],
     "infra_step": true,
     "name": "patch manifest.copy _kernel_upstream.xml",
@@ -1656,9 +1656,9 @@
     "cmd": [
       "git",
       "add",
-      "[START_DIR]/chromiumos_workspace/manifest/_kernel_upstream.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.git add (2)",
     "~followup_annotations": [
@@ -1676,7 +1676,7 @@
       "Syncing with internal manifest.",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.write commit message",
     "~followup_annotations": [
@@ -1692,7 +1692,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.git commit",
     "~followup_annotations": [
@@ -1715,7 +1715,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "patch manifest.push manifest.git rev-parse",
     "~followup_annotations": [
@@ -1730,7 +1730,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "patch manifest.push manifest.git rev-parse (2)",
     "~followup_annotations": [
@@ -1745,7 +1745,7 @@
       "checkout",
       "main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.push manifest.branch main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1758,7 +1758,7 @@
       "--hard",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.push manifest.reset main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1772,7 +1772,7 @@
       ".",
       "[CLEANUP]/repo-overwrite-_tmp_1"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.push manifest.clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1783,7 +1783,7 @@
       "git",
       "remote"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.push manifest.remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1797,7 +1797,7 @@
       "+refs/remotes//*:refs/heads/*",
       "+refs/heads/main:refs/heads/main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.push manifest.push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1818,11 +1818,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[START_DIR]/chromiumos_workspace/.recipes_state.json",
+      "[CLEANUP]/chromiumos_workspace/.recipes_state.json",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "patch manifest.get patched manifest.Read proto from [START_DIR]/chromiumos_workspace/.recipes_state.json",
+    "name": "patch manifest.get patched manifest.Read proto from [CLEANUP]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
@@ -1848,10 +1848,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"file://[CLEANUP]/repo-overwrite-_tmp_1\", \n\"state\": \"STATE_DIRTY\"\n}",
-      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+      "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "patch manifest.get patched manifest.Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json",
+    "name": "patch manifest.get patched manifest.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
@@ -1877,7 +1877,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/chromiumos_workspace"
+      "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "patch manifest.get patched manifest.ensure synced checkout.ensure root path",
@@ -1893,9 +1893,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/.repo/manifests"
+      "[CLEANUP]/chromiumos_workspace/.repo/manifests"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "patch manifest.get patched manifest.ensure synced checkout.remove .repo/manifests",
     "~followup_annotations": [
@@ -1910,9 +1910,9 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[START_DIR]/chromiumos_workspace/.repo/manifests.git"
+      "[CLEANUP]/chromiumos_workspace/.repo/manifests.git"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "patch manifest.get patched manifest.ensure synced checkout.remove .repo/manifests.git",
     "~followup_annotations": [
@@ -1933,7 +1933,7 @@
       "--manifest-name",
       "../../manifest-internal/default.xml"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1960,7 +1960,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "patch manifest.get patched manifest.ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -1984,7 +1984,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2019,7 +2019,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2050,7 +2050,7 @@
       "2",
       "--no-manifest-update"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2075,10 +2075,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"file://[CLEANUP]/repo-overwrite-_tmp_1\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[START_DIR]/chromiumos_workspace/.recipes_state.json"
+      "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "patch manifest.get patched manifest.Write proto to [START_DIR]/chromiumos_workspace/.recipes_state.json (2)",
+    "name": "patch manifest.get patched manifest.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
@@ -2100,7 +2100,7 @@
       "checkout",
       "main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.restore manifest patches.branch main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2113,7 +2113,7 @@
       "--hard",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "name": "patch manifest.restore manifest patches.reset main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2125,7 +2125,7 @@
       "checkout",
       "main"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "name": "patch manifest.restore manifest patches.branch main (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2138,7 +2138,7 @@
       "--hard",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "name": "patch manifest.restore manifest patches.reset main (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2178,7 +2178,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2202,7 +2202,7 @@
       "https://chrome-internal.googlesource.com/chromeos/project",
       "refs/changes/57/557/7:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/project",
     "infra_step": true,
     "name": "apply gerrit patch sets.git fetch",
     "~followup_annotations": [
@@ -2215,7 +2215,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/project",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
@@ -2230,7 +2230,7 @@
       "-m",
       "merge gerrit changes"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/project",
     "name": "apply gerrit patch sets.git merge",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2242,7 +2242,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/project",
     "infra_step": true,
     "name": "apply gerrit patch sets.git rev-parse (2)",
     "~followup_annotations": [
@@ -2281,7 +2281,7 @@
       "[CLEANUP]/create_project_commits_archive_tmp_1/projects/manifest-internal/bundle",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "name": "create project commits archive.git bundle",
     "~followup_annotations": [
@@ -2314,7 +2314,7 @@
       "[CLEANUP]/create_project_commits_archive_tmp_1/projects/src/chromeos/project/bundle",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/src/chromeos/project",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/project",
     "infra_step": true,
     "name": "create project commits archive.git bundle (2)",
     "~followup_annotations": [
@@ -2347,7 +2347,7 @@
       "[CLEANUP]/create_project_commits_archive_tmp_1/projects/manifest/bundle",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^..HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "create project commits archive.git bundle (3)",
     "~followup_annotations": [
@@ -2438,7 +2438,7 @@
       "[CLEANUP]/checkout_project_commits_archive_tmp_1/archive/a/b/bundle",
       "HEAD:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
+    "cwd": "[CLEANUP]/chromiumos_workspace/a/b",
     "infra_step": true,
     "name": "checkout project commits archive.git fetch",
     "~followup_annotations": [
@@ -2451,7 +2451,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
+    "cwd": "[CLEANUP]/chromiumos_workspace/a/b",
     "infra_step": true,
     "name": "checkout project commits archive.git rev-parse",
     "~followup_annotations": [
@@ -2464,7 +2464,7 @@
       "checkout",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b",
+    "cwd": "[CLEANUP]/chromiumos_workspace/a/b",
     "infra_step": true,
     "name": "checkout project commits archive.git checkout",
     "~followup_annotations": [
@@ -2478,7 +2478,7 @@
       "[CLEANUP]/checkout_project_commits_archive_tmp_1/archive/a/b/c/bundle",
       "HEAD:"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
+    "cwd": "[CLEANUP]/chromiumos_workspace/a/b/c",
     "infra_step": true,
     "name": "checkout project commits archive.git fetch (2)",
     "~followup_annotations": [
@@ -2491,7 +2491,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
+    "cwd": "[CLEANUP]/chromiumos_workspace/a/b/c",
     "infra_step": true,
     "name": "checkout project commits archive.git rev-parse (2)",
     "~followup_annotations": [
@@ -2504,7 +2504,7 @@
       "checkout",
       "FETCH_HEAD"
     ],
-    "cwd": "[START_DIR]/chromiumos_workspace/a/b/c",
+    "cwd": "[CLEANUP]/chromiumos_workspace/a/b/c",
     "infra_step": true,
     "name": "checkout project commits archive.git checkout (2)",
     "~followup_annotations": [
