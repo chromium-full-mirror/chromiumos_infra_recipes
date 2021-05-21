@@ -53,12 +53,15 @@ class RepoApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(RepoApi, self).__init__(*args, **kwargs)
     self._disable_source_cache_health = properties.disable_source_cache_health
+    self._no_remove_manifests_git = properties.no_remove_manifests_git
 
   def initialize(self):
     self._binary_updated = False
     self._disable_source_cache_health |= (
         'chromeos.repo.disable_source_cache_health' in
         self.m.cros_infra_config.experiments)
+    self._no_remove_manifests_git |= ('chromeos.repo.no_remove_manifests_git' in
+                                      self.m.cros_infra_config.experiments)
 
   @property
   def repo_path(self):
@@ -691,7 +694,8 @@ class RepoApi(recipe_api.RecipeApi):
     if self._test_data.enabled and self._test_data.get('fail_repo_sync', False):
       repo_state.state = RepoState.STATE_RECOVERY
 
-    if not self._disable_source_cache_health and repo_state.state == RepoState.STATE_RECOVERY:
+    if (not self._disable_source_cache_health and
+        repo_state.state == RepoState.STATE_RECOVERY):
       # Should only be reached if recovery error has occured.
       # Caller will delete the cache and start over.
       # Wrapped in feature flag
@@ -764,9 +768,10 @@ class RepoApi(recipe_api.RecipeApi):
             # Remove .repo/manifests and .repo/manifests.git to avoid
             # potential problems when switching to a different manifest
             # repo or branch.
-            for manifest_dir in ('manifests', 'manifests.git'):
-              self.m.file.rmtree('remove .repo/%s' % manifest_dir,
-                                 root_path.join('.repo', manifest_dir))
+            if not self._no_remove_manifests_git:
+              for manifest_dir in ('manifests', 'manifests.git'):
+                self.m.file.rmtree('remove .repo/%s' % manifest_dir,
+                                   root_path.join('.repo', manifest_dir))
 
             self.init(manifest_url, **init_opts)
             if not clean:

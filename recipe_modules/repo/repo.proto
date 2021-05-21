@@ -6,4 +6,7 @@ message RepoProperties {
 
     // Feature flag: toggle the source cache health feature
     bool disable_source_cache_health = 1;
+
+    // Feature flag: do not rm .repo/manifests and .repo/manifests.git.
+    bool no_remove_manifests_git = 2;
 }
