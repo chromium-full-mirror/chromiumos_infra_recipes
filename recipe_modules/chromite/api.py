@@ -238,9 +238,7 @@ class ChromiteApi(recipe_api.RecipeApi):
 
     cbb_args = [
         '--buildroot',
-        self.m.cros_source.legacy_cache_path,
-        '--workspace',
-        self.m.cros_source.workspace_path,
+        self.m.path['cache'].join('cbuild'),
     ]
 
     if self.c.chromite_branch:
