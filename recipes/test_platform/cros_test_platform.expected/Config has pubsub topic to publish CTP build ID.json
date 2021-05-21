@@ -399,7 +399,7 @@
     },
     "infra_step": true,
     "name": "execute.call binary.launch luciexe",
-    "stdin": "\b*2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
+    "stdin": "\b*2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002\ufffd\u0001\u001d\n\u0015parent_buildbucket_id\u0012\u00041234",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",
