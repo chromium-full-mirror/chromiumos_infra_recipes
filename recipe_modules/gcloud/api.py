@@ -17,11 +17,14 @@ TEST_IMAGE_NAME = 'chromiumos_test_image.bin'
 class GcloudApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
 
-  def set_gce_project(self):
-    """Set the default project for gcloud command."""
+  def set_gce_project(self, project):
+    """Set the default project for gcloud command.
+    Args:
+      project(str): Google Cloud project name.
+    """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('set gcloud project',
-                  ['gcloud', 'config', 'set', 'project', 'chromeos-gce-tests'])
+                  ['gcloud', 'config', 'set', 'project', project])
 
   def auth_list(self, step_name=None):
     """Print out the auth creds currently on the bot.
@@ -105,31 +108,45 @@ class GcloudApi(recipe_api.RecipeApi):
           '--quiet',
       ])
 
-  def create_instance(self, image):
+  def create_instance(self, image, project, machine, zone, network=None,
+                      subnet=None):
     """Create an instance in the GCE project.
 
     Args:
       image(str): GCE image to use for the instance.
+      project(str): Google Cloud project name.
+      machine(str): GCE machine type
+      zone(str): GCE zone to create instance.
+      network(str): Network name to use.
+      subnet(str): Network subnet on which to create instance.
 
     Returns: A string name of the instance.
     """
+    extra_args = []
+    if network:
+      extra_args.append('--network={}'.format(network))
+    if subnet:
+      extra_args.append('--subnet={}'.format(subnet))
+    gcloud_cmd = [
+        'gcloud', 'compute', 'instances', 'create', image,
+        '--image={}'.format(image), '--project={}'.format(project),
+        '--machine-type={}'.format(machine), '--no-scopes', '--no-address',
+        '--zone={}'.format(zone)
+    ]
+    gcloud_cmd.extend(extra_args)
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('create instance', [
-          'gcloud', 'compute', 'instances', 'create', image,
-          '--image={}'.format(image), '--project=chromeos-gce-tests',
-          '--machine-type=n1-standard-4', '--no-scopes', '--no-address',
-          '--network=chromeos-gce-tests', '--subnet=us-central1',
-          '--zone=us-central1-a'
-      ])
+      self.m.step('create instance', gcloud_cmd)
 
-  def delete_instance(self, instance):
+  def delete_instance(self, instance, project, zone):
     """Delete a GCE instance.
 
     Args:
       instance(str): GCE instance to be deleted.
+      project(str): Google Cloud project name.
+      zone(str): GCE zone to create instance.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('delete instance', [
           'gcloud', 'compute', 'instances', 'delete', instance, '--quiet',
-          '--zone=us-central1-a', '--project=chromeos-gce-tests'
+          '--zone={}'.format(zone), '--project={}'.format(project)
       ])
