@@ -63,12 +63,9 @@ def RunSteps(api, properties):
         all_projects = api.repo.project_infos()
       project_paths = []
       for project in all_projects:
-        # TODO(crbug/1147304): In rolling out this recipe, we start first with
-        # just the (internal) galaxy projects. Once verified, remove the filter
-        # to enable for all projects/programs.
         if project.name.startswith(
-            "chromeos/project/galaxy/") or project.name.startswith(
-                "chromeos/program/galaxy"):
+            "chromeos/project/") or project.name.startswith(
+                "chromeos/program/"):
           project_paths.append(project.path)
 
       cmd = [manifest_doctor_path, "branch-local-manifest"]
@@ -96,8 +93,7 @@ def GenTests(api):
                    path='src/program/galaxy'),
               dict(project='chromeos/project/galaxy/milkyway',
                    path='src/project/galaxy/milkyway'),
-              dict(project='chromeos/program/guybrush',
-                   path='src/program/guybrush'),
+              dict(project='chromeos/foo', path='src/foo'),
           ]),
       api.post_check(
           post_process.StepCommandContains,
@@ -120,8 +116,7 @@ def GenTests(api):
                    path='src/program/galaxy'),
               dict(project='chromeos/project/galaxy/milkyway',
                    path='src/project/galaxy/milkyway'),
-              dict(project='chromeos/program/guybrush',
-                   path='src/program/guybrush'),
+              dict(project='chromeos/foo', path='src/foo'),
           ]),
       api.post_check(
           post_process.StepCommandContains,

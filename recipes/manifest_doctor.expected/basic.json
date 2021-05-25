@@ -609,7 +609,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/galaxy|src/program/galaxy|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/project/galaxy/milkyway|src/project/galaxy/milkyway|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/guybrush|src/program/guybrush|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/foo|src/foo|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
