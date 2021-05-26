@@ -24,6 +24,7 @@ _CI_GO_BINARIES = [
     'branch_util',
     'build_plan_generator',
     'manifest_doctor',
+    'setup_project',
     'test_plan_generator',
     'pointless_build_checker',
     'version_bumper',
