@@ -262,7 +262,7 @@
   * [forge_commit](#recipes-forge_commit) &mdash; Recipe for forcing forge commit failure.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full)
   * [gce_test](#recipes-gce_test) &mdash; An experimental recipe for running GCE tests.
-  * [gcloud:examples/full](#recipes-gcloud_examples_full)
+  * [gcloud:tests/full](#recipes-gcloud_tests_full)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change)
   * [gerrit:examples/add_change_comment](#recipes-gerrit_examples_add_change_comment)
@@ -3597,6 +3597,15 @@ Returns:
 
 A module to process tast-results/ directory.
 
+&mdash; **def [attach\_disk](/recipe_modules/gcloud/api.py#154)(self, instance, disk, zone):**
+
+Attach a disk to a GCE instance.
+
+Args:
+  instance(str): GCE instance to be deleted.
+  disk(str): Google Cloud disk name.
+  zone(str): GCE zone to create instance (e.g. us-central1-b).
+
 &mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#29)(self, step_name=None):**
 
 Print out the auth creds currently on the bot.
@@ -3624,7 +3633,7 @@ Args:
   image(str): GCE image to use for the instance.
   project(str): Google Cloud project name.
   machine(str): GCE machine type
-  zone(str): GCE zone to create instance.
+  zone(str): GCE zone to create instance (e.g. us-central1-b).
   network(str): Network name to use.
   subnet(str): Network subnet on which to create instance.
 
@@ -3639,7 +3648,16 @@ Delete a GCE instance.
 Args:
   instance(str): GCE instance to be deleted.
   project(str): Google Cloud project name.
-  zone(str): GCE zone to create instance.
+  zone(str): GCE zone to create instance (e.g. us-central1-b).
+
+&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#168)(self, instance, disk, zone):**
+
+Detach a disk to a GCE instance.
+
+Args:
+  instance(str): GCE instance to be deleted.
+  disk(str): Google Cloud disk name.
+  zone(str): GCE zone to create instance (e.g. us-central1-b).
 
 &mdash; **def [prep\_image](/recipe_modules/gcloud/api.py#38)(self, source_bucket, source_path, uniq_id):**
 
@@ -3658,6 +3676,15 @@ Returns: Path to the image tar file.
 Set the default project for gcloud command.
 Args:
   project(str): Google Cloud project name.
+
+&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#182)(self, disk, snapshot_name, zone):**
+
+Detach a disk to a GCE instance.
+
+Args:
+  disk(str): Google Cloud disk name.
+  snapshot_name(str): The name to give the snapshot.
+  zone(str): GCE zone to create instance (e.g. us-central1-b).
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#6): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7346,11 +7373,11 @@ See https://crbug.com/1068743.
 An experimental recipe for running GCE tests.
 
 &mdash; **def [RunSteps](/recipes/gce_test.py#19)(api):**
-### *recipes* / [gcloud:examples/full](/recipe_modules/gcloud/examples/full.py)
+### *recipes* / [gcloud:tests/full](/recipe_modules/gcloud/tests/full.py)
 
-[DEPS](/recipe_modules/gcloud/examples/full.py#6): [gcloud](#recipe_modules-gcloud)
+[DEPS](/recipe_modules/gcloud/tests/full.py#6): [gcloud](#recipe_modules-gcloud)
 
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/full.py#13)(api):**
 ### *recipes* / [generator](/recipes/generator.py)
 
 [DEPS](/recipes/generator.py#36): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]

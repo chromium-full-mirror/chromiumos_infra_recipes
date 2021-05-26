@@ -116,7 +116,7 @@ class GcloudApi(recipe_api.RecipeApi):
       image(str): GCE image to use for the instance.
       project(str): Google Cloud project name.
       machine(str): GCE machine type
-      zone(str): GCE zone to create instance.
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
       network(str): Network name to use.
       subnet(str): Network subnet on which to create instance.
 
@@ -143,10 +143,52 @@ class GcloudApi(recipe_api.RecipeApi):
     Args:
       instance(str): GCE instance to be deleted.
       project(str): Google Cloud project name.
-      zone(str): GCE zone to create instance.
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('delete instance', [
           'gcloud', 'compute', 'instances', 'delete', instance, '--quiet',
           '--zone={}'.format(zone), '--project={}'.format(project)
+      ])
+
+  def attach_disk(self, instance, disk, zone):
+    """Attach a disk to a GCE instance.
+
+    Args:
+      instance(str): GCE instance to be deleted.
+      disk(str): Google Cloud disk name.
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('attach disk', [
+          'gcloud', 'compute', 'instances', 'attach-disk', instance,
+          '--disk={}'.format(disk), '--zone={}'.format(zone)
+      ])
+
+  def detach_disk(self, instance, disk, zone):
+    """Detach a disk to a GCE instance.
+
+    Args:
+      instance(str): GCE instance to be deleted.
+      disk(str): Google Cloud disk name.
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('detach disk', [
+          'gcloud', 'compute', 'instances', 'detach-disk', instance,
+          '--disk={}'.format(disk), '--zone={}'.format(zone)
+      ])
+
+  def snapshot_disk(self, disk, snapshot_name, zone):
+    """Detach a disk to a GCE instance.
+
+    Args:
+      disk(str): Google Cloud disk name.
+      snapshot_name(str): The name to give the snapshot.
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('snapshot disk', [
+          'gcloud', 'compute', 'disks', 'snapshot', disk,
+          '--snapshot-names={}'.format(snapshot_name), '--zone={}'.format(zone)
       ])
