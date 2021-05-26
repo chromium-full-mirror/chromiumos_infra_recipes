@@ -1,0 +1,270 @@
+[
+  {
+    "cmd": [],
+    "name": "get git revision for chromeos-chrome ToT"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "name": "get git revision for chromeos-chrome ToT.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "get git revision for chromeos-chrome ToT.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
+    ],
+    "infra_step": true,
+    "name": "get git revision for chromeos-chrome ToT.gitiles-fetch-ref",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal\", \"project\": \"chrome/src-internal\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"internal1234revision\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
+    ],
+    "infra_step": true,
+    "name": "get git revision for chromeos-chrome ToT.gitiles-fetch-ref (2)",
+    "stdin": "{\"branch\": {\"branch\": \"trunk\", \"host\": \"chromium\", \"project\": \"chromium\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"public5678revision\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clone chromiumos/overlays/chromiumos-overlay"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay",
+      "."
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "clone chromiumos/overlays/chromiumos-overlay.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "modify chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_1/chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "modify chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild.read file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@sample file contents@@@",
+      "@@@STEP_LOG_END@chromeos-chrome-9999.ebuild@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "# chrome-internal rev: internal1234revision\n# chromium rev: public5678revision\n\nsample file contents",
+      "[CLEANUP]/tmp_tmp_1/chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "modify chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild.write to file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@# chrome-internal rev: internal1234revision@@@",
+      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@# chromium rev: public5678revision@@@",
+      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@@@@",
+      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@sample file contents@@@",
+      "@@@STEP_LOG_END@chromeos-chrome-9999.ebuild@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "commit changes"
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "commit changes.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "chromeos-chrome uprev dry-run with Chrome ToT\n\n# chrome-internal rev: internal1234revision\n# chromium rev: public5678revision",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "commit changes.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@chromeos-chrome uprev dry-run with Chrome ToT@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chrome-internal rev: internal1234revision@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chromium rev: public5678revision@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1",
+      "--",
+      "chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "commit changes.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload CL and trigger CQ dry run",
+    "~followup_annotations": [
+      "@@@STEP_LINK@uprev CL@https://test.change.url@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--reviewers",
+      "chrome-os-gardeners+review@google.com",
+      "--cq-dry-run"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "upload CL and trigger CQ dry run.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "upload CL and trigger CQ dry run.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -35,7 +35,7 @@ class GitClApi(recipe_api.RecipeApi):
     return wrapper
 
   def upload(self, topic=None, reviewers=None, ccs=None, hashtags=None,
-             send_mail=False, target_branch=None, **kwargs):
+             send_mail=False, target_branch=None, dry_run=False, **kwargs):
     """Run `git cl upload`.
 
     --force and --bypass-hooks are always set to remove the need to enter
@@ -49,6 +49,7 @@ class GitClApi(recipe_api.RecipeApi):
       send_mail (bool): If true, set --send-mail.
       target_branch (str): Optional --target-branch to send to.
       kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
+      dry_run (str): If true, set --cq-dry-run.
 
     Returns:
       str: The command output.
@@ -80,6 +81,9 @@ class GitClApi(recipe_api.RecipeApi):
     if target_branch is not None:
       args.append('--target-branch')
       args.append(target_branch)
+
+    if dry_run:
+      args.append('--cq-dry-run')
 
     return self('upload', args, **kwargs).stdout.strip()
 
