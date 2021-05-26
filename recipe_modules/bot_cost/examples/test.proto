@@ -10,8 +10,8 @@ message TestProperties {
   // name for the test and step.
   string name = 1;
 
-  // bot size
-  string bot_size = 2;
+  // machine type
+  string machine_type = 2;
 
   // Whether we expect non-zero cost.
   bool expect_cost = 3;

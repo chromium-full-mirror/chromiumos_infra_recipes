@@ -154,6 +154,12 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     if bot_size:
       msg.infra.swarming.bot_dimensions.extend(
           self.m.cros_tags.tags(bot_size=bot_size))
+      if bot_size == 'large':
+        msg.infra.swarming.bot_dimensions.extend(
+            self.m.cros_tags.tags(machine_type='custom-32-65536'))
+      elif bot_size == 'small':
+        msg.infra.swarming.bot_dimensions.extend(
+            self.m.cros_tags.tags(machine_type='e2-medium'))
 
     msg.created_by = created_by if created_by else msg.created_by
 

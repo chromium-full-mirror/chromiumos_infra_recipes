@@ -14,16 +14,16 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 
 def RunSteps(api):
-  api.assertions.assertEqual(api.bot_cost._bot_size, None)
+  api.assertions.assertEqual(api.bot_cost._machine_type, None)
   api.assertions.assertRaises(ValueError, api.bot_cost.set_build_cost)
 
 
 def GenTests(api):
 
-  def test(name, status, bot_size):
+  def test(name, status, machine_type):
     bld_msg = build_pb2.Build(id=123, status=status)
     bld_msg.infra.swarming.bot_dimensions.extend(
-        api.cros_tags.tags(bot_size=bot_size))
+        api.cros_tags.tags(machine_type=machine_type))
     return api.test(name, api.buildbucket.build(bld_msg))
 
-  yield test('bad-size', status='STARTED', bot_size='bad')
+  yield test('bad-size', status='STARTED', machine_type='bad')

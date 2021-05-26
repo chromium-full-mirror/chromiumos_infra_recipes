@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "medium-bot"
+    "name": "e2-medium"
   },
   {
     "cmd": [
@@ -11,7 +11,7 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "medium-bot.calculate build cost.buildbucket.get",
+    "name": "e2-medium.calculate build cost.buildbucket.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"123\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -25,8 +25,8 @@
       "@@@STEP_LOG_LINE@json.output@          \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"botDimensions\": [@@@",
       "@@@STEP_LOG_LINE@json.output@              {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"key\": \"bot_size\", @@@",
-      "@@@STEP_LOG_LINE@json.output@                \"value\": \"medium\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"key\": \"machine_type\", @@@",
+      "@@@STEP_LOG_LINE@json.output@                \"value\": \"e2-medium\"@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            ]@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
