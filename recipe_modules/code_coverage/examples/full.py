@@ -15,7 +15,8 @@ def RunSteps(api):
         api.build_menu.setup_workspace_and_chroot():
     api.build_menu.setup_sysroot_and_determine_relevance()
 
-    api.build_menu.bootstrap_sysroot_and_install_packages()
+    api.build_menu.bootstrap_sysroot()
+    api.build_menu.install_packages()
     api.build_menu.build_and_test_images()
 
 

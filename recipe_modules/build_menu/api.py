@@ -384,37 +384,51 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     return self.dep_graph
 
-  def bootstrap_sysroot_and_install_packages(self, config=None, packages=None,
-                                             timeout_sec='DEFAULT', name=None):
-    """Bootstrap the sysroot and install packages as appropriate.
+  def bootstrap_sysroot(self, config=None):
+    """Bootstrap the sysroot by installing the toolchain.
 
-    The config determines whether to call install packages.  If installing
+    Args:
+      config (BuilderConfig): The Builder Config for the build. If none, will
+        attempt to get the BuilderConfig whose id.name matches the specified
+        Buildbucket builder from HEAD.
+    """
+    # Make sure we have a valid config
+    config = config or self.config_or_default
+    self.m.sysroot_util.bootstrap_sysroot(
+        compile_source=config.build.install_toolchain.compile_source)
+
+  def install_packages(self, config=None, packages=None, timeout_sec='DEFAULT',
+                       name=None, force_all_deps=False, include_rev_deps=False,
+                       dryrun=False):
+    """Install packages as appropriate.
+
+    The config determines whether to call install packages. If installing
     packages, fetch Chrome source when needed.
 
     Args:
       config (BuilderConfig): The Builder Config for the build.
-      packages (list[PackageInfo]): list of packages to install.  Default: all
-          packages for the build_target.
+      packages (list[PackageInfo]): List of packages to install.  Default: all
+        packages for the build_target.
       timeout_sec (int): Step timeout, in seconds, or None for default.
-      name (string): step name for install packages, or None for default.
+      name (string): Step name for install packages, or None for default.
+      force_all_deps (bool): Whether to force building of all dependencies.
+      include_rev_deps (bool): Whether to also install reverse dependencies.
+        Ignored if config specifies ALL_DEPENDENCIES or force_all_deps is True.
+      dryrun (bool): Dryrun the install packages step.
 
     Returns:
       (bool): Whether to continue with the build.
     """
     # Make sure we have a valid config
     config = config or self.config_or_default
-
-    self.m.sysroot_util.bootstrap_sysroot(
-        compile_source=config.build.install_toolchain.compile_source)
-
     install_packages = config.build.install_packages
     relevant_packages = packages
-    if (config.build.install_packages.dependencies ==
-        BuilderConfig.CL_AFFECTED_DEPENDENCIES):
+    if not force_all_deps and (config.build.install_packages.dependencies ==
+                               BuilderConfig.CL_AFFECTED_DEPENDENCIES):
       relevant_packages = self.m.cros_relevance.get_package_dependencies(
           sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
           patch_sets=self.m.workspace_util.patch_sets, packages=packages,
-          include_rev_deps=True)
+          include_rev_deps=include_rev_deps)
       self._cl_affected_sysroot_packages = list(relevant_packages)
       # Ensure implicit dependencies are installed.
       relevant_packages.add(category='virtual', package_name='implicit-system')
@@ -425,7 +439,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           config, self.dep_graph, relevant_packages,
           artifact_build=self._artifact_build,
           package_indexes=self._package_indexes, timeout_sec=timeout_sec,
-          name=name)
+          name=name, dryrun=dryrun)
 
     return not self.m.cros_infra_config.should_exit(install_packages.run_spec)
 

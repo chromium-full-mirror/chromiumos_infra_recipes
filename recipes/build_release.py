@@ -41,7 +41,8 @@ def DoRunSteps(api, config, _properties):
   # packages when that step fails, or even if build images fail afterward.
   failing_build = False
   try:
-    if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
+    api.build_menu.bootstrap_sysroot(config)
+    if api.build_menu.install_packages(config, packages):
       if api.build_menu.build_and_test_images(config, include_version=True):
         api.build_menu.upload_prebuilts(config)
   except StepFailure:

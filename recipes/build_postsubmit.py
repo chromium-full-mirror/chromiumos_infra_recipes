@@ -38,7 +38,8 @@ def DoRunSteps(api, config, _properties):
   # the build has already failed. See also crbug/1086630.
   raise_upload_failure = True
   try:
-    if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
+    api.build_menu.bootstrap_sysroot(config)
+    if api.build_menu.install_packages(config, packages):
       if api.build_menu.build_and_test_images(config):
         api.build_menu.upload_prebuilts(config)
   except StepFailure:

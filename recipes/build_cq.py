@@ -41,7 +41,8 @@ def DoRunSteps(api, config, _properties):
   # the build has already failed. See also crbug/1086630.
   raise_upload_failure = True
   try:
-    if api.build_menu.bootstrap_sysroot_and_install_packages(config, packages):
+    api.build_menu.bootstrap_sysroot(config)
+    if api.build_menu.install_packages(config, packages):
       # We have no steps following build_and_test_images, so we don't need to
       # check the return value.
       api.build_menu.build_and_test_images(config)
@@ -69,14 +70,6 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusSuccess), cq=True, build_target='coral')
-
-  # Slim CQ build, with one gerrit_change.
-  yield api.build_menu.test(
-      'slim-cq-build', api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess), cq=True,
-      build_target='atlas-slim')
 
   # This covers the Relevance check.
   yield api.build_menu.test(

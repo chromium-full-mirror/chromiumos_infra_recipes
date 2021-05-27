@@ -125,6 +125,7 @@
   * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds)
   * [build_postsubmit](#recipes-build_postsubmit) &mdash; Recipe for building a BuildTarget image for Postsubmit.
   * [build_release](#recipes-build_release) &mdash; Recipe for building images for release.
+  * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
@@ -705,24 +706,16 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [bootstrap\_sysroot\_and\_install\_packages](/recipe_modules/build_menu/api.py#387)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#387)(self, config=None):**
 
-Bootstrap the sysroot and install packages as appropriate.
-
-The config determines whether to call install packages.  If installing
-packages, fetch Chrome source when needed.
+Bootstrap the sysroot by installing the toolchain.
 
 Args:
-  config (BuilderConfig): The Builder Config for the build.
-  packages (list[PackageInfo]): list of packages to install.  Default: all
-      packages for the build_target.
-  timeout_sec (int): Step timeout, in seconds, or None for default.
-  name (string): step name for install packages, or None for default.
+  config (BuilderConfig): The Builder Config for the build. If none, will
+    attempt to get the BuilderConfig whose id.name matches the specified
+    Buildbucket builder from HEAD.
 
-Returns:
-  (bool): Whether to continue with the build.
-
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#432)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#446)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -771,6 +764,27 @@ Returns:
 &emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#87)(self):**
 
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#70)(self):**
+
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#400)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
+
+Install packages as appropriate.
+
+The config determines whether to call install packages. If installing
+packages, fetch Chrome source when needed.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build.
+  packages (list[PackageInfo]): List of packages to install.  Default: all
+    packages for the build_target.
+  timeout_sec (int): Step timeout, in seconds, or None for default.
+  name (string): Step name for install packages, or None for default.
+  force_all_deps (bool): Whether to force building of all dependencies.
+  include_rev_deps (bool): Whether to also install reverse dependencies.
+    Ignored if config specifies ALL_DEPENDENCIES or force_all_deps is True.
+  dryrun (bool): Dryrun the install packages step.
+
+Returns:
+  (bool): Whether to continue with the build.
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#95)(self):**
 
@@ -830,7 +844,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#516)(self, config=None, failing_build=False, private_bundle_func=None, sysroot=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#530)(self, config=None, failing_build=False, private_bundle_func=None, sysroot=None):**
 
 Upload artifacts from the build.
 
@@ -847,7 +861,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#545)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#559)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -5724,7 +5738,7 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#249)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, version=None, timeout_sec=(60 \* 60), build_test_data=None, test_test_data=None, name=None):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#251)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, version=None, timeout_sec=(60 \* 60), build_test_data=None, test_test_data=None, name=None):**
 
 Build and validate images.
 
@@ -5763,7 +5777,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#33)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/sysroot_util/api.py#159)(self, config, dep_graph, packages=None, artifact_build=False, package_indexes=None, timeout_sec='DEFAULT', name=None):**
+&mdash; **def [install\_packages](/recipe_modules/sysroot_util/api.py#159)(self, config, dep_graph, packages=None, artifact_build=False, package_indexes=None, timeout_sec='DEFAULT', name=None, dryrun=False):**
 
 Install packages (possibly fetching Chrome source).
 
@@ -5776,6 +5790,8 @@ Args:
   package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
   timeout_sec (int): Step timeout, in seconds, or None for default.
   name (str): Step name to use, or None for default name.
+  dryrun (bool): Whether to dryrun the step such that we calculate the
+      packages which would have been built, but do not install them.
 
 &emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#36)(self):**
 
@@ -6478,6 +6494,15 @@ Recipe for building images for release.
 &mdash; **def [DoRunSteps](/recipes/build_release.py#35)(api, config, _properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#28)(api, properties):**
+### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
+
+[DEPS](/recipes/build_slim_cq.py#8): [build\_menu](#recipe_modules-build_menu)
+
+Recipe for building and testing a BuildTarget's packages.
+
+&mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#22)(api, config):**
+
+&mdash; **def [RunSteps](/recipes/build_slim_cq.py#16)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
@@ -8350,7 +8375,7 @@ Args:
 Returns:
   BuildPath: where the build artifacts were uploaded.
 
-&emsp; **@exponential_retry(retries=2)**<br>&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#195)(api, properties, artifacts_path, parallels_version):**
+&emsp; **@exponential_retry(retries=2)**<br>&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#196)(api, properties, artifacts_path, parallels_version):**
 
 Builds a new VM image for testing.
 
@@ -8361,7 +8386,7 @@ Args:
 Returns:
   dict: The details of the new test image.
 
-&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#261)(api, properties, package, new_version_pin):**
+&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#262)(api, properties, package, new_version_pin):**
 
 Commits and uploads the uprev of the version-pin file.
 
@@ -8370,7 +8395,7 @@ Args:
       commit message.
   new_version_pin (VersionPin): the new version pin data.
 
-&mdash; **def [get\_latest\_green\_snapshot\_commit](/recipes/uprev_parallels_pin.py#404)(api, build_target):**
+&mdash; **def [get\_latest\_green\_snapshot\_commit](/recipes/uprev_parallels_pin.py#405)(api, build_target):**
 
 Finds the latest green snapshot build for the given build target
 and returns the corresponding manifest gitiles (input) commit.
@@ -8378,18 +8403,18 @@ and returns the corresponding manifest gitiles (input) commit.
 Args:
   build_target (str): The name of the build target.
 
-&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#303)(api, properties):**
+&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#304)(api, properties):**
 
 Gets the latest version of Parallels from the upstream bucket.
 
 Returns:
   string: the latest upstream version of Parallels.
 
-&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#384)(api, properties):**
+&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#385)(api, properties):**
 
 Gets the path of the VERSION-PIN file.
 
-&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#343)(api, properties):**
+&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#344)(api, properties):**
 
 Reads and returns the content of the VERSION-PIN file.
 
@@ -8399,7 +8424,7 @@ have been checked out.
 Returns:
   VersionPin: the pinned version data.
 
-&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#389)(version, previous_version):**
+&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#390)(version, previous_version):**
 
 Returns if version occurs logically after pervious_version.
 
@@ -8409,7 +8434,7 @@ Args:
   version (str): The version to compare.
   previous_version (str): The previous version to compare with.
 
-&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#366)(api, properties, new_version):**
+&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#367)(api, properties, new_version):**
 
 Sets the content of the VERSION-PIN file.
 
@@ -8419,7 +8444,7 @@ have been checked out.
 Args:
   new_version (VersionPin): the new version pin data.
 
-&mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#158)(api, properties, package, to_version):**
+&mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#159)(api, properties, package, to_version):**
 
 Uprevs the Parallels package to the given version.
 

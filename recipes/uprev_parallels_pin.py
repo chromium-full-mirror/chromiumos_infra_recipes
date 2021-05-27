@@ -139,7 +139,8 @@ def build_os_with_uprev(api, properties, package, upstream_version):
       # afterward.
       publish = True
       try:
-        api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
+        api.build_menu.bootstrap_sysroot(config)
+        api.build_menu.install_packages(config, packages)
         api.build_menu.build_and_test_images(config)
       except StepFailure:
         publish = False

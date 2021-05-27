@@ -82,7 +82,8 @@ def DoRunSteps(api, properties):
           PackageInfo(category='chromeos-base', package_name='autotest-all')
       ]
       api.build_menu.setup_sysroot_and_determine_relevance(packages=packages)
-      api.build_menu.bootstrap_sysroot_and_install_packages(config, packages)
+      api.build_menu.bootstrap_sysroot(config)
+      api.build_menu.install_packages(config, packages)
 
   # TODO(evanhernandez): Read and present the test results.
   test_harness_name = VmTestRequest.TestHarness.Name(properties.test_harness)

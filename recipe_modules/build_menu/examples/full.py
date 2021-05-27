@@ -44,7 +44,8 @@ def DoRunSteps(api, properties):
     if properties.no_sysroot:
       api.assertions.assertIsNone(api.build_menu.sysroot)
     else:
-      api.build_menu.bootstrap_sysroot_and_install_packages()
+      api.build_menu.bootstrap_sysroot()
+      api.build_menu.install_packages()
       api.build_menu.build_and_test_images()
       api.build_menu.build_and_test_images(include_version=True)
       if properties.upload_prebuilts:

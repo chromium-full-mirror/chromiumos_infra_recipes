@@ -158,7 +158,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
   def install_packages(self, config, dep_graph, packages=None,
                        artifact_build=False, package_indexes=None,
-                       timeout_sec='DEFAULT', name=None):
+                       timeout_sec='DEFAULT', name=None, dryrun=False):
     """Install packages (possibly fetching Chrome source).
 
     Args:
@@ -170,6 +170,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
       timeout_sec (int): Step timeout, in seconds, or None for default.
       name (str): Step name to use, or None for default name.
+      dryrun (bool): Whether to dryrun the step such that we calculate the
+          packages which would have been built, but do not install them.
     """
     packages = packages or []
     package_indexes = package_indexes or []
@@ -184,7 +186,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           presentation.step_text = 'Forcing toolchain_changed=False'
           toolchain_cls = False
 
-        def _InstallPackagesRequest():
+        def _InstallPackagesRequest(dryrun=False):
           """Helper to make InstallPackagesRequest."""
           return InstallPackagesRequest(
               chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
@@ -192,8 +194,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
               flags=InstallPackagesRequest.Flags(
                   compile_source=install_packages.compile_source,
                   use_goma=self.m.cros_sdk.has_goma_config(),
-                  toolchain_changed=toolchain_cls),
-              use_flags=config.build.use_flags,
+                  toolchain_changed=toolchain_cls,
+                  dryrun=dryrun), use_flags=config.build.use_flags,
               goma_config=self.m.cros_sdk.goma_config())
 
         with self.m.step.nest('check chrome source needed') as check_pres:
@@ -223,7 +225,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           self.m.sysroot_util.update_for_artifact_build(
               self.m.cros_sdk.chroot, config.artifacts, force_relevance=True,
               name='prepare artifacts final')
-        install_pkg_request = _InstallPackagesRequest()
+        install_pkg_request = _InstallPackagesRequest(dryrun=dryrun)
         response = self.m.cros_build_api.SysrootService.InstallPackages(
             install_pkg_request,
             response_lambda=self.m.cros_build_api.failed_pkg_names,
