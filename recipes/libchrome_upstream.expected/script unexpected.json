@@ -1014,7 +1014,7 @@
       "libchrome_tools/developer-tools/uprev/update_upstream.py",
       "cros/upstream",
       "cb10da20a312790d1d2421ae2f8dc2ea831cffa3",
-      "--forward"
+      "--all"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
     "name": "generate new upstream branch locally.generate new upstream head",

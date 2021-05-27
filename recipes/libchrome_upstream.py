@@ -52,18 +52,11 @@ def RunSteps(api):
           # Just print libchrome HEAD so we know which version of
           # libchrome_tools is used.
           api.git.head_commit()
-          step_data = api.step(
-              'generate new upstream head',
-              [
-                  'vpython3',
-                  'libchrome_tools/developer-tools/uprev/update_upstream.py',
-                  'cros/upstream',
-                  chromium_heads,
-                  # TODO(b/180558819): use --all to support picking old
-                  # history of new files after filter change.
-                  '--forward'
-              ],
-              stdout=api.raw_io.output())
+          step_data = api.step('generate new upstream head', [
+              'vpython3',
+              'libchrome_tools/developer-tools/uprev/update_upstream.py',
+              'cros/upstream', chromium_heads, '--all'
+          ], stdout=api.raw_io.output())
           result_commit = step_data.stdout.strip()
           if not (result_commit and re.match(r'^[0-9a-f]{40}$', result_commit)):
             raise StepFailure('Got invalid commit %s' % result_commit)
