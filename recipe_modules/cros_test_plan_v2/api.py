@@ -19,7 +19,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
   def initialize(self):
     self._cipd_package = (
         self._properties.test_plan_cipd_package.encode('utf-8') or
-        "chromiumos/infra/test_plan_generator/${platform}")
+        "chromiumos/infra/test_plan/${platform}")
 
     default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
     self._cipd_ref = (
