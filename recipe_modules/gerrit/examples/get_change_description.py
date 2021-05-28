@@ -22,6 +22,15 @@ def RunSteps(api):
       api.gerrit.get_change_description(gerrit_change),
       api.gerrit.test_api.test_gerrit_change_description())
 
+  api.assertions.assertEqual(
+      api.gerrit.get_change_description(gerrit_change, memoize=True),
+      api.gerrit.test_api.test_gerrit_change_description())
+
+  # Do it again, but this time we hit the cache.
+  api.assertions.assertEqual(
+      api.gerrit.get_change_description(gerrit_change, memoize=True),
+      api.gerrit.test_api.test_gerrit_change_description())
+
 
 def GenTests(api):
   yield api.test('basic')

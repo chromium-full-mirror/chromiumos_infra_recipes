@@ -194,11 +194,13 @@ class GerritApi(RecipeApi):
   PatchSet = PatchSet
   Label = Label
 
+
   def __init__(self, *args, **kwargs):
     """Initialize GerritApi."""
     super(GerritApi, self).__init__(*args, **kwargs)
     self._buildbucket_patch_sets = None
     self._gerrit_patch_sets = None
+    self._GET_CHANGE_DESCRIPTION_CACHE = {}
 
   @property
   def gerrit_patch_sets(self):
@@ -562,15 +564,19 @@ class GerritApi(RecipeApi):
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
         self.m.git_cl('comment', ['-i', gerrit_change.change, '-a', comment])
 
-  def get_change_description(self, gerrit_change):
+  def get_change_description(self, gerrit_change, memoize=False):
     """Get the description of the given Gerrit change.
 
     Args:
       gerrit_change (GerritChange): The change of interest.
-
+      memoize (bool): Should we consult a local cache for the change id instead
+          of fetching from gerrit.
     Returns:
       str: The change description.
     """
+    if memoize and gerrit_change.change in self._GET_CHANGE_DESCRIPTION_CACHE:
+      return self._GET_CHANGE_DESCRIPTION_CACHE[gerrit_change.change]
+
     with self.m.step.nest('get CL %d description' %
                           gerrit_change.change) as pres:
       gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
@@ -582,6 +588,8 @@ class GerritApi(RecipeApi):
       description = (
           description if description.endswith('\n') else description + '\n')
       pres.logs['description text'] = [description]
+      if memoize:
+        self._GET_CHANGE_DESCRIPTION_CACHE[gerrit_change.change] = description
       return description
 
   def set_change_description(self, gerrit_change, description,
