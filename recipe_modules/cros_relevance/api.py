@@ -27,6 +27,10 @@ from recipe_engine import recipe_api
 class CrosRelevanceApi(recipe_api.RecipeApi):
   """A module for determining if a build is unnecessary."""
 
+  # A git footer that can be included in commit messages to tell the cq run to
+  # force the builds to be relevant. Does not prevent them being recycled.
+  FORCE_RELEVANT_BUILDS_FOOTER = 'Force-Relevant-Builds'
+
   def __init__(self, properties, *args, **kwargs):
     super(CrosRelevanceApi, self).__init__(*args, **kwargs)
     self._properties = properties
@@ -346,6 +350,33 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                                          build_target=build_target,
                                          chroot=chroot, packages=packages))
       return _dep_graph(target=resp.dep_graph, sdk=resp.sdk_dep_graph)
+
+  def check_force_relevance_footer(self, gerrit_changes, configs):
+    """Check the incoming gerrit changes to determine if we force relevance.
+
+    Args:
+      gerrit_changes (list[GerritChange]): The gerrit changes.
+      configs (list[BuilderConfig]: The Builder Configs for the build.
+
+    Returns:
+      A list of target names, derived from `configs`, to be forced relevant.
+    """
+    with self.m.step.nest('check force relevance') as pres:
+      force_relevant_targets = self.m.git_footers.get_footer_values(
+          gerrit_changes, self.FORCE_RELEVANT_BUILDS_FOOTER)
+      pres.logs['found footer builders'] = 'found build(s): %s' % ','.join(
+          [x for x in force_relevant_targets])
+      # Handle forcing relevance via footer value.
+      f_rel = [
+          cfg.id.name
+          for cfg in configs
+          if cfg.id.name in force_relevant_targets or
+          'all' in force_relevant_targets
+      ]
+      pres.step_text = 'force relevant %s target(s)' % len(f_rel)
+      if f_rel:
+        pres.logs['forced targets'] = '\n'.join(f_rel)
+      return f_rel
 
   def _get_affected_paths(self, patch_sets):
     """Returns the union of all paths in the list of patchsets.

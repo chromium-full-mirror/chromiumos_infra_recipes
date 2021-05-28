@@ -35,10 +35,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
   ]
 
-  # A git footer that can be included in commit messages to tell the cq run to
-  # force the builds to be relevant. Does not prevent them being recycled.
-  FORCE_RELEVANT_BUILDS_FOOTER = 'Force-Relevant-Builds'
-
   # TODO(crbug/1099259): Migrate the common build_target properties to the
   # module, and stop looking at the global properties.
   def __init__(self, props, glob_props, *args, **kwargs):
@@ -327,7 +323,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # 4. The gerrit change contains the appropriate footer.
     force_rel = (
         self._force_relevant_build or
-        self._check_force_relevance_footer(self.gerrit_changes, config))
+        config.id.name in self.m.cros_relevance.check_force_relevance_footer(
+            self.gerrit_changes, [config]))
 
     pointless = self.m.cros_relevance.is_build_pointless(
         self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
@@ -337,28 +334,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.buildbucket.hide_current_build_in_gerrit()
 
     return _env_info(pointless, packages)
-
-  def _check_force_relevance_footer(self, gerrit_changes, config):
-    """Check the incoming gerrit changes to determine if we force relevance.
-
-    Args:
-      gerrit_changes (list[GerritChange]): The gerrit changes.
-      config (BuilderConfig): The Builder Config for the build.
-
-    Returns:
-      If the current builder name is forced relevant.
-    """
-    with self.m.step.nest('check force relevance') as pres:
-      force_relevant_targets = self.m.git_footers.get_footer_values(
-          gerrit_changes, self.FORCE_RELEVANT_BUILDS_FOOTER)
-      pres.logs['found footer builders'] = 'found build(s): %s' % ','.join(
-          [x for x in force_relevant_targets])
-      # Handle forcing relevance via footer value.
-      f_rel = (
-          config.id.name in force_relevant_targets or
-          'all' in force_relevant_targets)
-      pres.step_text = 'force relevant: %s' % str(f_rel)
-      return f_rel
 
   def _get_dep_graph(self, packages):
     """Fetch the dependency graph, and validate the SDK for reuse.

@@ -64,6 +64,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
           builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
               b.id for b in builder_configs if 'pointless' not in b.id.name
           ])
+    # Handle forced relevancy.
+    forced_necessary = self.m.cros_relevance.check_force_relevance_footer(
+        gerrit_changes, builder_configs)
+    necessary_builders = list(set(necessary_builders) | set(forced_necessary))
+
     slim_eligible_run = any(x.endswith('slim-cq') for x in necessary_builders)
 
     if enable_history:
@@ -354,7 +359,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     # return reduced list
     return best_builds_list
-
 
   def _get_forced_rebuilds(self, gerrit_changes):
     """Gets a list of builders whose builds should not be reused.
