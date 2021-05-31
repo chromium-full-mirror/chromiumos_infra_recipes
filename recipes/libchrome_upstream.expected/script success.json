@@ -988,6 +988,37 @@
   },
   {
     "cmd": [],
+    "name": "sync upstream branch"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "refs/heads/upstream:"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "infra_step": true,
+    "name": "sync upstream branch.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
+    "infra_step": true,
+    "name": "sync upstream branch.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate new upstream branch locally"
   },
   {
@@ -1009,7 +1040,7 @@
     "cmd": [
       "vpython3",
       "libchrome_tools/developer-tools/uprev/update_upstream.py",
-      "cros/upstream",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
       "cb10da20a312790d1d2421ae2f8dc2ea831cffa3",
       "--all"
     ],
@@ -1024,7 +1055,7 @@
       "git",
       "log",
       "--pretty=%H%x1E%B%x00",
-      "cros/upstream...49d1e4a4a6ca65114208c498416be3b85e10cc8e"
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef...49d1e4a4a6ca65114208c498416be3b85e10cc8e"
     ],
     "cwd": "[START_DIR]/chromiumos_workspace/src/aosp/external/libchrome",
     "infra_step": true,

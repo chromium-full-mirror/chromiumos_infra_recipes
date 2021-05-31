@@ -45,9 +45,12 @@ def RunSteps(api):
               '/usr/bin/git', 'fetch',
               'https://chromium.googlesource.com/chromium/src'
           ])
-          chromium_heads = api.step('get chromium head',
-                                    ['/usr/bin/git', 'rev-parse', 'FETCH_HEAD'],
-                                    stdout=api.raw_io.output()).stdout.strip()
+          chromium_head = api.step('get chromium head',
+                                   ['/usr/bin/git', 'rev-parse', 'FETCH_HEAD'],
+                                   stdout=api.raw_io.output()).stdout.strip()
+        with api.step.nest('sync upstream branch'):
+          upstream_branch_head = api.git.fetch_ref(project_info.remote,
+                                                   'refs/heads/upstream')
         with api.step.nest('generate new upstream branch locally'):
           # Just print libchrome HEAD so we know which version of
           # libchrome_tools is used.
@@ -55,12 +58,12 @@ def RunSteps(api):
           step_data = api.step('generate new upstream head', [
               'vpython3',
               'libchrome_tools/developer-tools/uprev/update_upstream.py',
-              'cros/upstream', chromium_heads, '--all'
+              upstream_branch_head, chromium_head, '--all'
           ], stdout=api.raw_io.output())
           result_commit = step_data.stdout.strip()
           if not (result_commit and re.match(r'^[0-9a-f]{40}$', result_commit)):
             raise StepFailure('Got invalid commit %s' % result_commit)
-          api.git.log('cros/upstream', result_commit)
+          api.git.log(upstream_branch_head, result_commit)
         # Pushes to upstream branch, instead of tip-of-tree.
         # The script should run the script from libchrome tip-of-tree to generate
         # updated upstream (based on inputs from Chromium tip-of-tree)
