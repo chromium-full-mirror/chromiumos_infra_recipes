@@ -37,7 +37,7 @@ def GenTests(api):
               '$chromeos/service_version':
                   ServiceVersionProperties(
                       version=service_version.ServiceVersion(
-                          crosfleet_tool=2, skylab_tool=1))
+                          crosfleet_tool=3, skylab_tool=2))
           }))
 
   yield api.test(
@@ -47,7 +47,7 @@ def GenTests(api):
               '$chromeos/service_version':
                   ServiceVersionProperties(
                       version=service_version.ServiceVersion(
-                          crosfleet_tool=1, skylab_tool=2))
+                          crosfleet_tool=2, skylab_tool=3))
           }))
 
   yield api.test(
@@ -57,7 +57,7 @@ def GenTests(api):
               '$chromeos/service_version':
                   ServiceVersionProperties(
                       version=service_version.ServiceVersion(
-                          crosfleet_tool=1, skylab_tool=1))
+                          crosfleet_tool=2, skylab_tool=2))
           }))
 
   yield api.test(
@@ -67,5 +67,5 @@ def GenTests(api):
               '$chromeos/service_version':
                   ServiceVersionProperties(
                       version=service_version.ServiceVersion(
-                          crosfleet_tool=2, skylab_tool=2))
+                          crosfleet_tool=3, skylab_tool=3))
           }))

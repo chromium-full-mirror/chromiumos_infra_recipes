@@ -8,7 +8,7 @@ from recipe_engine import recipe_api
 # NOTE: when this version is bumped, you MUST bump the `cbuildbot-prod` CIPD
 # ref of the skylab CIPD package (chromiumos/infra/skylab/linux-amd64) to the
 # latest stable skylab package version.
-_MINIMUM_CLI_VERSION = 2
+_MINIMUM_CLI_VERSION = 3
 
 
 class ServiceVersionCommand(recipe_api.RecipeApi):

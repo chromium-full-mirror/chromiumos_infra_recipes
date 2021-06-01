@@ -63,7 +63,7 @@ def GenTests(api):
                           }),
               '$chromeos/service_version':
                   ServiceVersionProperties(
-                      version=service_version.ServiceVersion(crosfleet_tool=2),
+                      version=service_version.ServiceVersion(crosfleet_tool=3),
                   ),
           }) +  #
       api.properties.environ(
@@ -95,7 +95,7 @@ def GenTests(api):
                           }),
               '$chromeos/service_version':
                   ServiceVersionProperties(
-                      version=service_version.ServiceVersion(crosfleet_tool=1),
+                      version=service_version.ServiceVersion(crosfleet_tool=2),
                   ),
           }) +  #
       api.properties.environ(

@@ -739,7 +739,7 @@ def GenTests(api):
           CrosTestPlatformProperties(requests={'first': Request()}), **{
               '$chromeos/service_version':
                   ServiceVersionProperties(
-                      version=service_version_pb.ServiceVersion(skylab_tool=1)),
+                      version=service_version_pb.ServiceVersion(skylab_tool=2)),
           }))
 
   yield api.test(
@@ -748,7 +748,7 @@ def GenTests(api):
           CrosTestPlatformProperties(requests={'first': Request()}), **{
               '$chromeos/service_version':
                   ServiceVersionProperties(
-                      version=service_version_pb.ServiceVersion(skylab_tool=2)),
+                      version=service_version_pb.ServiceVersion(skylab_tool=3)),
           }))
 
   yield api.test(
