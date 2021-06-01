@@ -4342,7 +4342,7 @@ Args:
   send_mail (bool): If true, set --send-mail.
   target_branch (str): Optional --target-branch to send to.
   kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
-  dry_run (str): If true, set --cq-dry-run.
+  dry_run (bool): If true, set --cq-dry-run.
 
 Returns:
   str: The command output.
