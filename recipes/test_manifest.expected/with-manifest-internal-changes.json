@@ -791,7 +791,7 @@
     },
     "infra_step": true,
     "name": "sync to gitiles commit.repo sync",
-    "timeout": 5400,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -972,7 +972,7 @@
     },
     "infra_step": true,
     "name": "cherry-pick gerrit changes.patch manifest.checkout branch main.repo sync",
-    "timeout": 5400,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

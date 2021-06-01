@@ -674,7 +674,7 @@
     },
     "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.repo sync",
-    "timeout": 5400,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -842,7 +842,7 @@
     },
     "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.repo sync",
-    "timeout": 5400,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

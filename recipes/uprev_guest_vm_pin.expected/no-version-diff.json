@@ -627,7 +627,7 @@
     },
     "infra_step": true,
     "name": "upreving pin for branch main.checkout branch main.repo sync",
-    "timeout": 5400,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

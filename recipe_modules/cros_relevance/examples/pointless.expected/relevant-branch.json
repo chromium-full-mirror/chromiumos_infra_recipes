@@ -129,7 +129,7 @@
     },
     "infra_step": true,
     "name": "checkout branch BRANCH.repo sync",
-    "timeout": 5400,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

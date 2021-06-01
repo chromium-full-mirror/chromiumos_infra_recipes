@@ -27,7 +27,7 @@ STAGING_INIT_OPTS = dict(repo_branch='main')
 # Default options for checking out a branch.
 DEFAULT_CHECKOUT_SYNC_OPTS = dict(current_branch=True, force_sync=True, jobs=8,
                                   optimized_fetch=True, retry_fetches=8,
-                                  timeout=5400)
+                                  timeout=10800)
 
 # Manifest repositories that sync_to_pinned_manifest is allowed to pull from.
 ALLOWED_MANIFEST_SOURCES = [
