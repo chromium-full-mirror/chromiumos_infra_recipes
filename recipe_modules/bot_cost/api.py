@@ -42,6 +42,7 @@ class BotCostApi(RecipeApi):
     # If we are led launched, this lets us at least estimate the actual time
     # spend in the run.
     self._start_time = self.m.time.time()
+    self._build_run_cost = 0
     self._cq_run_cost = 0
 
   @property
@@ -88,8 +89,10 @@ class BotCostApi(RecipeApi):
     property.
     """
     with self.m.step.nest('set build cost') as presentation:
+      presentation.logs['machine_type'] = [str(self.machine_type)]
       build_cost = self._calculate_build_cost()
       presentation.properties['build_cost'] = round(build_cost, 4)
+      self._build_run_cost = build_cost
 
   def _calculate_build_cost(self):
     """Calculate the cost of creating a build.
@@ -105,12 +108,6 @@ class BotCostApi(RecipeApi):
     Returns:
       A float representing the cost (USD) of building this image.
     """
-    # If we didn't get a machine_type, give it a zero cost.
-    # Cost is hourly, therefore we calcuate for a total daily cost.
-    # TODO(lamontjones): consider fetching bot_policy.cfg and using the
-    # hourlyCost field.
-    daily_cost = 24 * MACHINE_HOURLY_COST.get(self.machine_type, 0.0)
-
     build = self.m.buildbucket.build
     if self.m.led.run_id or build.status == common_pb2.STATUS_UNSPECIFIED:
       # If this led job, use a known-ended build, since the led job doesn't
@@ -122,6 +119,12 @@ class BotCostApi(RecipeApi):
       # Refresh the build information.
       build = self.m.buildbucket.get(
           build.id, step_name='calculate build cost.buildbucket.get')
+
+    # If we didn't get a machine_type, give it a zero cost.
+    # Cost is hourly, therefore we calcuate for a total daily cost.
+    # TODO(lamontjones): consider fetching bot_policy.cfg and using the
+    # hourlyCost field.
+    hourly_cost = MACHINE_HOURLY_COST.get(self.machine_type, 0.0)
 
     if build.status & common_pb2.ENDED_MASK:
       # Cases that take this path:
@@ -138,7 +141,7 @@ class BotCostApi(RecipeApi):
       # return a zero cost.
       return 0.0
     bot_days = build_duration / (60.0 * 60.0 * 24.0)
-    return bot_days * daily_cost
+    return bot_days * (hourly_cost * 24)
 
   def set_cq_run_cost(self, child_builds=None):
     """Wrapper function to calculate and set the cost of the cq run.
