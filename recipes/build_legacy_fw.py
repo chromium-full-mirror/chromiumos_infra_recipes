@@ -102,6 +102,7 @@ class FirmwareBuilder(object):
     self._suite_scheduling = False
     self._old_setup_board = False
     self._tot_chromite = None
+    # TODO(b/188555398): Make this False once the root-cause is identified.
     self._debug = True
 
   def sdk_call(self, name, sdk_args=(), cmd=(), **kwargs):
@@ -136,7 +137,6 @@ class FirmwareBuilder(object):
     # If we do not have a gitiles_commit from buildbucket, and input properties
     # has manifest_branch, use that branch of the internal manifest.
     self._is_staging = self.m.build_menu.is_staging
-    self._debug = self._is_staging or self.m.cq.active
     commit = self.m.src_state.gitiles_commit
     targets = self.properties.build_targets
     if not commit.project and self.properties.manifest_branch:
@@ -420,16 +420,6 @@ class FirmwareBuilder(object):
           '--version={}'.format(self._bcs_version.legacy_version),
           '--buildroot', self.m.src_state.workspace_path
       ]
-      if self.properties.use_pushimage_from_tree:
-        cmd = [
-            'pushimage',
-            '--yes',
-            '--board={}'.format(board),
-            '--version={}'.format(self._bcs_version.legacy_version),
-        ]
-        if self._is_after('11019.0.0'):
-          # pushimage did not support --buildroot until 11019.0.0.
-          cmd.extend(['--buildroot', self.m.src_state.workspace_path])
       if dry_run:
         cmd.append('-n')
       cmd.extend(profile(self._config.build.portage_profile.profile))
@@ -446,10 +436,7 @@ class FirmwareBuilder(object):
                                                   build_target,
                                                   self._config.id.type), board))
 
-      if self.properties.use_pushimage_from_tree:
-        self.sdk_call('call pushimage', cmd=cmd)
-      else:
-        self.m.step('call pushimage', cmd=cmd, infra_step=True)
+      self.m.step('call pushimage', cmd=cmd, infra_step=True)
 
   @contextmanager
   def _maybe_step(self, name, cond):
@@ -568,16 +555,6 @@ def GenTests(api):
       api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
       api.post_check(StepCommandContains, 'build target.install packages',
                      ['--withdebugsymbols']), api.post_check(StatusSuccess))
-
-  yield test(
-      'pushimage-from-tree',
-      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
-      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
-      api.post_check(DoesNotRun, 'bump version'),
-      api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
-      api.post_check(StepCommandContains, 'build target.install packages',
-                     ['--withdebugsymbols']), api.post_check(StatusSuccess),
-      input_properties=dict(use_pushimage_from_tree=True))
 
   yield test(
       'old-postsubmit',
