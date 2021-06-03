@@ -5558,8 +5558,6 @@
     "name": "build chromiumos with upreved Parallels.set build cost",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@machine_type@custom-32-65536@@@",
-      "@@@STEP_LOG_END@machine_type@@@",
       "@@@SET_BUILD_PROPERTY@build_cost@0.0053@@@"
     ]
   },
