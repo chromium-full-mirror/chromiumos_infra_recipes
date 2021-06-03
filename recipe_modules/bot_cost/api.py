@@ -11,15 +11,32 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
-# Cost is in USD per day as calculated in go/cros-infra-sizing on 2018-12-12.
-# With an estimate for medium, since postdates that doc.
+# Cost values are hourly pulled from bot_policies_helper.
+# Cost is in USD per day, last updated on 05/05/2020.
 BOT_COST = {
-    'small': 0.342,
-    'smedium': .0402,
-    'medium': 1.93,
-    'large': 8.08,
-    'xlarge': 8.08,
-    'xxlarge': 14.376,
+    'small': 0.01425,
+    'smedium': 0.001675,
+    'medium': 0.08042,
+    'large': 0.337,
+    'xlarge': 0.337,
+    'xxlarge': 0.599,
+    'custom-32-65536': 0.337,
+    'e2-custom-32-65536': 0.279,
+    'f1-micro': .00228,
+    'g1-small': .00771,
+    'e2-medium': 0.0101,
+    'e2-small': 0.0050,
+    'e2-standard-4': 0.0402,
+    'e2-standard-8': 0.0804,
+    'e2-standard-16': 0.1608,
+    'e2-standard-32': 0.3217,
+    'n1-standard-1': 0.0143,
+    'n1-standard-2': 0.0285,
+    'n1-standard-4': 0.057,
+    'n1-standard-8': 0.114,
+    'n1-standard-16': 0.228,
+    'n1-standard-32': 0.456,
+    'n2d-highcpu-64': 0.599,
 }
 
 
@@ -97,7 +114,7 @@ class BotCostApi(RecipeApi):
     # If we didn't get a bot_size, give it a zero cost.
     # TODO(lamontjones): consider fetching bot_policy.cfg and using the
     # hourlyCost field.
-    daily_cost = BOT_COST.get(self.bot_size, 0.0)
+    daily_cost = BOT_COST.get(self.bot_size, 0.0) * 24
 
     build = self.m.buildbucket.build
     if self.m.led.run_id or build.status == common_pb2.STATUS_UNSPECIFIED:

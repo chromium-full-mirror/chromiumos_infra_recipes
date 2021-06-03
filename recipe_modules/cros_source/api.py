@@ -237,8 +237,9 @@ class CrosSourceApi(RecipeApi):
 
     # This is purely a bug catcher to ease detection of the issue when someone
     # configures a builder incorrectly.
-    assert self.m.bot_cost.bot_size != 'small' or projects, (
-        'cannot sync full tree on small bot.')
+    assert self.m.bot_cost.bot_size not in [
+        'f1-micro', 'g1-small', 'e2-medium', 'e2-small'
+    ] or projects, ('cannot sync full tree on small bot.')
 
     with self.m.context(cwd=self.m.path['cleanup']):
       # There are a few things we want to make sure are set globally for git.
