@@ -1,0 +1,181 @@
+[
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "-r",
+      "gs://chromeos-mirror/gentoo/distfiles/**"
+    ],
+    "infra_step": true,
+    "name": "gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/"
+  },
+  {
+    "cmd": [
+      "cut",
+      "-c39-",
+      "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
+    ],
+    "infra_step": true,
+    "name": "remove gs://... prefix"
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "sort gs distfiles"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--list-only",
+      "--no-motd",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "rsync://mirror.rackspace.com/gentoo/distfiles/**"
+    ],
+    "infra_step": true,
+    "name": "list distfiles in rsync://mirror.rackspace.com/gentoo/distfiles",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "-r",
+      "gs://chromeos-mirror/gentoo/distfiles/**"
+    ],
+    "infra_step": true,
+    "name": "gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/ (2)"
+  },
+  {
+    "cmd": [
+      "cut",
+      "-c39-",
+      "[CLEANUP]/distfile_lists_tmp_2/gs.txt"
+    ],
+    "infra_step": true,
+    "name": "remove gs://... prefix (2)"
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_2/gs_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "sort gs distfiles (2)"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--list-only",
+      "--no-motd",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "rsync://rsync.gtlib.gatech.edu/gentoo/distfiles/**"
+    ],
+    "infra_step": true,
+    "name": "list distfiles in rsync://rsync.gtlib.gatech.edu/gentoo/distfiles"
+  },
+  {
+    "cmd": [
+      "awk",
+      "match($1, /^[^d]/) { print $5 }",
+      "[CLEANUP]/distfile_lists_tmp_2/gentoo.txt"
+    ],
+    "infra_step": true,
+    "name": "remove perms/size/timestamp prefix"
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_2/gentoo_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "sort gentoo distfiles"
+  },
+  {
+    "cmd": [
+      "comm",
+      "-13",
+      "[CLEANUP]/distfile_lists_tmp_2/gs_relative_sorted.txt",
+      "[CLEANUP]/distfile_lists_tmp_2/gentoo_relative_sorted.txt"
+    ],
+    "infra_step": true,
+    "name": "get list of files in gentoo that are not in gs"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "--perms",
+      "--times",
+      "--compress",
+      "--stats",
+      "--progress",
+      "--human-readable",
+      "--ignore-existing",
+      "--timeout=180",
+      "--bwlimit=1m",
+      "--files-from=[CLEANUP]/distfile_lists_tmp_2/new.txt",
+      "rsync://rsync.gtlib.gatech.edu/gentoo/distfiles/",
+      "[CLEANUP]/distfiles_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "rsync distfiles from rsync://rsync.gtlib.gatech.edu/gentoo/distfiles"
+  },
+  {
+    "cmd": [
+      "find",
+      "[CLEANUP]/distfiles_tmp_2/",
+      "-type",
+      "l",
+      "-ls"
+    ],
+    "name": "list symlink distfiles"
+  },
+  {
+    "cmd": [],
+    "name": "copy new distfiles to gs",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No new distfiles to upload@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/distfiles_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.list new distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
