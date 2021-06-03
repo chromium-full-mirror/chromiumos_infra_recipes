@@ -11,26 +11,15 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
-# Cost values are hourly pulled from bot_policies_helper.
-# Cost is in USD per day, last updated on 05/05/2020.
-MACHINE_HOURLY_COST = {
-    'custom-32-65536': 0.337,
-    'e2-custom-32-65536': 0.279,
-    'f1-micro': .00228,
-    'g1-small': .00771,
-    'e2-medium': 0.0101,
-    'e2-small': 0.0050,
-    'e2-standard-4': 0.0402,
-    'e2-standard-8': 0.0804,
-    'e2-standard-16': 0.1608,
-    'e2-standard-32': 0.3217,
-    'n1-standard-1': 0.0143,
-    'n1-standard-2': 0.0285,
-    'n1-standard-4': 0.057,
-    'n1-standard-8': 0.114,
-    'n1-standard-16': 0.228,
-    'n1-standard-32': 0.456,
-    'n2d-highcpu-64': 0.599,
+# Cost is in USD per day as calculated in go/cros-infra-sizing on 2018-12-12.
+# With an estimate for medium, since postdates that doc.
+BOT_COST = {
+    'small': 0.342,
+    'smedium': .0402,
+    'medium': 1.93,
+    'large': 8.08,
+    'xlarge': 8.08,
+    'xxlarge': 14.376,
 }
 
 
@@ -38,24 +27,24 @@ class BotCostApi(RecipeApi):
   """A module to calculate the cost of running bots."""
 
   def initialize(self):
-    self._machine_type = None
+    self._bot_size = None
     # If we are led launched, this lets us at least estimate the actual time
     # spend in the run.
     self._start_time = self.m.time.time()
     self._cq_run_cost = 0
 
   @property
-  def machine_type(self):
-    if not self._machine_type:
+  def bot_size(self):
+    if not self._bot_size:
       swarming = self.m.buildbucket.build.infra.swarming
       for dimension in swarming.bot_dimensions or swarming.task_dimensions:
-        if dimension.key == 'machine_type':
-          if dimension.value not in MACHINE_HOURLY_COST:
-            raise StepFailure('machine_type:{} not supported'.format(
+        if dimension.key == 'bot_size':
+          if dimension.value not in BOT_COST:
+            raise StepFailure('bot_size:{} not supported'.format(
                 dimension.value))
-          self._machine_type = dimension.value
+          self._bot_size = dimension.value
           break
-    return self._machine_type
+    return self._bot_size
 
   @contextlib.contextmanager
   def build_cost_context(self):
@@ -105,11 +94,10 @@ class BotCostApi(RecipeApi):
     Returns:
       A float representing the cost (USD) of building this image.
     """
-    # If we didn't get a machine_type, give it a zero cost.
-    # Cost is hourly, therefore we calcuate for a total daily cost.
+    # If we didn't get a bot_size, give it a zero cost.
     # TODO(lamontjones): consider fetching bot_policy.cfg and using the
     # hourlyCost field.
-    daily_cost = 24 * MACHINE_HOURLY_COST.get(self.machine_type, 0.0)
+    daily_cost = BOT_COST.get(self.bot_size, 0.0)
 
     build = self.m.buildbucket.build
     if self.m.led.run_id or build.status == common_pb2.STATUS_UNSPECIFIED:

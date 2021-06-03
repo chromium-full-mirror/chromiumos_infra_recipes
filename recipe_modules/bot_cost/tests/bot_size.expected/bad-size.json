@@ -9,7 +9,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "machine_type:bad not supported"
+      "humanReason": "bot_size:bad not supported"
     },
     "name": "$result"
   }

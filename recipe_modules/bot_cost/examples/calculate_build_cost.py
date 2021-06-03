@@ -33,7 +33,7 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def test(name, status, start_time=None, end_time=None, update_time=None,
-           machine_type='e2-medium', expect_cost=True, extra=None):
+           bot_size='small', expect_cost=True, extra=None):
     if start_time:
       start_time = timestamp_pb2.Timestamp(seconds=start_time)
     if end_time:
@@ -43,14 +43,13 @@ def GenTests(api):
     bld_msg = build_pb2.Build(id=123, status=status, start_time=start_time,
                               end_time=end_time, update_time=update_time)
     bld_msg.infra.swarming.bot_dimensions.extend(
-        api.cros_tags.tags(machine_type=machine_type))
+        api.cros_tags.tags(bot_size=bot_size))
     build = api.buildbucket.build(bld_msg)
     if status != 'STATUS_UNSPECIFIED':
       build += api.buildbucket.simulated_get(
           bld_msg, step_name='%s.calculate build cost.buildbucket.get' % name)
     build += api.properties(
-        TestProperties(name=name, machine_type=machine_type,
-                       expect_cost=expect_cost))
+        TestProperties(name=name, bot_size=bot_size, expect_cost=expect_cost))
     return api.test(name, build, *(extra or []))
 
   yield test('terminal-build', status='SUCCESS', start_time=5000,
@@ -62,8 +61,8 @@ def GenTests(api):
   yield test('scheduled-build', status='SCHEDULED', start_time=5000,
              end_time=15000, update_time=15000, expect_cost=False)
 
-  yield test('e2-medium', status='SUCCESS', start_time=5000, end_time=15000,
-             machine_type='e2-medium')
+  yield test('medium-bot', status='SUCCESS', start_time=5000, end_time=15000,
+             bot_size='medium')
 
   # Covers led launched builds, too.
   yield test('unspecified', status='STATUS_UNSPECIFIED')

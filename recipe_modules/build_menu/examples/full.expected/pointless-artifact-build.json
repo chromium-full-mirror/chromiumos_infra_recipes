@@ -4971,7 +4971,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0037@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0036@@@"
     ]
   },
   {

@@ -10,7 +10,6 @@ import json
 import re
 
 DEPS = [
-    'bot_cost',
     'chromite',
     'cros_infra_config',
     'depot_tools/gitiles',
@@ -65,8 +64,7 @@ def DoRunSteps(api):
 
   # Use the system python, not "bundled python" so that we have access
   # to system python packages.
-  with api.chromite.with_system_python(), \
-       api.bot_cost.build_cost_context():
+  with api.chromite.with_system_python():
     api.chromite.run()
 
 

@@ -371,13 +371,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "set build cost",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
-    ]
-  },
-  {
     "failure": {
       "failure": {},
       "humanReason": "Step('cbuildbot_launch [swarming-build-config]') (retcode: 1)"
