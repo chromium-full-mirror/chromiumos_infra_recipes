@@ -75,9 +75,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
       if gerrit_changes:
         with self.m.step.nest('get build history') as presentation:
           orch_config = self.m.cros_infra_config.config_or_default
-          is_retry = orch_config.id.type == BuilderConfig.Id.CQ and len(
-              self.m.cros_history.get_matching_builds(
-                  self.m.buildbucket.build)) > 1
+          is_retry = (
+              orch_config.id.type == BuilderConfig.Id.CQ and
+              self.m.cros_history.is_retry(self.m.buildbucket.build))
           forced_rebuilds = self._get_forced_rebuilds(gerrit_changes)
           completed_builds = self.get_completed_builds(child_specs,
                                                        forced_rebuilds)

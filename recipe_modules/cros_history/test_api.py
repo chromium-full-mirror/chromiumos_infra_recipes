@@ -20,6 +20,12 @@ from google.protobuf import timestamp_pb2
 class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the cros_history module."""
 
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def is_retry(value):
+    """Return value for is_retry when testing."""
+    return value
+
   def build_with_passed_tests(self, tests, build_id=123, start_time=1562475240):
     """Generate a test build with the 'passed_tests' property.
 

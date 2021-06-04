@@ -205,6 +205,22 @@ class CrosHistoryApi(recipe_api.RecipeApi):
                                      builder=build.builder, statuses=statuses,
                                      start_build_id=start_build_id, limit=limit)
 
+  def is_retry(self, build):
+    """Determine if this build is being retried.
+
+    Args:
+      build (build_pb2.Build): The build to match for.
+
+    Returns:
+      Boolean indicating if it is a retry.
+    """
+    if self._test_data.enabled:
+      is_retry = self._test_data.get('is_retry', None)
+      if is_retry is not None:
+        return is_retry
+
+    return len(self.get_matching_builds(self.m.buildbucket.build)) > 1
+
   @staticmethod
   def _buildset_tag_from_snapshot(snapshot):
     """Map a snapshot (GitilesCommit) into a buildset tag string value."""

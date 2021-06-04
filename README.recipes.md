@@ -179,6 +179,7 @@
   * [cros_history:examples/get_passed_tests](#recipes-cros_history_examples_get_passed_tests)
   * [cros_history:examples/get_snapshot_builds](#recipes-cros_history_examples_get_snapshot_builds)
   * [cros_history:examples/get_test_failure_builders](#recipes-cros_history_examples_get_test_failure_builders)
+  * [cros_history:examples/is_retry](#recipes-cros_history_examples_is_retry)
   * [cros_history:examples/set_passed_tests](#recipes-cros_history_examples_set_passed_tests)
   * [cros_infra_config:examples/builder](#recipes-cros_infra_config_examples_builder)
   * [cros_infra_config:examples/builder_group](#recipes-cros_infra_config_examples_builder_group)
@@ -1838,6 +1839,16 @@ Get builders with the given patches that failed HW tests in the last run.
 
 Returns:
   set[str]: Names of builders with HW testing failures, if any.
+
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#208)(self, build):**
+
+Determine if this build is being retried.
+
+Args:
+  build (build_pb2.Build): The build to match for.
+
+Returns:
+  Boolean indicating if it is a retry.
 
 &mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#132)(self, tests):**
 
@@ -6974,6 +6985,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_history/examples/get_test_failure_builders.py#11): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_test_failure_builders.py#23)(api, expected_builder_names):**
+### *recipes* / [cros\_history:examples/is\_retry](/recipe_modules/cros_history/examples/is_retry.py)
+
+[DEPS](/recipe_modules/cros_history/examples/is_retry.py#10): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/is_retry.py#20)(api, is_retry):**
 ### *recipes* / [cros\_history:examples/set\_passed\_tests](/recipe_modules/cros_history/examples/set_passed_tests.py)
 
 [DEPS](/recipe_modules/cros_history/examples/set_passed_tests.py#9): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
