@@ -400,13 +400,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
     relevant_packages = packages
     if not force_all_deps and (config.build.install_packages.dependencies ==
                                BuilderConfig.CL_AFFECTED_DEPENDENCIES):
-      relevant_packages = self.m.cros_relevance.get_package_dependencies(
-          sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
-          patch_sets=self.m.workspace_util.patch_sets, packages=packages,
-          include_rev_deps=include_rev_deps)
+      relevant_packages = (
+          self._cl_affected_sysroot_packages or
+          self.m.cros_relevance.get_package_dependencies(
+              sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
+              patch_sets=self.m.workspace_util.patch_sets, packages=packages,
+              include_rev_deps=include_rev_deps))
       self._cl_affected_sysroot_packages = list(relevant_packages)
       # Ensure implicit dependencies are installed.
-      relevant_packages.add(category='virtual', package_name='implicit-system')
+      relevant_packages.append(
+          PackageInfo(category='virtual', package_name='implicit-system'))
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = Profile(name=config.build.portage_profile.profile)
