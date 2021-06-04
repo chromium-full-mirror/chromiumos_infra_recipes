@@ -6,7 +6,10 @@
 """Recipe for building and testing a BuildTarget's packages."""
 
 DEPS = [
+    'recipe_engine/buildbucket',
+    'recipe_engine/step',
     'build_menu',
+    'cros_history',
 ]
 
 from recipe_engine import post_process
@@ -33,14 +36,8 @@ def DoRunSteps(api, config):
   # TODO(b/189363718): Add logic such that we always install all packages on
   # retries.
   packages = env_info.packages
-  install_all_packages = False
   failing_build = False
-  try:
-    api.build_menu.install_packages(config, packages,
-                                    name='Attempt to resolve package list',
-                                    include_rev_deps=True, dryrun=True)
-  except StepFailure:
-    install_all_packages = True
+  install_all_packages = _should_install_all_packages(api, config, packages)
 
   try:
     api.build_menu.bootstrap_sysroot(config)
@@ -54,6 +51,37 @@ def DoRunSteps(api, config):
     api.build_menu.upload_artifacts(config, failing_build=failing_build)
     if failing_build:
       raise
+
+
+def _should_install_all_packages(api, config, packages):
+  """Determine if all packages need to be installed.
+
+  All packages need to be installed on retries or if Portage is unable to
+  calculate the list of packages to install (b/188214351).
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    config (BuilderConfig): The Builder Config for the build.
+    packages (list[PackageInfo]): List of packages to install.
+
+  Returns:
+    Boolean whether the build needs to install all packages
+      for the build target.
+  """
+  with api.step.nest('Determine which packages to build') as presentation:
+    if api.cros_history.is_retry(api.buildbucket.build):
+      presentation.step_text = 'Build all packages on retries'
+      return True
+    try:
+      api.build_menu.install_packages(config, packages,
+                                      name='Attempt to resolve package list',
+                                      include_rev_deps=True, dryrun=True)
+      presentation.step_text = 'Build only CL affected packages'
+      return False
+    except StepFailure:
+      presentation.step_text = 'Build all packages, failed to get package list'
+      presentation.status = 'WARNING'
+      return True
 
 
 def GenTests(api):
@@ -111,9 +139,27 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusSuccess),
-      api.build_menu.set_build_api_return('Attempt to resolve package list',
-                                          'SysrootService/InstallPackages',
-                                          retcode=1),
+      api.build_menu.set_build_api_return(
+          'Determine which packages to build.Attempt to resolve package list',
+          'SysrootService/InstallPackages', retcode=1),
+      build_target='atlas-slim',
+      cq=True,
+  )
+
+  # Retry.
+  yield api.build_menu.test(
+      'cq-retry',
+      api.cros_history.is_retry(True),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'Determine which packages to build.Attempt to resolve package list'),
+      api.post_check(post_process.MustRun, 'install packages'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.post_check(post_process.StatusSuccess),
       build_target='atlas-slim',
       cq=True,
   )

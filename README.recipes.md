@@ -6540,13 +6540,13 @@ Recipe for building images for release.
 &mdash; **def [RunSteps](/recipes/build_release.py#28)(api, properties):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
-[DEPS](/recipes/build_slim_cq.py#8): [build\_menu](#recipe_modules-build_menu)
+[DEPS](/recipes/build_slim_cq.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for building and testing a BuildTarget's packages.
 
-&mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#22)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#25)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_slim_cq.py#16)(api):**
+&mdash; **def [RunSteps](/recipes/build_slim_cq.py#19)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)
 
 [DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)

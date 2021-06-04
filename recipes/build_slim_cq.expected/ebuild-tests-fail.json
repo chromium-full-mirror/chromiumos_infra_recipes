@@ -3058,13 +3058,53 @@
   },
   {
     "cmd": [],
-    "name": "get package dependencies"
+    "name": "Determine which packages to build",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Build only CL affected packages@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "get package dependencies.get affected paths",
+    "name": "Determine which packages to build.find matching builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"atlas-slim-cq\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:47Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Determine which packages to build.find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Determine which packages to build.get package dependencies",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Determine which packages to build.get package dependencies.get affected paths",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -3085,18 +3125,18 @@
       ]
     },
     "infra_step": true,
-    "name": "get package dependencies.get affected paths.repo forall",
+    "name": "Determine which packages to build.get package dependencies.get affected paths.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "get package dependencies.call chromite.api.DependencyService/List",
+    "name": "Determine which packages to build.get package dependencies.call chromite.api.DependencyService/List",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
@@ -3132,9 +3172,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "get package dependencies.call chromite.api.DependencyService/List.write input file",
+    "name": "Determine which packages to build.get package dependencies.call chromite.api.DependencyService/List.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
@@ -3172,9 +3212,9 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "get package dependencies.call chromite.api.DependencyService/List.call build API script",
+    "name": "Determine which packages to build.get package dependencies.call chromite.api.DependencyService/List.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3195,37 +3235,40 @@
       ]
     },
     "infra_step": true,
-    "name": "get package dependencies.call chromite.api.DependencyService/List.read output file",
+    "name": "Determine which packages to build.get package dependencies.call chromite.api.DependencyService/List.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "get package dependencies.call chromite.api.DependencyService/List.call response",
+    "name": "Determine which packages to build.get package dependencies.call chromite.api.DependencyService/List.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list"
+    "name": "Determine which packages to build.Attempt to resolve package list",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@local_uprev no_prebuilt@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"installRequest\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"flags\": {}, @@@",
@@ -3277,9 +3320,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.write input file",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"installRequest\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"flags\": {}, @@@",
@@ -3333,9 +3376,9 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call build API script",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3356,43 +3399,43 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.read output file",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call response",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed.set properties",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.set properties",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@builds_chrome@false@@@",
       "@@@SET_BUILD_PROPERTY@chrome_source_reasons@{\"compile_source\": false, \"follower_lacks_prebuilt\": false, \"local_uprev\": true, \"no_prebuilt\": true}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
       "@@@STEP_LOG_END@gclient configuration@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"atlas-slim\"@@@",
@@ -3419,9 +3462,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas-slim\"@@@",
@@ -3451,9 +3494,9 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -3474,25 +3517,25 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
@@ -3502,22 +3545,22 @@
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:53Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:54.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"Attempt to resolve package list|check chrome source needed|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"Determine which packages to build|Attempt to resolve package list|check chrome source needed|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:54.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:56Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -3531,10 +3574,10 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI4YDE/QQiDAjigMT9BBCAyrXuAdAC0OyA2a7xtZJ82gKOAUF0dGVtcHQgdG8gcmVzb2x2ZSBw\\nYWNrYWdlIGxpc3R8Y2hlY2sgY2hyb21lIHNvdXJjZSBuZWVkZWR8c3luYyBjaHJvbWV8Y2FsbCBj\\naHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hyb21lVmVyc2lvbnxjYWxsIGJ1aWxkIEFQ\\nSSBzY3JpcHSCAywKHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QSDAoKYXRsYXMtc2xpbYoD\\nCQoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwI4oDE/QQQgMq17gEiBgjkgMT9BNAC0OyA2a7xtZJ82gKwAURldGVybWluZSB3aGljaCBwYWNr\\nYWdlcyB0byBidWlsZHxBdHRlbXB0IHRvIHJlc29sdmUgcGFja2FnZSBsaXN0fGNoZWNrIGNocm9t\\nZSBzb3VyY2UgbmVlZGVkfHN5bmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2\\naWNlL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMsChwKGltDQUNIRV0v\\nY3Jvc19jaHJvb3QvY2hyb290EgwKCmF0bGFzLXNsaW2KAwkKB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_NEST_LEVEL@7@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -3555,9 +3598,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.ensure chrome root",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.ensure chrome root",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3579,9 +3622,9 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.gclient config",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.gclient config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -3605,9 +3648,9 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.gclient contents",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.gclient contents",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
       "@@@STEP_LOG_END@.gclient@@@"
     ]
@@ -3641,17 +3684,17 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.sync chrome.gclient sync",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.gclient sync",
     "timeout": 5400,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check chrome source needed.ensure goma client",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.ensure goma client",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3669,9 +3712,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Attempt to resolve package list.check chrome source needed.ensure goma client.ensure_installed",
+    "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.ensure goma client.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -3687,9 +3730,9 @@
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.get android version information",
+    "name": "Determine which packages to build.Attempt to resolve package list.get android version information",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"atlas-slim\"@@@",
@@ -3717,9 +3760,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Attempt to resolve package list.get android version information.write input file",
+    "name": "Determine which packages to build.Attempt to resolve package list.get android version information.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas-slim\"@@@",
@@ -3749,9 +3792,9 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "Attempt to resolve package list.get android version information.call build API script",
+    "name": "Determine which packages to build.Attempt to resolve package list.get android version information.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3772,33 +3815,33 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.get android version information.read output file",
+    "name": "Determine which packages to build.Attempt to resolve package list.get android version information.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.get android version information.call response",
+    "name": "Determine which packages to build.Attempt to resolve package list.get android version information.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.check if an android uprev is required",
+    "name": "Determine which packages to build.Attempt to resolve package list.check if an android uprev is required",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@no file diffs caused an android uprev@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages",
+    "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"gomaConfig\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"gomaDir\": \"[START_DIR]/cipd/goma\", @@@",
@@ -3859,9 +3902,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.write input file",
+    "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"gomaConfig\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"gomaDir\": \"[START_DIR]/cipd/goma\", @@@",
@@ -3924,10 +3967,10 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.call build API script",
+    "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.call build API script",
     "timeout": 28800,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3948,29 +3991,29 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.read output file",
+    "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.call response",
+    "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.publish event",
+    "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:59Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:00.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"Attempt to resolve package list|call chromite.api.SysrootService/InstallPackages|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"Determine which packages to build|Attempt to resolve package list|call chromite.api.SysrootService/InstallPackages|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"gomaConfig\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"gomaDir\": \"[START_DIR]/cipd/goma\", @@@",
@@ -4014,16 +4057,16 @@
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {}, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:00.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:02Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
+    "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -4037,10 +4080,10 @@
       ]
     },
     "infra_step": true,
-    "name": "Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CtwCCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SBBgBKAEaIgoKY2hyb21lLWlj\\ndRINY2hyb21lb3MtYmFzZRoFMS1yNTIaIgoJYXJjLXNldHVwEg1jaHJvbWVvcy1iYXNlGgYxLXIx\\nMjMaGgoPaW1wbGljaXQtc3lzdGVtEgd2aXJ0dWFsIjAKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hy\\nb290IhJbU1RBUlRfRElSXS9jaHJvbWUymgEKFVtTVEFSVF9ESVJdL2NpcGQvZ29tYRI4L2NyZWRz\\nL3NlcnZpY2VfYWNjb3VudHMvc2VydmljZS1hY2NvdW50LWdvbWEtY2xpZW50Lmpzb24gASocChpb\\nQ0xFQU5VUF0vZ29tYS1sb2dzLV90bXBfMTIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJp\\nbmFyeXByb3RvEgAaBgjngMT9BCIMCOiAxP0EEIDKte4B0ALQ7IDZrvG1knzaAmZBdHRlbXB0IHRv\\nIHJlc29sdmUgcGFja2FnZSBsaXN0fGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0lu\\nc3RhbGxQYWNrYWdlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"CtwCCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SBBgBKAEaIgoKY2hyb21lLWlj\\ndRINY2hyb21lb3MtYmFzZRoFMS1yNTIaIgoJYXJjLXNldHVwEg1jaHJvbWVvcy1iYXNlGgYxLXIx\\nMjMaGgoPaW1wbGljaXQtc3lzdGVtEgd2aXJ0dWFsIjAKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hy\\nb290IhJbU1RBUlRfRElSXS9jaHJvbWUymgEKFVtTVEFSVF9ESVJdL2NpcGQvZ29tYRI4L2NyZWRz\\nL3NlcnZpY2VfYWNjb3VudHMvc2VydmljZS1hY2NvdW50LWdvbWEtY2xpZW50Lmpzb24gASocChpb\\nQ0xFQU5VUF0vZ29tYS1sb2dzLV90bXBfMTIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJp\\nbmFyeXByb3RvEgAaDAjogMT9BBCAyrXuASIGCOqAxP0E0ALQ7IDZrvG1knzaAogBRGV0ZXJtaW5l\\nIHdoaWNoIHBhY2thZ2VzIHRvIGJ1aWxkfEF0dGVtcHQgdG8gcmVzb2x2ZSBwYWNrYWdlIGxpc3R8\\nY2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVp\\nbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -4049,9 +4092,9 @@
   },
   {
     "cmd": [],
-    "name": "Attempt to resolve package list.process_goma_artifacts",
+    "name": "Determine which packages to build.Attempt to resolve package list.process_goma_artifacts",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
       "@@@STEP_LOG_END@NoGomaArtifacts@@@"
     ]
@@ -4176,8 +4219,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:02Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:03.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:03.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:05Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"install toolchain (2)|call chromite.api.SysrootService/InstallToolchain|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installToolchainResponse\": {}, @@@",
@@ -4217,7 +4260,7 @@
     },
     "infra_step": true,
     "name": "install toolchain (2).call chromite.api.SysrootService/InstallToolchain.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI6oDE/QQiDAjrgMT9BBCAyrXuAfIBVwohChEvYnVpbGQvYXRsYXMtc2xpbRIMCgphdGxhcy1z\\nbGltEgAaMAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QiEltTVEFSVF9ESVJdL2Nocm9tZfoB\\nANAC0OyA2a7xtZJ82gJdaW5zdGFsbCB0b29sY2hhaW4gKDIpfGNhbGwgY2hyb21pdGUuYXBpLlN5\\nc3Jvb3RTZXJ2aWNlL0luc3RhbGxUb29sY2hhaW58Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI64DE/QQQgMq17gEiBgjtgMT9BPIBVwohChEvYnVpbGQvYXRsYXMtc2xpbRIMCgphdGxhcy1z\\nbGltEgAaMAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QiEltTVEFSVF9ESVJdL2Nocm9tZfoB\\nANAC0OyA2a7xtZJ82gJdaW5zdGFsbCB0b29sY2hhaW4gKDIpfGNhbGwgY2hyb21pdGUuYXBpLlN5\\nc3Jvb3RTZXJ2aWNlL0luc3RhbGxUb29sY2hhaW58Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4550,13 +4593,13 @@
       "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\"@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:08Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:09.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"install packages|check chrome source needed|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:09.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:11Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -4580,7 +4623,7 @@
     },
     "infra_step": true,
     "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI8IDE/QQiDAjxgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJ/aW5zdGFsbCBwYWNrYWdlc3xjaGVj\\nayBjaHJvbWUgc291cmNlIG5lZWRlZHxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNr\\nYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDQAowChpb\\nQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lEgwKCmF0bGFzLXNs\\naW2KAwkKB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI8YDE/QQQgMq17gEiBgjzgMT9BNAC0OyA2a7xtZJ82gJ/aW5zdGFsbCBwYWNrYWdlc3xjaGVj\\nayBjaHJvbWUgc291cmNlIG5lZWRlZHxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNr\\nYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDQAowChpb\\nQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lEgwKCmF0bGFzLXNs\\naW2KAwkKB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4976,7 +5019,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:14Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:15.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"install packages|call chromite.api.SysrootService/InstallPackages|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
@@ -5021,7 +5064,7 @@
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {}, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:15.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:17Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -5045,7 +5088,7 @@
     },
     "infra_step": true,
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CtoCCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SAhgBGiIKCmNocm9tZS1pY3US\\nDWNocm9tZW9zLWJhc2UaBTEtcjUyGiIKCWFyYy1zZXR1cBINY2hyb21lb3MtYmFzZRoGMS1yMTIz\\nGhoKD2ltcGxpY2l0LXN5c3RlbRIHdmlydHVhbCIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9v\\ndCISW1NUQVJUX0RJUl0vY2hyb21lMpoBChVbU1RBUlRfRElSXS9jaXBkL2dvbWESOC9jcmVkcy9z\\nZXJ2aWNlX2FjY291bnRzL3NlcnZpY2UtYWNjb3VudC1nb21hLWNsaWVudC5qc29uIAEqHAoaW0NM\\nRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzIyEXN0YXRzLmJpbmFyeXByb3RvOhRjb3VudGVyei5iaW5h\\ncnlwcm90bxIAGgYI9oDE/QQiDAj3gMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJXaW5zdGFsbCBwYWNr\\nYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2Fs\\nbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CtoCCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SAhgBGiIKCmNocm9tZS1pY3US\\nDWNocm9tZW9zLWJhc2UaBTEtcjUyGiIKCWFyYy1zZXR1cBINY2hyb21lb3MtYmFzZRoGMS1yMTIz\\nGhoKD2ltcGxpY2l0LXN5c3RlbRIHdmlydHVhbCIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9v\\ndCISW1NUQVJUX0RJUl0vY2hyb21lMpoBChVbU1RBUlRfRElSXS9jaXBkL2dvbWESOC9jcmVkcy9z\\nZXJ2aWNlX2FjY291bnRzL3NlcnZpY2UtYWNjb3VudC1nb21hLWNsaWVudC5qc29uIAEqHAoaW0NM\\nRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzIyEXN0YXRzLmJpbmFyeXByb3RvOhRjb3VudGVyei5iaW5h\\ncnlwcm90bxIAGgwI94DE/QQQgMq17gEiBgj5gMT9BNAC0OyA2a7xtZJ82gJXaW5zdGFsbCBwYWNr\\nYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2Fs\\nbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5249,7 +5292,7 @@
       "@@@STEP_LOG_LINE@published event@  \"stepExecutionResult\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"retcode\": 1@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:17Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:18.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"run ebuild tests|call chromite.api.TestService/BuildTargetUnitTest|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildTargetUnitTestRequest\": {@@@",
@@ -5273,7 +5316,7 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:18.500Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:20Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildTargetUnitTestResponse\": {}@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
@@ -5298,7 +5341,7 @@
     },
     "infra_step": true,
     "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI+YDE/QQiDAj6gMT9BBCAyrXuAYICfwoMCgphdGxhcy1zbGltEhNbQ0xFQU5VUF0vdG1wX3Rt\\ncF8xGjAKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUiBCAB\\nKAEyIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTKKAgDQAtDsgNmu8bWSfNoCWHJ1\\nbiBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRV\\nbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSiAwIIAQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI+oDE/QQQgMq17gEiBgj8gMT9BIICfwoMCgphdGxhcy1zbGltEhNbQ0xFQU5VUF0vdG1wX3Rt\\ncF8xGjAKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUiBCAB\\nKAEyIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTKKAgDQAtDsgNmu8bWSfNoCWHJ1\\nbiBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRV\\nbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSiAwIIAQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5443,7 +5486,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:20Z\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:21.500Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload artifacts|bundle IMAGE_ZIP for upload|call chromite.api.ArtifactsService/BundleImageZip|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"bundleRequest\": {@@@",
@@ -5469,7 +5512,7 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:21.500Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:23Z\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -5493,7 +5536,7 @@
     },
     "infra_step": true,
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI/IDE/QQiDAj9gMT9BBCAyrXuASp+CgwKCmF0bGFzLXNsaW0SGVtDTEVBTlVQXS9hcnRpZmFj\\ndHNfdG1wXzEaMAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QiEltTVEFSVF9ESVJdL2Nocm9t\\nZSIhChEvYnVpbGQvYXRsYXMtc2xpbRIMCgphdGxhcy1zbGltMiMKIQofW1NUQVJUX0RJUl0vdG1w\\nL2FydGlmYWN0LnRhci5netAC0OyA2a7xtZJ82gJ0dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1B\\nR0VfWklQIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5k\\nbGVJbWFnZVppcHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI/YDE/QQQgMq17gEiBgj/gMT9BCp+CgwKCmF0bGFzLXNsaW0SGVtDTEVBTlVQXS9hcnRpZmFj\\ndHNfdG1wXzEaMAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QiEltTVEFSVF9ESVJdL2Nocm9t\\nZSIhChEvYnVpbGQvYXRsYXMtc2xpbRIMCgphdGxhcy1zbGltMiMKIQofW1NUQVJUX0RJUl0vdG1w\\nL2FydGlmYWN0LnRhci5netAC0OyA2a7xtZJ82gJ0dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1B\\nR0VfWklQIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5k\\nbGVJbWFnZVppcHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5845,7 +5888,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"atlas-slim\"\n    ], \n    \"bot-config\": \"atlas-slim-cq\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"atlas-slim-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"fail\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:26\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"atlas-slim\"\n    ], \n    \"bot-config\": \"atlas-slim-cq\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"atlas-slim-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"fail\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:27\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -5893,7 +5936,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:26\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:27\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null, @@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
@@ -6376,7 +6419,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.007@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0072@@@"
     ]
   },
   {
