@@ -115,6 +115,35 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def dep_graph(self):
     return self._dep_graph
 
+  # TODO(b/189363718): This function is catered towards the slim build use case.
+  # Refactor so that it can be applied to other use cases. For example, the
+  # decision to include reverse dependencies should come from the config.
+  def get_cl_affected_sysroot_packages(self, packages=None,
+                                       include_rev_deps=False):
+    """Gets the list of sysroot packages affected by the input CLs.
+
+    Calculates the list of packages which were changed by the CLs and their
+    reverse dependencies. The list is cached to avoid recalculating the list
+    during subsequent calls.
+
+    Args:
+      packages (list[PackageInfo]): The list of packages for which to get
+        dependencies. If none are specified the standard list of packages is
+        used.
+      include_rev_deps (bool): Whether to also calculate reverse dependencies.
+
+    Returns:
+      (List[PackageInfo]): A list of packages affected by the CLs.
+    """
+    packages = packages or self.config_or_default.build.install_packages.packages
+    if self._cl_affected_sysroot_packages:
+      return list(self._cl_affected_sysroot_packages)
+    self._cl_affected_sysroot_packages = self.m.cros_relevance.get_package_dependencies(
+        sysroot=self.sysroot, chroot=self.chroot,
+        patch_sets=self.m.workspace_util.patch_sets, packages=packages,
+        include_rev_deps=include_rev_deps)
+    return list(self._cl_affected_sysroot_packages)
+
   @contextlib.contextmanager
   def configure_builder(self, is_staging=None, missing_ok=False,
                         disable_sdk=False, commit=None, targets=()):
@@ -400,13 +429,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     relevant_packages = packages
     if not force_all_deps and (config.build.install_packages.dependencies ==
                                BuilderConfig.CL_AFFECTED_DEPENDENCIES):
-      relevant_packages = (
-          self._cl_affected_sysroot_packages or
-          self.m.cros_relevance.get_package_dependencies(
-              sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot,
-              patch_sets=self.m.workspace_util.patch_sets, packages=packages,
-              include_rev_deps=include_rev_deps))
-      self._cl_affected_sysroot_packages = list(relevant_packages)
+      relevant_packages = self.get_cl_affected_sysroot_packages(
+          packages=relevant_packages, include_rev_deps=include_rev_deps)
       # Ensure implicit dependencies are installed.
       relevant_packages.append(
           PackageInfo(category='virtual', package_name='implicit-system'))
@@ -459,7 +483,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
             BuilderConfig.CL_AFFECTED_DEPENDENCIES):
           testable_packages_optional = True
           filter_only_cros_workon = True
-          relevant_testable_packages = self._cl_affected_sysroot_packages
+          relevant_testable_packages = self.get_cl_affected_sysroot_packages(
+              include_rev_deps=True)
           # If the config specifies packages to test, only test the specified
           # packages which were affected by the CL.
           # The PackageInfo objects returned by the depgraph contain versions
