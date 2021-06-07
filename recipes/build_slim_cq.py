@@ -33,8 +33,6 @@ def DoRunSteps(api, config):
     api.build_menu.upload_artifacts(config, failing_build=True)
     raise
 
-  # TODO(b/189363718): Add logic such that we always install all packages on
-  # retries.
   packages = env_info.packages
   failing_build = False
   install_all_packages = _should_install_all_packages(api, config, packages)
@@ -71,15 +69,18 @@ def _should_install_all_packages(api, config, packages):
   with api.step.nest('Determine which packages to build') as presentation:
     if api.cros_history.is_retry(api.buildbucket.build):
       presentation.step_text = 'Build all packages on retries'
+      presentation.properties['subset_of_packages_built'] = ['ALL_ON_RETRY']
       return True
     try:
       api.build_menu.install_packages(config, packages,
                                       name='Attempt to resolve package list',
                                       include_rev_deps=True, dryrun=True)
       presentation.step_text = 'Build only CL affected packages'
+      presentation.properties['subset_of_packages_built'] = ['CL_AFFECTED']
       return False
     except StepFailure:
       presentation.step_text = 'Build all packages, failed to get package list'
+      presentation.properties['subset_of_packages_built'] = ['ALL']
       presentation.status = 'WARNING'
       return True
 
