@@ -291,3 +291,41 @@ def GenTests(api):
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
+
+  # TODO(crbug.com/187793586): Remove test case after go/cros-slim-rollout.
+  yield api.test(
+      'honor-slim-criticality',
+      cq_orchestrator_build_with_gerrit_change(
+          experiments=['enable_slim_builds', 'honor_slim_builder_criticality']),
+      api.properties(
+          expected_experiments=[
+              'enable_slim_builds', 'honor_slim_builder_criticality'
+          ], expected_build_requests=[
+              'atlas-slim-cq',
+              'arm64-generic-cq',
+          ], expected_completed_builds=[
+              'amd64-generic-cq',
+              'cave-cq',
+          ], **{
+              "$chromeos/cros_relevance": {
+                  "enable_slim_builds": True
+              },
+              "$chromeos/build_plan": {
+                  "honor_slim_builder_criticality": True
+              }
+          }),
+      api.git_footers.simulated_get_footers([], 'get build history'),
+      api.cros_relevance.simulated_get_necessary_builders([
+          'amd64-generic-slim-cq',
+          'arm-generic-cq',
+          'arm64-generic-cq',
+          'atlas-slim-cq',
+          'cave-cq',
+      ]),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+  )

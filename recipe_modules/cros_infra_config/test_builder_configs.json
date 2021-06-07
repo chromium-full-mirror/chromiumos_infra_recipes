@@ -659,7 +659,7 @@
         "type": "CQ"
       },
       "general": {
-        "critical": false,
+        "critical": true,
         "brokenBefore": "2019-11-01T00:00:00Z",
         "manifest": "PRIVATE"
       },

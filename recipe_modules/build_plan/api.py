@@ -19,6 +19,18 @@ class BuildPlanApi(recipe_api.RecipeApi):
     super(BuildPlanApi, self).__init__(*args, **kwargs)
     self._properties = properties
 
+  def initialize(self):
+    """Initializes the module."""
+    # TODO(b/187793586): Remove after go/cros-slim-rollout.
+    # If false, launch slim builds as non-critical in parallel with the full
+    # build when applicable.
+    self._honor_slim_builder_criticality = (
+        self._properties.honor_slim_builder_criticality or
+        'chromeos.build_plan.honor_slim_builder_criticality' in
+        self.m.cros_infra_config.experiments)
+
+
+
   # A Git footer that can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
   DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
@@ -206,19 +218,26 @@ class BuildPlanApi(recipe_api.RecipeApi):
         properties = self.m.cq.props_for_child_build
         properties.update(self.m.cros_infra_config.props_for_child_build)
 
-        # TODO(crbug.com/1123776): Remove scheduling of a full builder in
-        # addition to a slim builder after go/cros-slim-rollout parallel
-        # adoption phase.
         if child_builder_name.endswith('-slim-cq'):
           count_scheduled_slim_builds += 1
 
-          new_build_requests.append(
-              self.m.buildbucket.schedule_request(
-                  gitiles_commit=child_build_snapshot, inherit_buildsets=False,
-                  builder=full_builder_name, bucket=bucket,
-                  gerrit_changes=gerrit_changes, critical=full_builder_critical,
-                  tags=tags, properties=properties, experiments=child_exps,
-                  swarming_parent_run_id=parent_run_id))
+          # TODO(b/187793586): Remove scheduling of a full builder in
+          # addition to a slim builder after go/cros-slim-rollout.
+          # Keep this logic throughout the incremental rollout phase so we can
+          # revert back to the parallel adoption phase if any issues surface.
+          if not self._honor_slim_builder_criticality:
+
+            # If launching both the full and slim builder, the slim build should
+            # always be non-critical.
+            critical = False
+            new_build_requests.append(
+                self.m.buildbucket.schedule_request(
+                    gitiles_commit=child_build_snapshot,
+                    inherit_buildsets=False, builder=full_builder_name,
+                    bucket=bucket, gerrit_changes=gerrit_changes,
+                    critical=full_builder_critical, tags=tags,
+                    properties=properties, experiments=child_exps,
+                    swarming_parent_run_id=parent_run_id))
 
         new_build_requests.append(
             self.m.buildbucket.schedule_request(

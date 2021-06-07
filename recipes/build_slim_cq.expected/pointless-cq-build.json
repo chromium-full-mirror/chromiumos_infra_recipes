@@ -31,6 +31,7 @@
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",
       "@@@STEP_LOG_LINE@builder config@  critical {@@@",
+      "@@@STEP_LOG_LINE@builder config@    value: true@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  broken_before {@@@",
       "@@@STEP_LOG_LINE@builder config@    seconds: 1572566400@@@",
