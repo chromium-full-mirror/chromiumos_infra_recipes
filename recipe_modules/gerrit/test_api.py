@@ -72,22 +72,20 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     return resp
 
   def set_gerrit_fetch_changes_response(self, step_name, changes,
-                                        values_dict=None):
+                                        values_dict=None, iteration=1):
     """Set the response from gerrit-fetch-changes.
-
-    Note: this will only set the response for the first call to
-    gerrit-fetch-changes with the given step_name. This method will
-    overwrite any data provided in a recipe via test_output_data.
 
     Args:
       step_name (str): name of the step calling gerrit.fetch_patch_sets.
       changes (list[GerritChange]): The list of changes which will be found.
       values_dict (dict): Dictionary of {change_number: values} to provide field
           values to test_response.
+      iteration (int): Which call this applies to for this step/endpoint.
 
     Returns:
       (StepTestData) test data instance for the test.
     """
+    iteration = '' if iteration == 1 else ' (%d)' % iteration
     resp = []
     for change in changes:
       request = dict(host=change.host, change_number=change.change,
@@ -98,8 +96,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
 
     resp = dict(changes=resp)
     prefix = '%s.' % step_name if step_name else ''
-    return self.step_data(prefix + 'gerrit-fetch-changes',
-                          stdout=self.m.json.output(resp))
+    step_name = '%sgerrit-fetch-changes%s' % (prefix, iteration)
+    return self.step_data(step_name, stdout=self.m.json.output(resp))
 
   def test_gerrit_fetch_changes(self, input, gerrit_changes):
     return {
@@ -121,7 +119,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
   def test_gerrit_change_description(self):
     return 'a quick description\n\nChange-Id: deadbeef\n'
 
-  def test_changes_are_submittable(self, errors=[]):
+  def test_changes_are_submittable(self, errors=()):
     """Test output for changes_are_submitted.
 
     Args:

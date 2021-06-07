@@ -275,6 +275,7 @@
   * [gerrit:examples/fetch_patch_sets](#recipes-gerrit_examples_fetch_patch_sets)
   * [gerrit:examples/get_change_description](#recipes-gerrit_examples_get_change_description)
   * [gerrit:examples/has_chromite_changes](#recipes-gerrit_examples_has_chromite_changes)
+  * [gerrit:examples/multiple_fetch_changes](#recipes-gerrit_examples_multiple_fetch_changes)
   * [gerrit:examples/parse_gerrit_change](#recipes-gerrit_examples_parse_gerrit_change)
   * [gerrit:examples/parse_gerrit_change_url](#recipes-gerrit_examples_parse_gerrit_change_url)
   * [gerrit:examples/parse_qualified_gerrit_host](#recipes-gerrit_examples_parse_qualified_gerrit_host)
@@ -7524,6 +7525,11 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 [DEPS](/recipe_modules/gerrit/examples/has_chromite_changes.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/has_chromite_changes.py#17)(api):**
+### *recipes* / [gerrit:examples/multiple\_fetch\_changes](/recipe_modules/gerrit/examples/multiple_fetch_changes.py)
+
+[DEPS](/recipe_modules/gerrit/examples/multiple_fetch_changes.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/multiple_fetch_changes.py#56)(api):**
 ### *recipes* / [gerrit:examples/parse\_gerrit\_change](/recipe_modules/gerrit/examples/parse_gerrit_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/parse_gerrit_change.py#10): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
