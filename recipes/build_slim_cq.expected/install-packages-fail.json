@@ -3061,7 +3061,7 @@
     "name": "Determine which packages to build",
     "~followup_annotations": [
       "@@@STEP_TEXT@Build only CL affected packages@@@",
-      "@@@SET_BUILD_PROPERTY@subset_of_packages_built@[\"CL_AFFECTED\"]@@@"
+      "@@@SET_BUILD_PROPERTY@subset_of_packages_built@\"CL_AFFECTED\"@@@"
     ]
   },
   {

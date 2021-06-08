@@ -3061,7 +3061,7 @@
     "name": "Determine which packages to build",
     "~followup_annotations": [
       "@@@STEP_TEXT@Build all packages on retries@@@",
-      "@@@SET_BUILD_PROPERTY@subset_of_packages_built@[\"ALL_ON_RETRY\"]@@@"
+      "@@@SET_BUILD_PROPERTY@subset_of_packages_built@\"ALL_ON_RETRY\"@@@"
     ]
   },
   {

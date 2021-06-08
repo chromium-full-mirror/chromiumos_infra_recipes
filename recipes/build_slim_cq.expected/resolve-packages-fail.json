@@ -3061,7 +3061,7 @@
     "name": "Determine which packages to build",
     "~followup_annotations": [
       "@@@STEP_TEXT@Build all packages, failed to get package list@@@",
-      "@@@SET_BUILD_PROPERTY@subset_of_packages_built@[\"ALL\"]@@@",
+      "@@@SET_BUILD_PROPERTY@subset_of_packages_built@\"ALL\"@@@",
       "@@@STEP_WARNINGS@@@"
     ]
   },
