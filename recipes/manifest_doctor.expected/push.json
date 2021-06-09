@@ -589,6 +589,15 @@
   },
   {
     "cmd": [
+      "nproc"
+    ],
+    "name": "branch local manifests.nproc",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "[START_DIR]/cipd/manifest_doctor",
       "branch-local-manifest",
       "--chromeos_checkout",
@@ -597,6 +606,8 @@
       "90",
       "--projects",
       "src/program/galaxy,src/project/galaxy/milkyway",
+      "-j",
+      "8",
       "--push"
     ],
     "name": "branch local manifests.run manifest_doctor",

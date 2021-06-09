@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'bot_cost',
     'cros_infra_config',
@@ -68,10 +69,16 @@ def RunSteps(api, properties):
                 "chromeos/program/"):
           project_paths.append(project.path)
 
+      nproc = api.step(
+          "nproc", ["nproc"], stdout=api.raw_io.output_text(),
+          step_test_data=lambda: api.raw_io.test_api.stream_output(
+              '8\n')).stdout.strip()
+
       cmd = [manifest_doctor_path, "branch-local-manifest"]
       cmd += ["--chromeos_checkout", api.workspace_util.workspace_path]
       cmd += ["--min_milestone", properties.min_milestone]
       cmd += ["--projects", ",".join(project_paths)]
+      cmd += ["-j", nproc]
 
       if properties.push:
         cmd += ["--push"]
@@ -102,6 +109,8 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'branch local manifests.run manifest_doctor',
                      ['--min_milestone', '90']),
+      api.post_check(post_process.StepCommandContains,
+                     'branch local manifests.run manifest_doctor', ['-j', '8']),
   )
 
   yield api.test(
