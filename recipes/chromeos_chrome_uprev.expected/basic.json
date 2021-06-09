@@ -223,7 +223,7 @@
       "--bypass-hooks",
       "--force",
       "--reviewers",
-      "chrome-os-gardeners+review@google.com",
+      "chrome-os-gardeners-reviews@google.com",
       "--cq-dry-run"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",

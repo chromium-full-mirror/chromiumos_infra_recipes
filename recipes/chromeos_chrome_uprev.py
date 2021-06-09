@@ -28,7 +28,7 @@ _CHROMEOS_OVERLAY_PROJECT = 'chromiumos/overlays/chromiumos-overlay'
 _CHROMEOS_OVERLAY_REPO = 'https://chromium.googlesource.com/%s' % _CHROMEOS_OVERLAY_PROJECT
 _CHROMEOS_CHROME_EBUILD_PATH = 'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild'
 
-_UPREV_CL_REVIEWERS = ['chrome-os-gardeners+review@google.com']
+_UPREV_CL_REVIEWERS = ['chrome-os-gardeners-reviews@google.com']
 
 
 def RunSteps(api):
