@@ -5023,7 +5023,7 @@ Returns:
   BuilderConfig or None, with an active context.
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
-[DEPS](/recipe_modules/overlayfs/__init__.py#6): [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/overlayfs/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
 
@@ -5037,11 +5037,11 @@ A module for interacting with OverlayFS mounts.
 
 Initialize OverlayfsApi.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#94)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#103)(self):**
 
 Returns a context that cleans up any overlayfs mounts created in it.
 
-&mdash; **def [mount](/recipe_modules/overlayfs/api.py#36)(self, name, lowerdir_path, mount_path, persist=False):**
+&mdash; **def [mount](/recipe_modules/overlayfs/api.py#40)(self, name, lowerdir_path, mount_path, persist=False):**
 
 Mount an OverlayFS.
 
@@ -5055,7 +5055,7 @@ Args:
       it doesn't exist.
   * persist (bool): Whether to persist the mount beyond one execution.
 
-&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#80)(self, name, mount_path):**
+&mdash; **def [unmount](/recipe_modules/overlayfs/api.py#89)(self, name, mount_path):**
 
 Unmount an OverlayFS.
 

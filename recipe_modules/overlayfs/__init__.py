@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'easy',
 ]
 
 from PB.recipe_modules.chromeos.overlayfs.overlayfs import OverlayfsProperties

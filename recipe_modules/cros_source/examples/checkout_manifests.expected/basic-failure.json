@@ -4,6 +4,14 @@
     "name": "mount overlay chromiumos"
   },
   {
+    "cmd": [],
+    "name": "mount overlay chromiumos.set chromiumos_warm_cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@chromiumos_warm_cache@false@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -232,6 +240,14 @@
     "name": "retry cache sync.mount overlay chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "retry cache sync.mount overlay chromiumos.set chromiumos_warm_cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@chromiumos_warm_cache@false@@@"
     ]
   },
   {

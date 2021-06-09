@@ -33,6 +33,10 @@ class OverlayfsApi(recipe_api.RecipeApi):
     else:
       return self.m.path['cleanup'].join('overlayfs')
 
+  def _set_cache_status(self, upperdir):
+    """Returns bool of whether the path contains overlay directories."""
+    return self.m.path.exists(upperdir)
+
   def mount(self, name, lowerdir_path, mount_path, persist=False):
     """Mount an OverlayFS.
 
@@ -59,6 +63,11 @@ class OverlayfsApi(recipe_api.RecipeApi):
           work_base = self._base_work_path
         work_base = work_base.join(name)
         upperdir_path = work_base.join('upperdir').join(name)
+        if persist:
+          self.m.easy.set_properties_step(**{
+              '{}_warm_cache'.format(name):
+                  self._set_cache_status(upperdir_path)
+          })
         self.m.file.ensure_directory('create upperdir', upperdir_path)
         workdir_path = work_base.join('workdir').join(name)
         self.m.file.ensure_directory('create workdir', workdir_path)

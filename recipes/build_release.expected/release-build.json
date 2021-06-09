@@ -251,6 +251,14 @@
     "name": "mount overlay chromiumos"
   },
   {
+    "cmd": [],
+    "name": "mount overlay chromiumos.set chromiumos_warm_cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@chromiumos_warm_cache@false@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
