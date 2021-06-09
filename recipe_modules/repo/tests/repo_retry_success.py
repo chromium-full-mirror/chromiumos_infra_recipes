@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/path',
+    'recipe_engine/properties',
     'repo',
 ]
 
@@ -29,4 +30,7 @@ def GenTests(api):
       'repo_retry_success',
       attempt_retry_repo(api, 1),
       attempt_retry_repo(api, 2),
+      api.properties(**{'$chromeos/repo': {
+          "remove_manifests_git": True
+      }}),
   )

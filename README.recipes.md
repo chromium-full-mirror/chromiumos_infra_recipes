@@ -7926,11 +7926,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/tests/repo_retry_failure.py#21)(api, attempt):**
 ### *recipes* / [repo:tests/repo\_retry\_success](/recipe_modules/repo/tests/repo_retry_success.py)
 
-[DEPS](/recipe_modules/repo/tests/repo_retry_success.py#6): [repo](#recipe_modules-repo), [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/repo/tests/repo_retry_success.py#6): [repo](#recipe_modules-repo), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_retry_success.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_retry_success.py#13)(api):**
 
-&mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/tests/repo_retry_success.py#17)(api, attempt):**
+&mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/tests/repo_retry_success.py#18)(api, attempt):**
 ### *recipes* / [repo:tests/source\_cache\_feature](/recipe_modules/repo/tests/source_cache_feature.py)
 
 [DEPS](/recipe_modules/repo/tests/source_cache_feature.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

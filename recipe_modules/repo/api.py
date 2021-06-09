@@ -53,15 +53,15 @@ class RepoApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(RepoApi, self).__init__(*args, **kwargs)
     self._disable_source_cache_health = properties.disable_source_cache_health
-    self._no_remove_manifests_git = properties.no_remove_manifests_git
+    self._remove_manifests_git = properties.remove_manifests_git
     self._binary_updated = False
 
   def initialize(self):
     self._disable_source_cache_health |= (
         'chromeos.repo.disable_source_cache_health' in
         self.m.cros_infra_config.experiments)
-    self._no_remove_manifests_git |= ('chromeos.repo.no_remove_manifests_git' in
-                                      self.m.cros_infra_config.experiments)
+    self._remove_manifests_git |= ('chromeos.repo.remove_manifests_git' in
+                                   self.m.cros_infra_config.experiments)
 
   @property
   def repo_path(self):
@@ -767,7 +767,7 @@ class RepoApi(recipe_api.RecipeApi):
             # Remove .repo/manifests and .repo/manifests.git to avoid
             # potential problems when switching to a different manifest
             # repo or branch.
-            if not self._no_remove_manifests_git:
+            if self._remove_manifests_git:
               for manifest_dir in ('manifests', 'manifests.git'):
                 self.m.file.rmtree('remove .repo/%s' % manifest_dir,
                                    root_path.join('.repo', manifest_dir))
