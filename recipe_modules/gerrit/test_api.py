@@ -99,9 +99,9 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     step_name = '%sgerrit-fetch-changes%s' % (prefix, iteration)
     return self.step_data(step_name, stdout=self.m.json.output(resp))
 
-  def test_gerrit_fetch_changes(self, input, gerrit_changes):
+  def test_gerrit_fetch_changes(self, request, gerrit_changes):
     return {
-        'changes': map(self.test_response, input['changes'], gerrit_changes)
+        'changes': map(self.test_response, request['changes'], gerrit_changes)
     }
 
   def test_patch_set(self):

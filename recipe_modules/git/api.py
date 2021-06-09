@@ -663,8 +663,7 @@ class GitApi(recipe_api.RecipeApi):
     """
     if refspec.startswith('refs/heads/'):
       return refspec.split('/', 2)[2]
-    else:
-      return default
+    return default
 
   def get_branch_refspec(self, branch):
     """Creates the full refspec for a branch.

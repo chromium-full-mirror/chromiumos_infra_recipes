@@ -41,7 +41,7 @@ def RunSteps(api):
   api.gerrit.test_api.simulated_changes_are_submittable(submittable=False)
 
   # Missing FetchInfo.
-  del patch._rev_info['fetch']
+  del patch._rev_info['fetch']  # pylint: disable=protected-access
   api.assertions.assertEqual(
       patch.git_fetch_url,
       'https://chromium-review.googlesource.com/chromium/src')

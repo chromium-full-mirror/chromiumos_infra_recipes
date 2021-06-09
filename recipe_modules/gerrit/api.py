@@ -213,11 +213,12 @@ class GerritApi(RecipeApi):
                             include_commit_info=True)
     return self._gerrit_patch_sets
 
-  def _gerrit_fetch_changes(self, input, gerrit_changes, test_output_data=None):
+  def _gerrit_fetch_changes(self, request, gerrit_changes,
+                            test_output_data=None):
     """Call gerrit-fetch-changes support tool.
 
     Args:
-      input (dict): Input data.
+      request (dict): Input data.
       test_output_data (dict): Test output for gerrit-fetch-changes.
 
     Returns:
@@ -225,8 +226,8 @@ class GerritApi(RecipeApi):
     """
     if test_output_data is None:
       test_output_data = lambda: self.test_api.test_gerrit_fetch_changes(
-          input, gerrit_changes)
-    return self.m.support.call('gerrit-fetch-changes', input,
+          request, gerrit_changes)
+    return self.m.support.call('gerrit-fetch-changes', request,
                                test_output_data=test_output_data,
                                timeout=10 * 60)
 
@@ -357,8 +358,7 @@ class GerritApi(RecipeApi):
       if gerrit_change.patchset:
         url = '%s/%d' % (url, gerrit_change.patchset)
       return url
-    else:
-      return '%s/%d' % (qualified_host, gerrit_change.change)
+    return '%s/%d' % (qualified_host, gerrit_change.change)
 
   def parse_qualified_gerrit_host(self, gerrit_change):
     """Transform a GerritChange proto into a fully qualified host.
@@ -397,7 +397,7 @@ class GerritApi(RecipeApi):
           'temp_dir': self.m.path['cleanup'].join('submittable_check'),
       }
       if test_output_data is None:
-        test_output_data = lambda: self.test_api.test_changes_are_submittable()
+        test_output_data = self.test_api.test_changes_are_submittable
       result = self.m.support.call('git-test-submit', req,
                                    test_output_data=test_output_data)
       if result['errors']:
@@ -510,8 +510,8 @@ class GerritApi(RecipeApi):
     Args:
       gerrit_change (GerritChange): The change of interest.
       labels (dict): Mapping from label (Label) to value (int).
-      rebase_from_remote (bool): If true, sets the rebase branch to the equiv.
-        of origin/master (usually cros/master).
+      rebase_from_remote (bool): If true, sets the rebase branch to the
+        the remote and branch for the project.
       branch (str): The remote branch to update.
       ref (str): The remote ref to update.
 
@@ -664,8 +664,8 @@ class GerritApi(RecipeApi):
 
     Args:
       host (str): The Gerrit host to query.
-      query_params (list[(str, str)]): Query parameters as list of (key, value) tuples
-          to form a query as documented here:
+      query_params (list[(str, str)]): Query parameters as list of (key, value)
+          tuples to form a query as documented here:
           https://gerrit-review.googlesource.com/Documentation/user-search.html#search-operators
 
     Returns:

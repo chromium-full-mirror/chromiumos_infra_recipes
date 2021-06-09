@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-
 DEPS = [
     'recipe_engine/assertions',
     'gerrit',

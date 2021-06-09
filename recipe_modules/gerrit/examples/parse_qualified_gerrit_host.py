@@ -4,8 +4,8 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.recipe_modules.chromeos.gerrit.examples.parse_qualified_gerrit_host import (
-    ParseQualifiedGerritHostProperties)
+from PB.recipe_modules.chromeos.gerrit.examples \
+    .parse_qualified_gerrit_host import ParseQualifiedGerritHostProperties
 
 DEPS = [
     'recipe_engine/assertions',

@@ -124,6 +124,7 @@ def RunSteps(api):
   with api.step.nest('test fetch_patch_sets_from_change'):
     for change, patch in zip(changes, patches):
       patch_set = api.gerrit.fetch_patch_set_from_change(change)
+      api.assertions.assertEqual(patch_set.change_id, patch.change_id)
       values = values_dict.get(patch.change_id,
                                values_dict.get(-patch.change_id))
       api.assertions.assertEqual(patch.project, values['project'])
@@ -145,7 +146,7 @@ def RunSteps(api):
 
   patch = patches[0]
   # Missing FetchInfo.
-  del patch._rev_info['fetch']
+  del patch._rev_info['fetch']  # pylint: disable=protected-access
   api.assertions.assertEqual(
       patch.git_fetch_url,
       'https://chromium-review.googlesource.com/chromium/src')
@@ -163,7 +164,7 @@ def RunSteps(api):
       # Fetch for wrong patchset. Should raise an error.
       change = GerritChange(host='google.com', change=2, patchset=4)
       api.gerrit.fetch_patch_set_from_change(change)
-  except api.step.StepFailure as e:
+  except api.step.StepFailure:
     pass
 
   api.gerrit.test_api.test_patch_set()

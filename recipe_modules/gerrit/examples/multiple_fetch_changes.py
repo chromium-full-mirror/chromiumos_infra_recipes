@@ -20,7 +20,7 @@ changes = [
 ]
 
 
-def _get_values_dict(api):
+def _get_values_dict():
   return {
       1: {
           'change_id': '1',
@@ -59,7 +59,7 @@ def RunSteps(api):
     for commit in changes:
       patches.append(api.gerrit.fetch_patch_set_from_change(commit))
 
-  values_dict = _get_values_dict(api)
+  values_dict = _get_values_dict()
   for patch in patches:
     values = values_dict.get(patch.change_id, values_dict.get(patch.change_id))
     api.assertions.assertEqual(patch.project, values['project'])
@@ -74,9 +74,9 @@ def GenTests(api):
       'multiple_calls',
       api.gerrit.set_gerrit_fetch_changes_response('test multiple',
                                                    [changes[0]],
-                                                   _get_values_dict(api)),
+                                                   _get_values_dict()),
       api.gerrit.set_gerrit_fetch_changes_response('test multiple',
                                                    [changes[1]],
-                                                   _get_values_dict(api),
+                                                   _get_values_dict(),
                                                    iteration=2),
   )

@@ -14,8 +14,6 @@ DEPS = [
 from PB.recipe_modules.chromeos.git.examples.fetch_refs import FetchProperties
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
-from recipe_engine import post_process
-
 PROPERTIES = FetchProperties
 
 

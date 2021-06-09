@@ -66,7 +66,8 @@ def GenTests(api):
   yield api.test(
       'parse-no-project-url',
       api.properties(
-          gerrit_change_url='https://chrome-internal-review.googlesource.com/12345',
+          gerrit_change_url=(
+              'https://chrome-internal-review.googlesource.com/12345'),
           expected=GerritChange(
               host='chrome-internal-review.googlesource.com',
               change=12345,

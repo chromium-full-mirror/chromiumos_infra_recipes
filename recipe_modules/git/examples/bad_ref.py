@@ -19,13 +19,13 @@ def RunSteps(api):
 
 
 def GenTests(api):
+  sha1 = 'cce0727710f0c250357fddf1bf033e8300afb932'
   yield api.test(
       'basic',
       api.step_data(
           "git merge-base",
           retcode=2,
           stdout=api.raw_io.output(
-              "fatal: Not a valid commit name cce0727710f0c250357fddf1bf033e8300afb932"
-          ),
+              'fatal: Not a valid commit name {}'.format(sha1)),
       ),
   )

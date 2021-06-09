@@ -3820,7 +3820,7 @@ Args:
 Returns:
   GerritChange: The newly created change.
 
-&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#288)(self, change, include_files=False, test_output_data=None):**
+&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#289)(self, change, include_files=False, test_output_data=None):**
 
 Fetch and return PatchSet associated with the given GerritChange.
 
@@ -3835,7 +3835,7 @@ Args:
 Returns:
   PatchSet: The corresponding PatchSet.
 
-&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#233)(self, gerrit_changes, include_files=False, include_commit_info=False, include_messages=False, test_output_data=None):**
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#234)(self, gerrit_changes, include_files=False, include_commit_info=False, include_messages=False, test_output_data=None):**
 
 Fetch and return PatchSets from Gerrit.
 
@@ -3868,7 +3868,7 @@ Args:
 Returns:
   str: The change description.
 
-&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#311)(self, gerrit_change_url):**
+&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#312)(self, gerrit_change_url):**
 
 Parse GerritChange proto from a gerrit change URL.
 
@@ -3882,7 +3882,7 @@ Args:
 Returns:
   GerritChange: The parsed proto.
 
-&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#341)(self, gerrit_change):**
+&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#342)(self, gerrit_change):**
 
 Transform a GerritChange proto into a Gerrit change URL.
 
@@ -3908,8 +3908,8 @@ Query gerrit for the given changes.
 
 Args:
   host (str): The Gerrit host to query.
-  query_params (list[(str, str)]): Query parameters as list of (key, value) tuples
-      to form a query as documented here:
+  query_params (list[(str, str)]): Query parameters as list of (key, value)
+      tuples to form a query as documented here:
       https://gerrit-review.googlesource.com/Documentation/user-search.html#search-operators
 
 Returns:
@@ -4112,7 +4112,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#669)(self, branch):**
+&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#668)(self, branch):**
 
 Creates the full refspec for a branch.
 
@@ -4140,7 +4140,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#684)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#683)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -4154,7 +4154,7 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#709)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#708)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -4173,7 +4173,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#698)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#697)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -4301,7 +4301,7 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [remote\_url](/recipe_modules/git/api.py#732)(self, remote='origin'):**
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#731)(self, remote='origin'):**
 
 Get the URL for a defined remote.
 
@@ -4328,7 +4328,7 @@ Runs `git config --global` to set global config.
 Args:
   args (list[str]): args for `git config`.
 
-&mdash; **def [set\_upstream](/recipe_modules/git/api.py#748)(self, remote, branch):**
+&mdash; **def [set\_upstream](/recipe_modules/git/api.py#747)(self, remote, branch):**
 
 Set the upretrem for the given branch.
 
@@ -7532,9 +7532,9 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/changes_are_submittable.py#15)(api):**
 ### *recipes* / [gerrit:examples/create\_change](/recipe_modules/gerrit/examples/create_change.py)
 
-[DEPS](/recipe_modules/gerrit/examples/create_change.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/gerrit/examples/create_change.py#6): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/create_change.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/create_change.py#12)(api):**
 ### *recipes* / [gerrit:examples/fetch\_patch\_sets](/recipe_modules/gerrit/examples/fetch_patch_sets.py)
 
 [DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7572,9 +7572,9 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_qualified_gerrit_host.py#19)(api, properties):**
 ### *recipes* / [gerrit:examples/query\_changes](/recipe_modules/gerrit/examples/query_changes.py)
 
-[DEPS](/recipe_modules/gerrit/examples/query_changes.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/gerrit/examples/query_changes.py#6): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#12)(api):**
 ### *recipes* / [gerrit:examples/set\_change\_description](/recipe_modules/gerrit/examples/set_change_description.py)
 
 [DEPS](/recipe_modules/gerrit/examples/set_change_description.py#8): [gerrit](#recipe_modules-gerrit)
@@ -7599,7 +7599,7 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 
 [DEPS](/recipe_modules/git/examples/fetch_refs.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/git/examples/fetch_refs.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/git/examples/fetch_refs.py#20)(api, properties):**
 ### *recipes* / [git:examples/full](/recipe_modules/git/examples/full.py)
 
 [DEPS](/recipe_modules/git/examples/full.py#6): [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
