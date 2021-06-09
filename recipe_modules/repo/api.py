@@ -54,9 +54,9 @@ class RepoApi(recipe_api.RecipeApi):
     super(RepoApi, self).__init__(*args, **kwargs)
     self._disable_source_cache_health = properties.disable_source_cache_health
     self._no_remove_manifests_git = properties.no_remove_manifests_git
+    self._binary_updated = False
 
   def initialize(self):
-    self._binary_updated = False
     self._disable_source_cache_health |= (
         'chromeos.repo.disable_source_cache_health' in
         self.m.cros_infra_config.experiments)
@@ -89,9 +89,9 @@ class RepoApi(recipe_api.RecipeApi):
     """Executes 'repo' with the supplied arguments.
 
     Args:
-      * args (list): A list of arguments to supply to 'repo'.
-      * name (str): The name of the step. If None, generate from the args.
-      * kwargs: See 'step.__call__'.
+      args (list): A list of arguments to supply to 'repo'.
+      name (str): The name of the step. If None, generate from the args.
+      kwargs: See 'step.__call__'.
 
     Returns:
       StepData: See 'step.__call__'.
@@ -116,8 +116,8 @@ class RepoApi(recipe_api.RecipeApi):
     a subset of the projects. The speedup can be substantial.
 
     Args:
-      * projects (List[str]): Projects to limit the repo forall deleting of
-      locks to, or None to clear all project locks.
+      projects (list[str]): Projects to limit the repo forall deleting of
+        locks to, or None to clear all project locks.
     """
     repo_cmd = [
         'find', '.repo/', '-type', 'f', '-name', '*.lock', '-print', '-delete'
@@ -152,22 +152,22 @@ class RepoApi(recipe_api.RecipeApi):
     """Executes 'repo init' with the given arguments.
 
     Args:
-      * manifest_url (str): URL of the manifest repository to clone.
-      * manifest_branch (str): Manifest repository branch to checkout.
-      * reference (str): Location of a mirror directory to bootstrap sync.
-      * groups (list): Groups to checkout (see `repo init --groups`).
-      * depth (int): Create a shallow clone of the given depth.
-      * repo_url (str): URL of the repo repository.
-      * repo_branch (str): Repo binary branch to use.
-      * local_manifests (list[LocalManifest]): Local manifests to add. See
-      https://gerrit.googlesource.com/git-repo/+/HEAD/docs/manifest-format.md#local-manifests.
-      * manifest_name (Path): The manifest file to use.
-      * projects (List[str]): Projects of concern or None if all projects are of
-      concern. Used to limit work where possible such as only clearing git locks
-      in these projects.
-      * verbose (bool): Whether to produce verbose output.
+      manifest_url (str): URL of the manifest repository to clone.
+      manifest_branch (str): Manifest repository branch to checkout.
+      reference (str): Location of a mirror directory to bootstrap sync.
+      groups (list): Groups to checkout (see `repo init --groups`).
+      depth (int): Create a shallow clone of the given depth.
+      repo_url (str): URL of the repo repository.
+      repo_branch (str): Repo binary branch to use.
+      local_manifests (list[LocalManifest]): Local manifests to add. See
+        https://gerrit.googlesource.com/git-repo/+/HEAD/docs/manifest-format.md#local-manifests.
+      manifest_name (Path): The manifest file to use.
+      projects (list[str]): Projects of concern or None if all projects are of
+        concern. Ignored as of go/cros-source-cache-health.
+      verbose (bool): Whether to produce verbose output.
     """
-    assert _kwonly is (), 'init accepts only 1 positional arg'
+    assert _kwonly == (), 'init accepts only 1 positional arg'
+    _ = projects
     cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
     if manifest_branch:
       cmd += ['--manifest-branch', manifest_branch]
@@ -226,21 +226,21 @@ class RepoApi(recipe_api.RecipeApi):
     """Executes 'repo sync' with the given arguments.
 
     Args:
-      * force_sync (bool): Overwrite existing git directories if needed.
-      * detach (bool): Detach projects back to manifest revision.
-      * current_branch (bool): Fetch only current branch.
-      * jobs (int): Projects to fetch simultaneously.
-      * manifest_name (str): Temporary manifest to use for this sync.
-      * no_tags (bool): Don't fetch tags.
-      * optimized_fetch (bool): Only fetch projects if revision doesn't exist.
-      * cache_dir (Path): Use git-cache with this cache directory.
-      * retry_fetches (int): The number of times to retry retriable fetches.
-      * projects (List[str]): Projects to limit the sync to, or None to sync
+      force_sync (bool): Overwrite existing git directories if needed.
+      detach (bool): Detach projects back to manifest revision.
+      current_branch (bool): Fetch only current branch.
+      jobs (int): Projects to fetch simultaneously.
+      manifest_name (str): Temporary manifest to use for this sync.
+      no_tags (bool): Don't fetch tags.
+      optimized_fetch (bool): Only fetch projects if revision doesn't exist.
+      cache_dir (Path): Use git-cache with this cache directory.
+      retry_fetches (int): The number of times to retry retriable fetches.
+      projects (list[str]): Projects to limit the sync to, or None to sync
         all projects.
-      * verbose (bool): Whether to produce verbose output.
-      * no_manifest_update (bool): Whether to disable updating the manifest.
+      verbose (bool): Whether to produce verbose output.
+      no_manifest_update (bool): Whether to disable updating the manifest.
     """
-    assert _kwonly is (), 'sync accepts no positional args'
+    assert _kwonly == (), 'sync accepts no positional args'
     cmd = ['sync']
     if force_sync:
       cmd += ['--force-sync']
@@ -280,16 +280,15 @@ class RepoApi(recipe_api.RecipeApi):
     manifest_path = repo_root.join('.repo', 'tmp_manifest')
     self.m.file.write_raw('write manifest', manifest_path, manifest_data)
 
-    repo_manifests_path = repo_root.join('.repo', 'manifests')
     return manifest_path
 
   def sync_manifest(self, manifest_url, manifest_data, **kwargs):
     """Sync to the given manifest file data.
 
     Args:
-      * manifest_url (str): URL of manifest repo to sync to (for repo init)
-      * manifest_data (str): Manifest XML data to use for the sync.
-      * kwargs: Keyword arguments to pass to 'repo.sync'.
+      manifest_url (str): URL of manifest repo to sync to (for repo init)
+      manifest_data (str): Manifest XML data to use for the sync.
+      kwargs: Keyword arguments to pass to 'repo.sync'.
     """
     repo_root = self._find_root()
     assert repo_root is not None, 'no repo root found'
@@ -339,16 +338,16 @@ class RepoApi(recipe_api.RecipeApi):
     return separately.
 
     Args:
-      projects (List[str]): Project names or paths to return info for. Defaults
+      projects (list[str]): Project names or paths to return info for. Defaults
         to all projects.
-      regexes (List[str]): list of regexes for matching projects. The matching
+      regexes (list[str]): list of regexes for matching projects. The matching
         is the same as in `repo forall --regex regexes...`.
       test_data (str): Test data for the step: the output from repo forall, or
           None for the default.
       ignore_missing (bool): If True, skip missing projects and continue
 
     Returns:
-      List[ProjectInfo]: Requested project infos.
+      list[ProjectInfo]: Requested project infos.
     """
     if test_data is None:
       test_data = self.test_api.project_infos_test_data(
@@ -361,8 +360,8 @@ class RepoApi(recipe_api.RecipeApi):
     cmd += (['--regex'] + regexes) if regexes is not None else []
     cmd += projects if projects is not None else []
     cmd += [
-        '-c',
-        'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV\|$REPO_UPSTREAM'
+        '-c', r'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV\|'
+        r'$REPO_UPSTREAM'
     ]
     step_data = self._step(cmd,
                            stdout=self.m.raw_io.output(add_output_log=True),
@@ -409,9 +408,9 @@ class RepoApi(recipe_api.RecipeApi):
     If the manifest is not pinned, a pinned manifest is created and logged.
 
     Args:
-      projects (List[str]): Project names or paths to return info for. Defaults
+      projects (list[str]): Project names or paths to return info for. Defaults
         to all projects.
-      regexes (List[str]): list of regexes for matching projects. The matching
+      regexes (list[str]): list of regexes for matching projects. The matching
         is the same as in `repo forall --regex regexes...`.
       test_data (str): Test data for the step: the output from repo forall, or
           None for the default.  This is passed to project_infos().
@@ -479,7 +478,7 @@ class RepoApi(recipe_api.RecipeApi):
           merge-base`.
 
     Returns:
-      List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
+      list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
       changed project (excludes added/removed projects).
     """
     with self.m.step.nest('diff remote and local manifest') as presentation:
@@ -517,7 +516,7 @@ class RepoApi(recipe_api.RecipeApi):
           merge-base`.
 
     Returns:
-      List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
+      list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
       changed project (excludes added/removed projects).
     """
 
@@ -638,8 +637,8 @@ class RepoApi(recipe_api.RecipeApi):
     We're assuming that the root path provided has already been validated.
 
     Args:
-      * root_path (Path): Path to the repo root.
-      * projects (List[str]): Projects to clean or None to clean all projects.
+      root_path (Path): Path to the repo root.
+      projects (list[str]): Projects to clean or None to clean all projects.
     """
     with self.m.step.nest('ensure clean checkout'), self.m.context(
         cwd=root_path, infra_steps=True):
@@ -735,13 +734,13 @@ class RepoApi(recipe_api.RecipeApi):
     """Ensure the given repo checkout exists and is synced.
 
     Args:
-      * root_path (Path): Path to the repo root.
-      * manifest_url (str): Manifest URL for 'repo.init`.
-      * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
-      * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
-      * projects (List[str]): Projects of concern or None if all projects
-      are of concern. Used to perform optimizations where possible to only
-      operate on the given projects.
+      root_path (Path): Path to the repo root.
+      manifest_url (str): Manifest URL for 'repo.init`.
+      init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
+      sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+      projects (list[str]): Projects of concern or None if all projects
+        are of concern. Used to perform optimizations where possible to only
+        operate on the given projects.
     """
     with self.m.step.nest('ensure synced checkout'):
       self.m.file.ensure_directory('ensure root path', root_path)
@@ -792,7 +791,7 @@ class RepoApi(recipe_api.RecipeApi):
     """Issues a repo selfupdate to update the binary.
 
     Args"
-      * root_path (Path): Path to the repo root.
+      root_path (Path): Path to the repo root.
     """
     if self._binary_updated:
       return

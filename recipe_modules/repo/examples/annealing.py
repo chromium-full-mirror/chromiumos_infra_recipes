@@ -80,7 +80,7 @@ def GenTests(api):
 
   def AnnealingTest(state_name, state):
     return api.test(
-        'annealing-{}'.format(state),
+        'annealing-{}'.format(state_name),
         api.properties(AnnealingProperties(manifest_file='snapshot.xml')),
         api.repo.repo_current_state(state))
 
@@ -90,7 +90,7 @@ def GenTests(api):
         path='local_manifest.xml',
     )
     return api.test(
-        'annealing-local-manifest-{}'.format(state),
+        'annealing-local-manifest-{}'.format(state_name),
         api.properties(
             AnnealingProperties(manifest_file='snapshot.xml'),
             init_opts=common.InitOpts(local_manifest=local_manifest)),
@@ -98,7 +98,7 @@ def GenTests(api):
 
   def AnnealingMissingFromXML(state_name, state):
     return api.test(
-        'annealing-missing-FromXML-{}'.format(state),
+        'annealing-missing-FromXML-{}'.format(state_name),
         api.properties(AnnealingProperties(manifest_file='snapshot.xml')),
         api.step_data('diff remote and local manifest.git show', retcode=128),
         api.repo.repo_current_state(state))
@@ -130,7 +130,7 @@ def GenTests(api):
     from_manifest = dedent(from_manifest)
     to_manifest = dedent(to_manifest)
     return api.test(
-        'annealing-with-changes-{}'.format(state),
+        'annealing-with-changes-{}'.format(state_name),
         api.step_data(
             'diff remote and local manifest.validate PATH.git merge-base',
             retcode=1),

@@ -5257,7 +5257,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 A module for interacting with the repo tool.
 
-&mdash; **def [abandon](/recipe_modules/repo/api.py#319)(self, branch, projects=None):**
+&mdash; **def [abandon](/recipe_modules/repo/api.py#318)(self, branch, projects=None):**
 
 Abandon the branch in the given projects, or all projects if not set.
 
@@ -5271,7 +5271,7 @@ Write manifest_data to a temporary manifest file inside the repo root.
 
 Returns (string): path of tmp manifest relative.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#505)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#504)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -5286,10 +5286,10 @@ Args:
       merge-base`.
 
 Returns:
-  List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
+  list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#612)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#611)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -5297,7 +5297,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#463)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#462)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -5314,21 +5314,21 @@ Args:
       merge-base`.
 
 Returns:
-  List[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
+  list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
 &emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#70)(self):**
 
-&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#405)(self, projects=None, regexes=None, test_data=None, step_name=None):**
+&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#404)(self, projects=None, regexes=None, test_data=None, step_name=None):**
 
 Ensure that we know the revision info for all projects.
 
 If the manifest is not pinned, a pinned manifest is created and logged.
 
 Args:
-  projects (List[str]): Project names or paths to return info for. Defaults
+  projects (list[str]): Project names or paths to return info for. Defaults
     to all projects.
-  regexes (List[str]): list of regexes for matching projects. The matching
+  regexes (list[str]): list of regexes for matching projects. The matching
     is the same as in `repo forall --regex regexes...`.
   test_data (str): Test data for the step: the output from repo forall, or
       None for the default.  This is passed to project_infos().
@@ -5337,31 +5337,30 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#663)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#662)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
 
 &mdash; **def [init](/recipe_modules/repo/api.py#148)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
 
 Executes 'repo init' with the given arguments.
 
 Args:
-  * manifest_url (str): URL of the manifest repository to clone.
-  * manifest_branch (str): Manifest repository branch to checkout.
-  * reference (str): Location of a mirror directory to bootstrap sync.
-  * groups (list): Groups to checkout (see `repo init --groups`).
-  * depth (int): Create a shallow clone of the given depth.
-  * repo_url (str): URL of the repo repository.
-  * repo_branch (str): Repo binary branch to use.
-  * local_manifests (list[LocalManifest]): Local manifests to add. See
-  https://gerrit.googlesource.com/git-repo/+/HEAD/docs/manifest-format.md#local-manifests.
-  * manifest_name (Path): The manifest file to use.
-  * projects (List[str]): Projects of concern or None if all projects are of
-  concern. Used to limit work where possible such as only clearing git locks
-  in these projects.
-  * verbose (bool): Whether to produce verbose output.
+  manifest_url (str): URL of the manifest repository to clone.
+  manifest_branch (str): Manifest repository branch to checkout.
+  reference (str): Location of a mirror directory to bootstrap sync.
+  groups (list): Groups to checkout (see `repo init --groups`).
+  depth (int): Create a shallow clone of the given depth.
+  repo_url (str): URL of the repo repository.
+  repo_branch (str): Repo binary branch to use.
+  local_manifests (list[LocalManifest]): Local manifests to add. See
+    https://gerrit.googlesource.com/git-repo/+/HEAD/docs/manifest-format.md#local-manifests.
+  manifest_name (Path): The manifest file to use.
+  projects (list[str]): Projects of concern or None if all projects are of
+    concern. Ignored as of go/cros-source-cache-health.
+  verbose (bool): Whether to produce verbose output.
 
-&mdash; **def [initialize](/recipe_modules/repo/api.py#58)(self):**
+&mdash; **def [initialize](/recipe_modules/repo/api.py#59)(self):**
 
-&mdash; **def [manifest](/recipe_modules/repo/api.py#432)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#431)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
 Uses repo to create a manifest and returns it as a string.
 
@@ -5378,11 +5377,11 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#657)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#656)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#390)(self, project=None):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#389)(self, project=None):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -5393,7 +5392,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#333)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#332)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
 
 Uses 'repo forall' to gather project information.
 
@@ -5402,20 +5401,20 @@ ProjectInfos are the union, without duplicates, of what each would
 return separately.
 
 Args:
-  projects (List[str]): Project names or paths to return info for. Defaults
+  projects (list[str]): Project names or paths to return info for. Defaults
     to all projects.
-  regexes (List[str]): list of regexes for matching projects. The matching
+  regexes (list[str]): list of regexes for matching projects. The matching
     is the same as in `repo forall --regex regexes...`.
   test_data (str): Test data for the step: the output from repo forall, or
       None for the default.
   ignore_missing (bool): If True, skip missing projects and continue
 
 Returns:
-  List[ProjectInfo]: Requested project infos.
+  list[ProjectInfo]: Requested project infos.
 
 &emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#66)(self):**
 
-&mdash; **def [start](/recipe_modules/repo/api.py#305)(self, branch, projects=None):**
+&mdash; **def [start](/recipe_modules/repo/api.py#304)(self, branch, projects=None):**
 
 Start a new branch in the given projects, or all projects if not set.
 
@@ -5428,28 +5427,28 @@ Args:
 Executes 'repo sync' with the given arguments.
 
 Args:
-  * force_sync (bool): Overwrite existing git directories if needed.
-  * detach (bool): Detach projects back to manifest revision.
-  * current_branch (bool): Fetch only current branch.
-  * jobs (int): Projects to fetch simultaneously.
-  * manifest_name (str): Temporary manifest to use for this sync.
-  * no_tags (bool): Don't fetch tags.
-  * optimized_fetch (bool): Only fetch projects if revision doesn't exist.
-  * cache_dir (Path): Use git-cache with this cache directory.
-  * retry_fetches (int): The number of times to retry retriable fetches.
-  * projects (List[str]): Projects to limit the sync to, or None to sync
+  force_sync (bool): Overwrite existing git directories if needed.
+  detach (bool): Detach projects back to manifest revision.
+  current_branch (bool): Fetch only current branch.
+  jobs (int): Projects to fetch simultaneously.
+  manifest_name (str): Temporary manifest to use for this sync.
+  no_tags (bool): Don't fetch tags.
+  optimized_fetch (bool): Only fetch projects if revision doesn't exist.
+  cache_dir (Path): Use git-cache with this cache directory.
+  retry_fetches (int): The number of times to retry retriable fetches.
+  projects (list[str]): Projects to limit the sync to, or None to sync
     all projects.
-  * verbose (bool): Whether to produce verbose output.
-  * no_manifest_update (bool): Whether to disable updating the manifest.
+  verbose (bool): Whether to produce verbose output.
+  no_manifest_update (bool): Whether to disable updating the manifest.
 
-&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#286)(self, manifest_url, manifest_data, \*\*kwargs):**
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#285)(self, manifest_url, manifest_data, \*\*kwargs):**
 
 Sync to the given manifest file data.
 
 Args:
-  * manifest_url (str): URL of manifest repo to sync to (for repo init)
-  * manifest_data (str): Manifest XML data to use for the sync.
-  * kwargs: Keyword arguments to pass to 'repo.sync'.
+  manifest_url (str): URL of manifest repo to sync to (for repo init)
+  manifest_data (str): Manifest XML data to use for the sync.
+  kwargs: Keyword arguments to pass to 'repo.sync'.
 
 &mdash; **def [version](/recipe_modules/repo/api.py#144)(self):**
 
@@ -7896,13 +7895,13 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 
 [DEPS](/recipe_modules/repo/examples/image_builder.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/image_builder.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/image_builder.py#26)(api, properties):**
 
-&mdash; **def [WithArgsTest](/recipe_modules/repo/examples/image_builder.py#74)(api, state_name, state, local_manifest):**
+&mdash; **def [WithArgsTest](/recipe_modules/repo/examples/image_builder.py#73)(api, state_name, state, local_manifest):**
 
-&mdash; **def [WithManifestNameTest](/recipe_modules/repo/examples/image_builder.py#64)(api, state_name, state):**
+&mdash; **def [WithManifestNameTest](/recipe_modules/repo/examples/image_builder.py#63)(api, state_name, state):**
 
-&mdash; **def [WithretryTest](/recipe_modules/repo/examples/image_builder.py#98)(api, state_name, state, local_manifest):**
+&mdash; **def [WithretryTest](/recipe_modules/repo/examples/image_builder.py#97)(api, state_name, state, local_manifest):**
 ### *recipes* / [repo:examples/project\_infos](/recipe_modules/repo/examples/project_infos.py)
 
 [DEPS](/recipe_modules/repo/examples/project_infos.py#6): [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

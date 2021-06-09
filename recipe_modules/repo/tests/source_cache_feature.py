@@ -4,14 +4,14 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'repo',
-    'recipe_engine/path',
     'recipe_engine/assertions',
+    'recipe_engine/path',
     'recipe_engine/properties',
+    'repo',
 ]
 
 from recipe_engine import post_process
-from PB.recipe_modules.chromeos.repo.repo import (RepoProperties)
+from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 
 
 def RunSteps(api):

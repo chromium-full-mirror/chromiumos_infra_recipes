@@ -4,8 +4,8 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'repo',
     'recipe_engine/path',
+    'repo',
 ]
 
 from PB.chromiumos.repo_cache_state import RepoState

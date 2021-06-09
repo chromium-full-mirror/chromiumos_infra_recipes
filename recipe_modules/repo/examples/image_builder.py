@@ -12,7 +12,6 @@ DEPS = [
     'repo',
 ]
 
-from google.protobuf import json_format
 from google.protobuf.json_format import MessageToDict
 from PB.recipe_modules.chromeos.repo.examples import common
 from PB.chromiumos.repo_cache_state import RepoState
@@ -29,16 +28,16 @@ def RunSteps(api, properties):
   api.path.mock_add_paths(repo_root.join('.repo'))
 
   with api.context(cwd=repo_root.join('manifest-internal')):
-    init_opts = json_format.MessageToDict(properties.init_opts,
-                                          preserving_proto_field_name=True)
+    init_opts = MessageToDict(properties.init_opts,
+                              preserving_proto_field_name=True)
     manifest_url = init_opts.pop('manifest_url', 'http://manifest_url')
     local_manifest = init_opts.pop('local_manifest', None)
     if local_manifest:
       init_opts['local_manifests'] = [
           api.repo.LocalManifest(local_manifest['repo'], local_manifest['path'])
       ]
-    sync_opts = json_format.MessageToDict(properties.sync_opts,
-                                          preserving_proto_field_name=True)
+    sync_opts = MessageToDict(properties.sync_opts,
+                              preserving_proto_field_name=True)
 
     projects = list(properties.projects)
     checkout_path = api.path['cleanup'].join('ensure')
