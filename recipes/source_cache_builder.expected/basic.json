@@ -1,0 +1,24 @@
+[
+  {
+    "cmd": [],
+    "name": "source cache update",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.get swarming hostname",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "failed to get zone from swarming host: fake-bot-id"
+    },
+    "name": "$result"
+  }
+]

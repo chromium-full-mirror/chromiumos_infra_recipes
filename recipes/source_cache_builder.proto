@@ -1,0 +1,29 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.source_cache_builder;
+
+// Defines the source cache to generate or update
+message SourceCacheDefinition {
+  // The name of the cache to be generated or updated.
+  string cache_name = 1;
+  // The destination path of the cache.
+  string cache_directory = 2;
+  // Google Compute disk to mount.
+  string compute_disk = 3;
+  // Snapshot prefix to use for generating snapshots.
+  string snapshot_prefix = 4;
+  // Version file name to write
+  string version_file = 5;
+  // Command to utilize to update the cache.
+  string command = 6;
+}
+message SourceCacheBuilderProperties {
+  // The list of the buildbucket pools to monitor and scale.
+  repeated SourceCacheDefinition cache_definition = 1;
+  // Google Storage bucket to write version files
+  string cache_bucket = 2;
+}

@@ -4,8 +4,8 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
+import contextlib
 import os
-import random
 
 DUMMY_IMAGE = 'cos-rc-85-13310-1015-0'
 GCE_PREFIX = 'gce-tests'
@@ -15,7 +15,12 @@ TEST_IMAGE_NAME = 'chromiumos_test_image.bin'
 
 
 class GcloudApi(recipe_api.RecipeApi):
-  """A module to process tast-results/ directory."""
+  """A module to interact with Google Cloud."""
+
+  def __init__(self, *args, **kwargs):
+    """Initialize GcloudApi."""
+    super(GcloudApi, self).__init__(*args, **kwargs)
+    self._cleanup_stack = [[]]
 
   def set_gce_project(self, project):
     """Set the default project for gcloud command.
@@ -164,6 +169,7 @@ class GcloudApi(recipe_api.RecipeApi):
           'gcloud', 'compute', 'instances', 'attach-disk', instance,
           '--disk={}'.format(disk), '--zone={}'.format(zone)
       ])
+      self._add_cleanup_disk(disk, instance, zone)
 
   def detach_disk(self, instance, disk, zone):
     """Detach a disk to a GCE instance.
@@ -178,6 +184,7 @@ class GcloudApi(recipe_api.RecipeApi):
           'gcloud', 'compute', 'instances', 'detach-disk', instance,
           '--disk={}'.format(disk), '--zone={}'.format(zone)
       ])
+      self._remove_cleanup_disk(disk, instance, zone)
 
   def snapshot_disk(self, disk, snapshot_name, zone):
     """Detach a disk to a GCE instance.
@@ -192,3 +199,33 @@ class GcloudApi(recipe_api.RecipeApi):
           'gcloud', 'compute', 'disks', 'snapshot', disk,
           '--snapshot-names={}'.format(snapshot_name), '--zone={}'.format(zone)
       ])
+
+  @contextlib.contextmanager
+  def cleanup_attached_disks(self):
+    """Wrap disk cleanup in a context handler to ensure they are unmounted."""
+    cleanup_disks = []
+    self._cleanup_stack.append(cleanup_disks)
+    try:
+      yield
+    finally:
+      if cleanup_disks:
+        with self.m.step.nest('clean up attached compute disk'):
+          for disk, instance, zone in list(cleanup_disks):
+            self.detach_disk(instance, disk, zone)
+      self._cleanup_stack.pop()
+
+  def _add_cleanup_disk(self, disk, instance, zone):
+    """Track attach disk for cleanup_attached_disks."""
+    self._cleanup_stack[-1].append((disk, instance, zone))
+
+  def _remove_cleanup_disk(self, disk, instance, zone):
+    """Track detach disk for cleanup_attached_disks."""
+    item = (disk, instance, zone)
+    for mounts in reversed(self._cleanup_stack):
+      if item in mounts:
+        mounts.remove(item)
+        break
+    else:
+      # Unmount succeeded, so just warn that something odd has happened.
+      self.m.step.active_result.presentation.step_text += (
+          '<br/>[WARNING: gcloud detach disk bookkeeping error for %s]' % disk)

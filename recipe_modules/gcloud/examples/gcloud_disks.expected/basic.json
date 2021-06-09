@@ -1,0 +1,93 @@
+[
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "attach-disk",
+      "test_bot1",
+      "--disk=test_disk1",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "attach disk"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "attach-disk",
+      "test_bot1",
+      "--disk=test_disk2",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "attach disk (2)"
+  },
+  {
+    "cmd": [],
+    "name": "clean up attached compute disk"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "test_bot1",
+      "--disk=test_disk1",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "clean up attached compute disk.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "test_bot1",
+      "--disk=test_disk2",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "clean up attached compute disk.detach disk (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "test_bot1",
+      "--disk=test_disk3",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "detach disk",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud detach disk bookkeeping error for test_disk3]@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

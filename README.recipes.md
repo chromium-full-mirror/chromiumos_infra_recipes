@@ -267,7 +267,8 @@
   * [forge_commit](#recipes-forge_commit) &mdash; Recipe for forcing forge commit failure.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full)
   * [gce_test](#recipes-gce_test) &mdash; An experimental recipe for running GCE tests.
-  * [gcloud:tests/full](#recipes-gcloud_tests_full)
+  * [gcloud:examples/full](#recipes-gcloud_examples_full)
+  * [gcloud:examples/gcloud_disks](#recipes-gcloud_examples_gcloud_disks)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change)
   * [gerrit:examples/add_change_comment](#recipes-gerrit_examples_add_change_comment)
@@ -354,6 +355,7 @@
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
+  * [source_cache_builder](#recipes-source_cache_builder) &mdash; Recipe for generating ChromeOS source cache snapshots.
   * [src_state:examples/build_manifest](#recipes-src_state_examples_build_manifest)
   * [src_state:examples/external_manifest](#recipes-src_state_examples_external_manifest)
   * [src_state:examples/gerrit_changes](#recipes-src_state_examples_gerrit_changes)
@@ -3657,9 +3659,13 @@ Returns:
 
 #### **class [GcloudApi](/recipe_modules/gcloud/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module to process tast-results/ directory.
+A module to interact with Google Cloud.
 
-&mdash; **def [attach\_disk](/recipe_modules/gcloud/api.py#154)(self, instance, disk, zone):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gcloud/api.py#20)(self, \*args, \*\*kwargs):**
+
+Initialize GcloudApi.
+
+&mdash; **def [attach\_disk](/recipe_modules/gcloud/api.py#159)(self, instance, disk, zone):**
 
 Attach a disk to a GCE instance.
 
@@ -3668,14 +3674,18 @@ Args:
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#29)(self, step_name=None):**
+&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#34)(self, step_name=None):**
 
 Print out the auth creds currently on the bot.
 
 Args:
   step_name(str): Name of the step.
 
-&mdash; **def [create\_image](/recipe_modules/gcloud/api.py#72)(self, tar_path, target, uniq_id):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_attached\_disks](/recipe_modules/gcloud/api.py#203)(self):**
+
+Wrap disk cleanup in a context handler to ensure they are unmounted.
+
+&mdash; **def [create\_image](/recipe_modules/gcloud/api.py#77)(self, tar_path, target, uniq_id):**
 
 Create an image in the GCE project.
 
@@ -3687,7 +3697,7 @@ Args:
 
 Returns: A string name of the image.
 
-&mdash; **def [create\_instance](/recipe_modules/gcloud/api.py#111)(self, image, project, machine, zone, network=None, subnet=None):**
+&mdash; **def [create\_instance](/recipe_modules/gcloud/api.py#116)(self, image, project, machine, zone, network=None, subnet=None):**
 
 Create an instance in the GCE project.
 
@@ -3701,9 +3711,9 @@ Args:
 
 Returns: A string name of the instance.
 
-&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#100)(self, image_name):**
+&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#105)(self, image_name):**
 
-&mdash; **def [delete\_instance](/recipe_modules/gcloud/api.py#140)(self, instance, project, zone):**
+&mdash; **def [delete\_instance](/recipe_modules/gcloud/api.py#145)(self, instance, project, zone):**
 
 Delete a GCE instance.
 
@@ -3712,7 +3722,7 @@ Args:
   project(str): Google Cloud project name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#168)(self, instance, disk, zone):**
+&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#174)(self, instance, disk, zone):**
 
 Detach a disk to a GCE instance.
 
@@ -3721,7 +3731,7 @@ Args:
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [prep\_image](/recipe_modules/gcloud/api.py#38)(self, source_bucket, source_path, uniq_id):**
+&mdash; **def [prep\_image](/recipe_modules/gcloud/api.py#43)(self, source_bucket, source_path, uniq_id):**
 
 Prepare the image to be used for testing.
 
@@ -3733,13 +3743,13 @@ Args:
 
 Returns: Path to the image tar file.
 
-&mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#20)(self, project):**
+&mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#25)(self, project):**
 
 Set the default project for gcloud command.
 Args:
   project(str): Google Cloud project name.
 
-&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#182)(self, disk, snapshot_name, zone):**
+&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#189)(self, disk, snapshot_name, zone):**
 
 Detach a disk to a GCE instance.
 
@@ -7478,11 +7488,16 @@ See https://crbug.com/1068743.
 An experimental recipe for running GCE tests.
 
 &mdash; **def [RunSteps](/recipes/gce_test.py#19)(api):**
-### *recipes* / [gcloud:tests/full](/recipe_modules/gcloud/tests/full.py)
+### *recipes* / [gcloud:examples/full](/recipe_modules/gcloud/examples/full.py)
 
-[DEPS](/recipe_modules/gcloud/tests/full.py#6): [gcloud](#recipe_modules-gcloud)
+[DEPS](/recipe_modules/gcloud/examples/full.py#6): [gcloud](#recipe_modules-gcloud)
 
-&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/full.py#13)(api):**
+### *recipes* / [gcloud:examples/gcloud\_disks](/recipe_modules/gcloud/examples/gcloud_disks.py)
+
+[DEPS](/recipe_modules/gcloud/examples/gcloud_disks.py#6): [gcloud](#recipe_modules-gcloud), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/gcloud_disks.py#14)(api):**
 ### *recipes* / [generator](/recipes/generator.py)
 
 [DEPS](/recipes/generator.py#36): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7992,6 +8007,13 @@ Recipe for signing ChromeOS images.
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#16)(api):**
+### *recipes* / [source\_cache\_builder](/recipes/source_cache_builder.py)
+
+[DEPS](/recipes/source_cache_builder.py#8): [gcloud](#recipe_modules-gcloud), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+
+Recipe for generating ChromeOS source cache snapshots.
+
+&mdash; **def [RunSteps](/recipes/source_cache_builder.py#30)(api, properties):**
 ### *recipes* / [src\_state:examples/build\_manifest](/recipe_modules/src_state/examples/build_manifest.py)
 
 [DEPS](/recipe_modules/src_state/examples/build_manifest.py#6): [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
