@@ -199,27 +199,33 @@ class FirmwareBuilder(object):
       # uprev older branches until such time as they have a long-term answer.
       # This is not true for other chromite commands.
       self._ensure_chromite_main()
-      no_push = bool(self.m.cq.active or self._is_staging or
-                     self.m.src_state.gerrit_changes)
+      push = not bool(self.m.cq.active or self._is_staging or
+                      self.m.src_state.gerrit_changes)
       drop_file = self.m.path.mkstemp()
       manifest = 0 if not self._config else self._config.general.manifest
 
-      cmd = [self._tot_chromite.join('bin/cros_mark_as_stable')]
-      if no_push:
-        cmd.extend(['commit', '--dryrun'])
-      else:
-        cmd.append('push')
-      cmd.extend([
+      uprev_args = [
           '--all',
-          '--boards=%s' % ':'.join(self._boards), '--drop_file', drop_file,
-          '--buildroot', self.m.src_state.workspace_path, '--overlay-type',
+          '--boards=%s' % ':'.join(self._boards), '--buildroot',
+          self.m.src_state.workspace_path, '--overlay-type',
           'public' if manifest == BuilderConfig.General.PUBLIC else 'both'
-      ])
-
-      self.m.step('call cros_mark_as_stable', cmd)
+      ]
+      cmd = [
+          self._tot_chromite.join('bin/cros_mark_as_stable'), 'commit',
+          '--drop_file', drop_file
+      ]
+      if not push:
+        cmd.append('--dryrun')
+      cmd += uprev_args
+      self.m.step('call cros_mark_as_stable commit', cmd)
       pres.logs['packages'] = self.m.file.read_raw(
           'read uprevved packages', drop_file,
           test_data='sys-boot/depthcharge sys-apps/coreboot-utils')
+
+      if push:
+        cmd = [self._tot_chromite.join('bin/cros_mark_as_stable'), 'push'
+              ] + uprev_args
+        self.m.step('call cros_mark_as_stable push', cmd)
 
   def _ensure_chromite_main(self):
     if self._tot_chromite:

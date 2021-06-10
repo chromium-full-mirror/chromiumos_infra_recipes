@@ -1018,18 +1018,18 @@
   {
     "cmd": [
       "[CLEANUP]/tmp_tmp_1/chromite/bin/cros_mark_as_stable",
-      "push",
-      "--all",
-      "--boards=target",
+      "commit",
       "--drop_file",
       "[CLEANUP]/tmp_tmp_2",
+      "--all",
+      "--boards=target",
       "--buildroot",
       "[CLEANUP]/chromiumos_workspace",
       "--overlay-type",
       "both"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "uprev packages.call cros_mark_as_stable",
+    "name": "uprev packages.call cros_mark_as_stable commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1048,6 +1048,23 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "uprev packages.read uprevved packages",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/tmp_tmp_1/chromite/bin/cros_mark_as_stable",
+      "push",
+      "--all",
+      "--boards=target",
+      "--buildroot",
+      "[CLEANUP]/chromiumos_workspace",
+      "--overlay-type",
+      "both"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "uprev packages.call cros_mark_as_stable push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
