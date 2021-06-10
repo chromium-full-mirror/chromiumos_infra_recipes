@@ -38,7 +38,10 @@ def RunSteps(api, properties):
     with api.step.nest('attach gcloud compute cache disks'):
       with api.gcloud.cleanup_attached_disks():
         for cache in properties.cache_definition:
-          api.gcloud.attach_disk(instance=infra_host, disk=cache.compute_disk,
+          disk = '{}-{}'.format(cache.compute_disk, m.group('zone'))
+          if m.group('role') in ['staging']:
+            disk = '{}-{}'.format('staging', disk)
+          api.gcloud.attach_disk(instance=infra_host, disk=disk,
                                  zone=m.group('zone'))
 
 
@@ -50,6 +53,21 @@ def GenTests(api):
       'attach-chromeos-disk',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(cache_definition=[
+          dict(
+              cache_name='test-cache',
+              cache_directory='/tmp/test-cache',
+              compute_disk='test-disk1',
+              snapshot_prefix='test-cache-prefix',
+              version_file='test-cache-version',
+              command='repo sync -j20',
+          ),
+      ]))
+
+  yield api.test(
+      'staging-execution',
+      api.swarming.properties(
+          bot_id='chromeos-ci-staging-us-central1-b-x16-0-nvcj'),
       api.properties(cache_definition=[
           dict(
               cache_name='test-cache',

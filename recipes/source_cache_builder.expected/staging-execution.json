@@ -23,8 +23,8 @@
       "compute",
       "instances",
       "attach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk1-us-central1-b",
+      "chromeos-ci-staging-us-central1-b-x16-0-nvcj",
+      "--disk=staging-test-disk1-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -48,8 +48,8 @@
       "compute",
       "instances",
       "detach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk1-us-central1-b",
+      "chromeos-ci-staging-us-central1-b-x16-0-nvcj",
+      "--disk=staging-test-disk1-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
