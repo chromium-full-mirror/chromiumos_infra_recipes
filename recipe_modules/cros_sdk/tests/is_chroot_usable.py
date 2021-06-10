@@ -57,18 +57,7 @@ def GenTests(api):
       'mismatch-url',
       api.step_data(
           'is chroot usable.read sdk cache state json',
-          api.file.read_proto(_sdk_cache_state_file(manifest_url='other'))),
-      api.properties(
-          **
-          {"$chromeos/cros_sdk": CrosSdkProperties(
-              compare_snapshot_hash=True)}))
-
-  yield api.test(
-      'mismatch-url-experiment-off',
-      api.step_data(
-          'is chroot usable.read sdk cache state json',
-          api.file.read_proto(_sdk_cache_state_file(manifest_url='other'))),
-      api.properties(is_chroot_usable=True))
+          api.file.read_proto(_sdk_cache_state_file(manifest_url='other'))))
 
   yield api.test(
       'mismatch-branch',
@@ -81,15 +70,4 @@ def GenTests(api):
       api.step_data(
           'is chroot usable.read sdk cache state json',
           api.file.read_proto(_sdk_cache_state_file(snapshot_hash='123\n'))),
-      api.git.is_reachable(False),
-      api.properties(
-          **
-          {"$chromeos/cros_sdk": CrosSdkProperties(
-              compare_snapshot_hash=True)}))
-
-  yield api.test(
-      'mismatch-snapshot-hash-experiment-off',
-      api.step_data(
-          'is chroot usable.read sdk cache state json',
-          api.file.read_proto(_sdk_cache_state_file(snapshot_hash='123\n'))),
-      api.git.is_reachable(False), api.properties(is_chroot_usable=True))
+      api.git.is_reachable(False))

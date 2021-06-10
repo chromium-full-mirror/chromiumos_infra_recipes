@@ -14,7 +14,4 @@ message CrosSdkProperties {
 
   // Whether to mount the named cache as an overlayfs.
   bool mount_named_cache = 2;
-
-  // Whether to use the snapshot hash to compare.
-  bool compare_snapshot_hash = 3;
 }

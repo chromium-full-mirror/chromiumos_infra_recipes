@@ -62,6 +62,22 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "123",
+      ""
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "is chroot usable.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@commit is reachable@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

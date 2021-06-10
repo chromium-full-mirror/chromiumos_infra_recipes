@@ -35,7 +35,6 @@ class CrosSdkApi(RecipeApi):
     # TODO(b/169266654): Make this a git footer configurable value.
     self._force_off_toolchain_changed = props.force_off_toolchain_changed
     self._mount_named_cache = props.mount_named_cache
-    self._compare_snapshot_hash = props.compare_snapshot_hash
 
   def initialize(self):
     """Cache the chroot path."""
@@ -43,8 +42,6 @@ class CrosSdkApi(RecipeApi):
     self.configure(self.m.path['cache'])
     self._mount_named_cache |= ('chromeos.cros_sdk.mount_named_cache' in
                                 self.m.cros_infra_config.experiments)
-    self._compare_snapshot_hash |= ('chromeos.cros_sdk.compare_snapshot_hash' in
-                                    self.m.cros_infra_config.experiments)
 
   @property
   def force_off_toolchain_changed(self):
@@ -305,13 +302,12 @@ class CrosSdkApi(RecipeApi):
     reuse &= (version == cache_state.version)
     manifest_branch = self.m.cros_source.manifest_branch or 'snapshot'
     reuse &= (manifest_branch == cache_state.manifest_branch)
-    if self._compare_snapshot_hash:
-      reuse &= (self.m.src_state.build_manifest.url == cache_state.manifest_url)
-      with self.m.context(cwd=self.m.src_state.build_manifest.path):
-        reuse &= (
-            bool(cache_state.snapshot_hash) and
-            self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
-                                    self.m.src_state.gitiles_commit.id))
+    reuse &= (self.m.src_state.build_manifest.url == cache_state.manifest_url)
+    with self.m.context(cwd=self.m.src_state.build_manifest.path):
+      reuse &= (
+          bool(cache_state.snapshot_hash) and
+          self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
+                                  self.m.src_state.gitiles_commit.id))
     return reuse
 
   def _check_sdk_cache_state(self, version):
