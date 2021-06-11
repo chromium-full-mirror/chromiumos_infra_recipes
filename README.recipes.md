@@ -10,6 +10,7 @@
   * [breakpad](#recipe_modules-breakpad)
   * [build_menu](#recipe_modules-build_menu) &mdash; API providing a menu for build steps.
   * [build_plan](#recipe_modules-build_plan)
+  * [build_reporting](#recipe_modules-build_reporting) &mdash; Contains functions for building and sending build status to a pub/sub topic.
   * [buildbucket_stats](#recipe_modules-buildbucket_stats)
   * [chrome](#recipe_modules-chrome)
   * [chromite](#recipe_modules-chromite)
@@ -127,6 +128,10 @@
   * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds)
   * [build_postsubmit](#recipes-build_postsubmit) &mdash; Recipe for building a BuildTarget image for Postsubmit.
   * [build_release](#recipes-build_release) &mdash; Recipe for building images for release.
+  * [build_reporting:examples/contexts_1](#recipes-build_reporting_examples_contexts_1)
+  * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2)
+  * [build_reporting:examples/full](#recipes-build_reporting_examples_full)
+  * [build_reporting:tests/full](#recipes-build_reporting_tests_full)
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
   * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
@@ -975,6 +980,127 @@ Args:
   builds ([build_pb2.Build]): Builds to dedupe and sort.
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
+### *recipe_modules* / [build\_reporting](/recipe_modules/build_reporting)
+
+[DEPS](/recipe_modules/build_reporting/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+Contains functions for building and sending build status to a pub/sub topic.
+
+The messages for build reporting are defined in:
+  infra/proto/src/chromiumos/build_report.proto
+
+And are specifically designed to be aggregated as a build progresses to create
+the current status.  This means we can focus on sending out just the status
+pieces that we need without worrying about maintaining the state of the entire
+message.
+
+The pub/sub topic to send status to is configurable through the `pubsub_project`
+and `pubsub_topic` properties for the module.  If not set, these default to
+`chromeos-bot` and `chromeos-builds-all`, which is intended to be the unfiltered
+top-level topic for all builds.
+
+#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#74)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+API implemention for build reporting.
+
+&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#97)(self):**
+
+&mdash; **def [create\_build\_config](/recipe_modules/build_reporting/api.py#179)(self):**
+
+Create a BuildConfig instance that can be .published().
+
+Return:
+   _MessageDelegate wrapping BuildConfig instance
+
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#167)(self):**
+
+Create BuildReport instance that can be .published().
+
+Return:
+  _MessageDelegate wrapping BuildReport instance
+
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#235)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
+
+Create a StepDetails instance to publish information for a step.
+
+Args:
+  step_name: Predefined step name, one of BuildReport.StepDetails.StepName
+  start_time: UTC datemite indicating step start time
+  end_time: UTC datetime indicating step end time
+  status: Step status (default: running)
+
+Return:
+   _MessageDelegate wrapping StepDetails instance
+
+&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#101)(self):**
+
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#131)(self, build_report):**
+
+Send a BuildReport to the pubsub topic.
+
+Also aggregates the published BuildReport which is then available through
+the merged_build_report property.
+
+Args:
+  build_report: Instance of BuildReport to send to pub/sub
+
+Return:
+  Reference to input message
+
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#199)(self, artifact_type, gs_uri, sha256, created=None):**
+
+Publish information about a created artifact.
+
+Args:
+  artifact_type: BuildReport.BuildArtifact.Type for artifact
+  gs_uri: GS bucket URI for artifact (eg: gs://foo/bar/baz.tgz)
+  sha256: SHA256 hash for artifact
+  created (optional): datetime for when artifact was created (default: now)
+
+Throws:
+  ValueError if gs_uri isn't properly formatted with gs:// prefix
+
+Return:
+  Nothing
+
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#191)(self, status):**
+
+Publish build status.
+
+&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#89)(self):**
+
+&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#93)(self):**
+
+&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#105)(self, build_type):**
+
+Set the type for the build, must be set once and only once.
+
+&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#83)(step_name):**
+
+Convert a BuildReport.StepDetails.StepName to a canonical string.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#274)(self, step_name):**
+
+Create a context manager to automatically send out step status.
+
+When created, initial step status is published with the current time and
+a status of STATUS_RUNNING.
+
+When the context is exited, the step endtime is set and status is set to
+STATUS_SUCCESS by default.
+
+A handle is returned from the context manager which can be used to set
+the return status to STATUS_FAILURE or STATUS_INFRA_FAILURE via the
+fail() and infra_fail() methods respectively.
+
+If a StepFailure occurs, status is set to STATUS_FAILURE automatically, and
+similarly, InfraFailure sets status to STATUS_INFRA_FAILURE.
+
+Args:
+  step_name: Predefined step name, one of BuildReport.StepDetails.StepName
+
+Return:
+  Handle which can be used to set the step status manually.
 ### *recipe_modules* / [buildbucket\_stats](/recipe_modules/buildbucket_stats)
 
 [DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -6618,6 +6744,26 @@ Recipe for building images for release.
 &mdash; **def [DoRunSteps](/recipes/build_release.py#35)(api, config, _properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#28)(api, properties):**
+### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
+
+[DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_1.py#20)(api):**
+### *recipes* / [build\_reporting:examples/contexts\_2](/recipe_modules/build_reporting/examples/contexts_2.py)
+
+[DEPS](/recipe_modules/build_reporting/examples/contexts_2.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_2.py#22)(api):**
+### *recipes* / [build\_reporting:examples/full](/recipe_modules/build_reporting/examples/full.py)
+
+[DEPS](/recipe_modules/build_reporting/examples/full.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#24)(api):**
+### *recipes* / [build\_reporting:tests/full](/recipe_modules/build_reporting/tests/full.py)
+
+[DEPS](/recipe_modules/build_reporting/tests/full.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#23)(api):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
