@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'cros_infra_config',
     'cros_relevance',
@@ -26,9 +27,9 @@ _BUILDER_NAME = 'my little builder'
 
 def RunSteps(api, properties):
   gc = [
-      bbcommon_pb2.GerritChange(change=123),
-      bbcommon_pb2.GerritChange(change=456)
-  ]
+      bbcommon_pb2.GerritChange(change=123, host='cr.googlesource.com'),
+      bbcommon_pb2.GerritChange(change=456, host='cr.googlesource.com'),
+  ] if api.cq.active else []
   bc = [
       BuilderConfig(
           id=BuilderConfig.Id(name=_BUILDER_NAME),
@@ -121,7 +122,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'slim-enabled',
+      'slim-enabled', api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(
           BuildPlanTest(
               test_builder_ids=[BuilderConfig.Id(name='amd64-generic-slim-cq')],
@@ -131,7 +132,7 @@ def GenTests(api):
           }}))
 
   yield api.test(
-      'slim-not-enabled',
+      'slim-not-enabled', api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(
           BuildPlanTest(
               test_builder_ids=[BuilderConfig.Id(name='amd64-generic-slim-cq')],

@@ -28,6 +28,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
   """A module for determining if a build is unnecessary."""
 
   # A git footer that can be included in commit messages to tell the cq run to
+  # disallow using slim builds for the given builders or all.
+  DISALLOW_SLIM_BUILDS_FOOTER = 'Disallow-Slim-Builds'
+
+  # A git footer that can be included in commit messages to tell the cq run to
   # force the builds to be relevant. Does not prevent them being recycled.
   FORCE_RELEVANT_BUILDS_FOOTER = 'Force-Relevant-Builds'
 
@@ -140,10 +144,39 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
               len(result.builds_to_run),
               len(result.skip_for_global_build_irrelevance) +
               len(result.skip_for_run_when_rules)))
-      # TODO(crbug.com/1123776): Remove after go/cros-slim-rollout.
-      if not self._enable_slim_builds:
-        return [b.name.replace('-slim-cq', '-cq') for b in result.builds_to_run]
-      return [b.name for b in result.builds_to_run]
+      builders = [b.name for b in result.builds_to_run]
+      if not self.m.cq.active:
+        return builders
+      return self._filter_slim_builders(builders, gerrit_changes)
+
+  def _filter_slim_builders(self, builders, gerrit_changes):
+    """Filter out slim builders and replace with standard builders as necessary.
+
+    Replace slim CQ builders with standard CQ builders if specified in the
+    commit message footer.
+
+    Args:
+      builders (string): The names of the builders to run as determined by the
+        build planner.
+      gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit changes to be
+        applied to the build.
+
+    Returns:
+      List of builders to be run.
+    """
+    # TODO(b/187793586): Remove conditional after go/cros-slim-rollout.
+    if not self._enable_slim_builds:
+      return [b.replace('-slim-cq', '-cq') for b in builders]
+    forced_standard_builders = self._check_disallow_slim_footer(gerrit_changes)
+    if 'all' in forced_standard_builders:
+      return [b.replace('-slim-cq', '-cq') for b in builders]
+    # Replace any slim CQ builders with the standard CQ builder if present.
+    # Input builder list is returned if no builders are specified in the footer.
+    return [
+        b.replace('-slim-cq', '-cq')
+        if b.replace('-slim-cq', '-cq') in forced_standard_builders else b
+        for b in builders
+    ]
 
   def is_build_pointless(self, gerrit_changes, gitiles_commit, dep_graph,
                          config, force_relevant=False, test_value=None):
@@ -377,6 +410,21 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       if f_rel:
         pres.logs['forced targets'] = '\n'.join(f_rel)
       return f_rel
+
+  def _check_disallow_slim_footer(self, gerrit_changes):
+    """Check the incoming gerrit changes for disallow slim builds footer.
+
+    Args:
+      gerrit_changes (list[GerritChange]): The gerrit changes.
+
+    Returns:
+      builders (set(str)): A set of builder names or 'all' if no slim builds
+        should be run.
+    """
+    with self.m.step.nest('check disallow slim builds') as pres:
+      builders = self.m.git_footers.get_footer_values(
+          gerrit_changes, self.DISALLOW_SLIM_BUILDS_FOOTER)
+      return {'all'} if 'all' in builders else builders
 
   def _get_affected_paths(self, patch_sets):
     """Returns the union of all paths in the list of patchsets.

@@ -5,6 +5,7 @@
 DEPS = [
     'cros_build_api',
     'recipe_engine/cipd',
+    'recipe_engine/cq',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/json',

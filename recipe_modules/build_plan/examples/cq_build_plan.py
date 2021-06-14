@@ -16,6 +16,7 @@ from google.protobuf import timestamp_pb2
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'build_plan',
     'cros_infra_config',
@@ -102,6 +103,7 @@ def GenTests(api):
 
   yield api.test(
       'basic',
+      api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
@@ -131,6 +133,7 @@ def GenTests(api):
 
   yield api.test(
       'force-rebuild-non-critical-builder',
+      api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
@@ -162,6 +165,7 @@ def GenTests(api):
 
   yield api.test(
       'forced-rebuilds-all',
+      api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
@@ -191,6 +195,7 @@ def GenTests(api):
 
   yield api.test(
       'experiments',
+      api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
           experiments=['named-experiment-from-cq']),
       api.properties(
@@ -227,6 +232,7 @@ def GenTests(api):
   config_ref = 'refs/changes/33/433/1'
   yield api.test(
       'with-config',
+      api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
           bucket='staging', builder='staging-cq-orchestrator'),
       api.properties(
@@ -263,6 +269,7 @@ def GenTests(api):
   # after go/cros-slim-rollout parallel adoption.
   yield api.test(
       'slim-enabled',
+      api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
           experiments=['enable_slim_builds']),
       api.properties(
@@ -295,6 +302,7 @@ def GenTests(api):
   # TODO(crbug.com/187793586): Remove test case after go/cros-slim-rollout.
   yield api.test(
       'honor-slim-criticality',
+      api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
           experiments=['enable_slim_builds', 'honor_slim_builder_criticality']),
       api.properties(

@@ -1,0 +1,76 @@
+# -*- coding: utf-8 -*-
+# Copyright 2021 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/properties',
+    'cros_relevance',
+    'git_footers',
+]
+
+from recipe_engine.recipe_api import Property
+
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
+
+PROPERTIES = {
+    'expected_builders': Property(default=['a-slim-cq', 'b-slim-cq', 'c-cq']),
+}
+
+
+def RunSteps(api, expected_builders):
+  builders = ['a-slim-cq', 'b-slim-cq', 'c-cq']
+  gc = [
+      bbcommon_pb2.GerritChange(change=123, host='cr.googlesource.com'),
+  ]
+  api.assertions.assertEqual(
+      api.cros_relevance._filter_slim_builders(builders, gc), expected_builders)
+
+
+def GenTests(api):
+
+  # TODO(b/187793586): Remove test case after go/cros-slim-rollout and remove
+  # enable_slim_builds property from all other test cases.
+  yield api.test('slim-not-enabled',
+                 api.properties(expected_builders=['a-cq', 'b-cq', 'c-cq']))
+
+  yield api.test(
+      'none',
+      api.git_footers.simulated_get_footers(
+          [], parent_step_name='check disallow slim builds'),
+      api.properties(
+          expected_builders=['a-slim-cq', 'b-slim-cq', 'c-cq'],
+          **{'$chromeos/cros_relevance': {
+              'enable_slim_builds': True
+          }}))
+
+  yield api.test(
+      'all',
+      api.git_footers.simulated_get_footers(
+          ['all'], parent_step_name='check disallow slim builds'),
+      api.properties(
+          expected_builders=['a-cq', 'b-cq', 'c-cq'],
+          **{'$chromeos/cros_relevance': {
+              'enable_slim_builds': True
+          }}))
+
+  yield api.test(
+      'relevant-builder',
+      api.git_footers.simulated_get_footers(
+          ['a-cq'], parent_step_name='check disallow slim builds'),
+      api.properties(
+          expected_builders=['a-cq', 'b-slim-cq', 'c-cq'],
+          **{'$chromeos/cros_relevance': {
+              'enable_slim_builds': True
+          }}))
+
+  yield api.test(
+      'irrelevant-builder',
+      api.git_footers.simulated_get_footers(
+          ['d-cq'], parent_step_name='check disallow slim builds'),
+      api.properties(
+          expected_builders=['a-slim-cq', 'b-slim-cq', 'c-cq'],
+          **{'$chromeos/cros_relevance': {
+              'enable_slim_builds': True
+          }}))
