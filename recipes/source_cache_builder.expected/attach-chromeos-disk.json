@@ -30,9 +30,68 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "source cache update.attach gcloud compute cache disks.attach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/tmp/test-cache"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "/dev/sdb",
+      "/tmp/test-cache"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.mount disk test-cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/tmp/test-cache"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk.unmount disk test-cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -55,6 +114,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "source cache update.attach gcloud compute cache disks.clean up attached compute disk.detach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"

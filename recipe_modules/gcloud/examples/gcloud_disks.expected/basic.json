@@ -12,6 +12,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "attach disk"
   },
   {
@@ -27,7 +28,102 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "attach disk (2)"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/tmp/cache1"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create mount path"
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "/dev/sdb",
+      "/tmp/cache1"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "mount disk cache_test1"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/tmp/cache2"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create mount path (2)"
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "/dev/sdc",
+      "/tmp/cache2"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "mount disk cache_test2"
+  },
+  {
+    "cmd": [],
+    "name": "clean up mounted compute disk"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/tmp/cache1"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up mounted compute disk.unmount disk cache_test1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/tmp/cache2"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up mounted compute disk.unmount disk cache_test2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
@@ -46,6 +142,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "clean up attached compute disk.detach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -64,9 +161,24 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "clean up attached compute disk.detach disk (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/tmp/cache3"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "unmount disk cache_test3",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for /tmp/cache3]@@@"
     ]
   },
   {
@@ -82,6 +194,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "detach disk",
     "~followup_annotations": [
       "@@@STEP_TEXT@<br/>[WARNING: gcloud detach disk bookkeeping error for test_disk3]@@@"

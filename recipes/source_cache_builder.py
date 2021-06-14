@@ -36,13 +36,16 @@ def RunSteps(api, properties):
         raise StepFailure(
             'failed to get zone from swarming host: {}'.format(infra_host))
     with api.step.nest('attach gcloud compute cache disks'):
-      with api.gcloud.cleanup_attached_disks():
+      with api.gcloud.cleanup_attached_disks(), \
+           api.gcloud.cleanup_mounted_disks():
         for cache in properties.cache_definition:
           disk = '{}-{}'.format(cache.compute_disk, m.group('zone'))
           if m.group('role') in ['staging']:
             disk = '{}-{}'.format('staging', disk)
-          api.gcloud.attach_disk(instance=infra_host, disk=disk,
-                                 zone=m.group('zone'))
+          api.gcloud.attach_disk(name=cache.cache_name, instance=infra_host,
+                                 disk=disk, zone=m.group('zone'))
+          api.gcloud.mount_disk(name=cache.cache_name,
+                                mount_path=cache.cache_directory)
 
 
 def GenTests(api):

@@ -187,6 +187,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "attach disk"
   },
   {
@@ -217,6 +218,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "detach disk"
   },
   {

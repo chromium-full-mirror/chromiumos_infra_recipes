@@ -40,6 +40,9 @@ class OverlayfsApi(recipe_api.RecipeApi):
   def mount(self, name, lowerdir_path, mount_path, persist=False):
     """Mount an OverlayFS.
 
+    As an overlay is mounted, the overlay is then added to the stack
+    that is used by the context manager to unmount as the task ends.
+
     Args:
       * name (str): An alphanumeric name for the mount, used for display and
           implementation details. Underscores are allowed. Should usually be
@@ -89,6 +92,9 @@ class OverlayfsApi(recipe_api.RecipeApi):
   def unmount(self, name, mount_path):
     """Unmount an OverlayFS.
 
+    As an overlay is unmounted, the overlay is then removed from the stack
+    that is used by the context manager to unmount as the task ends.
+
     Args:
       * name (str): The name used for |mount|.
       * mount_path (Path): Path to unmount the OverlayFS from.
@@ -102,7 +108,11 @@ class OverlayfsApi(recipe_api.RecipeApi):
 
   @contextlib.contextmanager
   def cleanup_context(self):
-    """Returns a context that cleans up any overlayfs mounts created in it."""
+    """Returns a context that cleans up any overlayfs mounts created in it.
+
+    Upon exiting the context manager, each mounted overlay is then iterated
+    through and unmounted.
+    """
     cleanup_mounts = []
     self._cleanup_stack.append(cleanup_mounts)
     try:
@@ -115,11 +125,19 @@ class OverlayfsApi(recipe_api.RecipeApi):
       self._cleanup_stack.pop()
 
   def _cleanup_mount(self, name, mount_path):
-    """Track mount for cleanup_context."""
+    """Track mount for cleanup_context.
+
+    Each mounted overlay is added to the stack to be unmounted by
+    the context handler.
+    """
     self._cleanup_stack[-1].append((name, mount_path))
 
   def _cleanup_unmount(self, name, mount_path):
-    """Track unmount for cleanup_context."""
+    """Track unmount for cleanup_context.
+    
+    As an overlay is unmounted, the item is then removed from the stack
+    to avoid attempting to unmount at a later time.
+    """
     item = (name, mount_path)
     for mounts in reversed(self._cleanup_stack):
       if item in mounts:
