@@ -37,6 +37,7 @@ _CHROMEOS_OVERLAY_REPO = 'https://chromium.googlesource.com/%s' % _CHROMEOS_OVER
 _CHROMEOS_CHROME_EBUILD_PATH = 'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild'
 
 _UPREV_CL_REVIEWERS = ['chrome-os-gardeners-reviews@google.com']
+_UPREV_CL_TAG = 'chrome-uprev-dry-run'
 
 _FAKE_GERRIT_CHANGE_ID = '12341234'
 
@@ -69,12 +70,13 @@ def RunSteps(api):
 
     with api.step.nest('commit changes'):
       api.git.add([_CHROMEOS_CHROME_EBUILD_PATH])
-      message = 'chromeos-chrome uprev dry-run with Chrome ToT\n\n%s' % rev_info
+      message = 'chromeos-chrome uprev dry-run with Chrome ToT' \
+          '\n\n%s\n\nCq-Cl-Tag: %s' % (rev_info, _UPREV_CL_TAG)
       api.git.commit(message, files=[_CHROMEOS_CHROME_EBUILD_PATH])
 
     with api.step.nest('upload CL and trigger CQ dry run') as step:
       api.git_cl.upload(reviewers=_UPREV_CL_REVIEWERS, dry_run=True,
-                        hashtags=['#chrome-uprev-dry-run'])
+                        hashtags=[_UPREV_CL_TAG])
 
       gerrit_change_url = api.git_cl.status(
           field='url', fast=True, step_test_data=functools.partial(

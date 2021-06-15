@@ -6759,7 +6759,7 @@ Triggers a passive uprev attempt against current Chrome ToT by generating a CL
 that touches chromeos-chrome-9999.ebuild, adding the gardeners as reviewers,
 and triggering a CQ dry-run.
 
-&mdash; **def [RunSteps](/recipes/chromeos_chrome_uprev.py#44)(api):**
+&mdash; **def [RunSteps](/recipes/chromeos_chrome_uprev.py#45)(api):**
 ### *recipes* / [chromite:examples/full](/recipe_modules/chromite/examples/full.py)
 
 [DEPS](/recipe_modules/chromite/examples/full.py#7): [chromite](#recipe_modules-chromite), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
