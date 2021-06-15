@@ -224,6 +224,8 @@
       "--force",
       "--reviewers",
       "chrome-os-gardeners-reviews@google.com",
+      "--hashtag",
+      "#chrome-uprev-dry-run",
       "--cq-dry-run"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -320,6 +322,24 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
+      "\nimport sys\nimport time\ntime.sleep(int(sys.argv[1]))\n",
+      "600"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "name": "wait for CQ dry-run to start.sleep",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@python.inline@@@@",
+      "@@@STEP_LOG_LINE@python.inline@import sys@@@",
+      "@@@STEP_LOG_LINE@python.inline@import time@@@",
+      "@@@STEP_LOG_LINE@python.inline@time.sleep(int(sys.argv[1]))@@@",
+      "@@@STEP_LOG_END@python.inline@@@"
+    ]
+  },
+  {
+    "cmd": [
       "bb",
       "ls",
       "-host",
@@ -346,6 +366,24 @@
   {
     "cmd": [],
     "name": "wait for CQ dry-run to finish"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport sys\nimport time\ntime.sleep(int(sys.argv[1]))\n",
+      "600"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "name": "wait for CQ dry-run to finish.sleep",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@python.inline@@@@",
+      "@@@STEP_LOG_LINE@python.inline@import sys@@@",
+      "@@@STEP_LOG_LINE@python.inline@import time@@@",
+      "@@@STEP_LOG_LINE@python.inline@time.sleep(int(sys.argv[1]))@@@",
+      "@@@STEP_LOG_END@python.inline@@@"
+    ]
   },
   {
     "cmd": [
@@ -383,6 +421,24 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@99999999@https://cr-buildbucket.appspot.com/build/99999999@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport sys\nimport time\ntime.sleep(int(sys.argv[1]))\n",
+      "600"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "name": "wait for CQ dry-run to finish.sleep (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@python.inline@@@@",
+      "@@@STEP_LOG_LINE@python.inline@import sys@@@",
+      "@@@STEP_LOG_LINE@python.inline@import time@@@",
+      "@@@STEP_LOG_LINE@python.inline@time.sleep(int(sys.argv[1]))@@@",
+      "@@@STEP_LOG_END@python.inline@@@"
     ]
   },
   {

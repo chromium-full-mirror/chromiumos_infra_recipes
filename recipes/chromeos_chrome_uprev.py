@@ -73,7 +73,8 @@ def RunSteps(api):
       api.git.commit(message, files=[_CHROMEOS_CHROME_EBUILD_PATH])
 
     with api.step.nest('upload CL and trigger CQ dry run') as step:
-      api.git_cl.upload(reviewers=_UPREV_CL_REVIEWERS, dry_run=True)
+      api.git_cl.upload(reviewers=_UPREV_CL_REVIEWERS, dry_run=True,
+                        hashtags=['#chrome-uprev-dry-run'])
 
       gerrit_change_url = api.git_cl.status(
           field='url', fast=True, step_test_data=functools.partial(
@@ -89,7 +90,7 @@ def RunSteps(api):
 
       cq_tryjobs = _tryjobs_for_gerrit_cl(api, gerrit_change_id)
       while not cq_tryjobs:
-        api.time.sleep(60)
+        api.time.sleep(600)
         cq_tryjobs = _tryjobs_for_gerrit_cl(api, gerrit_change_id)
 
       cq_run = cq_tryjobs[0]
@@ -98,7 +99,7 @@ def RunSteps(api):
 
     with api.step.nest('wait for CQ dry-run to finish'):
       while cq_run.status in [bb_common.SCHEDULED, bb_common.STARTED]:
-        api.time.sleep(60)
+        api.time.sleep(600)
         cq_run = api.buildbucket.get(cq_run.id)
 
 
