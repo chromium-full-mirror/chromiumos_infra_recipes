@@ -9,7 +9,9 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
     'build_menu',
+    'cros_infra_config',
     'cros_history',
+    'cros_relevance',
 ]
 
 from recipe_engine import post_process
@@ -36,6 +38,9 @@ def DoRunSteps(api, config):
   packages = env_info.packages
   failing_build = False
   install_all_packages = _should_install_all_packages(api, config, packages)
+  if api.cros_relevance.toolchain_cls_applied:
+    config = api.cros_infra_config.get_builder_config(
+        api.buildbucket.build.builder.builder.replace('-slim-cq', '-cq'))
 
   try:
     api.build_menu.bootstrap_sysroot(config)
@@ -67,6 +72,11 @@ def _should_install_all_packages(api, config, packages):
       for the build target.
   """
   with api.step.nest('Determine which packages to build') as presentation:
+    if api.cros_relevance.toolchain_cls_applied:
+      presentation.step_text = 'Build all packages for toolchain CLs'
+      presentation.properties[
+          'subset_of_packages_built'] = 'ALL_FOR_TOOLCHAIN_CLS'
+      return True
     if api.cros_history.is_retry(api.buildbucket.build):
       presentation.step_text = 'Build all packages on retries'
       presentation.properties['subset_of_packages_built'] = 'ALL_ON_RETRY'
@@ -194,6 +204,21 @@ def GenTests(api):
       api.build_menu.set_build_api_return('run ebuild tests',
                                           'TestService/BuildTargetUnitTest',
                                           retcode=1),
+      build_target='atlas-slim',
+      cq=True,
+  )
+
+  # Toolchain CLs applied.
+  yield api.build_menu.test(
+      'toolchain-change',
+      api.cros_relevance.toolchain_cls_applied(True),
+      api.post_check(post_process.MustRun, 'install packages'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.post_check(post_process.StatusSuccess),
       build_target='atlas-slim',
       cq=True,
   )

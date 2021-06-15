@@ -69,6 +69,9 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
   @property
   def toolchain_cls_applied(self):
     """Whether there are toolchain CLs applied to the source tree."""
+    if (self._test_data.enabled and
+        self._test_data.get('toolchain_cls_applied', None) is not None):
+      return self._test_data.get('toolchain_cls_applied')
     return self._toolchain_cls_applied
 
   def get_necessary_builders(self, builder_configs, gerrit_changes,

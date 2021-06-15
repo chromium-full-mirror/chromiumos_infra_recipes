@@ -25,3 +25,9 @@ class CrosRelevanceTestApi(recipe_test_api.RecipeTestApi):
     resp = GenerateBuildPlanResponse(builds_to_run=builds_to_run)
     return self.step_data('plan builds.read output file',
                           self.m.file.read_raw(resp.SerializeToString()))
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def toolchain_cls_applied(value):
+    """Return value for toolchain_cls_applied when testing."""
+    return value

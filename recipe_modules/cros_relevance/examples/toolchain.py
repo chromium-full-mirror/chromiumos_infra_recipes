@@ -22,11 +22,11 @@ def RunSteps(api, properties):
 
   gitiles_commit = bbcommon_pb2.GitilesCommit(id='my hash')
 
-  toolchain_changed = api.cros_relevance.check_for_toolchain_change(
+  api.cros_relevance.check_for_toolchain_change(
       properties.gerrit_changes, gitiles_commit, chroot,
       test_value=properties.expected_toolchain_changed)
   api.assertions.assertEqual(properties.expected_toolchain_changed,
-                             toolchain_changed)
+                             api.cros_relevance.toolchain_cls_applied)
 
 
 def GenTests(api):
@@ -51,3 +51,6 @@ def GenTests(api):
 
   yield api.test(
       'no-cls', api.properties(ToolchainTest(expected_toolchain_changed=False)))
+
+  yield api.test('test-value', api.cros_relevance.toolchain_cls_applied(True),
+                 api.properties(ToolchainTest(expected_toolchain_changed=True)))

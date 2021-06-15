@@ -639,7 +639,13 @@
           "runSpec": "RUN",
           "dependencies": "ALL_DEPENDENCIES"
         },
-        "applyGerritChanges": true
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        }
       },
       "unitTests": {
         "packageBlacklist": [
