@@ -59,8 +59,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._package_indexes = None
     self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
 
-    self._is_cloudready = props.is_cloudready
-
     self._cl_affected_sysroot_packages = None
 
   def initialize(self):
@@ -235,10 +233,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # Set up source checkouts.
     with self.m.workspace_util.sync_to_commit(
         staging=self.is_staging, sync_to_manifest=sync_to_manifest):
-
-      if self._is_cloudready:
-        # If a Cloudready build, perform additional setup.
-        self.m.cloudready.setup_cloudready_workspace()
 
       # Apply any appropriate gerrit changes.
       ignore_missing_projects = (

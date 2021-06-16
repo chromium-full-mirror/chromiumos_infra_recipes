@@ -80,28 +80,6 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess), build_target='kukui-main',
       bucket='release')
 
-  # Cloudready build.
-  manifest_internal_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
-  yield api.build_menu.test(
-      'cloudready-build',
-      api.properties(
-          **{
-              '$chromeos/build_menu': {
-                  'is_cloudready': True,
-              },
-              'sync_to_manifest':
-                  MessageToDict(
-                      ManifestLocation(manifest_repo_url=manifest_url,
-                                       branch='release-R90-13816.B',
-                                       manifest_file='cloudready.xml'))
-          }), api.post_check(post_process.MustRun,
-                             'sync to specified manifest'),
-      api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess),
-      build_target='cloudready-release-R90-13816.B', bucket='release')
-
   # Release build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',

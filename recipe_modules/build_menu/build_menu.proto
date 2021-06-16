@@ -25,8 +25,4 @@ message BuildMenuProperties {
   // Also set by the chromeos.build_menu.force_empty_toolchain_targets
   // experiment.
   bool force_empty_toolchain_targets = 5;
-
-  // Whether or not the build is a Cloudready build.
-  // TODO(b/180715619): Delete once Cloudready is fully integrated into CrOS.
-  bool is_cloudready = 6;
 }
