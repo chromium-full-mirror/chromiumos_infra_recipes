@@ -5,9 +5,7 @@
     "~followup_annotations": [
       "@@@STEP_TEXT@some builds already completed@@@",
       "@@@STEP_LINK@betty@https://cr-buildbucket.appspot.com/build/122@@@",
-      "@@@STEP_LINK@reef@https://cr-buildbucket.appspot.com/build/231@@@",
-      "@@@SET_BUILD_PROPERTY@cq_equivalent_cl_group_key@\"GROUP_KEY\"@@@",
-      "@@@SET_BUILD_PROPERTY@use_group_key@true@@@"
+      "@@@STEP_LINK@reef@https://cr-buildbucket.appspot.com/build/231@@@"
     ]
   },
   {
