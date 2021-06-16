@@ -62,7 +62,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/temp_tmp_2/image.zip\", \"include_files\": [\"chromiumos_qemu_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/temp_tmp_2/image\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/temp_tmp_2/image.zip\", \"include_files\": [\"chromiumos_test_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/temp_tmp_2/image\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -86,7 +86,7 @@
       "-f",
       "qcow2",
       "-b",
-      "[CLEANUP]/temp_tmp_2/image/chromiumos_qemu_image.bin",
+      "[CLEANUP]/temp_tmp_2/image/chromiumos_test_image.bin",
       "[CLEANUP]/temp_tmp_2/image/qcow2.img"
     ],
     "name": "setup vm image.convert image to qcow format",
