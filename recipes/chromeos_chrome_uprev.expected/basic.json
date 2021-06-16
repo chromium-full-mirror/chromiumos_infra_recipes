@@ -176,7 +176,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "chromeos-chrome uprev dry-run with Chrome ToT\n\n# chrome-internal rev: internal1234revision\n# chromium rev: public5678revision\n\nCq-Cl-Tag: chrome-uprev-dry-run",
+      "chromeos-chrome uprev dry-run with Chrome ToT\n\n# chrome-internal rev: internal1234revision\n# chromium rev: public5678revision\n\nCq-Cl-Tag: swiftr:chrome-uprev-dry-run",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -189,7 +189,7 @@
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chrome-internal rev: internal1234revision@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chromium rev: public5678revision@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Cl-Tag: chrome-uprev-dry-run@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Cl-Tag: swiftr:chrome-uprev-dry-run@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
@@ -227,7 +227,7 @@
       "--reviewers",
       "chrome-os-gardeners-reviews@google.com",
       "--hashtag",
-      "chrome-uprev-dry-run",
+      "swiftr:chrome-uprev-dry-run",
       "--cq-dry-run"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
