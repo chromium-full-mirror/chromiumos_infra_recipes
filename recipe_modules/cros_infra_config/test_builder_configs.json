@@ -1569,6 +1569,15 @@
                 ]
               }
             ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
           }
         }
       },

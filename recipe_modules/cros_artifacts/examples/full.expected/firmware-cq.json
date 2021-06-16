@@ -216,6 +216,55 @@
   },
   {
     "cmd": [],
+    "name": "upload artifacts.create manifest.xml artifact",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload artifacts.create manifest.xml artifact.repo manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "<manifest></manifest>",
+      "[CLEANUP]/artifacts_tmp_1/manifest.xml"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.create manifest.xml artifact.write manifest.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@manifest.xml@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@manifest.xml@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "upload artifacts.bundle EBUILD_LOGS for upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -617,6 +666,15 @@
       "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            36@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -642,7 +700,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\", \n      \"location\": 2\n    }\n  }, \n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            7\n          ]\n        }\n      ]\n    }, \n    \"toolchain\": {\n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"publish_gs_location\", \n            \"pub2/{gs_path}\"\n          ], \n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            11\n          ], \n          \"publishCondition\": 1\n        }\n      ]\n    }, \n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            30, \n            31, \n            33\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }\n}",
+      "{\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\", \n      \"location\": 2\n    }\n  }, \n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            7\n          ]\n        }\n      ]\n    }, \n    \"toolchain\": {\n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"publish_gs_location\", \n            \"pub2/{gs_path}\"\n          ], \n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            11\n          ], \n          \"publishCondition\": 1\n        }\n      ]\n    }, \n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"aclName\": \"public-read\", \n          \"artifactTypes\": [\n            30, \n            31, \n            33\n          ]\n        }\n      ]\n    }, \n    \"infra\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            36\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }, \n    \"path\": \"/build/target\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
@@ -689,6 +747,15 @@
       "@@@STEP_LOG_LINE@input_proto.json@            30, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@            31, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@            33@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            36@@@",
       "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
@@ -862,7 +929,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_LCOV\": [\"../../[START_DIR]/coverage.tbz2\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_LCOV\": [\"../../[START_DIR]/coverage.tbz2\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -1275,7 +1342,7 @@
     "cmd": [],
     "name": "output artifact GS paths",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\", \"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_LCOV\": [\"../../[START_DIR]/coverage.tbz2\", \"../../[START_DIR]/coverage.tbz2\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\", \"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\", \"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\", \"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_LCOV\": [\"../../[START_DIR]/coverage.tbz2\", \"../../[START_DIR]/coverage.tbz2\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\", \"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {

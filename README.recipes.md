@@ -1393,7 +1393,7 @@ A temporary directory for the zoss coverage data.
 Temp dir is created on first access to this property.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
-[DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [code\_coverage](#recipe_modules-code_coverage), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [code\_coverage](#recipe_modules-code_coverage), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for uploading CrOS build artifacts to Google Storage.
 
@@ -1401,7 +1401,7 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#386)(self, builder_name, target, kind=BuilderConfig.Id.TYPE_UNSPECIFIED, template='{gs_path}'):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#417)(self, builder_name, target, kind=BuilderConfig.Id.TYPE_UNSPECIFIED, template='{gs_path}'):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -1419,7 +1419,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#650)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#681)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1434,7 +1434,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#684)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#715)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1449,7 +1449,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#508)(self, artifacts_info):**
+&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#539)(self, artifacts_info):**
 
 Return whether there are output artifacts.
 
@@ -1459,14 +1459,14 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#627)(self, properties):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#658)(self, properties):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#704)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#735)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1487,7 +1487,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#822)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#853)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
 
 Call the PushImage build API endpoint.
 
@@ -1500,7 +1500,7 @@ Args:
 
   For more context on this parameters, see chromite/scripts/pushimage.py.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#525)(self, builder_name, kind, gs_bucket, _kwonly=(), artifacts_info=None, chroot=None, sysroot=None, failing_build=False, name='upload artifacts', test_data=None, private_bundle_func=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#556)(self, builder_name, kind, gs_bucket, _kwonly=(), artifacts_info=None, chroot=None, sysroot=None, failing_build=False, name='upload artifacts', test_data=None, private_bundle_func=None):**
 
 Bundle and upload the given artifacts for the given build target.
 

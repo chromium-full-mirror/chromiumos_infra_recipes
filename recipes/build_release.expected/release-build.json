@@ -133,6 +133,11 @@
       "@@@STEP_LOG_LINE@builder config@        artifact_types: DLC_IMAGE@@@",
       "@@@STEP_LOG_LINE@builder config@      }@@@",
       "@@@STEP_LOG_LINE@builder config@    }@@@",
+      "@@@STEP_LOG_LINE@builder config@    infra {@@@",
+      "@@@STEP_LOG_LINE@builder config@      output_artifacts {@@@",
+      "@@@STEP_LOG_LINE@builder config@        artifact_types: BUILD_MANIFEST@@@",
+      "@@@STEP_LOG_LINE@builder config@      }@@@",
+      "@@@STEP_LOG_LINE@builder config@    }@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@chrome {@@@",
@@ -4523,6 +4528,33 @@
   },
   {
     "cmd": [],
+    "name": "upload artifacts.create manifest.xml artifact",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "<manifest></manifest>",
+      "[CLEANUP]/artifacts_tmp_1/manifest.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "upload artifacts.create manifest.xml artifact.write manifest.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@manifest.xml@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@manifest.xml@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "upload artifacts.bundle IMAGE_ZIP for upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -6086,6 +6118,15 @@
       "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            36@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -6122,7 +6163,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\", \n      \"location\": 2\n    }\n  }, \n  \"artifactInfo\": {\n    \"image\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            34\n          ]\n        }\n      ]\n    }, \n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-releases-test/{target}-release/{version}\"\n          ], \n          \"artifactTypes\": [\n            1, \n            3, \n            4, \n            5, \n            7, \n            2, \n            32\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"kukui-main\"\n    }, \n    \"path\": \"/build/kukui-main\"\n  }\n}",
+      "{\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\", \n      \"location\": 2\n    }\n  }, \n  \"artifactInfo\": {\n    \"image\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            34\n          ]\n        }\n      ]\n    }, \n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"gsLocations\": [\n            \"chromeos-releases-test/{target}-release/{version}\"\n          ], \n          \"artifactTypes\": [\n            1, \n            3, \n            4, \n            5, \n            7, \n            2, \n            32\n          ]\n        }\n      ]\n    }, \n    \"infra\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            36\n          ]\n        }\n      ]\n    }\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }\n      ]\n    }\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"kukui-main\"\n    }, \n    \"path\": \"/build/kukui-main\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_21/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6161,6 +6202,15 @@
       "@@@STEP_LOG_LINE@input_proto.json@            7, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@            2, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@            32@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@            36@@@",
       "@@@STEP_LOG_LINE@input_proto.json@          ]@@@",
       "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
@@ -6349,7 +6399,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"DEBUG_SYMBOLS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-releases-test\", \"gs_path\": \"kukui-main-release/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"BUILD_MANIFEST\": [\"manifest.xml\"], \"DEBUG_SYMBOLS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-releases-test\", \"gs_path\": \"kukui-main-release/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {

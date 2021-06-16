@@ -112,6 +112,35 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         files_by_artifact[name] = [art.path for art in response.artifacts]
     return files_by_artifact
 
+  def _bundle_infra_artifacts(self, _chroot, _sysroot, outpath, artifact_types,
+                              _artifact_profile_info):
+    """Bundle infra artifacts.
+
+    Batch handler for infra artifact types.
+
+    Args:
+      _chroot (Chroot): The chroot to use.
+      _sysroot (Sysroot): The sysroot to use.
+      outpath (Path): Path to write bundled artifacts to.
+      artifact_types (list[ArtifactTypes]): Artifact types to bundle.
+      _artifact_profile_info (ArtifactProfileInfo): profile information.
+
+    Returns:
+      dict(artifact_name: list(artifact paths)).  Paths are absolute.
+    """
+    files_by_artifact = {}
+    if ArtifactsByService.Infra.ArtifactType.BUILD_MANIFEST in artifact_types:
+      with self.m.step.nest('create manifest.xml artifact'):
+        outpath = outpath.join('manifest.xml')
+
+        pinned_manifest_data = self.m.cros_source.pinned_manifest
+        self.m.file.write_raw('write manifest.xml', outpath,
+                              pinned_manifest_data)
+
+        files_by_artifact['BUILD_MANIFEST'] = [str(outpath)]
+
+    return files_by_artifact
+
   def _prepare_unknown(self, _chroot, _sysroot, _artifact_types,
                        _input_artifacts, _artifact_profile_info, test_data):
     """Declare the build necessity UNKNOWN from this artifact's perspective.
@@ -321,13 +350,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     funcs = collections.defaultdict(list)
     for _, service in artifacts_info.ListFields():
       for art_info in getattr(service, 'output_artifacts', []):
-        # The individual functions only exist for Toolchain and Legacy.
+        # The individual functions only exist for Toolchain, Legacy, and Infra.
         # FirmwareService is a special case immediately below, and the others
         # are only handled by ArtifactsService.Get().
         if service.DESCRIPTOR.name == 'Toolchain':
           funcs[self._bundle_toolchain].extend(art_info.artifact_types)
         elif service.DESCRIPTOR.name == 'Legacy':
           funcs[self._bundle_legacy_artifacts].extend(art_info.artifact_types)
+        elif service.DESCRIPTOR.name == 'Infra':
+          funcs[self._bundle_infra_artifacts].extend(art_info.artifact_types)
 
     files = {}
 

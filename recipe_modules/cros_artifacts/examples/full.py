@@ -51,6 +51,11 @@ def RunSteps(api, properties):
                   common.ArtifactsByService.Firmware.FIRMWARE_LCOV,
               ], acl_name='public-read')
       ]),
+      infra=common.ArtifactsByService.Infra(output_artifacts=[
+          common.ArtifactsByService.Infra.ArtifactInfo(artifact_types=[
+              common.ArtifactsByService.Infra.BUILD_MANIFEST,
+          ])
+      ]),
   )
 
   # This verifies that we can upload artifacts, some of which get an acl
