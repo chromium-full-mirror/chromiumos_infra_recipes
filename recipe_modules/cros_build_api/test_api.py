@@ -186,14 +186,6 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     _uploaded_path = lambda name: dict(path=self.path(name), location=2)
 
     responses = {
-        'BuildAllTotFirmware':
-            jsonify(
-                # TODO(b/172268309): Provide sample data.
-            ),
-        'TestAllTotFirmware':
-            jsonify(
-                # TODO(b/172268309): Provide sample data.
-            ),
         'BuildAllFirmware':
             jsonify(
                 # TODO(b/177907747): Provide sample data.

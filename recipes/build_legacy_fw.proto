@@ -15,7 +15,7 @@ message BuildLegacyFwProperties {
   chromiumos.BuildTarget build_target = 1 [deprecated=true];
 
   // Firmware location.  See chromite.api.firmware.
-  chromite.api.FwLocation firmware_location = 2;
+  chromiumos.FwLocation firmware_location = 2;
 
   // The manifest branch to check out.
   string manifest_branch = 3;

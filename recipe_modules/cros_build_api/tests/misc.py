@@ -105,8 +105,6 @@ def RunSteps(api):
           'List': depgraph.ListResponse,
       },
       'FirmwareService': {
-          'BuildAllTotFirmware': firmware.BuildAllTotFirmwareResponse,
-          'TestAllTotFirmware': firmware.TestAllTotFirmwareResponse,
           'BuildAllFirmware': firmware.BuildAllFirmwareResponse,
           'TestAllFirmware': firmware.TestAllFirmwareResponse,
           'BundleFirmwareArtifacts': firmware.BundleFirmwareArtifactsResponse,

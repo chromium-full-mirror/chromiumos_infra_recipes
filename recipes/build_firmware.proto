@@ -6,11 +6,11 @@ syntax = "proto3";
 
 package recipes.chromeos.build_firmware;
 
-import "chromite/api/firmware.proto";
+import "chromiumos/common.proto";
 
 message BuildFirmwareProperties {
   // Firmware location.  See chromite.api.firmware.
-  chromite.api.FwLocation firmware_location = 1;
+  chromiumos.FwLocation firmware_location = 1;
 
   // Whether upload_artifacts works for this builder.
   // TODO(b:177907747): Remove this.
