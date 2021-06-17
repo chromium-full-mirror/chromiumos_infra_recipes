@@ -28,7 +28,7 @@ class CrosScheduleApi(recipe_api.RecipeApi):
     # Hack in timezone component to the json to satisfy protobuf's parser.
     json_str = sched_str_json.replace('T00:00:00', 'T00:00:00Z')
     mstones = FetchMilestoneScheduleResponse()
-    return Parse(json_str, mstones)
+    return Parse(json_str, mstones, ignore_unknown_fields=True)
 
   def fetch_chromiumdash_schedule(self, start_mstone=None, fetch_n=10):
     """Return the json schedule from chromiumdash.
