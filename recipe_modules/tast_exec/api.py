@@ -14,7 +14,7 @@ VM_ARTIFACT_TARBALL = '/tmp/artifacts.tar'
 ARTIFACT_TARBALL_NAME = 'artifacts.tar'
 VM_ARTIFACT_LIST = ['/var/log', '/var/spool/crash']
 PRIVATE_KEY_NAME = 'id_rsa'
-VM_IMAGE_NAME = 'chromiumos_test_image.bin'
+VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
 QCOW_IMG_NAME = 'qcow2.img'
 
 
