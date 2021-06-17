@@ -1248,11 +1248,11 @@ A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#112)(self, build_target, chroot):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#114)(self, build_target, chroot):**
 
 Processes the coverage data for metadata.
 
-&mdash; **def [upload\_tarfile\_to\_zoss](/recipe_modules/code_coverage/api.py#286)(self, tarfile, step_name='upload to zoss'):**
+&mdash; **def [upload\_tarfile\_to\_zoss](/recipe_modules/code_coverage/api.py#288)(self, tarfile, step_name='upload to zoss'):**
 
 Upload a tarfile to zoss.
 

@@ -70,23 +70,25 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       self._zoss_dir = self.m.path.mkdtemp(prefix='code-coverage-zoss')
     return self._zoss_dir
 
+  @property
+  def _code_coverage_root(self):
+    return self.m.path['start_dir'].join('code_coverage')
+
   def _ensure_binaries(self):
     """Ensure this module's binaries are installed."""
     if not self._incremental_coverage_tool:
       with self.m.step.nest('ensure binaries'):
         with self.m.context(infra_steps=True):
-          cipd_dir = self.m.path['start_dir'].join('cipd')
-
           pkgs = self.m.cipd.EnsureFile()
           pkgs.add_package(INCREMENTAL_COVERAGE_CIPD_PACKAGE,
                            INCREMENTAL_COVERAGE_CIPD_VERSION)
           pkgs.add_package(ABSOLUTE_COVERAGE_CIPD_PACKAGE,
                            ABSOLUTE_COVERAGE_CIPD_VERSION)
-          self.m.cipd.ensure(cipd_dir, pkgs)
+          self.m.cipd.ensure(self._code_coverage_root, pkgs)
 
-          self._incremental_coverage_tool = cipd_dir.join(
+          self._incremental_coverage_tool = self._code_coverage_root.join(
               INCREMENTAL_COVERAGE_CIPD_FILE)
-          self._absolute_coverage_tool = cipd_dir.join(
+          self._absolute_coverage_tool = self._code_coverage_root.join(
               ABSOLUTE_COVERAGE_CIPD_FILE)
 
   def _set_builder_output_properties_for_uploads(self):
