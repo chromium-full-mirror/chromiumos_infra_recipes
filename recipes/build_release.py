@@ -8,6 +8,7 @@
 DEPS = [
     'recipe_engine/properties',
     'build_menu',
+    'build_reporting',
     'cros_release',
     'test_util',
 ]
@@ -15,8 +16,11 @@ DEPS = [
 from google.protobuf.json_format import MessageToDict
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.recipes.chromeos.build_target import (BuildTargetProperties,
                                               ManifestLocation)
+
 
 # TODO(crbug/1099259): Drop our properties.
 # Our properties are processed and used by both the build_menu module, as well
@@ -24,12 +28,17 @@ from PB.recipes.chromeos.build_target import (BuildTargetProperties,
 # properties.  They are not used directly within the recipe.
 PROPERTIES = BuildTargetProperties
 
+StepDetails = BuildReport.StepDetails
+
 
 def RunSteps(api, properties):
-  with api.build_menu.configure_builder() as config, \
-      api.build_menu.setup_workspace_and_chroot(
-        sync_to_manifest=properties.sync_to_manifest):
-    return DoRunSteps(api, config, properties)
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
+
+  with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
+    with api.build_menu.configure_builder() as config, \
+        api.build_menu.setup_workspace_and_chroot(
+          sync_to_manifest=properties.sync_to_manifest):
+      return DoRunSteps(api, config, properties)
 
 
 def DoRunSteps(api, config, _properties):
