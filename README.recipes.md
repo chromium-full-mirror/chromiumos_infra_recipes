@@ -1005,21 +1005,21 @@ API implemention for build reporting.
 
 &emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#97)(self):**
 
-&mdash; **def [create\_build\_config](/recipe_modules/build_reporting/api.py#179)(self):**
+&mdash; **def [create\_build\_config](/recipe_modules/build_reporting/api.py#181)(self):**
 
 Create a BuildConfig instance that can be .published().
 
 Return:
    _MessageDelegate wrapping BuildConfig instance
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#167)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#169)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#235)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#237)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1047,7 +1047,7 @@ Args:
 Return:
   Reference to input message
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#199)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#201)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish information about a created artifact.
 
@@ -1063,7 +1063,7 @@ Throws:
 Return:
   Nothing
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#191)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#193)(self, status):**
 
 Publish build status.
 
@@ -1079,7 +1079,7 @@ Set the type for the build, must be set once and only once.
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#274)(self, step_name):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#276)(self, step_name):**
 
 Create a context manager to automatically send out step status.
 

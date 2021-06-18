@@ -153,6 +153,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     # The publish-message binary requires that messages be base64 encoded to
     # avoid issues with binary data and strings.
+    #
+    # TODO(b/190725318): Add human readable message.
     self.m.cloud_pubsub.publish_message(
         self.pubsub_project,
         self.pubsub_topic,
