@@ -59,7 +59,6 @@ def DoRunSteps(api, properties):
 
 
 def GenTests(api):
-
   # Normal CQ build, with one gerrit_change.
   yield api.build_menu.test('cq-build', cq=True)
 

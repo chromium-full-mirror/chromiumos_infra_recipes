@@ -147,6 +147,7 @@ def RunSteps(api):
       },
       'TestService': {
           'BuildTargetUnitTest': test.BuildTargetUnitTestResponse,
+          'BuildTestServiceContainers': test.BuildTestServiceContainersResponse,
           'ChromitePytest': empty_pb2.Empty,
           'ChromiteUnitTest': empty_pb2.Empty,
           'DebugInfoTest': empty_pb2.Empty,

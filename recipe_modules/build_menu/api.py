@@ -17,6 +17,7 @@ from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest
+from PB.chromite.api.test import BuildTestServiceContainersRequest
 from PB.chromiumos.common import IMAGE_TYPE_RECOVERY, IMAGE_TYPE_ACCESSORY_RWSIG
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import UseFlag
@@ -552,6 +553,21 @@ class BuildMenuApi(recipe_api.RecipeApi):
           artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
           sysroot=sysroot, failing_build=failing_build,
           private_bundle_func=private_bundle_func)
+
+    if self.m.cros_build_api.has_endpoint(self.m.cros_build_api.TestService,
+                                          'BuildTestServiceContainers'):
+      with self.m.step.nest(
+          'build & upload test service containers') as presentation:
+        version = self.m.cros_version.read_workspace_version().legacy_version
+        response = self.m.cros_build_api.TestService.BuildTestServiceContainers(
+            BuildTestServiceContainersRequest(build_target=self.build_target,
+                                              chroot=self.m.cros_sdk.chroot,
+                                              version=version),
+            timeout=1 * 60 * 60)
+        errors = []
+        presentation.step_text = (
+            'Test containers (gcr.io/chromeos-bot) build/push result for'
+            ' %s: %s ' % (version, str(response.results)))
     return {}
 
   def upload_prebuilts(self, config=None):

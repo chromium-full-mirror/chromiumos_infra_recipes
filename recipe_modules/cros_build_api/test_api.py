@@ -345,6 +345,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         tarball_path='tarball/path',
         failed_packages=[],
     )
+    responses['BuildTestServiceContainers'] = jsonify(
+        results=[{
+            'success': {},
+        }],
+    )
     responses['ChromitePytest'] = '{}'
     responses['ChromiteUnitTest'] = '{}'
     responses['DebugInfoTest'] = '{}'
