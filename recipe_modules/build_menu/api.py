@@ -431,11 +431,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = Profile(name=config.build.portage_profile.profile)
-      self.m.sysroot_util.install_packages(
-          config, self.dep_graph, relevant_packages,
-          artifact_build=self._artifact_build,
-          package_indexes=self._package_indexes, timeout_sec=timeout_sec,
-          name=name, dryrun=dryrun)
+      with self.m.context(env={'DEPOT_TOOLS_COLLECT_METRICS': '0'}):
+        self.m.sysroot_util.install_packages(
+            config, self.dep_graph, relevant_packages,
+            artifact_build=self._artifact_build,
+            package_indexes=self._package_indexes, timeout_sec=timeout_sec,
+            name=name, dryrun=dryrun)
 
     return not self.m.cros_infra_config.should_exit(install_packages.run_spec)
 

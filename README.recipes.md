@@ -726,7 +726,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#442)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#443)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -872,7 +872,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#527)(self, config=None, failing_build=False, private_bundle_func=None, sysroot=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#528)(self, config=None, failing_build=False, private_bundle_func=None, sysroot=None):**
 
 Upload artifacts from the build.
 
@@ -889,7 +889,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#556)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#557)(self, config=None):**
 
 Upload prebuilts from the build.
 

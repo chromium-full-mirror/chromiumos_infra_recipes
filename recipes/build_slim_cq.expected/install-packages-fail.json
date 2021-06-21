@@ -3295,6 +3295,9 @@
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.write input file",
     "~followup_annotations": [
@@ -3347,6 +3350,9 @@
       "chromite.api.PackageService/NeedsChromeSource"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3369,6 +3375,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3437,6 +3446,9 @@
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
     "~followup_annotations": [
@@ -3464,6 +3476,9 @@
       "chromite.api.PackageService/GetChromeVersion"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3487,6 +3502,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3544,6 +3562,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3573,6 +3594,9 @@
       "[START_DIR]/chrome"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.sync chrome.ensure chrome root",
     "~followup_annotations": [
@@ -3589,6 +3613,9 @@
       "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
     ],
     "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3615,6 +3642,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3651,6 +3681,9 @@
       "src@version"
     ],
     "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3687,6 +3720,9 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "Determine which packages to build.Attempt to resolve package list.check chrome source needed.ensure goma client.ensure_installed",
     "~followup_annotations": [
@@ -3743,6 +3779,9 @@
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "Determine which packages to build.Attempt to resolve package list.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.write input file",
     "~followup_annotations": [
@@ -3771,6 +3810,9 @@
       "chromite.api.PackageService/GetAndroidMetadata"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3793,6 +3835,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3877,6 +3922,9 @@
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.write input file",
     "~followup_annotations": [
@@ -3938,6 +3986,9 @@
       "chromite.api.SysrootService/InstallPackages"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3961,6 +4012,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4050,6 +4104,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4329,6 +4386,9 @@
       "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.write input file",
     "~followup_annotations": [
@@ -4395,6 +4455,9 @@
       "chromite.api.PackageService/NeedsChromeSource"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4417,6 +4480,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4486,6 +4552,9 @@
       "[CLEANUP]/build_api_messages_tmp_16/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
     "~followup_annotations": [
@@ -4514,6 +4583,9 @@
       "chromite.api.PackageService/GetChromeVersion"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4537,6 +4609,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4595,6 +4670,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4624,6 +4702,9 @@
       "[START_DIR]/chrome"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "install packages.check chrome source needed.sync chrome.ensure chrome root",
     "~followup_annotations": [
@@ -4640,6 +4721,9 @@
       "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
     ],
     "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -4666,6 +4750,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -4702,6 +4789,9 @@
       "src@version"
     ],
     "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -4756,6 +4846,9 @@
       "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.write input file",
     "~followup_annotations": [
@@ -4784,6 +4877,9 @@
       "chromite.api.PackageService/GetAndroidMetadata"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4806,6 +4902,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4890,6 +4989,9 @@
       "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "infra_step": true,
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.write input file",
     "~followup_annotations": [
@@ -4950,6 +5052,9 @@
       "chromite.api.SysrootService/InstallPackages"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -5033,6 +5138,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
