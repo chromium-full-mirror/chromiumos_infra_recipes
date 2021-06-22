@@ -142,7 +142,7 @@ def RunSteps(api, properties):
     # regardless of the branch that is checked out at that path.
     return {p.name: p.path for p in project_infos}
 
-  api.cros_infra_config.configure_builder()
+  api.cros_source.configure_builder()
 
   with api.cros_source.checkout_overlays_context():
     # sync down projects

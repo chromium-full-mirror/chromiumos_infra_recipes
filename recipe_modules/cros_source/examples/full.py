@@ -34,14 +34,7 @@ PROPERTIES = FullProperties
 
 
 def RunSteps(api, properties):
-  # This is normally done by cros_infra_config.configure_builder().
-  if (api.buildbucket.build.input.gitiles_commit.host ==
-      api.src_state.internal_manifest.host):
-    api.src_state.build_manifest = api.src_state.internal_manifest
-  elif (api.buildbucket.build.input.gitiles_commit.host ==
-        api.src_state.external_manifest.host):
-    api.src_state.build_manifest = api.src_state.external_manifest
-  _ = api.cros_source.workspace_path
+  api.cros_source.configure_builder()
 
   try:
     api.cros_source.find_project_paths('fake_project', 'fake_branch')
