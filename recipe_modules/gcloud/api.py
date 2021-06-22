@@ -25,6 +25,11 @@ class GcloudApi(recipe_api.RecipeApi):
     self._attached_disks = {}
     self._dev_ref = 'a'
 
+  @property
+  def _base_mount_path(self):
+    """Returns a Path to the base mount directory for this module."""
+    return self.m.path['cleanup'].join('snapshot')
+
   def set_gce_project(self, project):
     """Set the default project for gcloud command.
     Args:
@@ -213,13 +218,18 @@ class GcloudApi(recipe_api.RecipeApi):
     Args:
       name (str): An alphanumeric name for the mount, used for display.
       mount_path(str): Directory to mount the disk.
+
+    Returns: Path to the mounted disk
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.file.ensure_directory('create mount path', mount_path)
-      self.m.step('mount disk %s' % name,
-                  ['sudo', 'mount', self._attached_disks[name], mount_path],
-                  infra_step=True)
+      recipe_mount_path = self._base_mount_path.join(mount_path)
+      self.m.file.ensure_directory('create mount path', recipe_mount_path)
+      self.m.step(
+          'mount disk %s' % name,
+          ['sudo', 'mount', self._attached_disks[name], recipe_mount_path],
+          infra_step=True)
       self._add_cleanup_mounted_disk(name, mount_path)
+      return recipe_mount_path
 
   def _unmount_disk(self, name, mount_path):
     """Unmount an attached disk to host.

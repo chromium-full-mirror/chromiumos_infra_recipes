@@ -19,6 +19,18 @@ from PB.chromiumos.common import PackageInfo
 
 CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 
+GCLIENT_CACHE_CONFIG = [
+    {
+        "url": "https://chromium.googlesource.com/chromium/src.git",
+        "managed": False,
+        "name": "src",
+        "custom_deps": {},
+        "custom_vars": {
+            "checkout_src_internal": True,
+        },
+    },
+]
+
 # The following project->regexes should trigger a chrome rebuild.
 CHROMIUM_REBUILD_REGEXES = {
     'chromiumos/overlays/chromiumos-overlay': [
@@ -62,6 +74,39 @@ class ChromeApi(recipe_api.RecipeApi):
     request = GetChromeVersionRequest(chroot=chroot, build_target=build_target)
     return self.m.cros_build_api.PackageService.GetChromeVersion(
         request, infra_step=True).version
+
+  def cache_sync(self, cache_path):
+    """Sync Chrome cache using existing cached repositories.
+
+    Args:
+      cache_path (Path): Path to mount of cache.
+    """
+    with self.m.step.nest('sync chrome'):
+      cache_dir = cache_path.join('chrome_cache')
+      src_dir = cache_path.join('src')
+      config_exists = self.m.path.exists(src_dir.join('.gclient'))
+      gclient_config_cmd = [
+          'config', '--spec',
+          "solutions = {}\ncache_dir = '{}'".format(GCLIENT_CACHE_CONFIG,
+                                                    cache_dir)
+      ]
+      with self.m.context(cwd=src_dir):
+        if not config_exists:
+          self.m.python('gclient config',
+                        self.m.depot_tools.root.join('gclient.py'),
+                        gclient_config_cmd, infra_step=True)
+        gclient_sync_cmd = [
+            'sync',
+            '--force',
+            '--reset',
+            '--verbose',
+            '--with_branch_heads',
+            '--with_tags',
+        ]
+        self.m.python('gclient sync',
+                      self.m.depot_tools.root.join('gclient.py'),
+                      gclient_sync_cmd, infra_step=True,
+                      timeout=self.test_api.gclient_sync_timeout_seconds)
 
   def sync(self, chrome_root, chroot, build_target, internal):
     """Sync Chrome source code.

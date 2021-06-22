@@ -1,0 +1,74 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome"
+  },
+  {
+    "cmd": [],
+    "name": "sync chrome.sync chrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "config",
+      "--spec",
+      "solutions = [{'url': 'https://chromium.googlesource.com/chromium/src.git', 'managed': False, 'name': 'src', 'custom_vars': {'checkout_src_internal': True}, 'custom_deps': {}}]\ncache_dir = '[CLEANUP]/snapshot_chrome/chrome_cache'"
+    ],
+    "cwd": "[CLEANUP]/snapshot_chrome/src",
+    "infra_step": true,
+    "name": "sync chrome.sync chrome.gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "sync",
+      "--force",
+      "--reset",
+      "--verbose",
+      "--with_branch_heads",
+      "--with_tags"
+    ],
+    "cwd": "[CLEANUP]/snapshot_chrome/src",
+    "infra_step": true,
+    "name": "sync chrome.sync chrome.gclient sync",
+    "timeout": 5400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

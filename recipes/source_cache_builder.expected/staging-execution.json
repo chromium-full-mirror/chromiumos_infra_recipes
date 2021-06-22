@@ -1,6 +1,28 @@
 [
   {
     "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "source cache update"
   },
   {
@@ -46,7 +68,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "/tmp/test-cache"
+      "[CLEANUP]/snapshot/test-cache"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -62,7 +84,7 @@
       "sudo",
       "mount",
       "/dev/sdb",
-      "/tmp/test-cache"
+      "[CLEANUP]/snapshot/test-cache"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -75,6 +97,42 @@
   },
   {
     "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--jobs",
+      "20",
+      "--no-tags",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8"
+    ],
+    "cwd": "[CLEANUP]/snapshot/test-cache",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo sync",
+    "timeout": 10800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -83,7 +141,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "/tmp/test-cache"
+      "test-cache"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

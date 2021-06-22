@@ -6,11 +6,14 @@
 """Recipe for generating ChromeOS source cache snapshots."""
 
 DEPS = [
+    'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/swarming',
     'recipe_engine/step',
+    'chrome',
     'gcloud',
+    'repo',
 ]
 
 import re
@@ -44,8 +47,18 @@ def RunSteps(api, properties):
             disk = '{}-{}'.format('staging', disk)
           api.gcloud.attach_disk(name=cache.cache_name, instance=infra_host,
                                  disk=disk, zone=m.group('zone'))
-          api.gcloud.mount_disk(name=cache.cache_name,
-                                mount_path=cache.cache_directory)
+          mount_path = api.gcloud.mount_disk(name=cache.cache_name,
+                                             mount_path=cache.cache_directory)
+          with api.step.nest('sync mounted cache directories'):
+            if cache.command == 'repo':
+              with api.context(cwd=mount_path):
+                api.repo.sync(force_sync=True, detach=True, jobs=20,
+                              no_tags=True, optimized_fetch=True,
+                              retry_fetches=8, timeout=10800)
+            if cache.command == 'gclient':
+              # Chrome cache consists of a local repo cache and src, both mounted
+              # via a single disk. We change into the source directory to sync.
+              api.chrome.cache_sync(cache_path=mount_path)
 
 
 def GenTests(api):
@@ -59,11 +72,11 @@ def GenTests(api):
       api.properties(cache_definition=[
           dict(
               cache_name='test-cache',
-              cache_directory='/tmp/test-cache',
+              cache_directory='test-cache',
               compute_disk='test-disk1',
               snapshot_prefix='test-cache-prefix',
               version_file='test-cache-version',
-              command='repo sync -j20',
+              command='repo',
           ),
       ]))
 
@@ -74,10 +87,33 @@ def GenTests(api):
       api.properties(cache_definition=[
           dict(
               cache_name='test-cache',
-              cache_directory='/tmp/test-cache',
+              cache_directory='test-cache',
               compute_disk='test-disk1',
               snapshot_prefix='test-cache-prefix',
               version_file='test-cache-version',
-              command='repo sync -j20',
+              command='repo',
+          ),
+      ]))
+
+  yield api.test(
+      'sync-caches',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(cache_definition=[
+          dict(
+              cache_name='chromiumos',
+              cache_directory='snapshot_chromeos',
+              compute_disk='test-disk1',
+              snapshot_prefix='test-chromeos-prefix',
+              version_file='test-chromeos-version',
+              command='repo',
+          ),
+          dict(
+              cache_name='chrome',
+              cache_directory='snapshot_chrome',
+              compute_disk='test-disk2',
+              snapshot_prefix='test-chrome-prefix',
+              version_file='test-chrome-version',
+              command='gclient',
           ),
       ]))

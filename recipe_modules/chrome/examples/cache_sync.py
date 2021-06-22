@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+# Copyright 2021 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/context',
+    'recipe_engine/path',
+    'recipe_engine/step',
+    'chrome',
+]
+
+
+def RunSteps(api):
+  with api.step.nest('sync chrome'):
+    cache_path = api.path['cleanup'].join('snapshot_chrome')
+    with api.context(cwd=cache_path.join('src')):
+      api.chrome.cache_sync(cache_path=cache_path)
+
+
+def GenTests(api):
+
+  yield api.test('basic')
