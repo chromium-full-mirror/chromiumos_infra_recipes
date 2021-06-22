@@ -309,6 +309,7 @@ class CrosSourceApi(RecipeApi):
       # Disable packRefs before doing merges. See https://crbug.com/1057878.
       self.m.git.set_global_config(['gc.packRefs', 'false'])
 
+    assert self._is_configured, 'cros_source not configured'
     if self._enable_custom_overlays:
       self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
                              persist=True)
