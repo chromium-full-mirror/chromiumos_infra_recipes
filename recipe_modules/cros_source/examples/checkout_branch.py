@@ -22,6 +22,7 @@ PROPERTIES = CheckoutBranchProperties
 
 def RunSteps(api, properties):
 
+  api.cros_source.configure_builder(default_main=True)
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache()

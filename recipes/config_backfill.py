@@ -450,7 +450,7 @@ def format_output_markdown(commits, errors, nmissing):
 
 
 def RunSteps(api, properties):
-  api.cros_infra_config.configure_builder()
+  api.cros_source.configure_builder()
 
   # setup overlays, sync projects and move to tip-of-tree
   with api.cros_source.checkout_overlays_context():

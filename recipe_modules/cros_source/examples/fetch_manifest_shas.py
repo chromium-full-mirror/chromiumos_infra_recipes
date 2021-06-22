@@ -5,7 +5,6 @@
 
 DEPS = [
     'recipe_engine/assertions',
-    'cros_infra_config',
     'cros_source',
     'git',
     'test_util',
@@ -13,7 +12,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  _ = api.cros_infra_config.configure_builder()
+  _ = api.cros_source.configure_builder(default_main=True)
 
   count = 10
   api.assertions.assertEqual(

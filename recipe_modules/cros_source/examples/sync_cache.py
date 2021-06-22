@@ -19,6 +19,7 @@ PROPERTIES = SyncCacheProperties
 
 
 def RunSteps(api, properties):
+  api.cros_source.configure_builder(default_main=True)
   path = None
   if properties.cache_path_override:
     path = api.path['cache'].join(properties.cache_path_override)
