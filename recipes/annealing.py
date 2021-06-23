@@ -18,7 +18,6 @@ The annealing builders run in serial and do the following:
 
 import collections
 import urlparse
-import re
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.annealing import AnnealingProperties
@@ -277,7 +276,6 @@ def _sync_manifest(api, _properties, manifest_ref, prior_internal,
         'external {}: {}'.format(manifest_ref, prior_external),
     ]
 
-    diff_paths = {}
     m_files = api.cros_source.mirrored_manifest_files
     e_paths = []
     for m_file in m_files:
@@ -313,154 +311,24 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
       all_uprevs_passed(bool): True if all uprevs succeeded, False if ANY failed
   """
   is_staging = not properties.publish_uprevs
-  all_uprevs_passed = True
-  failed_uprevs = []
-  passed_uprevs = []
-  with api.step.nest('uprev packages'), api.context(cwd=workspace_path):
-    response = api.cros_sdk.uprev_packages(name='uprev ebuilds')
+  uprev_info = []
+  with api.step.nest('uprev packages'):
+    response = api.cros_source.uprev_packages(workspace_path)
 
-    ebuilds_by_repository = collections.defaultdict(list)
     for ebuild in response.modified_ebuilds:
-      with api.context(cwd=api.path.abs_to_path(api.path.dirname(ebuild.path))):
-        repository = api.git.repository_root(step_name='repo for {}'.format(
-            api.path.relpath(ebuild.path, api.src_state.workspace_path)))
-        ebuilds_by_repository[repository].append(ebuild.path)
+      uprev_info.append(
+          api.cros_source.PushUprevRequest(ebuild.path,
+                                           'Marking set of ebuilds as stable'))
 
     # Treat the manifest changes as if they were an uprev
-    for repo, files in manifest_diffs.items():
-      ebuilds_by_repository[repo].extend(files)
+    for _, files in manifest_diffs.items():
+      for manifest in files:
+        uprev_info.append(
+            api.cros_source.PushUprevRequest(manifest,
+                                             'Syncing with internal manifest'))
 
-  with api.step.nest('push uprevs') as push_uprevs_pres:
-    for repository, ebuilds in ebuilds_by_repository.items():
-      repo_name = api.path.relpath(repository, api.src_state.workspace_path)
-      with api.step.nest('push to {}'.format(repo_name)):
-        with api.context(cwd=api.path.abs_to_path(repository)):
-          with api.step.nest('commit uprev changes in {}'.format(repo_name)):
-            api.git.add(ebuilds)
-            if repository in manifest_diffs:
-              subject = 'Syncing with internal manifest'
-            else:
-              subject = 'Marking set of ebuilds as stable'
-            message = '\n'.join([
-                subject,
-                '',
-                'Cr-Build-Url: {}'.format(api.buildbucket.build_url()),
-                'Cr-Automation-Id: annealing/push_uprevs',
-            ]) + '\n'
-            api.git.commit(message, files=ebuilds)
-
-          # Filter to ebuilds that exist. In particular, we need to exclude
-          # the version of the ebuild from prior to the uprev.
-          existing_ebuilds = []
-          for ebuild in ebuilds:
-            api.path.mock_add_paths(ebuild)
-            if api.path.exists(ebuild):
-              existing_ebuilds.append(ebuild)
-          projects = api.repo.project_infos(projects=existing_ebuilds)
-          # The list of projects should be checked to see if all elements
-          # are equivalent. This check is temporarily removed because
-          # Annealing is broken, and length isn't the right thing to check.
-          # assert len(projects) == 1, \
-          #     'expected 1 project, got: %r' % projects
-          project = projects[0]
-          step_name = 'git push {}'.format(repo_name)
-          branch = project.branch_name
-          namespace = 'heads'
-          if is_staging:
-            branch = 'staging-infra-{}'.format(branch)
-          refspec = 'HEAD:refs/{}/{}'.format(namespace, branch)
-          try:
-            api.git.push(project.remote, refspec, dry_run=dry_run,
-                         capture_stdout=True, retry=False, name=step_name)
-            passed_uprevs.append(repo_name)
-          except StepFailure as ex:
-            api.step.active_result.presentation.logs['exception'] = (
-                ex.result.stdout.splitlines())
-            git_flags = _check_push_exception(ex)
-            # Define no change
-            if git_flags.no_change:
-              api.step.active_result.presentation.status = api.step.SUCCESS
-            elif git_flags.merge_required:
-              # try resolving the issue three times before failing
-              api.step.active_result.presentation.status = api.step.WARNING
-              with api.step.nest('retry uprev to {}'.format(repo_name)):
-                for index in range(3):
-                  with api.git.head_context():
-                    try:
-                      _uprev_retry(api, project, dry_run, step_name, branch,
-                                   is_staging, namespace)
-                      passed_uprevs.append(repo_name)
-                      break
-                    except StepFailure as ex:
-                      if index == 2:
-                        failed_uprevs.append(repo_name)
-                        all_uprevs_passed = False
-            else:
-              failed_uprevs.append(repo_name)
-              all_uprevs_passed = False
-    # Log failures and successes
-    if all_uprevs_passed:
-      # If they all eventually succeeded, the step was successful.
-      push_uprevs_pres.status = api.step.SUCCESS
-    else:
-      push_uprevs_pres.logs['Failed Uprevs'] = failed_uprevs
-    push_uprevs_pres.logs['Passed Uprevs'] = passed_uprevs
-
-    return all_uprevs_passed
-
-
-def _check_push_exception(exception):
-  """Parse stdout in push exception
-
-  When the push during an uprev fails we need to parse the output to
-  determine what out next steps will be.
-
-  Args:
-    exception(StepFailure): step failure encounted during git push
-
-  Returns(FailureFlags):
-    no_change(bool): push failed due to no files changed
-    merge_required(bool): fetch and merge required
-  """
-  FailureFlags = collections.namedtuple('FailureFlags',
-                                        ['no_change', 'merge_required'])
-  no_change = merge_required = False
-  for line in exception.result.stdout.splitlines():
-    no_change |= bool(re.search(r'\(no new changes\)', line))
-    merge_required |= bool(
-        re.search(r'\(fetch first\)', line) or
-        re.search(r'\(non-fast-forward\)', line))
-  return FailureFlags(no_change, merge_required)
-
-
-def _uprev_retry(api, project, dry_run, step_name, branch, is_staging,
-                 namespace):
-  """Retry the uprev push
-
-  LUCI CQ may push changes while we are upreving. This retry process will
-  attempt to bypass those collisions by fetching, merging, and then repushing
-  the uprevs.
-
-  Args:
-    api (object): See RunSteps documentation
-    dry_run:      Dry run the git push
-    step_name:    Step name overide for the git push
-    branch:       Branch name to push to
-    is_staging:   If annealing is running in staging or not
-    namespace:    The namespace for the refspec ('heads' or 'staging-infra').
-  """
-  current_branch = api.git.current_branch() or api.git.head_commit()
-  ref = 'refs/{}/{}'.format(namespace, branch)
-  api.git.fetch(project.remote, [ref])
-  if is_staging:
-    # Ignore all the changes on the ref, since they have been done on ToT since
-    # then.
-    api.git.merge('FETCH_HEAD', 'Resolve uprev conflict\n', '--strategy=ours')
-  else:
-    api.git.checkout('FETCH_HEAD')
-    api.git.merge(current_branch, 'Resolve uprev conflict\n')
-  api.git.push(project.remote, 'HEAD:{}'.format(ref), dry_run=dry_run,
-               capture_stdout=True, retry=False, name=step_name)
+  # Push the uprevs to the remote
+  return api.cros_source.push_uprev(uprev_info, dry_run, is_staging=is_staging)
 
 
 def _schedule_triggered_builds(api, commit, jobs):

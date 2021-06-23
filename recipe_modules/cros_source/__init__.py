@@ -4,6 +4,7 @@
 
 DEPS = {
     'archive': 'recipe_engine/archive',
+    'buildbucket': 'recipe_engine/buildbucket',
     'cas': 'recipe_engine/cas',
     'context': 'recipe_engine/context',
     'file': 'recipe_engine/file',
@@ -13,6 +14,7 @@ DEPS = {
     'step': 'recipe_engine/step',
     'depot_gitiles': 'depot_tools/gitiles',
     'bot_cost': 'bot_cost',
+    'cros_build_api': 'cros_build_api',
     'cros_infra_config': 'cros_infra_config',
     'easy': 'easy',
     'gerrit': 'gerrit',

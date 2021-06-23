@@ -7,12 +7,16 @@
 
 import contextlib
 import json
+import re
 
 from collections import defaultdict, namedtuple
 from google.protobuf.json_format import MessageToDict
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
+
+from PB.chromite.api.packages import UprevPackagesRequest
+from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 
 ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id', 'patch_set'])
 
@@ -39,6 +43,13 @@ ALLOWED_MANIFEST_SOURCES = [
 
 class CrosSourceApi(RecipeApi):
   """A module for CrOS-specific source steps."""
+  # PushUprevRequest:
+  #   modified_file (path): Path to modified file.
+  #   message_subject (string): String to use as the commit subject.
+  PushUprevRequest = namedtuple('PushUprevRequest', [
+      'modified_file',
+      'message_subject',
+  ])
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosSourceApi, self).__init__(*args, **kwargs)
@@ -1264,3 +1275,207 @@ class CrosSourceApi(RecipeApi):
           self.m.git.checkout('FETCH_HEAD')
 
       return metadata['project_paths']
+
+  def uprev_packages(self, workspace_path, build_targets=None,
+                     timeout_sec=(10 * 60), name='uprev ebuilds'):
+    """Uprev packages.
+
+    Args:
+      workspace_path (Path): Path to the workspace checkout.
+      build_targets (list[BuildTarget]): List of build_targets whose packages.
+          should be uprevved, or None for all build_targets.
+      timeout_sec (int): Step timeout (in seconds).  Default: 10 minutes.
+      name (string): Name for step.
+
+    Returns:
+      UprevPackagesResponse
+    """
+    with self.m.step.nest(name), self.m.context(cwd=workspace_path):
+      # Produces file changes if an uprev is possible.
+      return self.m.cros_build_api.PackageService.Uprev(
+          UprevPackagesRequest(build_targets=build_targets,
+                               overlay_type=OVERLAYTYPE_BOTH),
+          timeout=timeout_sec)
+
+  def push_uprev(self, uprev_response, dry_run, commit_only=False,
+                 is_staging=False):
+    """Commit and push any upreved packages to its remote.
+
+    Args:
+      uprev_response (list[PushUprevRequest]): Named tuple containing the
+        modified ebuild and associated message subject.
+      dry_run (bool): Dry run git push or not.
+      commit_only (bool): Whether to skip the push step.
+
+    Return:
+      all_uprevs_passed (bool): True if all uprevs succeeded,
+                                False if ANY failed.
+    """
+    with self.m.step.nest('push uprevs') as push_uprevs_pres:
+
+      # Create list of modified files, index by their repository
+      modified_ebuilds_by_repository = defaultdict(list)
+
+      # Cycle through modified ebuilds
+      with self.m.step.nest('retrieve project information'):
+        for item in uprev_response:
+          path = item.modified_file
+          with self.m.context(
+              cwd=self.m.path.abs_to_path(self.m.path.dirname(path))):
+            repository = self.m.git.repository_root(
+                step_name='repo for {}'.format(
+                    self.m.path.relpath(path, self.m.src_state.workspace_path)))
+            modified_ebuilds_by_repository[repository] = self.PushUprevRequest(
+                [path], item.message_subject)
+
+      with self.m.step.nest('commit uprevs'):
+        # Cycle through the modifed ebuild and push the change.
+        for repository, requests in modified_ebuilds_by_repository.items():
+          repo_name = self.m.path.relpath(repository,
+                                          self.m.src_state.workspace_path)
+          with self.m.context(cwd=self.m.path.abs_to_path(repository)):
+            with self.m.step.nest(
+                'commit uprev changes in {}'.format(repo_name)) as commit_pres:
+              self.m.git.add(requests.modified_file)
+              message = '\n'.join([
+                  requests.message_subject,
+                  '',
+                  'Cr-Build-Url: {}'.format(self.m.buildbucket.build_url()),
+                  'Cr-Automation-Id: cros_source/push_uprevs',
+              ]) + '\n'
+              self.m.git.commit(message, files=requests.modified_file)
+              commit_pres.logs['ebuilds'] = requests.modified_file
+
+      # If we do not want to push, return that the call has passed.
+      if commit_only:
+        return True
+
+      all_uprevs_passed = True
+      failed_uprevs = []
+      passed_uprevs = []
+      for repository, requests in modified_ebuilds_by_repository.items():
+        repo_name = self.m.path.relpath(repository,
+                                        self.m.src_state.workspace_path)
+        with self.m.step.nest('push to {}'.format(repo_name)):
+          with self.m.context(cwd=self.m.path.abs_to_path(repository)):
+            # Filter to ebuilds that exist. In particular, we need to exclude
+            # the version of the ebuild from prior to the uprev.
+            existing_ebuilds = []
+            for ebuild in requests.modified_file:
+              self.m.path.mock_add_paths(ebuild)
+              if self.m.path.exists(ebuild):
+                existing_ebuilds.append(ebuild)
+
+            projects = self.m.repo.project_infos(projects=existing_ebuilds)
+            # The list of projects should be checked to see if all elements
+            # are equivalent. This check is temporarily removed because
+            # Annealing is broken, and length isn't the right thing to check.
+            # assert len(projects) == 1, \
+            #     'expected 1 project, got: %r' % projects
+            project = projects[0]
+            step_name = 'git push {}'.format(repo_name)
+            branch = project.branch_name
+            namespace = 'heads'
+            if is_staging:
+              branch = 'staging-infra-{}'.format(branch)
+            refspec = 'HEAD:refs/{}/{}'.format(namespace, branch)
+
+            try:
+              self.m.git.push(project.remote, refspec, dry_run=dry_run,
+                              capture_stdout=True, retry=False, name=step_name)
+              passed_uprevs.append(repo_name)
+            except StepFailure as ex:
+              self.m.step.active_result.presentation.logs['exception'] = (
+                  ex.result.stdout.splitlines())
+              git_flags = self._check_push_exception(ex)
+              if git_flags.no_change:
+                self.m.step.active_result.presentation.status = \
+                  self.m.step.SUCCESS
+              elif git_flags.merge_required:
+                # try resolving the issue three times before failing
+                self.m.step.active_result.presentation.status = \
+                  self.m.step.WARNING
+                with self.m.step.nest('retry uprev to {}'.format(repo_name)):
+                  for index in range(3):
+                    with self.m.git.head_context():
+                      try:
+                        self._uprev_retry(project, dry_run, step_name, branch,
+                                          is_staging, namespace)
+                        passed_uprevs.append(repo_name)
+                        break
+                      except StepFailure as ex:
+                        if index == 2:
+                          failed_uprevs.append(repo_name)
+                          all_uprevs_passed = False
+              else:
+                failed_uprevs.append(repo_name)
+                all_uprevs_passed = False
+
+      # Log failures and successes
+      if all_uprevs_passed:
+        # If they all eventually succeeded, the step was successful.
+        push_uprevs_pres.status = self.m.step.SUCCESS
+      else:
+        push_uprevs_pres.logs['Failed Uprevs'] = failed_uprevs
+      push_uprevs_pres.logs['Passed Uprevs'] = passed_uprevs
+
+      return all_uprevs_passed
+
+  def _check_push_exception(self, exception):
+    """Parse stdout in push exception
+
+    When the push during an uprev fails we need to parse the output to
+    determine what out next steps will be.
+
+    Args:
+      exception(StepFailure): step failure encounted during git push
+
+    Returns(FailureFlags):
+      no_change(bool): git push failed due to no files changed.
+      merge_required(bool): fetch and merge of remote required.
+    """
+    FailureFlags = namedtuple(
+        'FailureFlags',
+        ['no_change', 'merge_required'],
+    )
+    no_change = merge_required = False
+    for line in exception.result.stdout.splitlines():
+      no_change |= bool(re.search(r'\(no new changes\)', line))
+      merge_required |= bool(
+          re.search(r'\(fetch first\)', line) or
+          re.search(r'\(non-fast-forward\)', line))
+    return FailureFlags(no_change, merge_required)
+
+  def _uprev_retry(self, project, dry_run, step_name, branch, is_staging,
+                   namespace):
+    """Retry the uprev push
+
+    LUCI CQ may push changes while we are upreving. This retry process will
+    attempt to bypass those collisions by fetching, merging, and then repushing
+    the uprevs.
+
+    Args:
+      project(ProjectInfo): Information desribing the repo.
+      dry_run(bool):        Dry run the git push.
+      step_name(string):    Step name overide for the git push.
+      branch(string):       Branch name to push to.
+      is_staging(bool):     If annealing is running in staging or not.
+      namespace(string):    The namespace for the refspec ('heads' or '
+        staging-infra').
+    """
+    current_branch = self.m.git.current_branch() or self.m.git.head_commit()
+    ref = 'refs/{}/{}'.format(namespace, branch)
+    self.m.git.fetch(project.remote, [ref])
+    if is_staging:
+      # Ignore all the changes on the ref, since they have been done on
+      # ToT since then.
+      self.m.git.merge(
+          'FETCH_HEAD',
+          'Resolve uprev conflict\n',
+          '--strategy=ours',
+      )
+    else:
+      self.m.git.checkout('FETCH_HEAD')
+      self.m.git.merge(current_branch, 'Resolve uprev conflict\n')
+    self.m.git.push(project.remote, 'HEAD:{}'.format(ref), dry_run=dry_run,
+                    capture_stdout=True, retry=False, name=step_name)

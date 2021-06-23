@@ -1486,32 +1486,6 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "--show-toplevel"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "name": "uprev packages.repo for src/overlay/foo.ebuild",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "--show-toplevel"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "uprev packages.repo for src/private-overlay/bar.ebuild",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "push uprevs",
     "~followup_annotations": [
@@ -1522,16 +1496,51 @@
   },
   {
     "cmd": [],
-    "name": "push uprevs.push to src/overlay",
+    "name": "push uprevs.retrieve project information",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "name": "push uprevs.retrieve project information.repo for src/overlay/foo.ebuild",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "push uprevs.retrieve project information.repo for src/private-overlay/bar.ebuild",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs.commit uprevs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "push uprevs.push to src/overlay.commit uprev changes in src/overlay",
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild@@@",
+      "@@@STEP_LOG_END@ebuilds@@@"
     ]
   },
   {
@@ -1542,7 +1551,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "push uprevs.push to src/overlay.commit uprev changes in src/overlay.git add",
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1555,18 +1564,18 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: annealing/push_uprevs\n",
+      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: cros_source/push_uprevs\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "push uprevs.push to src/overlay.commit uprev changes in src/overlay.write commit message",
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Marking set of ebuilds as stable@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: annealing/push_uprevs@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: cros_source/push_uprevs@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
@@ -1581,9 +1590,77 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "push uprevs.push to src/overlay.commit uprev changes in src/overlay.git commit",
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild@@@",
+      "@@@STEP_LOG_END@ebuilds@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: cros_source/push_uprevs\n",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: cros_source/push_uprevs@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2",
+      "--",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs.push to src/overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1633,65 +1710,6 @@
     "name": "push uprevs.push to src/private-overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "push uprevs.push to src/private-overlay.commit uprev changes in src/private-overlay",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/private-overlay.commit uprev changes in src/private-overlay.git add",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: annealing/push_uprevs\n",
-      "[CLEANUP]/commit_msg_tmp_2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/private-overlay.commit uprev changes in src/private-overlay.write commit message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: annealing/push_uprevs@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_2",
-      "--",
-      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/private-overlay.commit uprev changes in src/private-overlay.git commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
