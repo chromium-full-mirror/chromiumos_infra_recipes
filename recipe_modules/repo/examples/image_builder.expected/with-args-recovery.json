@@ -15,7 +15,7 @@
     "name": "Read proto from [CLEANUP]/ensure/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_RECOVERY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"mybranch\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -24,7 +24,7 @@
     "cmd": [],
     "name": "set initial_repo_state",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"mybranch\", \"manifestUrl\": \"http://manifest_url\", \"state\": \"STATE_RECOVERY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"http://manifest_url\", \"state\": \"STATE_RECOVERY\"}@@@"
     ]
   },
   {

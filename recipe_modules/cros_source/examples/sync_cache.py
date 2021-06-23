@@ -38,15 +38,16 @@ def GenTests(api):
 
   external_url = api.src_state.external_manifest.url
   internal_url = api.src_state.internal_manifest.url
+  manifest_branch = 'snapshot'
 
   yield api.cros_source.test(
-      'basic',
+      'basic', manifest_branch,
       api.post_check(verify_manifest_url, internal_url,
                      'sync cached directory.ensure synced checkout.repo init'),
       api.post_check(post_process.StatusSuccess))
 
   yield api.cros_source.test(
-      'internal',
+      'internal', manifest_branch,
       api.properties(
           SyncCacheProperties(
               manifest_url=api.src_state.internal_manifest.url)),
@@ -56,7 +57,7 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.cros_source.test(
-      'custom',
+      'custom', manifest_branch,
       api.properties(
           SyncCacheProperties(manifest_url=api.src_state.external_manifest.url,
                               cache_path_override='chromiumos-external')),

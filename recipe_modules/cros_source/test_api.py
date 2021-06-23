@@ -12,11 +12,12 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
   # Number of seconds to wait on gitiles file download.
   gitiles_timeout_seconds = 3 * 60
 
-  def test(self, name, *args, **kwargs):
+  def test(self, name, manifest_branch='snapshot', *args, **kwargs):
     """Create a test with properties.
 
     Args:
       cros_source_properties (dict): module properties for cros_source.
+      manifest_branch: manifest branch to use in repo init.
       args (list): args for api.test()
       kwargs (dict): kwargs for api.test_util.test_build.  Defaults applied:
         - cq = True.
@@ -32,8 +33,7 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
     kwargs.setdefault('revision', '2d72510e447ab60a9728aeea2362d8be2cbd7789')
     kwargs.setdefault('git_repo', self.m.src_state.internal_manifest.url)
     kwargs.setdefault('cq', True)
-    if not kwargs['cq']:
-      kwargs.setdefault('git_ref', 'refs/heads/snapshot')
+    kwargs.setdefault('git_ref', 'refs/heads/%s' % manifest_branch)
 
     data = self.m.test_util.test_build(**kwargs).build
     if cros_source_properties:

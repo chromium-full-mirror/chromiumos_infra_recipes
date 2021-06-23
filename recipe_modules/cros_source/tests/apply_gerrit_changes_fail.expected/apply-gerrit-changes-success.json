@@ -544,7 +544,8 @@
     "cmd": [],
     "name": "patch manifest.get patched manifest.ensure synced checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@cache tracking main branch@@@"
     ]
   },
   {

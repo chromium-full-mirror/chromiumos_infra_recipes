@@ -30,7 +30,7 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.cros_source.test(
-      'basic',
+      'basic', 'snapshot',
       api.properties(
           MismatchArgsProperties(
               manifest_url=api.src_state.external_manifest.url)))

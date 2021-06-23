@@ -747,8 +747,8 @@ class RepoApi(recipe_api.RecipeApi):
                             repo_state_path, repo_state, 'JSONPB')
 
     # Clean cache if needed
-    self._sync_checkout(root_path, manifest_url, init_opts, sync_opts, projects,
-                        clean)
+    self._sync_checkout(root_path, manifest_url, init_opts=init_opts,
+                        sync_opts=sync_opts, projects=projects, clean=clean)
     repo_state.state = RepoState.STATE_CLEAN
 
     self.m.file.write_proto('Write proto to {}'.format(repo_state_path),
@@ -769,7 +769,7 @@ class RepoApi(recipe_api.RecipeApi):
         operate on the given projects.
       clean (bool): Boolean stating whether the cache is clean.
     """
-    with self.m.step.nest('ensure synced checkout'):
+    with self.m.step.nest('ensure synced checkout') as presentation:
       self.m.file.ensure_directory('ensure root path', root_path)
       with self.m.context(cwd=root_path, infra_steps=True):
         init_opts = dict(init_opts or {}, projects=projects)
@@ -777,6 +777,11 @@ class RepoApi(recipe_api.RecipeApi):
         manifest_name = init_opts.get('manifest_name')
         # The same value must be passed in both sets of options.
         assert manifest_name == sync_opts.get('manifest_name')
+        # Manifest branch must be passed with init_opts
+        assert 'manifest_branch' in init_opts, (
+            'manifest tracking branch not specified.')
+        presentation.step_text = 'cache tracking %s branch' % init_opts[
+            'manifest_branch']
         if manifest_name:
           # Our API calls for manifest_name to be a Path, and the underlying
           # routines need manifest_name to be a string, giving the name of the

@@ -77,11 +77,15 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
+  manifest_branch = 'snapshot'
 
   def AnnealingTest(state_name, state):
     return api.test(
         'annealing-{}'.format(state_name),
-        api.properties(AnnealingProperties(manifest_file='snapshot.xml')),
+        api.properties(
+            AnnealingProperties(
+                manifest_file='snapshot.xml',
+                init_opts=common.InitOpts(manifest_branch=manifest_branch))),
         api.repo.repo_current_state(state))
 
   def AnnealingLocalManifest(state_name, state):
@@ -92,14 +96,19 @@ def GenTests(api):
     return api.test(
         'annealing-local-manifest-{}'.format(state_name),
         api.properties(
-            AnnealingProperties(manifest_file='snapshot.xml'),
-            init_opts=common.InitOpts(local_manifest=local_manifest)),
+            AnnealingProperties(
+                manifest_file='snapshot.xml',
+                init_opts=common.InitOpts(local_manifest=local_manifest,
+                                          manifest_branch=manifest_branch))),
         api.repo.repo_current_state(state))
 
   def AnnealingMissingFromXML(state_name, state):
     return api.test(
         'annealing-missing-FromXML-{}'.format(state_name),
-        api.properties(AnnealingProperties(manifest_file='snapshot.xml')),
+        api.properties(
+            AnnealingProperties(
+                manifest_file='snapshot.xml',
+                init_opts=common.InitOpts(manifest_branch=manifest_branch))),
         api.step_data('diff remote and local manifest.git show', retcode=128),
         api.repo.repo_current_state(state))
 
@@ -138,6 +147,7 @@ def GenTests(api):
                       retcode=1),
         api.properties(
             AnnealingProperties(
+                init_opts=common.InitOpts(manifest_branch=manifest_branch),
                 manifest_file='snapshot.xml', manifest_data=to_manifest,
                 from_manifest_data=from_manifest, expected_manifest_diffs=[
                     common.ManifestDiff(name='NAME', path='PATH',

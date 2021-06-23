@@ -164,7 +164,7 @@
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_CLEAN\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"staging-snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_CLEAN\"}@@@"
     ]
   },
   {
@@ -175,7 +175,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n\"manifest_branch\": \"staging-snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/snapshot/test-cache/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/snapshot/test-cache",
@@ -184,6 +184,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"staging-snapshot\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -192,7 +193,8 @@
     "cmd": [],
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@cache tracking staging-snapshot branch@@@"
     ]
   },
   {
@@ -222,6 +224,8 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
+      "--manifest-branch",
+      "staging-snapshot",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/snapshot/test-cache",
@@ -343,7 +347,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n\"manifest_branch\": \"staging-snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/snapshot/test-cache/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/snapshot/test-cache",
@@ -352,6 +356,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"staging-snapshot\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -516,7 +521,7 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2021-07-15 AND name~test-cache-prefix-.*"
+      "creationTimestamp<2021-07-16 AND name~test-cache-prefix-.*"
     ],
     "infra_step": true,
     "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-cache-prefix",

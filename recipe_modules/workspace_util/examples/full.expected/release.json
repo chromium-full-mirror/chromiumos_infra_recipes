@@ -345,7 +345,10 @@
   },
   {
     "cmd": [],
-    "name": "ensure synced checkout"
+    "name": "ensure synced checkout",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@cache tracking release-R86.13421.B branch@@@"
+    ]
   },
   {
     "cmd": [

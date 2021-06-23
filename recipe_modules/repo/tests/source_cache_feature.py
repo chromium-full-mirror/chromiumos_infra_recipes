@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'cros_source',
     'repo',
 ]
 
@@ -15,9 +16,10 @@ from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 
 
 def RunSteps(api):
+  init_opts = dict(manifest_branch='snapshot')
   api.assertions.assertTrue(api.repo.disable_source_cache_health)
   api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
-                                  'http://manifest_url')
+                                  'http://manifest_url', init_opts=init_opts)
 
 
 def GenTests(api):

@@ -84,7 +84,9 @@ def RunSteps(api, properties):
                   sync_opts = dict(force_sync=True, detach=True, jobs=20,
                                    retry_fetches=8, timeout=10800,
                                    force_remove_dirty=True)
-                  init_opts = dict(verbose=True)
+                  init_opts = dict(
+                      verbose=True, manifest_branch='{}snapshot'.format(
+                          'staging-' if is_staging else ''))
                   api.repo.ensure_synced_checkout(
                       mount_path, api.src_state.internal_manifest.url,
                       init_opts=init_opts, sync_opts=sync_opts)

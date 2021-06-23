@@ -15,7 +15,7 @@
     "name": "Read proto from [CLEANUP]/ensure/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"mybranch\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -24,7 +24,7 @@
     "cmd": [],
     "name": "set initial_repo_state",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"mybranch\", \"manifestUrl\": \"http://manifest_url\", \"state\": \"STATE_CLEAN\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"http://manifest_url\", \"state\": \"STATE_CLEAN\"}@@@"
     ]
   },
   {
@@ -35,7 +35,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"mybranch\", \n\"manifest_url\": \"http://manifest_url\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"http://manifest_url\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/ensure/.recipes_state.json"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
@@ -43,14 +43,17 @@
     "name": "Write proto to [CLEANUP]/ensure/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"mybranch\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "ensure synced checkout"
+    "name": "ensure synced checkout",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@cache tracking snapshot branch@@@"
+    ]
   },
   {
     "cmd": [
@@ -80,7 +83,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "mybranch",
+      "snapshot",
       "--reference",
       "/preload/chromeos",
       "--groups",
@@ -292,7 +295,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"mybranch\", \n\"manifest_url\": \"http://manifest_url\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"http://manifest_url\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/ensure/.recipes_state.json"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
@@ -300,7 +303,7 @@
     "name": "Write proto to [CLEANUP]/ensure/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"mybranch\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]

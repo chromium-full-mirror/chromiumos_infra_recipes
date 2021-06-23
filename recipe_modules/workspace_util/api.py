@@ -224,7 +224,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
         mount_cache=not cache_path_override):
       self.m.cros_source.ensure_synced_cache(
           gitiles_commit=gitiles_commit, manifest_url=manifest_url,
-          init_opts=init_opts, cache_path_override=cache_path_override)
+          init_opts=init_opts, cache_path_override=cache_path_override,
+          manifest_branch_override=manifest_branch)
       with self.m.context(
           cwd=cache_path_override or self.m.cros_source.cache_path):
         yield

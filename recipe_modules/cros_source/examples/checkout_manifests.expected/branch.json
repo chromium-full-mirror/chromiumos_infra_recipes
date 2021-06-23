@@ -303,7 +303,10 @@
   },
   {
     "cmd": [],
-    "name": "ensure synced checkout"
+    "name": "ensure synced checkout",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@cache tracking release-R88-13597.B branch@@@"
+    ]
   },
   {
     "cmd": [

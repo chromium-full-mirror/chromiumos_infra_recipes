@@ -30,6 +30,7 @@ def RunSteps(api, properties):
   with api.context(cwd=repo_root.join('manifest-internal')):
     init_opts = MessageToDict(properties.init_opts,
                               preserving_proto_field_name=True)
+    init_opts['manifest_branch'] = 'snapshot'
     manifest_url = init_opts.pop('manifest_url', 'http://manifest_url')
     sync_opts = MessageToDict(properties.sync_opts,
                               preserving_proto_field_name=True)

@@ -474,7 +474,10 @@
   },
   {
     "cmd": [],
-    "name": "ensure synced checkout"
+    "name": "ensure synced checkout",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@cache tracking firmware-board-9999.B branch@@@"
+    ]
   },
   {
     "cmd": [

@@ -28,7 +28,7 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.cros_source.test(
-      'basic', api.post_check(post_process.StatusSuccess),
+      'basic', 'snapshot', api.post_check(post_process.StatusSuccess),
       api.path.exists(api.path['start_dir'].join('chromiumos_workspace')),
       api.properties(
           **

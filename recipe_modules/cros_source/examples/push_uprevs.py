@@ -55,8 +55,10 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
+  manifest_branch = 'snapshot'
   yield api.cros_source.test(
       'commit-only',
+      manifest_branch,
       api.properties(PushUprevsArgs(commit_only=True, is_staging=True)),
       api.post_check(post_process.MustRun, 'push uprevs.commit uprevs'),
       api.post_check(post_process.MustRunRE,
@@ -66,6 +68,7 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'push-uprevs-prod',
+      manifest_branch,
       api.properties(PushUprevsArgs(
           commit_only=False,
           is_staging=False,
@@ -90,6 +93,7 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'push-uprevs-staging',
+      manifest_branch,
       api.properties(PushUprevsArgs(
           commit_only=False,
           is_staging=True,
@@ -116,6 +120,7 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'push-uprevs-retry-no-change',
+      manifest_branch,
       api.properties(PushUprevsArgs(
           commit_only=False,
           is_staging=False,
@@ -132,6 +137,7 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'push-uprevs-retry-fetch-first',
+      manifest_branch,
       api.properties(PushUprevsArgs(
           commit_only=False,
           is_staging=False,
@@ -147,6 +153,7 @@ def GenTests(api):
   )
   yield api.cros_source.test(
       'push-uprevs-retry-fetch-first-staging',
+      manifest_branch,
       api.properties(PushUprevsArgs(
           commit_only=False,
           is_staging=True,
@@ -163,6 +170,7 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'push-uprevs-retry-fast-forward',
+      manifest_branch,
       api.properties(PushUprevsArgs(
           commit_only=False,
           is_staging=False,
@@ -178,6 +186,7 @@ def GenTests(api):
   )
   yield api.cros_source.test(
       'push-uprevs-retry-unknown',
+      manifest_branch,
       api.properties(PushUprevsArgs(
           commit_only=False,
           is_staging=False,
@@ -192,6 +201,7 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'push-uprevs-retry-fail',
+      manifest_branch,
       api.properties(PushUprevsArgs(
           commit_only=False,
           is_staging=False,

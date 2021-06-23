@@ -43,7 +43,8 @@ def RunSteps(api, properties):
     commit = (api.src_state.external_manifest
               if properties.use_external_manifest else
               api.src_state.internal_manifest).as_gitiles_commit_proto
-  api.cros_source.configure_builder(commit, api.src_state.gerrit_changes)
+  api.cros_source.configure_builder(commit=commit,
+                                    changes=api.src_state.gerrit_changes)
 
   if not properties.manifest_groups:
     raise ValueError('At least one manifest group must be specified.')

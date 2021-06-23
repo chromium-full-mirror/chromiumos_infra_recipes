@@ -73,29 +73,30 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-
-  yield api.cros_source.test('basic-success',
+  manifest_branch = 'snapshot'
+  yield api.cros_source.test('basic-success', manifest_branch,
                              api.post_check(post_process.StatusSuccess))
 
   yield api.cros_source.test(
-      'basic-failure', api.repo.fail_repo_sync(True),
+      'basic-failure', manifest_branch, api.repo.fail_repo_sync(True),
       api.post_check(post_process.StepFailure,
                      'sync cached directory.retry cache sync'))
 
   yield api.cros_source.test(
-      'chrome-ref', api.post_check(post_process.StatusSuccess),
+      'chrome-ref', manifest_branch, api.post_check(post_process.StatusSuccess),
       git_repo='https://chromium.googlesource.com/chromium/src',
       git_ref='refs/tags/93.0.4552.0')
 
   sync_step_name = ('sync to gitiles commit.fetch '
                     '2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml')
   yield api.cros_source.test(
-      'sync-to-branch', api.post_check(post_process.StatusSuccess),
+      'sync-to-branch', manifest_branch,
+      api.post_check(post_process.StatusSuccess),
       api.step_data(sync_step_name, api.json.output(dict(value=''))), cq=False,
       git_ref='refs/heads/release-R87-13505.B')
 
   yield api.cros_source.test(
-      'merge-commit-fails',
+      'merge-commit-fails', manifest_branch,
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
                     api.raw_io.stream_output('commitsha1 commitsha2')),
@@ -104,7 +105,7 @@ def GenTests(api):
       ])
 
   yield api.cros_source.test(
-      'cherry-picks',
+      'cherry-picks', manifest_branch,
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
                     api.raw_io.stream_output('commitsha1')),
@@ -113,7 +114,7 @@ def GenTests(api):
       ])
 
   yield api.cros_source.test(
-      'with-custom-snapshot-cas-success',
+      'with-custom-snapshot-cas-success', manifest_branch,
       api.properties(FullProperties(expected_snapshot_cas_digest='xxx')),
       api.post_check(post_process.StatusSuccess),
       cros_source_properties=CrosSourceProperties(
@@ -123,7 +124,7 @@ def GenTests(api):
       ))
 
   yield api.cros_source.test(
-      'with-custom-snapshot-cas-failure',
+      'with-custom-snapshot-cas-failure', manifest_branch,
       api.properties(FullProperties(expected_snapshot_cas_digest='xxx')),
       api.repo.fail_repo_sync(True),
       api.post_check(post_process.StepFailure,
@@ -135,7 +136,8 @@ def GenTests(api):
       ))
 
   yield api.cros_source.test(
-      'enable-custom-overlays', api.post_check(post_process.StatusSuccess),
+      'enable-custom-overlays', manifest_branch,
+      api.post_check(post_process.StatusSuccess),
       cros_source_properties=CrosSourceProperties(
           enable_custom_overlays=True,
       ))
@@ -170,8 +172,8 @@ def GenTests(api):
                 upstream=branch_override or manifest.ref)
 
   yield api.cros_source.test(
-      'empty-change-to-full.xml', api.post_check(post_process.StatusSuccess),
-      _gerrit_return(changes),
+      'empty-change-to-full.xml', manifest_branch,
+      api.post_check(post_process.StatusSuccess), _gerrit_return(changes),
       api.repo.project_infos_step_data(
           'patch manifest.checkout branch {}.ensure manifest is pinned'.format(
               api.src_state.default_branch), data=[
@@ -197,8 +199,8 @@ def GenTests(api):
       gerrit_changes=changes)
 
   yield api.cros_source.test(
-      'commit-failure-full.xml', api.post_check(post_process.StatusAnyFailure),
-      _gerrit_return(changes),
+      'commit-failure-full.xml', manifest_branch,
+      api.post_check(post_process.StatusAnyFailure), _gerrit_return(changes),
       api.repo.project_infos_step_data(
           'patch manifest.chromeos/manifest-internal: apply gerrit patch sets',
           data=[_project_data(api.src_state.internal_manifest)]),
@@ -217,7 +219,7 @@ def GenTests(api):
       ])
 
   yield api.cros_source.test(
-      'manifest-changes-active-internal',
+      'manifest-changes-active-internal', manifest_branch,
       api.post_check(post_process.StatusSuccess), _gerrit_return(changes),
       api.repo.project_infos_step_data(
           'patch manifest.chromeos/manifest-internal: apply gerrit patch sets',
@@ -228,7 +230,7 @@ def GenTests(api):
       git_repo=api.src_state.internal_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
-      'manifest-changes-active-external',
+      'manifest-changes-active-external', manifest_branch,
       api.properties(FullProperties(ignore_missing_projects=True)),
       api.post_check(post_process.StatusSuccess), _gerrit_return(changes),
       api.repo.project_infos_step_data(
@@ -237,7 +239,7 @@ def GenTests(api):
       git_repo=api.src_state.external_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
-      'internal-change-no-external',
+      'internal-change-no-external', manifest_branch,
       _gerrit_return([_manifest_change(api.src_state.internal_manifest)]),
       api.post_check(post_process.MustRun,
                      'patch manifest.restore manifest patches.branch main'),
@@ -246,7 +248,7 @@ def GenTests(api):
       gerrit_changes=[_manifest_change(api.src_state.internal_manifest)])
 
   yield api.cros_source.test(
-      'internal-change-no-external-branch',
+      'internal-change-no-external-branch', manifest_branch,
       _gerrit_return([_manifest_change(api.src_state.internal_manifest)],
                      values_dict={555: dict(branch='other')}),
       api.post_check(post_process.MustRun,
@@ -263,13 +265,13 @@ def GenTests(api):
       gerrit_changes=[_manifest_change(api.src_state.internal_manifest)])
 
   yield api.cros_source.test(
-      'manifest-changes-multi-branch',
+      'manifest-changes-multi-branch', manifest_branch,
       _gerrit_return(changes, values_dict={556: dict(branch='other')}),
       api.post_check(post_process.StatusAnyFailure), cq=True,
       git_repo=api.src_state.external_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
-      'manifest-changes-external-full-changed',
+      'manifest-changes-external-full-changed', manifest_branch,
       _gerrit_return(
           changes, values_dict={
               556:
@@ -281,7 +283,7 @@ def GenTests(api):
       git_repo=api.src_state.external_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
-      'manifest-changes-external-not-changed',
+      'manifest-changes-external-not-changed', manifest_branch,
       _gerrit_return(changes, values_dict={555: dict(branch='main')}),
       api.post_check(post_process.StatusSuccess), cq=True,
       git_repo=api.src_state.external_manifest.url,
@@ -290,7 +292,8 @@ def GenTests(api):
   manifest_internal_url = (
       'https://chrome-internal.googlesource.com/chromeos/manifest-versions')
   yield api.cros_source.test(
-      'sync-to-manifest-gitiles', api.post_check(post_process.StatusSuccess),
+      'sync-to-manifest-gitiles', manifest_branch,
+      api.post_check(post_process.StatusSuccess),
       cros_source_properties=CrosSourceProperties(
           sync_to_manifest=ManifestLocation(
               manifest_repo_url=manifest_internal_url,
@@ -300,7 +303,7 @@ def GenTests(api):
       ))
 
   yield api.cros_source.test(
-      'sync-to-manifest-gitiles-bad-url',
+      'sync-to-manifest-gitiles-bad-url', manifest_branch,
       api.post_check(post_process.StepFailure, 'sync to specified manifest'),
       cros_source_properties=CrosSourceProperties(
           sync_to_manifest=ManifestLocation(
@@ -311,7 +314,7 @@ def GenTests(api):
       ))
 
   yield api.cros_source.test(
-      'sync-to-manifest-gitiles-missing-args',
+      'sync-to-manifest-gitiles-missing-args', manifest_branch,
       api.post_check(post_process.StepFailure, 'sync to specified manifest'),
       cros_source_properties=CrosSourceProperties(
           sync_to_manifest=ManifestLocation(
@@ -321,7 +324,8 @@ def GenTests(api):
       ))
 
   yield api.cros_source.test(
-      'sync-to-manifest-gs', api.post_check(post_process.StatusSuccess),
+      'sync-to-manifest-gs', manifest_branch,
+      api.post_check(post_process.StatusSuccess),
       cros_source_properties=CrosSourceProperties(
           sync_to_manifest=ManifestLocation(
               manifest_gs_path='gs://buildspecs-internal/release/91/13818.0.0.xml'

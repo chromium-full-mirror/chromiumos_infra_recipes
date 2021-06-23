@@ -30,6 +30,7 @@ def RunSteps(api, properties):
   with api.context(cwd=repo_root.join('manifest-internal')):
     init_opts = MessageToDict(properties.init_opts,
                               preserving_proto_field_name=True)
+    init_opts['manifest_branch'] = 'snapshot'
     manifest_url = init_opts.pop('manifest_url', 'http://manifest_url')
     local_manifest = init_opts.pop('local_manifest', None)
     if local_manifest:
@@ -77,7 +78,6 @@ def WithArgsTest(api, state_name, state, local_manifest):
           ImageBuilderProperties(
               projects=['chromiumos/config', 'chromeos/project/puff/duffy'
                        ], init_opts=common.InitOpts(
-                           manifest_branch='mybranch',
                            manifest_name='snapshot.xml',
                            reference='/preload/chromeos',
                            groups=['group1', 'group2'],
@@ -102,7 +102,6 @@ def WithretryTest(api, state_name, state, local_manifest):
           ImageBuilderProperties(
               projects=['chromiumos/config', 'chromeos/project/puff/duffy'
                        ], init_opts=common.InitOpts(
-                           manifest_branch='mybranch',
                            manifest_name='snapshot.xml',
                            reference='/preload/chromeos',
                            groups=['group1', 'group2'],

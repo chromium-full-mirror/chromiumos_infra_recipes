@@ -12,10 +12,12 @@ from PB.chromiumos.repo_cache_state import RepoState
 
 
 def RunSteps(api):
+  init_opts = dict(manifest_branch='snapshot')
   checkout_path = api.path['cleanup'].join('ensure')
   repo_state_path = checkout_path.join('.recipes_state.json')
   api.path.mock_add_paths(repo_state_path)
-  api.repo.ensure_synced_checkout(checkout_path, 'http://manifest_url')
+  api.repo.ensure_synced_checkout(checkout_path, 'http://manifest_url',
+                                  init_opts=init_opts)
 
 
 def attempt_retry_repo(api, attempt):

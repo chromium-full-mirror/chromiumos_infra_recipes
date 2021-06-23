@@ -45,33 +45,35 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-
+  manifest_branch = 'snapshot'
   # The normal case for postsubmit: checkout the external manifest, so we can
   # push manifest refs.
   yield api.cros_source.test(
-      'basic-success', api.post_check(post_process.StatusSuccess),
+      'basic-success', manifest_branch,
+      api.post_check(post_process.StatusSuccess),
       api.properties(CheckoutManifestsProperties(checkout_external=True)),
       revision=None, cq=False, git_ref=None)
 
   yield api.cros_source.test(
-      'basic-failure',
+      'basic-failure', manifest_branch,
       api.properties(CheckoutManifestsProperties(checkout_external=True)),
       api.repo.fail_repo_sync(True),
       api.post_check(post_process.StepFailure, 'retry cache sync'),
       revision=None, cq=False, git_ref=None)
 
   # Running on an unpinned branch.
-  branch = 'release-R88-13597.B'
+  release_branch = 'release-R88-13597.B'
   yield api.cros_source.test(
-      'branch', api.properties(CheckoutManifestsProperties(branch_name=branch)),
+      'branch', release_branch,
+      api.properties(CheckoutManifestsProperties(branch_name=release_branch)),
       api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.StatusSuccess),
-      git_ref='refs/heads/{}'.format(branch), cq=False)
+      git_ref='refs/heads/{}'.format(release_branch), cq=False)
 
   # Two footers
   yield api.cros_source.test(
-      'two-footers',
-      api.properties(CheckoutManifestsProperties(branch_name='snapshot')),
+      'two-footers', manifest_branch,
+      api.properties(CheckoutManifestsProperties(branch_name=manifest_branch)),
       api.post_check(post_process.StatusAnyFailure),
       api.step_data('read git footers',
                     stdout=api.raw_io.output('\n'.join(['1' * 40, '2' * 40]))),

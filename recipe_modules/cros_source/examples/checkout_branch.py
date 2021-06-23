@@ -17,17 +17,22 @@ from recipe_engine import post_process
 from PB.recipe_modules.chromeos.cros_source.examples.checkout_branch import (
     CheckoutBranchProperties)
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+
 PROPERTIES = CheckoutBranchProperties
 
 
 def RunSteps(api, properties):
 
-  api.cros_source.configure_builder(default_main=True)
+  api.cros_source.configure_builder(default_main=False)
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
-      api.cros_source.ensure_synced_cache()
-      api.assertions.assertEqual(api.cros_source.manifest_branch, '')
-      api.assertions.assertEqual(api.cros_source.manifest_push, 'main')
+      api.cros_source.ensure_synced_cache(is_staging=properties.is_staging)
+      branch_name = 'staging-snapshot' if properties.is_staging else 'snapshot'
+      api.assertions.assertEqual(api.cros_source.manifest_branch, branch_name)
+      # Manifest changes get pushed to main
+      branch_name = branch_name if properties.is_staging else 'main'
+      api.assertions.assertEqual(api.cros_source.manifest_push, branch_name)
       api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
                                       properties.branch_name)
       api.assertions.assertEqual(api.cros_source.manifest_branch,
@@ -41,7 +46,9 @@ def GenTests(api):
   # Checking out an unpinned branch.
   branch = 'release-R86-13421.B'
   yield api.cros_source.test(
-      'basic', api.properties(CheckoutBranchProperties(branch_name=branch)),
+      'basic', 'snapshot',
+      api.properties(
+          CheckoutBranchProperties(branch_name=branch, is_staging=False)),
       api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.MustRun,
@@ -53,7 +60,9 @@ def GenTests(api):
   staging = 'staging-snapshot'
   yield api.cros_source.test(
       'staging-snapshot',
-      api.properties(CheckoutBranchProperties(branch_name=staging)),
+      staging,
+      api.properties(
+          CheckoutBranchProperties(branch_name=staging, is_staging=True)),
       api.step_data(
           'checkout branch %s.ensure manifest is pinned.repo forall' % staging,
           stdout=api.raw_io.output('')),
@@ -62,4 +71,5 @@ def GenTests(api):
           post_process.DoesNotRun,
           'checkout branch %s.ensure manifest is pinned.repo manifest' %
           staging),
-      api.post_check(post_process.MustRun, 'checkout branch %s' % staging))
+      api.post_check(post_process.MustRun, 'checkout branch %s' % staging),
+  )

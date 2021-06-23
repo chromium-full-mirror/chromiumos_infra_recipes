@@ -320,8 +320,7 @@ class CrosSourceApi(RecipeApi):
 
     return config
 
-  def _validate_args(self, manifest_url, local_manifests, groups, cache_path,
-                     manifest_branch):
+  def _validate_args(self, manifest_url, local_manifests, groups, cache_path):
     """Ensure the args to ensure_synced_cache are to a supported configuration.
 
     Supported configurations include:
@@ -336,14 +335,12 @@ class CrosSourceApi(RecipeApi):
       groups (list[str]): List of manifest groups to checkout.
       cache_path (Path): Path to sync into. If None, the cache_path
         property is used.
-      manifest_branch (str): The branch to check out, such as
-        'release-R86-13421.B'.
     Returns:
       If the configuration is supported, the type of configuration.
     """
     if cache_path == self.cache_path:
       if (manifest_url != self.m.src_state.internal_manifest.url or
-          local_manifests or groups or manifest_branch):
+          local_manifests or groups):
         raise ValueError('Only the internal manifest on the default branch can'
                          'be synced to the chromiumos cache path.')
       return 'INTERNAL'
@@ -370,7 +367,8 @@ class CrosSourceApi(RecipeApi):
 
   def ensure_synced_cache(self, manifest_url=None, init_opts=None,
                           sync_opts=None, cache_path_override=None,
-                          is_staging=False, projects=None, gitiles_commit=None):
+                          is_staging=False, projects=None, gitiles_commit=None,
+                          manifest_branch_override=None):
     """Ensure the configured repo cache exists and is synced.
 
     Args:
@@ -384,6 +382,9 @@ class CrosSourceApi(RecipeApi):
         all projects.
       * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
       current value.
+      * manifest_branch_override (str): If provided this will override the 
+        manifest_branch value in init_opts. If None then use the value returned
+        from configure_builder()
     """
     # Make sure that there is an active overlayfs.cleanup_context.
     # See crbug.com/1165775.
@@ -429,6 +430,14 @@ class CrosSourceApi(RecipeApi):
                                commit=MessageToDict(gitiles_commit))
 
     init_opts = init_opts or {}
+    # Initialize the cache on the branch given from configure_builder or the
+    # override value. If an incorrect format is given then default to
+    # (staging-)snapshot.
+    # Visit go/cros-snapshot-source-cache-dd for more background.
+    init_opts[
+        'manifest_branch'] = manifest_branch_override or self.m.git.extract_branch(
+            gitiles_commit.ref, '{}snapshot'.format(
+                'staging-' if self.m.cros_infra_config.is_staging else ''))
     if is_staging:
       init_opts.update(STAGING_INIT_OPTS)
       # Allow forcing the released version of repo on staging.
@@ -444,9 +453,10 @@ class CrosSourceApi(RecipeApi):
     retry_fetches = sync_opts.get('retry_fetches')
 
     configuration = self._validate_args(manifest_url, local_manifests, groups,
-                                        cache_path, manifest_branch)
+                                        cache_path)
     if configuration == 'INTERNAL':
-      self._sync_cached_dir(retry_fetches, projects, verbose,
+      self._sync_cached_dir(manifest_branch, retry_fetches=retry_fetches,
+                            projects=projects, verbose=verbose,
                             is_staging=is_staging)
     else:
       if not self.m.repo.ensure_synced_checkout(
@@ -637,10 +647,9 @@ class CrosSourceApi(RecipeApi):
 
   def checkout_tip_of_tree(self):
     """Check out the tip-of-tree in the workspace."""
-    # Right now, the named cache tracks tip-of-tree, so we have nothing to do,
-    # other than setting self._sync_target.
     self._sync_target = dict(call='checkout_tip_of_tree',
                              branch=self.m.src_state.internal_manifest.branch)
+    self.ensure_synced_cache(init_opts={'manifest_branch': 'main'})
 
   def fetch_snapshot_shas(self, count=7 * 24 * 2):
     """Return snapshot SHAs for the manifest.
@@ -663,12 +672,13 @@ class CrosSourceApi(RecipeApi):
           'https://{}/{}'.format(snapshot.host, snapshot.project), snapshot.id,
           count=count)
 
-  def _sync_cached_dir(self, retry_fetches=None, projects=None, verbose=False,
-                       is_staging=False):
+  def _sync_cached_dir(self, manifest_branch, retry_fetches=None, projects=None,
+                       verbose=False, is_staging=False):
     """Sync to the chromiumos overlay.
 
     Args:
       retry_fetches (int): The number of times to retry retriable fetches.
+      manifest_branch(str): Manifest branch to be used for init_opt.
       projects (List[str]): Projects to limit the sync to, or None to sync
         all projects.
       verbose (bool): Whether to produce verbose output.
@@ -678,7 +688,7 @@ class CrosSourceApi(RecipeApi):
       sync_path = self.cache_path
       manifest = self.m.src_state.internal_manifest
 
-      init_opts = dict(verbose=verbose)
+      init_opts = dict(verbose=verbose, manifest_branch=manifest_branch)
       if is_staging:
         init_opts.update(STAGING_INIT_OPTS)
       sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, verbose=verbose,
