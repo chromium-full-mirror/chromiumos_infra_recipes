@@ -21,6 +21,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 
 def RunSteps(api):
+  api.cros_source.configure_builder()
   with api.cros_source.checkout_overlays_context(), api.context(
       cwd=api.cros_source.workspace_path):
     api.cros_source.ensure_synced_cache()

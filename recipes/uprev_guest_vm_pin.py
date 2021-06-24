@@ -44,6 +44,7 @@ DEPS = [
     'git',
     'repo',
     'src_state',
+    'workspace_util',
 ]
 
 PROPERTIES = UprevGuestVmPinProperties
@@ -222,7 +223,7 @@ def RunSteps(api, properties):
     _validate_properties(properties)
     presentation.step_text = 'all properties good'
 
-  with api.cros_source.checkout_overlays_context():
+  with api.workspace_util.setup_workspace(default_main=True):
     # Sync the cache before we do anything that might touch the workspace.
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()

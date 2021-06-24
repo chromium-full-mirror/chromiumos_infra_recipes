@@ -13,6 +13,7 @@ from recipe_engine import post_process
 
 
 def RunSteps(api):
+  api.cros_source.configure_builder(default_main=True)
   with api.cros_source.checkout_overlays_context(), \
       api.context(cwd=api.cros_source.workspace_path):
     api.cros_source.ensure_synced_cache(projects=['chromiumos/config'])

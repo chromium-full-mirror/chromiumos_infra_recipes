@@ -42,14 +42,20 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     return self.m.src_state.workspace_path
 
   @contextlib.contextmanager
-  def setup_workspace(self):
+  def setup_workspace(self, default_main=False):
     """Prepare the source checkout for building.
+
+    Args:
+      default_main (bool): Whether to checkout tip-of-tree instead of snapshot
+        when no gitiles_commit was provided.
 
     Returns:
       A context where source is set up, and the current working directory is the
       workspace path.  Note that api.cros_source.cleanup_context() is generally
       going to be needed.
     """
+    if not self.m.cros_infra_config.is_configured:
+      self.m.cros_source.configure_builder(default_main=default_main)
     with self.m.cros_source.checkout_overlays_context():
       yield
 

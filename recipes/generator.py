@@ -65,8 +65,8 @@ PROPERTIES = GeneratorProperties
 
 
 def RunSteps(api, properties):
-  api.cros_infra_config.configure_builder(api.src_state.gitiles_commit,
-                                          api.src_state.gerrit_changes)
+  api.cros_source.configure_builder(api.src_state.gitiles_commit,
+                                    api.src_state.gerrit_changes)
   workspace_path = api.cros_source.workspace_path
 
   policies = list(properties.branch_policies)

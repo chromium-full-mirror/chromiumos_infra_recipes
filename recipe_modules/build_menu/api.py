@@ -177,8 +177,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       build = self.m.buildbucket.build
       changes = build.input.gerrit_changes
       commit = commit or self.m.buildbucket.gitiles_commit
-      config = self.m.cros_infra_config.configure_builder(
-          commit, changes, is_staging=is_staging)
+      config = self.m.cros_source.configure_builder(commit, changes,
+                                                    is_staging=is_staging)
       targets = targets or [self.build_target]
       if (changes and config and not config.build.apply_gerrit_changes):
         raise recipe_api.StepFailure(

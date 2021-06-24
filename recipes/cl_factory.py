@@ -51,6 +51,7 @@ DEPS = [
     'git',
     'repo',
     'src_state',
+    'workspace_util',
 ]
 
 _CHROMIOUS_CONFIG_PROJECT = 'chromiumos/config'
@@ -62,7 +63,7 @@ def RunSteps(api, properties):
   # Note that gerrit_changes is allowed to be empty.
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
 
-  with api.cros_source.checkout_overlays_context():
+  with api.workspace_util.setup_workspace(default_main=True):
 
     # We must sync the cache before we touch the workspace (which includes
     # calling api.repo methods).  Start by syncing just the projects in
