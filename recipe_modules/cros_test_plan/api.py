@@ -83,7 +83,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       # This is a very hacky way of reading in LTS specific testing configs.
       # Delete once rubik has a better way of specifying separate testing
       # config per branch.
-      if self.m.buildbucket.build.builder.builder == 'lts-cq-orchestrator':
+      if self.m.buildbucket.build.builder.builder.startswith('lts-cq-'):
         config_path = self.m.path.mkdtemp(prefix='lts-configs')
         self.m.git.clone(INFRA_CONFIG_URL, target_path=config_path,
                          timeout_sec=3 * 60)

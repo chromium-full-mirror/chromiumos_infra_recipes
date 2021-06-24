@@ -118,7 +118,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder config@id {@@@",
-      "@@@STEP_LOG_LINE@builder config@  name: \"lts-cq-orchestrator\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"lts-cq-release-R90-13816.B-orchestrator\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: CQ@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",

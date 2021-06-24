@@ -1761,7 +1761,7 @@
     },
     {
       "id": {
-        "name": "lts-cq-orchestrator",
+        "name": "lts-cq-release-R90-13816.B-orchestrator",
         "type": "CQ"
       },
       "general": {
