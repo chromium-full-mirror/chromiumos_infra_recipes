@@ -60,7 +60,6 @@ class CrosSourceApi(RecipeApi):
     # Set whenever we sync the workspace, rather than remaining on "whatever the
     # chromiumos named cache gave us".
     self._sync_target = {}
-    self._is_configured = False
 
   def initialize(self):
     """Initialization that follows all module loading."""
@@ -167,64 +166,6 @@ class CrosSourceApi(RecipeApi):
     """Returns the snapshot digest in use or None."""
     return self._snapshot_cas.digest if self._snapshot_cas else None
 
-  def configure_builder(self, commit=None, changes=None, is_staging=None,
-                        default_main=False, name='configure builder'):
-    """Configure the builder.
-
-    Fetch the builder config.
-    Determine the actual commit and changes to use.
-    Set the bisect_builder and use_flags.
-
-    Args:
-      commit (GitilesCommit): The gitiles commit to use.  Default:
-          GitilesCommit(.... ref='refs/heads/snapshot').
-      changes (list[GerritChange]): The gerrit changes to apply.  Default: the
-          gerrit_changes from buildbucket.
-      is_staging (bool): Whether the builder is staging, or None to have
-          configure_builder determine, based on buildbucket bucket and/or
-          config.general.environment.
-      default_main (bool): Whether the default branch should be 'main'.
-          Default: use the appropriate snapshot branch.
-      name (string): Step name.  Default: "configure builder".
-
-    Returns:
-      BuilderConfig or None
-    """
-    with self.m.step.nest(name=name):
-      self._is_configured = True
-      original_commit = commit or self.m.src_state.gitiles_commit
-      config = self.m.cros_infra_config.configure_builder(
-          commit=original_commit, changes=changes, is_staging=is_staging,
-          name='cros_infra_config', choose_branch=False)
-
-      commit = self.m.src_state.gitiles_commit
-      if not commit.ref:
-        # Neither buildbucket, nor the builder config provided a gitiles_commit.
-        # Figure out what gitiles_commit should be.
-
-        # TODO(b/191178496): Inspect the gerrit changes and see if a branch can be
-        # determined.
-
-        # Use the appropriate snapshot branch.
-        commit = self.m.src_state.build_manifest.as_gitiles_commit_proto
-        if not default_main:
-          commit.ref = 'refs/heads/{}snapshot'.format(
-              'staging-' if self.m.cros_infra_config.is_staging else '')
-
-      # If there is no commit id, fetch the current commit id for the reference.
-      if not commit.id:
-        test_data = dict(
-            branch=dict(revision='%s-HEAD-SHA' % commit.ref.split('/')[-1]))
-        commit.id = self.m.gitiles.fetch_revision(commit.host, commit.project,
-                                                  commit.ref,
-                                                  test_output_data=test_data)
-
-      # Record the decision for later.  Saving the values in src_state will log
-      # what we chose to use (rather than what we were given.)
-      self.m.src_state.gitiles_commit = commit
-
-    return config
-
   def _validate_args(self, manifest_url, local_manifests, groups, cache_path,
                      manifest_branch):
     """Ensure the args to ensure_synced_cache are to a supported configuration.
@@ -309,7 +250,6 @@ class CrosSourceApi(RecipeApi):
       # Disable packRefs before doing merges. See https://crbug.com/1057878.
       self.m.git.set_global_config(['gc.packRefs', 'false'])
 
-    assert self._is_configured, 'cros_source not configured'
     if self._enable_custom_overlays:
       self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
                              persist=True)
@@ -1066,9 +1006,9 @@ class CrosSourceApi(RecipeApi):
             manifest_url, ",".join(ALLOWED_MANIFEST_SOURCES)))
 
       testdata = '<manifest></manifest>'
-      step_test_data = lambda: self.m.depot_gitiles.test_api.make_encoded_file(
+      step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file(
           testdata)
-      manifest_xml = self.m.depot_gitiles.download_file(
+      manifest_xml = self.m.gitiles.download_file(
           manifest_url, manifest_path, manifest_branch,
           step_test_data=step_test_data, accept_statuses=[200],
           timeout=self.test_api.gitiles_timeout_seconds)
@@ -1163,10 +1103,9 @@ class CrosSourceApi(RecipeApi):
                                      gitiles_commit.project)
 
     testdata = '<manifest></manifest>'
-    step_test_data = lambda: self.m.depot_gitiles.test_api.make_encoded_file(
-        testdata)
+    step_test_data = lambda: self.m.gitiles.test_api.make_encoded_file(testdata)
 
-    data = self.m.depot_gitiles.download_file(
+    data = self.m.gitiles.download_file(
         gitiles_url, 'snapshot.xml', branch=gitiles_commit.id,
         step_test_data=step_test_data, accept_statuses=[200, 404],
         timeout=self.test_api.gitiles_timeout_seconds)

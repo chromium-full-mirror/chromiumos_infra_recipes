@@ -36,7 +36,7 @@ def RunSteps(api, properties):
     # This builder doesn't have a builder config, but we want the shared
     # handling of gitiles_commit and gerrit_changes, and enough of a config to
     # let us work.
-    api.cros_source.configure_builder(
+    api.cros_infra_config.configure_builder(
         api.buildbucket.gitiles_commit,
         api.buildbucket.build.input.gerrit_changes)
 
@@ -44,8 +44,8 @@ def RunSteps(api, properties):
 
 
 def _FullCheckout(api, properties):
-  gitiles_commit = api.src_state.gitiles_commit
-  gerrit_changes = api.src_state.gerrit_changes
+  gitiles_commit = api.cros_infra_config.gitiles_commit
+  gerrit_changes = api.cros_infra_config.gerrit_changes
   is_staging = api.cros_infra_config.is_staging
   project_names = properties.project_names
 

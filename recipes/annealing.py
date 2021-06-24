@@ -55,18 +55,11 @@ PROPERTIES = AnnealingProperties
 
 
 def RunSteps(api, properties):
-  commit = api.src_state.gitiles_commit
-  cq_run = api.cq.active
-  # If we have a commit.ref, then this must be a CQ run.
-  assert cq_run or not commit.ref, "GitilesCommit provided for non-CQ run"
-
-  # If this is not a CQ run, we need to sync tip-of-tree.  If it is, then we
-  # should sync to the provided commit, or snapshot if none was provided.
-  api.cros_source.configure_builder(default_main=not cq_run)
-
   # If we're configured not to publish uprev's run as staging.
   is_staging = not properties.publish_uprevs
   workspace_path = api.src_state.workspace_path
+
+  commit = api.src_state.gitiles_commit
   prior_internal = prior_external = diffs = None
   dry_run = api.cq.active or properties.dry_run
   manifest_ref = properties.manifest_ref
@@ -89,7 +82,6 @@ def RunSteps(api, properties):
 
       if api.cq.active and not commit.id:
         # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
-        # This may be different from a provided GitilesCommit, but that is OK.
         ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)
         commit.host = commit.host or api.src_state.internal_manifest.host
         commit.project = commit.project or internal_manifest.project

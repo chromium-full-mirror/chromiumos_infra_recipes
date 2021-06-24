@@ -23,13 +23,6 @@ message BuilderProperties {
   // Expected value for is_staging.
   bool expected_is_staging = 4;
 
-  // Whether to expect an unset gitiles_commit.
-  bool expect_empty_gitiles_commit = 5;
-
-  // Expected gitiles commit.  If not set and expect_empty_gitiles_commit is
-  // False, then defaults are provided.
-  buildbucket.v2.GitilesCommit expected_gitiles_commit = 6;
-
-  // Whether to pass choose_branch=False
-  bool no_choose_branch = 7;
+  // Expected gitiles commit.  If not set, defaults are provided.
+  buildbucket.v2.GitilesCommit expected_gitiles_commit = 5;
 }

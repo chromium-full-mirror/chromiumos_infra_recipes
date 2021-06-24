@@ -9,7 +9,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/properties',
     'cros_cache',
-    'cros_source',
+    'cros_infra_config',
     'repo',
     'test_util',
     'workspace_util',
@@ -29,9 +29,10 @@ def RunSteps(api, properties):
   changes = api.buildbucket.build.input.gerrit_changes
 
   # Configure the builder so that we have
-  # self.m.cros_source.gitiles_commit. All of our tests will be with
+  # self.m.cros_infra_config.gitiles_commit. All of our tests will be with
   # builders that have configs.
-  config = api.cros_source.configure_builder()
+  config = api.cros_infra_config.configure_builder(commit=commit,
+                                                   changes=changes)
   cache_dir = api.cros_cache.create_cache_dir('temp_cache')
   with api.workspace_util.sync_to_manifest_groups(
       ['group1', 'group2'],

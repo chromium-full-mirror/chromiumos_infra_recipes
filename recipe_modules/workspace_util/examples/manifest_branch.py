@@ -6,7 +6,7 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'cros_cache',
-    'cros_source',
+    'cros_infra_config',
     'workspace_util',
 ]
 
@@ -18,7 +18,8 @@ def RunSteps(api):
   # Configure the builder so that we have
   # self.m.cros_infra_config.gitiles_commit. All of our tests will be with
   # builders that have configs.
-  config = api.cros_source.configure_builder()
+  config = api.cros_infra_config.configure_builder(commit=commit,
+                                                   changes=changes)
   cache_dir = api.cros_cache.create_cache_dir('temp_cache')
   with api.workspace_util.sync_to_manifest_groups(
       ['group1', 'group2'], manifest_branch="release-R123",

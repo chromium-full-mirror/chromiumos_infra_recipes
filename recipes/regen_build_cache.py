@@ -24,13 +24,12 @@ DEPS = [
     'git',
     'repo',
     'util',
-    'workspace_util',
 ]
 
 
 def RunSteps(api):
-  with api.workspace_util.setup_workspace(
-      default_main=True), api.cros_sdk.cleanup_context():
+  with api.cros_source.checkout_overlays_context(), \
+      api.cros_sdk.cleanup_context():
 
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()

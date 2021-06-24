@@ -4,18 +4,14 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'recipe_engine/context',
-    'recipe_engine/step',
-    'cros_cache',
-    'cros_source',
-    'repo',
-    'workspace_util',
+    'recipe_engine/context', 'recipe_engine/step', 'cros_cache', 'cros_source',
+    'repo'
 ]
 
 
 def RunSteps(api):
   cache_dir = api.cros_cache.create_cache_dir('temp_cache')
-  with api.workspace_util.setup_workspace(default_main=True), \
+  with api.cros_source.checkout_overlays_context(), \
       api.context(cwd=cache_dir):
     api.cros_source.ensure_synced_cache()
     cache_file, version_file = api.cros_cache.package_source(

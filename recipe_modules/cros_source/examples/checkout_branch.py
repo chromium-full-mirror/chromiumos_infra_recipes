@@ -22,7 +22,6 @@ PROPERTIES = CheckoutBranchProperties
 
 def RunSteps(api, properties):
 
-  api.cros_source.configure_builder(default_main=True)
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache()
@@ -49,7 +48,7 @@ def GenTests(api):
           branch),
       api.post_check(post_process.MustRun, 'checkout branch %s' % branch))
 
-  # Checking out a pinned branch.
+  # Checking out the pinned branch.
   staging = 'staging-snapshot'
   yield api.cros_source.test(
       'staging-snapshot',

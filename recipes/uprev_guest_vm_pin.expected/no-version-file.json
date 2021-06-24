@@ -14,9 +14,9 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 223, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 222, in RunSteps",
       "    _validate_properties(properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 95, in _validate_properties",
+      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_guest_vm_pin.py\", line 94, in _validate_properties",
       "    raise ValueError('must set version_file')",
       "ValueError: must set version_file"
     ]

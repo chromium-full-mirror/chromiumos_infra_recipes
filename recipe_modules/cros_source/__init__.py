@@ -2,29 +2,28 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-DEPS = {
-    'archive': 'recipe_engine/archive',
-    'cas': 'recipe_engine/cas',
-    'context': 'recipe_engine/context',
-    'file': 'recipe_engine/file',
-    'path': 'recipe_engine/path',
-    'properties': 'recipe_engine/properties',
-    'raw_io': 'recipe_engine/raw_io',
-    'step': 'recipe_engine/step',
-    'depot_gitiles': 'depot_tools/gitiles',
-    'bot_cost': 'bot_cost',
-    'cros_infra_config': 'cros_infra_config',
-    'easy': 'easy',
-    'gerrit': 'gerrit',
-    'git': 'git',
-    'gitiles': 'gitiles',
-    'git_footers': 'git_footers',
-    'overlayfs': 'overlayfs',
-    'repo': 'repo',
-    'src_state': 'src_state',
-    'test_util': 'test_util',
-    'util': 'util',
-}
+DEPS = [
+    'recipe_engine/archive',
+    'recipe_engine/cas',
+    'recipe_engine/context',
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/properties',
+    'recipe_engine/raw_io',
+    'recipe_engine/step',
+    'depot_tools/gitiles',
+    'bot_cost',
+    'cros_infra_config',
+    'easy',
+    'gerrit',
+    'git',
+    'git_footers',
+    'overlayfs',
+    'repo',
+    'src_state',
+    'test_util',
+    'util',
+]
 
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties)

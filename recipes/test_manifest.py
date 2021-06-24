@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'cros_branch',
+    'cros_infra_config',
     'cros_source',
     'repo',
     'src_state',
@@ -37,7 +38,7 @@ def RunSteps(api, properties):
   def _setup():
     """Set up the various contexts, and sync source."""
     # This will set up api.src_state properties for us.
-    api.cros_source.configure_builder(api.src_state.gitiles_commit)
+    api.cros_infra_config.configure_builder(api.src_state.gitiles_commit)
 
     with api.cros_source.checkout_overlays_context():
       api.cros_source.ensure_synced_cache()

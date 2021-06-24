@@ -16,7 +16,6 @@ from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 
 
 def RunSteps(api):
-  api.cros_source.configure_builder(default_main=True)
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       try:

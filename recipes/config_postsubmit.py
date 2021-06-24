@@ -36,7 +36,6 @@ DEPS = [
     'git_txn',
     'repo',
     'src_state',
-    'workspace_util',
 ]
 
 from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
@@ -436,7 +435,7 @@ def RunSteps(api, properties):
     # cancelled/removed projects who's repos haven't been deleted yet.
     return [info for info in project_infos if info.name in names]
 
-  with api.workspace_util.setup_workspace(default_main=True):
+  with api.cros_source.checkout_overlays_context():
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()
 

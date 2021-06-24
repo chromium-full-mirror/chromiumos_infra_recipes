@@ -181,7 +181,7 @@ class OrchMenuApi(RecipeApi):
         self.m.cros_source.checkout_overlays_context():
       with self.m.step.nest('set up orchestrator') as presentation:
         self._validate_properties()
-        config = self.m.cros_source.configure_builder(
+        config = self.m.cros_infra_config.configure_builder(
             self.m.buildbucket.gitiles_commit,
             self.m.buildbucket.build.input.gerrit_changes)
 

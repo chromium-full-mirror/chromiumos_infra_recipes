@@ -9,7 +9,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/properties',
-    'cros_source',
+    'cros_infra_config',
     'src_state',
     'test_util',
     'workspace_util',
@@ -29,8 +29,11 @@ def RunSteps(api, properties):
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
-  config = api.cros_source.configure_builder(commit, changes)
-
+  # Configure the builder so that we have
+  # self.m.cros_infra_config.gitiles_commit. All of our tests will be with
+  # builders that have configs.
+  config = api.cros_infra_config.configure_builder(commit=commit,
+                                                   changes=changes)
   # Note that any use case involving a chroot (SDK) will say:
   #   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
   with api.workspace_util.setup_workspace(), \

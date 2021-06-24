@@ -26,10 +26,8 @@ def RunSteps(api):
                               project='privateproject2', change=789),
   ]
 
-  # Call setup_workspace without first calling configure_builder.
-  with api.workspace_util.setup_workspace():
-    with api.assertions.assertRaises(api.step.StepFailure):
-      api.workspace_util.apply_changes(changes, name='failing apply changes')
+  with api.assertions.assertRaises(api.step.StepFailure):
+    api.workspace_util.apply_changes(changes, name='failing apply changes')
 
   api.workspace_util.apply_changes(changes, ignore_missing_projects=True,
                                    name='successful apply changes')

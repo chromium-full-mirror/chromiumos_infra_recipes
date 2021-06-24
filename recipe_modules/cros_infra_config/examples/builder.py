@@ -12,10 +12,15 @@ DEPS = [
     'test_util',
 ]
 
+from google.protobuf import json_format
 from recipe_engine import post_process
 
 from PB.chromiumos import common
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipes.chromeos.build_target import BuildTargetProperties
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
+    CrosInfraConfigProperties)
 from PB.recipe_modules.chromeos.cros_infra_config.examples.builder import (
     BuilderProperties)
 
@@ -31,9 +36,9 @@ def RunSteps(api, properties):
   is_staging = None
   if properties.HasField('is_staging'):
     is_staging = properties.is_staging.value
-  config = api.cros_infra_config.configure_builder(
-      commit=commit, changes=changes, is_staging=is_staging,
-      choose_branch=not properties.no_choose_branch)
+  config = api.cros_infra_config.configure_builder(commit=commit,
+                                                   changes=changes,
+                                                   is_staging=is_staging)
   api.assertions.assertTrue(api.cros_infra_config.is_configured)
   api.assertions.assertEqual(config, api.cros_infra_config.config)
 
@@ -46,20 +51,17 @@ def RunSteps(api, properties):
   expected_is_staging = properties.expected_is_staging
   p_commit = properties.expected_gitiles_commit
   i_manifest = api.src_state.internal_manifest
-
-  expected_commit = common_pb2.GitilesCommit()
-  if not properties.expect_empty_gitiles_commit:
-    expect_host = p_commit.host or i_manifest.host
-    expect_project = p_commit.project or i_manifest.project
-    expect_id = (
-        p_commit.id or
-        '{}snapshot-HEAD-SHA'.format('staging-' if expected_is_staging else ''))
-    expect_ref = (
-        p_commit.ref or 'refs/heads/{}snapshot'.format(
-            'staging-' if expected_is_staging else ''))
-    expected_commit = common_pb2.GitilesCommit(host=expect_host,
-                                               project=expect_project,
-                                               id=expect_id, ref=expect_ref)
+  expect_host = p_commit.host or i_manifest.host
+  expect_project = p_commit.project or i_manifest.project
+  expect_id = (
+      p_commit.id or
+      '{}snapshot-HEAD-SHA'.format('staging-' if expected_is_staging else ''))
+  expect_ref = (
+      p_commit.ref or
+      'refs/heads/{}snapshot'.format('staging-' if expected_is_staging else ''))
+  expected_commit = common_pb2.GitilesCommit(host=expect_host,
+                                             project=expect_project,
+                                             id=expect_id, ref=expect_ref)
 
   api.assertions.assertEqual(expected_commit,
                              api.cros_infra_config.gitiles_commit)
@@ -89,8 +91,7 @@ def GenTests(api):
   e_manifest = api.src_state.external_manifest
 
   def builder(build_target='grunt', is_staging=None, expected_is_staging=False,
-              expected_gitiles_commit=None, expect_empty_gitiles_commit=False,
-              choose_branch=True, **kwargs):
+              expected_gitiles_commit=None, **kwargs):
     kwargs['exe'] = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
                                           cipd_version='prod')
     build = api.test_util.test_child_build(build_target, **kwargs)
@@ -98,9 +99,7 @@ def GenTests(api):
         builder=build.message.builder.builder,
         build_target=common.BuildTarget(name=build_target),
         expected_is_staging=expected_is_staging,
-        expected_gitiles_commit=expected_gitiles_commit,
-        expect_empty_gitiles_commit=expect_empty_gitiles_commit,
-        no_choose_branch=not choose_branch)
+        expected_gitiles_commit=expected_gitiles_commit)
     if is_staging is not None:
       props.is_staging.value = is_staging
     # None of these example cases should fail, so verify that the build finished
@@ -180,15 +179,6 @@ def GenTests(api):
               host=i_manifest.host, project=i_manifest.project,
               ref='refs/heads/snapshot', id='5' * 40),
           extra_changes=[common_pb2.GerritChange(change=1234)]))
-
-  yield api.test(
-      'apply_gerrit_changes_false_no_choose_branch',
-      builder(build_target='grunt', builder='grunt-postsubmit',
-              choose_branch=False,
-              extra_changes=[common_pb2.GerritChange(change=1234)], cq=True,
-              expect_empty_gitiles_commit=True),
-      api.post_check(post_process.DoesNotRun,
-                     'configure builder.update src_state.gitiles_commit'))
 
   yield api.test(
       'has_parent',

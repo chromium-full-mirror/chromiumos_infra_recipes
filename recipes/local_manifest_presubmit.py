@@ -26,7 +26,6 @@ DEPS = [
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'cros_infra_config',
-    'cros_source',
     'git',
     'gs_step_logging',
     'repo',
@@ -46,7 +45,7 @@ def RunSteps(api, properties):
     commit = (api.src_state.external_manifest
               if properties.use_external_manifest else
               api.src_state.internal_manifest).as_gitiles_commit_proto
-  api.cros_source.configure_builder(commit, api.src_state.gerrit_changes)
+  api.cros_infra_config.configure_builder(commit, api.src_state.gerrit_changes)
 
   if not properties.project:
     raise ValueError('The project must be specified.')
