@@ -164,7 +164,9 @@ class SrcStateApi(recipe_api.RecipeApi):
         step.presentation.properties['commit'] = MessageToDict(gitiles_commit or
                                                                GitilesCommit())
         self._gitiles_commit = gitiles_commit
-        if gitiles_commit:
+        if (gitiles_commit and gitiles_commit.host and
+            gitiles_commit.project and gitiles_commit.ref and
+            gitiles_commit.id):
           self.m.buildbucket.set_output_gitiles_commit(gitiles_commit)
 
   @property

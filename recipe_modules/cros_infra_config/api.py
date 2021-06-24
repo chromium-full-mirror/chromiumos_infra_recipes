@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
 from google.protobuf.json_format import MessageToDict, Parse, ParseDict
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
@@ -22,7 +20,8 @@ from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.testplans.test_retry import SuiteRetryCfg
 
-CHROME_OS_REPO_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
+CHROME_OS_REPO_URL = (
+    'https://chrome-internal.googlesource.com/chromeos/infra/config')
 CHROME_REPO_URL = 'https://chrome-internal.googlesource.com/infradata/config'
 
 
@@ -186,8 +185,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
-  def _download_binproto(self, filename, step_test_data, branch='HEAD',
-                         timeout=None, application='ChromeOS', message=None):
+  def _download_binproto(self, filename, step_test_data, timeout=None,
+                         application='ChromeOS', message=None):
     """Helper method to fetch a file from gititles."""
     repo = CHROME_OS_REPO_URL
     if application == 'Chrome':
@@ -352,6 +351,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       Bool whether the builder has a valid commit.
     """
+    # We only accept commits on refs/heads/.
+    if not commit.ref.startswith('refs/heads/'):
+      return False
+
     # Private builders should use the internal gitiles commit.
     if config:
       return commit in manifest
@@ -361,7 +364,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return (commit in self.m.src_state.internal_manifest or
             commit in self.m.src_state.external_manifest)
 
-  def _determine_repo_state(self, config, commit, changes):
+  def _determine_repo_state(self, config, commit, changes, choose_branch):
     """Set _gitiles_commit and _gerrit_changes.
 
     If the commit and/or changes are other than what was given, that is added as
@@ -373,6 +376,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         buildbucket, or GitilesCommit(..., ref='refs/heads/snapshot').
       changes: (list[GerritChange]): The gerrit changes to apply.  Default: The
           currently stored list (initially the list from buildbucket.)
+      choose_branch (bool): Whether to choose a branch when none is provided.
     """
     commit = commit or self.m.src_state.gitiles_commit
     changes = self.m.src_state.gerrit_changes if changes is None else changes
@@ -395,10 +399,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     if (commit.ref and self._properties.honor_gitiles_commit_ref and
         not self._has_valid_commit(None, commit, manifest)):
       commit = manifest.as_gitiles_commit_proto
-      # TODO(crbug/1152875): Once manifest-internal migrates to main, this is
-      # not needed.  Meanwhile, if the original ref matches the external
-      # manifest (which has moved), then use the manifest ref from the active
-      # manifest.
+      # TODO(crbug/1152875): Once manifest-internal is on main on all supported
+      # branches, this is not needed.  Meanwhile, if the original ref matches
+      # the external manifest (which has moved), then use the manifest ref from
+      # the active manifest.
       if original_commit.ref != self.m.src_state.external_manifest.ref:
         commit.ref = original_commit.ref
 
@@ -411,20 +415,23 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Use the appropriate snapshot from the appropriate manifest.
     if not self._has_valid_commit(config, commit, manifest):
       commit = manifest.as_gitiles_commit_proto
-      commit.ref = 'refs/heads/{}snapshot'.format(
-          'staging-' if self._is_staging else '')
+      if choose_branch:
+        commit.ref = 'refs/heads/{}snapshot'.format(
+            'staging-' if self._is_staging else '')
+      else:
+        # No valid commit, but we don't get to choose one.  Clear it, and do not
+        # set build_manifest.
+        commit.ref = ''
+        commit.id = ''
 
-    # If there is no commit id, fetch the current commit id for the reference.
-    if not commit.id:
-      test_data = dict(
-          branch=dict(revision='%s-HEAD-SHA' % commit.ref.split('/')[-1]))
-      gitiles_id = self.m.gitiles.fetch_revision(commit.host, commit.project,
-                                                 commit.ref,
-                                                 test_output_data=test_data)
-      commit.id = gitiles_id
-
-    # Remember if we changed the commit from the passed value.
-    changed = commit != original_commit
+    if commit and commit.ref and not commit.id:
+      # If there is no commit id, fetch the current commit id for the reference.
+      if not commit.id:
+        test_data = dict(
+            branch=dict(revision='%s-HEAD-SHA' % commit.ref.split('/')[-1]))
+        commit.id = self.m.gitiles.fetch_revision(commit.host, commit.project,
+                                                  commit.ref,
+                                                  test_output_data=test_data)
 
     # If we are not ignoring the changelist in the config then insert any such
     # to the changelist.
@@ -435,11 +442,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       ]
     if extra_changes:
       changes = extra_changes + [x for x in changes if x not in extra_changes]
-      changed = True
 
     # If there is no config, then either manifest is allowed.  If there is, then
     # the assignment above is correct.
-    if not config:
+    if commit and commit.id and not config:
       manifest = (
           self.m.src_state.internal_manifest
           if commit in self.m.src_state.internal_manifest else
@@ -448,7 +454,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Record the decision for later.  Saving the values in src_state will log
     # what we chose to use (rather than what we were given.)
     self.m.src_state.gitiles_commit = commit
-    self.m.src_state.build_manifest = manifest
+    if manifest:
+      self.m.src_state.build_manifest = manifest
     self.m.src_state.gerrit_changes = changes or []
 
   def _get_package_git_revision(self):
@@ -465,7 +472,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return ret
 
   def configure_builder(self, commit=None, changes=None, is_staging=None,
-                        name='configure builder'):
+                        name='configure builder', choose_branch=True):
     """Configure the builder.
 
     Fetch the builder config.
@@ -516,11 +523,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # TODO(crbug/1053073): once changes is being stripped by callers, we can
       # drop the check of apply_gerrit_changes.
       # For now, we need to handle this here.
-      if (config and config.HasField('build') and
+      if (changes and config and config.HasField('build') and
           not config.build.apply_gerrit_changes):
         changes = []
 
-      self._determine_repo_state(config, commit, changes)
+      self._determine_repo_state(config, commit, changes,
+                                 choose_branch=choose_branch)
 
     self._is_configured = True
     return config
