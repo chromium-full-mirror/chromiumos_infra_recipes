@@ -41,7 +41,7 @@ DEPS = [
 PROPERTIES = TestVmProperties
 
 PRIVATE_KEY_NAME = 'id_rsa'
-VM_IMAGE_NAME = 'chromiumos_qemu_image.bin'
+VM_IMAGE_NAME = 'chromiumos_test_image.bin'
 
 
 def RunSteps(api, properties):
