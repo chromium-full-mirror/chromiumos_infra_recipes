@@ -48,7 +48,7 @@ def GenTests(api):
           branch),
       api.post_check(post_process.MustRun, 'checkout branch %s' % branch))
 
-  # Checking out the pinned branch.
+  # Checking out a pinned branch.
   staging = 'staging-snapshot'
   yield api.cros_source.test(
       'staging-snapshot',

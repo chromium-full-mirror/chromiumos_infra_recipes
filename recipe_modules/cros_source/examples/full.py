@@ -34,14 +34,7 @@ PROPERTIES = FullProperties
 
 
 def RunSteps(api, properties):
-  # This is normally done by cros_infra_config.configure_builder().
-  if (api.buildbucket.build.input.gitiles_commit.host ==
-      api.src_state.internal_manifest.host):
-    api.src_state.build_manifest = api.src_state.internal_manifest
-  elif (api.buildbucket.build.input.gitiles_commit.host ==
-        api.src_state.external_manifest.host):
-    api.src_state.build_manifest = api.src_state.external_manifest
-  _ = api.cros_source.workspace_path
+  api.cros_source.configure_builder()
 
   try:
     api.cros_source.find_project_paths('fake_project', 'fake_branch')
@@ -97,6 +90,11 @@ def GenTests(api):
       'basic-failure', api.repo.fail_repo_sync(True),
       api.post_check(post_process.StepFailure,
                      'sync cached directory.retry cache sync'))
+
+  yield api.cros_source.test(
+      'chrome-ref', api.post_check(post_process.StatusSuccess),
+      git_repo='https://chromium.googlesource.com/chromium/src',
+      git_ref='refs/tags/93.0.4552.0')
 
   sync_step_name = ('sync to gitiles commit.fetch '
                     '2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml')
