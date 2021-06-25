@@ -68,7 +68,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/snapshot/snapshot_chromeos"
+      "[CLEANUP]/snapshot/chromeos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -84,7 +84,7 @@
       "sudo",
       "mount",
       "/dev/sdb",
-      "[CLEANUP]/snapshot/snapshot_chromeos"
+      "[CLEANUP]/snapshot/chromeos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -105,6 +105,99 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--groups",
+      "all",
+      "--repo-rev=stable"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--force-sync",
       "--detach",
@@ -115,7 +208,7 @@
       "--retry-fetches",
       "8"
     ],
-    "cwd": "[CLEANUP]/snapshot/snapshot_chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -160,7 +253,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/snapshot/snapshot_chrome"
+      "[CLEANUP]/snapshot/chrome"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -176,7 +269,7 @@
       "sudo",
       "mount",
       "/dev/sdc",
-      "[CLEANUP]/snapshot/snapshot_chrome"
+      "[CLEANUP]/snapshot/chrome"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -208,9 +301,17 @@
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
-      "solutions = [{'url': 'https://chromium.googlesource.com/chromium/src.git', 'managed': False, 'name': 'src', 'custom_vars': {'checkout_src_internal': True}, 'custom_deps': {}}]\ncache_dir = '[CLEANUP]/snapshot/snapshot_chrome/chrome_cache'"
+      "solutions = [{'url': 'https://chromium.googlesource.com/chromium/src.git', 'managed': False, 'name': 'src', 'custom_vars': {'checkout_src_internal': True}, 'custom_deps': {}}]\ncache_dir = '../chrome_cache'"
     ],
-    "cwd": "[CLEANUP]/snapshot/snapshot_chrome/src",
+    "cwd": "[CLEANUP]/snapshot/chrome/src",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.gclient config",
     "~followup_annotations": [
@@ -221,18 +322,51 @@
     "cmd": [
       "python",
       "-u",
-      "RECIPE_REPO[depot_tools]/gclient.py",
-      "sync",
-      "--force",
-      "--reset",
-      "--verbose",
-      "--with_branch_heads",
-      "--with_tags"
+      "RECIPE_REPO[depot_tools]/git_cache.py",
+      "populate",
+      "-v",
+      "--cache-dir",
+      "../chrome_cache",
+      "https://chromium.googlesource.com/chromium/src.git",
+      "--reset-fetch-config",
+      "--no-fetch-tags",
+      "--ref",
+      "refs/heads/main"
     ],
-    "cwd": "[CLEANUP]/snapshot/snapshot_chrome/src",
+    "cwd": "[CLEANUP]/snapshot/chrome/src",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.populate git cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "sync"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chrome/src",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.gclient sync",
-    "timeout": 5400,
+    "timeout": 3600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -247,7 +381,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "snapshot_chromeos"
+      "chromeos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -261,7 +395,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "snapshot_chrome"
+      "chrome"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

@@ -18,10 +18,11 @@ from PB.chromite.api.packages import NeedsChromeSourceResponse
 from PB.chromiumos.common import PackageInfo
 
 CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
+CHROMIUM_GIT_URL = 'https://chromium.googlesource.com/chromium/src.git'
 
 GCLIENT_CACHE_CONFIG = [
     {
-        "url": "https://chromium.googlesource.com/chromium/src.git",
+        "url": CHROMIUM_GIT_URL,
         "managed": False,
         "name": "src",
         "custom_deps": {},
@@ -82,31 +83,39 @@ class ChromeApi(recipe_api.RecipeApi):
       cache_path (Path): Path to mount of cache.
     """
     with self.m.step.nest('sync chrome'):
-      cache_dir = cache_path.join('chrome_cache')
       src_dir = cache_path.join('src')
       config_exists = self.m.path.exists(src_dir.join('.gclient'))
-      gclient_config_cmd = [
-          'config', '--spec',
-          "solutions = {}\ncache_dir = '{}'".format(GCLIENT_CACHE_CONFIG,
-                                                    cache_dir)
-      ]
-      with self.m.context(cwd=src_dir):
+      with self.m.context(cwd=src_dir), \
+          self.m.depot_tools.on_path():
         if not config_exists:
+          gclient_config_cmd = [
+              'config', '--spec',
+              "solutions = {}\ncache_dir = '../chrome_cache'".format(
+                  GCLIENT_CACHE_CONFIG)
+          ]
           self.m.python('gclient config',
                         self.m.depot_tools.root.join('gclient.py'),
                         gclient_config_cmd, infra_step=True)
+        cache_cmd = [
+            'populate',
+            '-v',
+            '--cache-dir',
+            '../chrome_cache',
+            CHROMIUM_GIT_URL,
+            '--reset-fetch-config',
+            '--no-fetch-tags',
+            '--ref',
+            'refs/heads/main',
+        ]
+        self.m.python('populate git cache',
+                      self.m.depot_tools.root.join('git_cache.py'), cache_cmd,
+                      infra_step=True)
         gclient_sync_cmd = [
             'sync',
-            '--force',
-            '--reset',
-            '--verbose',
-            '--with_branch_heads',
-            '--with_tags',
         ]
         self.m.python('gclient sync',
                       self.m.depot_tools.root.join('gclient.py'),
-                      gclient_sync_cmd, infra_step=True,
-                      timeout=self.test_api.gclient_sync_timeout_seconds)
+                      gclient_sync_cmd, infra_step=True, timeout=60 * 60)
 
   def sync(self, chrome_root, chroot, build_target, internal):
     """Sync Chrome source code.

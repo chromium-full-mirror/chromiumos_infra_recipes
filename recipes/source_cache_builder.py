@@ -7,6 +7,7 @@
 
 DEPS = [
     'recipe_engine/context',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/swarming',
@@ -14,6 +15,7 @@ DEPS = [
     'chrome',
     'gcloud',
     'repo',
+    'src_state',
 ]
 
 import re
@@ -52,6 +54,9 @@ def RunSteps(api, properties):
           with api.step.nest('sync mounted cache directories'):
             if cache.command == 'repo':
               with api.context(cwd=mount_path):
+                if not api.path.exists(mount_path.join('.repo')):
+                  api.repo.init(
+                      manifest_url=api.src_state.internal_manifest.url)
                 api.repo.sync(force_sync=True, detach=True, jobs=20,
                               no_tags=True, optimized_fetch=True,
                               retry_fetches=8, timeout=10800)
@@ -102,7 +107,7 @@ def GenTests(api):
       api.properties(cache_definition=[
           dict(
               cache_name='chromiumos',
-              cache_directory='snapshot_chromeos',
+              cache_directory='chromeos',
               compute_disk='test-disk1',
               snapshot_prefix='test-chromeos-prefix',
               version_file='test-chromeos-version',
@@ -110,7 +115,7 @@ def GenTests(api):
           ),
           dict(
               cache_name='chrome',
-              cache_directory='snapshot_chrome',
+              cache_directory='chrome',
               compute_disk='test-disk2',
               snapshot_prefix='test-chrome-prefix',
               version_file='test-chrome-version',
