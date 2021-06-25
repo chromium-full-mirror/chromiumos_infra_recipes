@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
+    'cros_infra_config',
     'cros_source',
     'gerrit',
     'src_state',
@@ -58,6 +59,8 @@ def GenTests(api):
 
   change1 = _change(555)
   change2 = _change(556)
+  conf_change1 = _change(557, project='chromeos/infra/config', patchset=1)
+  conf_change2 = _change(558, project='chromeos/infra/config', patchset=1)
 
   yield api.cros_source.test(
       'basic', props(ref='refs/heads/snapshot', id='snapshot-HEAD-SHA'),
@@ -67,22 +70,38 @@ def GenTests(api):
   yield api.cros_source.test(
       'change-on-branch', props(ref=refspec, id=revision),
       api.post_check(post_process.StatusSuccess),
-      _gerrit_return([change1], values_dict={555: dict(branch=refspec)}),
+      _gerrit_return([change1], values_dict={555: dict(branch=branch)}),
       gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
       'change-on-two-branches', props(ref=refspec, id=revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1, change2], values_dict={
-          555: dict(branch=refspec),
-          556: dict(branch=refspec + '-main')
+          555: dict(branch=branch),
+          556: dict(branch=branch + '-main')
       }), gerrit_changes=[change1, change2], revision=None)
 
   yield api.cros_source.test(
       'change-on-diff-branches', props(ref=refspec, id=revision),
       api.post_check(post_process.StatusSuccess),
-      _gerrit_return(
-          [change1, change2], values_dict={
-              555: dict(branch=refspec),
-              556: dict(branch='refs/heads/firmware-other-999.B')
-          }), gerrit_changes=[change1, change2], revision=None)
+      _gerrit_return([change1, change2], values_dict={
+          555: dict(branch=branch),
+          556: dict(branch='firmware-other-999.B')
+      }), gerrit_changes=[change1, change2], revision=None)
+
+  yield api.cros_source.test(
+      'conf-change', props(ref='refs/heads/snapshot', id='snapshot-HEAD-SHA'),
+      api.post_check(post_process.StatusSuccess),
+      api.cros_infra_config.override_builder_configs_test_data(
+          BuilderConfigs(), ref='refs/changes/57/557/1', binaryproto=False,
+          step_name='configure builder.cros_infra_config'),
+      api.post_check(
+          post_process.MustRun,
+          'configure builder.cros_infra_config.read builder configs.'
+          'fetch refs/changes/57/557/1:generated/builder_configs.cfg'),
+      gerrit_changes=[conf_change1], revision=None)
+
+  yield api.cros_source.test('two-conf-change',
+                             api.post_check(post_process.StatusFailure),
+                             gerrit_changes=[conf_change1,
+                                             conf_change2], revision=None)

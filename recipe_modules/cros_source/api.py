@@ -219,9 +219,49 @@ class CrosSourceApi(RecipeApi):
                                                     include_commit_info=True,
                                                     include_files=True)
 
+      # If there is a change to infra/config in gerrit_changes, we want to use
+      # that.  We need to determine that before we configure the builder, which
+      # severely limits what we can do.  Only look for changes to the main
+      # branch of chromeos/infra/config.
+      config_patches = [
+          x for x in patch_sets
+          if x.project == 'chromeos/infra/config' and x.branch == 'main'
+      ]
+
+      # Use cases:
+      # 1. CQ with a change to infra/config:
+      #    The CQ build will proceed with the changed BuilderConfigs, running
+      #    the verifiers caused by the other changes.
+      #
+      # 2. Non-CQ builder with a change to infra/config: (manually launched)
+      #    If the config does not apply patches, the build will fail if a change
+      #    is specified.  It's likely easier to use
+      #    $chromeos/cros_infra_config.config_ref to apply the patch in this
+      #    case.
+      #
+      # 3. Mulitple changes to infra/config: (NOT SUPPORTED)
+      #    The answer here is: "developer merges the changes into one WIP CL and
+      #    tests".
+      #
+      #    If the changes are all in a stack, the top of the stack (which has
+      #    all of the changes in its copy of generated/builder_configs.cfg) can
+      #    be passed via $chromeos/cros_infra_config.config_ref.
+      #
+      #    If the changes are not in one stack, we would need to fetch them all,
+      #    merge them, and then add support to cros_infra_config to use the
+      #    local (merged) file.
+      config_ref = None
+      if config_patches:
+        if len(config_patches) > 1:
+          raise StepFailure('Found more than one config patch: {}'.format(
+              ' '.join(x.display_id for x in config_patches)))
+        conf = config_patches[0]
+        config_ref = 'refs/changes/%02d/%d/%d' % (
+            conf.change_id % 100, conf.change_id, conf.patch_set)
+
       config = self.m.cros_infra_config.configure_builder(
           commit=commit, changes=changes, is_staging=is_staging,
-          name='cros_infra_config', choose_branch=False)
+          name='cros_infra_config', choose_branch=False, config_ref=config_ref)
 
       commit = self.m.src_state.gitiles_commit
       if not commit.ref:

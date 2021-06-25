@@ -472,7 +472,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return ret
 
   def configure_builder(self, commit=None, changes=None, is_staging=None,
-                        name='configure builder', choose_branch=True):
+                        name='configure builder', choose_branch=True,
+                        config_ref=None):
     """Configure the builder.
 
     Fetch the builder config.
@@ -488,6 +489,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           configure_builder determine, based on buildbucket bucket and/or
           config.general.environment.
       name (string): Step name.  Default: "configure builder".
+      config_ref (string): Override properties.config_ref (for config CLs).
 
     Returns:
       BuilderConfig or None
@@ -498,6 +500,11 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       easy_props.update(
           {'experiments': self.experiments} if self.experiments else {})
       self.m.easy.set_properties_step(**easy_props)
+
+      # If a config_ref is given, we want to use it even if we are not on
+      # staging, so that we verify config changes when cq-depends pulls them
+      # into the CQ run.
+      self._config_ref = config_ref or self._config_ref
 
       config = self.config
       if config:

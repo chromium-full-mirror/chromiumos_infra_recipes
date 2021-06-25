@@ -76,19 +76,21 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                              TrackingPolicyCfg())
 
   def override_builder_configs_test_data(self, message, iteration=1, ref='HEAD',
-                                         binaryproto=True):
+                                         binaryproto=True, step_name=''):
     """Set arbitrary builder config test data.
 
     Args:
       message (BuilderConfigs): The data to return.
       iteration (int): Which call to read builder configs to replace.
       binaryproto (bool): Whether this is a binaryproto read. (Default)
+      step_name (string): Step name calling configure_builder().
 
     Returns:
       (StepTestData) to overwrite that BuilderConfigs refresh.
     """
-    step_name = ('read builder configs'
-                 if iteration == 1 else 'read builder configs (%d)' % iteration)
+    step_name = '{}{}'.format(step_name + '.' if step_name else '',
+                              ('read builder configs' if iteration == 1 else
+                               'read builder configs (%d)' % iteration))
     step_name += '.fetch {}:generated/builder_configs.{}'.format(
         ref, 'binaryproto' if binaryproto else 'cfg')
     data = (
