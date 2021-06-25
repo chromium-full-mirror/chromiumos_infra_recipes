@@ -203,9 +203,11 @@ class CrosSourceApi(RecipeApi):
     """
     with self.m.step.nest(name=name):
       self._is_configured = True
-      original_commit = commit or self.m.src_state.gitiles_commit
+      commit = commit or self.m.src_state.gitiles_commit
+      changes = changes or self.m.src_state.gerrit_changes
+
       config = self.m.cros_infra_config.configure_builder(
-          commit=original_commit, changes=changes, is_staging=is_staging,
+          commit=commit, changes=changes, is_staging=is_staging,
           name='cros_infra_config', choose_branch=False)
 
       commit = self.m.src_state.gitiles_commit
@@ -216,9 +218,10 @@ class CrosSourceApi(RecipeApi):
         # TODO(b/191178496): Inspect the gerrit changes and see if a branch can be
         # determined.
 
-        # Use the appropriate snapshot branch.
-        commit = self.m.src_state.build_manifest.as_gitiles_commit_proto
-        if not default_main:
+        # If we do not have a commit ref, use the appropriate snapshot branch.
+        if default_main:
+          commit.ref = 'refs/heads/main'
+        else:
           commit.ref = 'refs/heads/{}snapshot'.format(
               'staging-' if self.m.cros_infra_config.is_staging else '')
 

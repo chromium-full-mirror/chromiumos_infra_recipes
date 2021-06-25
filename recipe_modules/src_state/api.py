@@ -149,7 +149,9 @@ class SrcStateApi(recipe_api.RecipeApi):
     Returns:
       (GitilesCommit): the gerrit changes for this build.
     """
-    return self._gitiles_commit or self.m.buildbucket.gitiles_commit
+    ret = GitilesCommit()
+    ret.CopyFrom(self._gitiles_commit or self.m.buildbucket.gitiles_commit)
+    return ret
 
   @gitiles_commit.setter
   def gitiles_commit(self, gitiles_commit):
@@ -163,11 +165,15 @@ class SrcStateApi(recipe_api.RecipeApi):
         step = self.m.step('set gitiles_commit', cmd=None)
         step.presentation.properties['commit'] = MessageToDict(gitiles_commit or
                                                                GitilesCommit())
-        self._gitiles_commit = gitiles_commit
+        if gitiles_commit is None:
+          self._gitiles_commit = None
+        else:
+          self._gitiles_commit = GitilesCommit()
+          self._gitiles_commit.CopyFrom(gitiles_commit or GitilesCommit())
         if (gitiles_commit and gitiles_commit.host and
             gitiles_commit.project and gitiles_commit.ref and
             gitiles_commit.id):
-          self.m.buildbucket.set_output_gitiles_commit(gitiles_commit)
+          self.m.buildbucket.set_output_gitiles_commit(self._gitiles_commit)
 
   @property
   def gerrit_changes(self):
