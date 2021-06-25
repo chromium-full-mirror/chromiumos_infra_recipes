@@ -1089,7 +1089,8 @@ class CrosSourceApi(RecipeApi):
                                manifest_path=manifest_path,
                                manifest_branch=manifest_branch)
       manifest_relpath = self.m.repo.create_tmp_manifest(manifest_xml)
-      init_opts = dict(manifest_name=manifest_relpath)
+      init_opts = dict(manifest_name=manifest_relpath,
+                       manifest_branch=manifest_branch)
       sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8,
                        force_sync=True, manifest_name=manifest_relpath)
       sync_opts.update(kwargs)

@@ -1526,7 +1526,7 @@
     "name": "sync to specified manifest.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"release\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1537,7 +1537,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "{\n\"manifest_branch\": \"release\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\", \n\"state\": \"STATE_DIRTY\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1546,6 +1546,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"release\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -1584,6 +1585,8 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
       "--groups",
       "all",
+      "--manifest-branch",
+      "release",
       "--repo-rev=stable",
       "--manifest-name",
       "../tmp_manifest"
@@ -1725,7 +1728,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n\"manifest_branch\": \"release\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1734,6 +1737,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"release\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]

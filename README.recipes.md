@@ -3014,7 +3014,7 @@ Returns a context where overlays can be mounted.
 Args:
   mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1246)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1247)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -3054,7 +3054,7 @@ Args:
 Returns:
   BuilderConfig or None
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1203)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1204)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -3158,7 +3158,7 @@ The cached image checkout path.
 This is the cached version of source that is included in the base image of
 the bot, used as an initial reference path.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1300)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1301)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -3176,7 +3176,7 @@ Return:
 
 Returns the snapshot digest in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1104)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1105)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -3201,7 +3201,7 @@ Args:
   manifest_path (string): Path (relative to repository root) of manifest
     file, e.g. releasespecs/90/....xml.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1279)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1280)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
 
 Uprev packages.
 
