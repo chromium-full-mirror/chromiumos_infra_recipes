@@ -11,8 +11,10 @@ DEPS = [
     'recipe_engine/step',
     'bot_cost',
     'cros_infra_config',
+    'cros_source',
     'easy',
     'gerrit',
+    'git',
     'orch_menu',
     'src_state',
     'test_util',
@@ -26,37 +28,16 @@ from recipe_engine.post_process import (PropertyEquals, StatusSuccess,
 
 
 def RunSteps(api):
-  branch_fmt = (r'(?P<branch>(?P<base>firmware-'
-                r'(?P<device>[-a-z_0-9.]+)-'
-                r'(?P<version>[0-9.]+)'
-                r')\.B)'
-                r'(?P<parent_branch>-.+)?$')
-  valid_branch = lambda b: re.match(branch_fmt, b)
-
   with api.bot_cost.build_cost_context():
-    with api.step.nest('determine branch') as presentation:
-      patch_sets = api.gerrit.fetch_patch_sets(api.src_state.gerrit_changes)
-      branches = set(x.branch for x in patch_sets)
-      branch = list(branches).pop(0)
-      # Consider adding support for branch="main" to run snapshot builder(s).
-      if len(branches) != 1 or not valid_branch(branch):
-        raise StepFailure('Expected valid firmware branch, got: {}'.format(
-            ' '.join(branches)))
-      branch = re.sub(branch_fmt, r'\g<branch>', branch)
-      api.easy.set_properties_step(manifest_branch=branch)
-      presentation.step_text = branch
-
-    commit = api.src_state.gitiles_commit
-    # If the builder was not run with a commit, point to the correct branch.
-    if not commit.project:
-      commit = api.src_state.internal_manifest.as_gitiles_commit_proto
-      commit.ref = 'refs/heads/{}'.format(branch)
-    api.cros_infra_config.configure_builder(commit=commit)
+    api.cros_source.configure_builder()
+    branch = api.src_state.gitiles_commit.ref
+    branch = api.git.extract_branch(branch, branch)
+    api.easy.set_properties_step(manifest_branch=branch)
 
     # Turn the branch name into the cq builder name.
     builder = '{}{}'.format(
         'staging-' if api.cros_infra_config.is_staging else '',
-        re.sub(branch_fmt, r'\g<base>-cq', branch))
+        branch.replace('.B', '-cq'))
     api.easy.set_properties_step(child_verifier=builder)
     child_config = api.cros_infra_config.get_builder_config(
         builder, missing_ok=True)
@@ -80,6 +61,7 @@ def GenTests(api):
   def test(name, statuscheck, *args, **kwargs):
     kwargs.setdefault('cq', True)
     kwargs.setdefault('critical', True)
+    kwargs.setdefault('revision', None)
     kwargs.setdefault('builder', 'firmware-cq-orchestrator')
     branch = kwargs.pop('branch', test_branch)
     orch = api.test_util.test_orchestrator(**kwargs)
@@ -88,7 +70,7 @@ def GenTests(api):
     values = {x.change: {"branch": branch} for x in changes}
     args += (orch.build, api.post_check(statuscheck),
              api.gerrit.set_gerrit_fetch_changes_response(
-                 'determine branch', changes, values))
+                 'configure builder', changes, values))
     return api.test(name, *args)
 
   yield test('cq', StatusSuccess,
@@ -108,8 +90,6 @@ def GenTests(api):
                      '{}'.format(test_branch)),
       api.post_check(PropertyEquals, 'child_verifier', test_builder),
       branch='{}-main'.format(test_branch))
-
-  yield test('bad-branch', StatusFailure, branch='bad')
 
   yield test(
       'failed-child', StatusFailure,
