@@ -248,7 +248,7 @@ class GcloudApi(recipe_api.RecipeApi):
       self._remove_cleanup_mounted_disk(name, mount_path)
 
   def snapshot_disk(self, disk, snapshot_name, zone):
-    """Detach a disk to a GCE instance.
+    """Snapshot an attached disk on a GCE instance.
 
     Args:
       disk(str): Google Cloud disk name.

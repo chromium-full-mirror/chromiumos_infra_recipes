@@ -226,6 +226,76 @@
   },
   {
     "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "snapshot",
+      "staging-test-disk1-us-central1-b",
+      "--snapshot-names=test-cache-prefix-1337000003000",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk.snapshot disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "test-cache-prefix-1337000003000",
+      "[CLEANUP]/test-cache-version"
+    ],
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk.write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@test-cache-version@test-cache-prefix-1337000003000@@@",
+      "@@@STEP_LOG_END@test-cache-version@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/test-cache-version",
+      "gs://chromeos-bot-cache/test-cache-version"
+    ],
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.gsutil upload test-cache-version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/test-cache-version@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
