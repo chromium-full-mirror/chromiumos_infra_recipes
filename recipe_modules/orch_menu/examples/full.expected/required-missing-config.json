@@ -200,6 +200,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set up orchestrator.configure builder.determine branch from changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",

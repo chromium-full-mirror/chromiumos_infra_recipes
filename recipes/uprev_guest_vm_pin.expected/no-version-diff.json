@@ -90,6 +90,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "configure builder.determine branch from changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",

@@ -12,6 +12,7 @@ import re
 from collections import defaultdict, namedtuple
 from google.protobuf.json_format import MessageToDict
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
@@ -201,10 +202,22 @@ class CrosSourceApi(RecipeApi):
     Returns:
       BuilderConfig or None
     """
+    branch_fmt = (r'(?P<branch>(?P<base>(factory|firmware|release|stabilize)-'
+                  r'(?P<device>[-a-z_0-9.]+)-'
+                  r'(?P<version>[0-9.]+)'
+                  r')\.B)'
+                  r'(?P<parent_branch>-.+)?$')
+    valid_branch = lambda b: re.match(branch_fmt, b)
+
     with self.m.step.nest(name=name):
       self._is_configured = True
       commit = commit or self.m.src_state.gitiles_commit
       changes = changes or self.m.src_state.gerrit_changes
+      patch_sets = []
+      if changes:
+        patch_sets = self.m.gerrit.fetch_patch_sets(changes,
+                                                    include_commit_info=True,
+                                                    include_files=True)
 
       config = self.m.cros_infra_config.configure_builder(
           commit=commit, changes=changes, is_staging=is_staging,
@@ -215,9 +228,35 @@ class CrosSourceApi(RecipeApi):
         # Neither buildbucket, nor the builder config provided a gitiles_commit.
         # Figure out what gitiles_commit should be.
 
-        # TODO(b/191178496): Inspect the gerrit changes and see if a branch can be
-        # determined.
+        branches = set()
+        with self.m.step.nest('determine branch from changes') as pres:
+          # If the change is on what looks like a valid branch, use that for the
+          # checkout.
+          for patch_set in patch_sets:
+            branch = self.m.git.extract_branch(patch_set.branch,
+                                               patch_set.branch)
+            if valid_branch(branch):
+              branches.add(re.sub(branch_fmt, r'\g<branch>', branch))
 
+          if branches:
+            # While not pedantically correct, some branches refer to other
+            # branches for some projects in their manifest.  For example, see
+            # the manifest for firmware-icarus-12574.B.
+            #
+            # If there are multiple branches, use the first one from the list,
+            # rather than raising an error.  If we do switch to throwing an
+            # error, we should add a git footer to allow it.
+            branches = sorted(branches)
+            branch = branches[0]
+            branch_ref = self.m.git.get_branch_refspec(branch)
+            pres.step_text = 'Using manifest branch {}.  Found {}'.format(
+                branch, ' '.join(branches))
+            # Override gitiles_commit to use the appropriate ref/id.
+            with self.m.step.nest('set src_state.gitiles_commit'):
+              commit.ref = branch_ref
+              commit.id = ''
+
+      if not commit.ref:
         # If we do not have a commit ref, use the appropriate snapshot branch.
         if default_main:
           commit.ref = 'refs/heads/main'
