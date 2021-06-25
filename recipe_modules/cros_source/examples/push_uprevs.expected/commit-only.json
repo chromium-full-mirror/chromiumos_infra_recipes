@@ -101,7 +101,20 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
-    "name": "push uprevs.retrieve project information.repo for ../tmp_tmp_1/test.ebuild",
+    "name": "push uprevs.retrieve project information.repo for ../tmp_tmp_1/test1.ebuild",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "push uprevs.retrieve project information.repo for ../tmp_tmp_1/test2.ebuild",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -118,7 +131,8 @@
     "name": "push uprevs.commit uprevs.commit uprev changes in ../tmp_tmp_1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/tmp_tmp_1/test.ebuild@@@",
+      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/tmp_tmp_1/test1.ebuild@@@",
+      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/tmp_tmp_1/test2.ebuild@@@",
       "@@@STEP_LOG_END@ebuilds@@@"
     ]
   },
@@ -126,7 +140,8 @@
     "cmd": [
       "git",
       "add",
-      "[CLEANUP]/tmp_tmp_1/test.ebuild"
+      "[CLEANUP]/tmp_tmp_1/test1.ebuild",
+      "[CLEANUP]/tmp_tmp_1/test2.ebuild"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,
@@ -165,7 +180,8 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1",
       "--",
-      "[CLEANUP]/tmp_tmp_1/test.ebuild"
+      "[CLEANUP]/tmp_tmp_1/test1.ebuild",
+      "[CLEANUP]/tmp_tmp_1/test2.ebuild"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "infra_step": true,

@@ -316,15 +316,19 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
     response = api.cros_source.uprev_packages(workspace_path)
 
     for ebuild in response.modified_ebuilds:
+      # TODO(b/192099206): When recipes moves to python3 clean this up with
+      # default values
       uprev_info.append(
-          api.cros_source.PushUprevRequest(ebuild.path,
+          api.cros_source.PushUprevRequest([ebuild.path],
                                            'Marking set of ebuilds as stable'))
 
     # Treat the manifest changes as if they were an uprev
     for _, files in manifest_diffs.items():
       for manifest in files:
+        # TODO(b/192099206): When recipes moves to python3 clean this up with
+        # default values
         uprev_info.append(
-            api.cros_source.PushUprevRequest(manifest,
+            api.cros_source.PushUprevRequest([manifest],
                                              'Syncing with internal manifest'))
 
   # Push the uprevs to the remote

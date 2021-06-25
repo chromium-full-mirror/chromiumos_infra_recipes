@@ -44,11 +44,12 @@ ALLOWED_MANIFEST_SOURCES = [
 
 class CrosSourceApi(RecipeApi):
   """A module for CrOS-specific source steps."""
+  # TODO(b/192099206): add default values when recipe upgrades to python3
   # PushUprevRequest:
-  #   modified_file (path): Path to modified file.
+  #   modified_files (list[path]): Path to modified file.
   #   message_subject (string): String to use as the commit subject.
   PushUprevRequest = namedtuple('PushUprevRequest', [
-      'modified_file',
+      'modified_files',
       'message_subject',
   ])
 
@@ -1397,19 +1398,28 @@ class CrosSourceApi(RecipeApi):
     with self.m.step.nest('push uprevs') as push_uprevs_pres:
 
       # Create list of modified files, index by their repository
-      modified_ebuilds_by_repository = defaultdict(list)
+      modified_ebuilds_by_repository = {}
 
       # Cycle through modified ebuilds
       with self.m.step.nest('retrieve project information'):
         for item in uprev_response:
-          path = item.modified_file
+          # TODO(b/192099206): When recipes moves to python3, this will be
+          # cleaner with default values
+          path = str(item.modified_files[0])
+          # self.m.assertions.assertEqual(item, 0)
           with self.m.context(
               cwd=self.m.path.abs_to_path(self.m.path.dirname(path))):
             repository = self.m.git.repository_root(
                 step_name='repo for {}'.format(
                     self.m.path.relpath(path, self.m.src_state.workspace_path)))
-            modified_ebuilds_by_repository[repository] = self.PushUprevRequest(
-                [path], item.message_subject)
+
+            if repository in modified_ebuilds_by_repository:
+              modified_ebuilds_by_repository[repository].modified_files.append(
+                  path)
+            else:
+              modified_ebuilds_by_repository[
+                  repository] = self.PushUprevRequest([path],
+                                                      item.message_subject)
 
       with self.m.step.nest('commit uprevs'):
         # Cycle through the modifed ebuild and push the change.
@@ -1419,15 +1429,15 @@ class CrosSourceApi(RecipeApi):
           with self.m.context(cwd=self.m.path.abs_to_path(repository)):
             with self.m.step.nest(
                 'commit uprev changes in {}'.format(repo_name)) as commit_pres:
-              self.m.git.add(requests.modified_file)
+              self.m.git.add(requests.modified_files)
               message = '\n'.join([
                   requests.message_subject,
                   '',
                   'Cr-Build-Url: {}'.format(self.m.buildbucket.build_url()),
                   'Cr-Automation-Id: cros_source/push_uprevs',
               ]) + '\n'
-              self.m.git.commit(message, files=requests.modified_file)
-              commit_pres.logs['ebuilds'] = requests.modified_file
+              self.m.git.commit(message, files=requests.modified_files)
+              commit_pres.logs['ebuilds'] = requests.modified_files
 
       # If we do not want to push, return that the call has passed.
       if commit_only:
@@ -1439,12 +1449,13 @@ class CrosSourceApi(RecipeApi):
       for repository, requests in modified_ebuilds_by_repository.items():
         repo_name = self.m.path.relpath(repository,
                                         self.m.src_state.workspace_path)
-        with self.m.step.nest('push to {}'.format(repo_name)):
+        with self.m.step.nest('push to {}'.format(repo_name)) as push_pres:
+          push_pres.logs['repo'] = repository
           with self.m.context(cwd=self.m.path.abs_to_path(repository)):
             # Filter to ebuilds that exist. In particular, we need to exclude
             # the version of the ebuild from prior to the uprev.
             existing_ebuilds = []
-            for ebuild in requests.modified_file:
+            for ebuild in requests.modified_files:
               self.m.path.mock_add_paths(ebuild)
               if self.m.path.exists(ebuild):
                 existing_ebuilds.append(ebuild)
@@ -1455,7 +1466,9 @@ class CrosSourceApi(RecipeApi):
             # Annealing is broken, and length isn't the right thing to check.
             # assert len(projects) == 1, \
             #     'expected 1 project, got: %r' % projects
+            push_pres.logs['projects'] = str(projects)
             project = projects[0]
+            push_pres.logs['project chosen'] = str(project)
             step_name = 'git push {}'.format(repo_name)
             branch = project.branch_name
             namespace = 'heads'

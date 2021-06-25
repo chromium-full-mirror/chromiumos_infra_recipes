@@ -28,17 +28,21 @@ def RunSteps(api, properties):
   api.repo.init('http://manifest_url')
 
   # Create ebuild file
-  ebuild_path = api.path.join(temp_dir, 'test.ebuild')
-  api.path.mock_add_paths(ebuild_path)
+  ebuild_path1 = api.path.join(temp_dir, 'test1.ebuild')
+  ebuild_path2 = api.path.join(temp_dir, 'test2.ebuild')
+  api.path.mock_add_paths(ebuild_path1)
+  api.path.mock_add_paths(ebuild_path2)
   uprev_response = UprevPackagesResponse(
-      modified_ebuilds=[UprevPackagesResponse.Ebuild(path=ebuild_path)],
-      version='123.456.789.0')
+      modified_ebuilds=[
+          UprevPackagesResponse.Ebuild(path=ebuild_path1),
+          UprevPackagesResponse.Ebuild(path=ebuild_path2)
+      ], version='123.456.789.0')
 
   uprev_info = []
   for ebuild in uprev_response.modified_ebuilds:
     uprev_info.append(
         api.cros_source.PushUprevRequest(
-            ebuild.path,
+            [ebuild.path],
             'cros_source: uprev test subject',
         ))
 
