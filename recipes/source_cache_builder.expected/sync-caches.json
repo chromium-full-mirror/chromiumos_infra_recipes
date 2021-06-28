@@ -295,6 +295,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.set chromiumos_snapshot_version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@chromiumos_snapshot_version@\"test-chromeos-prefix-1337000003000\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "gcloud",
       "compute",
@@ -513,6 +521,14 @@
   },
   {
     "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2).set chrome_snapshot_version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@chrome_snapshot_version@\"test-chrome-prefix-1337000004500\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -521,7 +537,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "chromeos"
+      "[CLEANUP]/snapshot/chromeos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -535,7 +551,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "chrome"
+      "[CLEANUP]/snapshot/chrome"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

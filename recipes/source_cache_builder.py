@@ -16,6 +16,7 @@ DEPS = [
     'recipe_engine/time',
     'depot_tools/gsutil',
     'chrome',
+    'easy',
     'gcloud',
     'repo',
     'src_state',
@@ -78,6 +79,9 @@ def RunSteps(api, properties):
             api.gsutil.upload(version_file_path, properties.cache_bucket,
                               cache.version_file,
                               name='upload {}'.format(cache.version_file))
+            api.easy.set_properties_step(
+                **
+                {'{}_snapshot_version'.format(cache.cache_name): snapshot_name})
 
 
 def GenTests(api):

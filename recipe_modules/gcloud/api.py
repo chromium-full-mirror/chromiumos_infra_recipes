@@ -228,7 +228,7 @@ class GcloudApi(recipe_api.RecipeApi):
           'mount disk %s' % name,
           ['sudo', 'mount', self._attached_disks[name], recipe_mount_path],
           infra_step=True)
-      self._add_cleanup_mounted_disk(name, mount_path)
+      self._add_cleanup_mounted_disk(name, recipe_mount_path)
       return recipe_mount_path
 
   def _unmount_disk(self, name, mount_path):
