@@ -50,6 +50,11 @@ class CrosScheduleApi(recipe_api.RecipeApi):
           'curl fetch_milestone_schedule', ['curl', query_url],
           test_stdout=self.test_api.test_chromiumdash_fetch_response(
               start_mstone=start_mstone, fetch_n=fetch_n))
+
+      # json_to_proto can't handle null/None values, so replace with empty
+      # strings.
+      returned_data = returned_data.replace('null', '""')
+
       # Validate you have real json and the expected number of records.
       try:
         json_data = json.loads(returned_data)

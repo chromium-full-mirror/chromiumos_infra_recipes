@@ -2672,7 +2672,7 @@ Args:
 Returns:
   (str): JSON string representing the results of the query, or None.
 
-&mdash; **def [get\_last\_branched\_mstone](/recipe_modules/cros_schedule/api.py#67)(self):**
+&mdash; **def [get\_last\_branched\_mstone](/recipe_modules/cros_schedule/api.py#72)(self):**
 
 Gets the last branched milestone.
 
@@ -2681,7 +2681,7 @@ Returns:
 
 Raises: StepFailure if not able to find mstone.
 
-&mdash; **def [get\_last\_branched\_mstone\_n](/recipe_modules/cros_schedule/api.py#99)(self):**
+&mdash; **def [get\_last\_branched\_mstone\_n](/recipe_modules/cros_schedule/api.py#104)(self):**
 
 Gets the last branched milestone number as an int.
 

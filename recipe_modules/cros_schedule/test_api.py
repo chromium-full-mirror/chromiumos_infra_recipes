@@ -26,7 +26,7 @@ class CrosScheduleTestApi(recipe_test_api.RecipeTestApi):
           'owners': {
               'clank': 'Krishna Govind',
               'bling': 'Bindu Suvarna',
-              'cros': 'Marina Kazatcker',
+              'cros': None,
               'desktop': 'Srinivas Sista',
           },
           'stable_cut': '2021-01-12T00:00:00',
@@ -37,7 +37,7 @@ class CrosScheduleTestApi(recipe_test_api.RecipeTestApi):
           'ldaps': {
               'clank': 'govind',
               'bling': 'bindusuvarna',
-              'cros': 'marinakz',
+              'cros': None,
               'desktop': 'srinivassista ',
           },
           'earliest_beta_ios': '2020-11-17T00:00:00',
