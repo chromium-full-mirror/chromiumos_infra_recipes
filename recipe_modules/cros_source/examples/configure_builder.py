@@ -40,6 +40,14 @@ def GenTests(api):
   revision = '{}-HEAD-SHA'.format(branch)
   refspec = 'refs/heads/{}'.format(branch)
 
+  R90_branch = 'release-R90-13816.B'
+  R90_revision = '{}-HEAD-SHA'.format(R90_branch)
+  R90_refspec = 'refs/heads/{}'.format(R90_branch)
+
+  stabilize_branch = 'stabilize-13817.B'
+  stabilize_revision = '{}-HEAD-SHA'.format(stabilize_branch)
+  stabilize_refspec = 'refs/heads/{}'.format(stabilize_branch)
+
   def _change(change_num, project='project', patchset=7):
     return GerritChange(host='chromium.googlesource.com', project=project,
                         change=change_num, patchset=patchset)
@@ -105,3 +113,17 @@ def GenTests(api):
                              api.post_check(post_process.StatusFailure),
                              gerrit_changes=[conf_change1,
                                              conf_change2], revision=None)
+
+  yield api.cros_source.test(
+      'change-on-release-branch', props(ref=R90_refspec, id=R90_revision),
+      api.post_check(post_process.StatusSuccess),
+      _gerrit_return([change1], values_dict={555: dict(branch=R90_branch)}),
+      gerrit_changes=[change1], revision=None)
+
+  yield api.cros_source.test(
+      'change-on-stabilize-branch',
+      props(ref=stabilize_refspec, id=stabilize_revision),
+      api.post_check(post_process.StatusSuccess),
+      _gerrit_return([change1],
+                     values_dict={555: dict(branch=stabilize_branch)}),
+      gerrit_changes=[change1], revision=None)
