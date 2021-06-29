@@ -18,6 +18,7 @@ import zlib
 
 import aggregation_util
 import repository_util
+import code_coverage_util
 
 
 def _extract_coverage_info(segments):
@@ -251,18 +252,12 @@ def _to_compressed_file_record(file_coverage_data, constants_file, build_target,
   constants = {}
   with open(constants_file, 'r') as f:
     constants = json.load(f)
-  filename = file_coverage_data['filename']
-  coverage_path = os.path.normpath(filename)
-  matched = False
-  for mapping in constants[project_name]:
-    pre = os.path.join('/build', build_target, mapping['prefix'])
-    if re.match(pre, coverage_path):
-      matched = True
-      coverage_path = re.sub(pre, mapping['src_path'], coverage_path)
-      break
+
+  coverage_path = code_coverage_util.clean_file_name(
+      file_coverage_data['filename'], constants, project_name, build_target, '')
 
   # Skip files that we don't know how to map to the chromiumos repo.
-  if not matched:
+  if coverage_path is None:
     return None
 
   line_data, block_data = _extract_coverage_info(segments)
@@ -384,6 +379,7 @@ def _load_files_coverage_data(coverage_files, constants_file, build_target,
     data = {}
     with open(coverage_file, 'r') as f:
       data = json.load(f)
+
     for datum in data['data']:
       for file_data in datum['files']:
         record = _to_compressed_file_record(file_data, constants_file,
