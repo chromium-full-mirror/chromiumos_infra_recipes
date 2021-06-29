@@ -3,6 +3,38 @@
     "cmd": [
       "gcloud",
       "compute",
+      "disks",
+      "create",
+      "test_disk1",
+      "--zone=us-central1-b",
+      "--source-snapshot=test-chromeos-snapshot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create disk from snapshot"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "test_disk2",
+      "--zone=us-central1-b",
+      "--source-snapshot=test-chrome-snapshot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create disk from snapshot (2)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
       "instances",
       "attach-disk",
       "test_bot1",
@@ -41,7 +73,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "/tmp/cache1"
+      "[CLEANUP]/snapshot/cache1"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -54,7 +86,7 @@
       "sudo",
       "mount",
       "/dev/sdb",
-      "/tmp/cache1"
+      "[CLEANUP]/snapshot/cache1"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -64,28 +96,22 @@
   },
   {
     "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "/tmp/cache2"
+      "mkdir",
+      "-p",
+      "/snapshot_mounts/cache2"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create mount path (2)"
+    "name": "ensure mount directory exists"
   },
   {
     "cmd": [
       "sudo",
       "mount",
       "/dev/sdc",
-      "/tmp/cache2"
+      "/snapshot_mounts/cache2"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -100,7 +126,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "/tmp/cache1"
+      "[CLEANUP]/snapshot/cache1"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -114,7 +140,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "/tmp/cache2"
+      "/snapshot_mounts/cache2"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -127,7 +153,7 @@
   },
   {
     "cmd": [],
-    "name": "clean up attached compute disk"
+    "name": "clean up gce disk"
   },
   {
     "cmd": [
@@ -143,7 +169,25 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "clean up attached compute disk.detach disk",
+    "name": "clean up gce disk.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "test_disk1",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.delete disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -162,7 +206,25 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "clean up attached compute disk.detach disk (2)",
+    "name": "clean up gce disk.detach disk (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "test_disk2",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.delete disk (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -170,7 +232,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "/tmp/cache3"
+      "cache3"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -178,7 +240,7 @@
     "infra_step": true,
     "name": "unmount disk cache_test3",
     "~followup_annotations": [
-      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for /tmp/cache3]@@@"
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for cache3]@@@"
     ]
   },
   {
@@ -197,7 +259,7 @@
     "infra_step": true,
     "name": "detach disk",
     "~followup_annotations": [
-      "@@@STEP_TEXT@<br/>[WARNING: gcloud detach disk bookkeeping error for test_disk3]@@@"
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for test_disk3]@@@"
     ]
   },
   {

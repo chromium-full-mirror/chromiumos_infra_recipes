@@ -41,6 +41,42 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-bot-cache/test-chromeos-version"
+    ],
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "test-disk1-us-central1-b",
+      "--zone=us-central1-b",
+      "--source-snapshot="
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.create disk from snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "gcloud",
       "compute",
       "instances",
@@ -100,99 +136,6 @@
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
-      "--repo-rev=stable"
-    ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo init",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo binary update",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo binary update.repo version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "selfupdate"
-    ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo binary update.repo selfupdate",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.repo binary update.repo version (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -304,6 +247,42 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-bot-cache/test-chrome-version"
+    ],
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.gsutil cat (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "test-disk2-us-central1-b",
+      "--zone=us-central1-b",
+      "--source-snapshot="
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.create disk from snapshot (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "gcloud",
       "compute",
       "instances",
@@ -370,6 +349,42 @@
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/snapshot/chrome/src"
+    ],
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.ensure chrome src directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/snapshot/chrome/chrome_cache"
+    ],
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.ensure chrome cache directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -564,7 +579,7 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.clean up attached compute disk",
+    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -583,7 +598,25 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.clean up attached compute disk.detach disk",
+    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "test-disk1-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk.delete disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -602,7 +635,25 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.clean up attached compute disk.detach disk (2)",
+    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk.detach disk (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "test-disk2-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk.delete disk (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

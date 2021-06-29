@@ -1157,7 +1157,7 @@ Sync Chrome cache using existing cached repositories.
 Args:
   cache_path (Path): Path to mount of cache.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#212)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#215)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1170,7 +1170,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#265)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#268)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1186,13 +1186,13 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#238)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#241)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
 &mdash; **def [initialize](/recipe_modules/chrome/api.py#66)(self):**
 
 Initialization that follows all module loading.
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#305)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#308)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1204,7 +1204,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#246)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#249)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1220,7 +1220,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#376)(self, request, dep_graph, presentation, patch_sets=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#379)(self, request, dep_graph, presentation, patch_sets=None):**
 
 Checks whether chrome source is needed.
 
@@ -1234,7 +1234,7 @@ Args:
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#120)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#123)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -3851,7 +3851,7 @@ A module to interact with Google Cloud.
 
 Initialize GcloudApi.
 
-&mdash; **def [attach\_disk](/recipe_modules/gcloud/api.py#167)(self, name, instance, disk, zone):**
+&mdash; **def [attach\_disk](/recipe_modules/gcloud/api.py#175)(self, name, instance, disk, zone):**
 
 Attach a disk to a GCE instance.
 
@@ -3860,32 +3860,44 @@ that is used by the context manager to detach as the task ends.
 
 Args:
   name (str): An alphanumeric name for the mount, used for display.
-  instance(str): GCE instance to be deleted.
+  instance(str): GCE instance on which disk will be attached.
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#42)(self, step_name=None):**
+&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#50)(self, step_name=None):**
 
 Print out the auth creds currently on the bot.
 
 Args:
   step_name(str): Name of the step.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_attached\_disks](/recipe_modules/gcloud/api.py#264)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#313)(self):**
 
-Wrap disk cleanup in a context handler to ensure they are detached.
+Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
-through and detached.
+through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#307)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#357)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
 Upon exiting the context manager, each mounted disk is then iterated
 through and unmounted.
 
-&mdash; **def [create\_image](/recipe_modules/gcloud/api.py#85)(self, tar_path, target, uniq_id):**
+&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#220)(self, instance, disk, zone, snapshot):**
+
+Create a GCE disk.
+
+Create a GCE disk from a provided snapshot name.
+
+Args:
+  instance(str): GCE instance disk is associated.
+  disk(str): Google Cloud disk name.
+  zone(str): GCE zone to create disk (e.g. us-central1-b).
+  snapshot(str): Snapshot version use to create the disk.
+
+&mdash; **def [create\_image](/recipe_modules/gcloud/api.py#93)(self, tar_path, target, uniq_id):**
 
 Create an image in the GCE project.
 
@@ -3897,7 +3909,7 @@ Args:
 
 Returns: A string name of the image.
 
-&mdash; **def [create\_instance](/recipe_modules/gcloud/api.py#124)(self, image, project, machine, zone, network=None, subnet=None):**
+&mdash; **def [create\_instance](/recipe_modules/gcloud/api.py#132)(self, image, project, machine, zone, network=None, subnet=None):**
 
 Create an instance in the GCE project.
 
@@ -3911,9 +3923,20 @@ Args:
 
 Returns: A string name of the instance.
 
-&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#113)(self, image_name):**
+&mdash; **def [delete\_disk](/recipe_modules/gcloud/api.py#237)(self, instance, disk, zone):**
 
-&mdash; **def [delete\_instance](/recipe_modules/gcloud/api.py#153)(self, instance, project, zone):**
+Delete a GCE disk.
+
+Permanently delete a GCE disk from the project.
+
+Args:
+  instance(str): GCE instance disk is associated.
+  disk(str): Google Cloud disk name.
+  zone(str): GCE zone to create instance (e.g. us-central1-b).
+
+&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#121)(self, image_name):**
+
+&mdash; **def [delete\_instance](/recipe_modules/gcloud/api.py#161)(self, instance, project, zone):**
 
 Delete a GCE instance.
 
@@ -3922,7 +3945,7 @@ Args:
   project(str): Google Cloud project name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#194)(self, instance, disk, zone):**
+&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#202)(self, instance, disk, zone):**
 
 Detach a disk to a GCE instance.
 
@@ -3930,11 +3953,11 @@ As a disk is detached, the disk is then removed from the stack
 that is used by the context manager to detach as the task ends.
 
 Args:
-  instance(str): GCE instance to be deleted.
+  instance(str): GCE instance disk is attached.
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#212)(self, name, mount_path):**
+&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#252)(self, name, mount_path, recipe_mount=False):**
 
 Mount an attached disk to host.
 
@@ -3944,10 +3967,12 @@ that is used by the context manager to unmount as the task ends.
 Args:
   name (str): An alphanumeric name for the mount, used for display.
   mount_path(str): Directory to mount the disk.
+  recipe_mount(bool): Whether mount needs to be in the path to use within
+                    a recipe.
 
 Returns: Path to the mounted disk
 
-&mdash; **def [prep\_image](/recipe_modules/gcloud/api.py#51)(self, source_bucket, source_path, uniq_id):**
+&mdash; **def [prep\_image](/recipe_modules/gcloud/api.py#59)(self, source_bucket, source_path, uniq_id):**
 
 Prepare the image to be used for testing.
 
@@ -3959,13 +3984,13 @@ Args:
 
 Returns: Path to the image tar file.
 
-&mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#33)(self, project):**
+&mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#41)(self, project):**
 
 Set the default project for gcloud command.
 Args:
   project(str): Google Cloud project name.
 
-&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#250)(self, disk, snapshot_name, zone):**
+&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#299)(self, disk, snapshot_name, zone):**
 
 Snapshot an attached disk on a GCE instance.
 
@@ -3973,6 +3998,12 @@ Args:
   disk(str): Google Cloud disk name.
   snapshot_name(str): The name to give the snapshot.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
+
+&emsp; **@property**<br>&mdash; **def [snapshot\_mount\_path](/recipe_modules/gcloud/api.py#33)(self):**
+
+The path to mount the snapshot disks.
+
+This is the path that the disks created from snapshots will be mounted.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#6): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

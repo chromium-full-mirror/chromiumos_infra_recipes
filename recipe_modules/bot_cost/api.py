@@ -36,7 +36,7 @@ BOT_COST = {
     'n1-standard-8': 0.114,
     'n1-standard-16': 0.228,
     'n1-standard-32': 0.456,
-    'n2d-highcpu-64': 0.599,
+    'n2-highcpu-64': 0.599,
 }
 
 

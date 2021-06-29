@@ -13,25 +13,33 @@ DEPS = [
 
 def RunSteps(api):
   # Multiple disks
-  with api.gcloud.cleanup_attached_disks(), \
+  with api.gcloud.cleanup_gce_disks(), \
        api.gcloud.cleanup_mounted_disks():
+    api.gcloud.create_disk(instance='test_bot1', disk='test_disk1',
+                           zone='us-central1-b',
+                           snapshot='test-chromeos-snapshot')
+    api.gcloud.create_disk(instance='test_bot1', disk='test_disk2',
+                           zone='us-central1-b',
+                           snapshot='test-chrome-snapshot')
     api.gcloud.attach_disk(name='cache_test1', instance='test_bot1',
                            disk='test_disk1', zone='us-central1-b')
     api.gcloud.attach_disk(name='cache_test2', instance='test_bot1',
                            disk='test_disk2', zone='us-central1-b')
-    api.gcloud.mount_disk(name='cache_test1', mount_path='/tmp/cache1')
-    api.gcloud.mount_disk(name='cache_test2', mount_path='/tmp/cache2')
+    api.gcloud.mount_disk(name='cache_test1', mount_path='cache1',
+                          recipe_mount=True)
+    api.gcloud.mount_disk(name='cache_test2', mount_path='cache2')
 
   # Empty context
-  with api.gcloud.cleanup_attached_disks(), \
+  with api.gcloud.cleanup_gce_disks(), \
        api.gcloud.cleanup_mounted_disks():
     pass
 
   # Unmount warning
-  api.gcloud._unmount_disk(name='cache_test3', mount_path='/tmp/cache3')
+  api.gcloud._unmount_disk(name='cache_test3', mount_path='cache3')
   # Detach warning
   api.gcloud.detach_disk(instance='test_bot1', disk='test_disk3',
                          zone='us-central1-b')
+
 
 
 def GenTests(api):

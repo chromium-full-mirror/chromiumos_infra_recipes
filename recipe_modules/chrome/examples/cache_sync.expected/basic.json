@@ -34,6 +34,44 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/snapshot_chrome/src"
+    ],
+    "cwd": "[CLEANUP]/snapshot_chrome/src",
+    "infra_step": true,
+    "name": "sync chrome.sync chrome.ensure chrome src directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/snapshot_chrome/chrome_cache"
+    ],
+    "cwd": "[CLEANUP]/snapshot_chrome/src",
+    "infra_step": true,
+    "name": "sync chrome.sync chrome.ensure chrome cache directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",

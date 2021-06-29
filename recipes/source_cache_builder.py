@@ -45,22 +45,26 @@ def RunSteps(api, properties):
         raise StepFailure(
             'failed to get zone from swarming host: {}'.format(infra_host))
     with api.step.nest('attach gcloud compute cache disks'):
-      with api.gcloud.cleanup_attached_disks(), \
+      with api.gcloud.cleanup_gce_disks(), \
            api.gcloud.cleanup_mounted_disks():
         for cache in properties.cache_definition:
           disk = '{}-{}'.format(cache.compute_disk, m.group('zone'))
           if m.group('role') in ['staging']:
             disk = '{}-{}'.format('staging', disk)
+          cat_res = api.gsutil.cat(
+              'gs://{}/{}'.format(properties.cache_bucket, cache.version_file),
+              infra_step=True, stdout=api.raw_io.output())
+          ret = cat_res.stdout.strip()
+          api.gcloud.create_disk(instance=infra_host, disk=disk,
+                                 zone=m.group('zone'), snapshot=ret)
           api.gcloud.attach_disk(name=cache.cache_name, instance=infra_host,
                                  disk=disk, zone=m.group('zone'))
           mount_path = api.gcloud.mount_disk(name=cache.cache_name,
-                                             mount_path=cache.cache_directory)
+                                             mount_path=cache.cache_directory,
+                                             recipe_mount=True)
           with api.step.nest('sync mounted cache directories'):
             if cache.command == 'repo':
               with api.context(cwd=mount_path):
-                if not api.path.exists(mount_path.join('.repo')):
-                  api.repo.init(
-                      manifest_url=api.src_state.internal_manifest.url)
                 api.repo.sync(force_sync=True, detach=True, jobs=20,
                               no_tags=True, optimized_fetch=True,
                               retry_fetches=8, timeout=10800)

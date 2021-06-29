@@ -20,7 +20,7 @@ class GcloudApi(recipe_api.RecipeApi):
   def __init__(self, *args, **kwargs):
     """Initialize GcloudApi."""
     super(GcloudApi, self).__init__(*args, **kwargs)
-    self._cleanup_attached_stack = [[]]
+    self._cleanup_gce_stack = [[]]
     self._cleanup_mounted_stack = [[]]
     self._attached_disks = {}
     self._dev_ref = 'a'
@@ -29,6 +29,14 @@ class GcloudApi(recipe_api.RecipeApi):
   def _base_mount_path(self):
     """Returns a Path to the base mount directory for this module."""
     return self.m.path['cleanup'].join('snapshot')
+
+  @property
+  def snapshot_mount_path(self):
+    """The path to mount the snapshot disks.
+
+    This is the path that the disks created from snapshots will be mounted.
+    """
+    return '/snapshot_mounts'
 
   def set_gce_project(self, project):
     """Set the default project for gcloud command.
@@ -172,7 +180,7 @@ class GcloudApi(recipe_api.RecipeApi):
 
     Args:
       name (str): An alphanumeric name for the mount, used for display.
-      instance(str): GCE instance to be deleted.
+      instance(str): GCE instance on which disk will be attached.
       disk(str): Google Cloud disk name.
       zone(str): GCE zone to create instance (e.g. us-central1-b).
     """
@@ -198,7 +206,7 @@ class GcloudApi(recipe_api.RecipeApi):
     that is used by the context manager to detach as the task ends.
 
     Args:
-      instance(str): GCE instance to be deleted.
+      instance(str): GCE instance disk is attached.
       disk(str): Google Cloud disk name.
       zone(str): GCE zone to create instance (e.g. us-central1-b).
     """
@@ -207,9 +215,41 @@ class GcloudApi(recipe_api.RecipeApi):
           'gcloud', 'compute', 'instances', 'detach-disk', instance,
           '--disk={}'.format(disk), '--zone={}'.format(zone)
       ], infra_step=True)
-      self._remove_cleanup_attached_disk(disk, instance, zone)
+    self._remove_cleanup_attached_disk(disk, instance, zone)
 
-  def mount_disk(self, name, mount_path):
+  def create_disk(self, instance, disk, zone, snapshot):
+    """Create a GCE disk.
+
+    Create a GCE disk from a provided snapshot name.
+
+    Args:
+      instance(str): GCE instance disk is associated.
+      disk(str): Google Cloud disk name.
+      zone(str): GCE zone to create disk (e.g. us-central1-b).
+      snapshot(str): Snapshot version use to create the disk.
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('create disk from snapshot', [
+          'gcloud', 'compute', 'disks', 'create', disk,
+          '--zone={}'.format(zone), '--source-snapshot={}'.format(snapshot)
+      ], infra_step=True)
+
+  def delete_disk(self, instance, disk, zone):
+    """Delete a GCE disk.
+
+    Permanently delete a GCE disk from the project.
+
+    Args:
+      instance(str): GCE instance disk is associated.
+      disk(str): Google Cloud disk name.
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('delete disk', [
+          'gcloud', 'compute', 'disks', 'delete', disk, '--zone={}'.format(zone)
+      ], infra_step=True)
+
+  def mount_disk(self, name, mount_path, recipe_mount=False):
     """Mount an attached disk to host.
 
     As a disk is mounted, the disk is then added to the stack
@@ -218,12 +258,21 @@ class GcloudApi(recipe_api.RecipeApi):
     Args:
       name (str): An alphanumeric name for the mount, used for display.
       mount_path(str): Directory to mount the disk.
+      recipe_mount(bool): Whether mount needs to be in the path to use within
+                        a recipe.
 
     Returns: Path to the mounted disk
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      recipe_mount_path = self._base_mount_path.join(mount_path)
-      self.m.file.ensure_directory('create mount path', recipe_mount_path)
+      if recipe_mount:
+        recipe_mount_path = self._base_mount_path.join(mount_path)
+        self.m.file.ensure_directory('create mount path', recipe_mount_path)
+      else:
+        recipe_mount_path = '{}/{}'.format(self.snapshot_mount_path, mount_path)
+        # Ensure the mountpath exists.
+        mount_dir_cmd = ['mkdir', '-p', recipe_mount_path]
+        self.m.step('ensure mount directory exists', mount_dir_cmd,
+                    infra_step=True)
       self.m.step(
           'mount disk %s' % name,
           ['sudo', 'mount', self._attached_disks[name], recipe_mount_path],
@@ -262,22 +311,23 @@ class GcloudApi(recipe_api.RecipeApi):
       ])
 
   @contextlib.contextmanager
-  def cleanup_attached_disks(self):
-    """Wrap disk cleanup in a context handler to ensure they are detached.
+  def cleanup_gce_disks(self):
+    """Wrap disk cleanup in a context handler to ensure they are handled.
 
     Upon exiting the context manager, each attached disk is then iterated
-    through and detached.
+    through to unmount, detach, and delete the disk.
     """
-    cleanup_attached_disks = []
-    self._cleanup_attached_stack.append(cleanup_attached_disks)
+    cleanup_gce_disks = []
+    self._cleanup_gce_stack.append(cleanup_gce_disks)
     try:
       yield
     finally:
-      if cleanup_attached_disks:
-        with self.m.step.nest('clean up attached compute disk'):
-          for disk, instance, zone in list(cleanup_attached_disks):
+      if cleanup_gce_disks:
+        with self.m.step.nest('clean up gce disk'):
+          for disk, instance, zone in list(cleanup_gce_disks):
             self.detach_disk(instance, disk, zone)
-      self._cleanup_attached_stack.pop()
+            self.delete_disk(instance, disk, zone)
+      self._cleanup_gce_stack.pop()
 
   def _add_cleanup_attached_disk(self, disk, instance, zone):
     """Track attach disk for cleanup_attached_disks.
@@ -285,7 +335,7 @@ class GcloudApi(recipe_api.RecipeApi):
     Each attached disk is added to the stack to be detached by
     the context handler.
     """
-    self._cleanup_attached_stack[-1].append((disk, instance, zone))
+    self._cleanup_gce_stack[-1].append((disk, instance, zone))
 
   def _remove_cleanup_attached_disk(self, disk, instance, zone):
     """Track detach disk for cleanup_attached_disks.
@@ -294,7 +344,7 @@ class GcloudApi(recipe_api.RecipeApi):
     to avoid attempting to detach at a later time.
     """
     item = (disk, instance, zone)
-    for mounts in reversed(self._cleanup_attached_stack):
+    for mounts in reversed(self._cleanup_gce_stack):
       if item in mounts:
         mounts.remove(item)
         break
@@ -302,7 +352,7 @@ class GcloudApi(recipe_api.RecipeApi):
       # Detach succeeded, but the requested disk was not found in the
       # cleanup stack so we assume we already detached it.
       self.m.step.active_result.presentation.step_text += (
-          '<br/>[WARNING: gcloud detach disk bookkeeping error for %s]' % disk)
+          '<br/>[WARNING: gcloud delete disk bookkeeping error for %s]' % disk)
 
   @contextlib.contextmanager
   def cleanup_mounted_disks(self):

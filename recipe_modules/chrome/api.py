@@ -84,6 +84,9 @@ class ChromeApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('sync chrome'):
       src_dir = cache_path.join('src')
+      self.m.file.ensure_directory('ensure chrome src directory', src_dir)
+      self.m.file.ensure_directory('ensure chrome cache directory',
+                                   cache_path.join('chrome_cache'))
       config_exists = self.m.path.exists(src_dir.join('.gclient'))
       with self.m.context(cwd=src_dir), \
           self.m.depot_tools.on_path():
