@@ -91,9 +91,9 @@
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"refs/heads/release-R89-13729.B\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2020-10-22 18:54:00.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
@@ -107,23 +107,11 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bar.sh\": {}, @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"foo.ebuild\": {}@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/change/foo\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -214,7 +202,15 @@
     "cmd": [],
     "name": "configure builder.determine branch from changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Using manifest branch release-R89-13729.B.  Found release-R89-13729.B@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.determine branch from changes.set src_state.gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -223,12 +219,12 @@
     ],
     "infra_step": true,
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"release-R89-13729.B\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"main-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"release-R89-13729.B-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -246,7 +242,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"release-R89-13729.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/release-R89-13729.B\"}@@@"
     ]
   },
   {
@@ -254,7 +250,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"release-R89-13729.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/release-R89-13729.B\"}@@@"
     ]
   },
   {
@@ -277,9 +273,9 @@
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"refs/heads/release-R89-13729.B\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"1\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2020-10-22 18:54:00.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
@@ -293,60 +289,28 @@
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bar.sh\": {}, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"foo.ebuild\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/change/foo\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set src_state.gitiles_commit"
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
-    ],
-    "infra_step": true,
-    "name": "set src_state.gitiles_commit.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"release-R89-13729.B\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"main-HEAD-SHA\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set src_state.gitiles_commit.update src_state.gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set src_state.gitiles_commit.update src_state.gitiles_commit.set gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/release-R89-13729.B\"}@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set src_state.gitiles_commit.update src_state.gitiles_commit.set_output_gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/release-R89-13729.B\"}@@@"
     ]
   },
   {
@@ -876,14 +840,14 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/main-HEAD-SHA/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/release-R89-13729.B-HEAD-SHA/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
       "200,404"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "sync to gitiles commit.fetch main-HEAD-SHA:snapshot.xml",
+    "name": "sync to gitiles commit.fetch release-R89-13729.B-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1119,11 +1083,7 @@
   },
   {
     "cmd": [],
-    "name": "get project info",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@Project for branch refs/heads/release-R89-13729.B not found.@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "get project info"
   },
   {
     "cmd": [
@@ -1149,6 +1109,427 @@
       "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros-internal|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros-internal|refs/heads/foo|refs/heads/foo@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get CL 1 description",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromium/src/+/1/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "get CL 1 description.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 1, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src/tricium/data"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ensure tricium data dir"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"files\": [\n    {\n      \"path\": \"my/fake/file\"\n    }\n  ], \n  \"commitMessage\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"\n}",
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src/tricium/data/files.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "write files.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@files.json@{@@@",
+      "@@@STEP_LOG_LINE@files.json@  \"files\": [@@@",
+      "@@@STEP_LOG_LINE@files.json@    {@@@",
+      "@@@STEP_LOG_LINE@files.json@      \"path\": \"my/fake/file\"@@@",
+      "@@@STEP_LOG_LINE@files.json@    }@@@",
+      "@@@STEP_LOG_LINE@files.json@  ], @@@",
+      "@@@STEP_LOG_LINE@files.json@  \"commitMessage\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@files.json@}@@@",
+      "@@@STEP_LOG_END@files.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ShellcheckPortage",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@0 comment(s)@@@",
+      "@@@STEP_LOG_LINE@result@{}@@@",
+      "@@@STEP_LOG_END@result@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[CLEANUP]/ShellcheckPortage/package",
+      "-ensure-file",
+      "infra/tricium/function/shellcheck live",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "ShellcheckPortage.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-live------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tricium/function/shellcheck\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/ShellcheckPortage/package/shellcheck_tricium",
+      "-input",
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src",
+      "-output",
+      "[CLEANUP]/ShellcheckPortage/out",
+      "--path_filters=*.ebuild,*.eclass",
+      "--exclude=SC2148",
+      "--shell=bash",
+      "--enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces"
+    ],
+    "cwd": "[CLEANUP]/ShellcheckPortage/package",
+    "name": "ShellcheckPortage.run analyzer",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/ShellcheckPortage/package/shellcheck_tricium -input [CLEANUP]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/ShellcheckPortage/out --path_filters=*.ebuild,*.eclass --exclude=SC2148 --shell=bash --enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces@@@",
+      "@@@STEP_LOG_END@cmd@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/ShellcheckPortage/out/tricium/data"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ShellcheckPortage.ensure tricium data dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/ShellcheckPortage/out/tricium/data/results.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "ShellcheckPortage.read results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@results.json@{\"comments\":[]}@@@",
+      "@@@STEP_LOG_END@results.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Shellcheck",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@0 comment(s)@@@",
+      "@@@STEP_LOG_LINE@result@{}@@@",
+      "@@@STEP_LOG_END@result@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[CLEANUP]/Shellcheck/package",
+      "-ensure-file",
+      "infra/tricium/function/shellcheck live",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Shellcheck.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-live------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tricium/function/shellcheck\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/Shellcheck/package/shellcheck_tricium",
+      "-input",
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src",
+      "-output",
+      "[CLEANUP]/Shellcheck/out",
+      "--path_filters=*.sh",
+      "--exclude=SC1091,SC3043",
+      "--enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces,quote-safe-variables"
+    ],
+    "cwd": "[CLEANUP]/Shellcheck/package",
+    "name": "Shellcheck.run analyzer",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/Shellcheck/package/shellcheck_tricium -input [CLEANUP]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/Shellcheck/out --path_filters=*.sh --exclude=SC1091,SC3043 --enable=avoid-nullary-conditions,check-unassigned-uppercase,require-variable-braces,quote-safe-variables@@@",
+      "@@@STEP_LOG_END@cmd@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/Shellcheck/out/tricium/data"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Shellcheck.ensure tricium data dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/Shellcheck/out/tricium/data/results.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Shellcheck.read results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@results.json@{\"comments\":[]}@@@",
+      "@@@STEP_LOG_END@results.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Spellchecker",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@0 comment(s)@@@",
+      "@@@STEP_LOG_LINE@result@{}@@@",
+      "@@@STEP_LOG_END@result@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[CLEANUP]/Spellchecker/package",
+      "-ensure-file",
+      "infra/tricium/function/spellchecker live",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Spellchecker.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-live------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tricium/function/spellchecker\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/Spellchecker/package/spellchecker",
+      "-input",
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src",
+      "-output",
+      "[CLEANUP]/Spellchecker/out"
+    ],
+    "cwd": "[CLEANUP]/Spellchecker/package",
+    "name": "Spellchecker.run analyzer",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/Spellchecker/package/spellchecker -input [CLEANUP]/chromiumos_workspace/src/chromium/src -output [CLEANUP]/Spellchecker/out@@@",
+      "@@@STEP_LOG_END@cmd@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/Spellchecker/out/tricium/data"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Spellchecker.ensure tricium data dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/Spellchecker/out/tricium/data/results.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Spellchecker.read results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@results.json@{\"comments\":[]}@@@",
+      "@@@STEP_LOG_END@results.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/chromiumos_workspace/src/chromium/src/tricium"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "clean up tricium data dir"
+  },
+  {
+    "cmd": [],
+    "name": "write results",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@tricium@\"{}\"@@@"
     ]
   },
   {
@@ -1374,7 +1755,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/release-R89-13729.B\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"release-R89-13729.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/release-R89-13729.B\"}}@@@"
     ]
   },
   {

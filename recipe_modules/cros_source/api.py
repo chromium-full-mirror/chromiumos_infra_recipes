@@ -204,7 +204,7 @@ class CrosSourceApi(RecipeApi):
       BuilderConfig or None
     """
     branch_fmt = (r'(?P<branch>(?P<base>(factory|firmware|release|stabilize)-'
-                  r'(((?P<device>[-a-z_0-9.]+)|(?P<release>R[1-9][0-9]*))-)?'
+                  r'(((?P<device>[-a-zA-Z_0-9.]+)|(?P<release>R[1-9][0-9]*))-)?'
                   r'(?P<version>[0-9.]+)'
                   r')\.B)'
                   r'(?P<parent_branch>-.+)?$')

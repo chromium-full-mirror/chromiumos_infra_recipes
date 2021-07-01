@@ -62,29 +62,6 @@ def _FullCheckout(api):
   commit = api.src_state.gerrit_changes[0]
   patch_set = api.gerrit.fetch_patch_set_from_change(commit, include_files=True)
 
-  # If the change is on what looks like a valid branch, use that for the
-  # checkout. TODO(crbug/1168841): Move this code to a more appropriate home.
-  if not api.buildbucket.gitiles_commit.ref:
-    branch = api.git.extract_branch(patch_set.branch, patch_set.branch)
-    for branch_prefix in ["release-", "factory-", "firmware-", "stabilize-"]:
-      if branch.startswith(branch_prefix):
-        # Override gitiles_commit to use the appropriate ref/id.
-        with api.step.nest('set src_state.gitiles_commit'):
-          if not branch.endswith('.B'):
-            branch = branch[:branch.find('.B') + 2]
-          gitiles_commit = api.src_state.gitiles_commit
-          test_data = dict(
-              branch=dict(revision='%s-HEAD-SHA' %
-                          gitiles_commit.ref.split('/')[-1]))
-          gitiles_id = api.gitiles.fetch_revision(
-              gitiles_commit.host, gitiles_commit.project,
-              api.git.get_branch_refspec(branch), test_output_data=test_data)
-
-          api.src_state.gitiles_commit = GitilesCommit(
-              host=gitiles_commit.host, project=gitiles_commit.project,
-              ref=api.git.get_branch_refspec(branch), id=gitiles_id)
-          break
-
   if '.B' in api.src_state.gitiles_commit.ref:
     with api.step.nest('check branch version') as pres:
       version = api.cros_version.Version.from_branch_name(
@@ -147,7 +124,10 @@ def _FullCheckout(api):
           return
 
     commit_message = api.gerrit.get_change_description(commit)
-    files = patch_set.file_infos.keys()
+    files = [
+        name for name, finfo in patch_set.file_infos.items()
+        if finfo.get('status', None) != "D"
+    ]
     api.tricium.run_legacy(analyzers, project_path, files, commit_message)
 
 
@@ -202,7 +182,8 @@ def GenTests(api):
               dict(project='chromium/src', remote='cros-internal',
                    rrev='refs/heads/foo', upstream='refs/heads/foo'),
           ]),
-      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict))
+      api.gerrit.set_gerrit_fetch_changes_response('configure builder', changes,
+                                                   value_dict))
 
   yield api.test(
       'no-matching-project', test_builder(gerrit_changes=changes),
@@ -237,7 +218,8 @@ def GenTests(api):
               dict(project='chromium/src', remote='cros-internal',
                    rrev='refs/heads/foo', upstream='refs/heads/foo'),
           ]),
-      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict))
+      api.gerrit.set_gerrit_fetch_changes_response('configure builder', changes,
+                                                   value_dict))
 
   value_dict = {
       1: {
@@ -264,7 +246,8 @@ def GenTests(api):
               dict(project='chromium/src', remote='cros-internal',
                    rrev='refs/heads/foo', upstream='refs/heads/foo'),
           ]),
-      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict))
+      api.gerrit.set_gerrit_fetch_changes_response('configure builder', changes,
+                                                   value_dict))
 
   value_dict = {
       1: {
@@ -284,4 +267,5 @@ def GenTests(api):
 
   yield api.test(
       'old-branch', test_builder(gerrit_changes=changes),
-      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict))
+      api.gerrit.set_gerrit_fetch_changes_response('configure builder', changes,
+                                                   value_dict))
