@@ -53,6 +53,7 @@
       "git",
       "fetch",
       "origin",
+      "master",
       "--progress"
     ],
     "cwd": "[CLEANUP]/swarming-client",
@@ -70,7 +71,7 @@
       "git",
       "checkout",
       "-f",
-      "5d1ac84962602f74a9a83c5e0dbe594f8099db4b"
+      "FETCH_HEAD"
     ],
     "cwd": "[CLEANUP]/swarming-client",
     "infra_step": true,
