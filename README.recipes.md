@@ -6849,22 +6849,22 @@ Recipe for building images for release.
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_1.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_1.py#19)(api):**
 ### *recipes* / [build\_reporting:examples/contexts\_2](/recipe_modules/build_reporting/examples/contexts_2.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_2.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_2.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_2.py#21)(api):**
 ### *recipes* / [build\_reporting:examples/full](/recipe_modules/build_reporting/examples/full.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/full.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#23)(api):**
 ### *recipes* / [build\_reporting:tests/full](/recipe_modules/build_reporting/tests/full.py)
 
 [DEPS](/recipe_modules/build_reporting/tests/full.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#22)(api):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
