@@ -151,66 +151,6 @@ class SkylabApi(recipe_api.RecipeApi):
       dimension = "label-license:" + license_pb2.LicenseType.Name(lic)
       request.params.freeform_attributes.swarming_dimensions.append(dimension)
 
-  def create_recipe(self, test, unit, timeout, name=None,
-                    async_suite_run=False):
-    """Schedule a HW test suite by invoking the cros_test_platform recipe.
-
-    Args:
-    * tests (list[UnitHwTest]): Hardware test suites to execute
-    * timeout (Duration): Timeout in timestamp_pb2.Duration.
-    * name (str): The step name. Defaults to 'schedule skylab tests v2'
-    * async_suite_run (bool): If set, indicates that caller does not intend to wait for
-      the scheduled suite to complete, and the child build can outlive the parent build.
-
-    Returns:
-      SkylabTask: with buildbucket_id of the recipe launched.
-    """
-    name = name or 'schedule %s' % test.common.display_name
-    with self.m.step.nest(name) as presentation:
-      req = Request()
-      req.params.hardware_attributes.model = ""
-      req.params.time.maximum_duration.seconds = timeout.seconds
-      image_path = unit.common.build_payload.artifacts_gs_path
-      req.params.metadata.test_metadata_url = (
-          'gs://' + unit.common.build_payload.artifacts_gs_bucket + '/' +
-          image_path)
-      self._set_pool(req.params.scheduling, test.pool)
-      sw_dep = req.params.software_dependencies.add()
-      sw_dep.chromeos_build = image_path
-      req.params.scheduling.qs_account = self._qs_account
-      req.params.software_attributes.build_target.name = test.skylab_board
-      suite_to_create = req.test_plan.suite.add()
-      suite_to_create.name = test.suite
-
-      tags = self._get_ctp_tags(test, unit, image_path)
-      request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
-      req.params.decorations.tags.extend(request_tags)
-      self._enable_test_retries(req)
-      # We're sending this only to add a link back to the parent. This will not
-      # cause cascading termination. For that see swarming_parent_run_id.
-      tags['parent_buildbucket_id'] = str(self.m.buildbucket.build.id)
-
-      request_dict = json_format.MessageToDict(req)
-      swarming_parent_run_id = None if async_suite_run else self.m.swarming.task_id
-      bb_request = self.m.buildbucket.schedule_request(
-          self._ctp_builder,
-          bucket='testplatform',
-          properties={
-              'requests': {
-                  'default': request_dict
-              },
-          },
-          tags=self.m.cros_tags.tags(**tags),
-          gerrit_changes=[],
-          swarming_parent_run_id=swarming_parent_run_id,
-          # Disable inheriting the version from the parent builder.
-          exe_cipd_version='')
-      build = self.m.buildbucket.schedule([bb_request])[0]
-
-      build_url = self.m.buildbucket.build_url(build_id=build.id)
-      presentation.links['suite link'] = build_url
-      return self.SkylabTask(id=build.id, url=build_url, test=test, unit=unit)
-
   def _get_ctp_tags(self, test, unit, image_path):
     result = {
         'label-pool': test.pool,

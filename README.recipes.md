@@ -363,7 +363,6 @@
   * [sign_image](#recipes-sign_image) &mdash; Recipe for signing ChromeOS images.
   * [sign_paygen](#recipes-sign_paygen) &mdash; Recipe for signing ChromeOS payloads (AU deltas etc).
   * [signing](#recipes-signing) &mdash; Recipe for signing ChromeOS images.
-  * [skylab:examples/create_recipe](#recipes-skylab_examples_create_recipe)
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
@@ -5767,20 +5766,6 @@ Validate the caller's service version if they sent one.
 
 Module for issuing commands to Skylab
 
-&mdash; **def [create\_recipe](/recipe_modules/skylab/api.py#154)(self, test, unit, timeout, name=None, async_suite_run=False):**
-
-Schedule a HW test suite by invoking the cros_test_platform recipe.
-
-Args:
-* tests (list[UnitHwTest]): Hardware test suites to execute
-* timeout (Duration): Timeout in timestamp_pb2.Duration.
-* name (str): The step name. Defaults to 'schedule skylab tests v2'
-* async_suite_run (bool): If set, indicates that caller does not intend to wait for
-  the scheduled suite to complete, and the child build can outlive the parent build.
-
-Returns:
-  SkylabTask: with buildbucket_id of the recipe launched.
-
 &mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#43)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
@@ -5816,7 +5801,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#236)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#176)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -8323,11 +8308,6 @@ Recipe for signing ChromeOS payloads (AU deltas etc).
 Recipe for signing ChromeOS images.
 
 &mdash; **def [RunSteps](/recipes/signing.py#14)(api):**
-### *recipes* / [skylab:examples/create\_recipe](/recipe_modules/skylab/examples/create_recipe.py)
-
-[DEPS](/recipe_modules/skylab/examples/create_recipe.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/create_recipe.py#16)(api):**
 ### *recipes* / [skylab:examples/schedule\_suites](/recipe_modules/skylab/examples/schedule_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/schedule_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
