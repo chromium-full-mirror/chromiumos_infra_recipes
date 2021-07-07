@@ -341,6 +341,7 @@
   * [portage:examples/full](#recipes-portage_examples_full)
   * [presubmit_cq](#recipes-presubmit_cq) &mdash; Launches presubmit tests for CQ.
   * [presubmit_tests](#recipes-presubmit_tests) &mdash; Recipe for running presubmit on multiple CLs.
+  * [project_buildspec](#recipes-project_buildspec) &mdash; Recipe for invoking the per project buildspec tool.
   * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry)
   * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
@@ -8184,6 +8185,15 @@ Launches presubmit tests for CQ.
 Recipe for running presubmit on multiple CLs.
 
 &mdash; **def [RunSteps](/recipes/presubmit_tests.py#34)(api, properties):**
+### *recipes* / [project\_buildspec](/recipes/project_buildspec.py)
+
+[DEPS](/recipes/project_buildspec.py#10): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+Recipe for invoking the per project buildspec tool.
+
+&mdash; **def [RunSteps](/recipes/project_buildspec.py#47)(api, properties):**
+
+&mdash; **def [ensure\_manifest\_doctor](/recipes/project_buildspec.py#27)(api, properties):**
 ### *recipes* / [pupr:examples/identify\_retry](/recipe_modules/pupr/examples/identify_retry.py)
 
 [DEPS](/recipe_modules/pupr/examples/identify_retry.py#6): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

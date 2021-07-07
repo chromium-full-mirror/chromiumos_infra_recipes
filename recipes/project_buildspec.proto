@@ -1,0 +1,30 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.project_buildspec;
+
+message ProjectBuildspecProperties {
+    // Cipd ref to use for manifest_doctor.
+    // Defaults to "chromiumos/infra/manifest_doctor/{$platform}".
+    string manifest_doctor_cipd_package = 1;
+
+    // Cipd ref to use for manifest_doctor.
+    // Defaults to "staging" or "prod".
+    string manifest_doctor_cipd_ref = 2;
+
+    // Path to manifest within manifest-versions repo, relative to
+    // https://chrome-internal.googlesource.com/chromeos/manifest-versions/+/HEAD/buildspecs/
+    // e.g. 85/13277.0.0.xml
+    string buildspec = 3;
+
+    // Name of the program to create the program-specific buildspec for.
+    // If the specified program does not have a local_manifest, no program-specific
+	// buildspec will be created.
+    string program = 4;
+
+    // Name of the project to create the project-specific buildspec for.
+    string project = 5;
+}
