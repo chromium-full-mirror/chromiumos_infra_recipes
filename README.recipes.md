@@ -6821,13 +6821,13 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#24)(api, properties):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#44)(api, config, _properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#47)(api, config, _properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#34)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#35)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -33,6 +33,9 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "publish message.read deploy_cipd.json",
     "~followup_annotations": [
@@ -59,6 +62,9 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "publish message.ensure_installed",
     "~followup_annotations": [
@@ -80,6 +86,9 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "publish message.publish-message",
     "stdin": "{\"data\": \"CNDsgNmu8bWSfBABKh8SHQoMU1RFUF9PVkVSQUxMEg0QyAEaCAoGCMOAxP0E\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"chromeos-builds-all\"}",
@@ -172,6 +181,9 @@
       "--format",
       "text"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
@@ -227,6 +239,9 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "configure builder.gitiles-fetch-ref",
     "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}}",
@@ -294,6 +309,9 @@
       "0777",
       "[CACHE]/chromiumos/upperdir/chromiumos"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "mount overlay chromiumos.create upperdir",
     "~followup_annotations": [
@@ -312,6 +330,9 @@
       "0777",
       "[CACHE]/chromiumos/workdir/chromiumos"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "mount overlay chromiumos.create workdir",
     "~followup_annotations": [
@@ -330,6 +351,9 @@
       "0777",
       "[CACHE]/chromiumos"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "mount overlay chromiumos.create mount path",
     "~followup_annotations": [
@@ -348,6 +372,9 @@
       "overlay",
       "[CACHE]/chromiumos"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "mount overlay chromiumos.mount",
     "~followup_annotations": [
@@ -366,6 +393,9 @@
       "0777",
       "[CACHE]/cros_chroot/chroot"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "ensure chroot directory"
   },
@@ -380,6 +410,9 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "metadata setup.buildbucket.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
@@ -419,6 +452,9 @@
       "0"
     ],
     "cwd": "[CLEANUP]",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "git config"
   },
@@ -431,6 +467,9 @@
       "false"
     ],
     "cwd": "[CLEANUP]",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "git config (2)"
   },
@@ -450,6 +489,9 @@
       "0777",
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "mount overlay workspace.create upperdir",
     "~followup_annotations": [
@@ -468,6 +510,9 @@
       "0777",
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "mount overlay workspace.create workdir",
     "~followup_annotations": [
@@ -486,6 +531,9 @@
       "0777",
       "[CLEANUP]/chromiumos_workspace"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
     "~followup_annotations": [
@@ -504,6 +552,9 @@
       "overlay",
       "[CLEANUP]/chromiumos_workspace"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "mount overlay workspace.mount",
     "~followup_annotations": [
@@ -528,6 +579,9 @@
       "{\n\"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\", \n\"state\": \"STATE_DIRTY\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
@@ -552,6 +606,9 @@
       "0777",
       "[CLEANUP]/chromiumos_workspace"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "ensure synced checkout.ensure root path",
     "~followup_annotations": [
@@ -569,6 +626,9 @@
       "--repo-rev=stable"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -597,6 +657,9 @@
       "version"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -617,6 +680,9 @@
       "selfupdate"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -637,6 +703,9 @@
       "version"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -672,6 +741,9 @@
       "-f"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -702,6 +774,9 @@
       "8"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -728,6 +803,9 @@
       "{\n\"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json (2)",
     "~followup_annotations": [
@@ -747,6 +825,9 @@
       "update"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "sync manifest branches.sync chromiumos/manifest branches",
     "~followup_annotations": [
@@ -760,6 +841,9 @@
       "update"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "sync manifest branches.sync chromiumos/manifest branches (2)",
     "~followup_annotations": [
@@ -785,6 +869,9 @@
       "200,404"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "name": "sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -803,6 +890,9 @@
       "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
@@ -824,6 +914,9 @@
       "../tmp_manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -853,6 +946,9 @@
       "8"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -883,6 +979,9 @@
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -917,6 +1016,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
@@ -938,6 +1040,9 @@
       "snapshot-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
@@ -951,6 +1056,9 @@
       "FETCH_HEAD"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
@@ -966,6 +1074,9 @@
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
@@ -1008,6 +1119,9 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "uprev packages.call chromite.api.PackageService/Uprev.write input file",
     "~followup_annotations": [
@@ -1030,6 +1144,9 @@
       "chromite.api.PackageService/Uprev"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1053,6 +1170,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1113,6 +1233,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1146,6 +1269,9 @@
       "[CACHE]/cros_chroot/chroot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "init sdk.changing permissions of [CACHE]/cros_chroot/chroot",
     "~followup_annotations": [
@@ -1184,6 +1310,9 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "init sdk.check SDK in named cache.read sdk cache state json",
     "~followup_annotations": [
@@ -1229,6 +1358,9 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.write input file",
     "~followup_annotations": [
@@ -1263,6 +1395,9 @@
       "chromite.api.SdkService/Create"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1286,6 +1421,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1352,6 +1490,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1380,6 +1521,9 @@
       "[CACHE]/cros_chroot/sdk_cache_state.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "init sdk.write sdk cache state file",
     "~followup_annotations": [
@@ -1411,6 +1555,9 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "init sdk.link chroot in chromiumos_workspace.ensure chromiumos_workspace",
     "~followup_annotations": [
@@ -1429,6 +1576,9 @@
       "[CLEANUP]/chromiumos_workspace/chroot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "init sdk.link chroot in chromiumos_workspace.link chromiumos_workspace to chroot",
     "~followup_annotations": [
@@ -1479,6 +1629,9 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.write input file",
     "~followup_annotations": [
@@ -1516,6 +1669,9 @@
       "chromite.api.SdkService/Update"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1539,6 +1695,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1608,6 +1767,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1676,6 +1838,9 @@
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "create sysroot.call chromite.api.SysrootService/Create.write input file",
     "~followup_annotations": [
@@ -1714,6 +1879,9 @@
       "chromite.api.SysrootService/Create"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1737,6 +1905,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1810,6 +1981,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1862,6 +2036,9 @@
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "call chromite.api.PackageService/GetTargetVersions.write input file",
     "~followup_annotations": [
@@ -1896,6 +2073,9 @@
       "chromite.api.PackageService/GetTargetVersions"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1918,6 +2098,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1964,6 +2147,9 @@
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "upload metadata.writing partial-metadata.json",
     "~followup_annotations": [
@@ -2010,6 +2196,9 @@
       "gs://chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "upload metadata.gsutil cp",
     "timeout": 600,
@@ -2064,6 +2253,9 @@
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
     "~followup_annotations": [
@@ -2104,6 +2296,9 @@
       "chromite.api.DependencyService/GetBuildDependencyGraph"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2126,6 +2321,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2213,6 +2411,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2270,6 +2471,9 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "validate SDK reuse.depgraph relevance check.ensure binaries.ensure_installed",
     "~followup_annotations": [
@@ -2303,6 +2507,9 @@
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "validate SDK reuse.depgraph relevance check.write input binaryproto",
     "~followup_annotations": [
@@ -2323,6 +2530,9 @@
       "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "validate SDK reuse.depgraph relevance check.run check",
     "~followup_annotations": [
@@ -2341,6 +2551,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "validate SDK reuse.depgraph relevance check.read output file",
     "~followup_annotations": [
@@ -2401,6 +2614,9 @@
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.write input file",
     "~followup_annotations": [
@@ -2439,6 +2655,9 @@
       "chromite.api.SysrootService/InstallToolchain"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2462,6 +2681,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2528,6 +2750,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2618,6 +2843,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "infra_step": true,
@@ -2676,6 +2902,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -2701,6 +2928,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -2779,6 +3007,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "infra_step": true,
@@ -2816,6 +3045,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -2842,6 +3072,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -2909,6 +3140,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -2941,6 +3173,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "infra_step": true,
@@ -2960,6 +3193,7 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -2989,6 +3223,7 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -3028,6 +3263,7 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -3067,6 +3303,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "infra_step": true,
@@ -3147,6 +3384,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "infra_step": true,
@@ -3206,6 +3444,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -3288,6 +3527,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
+      "CHROMEOS_OFFICIAL": "1",
       "DEPOT_TOOLS_COLLECT_METRICS": "0"
     },
     "env_suffixes": {
@@ -3365,6 +3605,9 @@
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.write input file",
     "~followup_annotations": [
@@ -3407,6 +3650,9 @@
       "chromite.api.ArtifactsService/BundleImageZip"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3430,6 +3676,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3506,6 +3755,9 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3580,6 +3832,9 @@
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "upload artifacts.call chromite.api.ArtifactsService/Get.write input file",
     "~followup_annotations": [
@@ -3635,6 +3890,9 @@
       "chromite.api.ArtifactsService/Get"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3658,6 +3916,9 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3695,6 +3956,9 @@
       "gs://chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "upload artifacts.gsutil rsync",
     "timeout": 900,
@@ -3721,6 +3985,9 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "finalize metadata.buildbucket.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
@@ -3758,6 +4025,9 @@
       "-host",
       "cr-buildbucket.appspot.com"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "finalize metadata.buildbucket.get (2)",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
@@ -3807,6 +4077,9 @@
       "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"amd64-generic-postsubmit\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"fail\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:00\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "finalize metadata.upload metadata.writing metadata.json",
     "~followup_annotations": [
@@ -3879,6 +4152,9 @@
       "[CLEANUP]/metadata_tmp_2/metadata.json",
       "gs://chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "finalize metadata.upload metadata.gsutil cp",
     "timeout": 600,
@@ -3931,6 +4207,9 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
     "~followup_annotations": [
@@ -3962,6 +4241,9 @@
       "debug",
       "chromite.api.SdkService/Clean"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3983,6 +4265,9 @@
       "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4044,6 +4329,9 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_14/input_proto.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
     "~followup_annotations": [
@@ -4075,6 +4363,9 @@
       "debug",
       "chromite.api.SdkService/Unmount"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4096,6 +4387,9 @@
       "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4157,6 +4451,9 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.write input file",
     "~followup_annotations": [
@@ -4188,6 +4485,9 @@
       "debug",
       "chromite.api.SdkService/Delete"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4209,6 +4509,9 @@
       "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -4246,6 +4549,9 @@
       "remove",
       "[CLEANUP]/chromiumos_workspace/chroot"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace.remove original chroot link",
     "~followup_annotations": [
@@ -4260,6 +4566,9 @@
       "a+rwX,-t",
       "[CACHE]/cros_chroot/chroot"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot/chroot",
     "~followup_annotations": [
@@ -4282,6 +4591,9 @@
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CACHE]/chromiumos"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay chromiumos",
     "~followup_annotations": [
@@ -4293,6 +4605,9 @@
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CLEANUP]/chromiumos_workspace"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",
     "~followup_annotations": [
@@ -4314,6 +4629,9 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "name": "publish message (2).publish-message",
     "stdin": "{\"data\": \"CNDsgNmu8bWSfBABKi0SKwoMU1RFUF9PVkVSQUxMEhsQyAEaFgoGCMOAxP0EEgwI9IDE/QQQgMq1\\n7gE=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"chromeos-builds-all\"}",

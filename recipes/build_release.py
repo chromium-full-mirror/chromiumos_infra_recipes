@@ -6,6 +6,7 @@
 """Recipe for building images for release."""
 
 DEPS = [
+    'recipe_engine/context',
     'recipe_engine/properties',
     'build_menu',
     'build_reporting',
@@ -34,11 +35,13 @@ StepDetails = BuildReport.StepDetails
 def RunSteps(api, properties):
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
 
-  with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
-    with api.build_menu.configure_builder() as config, \
-        api.build_menu.setup_workspace_and_chroot(
-          sync_to_manifest=properties.sync_to_manifest):
-      return DoRunSteps(api, config, properties)
+  #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
+  with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
+    with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
+      with api.build_menu.configure_builder() as config, \
+          api.build_menu.setup_workspace_and_chroot(
+            sync_to_manifest=properties.sync_to_manifest):
+        return DoRunSteps(api, config, properties)
 
 
 def DoRunSteps(api, config, _properties):
