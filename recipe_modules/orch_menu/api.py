@@ -22,6 +22,9 @@ from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
 
+# GS path for internal buildspecs.
+BUILDSPEC_GS_PATH = 'buildspecs-internal/release/'
+
 
 class BuildsStatus(object):
   """The running status of the builds.
@@ -208,7 +211,8 @@ class OrchMenuApi(RecipeApi):
           with self.m.workspace_util.sync_to_commit(
               staging=self.m.cros_infra_config.is_staging):
             self.m.cros_version.bump_version()
-            self.m.cros_release.create_releasespec()
+            self.m.cros_release.create_releasespec(
+                gs_location=BUILDSPEC_GS_PATH)
 
       if config:
         # Update the start ref to indicate we've begun processing the snapshot.

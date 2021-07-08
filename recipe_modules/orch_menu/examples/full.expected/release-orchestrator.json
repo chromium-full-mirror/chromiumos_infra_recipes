@@ -1691,6 +1691,33 @@
   },
   {
     "cmd": [],
+    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to buildspecs-internal/release/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/manifest-versions_tmp_1/releasespecs/99/1234.56.0.xml",
+      "gs://buildspecs-internal/release/99/1234.56.0.xml"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to buildspecs-internal/release/.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/buildspecs-internal/release/99/1234.56.0.xml@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@2 new, 0 recycled@@@"

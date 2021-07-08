@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',

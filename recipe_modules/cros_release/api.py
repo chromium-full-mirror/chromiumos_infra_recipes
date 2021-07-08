@@ -67,7 +67,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     return self._releasespec
 
   def create_releasespec(self, specs_dir='releasespecs', branch='release',
-                         step_name='create releasespec', dry_run=False):
+                         step_name='create releasespec', dry_run=False,
+                         gs_location=None):
     """Create a pinned manifest and upload to manifest-versions/releasespecs.
 
     Args:
@@ -77,6 +78,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         to use the default branch.
       step_name (str): The step name to use.
       dry_run (bool): Whether the git push is --dry-run.
+      gs_location (string): If set, will also upload the pinned manifest to GS.
 
     Returns:
       Full URL path to newly-uploaded manifest.
@@ -117,6 +119,17 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           self.m.git.commit(commit_message)
           self.m.git.push('origin', 'HEAD:refs/for/{}%submit'.format(branch),
                           dry_run=dry_run)
+
+        if gs_location:
+          with self.m.step.nest('upload {} to {}'.format(
+              manifest_file, gs_location)):
+            # Split bucket off, and then append buildspec to the rest of the path (if any).
+            # If a filename is not supplied in gs_location, we use the buildspec_filename.
+            gs_toks = self.m.path.dirname(gs_location).split("/", 1)
+            gs_path = gs_toks[1]
+            if self.m.path.basename(gs_location) == "":
+              gs_path = self.m.path.join(gs_path, version.buildspec_filename)
+            self.m.gsutil.upload(manifest_path, gs_toks[0], gs_path)
 
       self._releasespec = ManifestLocation(
           manifest_repo_url=MANIFEST_VERSIONS_URL, branch=branch,
