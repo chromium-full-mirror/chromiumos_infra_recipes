@@ -638,7 +638,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/cipd/infra/tools/luci/cas/cas_module_pin"
+      "[CACHE]/cipd/infra/tools/luci/cas/git_revision%3Amock_infra_git_revision"
     ],
     "cwd": "[START_DIR]/chrome",
     "infra_step": true,
@@ -652,9 +652,9 @@
       "cipd",
       "ensure",
       "-root",
-      "[CACHE]/cipd/infra/tools/luci/cas/cas_module_pin",
+      "[CACHE]/cipd/infra/tools/luci/cas/git_revision%3Amock_infra_git_revision",
       "-ensure-file",
-      "infra/tools/luci/cas/${platform} cas_module_pin",
+      "infra/tools/luci/cas/${platform} git_revision:mock_infra_git_revision",
       "-max-threads",
       "0",
       "-json-output",
@@ -669,7 +669,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-cas_module_pin--\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-git_revision:moc\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/cas/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
@@ -680,7 +680,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/cipd/infra/tools/luci/cas/cas_module_pin/cas",
+      "[CACHE]/cipd/infra/tools/luci/cas/git_revision%3Amock_infra_git_revision/cas",
       "download",
       "-cas-instance",
       "projects/example-cas-server/instances/default_instance",
