@@ -35,6 +35,7 @@ class SkylabApi(recipe_api.RecipeApi):
     self._version = str(properties.skylab_version) or 'latest'
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
+    self._enable_retries = properties.enable_retries
 
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
@@ -118,7 +119,8 @@ class SkylabApi(recipe_api.RecipeApi):
             '{}:{}'.format(key, value) for key, value in tags.items()
         ]
         req.params.decorations.tags.extend(request_tags)
-        self._enable_test_retries(req)
+        if self._enable_retries:
+          self._enable_test_retries(req)
         reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
 
       bb_tags = self.m.cros_tags.make_schedule_tags(

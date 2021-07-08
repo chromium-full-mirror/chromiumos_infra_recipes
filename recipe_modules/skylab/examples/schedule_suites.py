@@ -13,6 +13,7 @@ DEPS = [
 from google.protobuf import duration_pb2
 
 from PB.lab import license as license_pb2
+from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 
 
 def RunSteps(api):
@@ -47,4 +48,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.properties(
+          **{'$chromeos/skylab': SkylabProperties(enable_retries=True)}))
