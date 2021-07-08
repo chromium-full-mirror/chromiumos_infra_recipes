@@ -580,7 +580,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--force-remove-dirty"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -1878,7 +1879,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "2",
-      "--no-manifest-update"
+      "--no-manifest-update",
+      "--force-remove-dirty"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

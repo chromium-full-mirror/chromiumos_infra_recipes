@@ -554,7 +554,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--force-remove-dirty"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

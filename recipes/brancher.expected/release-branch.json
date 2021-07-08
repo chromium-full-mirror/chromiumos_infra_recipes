@@ -656,6 +656,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--force-remove-dirty",
       "chromiumos/chromite",
       "chromeos/infra/config"
     ],

@@ -694,7 +694,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "2",
-      "--no-manifest-update"
+      "--no-manifest-update",
+      "--force-remove-dirty"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

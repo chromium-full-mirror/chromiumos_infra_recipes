@@ -466,7 +466,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--force-remove-dirty"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "env_suffixes": {

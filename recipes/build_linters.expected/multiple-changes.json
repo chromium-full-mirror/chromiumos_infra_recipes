@@ -765,7 +765,8 @@
       "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--force-remove-dirty"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -4446,6 +4447,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--force-remove-dirty",
       "chromiumos/chromite"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

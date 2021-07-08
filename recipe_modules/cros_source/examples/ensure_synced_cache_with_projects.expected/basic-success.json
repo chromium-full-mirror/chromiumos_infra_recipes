@@ -538,6 +538,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--force-remove-dirty",
       "chromiumos/config"
     ],
     "cwd": "[CACHE]/chromiumos",

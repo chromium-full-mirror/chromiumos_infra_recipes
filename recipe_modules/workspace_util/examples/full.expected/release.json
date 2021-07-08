@@ -560,6 +560,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--force-remove-dirty",
       "chromiumos/manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1098,6 +1099,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--force-remove-dirty",
       "chromiumos/manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

@@ -678,6 +678,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--force-remove-dirty",
       "chromium/src"
     ],
     "cwd": "[CACHE]/chromiumos",

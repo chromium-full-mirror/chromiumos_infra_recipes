@@ -98,4 +98,8 @@ message SyncOpts {
 
   // no_manifest_update (bool): Whether to disable updating the manifest.
   bool no_manifest_update = 12;
+
+  // force-remove_dirty (bool): force remove projects with uncommitted
+  // modifications if projects no longer exist in the manifest.
+  bool force_remove_dirty = 13;
 }

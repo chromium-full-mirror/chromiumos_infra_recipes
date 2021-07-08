@@ -595,6 +595,7 @@
       "--retry-fetches",
       "8",
       "--verbose",
+      "--force-remove-dirty",
       "chromeos/overlays/baseboard-foo-private"
     ],
     "cwd": "[CACHE]/chromiumos",

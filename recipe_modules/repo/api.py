@@ -222,7 +222,7 @@ class RepoApi(recipe_api.RecipeApi):
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,
            optimized_fetch=False, cache_dir=None, timeout=None,
            retry_fetches=None, projects=None, verbose=False,
-           no_manifest_update=False):
+           no_manifest_update=False, force_remove_dirty=False):
     """Executes 'repo sync' with the given arguments.
 
     Args:
@@ -239,6 +239,8 @@ class RepoApi(recipe_api.RecipeApi):
         all projects.
       verbose (bool): Whether to produce verbose output.
       no_manifest_update (bool): Whether to disable updating the manifest.
+      force_remove_dirty (bool): Whether to force remove projects with
+        uncommitted modifications if projects no longer exist in the manifest.
     """
     assert _kwonly == (), 'sync accepts no positional args'
     cmd = ['sync']
@@ -264,6 +266,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--verbose']
     if no_manifest_update:
       cmd += ['--no-manifest-update']
+    if force_remove_dirty:
+      cmd += ['--force-remove-dirty']
     if projects:
       cmd += projects
     self._step(cmd, name=None, timeout=timeout)

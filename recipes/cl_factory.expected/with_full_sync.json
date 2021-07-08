@@ -727,6 +727,7 @@
       "--retry-fetches",
       "8",
       "--verbose",
+      "--force-remove-dirty",
       "chromiumos/config",
       "chromeos/program/galaxy"
     ],

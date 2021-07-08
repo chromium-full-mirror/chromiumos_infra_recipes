@@ -689,6 +689,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--force-remove-dirty",
       "chromeos/manifest-internal"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

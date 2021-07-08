@@ -677,6 +677,7 @@
       "--retry-fetches",
       "8",
       "--verbose",
+      "--force-remove-dirty",
       "chromeos/overlays/baseboard-bar-private",
       "chromeos/overlays/baseboard-foo-private",
       "chromeos/overlays/baseboard-baz-private"

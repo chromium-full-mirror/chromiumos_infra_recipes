@@ -538,6 +538,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--force-remove-dirty",
       "infra/config",
       "src/config",
       "src/config-internal"

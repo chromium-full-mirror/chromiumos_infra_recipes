@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/swarming',
     'recipe_engine/step',
     'recipe_engine/time',
+    'depot_tools/depot_tools',
     'depot_tools/gsutil',
     'chrome',
     'easy',
@@ -65,9 +66,12 @@ def RunSteps(api, properties):
           with api.step.nest('sync mounted cache directories'):
             if cache.command == 'repo':
               with api.context(cwd=mount_path):
-                api.repo.sync(force_sync=True, detach=True, jobs=20,
-                              no_tags=True, optimized_fetch=True,
-                              retry_fetches=8, timeout=10800)
+                sync_opts = dict(force_sync=True, jobs=20, retry_fetches=8,
+                                 timeout=10800, force_remove_dirty=True)
+                init_opts = dict(verbose=True)
+                api.repo.ensure_synced_checkout(
+                    mount_path, api.src_state.internal_manifest.url,
+                    init_opts=init_opts, sync_opts=sync_opts)
             if cache.command == 'gclient':
               # Chrome cache consists of a local repo cache and src, both mounted
               # via a single disk. We change into the source directory to sync.

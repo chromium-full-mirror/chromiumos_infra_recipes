@@ -265,6 +265,7 @@
       "8",
       "--verbose",
       "--no-manifest-update",
+      "--force-remove-dirty",
       "chromiumos/config",
       "chromeos/project/puff/duffy"
     ],
