@@ -94,7 +94,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                            single_branch=True)
           branch = branch or self.m.git.current_branch()
 
-        version = self.m.cros_version.read_workspace_version()
+        version = self.m.cros_version.version
         manifest_file = self.m.path.join(specs_dir, version.buildspec_filename)
         manifest_path = self.m.path.join(tmp_dir, manifest_file)
         manifest_dir = self.m.path.dirname(manifest_path)
@@ -140,7 +140,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                        self.m.build_menu.is_staging else 'paygen-orchestrator')
     bucket = 'staging' if self.m.build_menu.is_staging else 'release'
 
-    version = self.m.cros_version.read_workspace_version()
+    version = self.m.cros_version.version
     with self.m.step.nest('generate payloads') as presentation:
       paygen_properties = {
           'builder_name': self.m.build_menu.build_target.name,
@@ -169,7 +169,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     underlying script, chromite/scripts/push_image.py. Must be used in the
     context of a build.
     """
-    version = str(self.m.cros_version.read_workspace_version())
+    version = str(self.m.cros_version.version)
     with self.m.step.nest('push images') as presentation:
       gs_bucket = self.m.build_menu.config.artifacts.artifacts_gs_bucket
       gs_path = '{target}-release/{version}'.format(

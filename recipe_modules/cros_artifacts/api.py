@@ -237,8 +237,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       req = firmware.BundleFirmwareArtifactsRequest(
           chroot=chroot, result_path=self._result_path(path),
           artifacts=artifact_info)
-      req.bcs_version_info.version_string = str(
-          self.m.cros_version.read_workspace_version())
+      req.bcs_version_info.version_string = str(self.m.cros_version.version)
       resp = self.m.cros_build_api.FirmwareService.BundleFirmwareArtifacts(
           req, infra_step=True)
       for art_info in resp.artifacts.artifacts:
@@ -399,7 +398,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     """
     # If there is a branch name in the builder_name, then we need to preserve
     # the builder name.
-    version = self.m.cros_version.read_workspace_version()
+    version = self.m.cros_version.version
     ret = {
         'version': str(version),
         'legacy_version': version.legacy_version,

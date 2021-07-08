@@ -242,7 +242,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           ignore_missing_projects=ignore_missing_projects)
 
       # The Chrome OS verison can be reported once the workspace is synced.
-      version = self.m.cros_version.read_workspace_version()
+      version = self.m.cros_version.version
       self.m.easy.set_properties_step(chromeos_version=str(version))
 
       yield
@@ -462,7 +462,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     extra_kwargs = {}
     if include_version:
-      version = self.m.cros_version.read_workspace_version()
+      version = self.m.cros_version.version
       extra_kwargs = {'version': str(version)}
 
     self.m.sysroot_util.build_images(build_images.image_types, builder_path,
@@ -558,7 +558,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
                                           'BuildTestServiceContainers'):
       with self.m.step.nest(
           'build & upload test service containers') as presentation:
-        version = self.m.cros_version.read_workspace_version().legacy_version
+        version = self.m.cros_version.version.legacy_version
         response = self.m.cros_build_api.TestService.BuildTestServiceContainers(
             BuildTestServiceContainersRequest(build_target=self.build_target,
                                               chroot=self.m.cros_sdk.chroot,

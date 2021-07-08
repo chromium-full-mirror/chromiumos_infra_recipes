@@ -51,7 +51,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       The full GS URI in which to upload prebuilts.
     """
     label = BuilderConfig.Id.Type.Name(kind).lower()
-    version = self.m.cros_version.read_workspace_version()
+    version = self.m.cros_version.version
     return 'gs://%s/board/%s/%s-%s-%s/packages' % (
         gs_bucket, target.name, label, version, self._build_id)
 
@@ -185,7 +185,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       location (str): The Google Storage URI where the prebuilts were uploaded.
     """
     with self.m.step.nest('upload metadata') as presentation:
-      version = self.m.cros_version.read_workspace_version()
+      version = self.m.cros_version.version
       commit = self.m.cros_infra_config.gitiles_commit
       target = build_target.name if build_target else 'Unknown'
       profile = self._profile_or_default(profile)
