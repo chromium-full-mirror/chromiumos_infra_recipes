@@ -30,8 +30,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, **kwargs):
     super(CrosTestProctorApi, self).__init__(**kwargs)
-    self._baseline_validation_percent = properties.baseline_validation_percent
-    self._baseline_validation_count = properties.baseline_validation_count
     self._timeout = properties.timeout
     if not self._timeout.seconds:
       self._timeout = duration_pb2.Duration(seconds=7 * 60 * 60)
@@ -91,78 +89,32 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             if not self.m.failures.is_critical_test_failure(test_result)
         ]
 
-      baseline_results = self.MetaTestTuple([], [], [])
       failed_test_names = ([
           self.m.naming.get_test_title(test_result)
           for test_result in (test_results.skylab + test_results.autotest_vm +
                               test_results.tast_vm)
           if self.m.failures.is_critical_test_failure(test_result)
       ])
-      needs_baseline_validation = self._needs_validation(
-          failed_test_names, test_plan, self._baseline_validation_percent,
-          self._baseline_validation_count)
 
-      if needs_baseline_validation:
-        pres.step_text = (
-            '{} test(s) failed. will run baseline validation'.format(
-                len(failed_test_names)))
-      elif failed_test_names:
+      if failed_test_names:
         pres.step_text = ('{} test(s) failed'.format(len(failed_test_names)))
       elif passed_tests:
-        pres.step_text = ('all tests passed. no need for baseline validation')
+        pres.step_text = ('all tests passed.')
       else:  #pragma: no cover
         # This shouldn't ever happen with multi-request
         pres.step_text = ('no tests were necessary')
         pres.properties['no_tests_needed'] = True
 
-    with self.m.failures.ignore_exceptions():
-      if gerrit_changes and needs_baseline_validation:
-        # Start Baseline HW Verification process.
-        build_targets_to_verify = set([
-            test_to_build_target_map[test_name]
-            for test_name in failed_test_names
-        ])
-        baseline_builds = []
-
-        with self.m.step.nest('run baseline tests'):
-          with self.m.step.nest('find baseline builds'):
-            for build in need_tests_builds:
-              build_target = self.m.cros_infra_config.get_build_target_name(
-                  build)
-              if build_target and build_target in build_targets_to_verify:
-                baseline_builds += self.m.cros_history.get_snapshot_builds(
-                    build.input.gitiles_commit, [build_target + '-snapshot'],
-                    [common_pb2.SUCCESS])
-          with self.m.step.nest('schedule baseline tests'):
-            baseline_test_plan = self.m.cros_test_plan.generate(
-                baseline_builds, gerrit_changes, snapshot)
-            baseline_tasks = self._schedule_tests(baseline_test_plan,
-                                                  passed_tests, self._timeout,
-                                                  snapshot=snapshot, dev=dev)
-
-          with self.m.step.nest('collect baseline tests'):
-            baseline_results = self._collect_tests(baseline_tasks,
-                                                   timeout=self._timeout)
-
-            # Add failures here to passed_tests.
-            passed_tests.extend([
-                self.m.naming.get_test_title(test_result)
-                for test_result in (baseline_results.skylab +
-                                    baseline_results.autotest_vm +
-                                    baseline_results.tast_vm)
-                if self.m.failures.is_critical_test_failure(test_result)
-            ])
-
     with self.m.step.nest('check test results'):
       self.m.cros_history.set_passed_tests(passed_tests)
-      needs_test_bisection = self._needs_validation(
+      needs_test_bisection = self._needs_bisection(
           failed_test_names, test_plan,
           self.m.cros_bisect.test_bisection_percent,
           self.m.cros_bisect.test_bisection_count)
 
       self.m.cros_bisect.set_test_failures(test_results.skylab,
                                            needs_test_bisection)
-      failures = self.get_test_failures(test_results, baseline_results)
+      failures = self.get_test_failures(test_results)
     return failures
 
   def _get_test_plan(self, builds, gerrit_changes, snapshot):
@@ -248,22 +200,17 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               autotest_vm=autotest_vm_results,
                               tast_vm=tast_vm_results)
 
-  def get_test_failures(self, test_results, baseline_results):
+  def get_test_failures(self, test_results):
     """Logs all test failures to the UI and raises on failed tests.
 
     Args:
       test_results: MetaTestTuple of the tests on the changes.
-      baseline_results: MetaTestTuple of the tests on the baseline images.
     Returns:
-      list[Failure]: All failures discovered in the given runs filtered
-          by baseline failures.
+      list[Failure]: All failures discovered in the given run.
     """
-    failures = self.m.failures.get_hw_test_failures(test_results.skylab,
-                                                    baseline_results.skylab)
-    failures += self.m.failures.get_vm_test_failures(
-        test_results.autotest_vm, baseline_results.autotest_vm)
-    failures += self.m.failures.get_vm_test_failures(test_results.tast_vm,
-                                                     baseline_results.tast_vm)
+    failures = self.m.failures.get_hw_test_failures(test_results.skylab)
+    failures += self.m.failures.get_vm_test_failures(test_results.autotest_vm)
+    failures += self.m.failures.get_vm_test_failures(test_results.tast_vm)
     return failures
 
   def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
@@ -391,22 +338,21 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         url_title_fn=self.m.naming.get_build_title)
     return vm_tests
 
-  def _needs_validation(self, failed_results, test_plan, percent_threshold,
-                        count_threshold):
-    """Check if we need validation.
+  def _needs_bisection(self, failed_results, test_plan, percent_threshold,
+                       count_threshold):
+    """Check if we need bisection.
 
-    Check if we need validation of the results per the validation constraints.
+    Check if we need bisection of the results per the bisection constraints.
 
     Args:
       failed_results (list[SkylabResults]): Results of failed tests.
       test_plan (GenerateTestPlanResponse): test_plan of the orchestrator.
-      percent_threshold (float): upper threshold for baseline validation.
+      percent_threshold (float): upper threshold for test bisection.
       count_threshold (int): upper threshold of # of tests
-          for baseline validation.
+          for test bisection.
 
     Returns:
-      A boolean indicating whether we need to initiate baseline
-      validation.
+      A boolean indicating whether we need to initiate bisection
     """
     test_count = (
         self._critical_test_count(test_plan.hw_test_units, lambda unit: unit.

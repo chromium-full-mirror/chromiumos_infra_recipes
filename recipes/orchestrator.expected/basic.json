@@ -1761,7 +1761,7 @@
     "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all tests passed. no need for baseline validation@@@"
+      "@@@STEP_TEXT@all tests passed.@@@"
     ]
   },
   {

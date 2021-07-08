@@ -3411,18 +3411,16 @@ Returns:
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#251)(self, test_results, baseline_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#203)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
 Args:
   test_results: MetaTestTuple of the tests on the changes.
-  baseline_results: MetaTestTuple of the tests on the baseline images.
 Returns:
-  list[Failure]: All failures discovered in the given runs filtered
-      by baseline failures.
+  list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#40)(self, need_tests_builds, snapshot, gerrit_changes, enable_history):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#38)(self, need_tests_builds, snapshot, gerrit_changes, enable_history):**
 
 Runs the test platform for a given bunch of builds.
 

@@ -9,13 +9,7 @@ package recipe_modules.chromeos.cros_test_proctor;
 import "google/protobuf/duration.proto";
 
 message ProctorProperties {
-  // The threshold for the ratio of failed tests to total tests
-  // below which baseline validation gets triggered.
-  float baseline_validation_percent = 1;
-
-  // The threshold for the number of failed tests below which
-  // baseline validation gets triggered.
-  int32 baseline_validation_count = 2;
+  reserved 1, 2;
 
   // Timeout for the proctor execution.
   google.protobuf.Duration timeout = 5;
