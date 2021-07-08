@@ -3329,22 +3329,22 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [gerrit](#recipe_modules-gerrit), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan_v2/api.py#28)(self, gerrit_changes):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#20)(self):**
 
-Call test_plan generate.
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#29)(self, gerrit_changes):**
+
+Call test_plan relevant-plans.
 
 Args:
   * gerrit_changes (list[common_pb2.GerritChange]): Changes to test, must be
       non-empty.
 
 Returns:
-  Generated CoverageRules
-
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#19)(self):**
+  A list of relevant SourceTestPlans
 ### *recipe_modules* / [cros\_test\_platform](/recipe_modules/cros_test_platform)
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7628,9 +7628,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#20)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/full](/recipe_modules/cros_test_plan_v2/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#18)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

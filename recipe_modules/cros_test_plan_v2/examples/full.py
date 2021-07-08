@@ -4,16 +4,19 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/raw_io',
     'cros_test_plan_v2',
 ]
 
 from recipe_engine import post_process
 
+from google.protobuf import text_format
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 
 def RunSteps(api):
-  coverage_rules = api.cros_test_plan_v2.generate([
+  coverage_rules = api.cros_test_plan_v2.relevant_plans([
       GerritChange(
           host="chromium-review.googlesource.com",
           project="src/projectA",
@@ -31,8 +34,8 @@ def RunSteps(api):
   api.assertions.assertListEqual(
       coverage_rules,
       [
-          api.cros_test_plan_v2.test_api.kernel_coverage_rule(),
-          api.cros_test_plan_v2.test_api.fp_coverage_rule(),
+          api.cros_test_plan_v2.test_api.kernel_source_test_plan(),
+          api.cros_test_plan_v2.test_api.fp_source_test_plan(),
       ],
   )
 
@@ -41,12 +44,28 @@ def GenTests(api):
 
   yield api.test(
       'basic',
+      api.step_data(
+          'find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb',
+          api.raw_io.output(
+              text_format.MessageToString(
+                  api.cros_test_plan_v2.kernel_source_test_plan(),
+              ),
+          ),
+      ),
+      api.step_data(
+          'find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb',
+          api.raw_io.output(
+              text_format.MessageToString(
+                  api.cros_test_plan_v2.fp_source_test_plan(),
+              ),
+          ),
+      ),
       api.post_process(
           post_process.StepCommandContains,
-          'generate test plan v2.call test_plan',
+          'find relevant plans.call test_plan',
           [
               '[START_DIR]/cipd/test_plan',
-              'generate',
+              'relevant-plans',
               '-loglevel',
               'debug',
               '-cl',

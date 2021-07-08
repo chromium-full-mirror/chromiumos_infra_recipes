@@ -2,11 +2,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
-from PB.chromiumos.test.api import coverage_rule as coverage_rule_pb2
+from google.protobuf import text_format
+
+from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 
 
 class CrosTestPlanV2Api(recipe_api.RecipeApi):
@@ -25,23 +26,23 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     self._cipd_ref = (
         self._properties.test_plan_cipd_ref.encode('utf-8') or default_ref)
 
-  def generate(self, gerrit_changes):
-    """Call test_plan generate.
+  def relevant_plans(self, gerrit_changes):
+    """Call test_plan relevant-plans.
 
     Args:
       * gerrit_changes (list[common_pb2.GerritChange]): Changes to test, must be
           non-empty.
 
     Returns:
-      Generated CoverageRules
+      A list of relevant SourceTestPlans
     """
-    with self.m.step.nest('generate test plan v2'), \
+    with self.m.step.nest('find relevant plans'), \
        self.m.context(infra_steps=True):
       self._ensure_test_plan()
 
       cmd = [
           self._test_plan_path,
-          'generate',
+          'relevant-plans',
           '-loglevel',
           'debug',
       ]
@@ -56,22 +57,22 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       self.m.step('call test_plan', cmd)
 
-      # Output is newline-delimited jsonpb CoverageRules.
-      output_raw = self.m.file.read_raw(
-          'read output', output, test_data='\n'.join([
-              json_format.MessageToJson(m).replace('\n', ' ') for m in [
-                  self.test_api.kernel_coverage_rule(),
-                  self.test_api.fp_coverage_rule(),
-              ]
-          ]))
+      # Output contains relevant plans in separate textproto files.
+      output_files = self.m.file.listdir(
+          'list output files',
+          output,
+          test_data=['relevant_plan_1.textpb', 'relevant_plan_2.textpb'],
+      )
+      relevant_plans = []
 
-      coverage_rules = []
-      for json in output_raw.split('\n'):
-        rule = coverage_rule_pb2.CoverageRule()
-        json_format.Parse(json, rule, ignore_unknown_fields=True)
-        coverage_rules.append(rule)
+      for f in output_files:
+        output_raw = self.m.file.read_raw('read output {}'.format(f), f)
 
-      return coverage_rules
+        plan = source_test_plan_pb2.SourceTestPlan()
+        text_format.Parse(output_raw, plan, allow_unknown_field=True)
+        relevant_plans.append(plan)
+
+      return relevant_plans
 
   def _ensure_test_plan(self):
     """Ensure the test_plan cli is installed.

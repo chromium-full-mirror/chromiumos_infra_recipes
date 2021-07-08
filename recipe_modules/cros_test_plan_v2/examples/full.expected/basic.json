@@ -1,11 +1,11 @@
 [
   {
     "cmd": [],
-    "name": "generate test plan v2"
+    "name": "find relevant plans"
   },
   {
     "cmd": [],
-    "name": "generate test plan v2.ensure test_plan",
+    "name": "find relevant plans.ensure test_plan",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -24,7 +24,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "generate test plan v2.ensure test_plan.ensure_installed",
+    "name": "find relevant plans.ensure test_plan.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -43,7 +43,7 @@
   {
     "cmd": [
       "[START_DIR]/cipd/test_plan",
-      "generate",
+      "relevant-plans",
       "-loglevel",
       "debug",
       "-cl",
@@ -54,7 +54,43 @@
       "[CLEANUP]/test_plan_tmp_1/output.jsonproto"
     ],
     "infra_step": true,
-    "name": "generate test plan v2.call test_plan",
+    "name": "find relevant plans.call test_plan",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/test_plan_tmp_1/output.jsonproto"
+    ],
+    "infra_step": true,
+    "name": "find relevant plans.list output files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -67,11 +103,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test_plan_tmp_1/output.jsonproto",
+      "[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "generate test plan v2.read output",
+    "name": "find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
