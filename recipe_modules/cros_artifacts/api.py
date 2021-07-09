@@ -629,9 +629,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # failing_build to _publish_artifacts and publish if the build is
       # not failing or if ArtifactInfo.publish_conditions = PUBLISH_ALWAYS.
 
-      # TODO(b/187794906): Switch to using updated ArtifactInfo fields.
+      # TODO(b/193131170): Switch to using updated ArtifactInfo fields.
       for fname in files_by_artifact.get('FIRMWARE_LCOV', []):
-        self.m.code_coverage.upload_tarfile_to_zoss(outpath.join(fname))
+        self.m.code_coverage.upload_firmware_lcov(sysroot.build_target.name,
+                                                  outpath.join(fname))
+
+      for fname in files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', []):
+        self.m.code_coverage.upload_code_coverage_llvm_json(
+            sysroot.build_target.name, outpath.join(fname))
 
       # Builders that publish artifacts should not recycyle dry-run builds,
       # since we treat them differently here.

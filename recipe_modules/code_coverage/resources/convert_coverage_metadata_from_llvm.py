@@ -420,12 +420,12 @@ def _load_files_coverage_data(coverage_files, constants_file, build_target,
   return file_coverage_data.values()
 
 
-def _convert_metadata(chroot_dir, checkout_dir, project_dir, output_dir,
+def _convert_metadata(coverage_files, checkout_dir, project_dir, output_dir,
                       constants_file, build_target, project_name, diff_mapping):
   """Convert coverage metadata from LLVM format.
 
   Args:
-    chroot_dir: Absolute path to the chroot directory.
+    coverage_files: The coverage files to process.
     output_dir: Output directory for the generated artifacts.
     build_target: The target code coverage was built for.
     diff_mapping: A json object that stores the diff mapping. Only meaningful to
@@ -435,21 +435,6 @@ def _convert_metadata(chroot_dir, checkout_dir, project_dir, output_dir,
     compressed_data: A data structure that can be serialized according to the
                      coverage metadata format.
   """
-
-  coverage_path = os.path.join(chroot_dir, 'build', build_target,
-                               'build/coverage_data/')
-  logging.info("Looking for coverage data in %s", coverage_path)
-  start_time = time.time()
-  coverage_files = []
-  for path, _, filenames in os.walk(coverage_path):
-    for filename in filenames:
-      if filename == 'coverage.json':
-        coverage_files.append(os.path.join(path, filename))
-        break
-  minutes = (time.time() - start_time) / 60
-  logging.info("Finding %d coverage files took %.0f minutes",
-               len(coverage_files), minutes)
-
   logging.info('Processing coverage data ...')
   start_time = time.time()
   files_coverage_data = _load_files_coverage_data(coverage_files,
@@ -502,8 +487,6 @@ def _create_index_html(output_dir):
 def _parse_args(args):
   parser = argparse.ArgumentParser(
       description='Convert from llvm coverage data to coverage.proto format')
-  parser.add_argument('--chroot-dir', required=True, type=str,
-                      help='absolute path to the chroot directory')
   parser.add_argument('--checkout-dir', required=True, type=str,
                       help='absolute path to the chromiumos checkout directory')
   parser.add_argument(
@@ -517,6 +500,11 @@ def _parse_args(args):
       '--constants-file', required=True, type=str,
       help='absolute path to the file containing constants for package mapping, must exist'
   )
+  parser.add_argument('--path_to_coverage_file', required=True, type=str,
+                      help='absolute path to the coverage file, must exist')
+  parser.add_argument('--build_target', required=True, type=str,
+                      help='name of the build target')
+
   parser.add_argument(
       '--output-dir', required=True, type=str,
       help='absolute path to the directory to store the metadata, must exist')
@@ -542,28 +530,27 @@ def main():
   if not os.path.exists(params.output_dir):
     raise RuntimeError('Output directory %s must exist' % params.output_dir)
 
-  if not os.path.exists(params.chroot_dir):
-    raise RuntimeError('Chroot directory %s must exist' % params.chroot_dir)
-
   if not os.path.exists(params.constants_file):
-    raise RuntimeError('Constants file %s must exist' % params.chroot_dir)
+    raise RuntimeError('Constants file %s must exist' % params.constants_file)
 
-  if not os.path.exists(
-      os.path.join(params.chroot_dir, "build", params.build_target)):
-    raise RuntimeError('Build data for target %s is missing' %
-                       params.build_target)
+  if not os.path.exists(params.path_to_coverage_file):
+    raise RuntimeError('Coverage file %s must exist' %
+                       params.path_to_coverage_file)
 
   if params.diff_mapping_path and not os.path.isfile(params.diff_mapping_path):
     raise RuntimeError('Diff mapping %s is missing' % params.diff_mapping_path)
+
+  if not params.build_target:
+    raise RuntimeError('Build target is required')
 
   diff_mapping = None
   if params.diff_mapping_path:
     with open(params.diff_mapping_path) as f:
       diff_mapping = json.load(f)
 
-  compressed_data = _convert_metadata(params.chroot_dir, params.checkout_dir,
-                                      params.project_dir, params.output_dir,
-                                      params.constants_file,
+  compressed_data = _convert_metadata([params.path_to_coverage_file],
+                                      params.checkout_dir, params.project_dir,
+                                      params.output_dir, params.constants_file,
                                       params.build_target, params.project_name,
                                       diff_mapping)
 

@@ -860,14 +860,14 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.upload to zoss",
+    "name": "upload artifacts.upload code coverage data (firmware lcov)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.upload to zoss.ensure binaries",
+    "name": "upload artifacts.upload code coverage data (firmware lcov).ensure binaries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -886,7 +886,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "upload artifacts.upload to zoss.ensure binaries.ensure_installed",
+    "name": "upload artifacts.upload code coverage data (firmware lcov).ensure binaries.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -908,14 +908,26 @@
   },
   {
     "cmd": [
-      "tar",
-      "xvf",
-      "[CLEANUP]/artifacts_tmp_1/../../[START_DIR]/coverage.tbz2"
+      "python3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
+      "--json-input",
+      "{\"archive_file\": \"[CLEANUP]/artifacts_tmp_1/../../[START_DIR]/coverage.tbz2\", \"include_files\": [], \"output\": \"[CLEANUP]/ccov-upload_tmp_1/out\", \"safe_mode\": true}",
+      "--json-output",
+      "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
-    "name": "upload artifacts.upload to zoss.untar coverage.tbz2",
+    "name": "upload artifacts.upload code coverage data (firmware lcov).untar coverage.tbz2",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -926,15 +938,22 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/ccov-upload_tmp_1"
+      "[CLEANUP]/ccov-upload_tmp_1/out"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "infra_step": true,
-    "name": "upload artifacts.upload to zoss.listdir",
+    "name": "upload artifacts.upload code coverage data (firmware lcov).listdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/ccov-upload_tmp_1/lcov.info@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/ccov-upload_tmp_1/out/coverage.json@@@",
       "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.upload code coverage data (firmware lcov).upload incremental coverage to gerrit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -943,11 +962,11 @@
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "infra_step": true,
-    "name": "upload artifacts.upload to zoss.gerrit-fetch-changes",
+    "name": "upload artifacts.upload code coverage data (firmware lcov).upload incremental coverage to gerrit.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -1018,12 +1037,12 @@
       "--format",
       "LCOV",
       "--coverage_file",
-      "[CLEANUP]/ccov-upload_tmp_1/lcov.info"
+      "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
-    "name": "upload artifacts.upload to zoss.upload lcov.info for 123456 (ps #7)",
+    "name": "upload artifacts.upload code coverage data (firmware lcov).upload incremental coverage to gerrit.upload coverage.json for 123456 (ps #7)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

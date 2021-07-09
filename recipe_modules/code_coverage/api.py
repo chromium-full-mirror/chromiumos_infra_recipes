@@ -6,15 +6,20 @@
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
-import os
-import re
 
-DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
+class CoverageFileSettings:
+  """Contains parameters used to drive different coverage upload workflows."""
+
+  def __init__(self, should_clean, clean_file_name_prepend):
+    self.should_clean = should_clean
+    self.clean_file_name_prepend = clean_file_name_prepend
+
+
 DEFAULT_CODE_PROJECT = 'chromiumos/platform2'
 DEFAULT_CODE_BRANCH = 'refs/heads/main'
-
 PUBLIC_CODE_HOST = 'chromium'
 CODESEARCH_PROJECT = 'chromiumos/codesearch'
+DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
 
 # TODO(b/189356506): Remove experimental path after auto deploy is implemented.
 INCREMENTAL_COVERAGE_CIPD_PACKAGE = 'experimental/chromiumos/infra/code_coverage/manual/incremental_code_coverage'
@@ -33,18 +38,14 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     super(CodeCoverageApi, self).__init__(*args, **kwargs)
     # Temp dir for metadata.
     self._metadata_dir = None
-    # The list of coverage metadata gs paths to be uploaded.
-    self._coverage_metadata_gs_paths = []
     # The bucket to which code coverage data should be uploaded.
     self._gs_bucket = props.gs_bucket or DEFAULT_BUCKET_NAME
+    # TODO(b/187795079) and b(184035226). Currently only required for cleanup and chromium coverage which will go away after directory coverage is enabled.
     # The project that contains the code this coverage data is being generated for.
+    # The project should be visible on https://chromium.googlesource.com/.
     self._project = props.project or DEFAULT_CODE_PROJECT
     # The branch this coverage data is being generated for.
     self._branch = props.branch or DEFAULT_CODE_BRANCH
-    # The commit id of branch for the project.
-    self._commit_id = None
-    # Temp dir for zoss.
-    self._zoss_dir = None
     # Path to incremental coverage client.
     self._incremental_coverage_tool = None
     # Path to absolute coverage client.
@@ -61,18 +62,79 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     return self._metadata_dir
 
   @property
-  def zoss_dir(self):
-    """A temporary directory for the zoss coverage data.
-
-    Temp dir is created on first access to this property.
-    """
-    if not self._zoss_dir:
-      self._zoss_dir = self.m.path.mkdtemp(prefix='code-coverage-zoss')
-    return self._zoss_dir
-
-  @property
   def _code_coverage_root(self):
     return self.m.path['start_dir'].join('code_coverage')
+
+  def upload_firmware_lcov(
+      self, build_target_name, tarfile,
+      step_name='upload code coverage data (firmware lcov)'):
+    """Uploads firmware lcov code coverage.
+
+      Args:
+        build_target_name (str): name of the build target.
+        tarfile (Path): path to tarfile.
+        step_name (str): name for the step.
+    """
+    self.process_coverage_data(build_target_name, tarfile, 'LCOV', step_name,
+                               CoverageFileSettings(False, None))
+
+  def upload_code_coverage_llvm_json(
+      self, build_target_name, tarfile,
+      step_name='upload code coverage data (code coverage llvm json)'):
+    """Uploads code coverage llvm json.
+
+      Args:
+        build_target_name (str): name of the build target.
+        tarfile (Path): path to tarfile.
+        step_name (str): name for the step.
+    """
+    self.process_coverage_data(build_target_name, tarfile, 'LLVM', step_name,
+                               CoverageFileSettings(True, ''),
+                               CoverageFileSettings(True, '/src/platform2/'),
+                               CoverageFileSettings(False, None))
+
+  def process_coverage_data(self, build_target_name, tarfile, coverage_type,
+                            step_name='upload code coverage data',
+                            incremental_settings=None,
+                            absolute_cs_settings=None,
+                            absolute_chromium_settings=None):
+    """Uploads code coverage data to the requested external sources.
+
+      Args:
+        build_target_name (str): name of the build target.
+        tarfile (Path): path to tarfile.
+        coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
+        step_name (str): name for the step.
+        incremental_settings (CoverageFileSettings): settings for uploading coverage to gerrit.
+        absolute_cs_settings (CoverageFileSettings): settings for uploading coverage to code search.
+        absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage to chromium.
+    """
+    with self.m.step.nest(step_name):
+      try:
+        self._ensure_binaries()
+
+        workdir = self.m.path.mkdtemp(prefix='ccov-upload')
+        with self.m.context(cwd=workdir):
+          path_to_extracted_files = workdir.join('out')
+          self.m.archive.extract(
+              'untar {}'.format(self.m.path.basename(tarfile)),
+              archive_file=str(tarfile), output=path_to_extracted_files)
+          for coverage_file in self.m.file.listdir(
+              'listdir', path_to_extracted_files, test_data=('coverage.json',)):
+            self._upload_incremental_coverage_to_gerrit(coverage_file,
+                                                        coverage_type,
+                                                        build_target_name,
+                                                        self._project,
+                                                        incremental_settings)
+            self._upload_absolute_coverage_to_code_search(
+                coverage_file, coverage_type, build_target_name, self._project,
+                absolute_cs_settings)
+            self._upload_absolute_coverage_to_chromium_coverage(
+                coverage_file, build_target_name, self._project,
+                absolute_chromium_settings)
+      except StepFailure:
+        self.m.step.active_result.presentation.properties[
+            'process_coverage_data_failure'] = True
 
   def _ensure_binaries(self):
     """Ensure this module's binaries are installed."""
@@ -91,45 +153,143 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           self._absolute_coverage_tool = self._code_coverage_root.join(
               ABSOLUTE_COVERAGE_CIPD_FILE)
 
-  def _set_builder_output_properties_for_uploads(self):
-    """Sets the output property of the builder."""
-    result = self.m.python.succeeding_step('Set builder output properties', '')
-    result.presentation.properties['coverage_metadata_gs_paths'] = (
-        self._coverage_metadata_gs_paths)
-    result.presentation.properties['mimic_builder_names'] = [
-        self.m.buildbucket.build.builder.builder
-    ]
-    result.presentation.properties['coverage_gs_bucket'] = self._gs_bucket
-    result.presentation.properties['coverage_is_presubmit'] = False
+  def _write_cleaned_coverage_file(self, path_to_coverage_file,
+                                   build_target_name, coverage_file_setting,
+                                   project_name):
+    # Nothing to do if there are no settings.
+    if coverage_file_setting.should_clean is False:
+      return path_to_coverage_file
 
-    # Override the default parameters so that code coverage processor knows where
-    # to look for the code. This location needs to be public.
-    result.presentation.properties['coverage_override_gitiles_commit'] = True
-    result.presentation.properties[
-        'gitiles_commit_host'] = PUBLIC_CODE_HOST + '.googlesource.com'
-    result.presentation.properties['gitiles_commit_project'] = self._project
-    result.presentation.properties['gitiles_commit_ref'] = self._branch
-    result.presentation.properties['gitiles_commit_id'] = self._commit_id
+    tmp_dir = self.m.path.mkdtemp(prefix='cleaned-coverage')
+    out_file = tmp_dir.join('cleaned.file')
+    self.m.python(
+        'writing cleaned coverage file',
+        self.resource('clean_coverage_file.py'), args=[
+            '--coverage-file',
+            path_to_coverage_file,
+            '--constants-file',
+            self.resource('constants.json'),
+            '--output-file',
+            out_file,
+            '--project-name',
+            project_name,
+            '--build-target',
+            build_target_name,
+            '--file-name-prepend',
+            coverage_file_setting.clean_file_name_prepend,
+        ], venv=True)
 
-  def process_coverage_data(self, build_target, chroot):
-    """Processes the coverage data for metadata."""
-    with self.m.step.nest('process code coverage data'):
-      try:
-        self._commit_id = self.m.gitiles.fetch_revision(PUBLIC_CODE_HOST,
-                                                        self._project,
-                                                        self._branch)
-        with self.m.step.nest('upload coverage to ZOSS'):
-          self._upload_to_zoss(build_target, chroot)
-        with self.m.step.nest('upload coverage to chromium coverage'):
-          self._generate_and_upload_metadata(build_target, chroot)
-      except StepFailure:
-        self.m.step.active_result.presentation.properties[
-            'process_coverage_data_failure'] = True
-        raise
+    # Return the path to the new file.
+    return out_file
 
-    self._set_builder_output_properties_for_uploads()
+  def _upload_absolute_coverage_to_code_search(self, fpath, coverage_type,
+                                               build_target_name,
+                                               project_name_to_use,
+                                               absolute_cs_settings):
+    """Uploads the coverage data to code search.
 
-  def _compose_gs_path_for_coverage_data(self, data_type):
+      Args:
+        fpath (str): path to the coverage file.
+        coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
+        build_target_name (str): name of the build target.
+        project_name_to_use (str): name of the project.
+        absolute_cs_settings (CoverageFileSettings): settings for uploading coverage.
+    """
+    if self.m.cq.active or absolute_cs_settings is None:
+      return
+
+    with self.m.step.nest('upload absolute coverage to Code Search'):
+      absolute_coverage_file = self._write_cleaned_coverage_file(
+          fpath, build_target_name, absolute_cs_settings, project_name_to_use)
+
+      codesearch_commit_id = self.m.gitiles.fetch_revision(
+          PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
+      build = self.m.buildbucket.build
+
+      self.m.step(
+          'absolute coverage upload for {}'.format(fpath),
+          [
+              'luci-auth',
+              'context',
+              '--',
+              self._absolute_coverage_tool,
+              '--absolute_coverage_service_env',
+              'prod',
+              '--timeout',
+              '10m',
+              '--host',
+              PUBLIC_CODE_HOST,
+              '--project',
+              CODESEARCH_PROJECT,
+              '--commit_id',
+              codesearch_commit_id,
+              '--ref',
+              # self._branch,
+              # TODO(b/189193947): must be master for code search integration.
+              'refs/heads/master',
+              '--uploader_name',
+              build.builder.builder,
+              '--uploader_id',
+              codesearch_commit_id + '_' + str(build.id),
+              '--format',
+              coverage_type,
+              '--coverage_file',
+              str(absolute_coverage_file),
+          ])
+
+  def _upload_incremental_coverage_to_gerrit(self, fpath, coverage_type,
+                                             build_target_name,
+                                             project_name_to_use,
+                                             incremental_settings):
+    """Uploads the coverage data to gerrit.
+
+      Args:
+        fpath (str): path to the coverage file.
+        coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
+        build_target_name (str): name of the build target.
+        project_name_to_use (str): name of the project.
+        incremental_settings (CoverageFileSettings): settings for uploading coverage.
+    """
+    if not self.m.cq.active or incremental_settings is None:
+      return
+
+    with self.m.step.nest('upload incremental coverage to gerrit'):
+      incremental_coverage_file = self._write_cleaned_coverage_file(
+          fpath, build_target_name, incremental_settings, project_name_to_use)
+
+      for change in self.m.gerrit.gerrit_patch_sets:
+        self.m.step(
+            'upload {} for {} (ps #{})'.format(
+                self.m.path.basename(fpath), change.change_id,
+                change.patch_set),
+            wrapper=['luci-auth', 'context', '--'],
+            cmd=[
+                self._incremental_coverage_tool,
+                '--env',
+                'prod',
+                '--host',
+                change.host,
+                '--project',
+                change.project,
+                '--change_id',
+                change.change_id,
+                '--patchset',
+                change.patch_set,
+                '--uploader_name',
+                self.m.buildbucket.build.builder.builder,
+                '--uploader_id',
+                '{}_{}_{}'.format(change.change_id, change.patch_set,
+                                  str(self.m.buildbucket.build.id)),
+                '--format',
+                coverage_type,
+                '--coverage_file',
+                str(incremental_coverage_file),
+            ],
+            stdout=self.m.raw_io.output(add_output_log=True),
+            stderr=self.m.raw_io.output(add_output_log=True),
+        )
+
+  def _compose_gs_path_for_chromium_coverage(self, data_type):
     build = self.m.buildbucket.build
     commit = build.input.gitiles_commit
     return 'postsubmit/%s/%s/%s/%s/%s/%s/%s' % (
@@ -142,36 +302,50 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         data_type,
     )
 
-  def _generate_and_upload_metadata(self, build_target, chroot):
-    """Generates the coverage info in metadata format."""
-    # The old coverage service does not support gerrit changes.
-    # Just skip it if there are gerrit changes.
-    if self.m.buildbucket.build.input.gerrit_changes:
+  def _upload_absolute_coverage_to_chromium_coverage(
+      self, fpath, build_target_name, project_name_to_use,
+      absolute_chromium_settings):
+    """Uploads the coverage data to chromium coverage.
+
+      Args:
+        fpath (str): path to the coverage file.
+        build_target_name (str): name of the build target.
+        project_name_to_use (str): name of the project.
+        absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage.
+    """
+    if self.m.cq.active or absolute_chromium_settings is None:
       return
 
-    args = [
-        '--chroot-dir',
-        chroot.path,
-        '--checkout-dir',
-        self.m.cros_source.workspace_path,
-        '--project-dir',
-        self.m.cros_source.find_project_paths(self._project, self._branch)[0],
-        '--output-dir',
-        self.metadata_dir,
-        '--constants-file',
-        self.resource('constants.json'),
-        '--build-target',
-        build_target.name,
-        '--project-name',
-        self._project,
-    ]
+    with self.m.step.nest('upload absolute coverage to chromium coverage'):
+      commit_id = self.m.gitiles.fetch_revision(PUBLIC_CODE_HOST,
+                                                project_name_to_use,
+                                                self._branch)
 
-    try:
-      self.m.python('converting metadata for test coverage',
-                    self.resource('convert_coverage_metadata_from_llvm.py'),
-                    args=args, venv=True)
-    finally:
-      gs_path = self._compose_gs_path_for_coverage_data('metadata')
+      path_to_coverage_file = self._write_cleaned_coverage_file(
+          fpath, build_target_name, absolute_chromium_settings,
+          project_name_to_use)
+
+      self.m.python(
+          'converting metadata for test coverage',
+          self.resource('convert_coverage_metadata_from_llvm.py'), args=[
+              '--checkout-dir',
+              self.m.cros_source.workspace_path,
+              '--project-dir',
+              self.m.cros_source.find_project_paths(project_name_to_use,
+                                                    self._branch)[0],
+              '--output-dir',
+              self.metadata_dir,
+              '--constants-file',
+              self.resource('constants.json'),
+              '--coverage-file',
+              path_to_coverage_file,
+              '--build-target',
+              build_target_name,
+              '--project-name',
+              project_name_to_use,
+          ], venv=True)
+
+      gs_path = self._compose_gs_path_for_chromium_coverage('metadata')
       upload_step = self.m.gsutil.upload(self.metadata_dir, self._gs_bucket,
                                          gs_path, link_name=None, args=['-r'],
                                          multithreaded=True,
@@ -179,159 +353,23 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       upload_step.presentation.links['metadata report'] = (
           'https://storage.cloud.google.com/%s/%s/index.html' %
           (self._gs_bucket, gs_path))
-      self._coverage_metadata_gs_paths.append(gs_path)
 
-  def _upload_to_zoss(self, build_target, chroot):
-    """Cleans up the coverage results and uploads them to ZOSS."""
-    # For now skip this in CQ.
-    if self.m.buildbucket.build.input.gerrit_changes:
-      return
+      # Set the output properties
+      result = self.m.python.succeeding_step('Set builder output properties',
+                                             '')
+      result.presentation.properties['coverage_metadata_gs_paths'] = [gs_path]
+      result.presentation.properties['mimic_builder_names'] = [
+          self.m.buildbucket.build.builder.builder
+      ]
+      result.presentation.properties['coverage_gs_bucket'] = self._gs_bucket
+      result.presentation.properties['coverage_is_presubmit'] = False
 
-    self._ensure_binaries()
-
-    coverage_path = self.m.path.abs_to_path(chroot.path).join(
-        'build', build_target.name, 'build', 'coverage_data')
-
-    coverage_files = self.m.file.glob_paths('find coverage files',
-                                            coverage_path, '**/coverage.json',
-                                            test_data=['coverage.json'])
-
-    constants = self.m.file.read_json(
-        'read constants', self.resource('constants.json'), test_data={
-            'chromiumos/platform2': [{
-                'prefix': 'base-[^/]*/base',
-                'src_path': 'base'
-            }]
-        })
-    coverage_type = ''
-    coverage_version = ''
-    coverage_data = []
-    for coverage_file in coverage_files:
-      try:
-        data = self.m.file.read_json(
-            'read coverage data from {}'.format(coverage_file), coverage_file,
-            test_data={
-                'data': [{
-                    'files': [{
-                        'filename': '/build/amd64-generic/base-0/base/test.cc'
-                    }]
-                }],
-                'type': 'coverage',
-                'version': '0.0',
-            })
-      except StepFailure:
-        # Ignore bad json files.
-        continue
-      coverage_type = data['type']
-      coverage_version = data['version']
-      for datum in data['data']:
-        for file_data in datum['files']:
-          filename = file_data['filename']
-          coverage_path = os.path.normpath(filename)
-          for mapping in constants[self._project]:
-            pre = os.path.join('/build', build_target.name, mapping['prefix'])
-            if re.match(pre, coverage_path):
-              coverage_path = re.sub(pre, mapping['src_path'], coverage_path)
-              # Hard-coded /src/platform2 is a temporary work around
-              # while we still use the old service.
-              # We currently load the same file remapper used by the old service
-              # which is relative to the platform2 folder.
-              file_data['filename'] = '/src/platform2/' + coverage_path
-              coverage_data.append(file_data)
-              break
-
-    out_file = self.zoss_dir.join('coverage.json')
-    self.m.file.write_json(
-        'write processed coverage json', out_file, {
-            'data': [{
-                'files': coverage_data
-            }],
-            'type': coverage_type,
-            'version': coverage_version,
-        })
-
-    # ZOSS always submits coverage data to the codesearch project.
-    codesearch_commit_id = self.m.gitiles.fetch_revision(
-        PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
-    build = self.m.buildbucket.build
-    self.m.step(
-        'absolute coverage upload for {}'.format(out_file),
-        [
-            'luci-auth',
-            'context',
-            '--',
-            self._absolute_coverage_tool,
-            '--absolute_coverage_service_env',
-            'prod',
-            '--timeout',
-            '10m',
-            '--host',
-            PUBLIC_CODE_HOST,
-            '--project',
-            CODESEARCH_PROJECT,
-            '--commit_id',
-            codesearch_commit_id,
-            '--ref',
-            # self._branch,
-            # TODO(b/189193947): must be master for code search integration.
-            'refs/heads/master',
-            '--uploader_name',
-            build.builder.builder,
-            '--uploader_id',
-            codesearch_commit_id + '_' + str(build.id),
-            '--format',
-            'LLVM',
-            '--coverage_file',
-            out_file,
-        ])
-
-  def upload_tarfile_to_zoss(self, tarfile, step_name='upload to zoss'):
-    """Upload a tarfile to zoss.
-
-    Args:
-       tarfile (Path): path to tarfile.
-       step_name (str): name for the step.
-    """
-    with self.m.step.nest(step_name):
-      self._ensure_binaries()
-      # Untar the tarfile, and upload each file found therein.
-      workdir = self.m.path.mkdtemp(prefix='ccov-upload')
-      with self.m.context(cwd=workdir):
-        self.m.step('untar {}'.format(self.m.path.basename(tarfile)),
-                    ['tar', 'xvf', str(tarfile)])
-        self.m.path.mock_add_paths(workdir.join('lcov.info'))
-        for fpath in self.m.file.listdir('listdir', workdir,
-                                         test_data=('lcov.info',)):
-          if self.m.path.basename(fpath) == 'lcov.info':
-            # Coverage was already calculated - upload it for each patch set.
-            for change in self.m.gerrit.gerrit_patch_sets:
-              self.m.step(
-                  'upload {} for {} (ps #{})'.format(
-                      self.m.path.basename(fpath), change.change_id,
-                      change.patch_set),
-                  wrapper=['luci-auth', 'context', '--'],
-                  cmd=[
-                      self._incremental_coverage_tool,
-                      '--env',
-                      'prod',
-                      '--host',
-                      change.host,
-                      '--project',
-                      change.project,
-                      '--change_id',
-                      change.change_id,
-                      '--patchset',
-                      change.patch_set,
-                      '--uploader_name',
-                      self.m.buildbucket.build.builder.builder,
-                      '--uploader_id',
-                      '{}_{}_{}'.format(change.change_id, change.patch_set,
-                                        str(self.m.buildbucket.build.id)),
-                      '--format',
-                      'LCOV',
-                      '--coverage_file',
-                      str(fpath),
-                  ],
-                  stdout=self.m.raw_io.output(add_output_log=True),
-                  stderr=self.m.raw_io.output(add_output_log=True),
-              )
+      # Override the default parameters so that code coverage processor knows where
+      # to look for the code. This location needs to be public.
+      result.presentation.properties['coverage_override_gitiles_commit'] = True
+      result.presentation.properties[
+          'gitiles_commit_host'] = PUBLIC_CODE_HOST + '.googlesource.com'
+      result.presentation.properties[
+          'gitiles_commit_project'] = project_name_to_use
+      result.presentation.properties['gitiles_commit_ref'] = self._branch
+      result.presentation.properties['gitiles_commit_id'] = commit_id

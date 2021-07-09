@@ -492,37 +492,22 @@ class BuildMenuApi(recipe_api.RecipeApi):
                 if PackageInfo(category=x.category, package_name=x.package_name)
                 in list(unit_tests.packages)
             ]
-        raise_coverage_failure = True
-        # Wrap this in a try so that we can upload code coverage results even if
-        # tests fail or timeout.
-        try:
-          response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
-              BuildTargetUnitTestRequest(
-                  build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
-                  result_path=str(self.m.path.mkdtemp()),
-                  package_blocklist=unit_tests.package_blacklist,
-                  packages=relevant_testable_packages,
-                  flags=BuildTargetUnitTestRequest.Flags(
-                      code_coverage=self._test_with_code_coverage,
-                      empty_sysroot=unit_tests.empty_sysroot,
-                      testable_packages_optional=testable_packages_optional,
-                      filter_only_cros_workon=filter_only_cros_workon)),
-              # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.
-              timeout=3 * 60 * 60,
-              response_lambda=self.m.cros_build_api.failed_pkg_names)
-          self.m.failures.set_failed_packages(presentation,
-                                              response.failed_packages)
-        except StepFailure:
-          raise_coverage_failure = False
-          raise
-        finally:
-          if self._test_with_code_coverage:
-            try:
-              self.m.code_coverage.process_coverage_data(
-                  self.build_target, self.chroot)
-            except StepFailure:
-              if raise_coverage_failure:
-                raise
+        response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
+            BuildTargetUnitTestRequest(
+                build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
+                result_path=str(self.m.path.mkdtemp()),
+                package_blocklist=unit_tests.package_blacklist,
+                packages=relevant_testable_packages,
+                flags=BuildTargetUnitTestRequest.Flags(
+                    code_coverage=self._test_with_code_coverage,
+                    empty_sysroot=unit_tests.empty_sysroot,
+                    testable_packages_optional=testable_packages_optional,
+                    filter_only_cros_workon=filter_only_cros_workon)),
+            # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.
+            timeout=3 * 60 * 60,
+            response_lambda=self.m.cros_build_api.failed_pkg_names)
+        self.m.failures.set_failed_packages(presentation,
+                                            response.failed_packages)
 
     return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 

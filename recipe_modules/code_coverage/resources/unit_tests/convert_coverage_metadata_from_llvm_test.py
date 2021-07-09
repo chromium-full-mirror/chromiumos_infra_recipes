@@ -11,8 +11,7 @@ import unittest
 import mock
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0,
-                os.path.abspath(os.path.join(THIS_DIR, os.pardir, 'resources')))
+sys.path.insert(0, os.path.abspath(os.path.join(THIS_DIR, os.pardir)))
 
 import convert_coverage_metadata_from_llvm as converter
 
@@ -430,7 +429,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     ]
 
     compressed_data = converter._convert_metadata(
-        chroot_dir='/path/to/chroot',
+        coverage_files=['/path/to/coverage_files'],
         checkout_dir='/path/to/checkout_dir',
         project_dir='project_dir',
         output_dir='/path/to/output_dir',

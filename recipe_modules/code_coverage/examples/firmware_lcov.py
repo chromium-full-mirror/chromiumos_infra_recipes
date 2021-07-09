@@ -14,7 +14,6 @@ from recipe_engine import post_process
 def RunSteps(api):
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
-    # Build and test firmware.
     api.build_menu.upload_artifacts(config=config, failing_build=False)
 
 
@@ -26,4 +25,8 @@ def GenTests(api):
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           data=('{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'
                 '"paths": [{"path":"[START_DIR]/coverage.tbz2","location":2}],'
-                '"location": "PLATFORM_EC"}]}}')), cq=True, builder='fw-ec-cq')
+                '"location": "PLATFORM_EC"}]}}')),
+      api.post_check(
+          post_process.MustRun,
+          'upload artifacts.upload code coverage data (firmware lcov)'),
+      cq=True, builder='fw-ec-cq')
