@@ -120,20 +120,23 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           self.m.git.push('origin', 'HEAD:refs/for/{}%submit'.format(branch),
                           dry_run=dry_run)
 
+        manifest_gs_path = ''
         if gs_location:
           with self.m.step.nest('upload {} to {}'.format(
               manifest_file, gs_location)):
             # Split bucket off, and then append buildspec to the rest of the path (if any).
             # If a filename is not supplied in gs_location, we use the buildspec_filename.
             gs_toks = self.m.path.dirname(gs_location).split("/", 1)
+            gs_bucket = gs_toks[0]
             gs_path = gs_toks[1]
             if self.m.path.basename(gs_location) == "":
               gs_path = self.m.path.join(gs_path, version.buildspec_filename)
-            self.m.gsutil.upload(manifest_path, gs_toks[0], gs_path)
+            self.m.gsutil.upload(manifest_path, gs_bucket, gs_path)
+            manifest_gs_path = 'gs://{}/{}'.format(gs_bucket, gs_path)
 
       self._releasespec = ManifestLocation(
           manifest_repo_url=MANIFEST_VERSIONS_URL, branch=branch,
-          manifest_file=manifest_file)
+          manifest_file=manifest_file, manifest_gs_path=manifest_gs_path)
 
   def schedule_payload_generation(self):
     """Schedule the generation of release payloads using the context of a build.

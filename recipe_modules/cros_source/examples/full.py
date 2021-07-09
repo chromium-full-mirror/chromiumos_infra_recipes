@@ -54,10 +54,17 @@ def RunSteps(api, properties):
                                               'releasespecs/91/13818.0.0.xml')
       _ = api.cros_source.pinned_manifest
 
+      manifest_gs_path = 'gs://buildspecs-internal/release/91/13818.0.0.xml'
+      api.cros_source.sync_to_pinned_manifest(manifest_gs_path=manifest_gs_path)
+
       with api.assertions.assertRaises(StepFailure):
         api.cros_source.sync_to_pinned_manifest(
-            'https://github.com/not-authorized', 'release',
+            'https://non-existent.com/not-authorized', 'release',
             'releasespecs/91/13818.0.0.xml')
+      with api.assertions.assertRaises(StepFailure):
+        api.cros_source.sync_to_pinned_manifest(
+            manifest_url='https://non-existent.com/not-authorized',
+            manifest_path='releasespecs/91/13818.0.0.xml')
 
   # At this point should be dirty only for custom manifest cases.
   if properties.expected_snapshot_cas_digest:

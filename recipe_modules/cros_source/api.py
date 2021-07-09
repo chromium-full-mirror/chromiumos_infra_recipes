@@ -1138,8 +1138,8 @@ class CrosSourceApi(RecipeApi):
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
 
   @exponential_retry(retries=3, condition=retry_timeouts)
-  def sync_to_pinned_manifest(self, manifest_url, manifest_branch,
-                              manifest_path, **kwargs):
+  def sync_to_pinned_manifest(self, manifest_url='', manifest_branch='',
+                              manifest_path='', manifest_gs_path='', **kwargs):
     """Sync a checkout to the specified [pinned] manifest.
 
       The manifest will be downloaded directly from the source using gitiles.
@@ -1150,27 +1150,48 @@ class CrosSourceApi(RecipeApi):
       manifest_branch (string): Branch of repository to get manifest from,
         e.g. 'main' or 'releasespecs'.
       manifest_path (string): Path (relative to repository root) of manifest
-        file, e.g. releasespecs/90/....xml.
+        file, e.g. releasespecs/91/13818.0.0.xml.
+      manifest_gs_path (string): GS Path of manifest, e.g.
+        gs://buildspecs-internal/release/91/13818.0.0.xml. Takes precendence over
+        manifest_url/branch/path.
     """
     with self.m.step.nest('sync to specified manifest'), self.m.context(
         cwd=self.workspace_path):
-      # Check that the manifest_url is allowed.
-      if manifest_url not in ALLOWED_MANIFEST_SOURCES:
-        raise StepFailure("manifest_url ({}) was not one of {}".format(
-            manifest_url, ",".join(ALLOWED_MANIFEST_SOURCES)))
+      valid_params = (manifest_url and manifest_branch and
+                      manifest_path) or manifest_gs_path
+      if not valid_params:
+        raise StepFailure(
+            'either need all of manifest_url/manifest_branch/manifest_path or manifest_gs_path'
+        )
 
       testdata = '<manifest></manifest>'
-      step_test_data = lambda: self.m.depot_gitiles.test_api.make_encoded_file(
-          testdata)
-      manifest_xml = self.m.depot_gitiles.download_file(
-          manifest_url, manifest_path, manifest_branch,
-          step_test_data=step_test_data, accept_statuses=[200],
-          timeout=self.test_api.gitiles_timeout_seconds)
+      if not manifest_gs_path:
+        # Check that the manifest_url is allowed.
+        if manifest_url not in ALLOWED_MANIFEST_SOURCES:
+          raise StepFailure("manifest_url ({}) was not one of {}".format(
+              manifest_url, ",".join(ALLOWED_MANIFEST_SOURCES)))
 
-      self._sync_target = dict(call='sync_to_manifest',
-                               manifest_url=manifest_url,
-                               manifest_path=manifest_path,
-                               manifest_branch=manifest_branch)
+        step_test_data = lambda: self.m.depot_gitiles.test_api.make_encoded_file(
+            testdata)
+        manifest_xml = self.m.depot_gitiles.download_file(
+            manifest_url, manifest_path, manifest_branch,
+            step_test_data=step_test_data, accept_statuses=[200],
+            timeout=self.test_api.gitiles_timeout_seconds)
+
+        self._sync_target = dict(call='sync_to_manifest',
+                                 manifest_url=manifest_url,
+                                 manifest_path=manifest_path,
+                                 manifest_branch=manifest_branch)
+      else:
+        manifest_xml = self.m.gsutil.cat(
+            manifest_gs_path, stdout=self.m.raw_io.output(),
+            step_test_data=lambda: self.m.raw_io.test_api.stream_output(
+                testdata)).stdout.strip()
+        self._sync_target = dict(
+            call='sync_to_manifest',
+            manifest_gs_path=manifest_gs_path,
+        )
+
       manifest_relpath = self.m.repo.create_tmp_manifest(manifest_xml)
       init_opts = dict(manifest_name=manifest_relpath,
                        manifest_branch=manifest_branch)

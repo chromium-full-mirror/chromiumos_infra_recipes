@@ -2474,7 +2474,7 @@ Returns:
 
 Takes an array of common_pb2.Channel & validates & strings them.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#177)(self):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#180)(self):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2487,7 +2487,7 @@ context of a build.
 
 Return the releasespec as created by this module, or None.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#138)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#141)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 
@@ -2932,7 +2932,7 @@ Args:
 Returns: A str
 ### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
 
-[DEPS](/recipe_modules/cros_source/__init__.py#5): [bot\_cost](#recipe_modules-bot_cost), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/__init__.py#5): [bot\_cost](#recipe_modules-bot_cost), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for working with CrOS source.
 
@@ -3018,7 +3018,7 @@ Returns a context where overlays can be mounted.
 Args:
   mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1330)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1351)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -3058,7 +3058,7 @@ Args:
 Returns:
   BuilderConfig or None
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1287)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1308)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -3162,7 +3162,7 @@ The cached image checkout path.
 This is the cached version of source that is included in the base image of
 the bot, used as an initial reference path.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1384)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1405)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -3180,7 +3180,7 @@ Return:
 
 Returns the snapshot digest in use or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1188)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1209)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -3191,7 +3191,7 @@ Args:
   manifest_url: URL of manifest repo.  Default: internal manifest
   kwargs (dict): additional args for repo.sync_manifest.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1140)(self, manifest_url, manifest_branch, manifest_path, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1140)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -3203,9 +3203,12 @@ Args:
   manifest_branch (string): Branch of repository to get manifest from,
     e.g. 'main' or 'releasespecs'.
   manifest_path (string): Path (relative to repository root) of manifest
-    file, e.g. releasespecs/90/....xml.
+    file, e.g. releasespecs/91/13818.0.0.xml.
+  manifest_gs_path (string): GS Path of manifest, e.g.
+    gs://buildspecs-internal/release/91/13818.0.0.xml. Takes precendence over
+    manifest_url/branch/path.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1363)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1384)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
 
 Uprev packages.
 
@@ -6410,7 +6413,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#105)(self, changes=None, name='cherry-pick gerrit changes', ignore_missing_projects=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#108)(self, changes=None, name='cherry-pick gerrit changes', ignore_missing_projects=False):**
 
 Apply gerrit changes.
 
@@ -6427,7 +6430,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#31)(self):**
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#134)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#137)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -6479,7 +6482,7 @@ Args:
   projects (List[str]): Project names or paths to return info for. Defaults
     to all projects.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#171)(self, manifest_groups, local_manifests=None, cache_path_override=None, gitiles_commit=None, manifest_branch=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#174)(self, manifest_groups, local_manifests=None, cache_path_override=None, gitiles_commit=None, manifest_branch=None):**
 
 Returns a context with manifest groups checked out to cwd.
 

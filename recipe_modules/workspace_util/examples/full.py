@@ -51,6 +51,11 @@ def RunSteps(api, properties):
         manifest_file = 'releasespecs/91/13818.0.0.xml'
       )):
     pass
+  with api.workspace_util.setup_workspace(), \
+      api.workspace_util.sync_to_commit(sync_to_manifest=ManifestLocation(
+        manifest_gs_path='gs://buildspecs-internal/release/91/13818.0.0.xml'
+      )):
+    pass
 
   api.workspace_util.detect_toolchain_cls(None)
   api.assertions.assertEqual(properties.expected_toolchain_cls_applied,

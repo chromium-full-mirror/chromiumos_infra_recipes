@@ -93,7 +93,10 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     self.m.cros_source.ensure_synced_cache(**sync_args)
 
     with self.m.context(cwd=self.m.cros_source.workspace_path):
-      if sync_to_manifest and sync_to_manifest.manifest_repo_url:
+      if sync_to_manifest and sync_to_manifest.manifest_gs_path:
+        self.m.cros_source.sync_to_pinned_manifest(
+            manifest_gs_path=sync_to_manifest.manifest_gs_path)
+      elif sync_to_manifest and sync_to_manifest.manifest_repo_url:
         self.m.cros_source.sync_to_pinned_manifest(
             sync_to_manifest.manifest_repo_url, sync_to_manifest.branch,
             sync_to_manifest.manifest_file)

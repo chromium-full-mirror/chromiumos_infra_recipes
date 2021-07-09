@@ -21,6 +21,7 @@ DEPS = {
     'git': 'git',
     'gitiles': 'gitiles',
     'git_footers': 'git_footers',
+    'gsutil': 'depot_tools/gsutil',
     'overlayfs': 'overlayfs',
     'repo': 'repo',
     'src_state': 'src_state',
