@@ -348,6 +348,7 @@
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [repo:examples/annealing](#recipes-repo_examples_annealing)
   * [repo:examples/branching](#recipes-repo_examples_branching)
+  * [repo:examples/cache_builder](#recipes-repo_examples_cache_builder)
   * [repo:examples/image_builder](#recipes-repo_examples_image_builder)
   * [repo:examples/project_infos](#recipes-repo_examples_project_infos)
   * [repo:tests/find_root](#recipes-repo_tests_find_root)
@@ -5591,7 +5592,20 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#666)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#666)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, cache_builder=False):**
+
+Ensure the given repo checkout exists and is synced.
+
+Args:
+  root_path (Path): Path to the repo root.
+  manifest_url (str): Manifest URL for 'repo.init`.
+  init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
+  sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
+  projects (list[str]): Projects of concern or None if all projects
+    are of concern. Used to perform optimizations where possible to only
+    operate on the given projects.
+  cache_builder (bool): Boolean whether the checkout is part of the cache
+    builder.
 
 &mdash; **def [init](/recipe_modules/repo/api.py#148)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
 
@@ -8213,6 +8227,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 [DEPS](/recipe_modules/repo/examples/branching.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/examples/branching.py#21)(api, properties):**
+### *recipes* / [repo:examples/cache\_builder](/recipe_modules/repo/examples/cache_builder.py)
+
+[DEPS](/recipe_modules/repo/examples/cache_builder.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/cache_builder.py#26)(api, properties):**
 ### *recipes* / [repo:examples/image\_builder](/recipe_modules/repo/examples/image_builder.py)
 
 [DEPS](/recipe_modules/repo/examples/image_builder.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

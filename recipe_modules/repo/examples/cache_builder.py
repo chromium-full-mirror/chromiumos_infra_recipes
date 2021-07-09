@@ -1,0 +1,45 @@
+# -*- coding: utf-8 -*-
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/context',
+    'recipe_engine/path',
+    'recipe_engine/properties',
+    'recipe_engine/step',
+    'repo',
+]
+
+from google.protobuf.json_format import MessageToDict
+from PB.recipe_modules.chromeos.repo.examples import common
+from PB.chromiumos.repo_cache_state import RepoState
+from PB.recipe_modules.chromeos.repo.examples.image_builder import (
+    ImageBuilderProperties)
+
+PROPERTIES = ImageBuilderProperties
+
+# This example shows the normal flow of events for build_menu.
+
+
+def RunSteps(api, properties):
+  repo_root = api.path['start_dir'].join('repo')
+  api.path.mock_add_paths(repo_root.join('.repo'))
+
+  with api.context(cwd=repo_root.join('manifest-internal')):
+    init_opts = MessageToDict(properties.init_opts,
+                              preserving_proto_field_name=True)
+    manifest_url = init_opts.pop('manifest_url', 'http://manifest_url')
+    sync_opts = MessageToDict(properties.sync_opts,
+                              preserving_proto_field_name=True)
+
+    repo_state_path = repo_root.join('.recipes_state.json')
+    api.path.mock_add_paths(repo_state_path)
+    api.repo.ensure_synced_checkout(repo_root, manifest_url,
+                                    init_opts=init_opts, sync_opts=sync_opts,
+                                    cache_builder=True)
+
+
+def GenTests(api):
+  yield api.test('basic')

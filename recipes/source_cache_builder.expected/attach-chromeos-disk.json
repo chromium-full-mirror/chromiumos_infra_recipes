@@ -292,6 +292,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--force-sync",
+      "--detach",
       "--jobs",
       "20",
       "--retry-fetches",
