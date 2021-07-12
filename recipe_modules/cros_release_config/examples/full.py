@@ -25,7 +25,7 @@ def construct_legacy_config(*blocks):
 LEGACY_BLOCK_NEW = """
       ('{}',
        ['kevin-android-pi-pre-flight-branch',
-        'hatch-arc-r-android-rvc-pre-flight-branch'],
+        'hatch-android-rvc-pre-flight-branch'],
        '',
        [],
        [],
@@ -35,7 +35,7 @@ LEGACY_BLOCK_4 = """
       # This is a branch.
       ('release-R04-13729.B',
        ['grunt-android-pi-pre-flight-branch',
-        'hatch-arc-r-android-rvc-pre-flight-branch'],
+        'hatch-android-rvc-pre-flight-branch'],
        '',
        [],
        [],
