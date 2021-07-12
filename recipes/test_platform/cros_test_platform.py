@@ -217,6 +217,7 @@ def enumerate_tests(api, requests):
         })
     enum_responses = api.cros_test_platform.enumerate(enum_requests)
     for tag, response in enum_responses.tagged_responses.iteritems():
+      _log_enumeration_errors(api, response)
       name = 'autotest tests for %s' % tag
       step.presentation.logs[name] = _enumeration_log(response)
     return enum_responses.tagged_responses

@@ -105,7 +105,8 @@
     "name": "enumerate tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
-      "@@@STEP_LOG_END@autotest tests for default@@@"
+      "@@@STEP_LOG_END@autotest tests for default@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -208,6 +209,16 @@
     "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.enumeration error",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@summary@some tests are missing@@@",
+      "@@@STEP_LOG_END@summary@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

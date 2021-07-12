@@ -8496,7 +8496,7 @@ Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#304)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#305)(api, properties):**
 
 &mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#201)(api, requests):**
 
@@ -8508,23 +8508,23 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#266)(api, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#267)(api, requests):**
 
 Execute request in the correct backend.
 
 Args:
   requests: ExecutionRequests payload.
 
-&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#326)(api):**
+&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#327)(api):**
 
 &mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#65)(api, properties):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#335)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#336)(api, requests, responses):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#243)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#244)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -8533,13 +8533,13 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#432)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#433)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#500)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#501)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#375)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#376)(api, enumerations, responses):**
 
 &mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#84)(api, properties):**
 
