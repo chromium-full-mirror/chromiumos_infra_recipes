@@ -1980,6 +1980,35 @@
     },
     {
       "id": {
+        "name": "cave-slim-cq",
+        "type": "CQ"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "applyGerritChanges": true,
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "CL_AFFECTED_DEPENDENCIES"
+        },
+        "buildImages": {
+          "imageTypes": [
+          ]
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "CL_AFFECTED_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
         "name": "fw-ec-cq",
         "type": "CQ"
       },

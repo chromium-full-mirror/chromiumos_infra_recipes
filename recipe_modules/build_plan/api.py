@@ -19,18 +19,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
     super(BuildPlanApi, self).__init__(*args, **kwargs)
     self._properties = properties
 
-  def initialize(self):
-    """Initializes the module."""
-    # TODO(b/187793586): Remove after go/cros-slim-rollout.
-    # If false, launch slim builds as non-critical in parallel with the full
-    # build when applicable.
-    self._honor_slim_builder_criticality = (
-        self._properties.honor_slim_builder_criticality or
-        'chromeos.build_plan.honor_slim_builder_criticality' in
-        self.m.cros_infra_config.experiments)
-
-
-
   # A Git footer that can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
   DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
@@ -130,22 +118,13 @@ class BuildPlanApi(recipe_api.RecipeApi):
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
 
-      # TODO(crbug.com/1123776): Remove full_builder_* references upon
-      # completion of go/cros-slim-rollout parallel adoption phases.
-      # Slim builds will always run as non-critical during the parallel
-      # adoption stage, so we need to check criticality of the full builder
-      # as well.
       for child_spec in child_specs:
         # Get the builder variant in the build plan.
         if child_spec.name in necessary_builders:
           child_builder_name = child_spec.name
-          full_builder_critical = None
         elif self.get_slim_builder_name(child_spec.name) in necessary_builders:
           child_builder_name = self.get_slim_builder_name(child_spec.name)
-          full_builder_name = child_spec.name
-          full_builder_config = self.m.cros_infra_config.get_builder_config(
-              full_builder_name)
-          full_builder_critical = full_builder_config.general.critical.value
+          standard_builder_name = child_spec.name
         else:
           filter_log.append('{} build is not needed for changes'.format(
               child_spec.name))
@@ -168,10 +147,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
           count_skip_since_already_passed += 1
           continue
 
-        # Do not retry slim builds if an equivalent full build already passed.
+        # Do not retry slim builds if an equivalent standard build passed.
         if child_builder_name.endswith(
-            'slim-cq') and full_builder_name in completed_builders:
-          filter_log.append('{} already passed'.format(full_builder_name))
+            'slim-cq') and standard_builder_name in completed_builders:
+          filter_log.append('{} already passed'.format(standard_builder_name))
           count_skip_since_already_passed += 1
           continue
 
@@ -186,7 +165,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           continue
 
         # Don't retry non-critical builds unless recycling is disabled.
-        if not (critical or full_builder_critical) and is_retry and not (
+        if not critical and is_retry and not (
             child_builder_name in forced_rebuilds or 'all' in forced_rebuilds):
           filter_log.append('{} is non-critical and this is a CQ rerun'.format(
               child_builder_name))
@@ -220,24 +199,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         if child_builder_name.endswith('-slim-cq'):
           count_scheduled_slim_builds += 1
-
-          # TODO(b/187793586): Remove scheduling of a full builder in
-          # addition to a slim builder after go/cros-slim-rollout.
-          # Keep this logic throughout the incremental rollout phase so we can
-          # revert back to the parallel adoption phase if any issues surface.
-          if not self._honor_slim_builder_criticality:
-
-            # If launching both the full and slim builder, the slim build should
-            # always be non-critical.
-            critical = False
-            new_build_requests.append(
-                self.m.buildbucket.schedule_request(
-                    gitiles_commit=child_build_snapshot,
-                    inherit_buildsets=False, builder=full_builder_name,
-                    bucket=bucket, gerrit_changes=gerrit_changes,
-                    critical=full_builder_critical, tags=tags,
-                    properties=properties, experiments=child_exps,
-                    swarming_parent_run_id=parent_run_id))
 
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
@@ -295,16 +256,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
             self.get_slim_builder_name(cs.name) for cs in child_specs
         ]
         if build.builder.builder not in child_builders:  #pragma: no cover
-          continue
-
-        # Filter out successful slim cq buids which ran in parallel with a full
-        # cq builder that failed.
-        if (build.builder.builder.endswith('slim-cq') and not build.critical and
-            self.get_full_builder_name(
-                build.builder.builder) not in passed_builds):
-          skip_log.append(
-              '{} is skipped because full builder equivalent failed.'.format(
-                  build.builder.builder))
           continue
 
         if build.builder.builder in forced_rebuilds or 'all' in forced_rebuilds:
@@ -410,18 +361,3 @@ class BuildPlanApi(recipe_api.RecipeApi):
     """
     builder_spec, env_suffix = builder_name.rsplit('-', 1)
     return builder_spec + '-slim-' + env_suffix
-
-  # TODO(crbug.com/1123776): Remove after go/cros-slim-rollout parallel
-  # adoption phase.
-  def get_full_builder_name(self, builder_name):
-    """Returns to the name of the full variant of the builder.
-
-    Args:
-      slim_builder_name (str): The name of the slim builder for which to get the
-        full builder variant name.
-
-    Returns:
-       A string of the full builder name.
-    """
-    builder_spec, env_suffix = builder_name.split('-slim-', 1)
-    return builder_spec + '-' + env_suffix

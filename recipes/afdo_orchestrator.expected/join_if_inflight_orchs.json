@@ -1463,19 +1463,16 @@
   },
   {
     "cmd": [],
-    "name": "run builds.check force relevance",
+    "name": "run builds.plan builds.check disallow slim builds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@force relevant 0 target(s)@@@",
-      "@@@STEP_LOG_LINE@found footer builders@found build(s): :Force-Relevant-Builds,a quick description,Change-Id: deadbeef@@@",
-      "@@@STEP_LOG_END@found footer builders@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run builds.check force relevance.get CL 123456 description",
+    "name": "run builds.plan builds.check disallow slim builds.get CL 123456 description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
@@ -1488,11 +1485,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "run builds.check force relevance.get CL 123456 description.gerrit-fetch-changes",
+    "name": "run builds.plan builds.check disallow slim builds.get CL 123456 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -1538,6 +1535,31 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Disallow-Slim-Builds"
+    ],
+    "infra_step": true,
+    "name": "run builds.plan builds.check disallow slim builds.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.check force relevance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@force relevant 0 target(s)@@@",
+      "@@@STEP_LOG_LINE@found footer builders@found build(s): :Force-Relevant-Builds,a quick description,Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_END@found footer builders@@@"
     ]
   },
   {

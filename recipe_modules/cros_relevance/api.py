@@ -61,11 +61,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         self._properties.pointless_build_checker_cipd_ref.encode('utf-8') or
         default_ref)
 
-    # TODO(crbug.com/1123776): Remove after go/cros-slim-rollout.
-    self._enable_slim_builds = self._properties.enable_slim_builds or (
-        'chromeos.cros_relevance.enable_slim_builds' in
-        self.m.cros_infra_config.experiments)
-
   @property
   def toolchain_cls_applied(self):
     """Whether there are toolchain CLs applied to the source tree."""
@@ -167,9 +162,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Returns:
       List of builders to be run.
     """
-    # TODO(b/187793586): Remove conditional after go/cros-slim-rollout.
-    if not self._enable_slim_builds:
-      return [b.replace('-slim-cq', '-cq') for b in builders]
     forced_standard_builders = self._check_disallow_slim_footer(gerrit_changes)
     if 'all' in forced_standard_builders:
       return [b.replace('-slim-cq', '-cq') for b in builders]
