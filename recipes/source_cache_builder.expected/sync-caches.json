@@ -62,7 +62,7 @@
       "compute",
       "disks",
       "create",
-      "test-disk1-us-central1-b",
+      "test-disk1-1337000003000-us-central1-b",
       "--zone=us-central1-b",
       "--source-snapshot="
     ],
@@ -82,7 +82,7 @@
       "instances",
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk1-us-central1-b",
+      "--disk=test-disk1-1337000003000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -90,6 +90,26 @@
     },
     "infra_step": true,
     "name": "source cache update.attach gcloud compute cache disks.attach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--auto-delete",
+      "--disk=test-disk1-1337000003000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -349,7 +369,7 @@
       "compute",
       "disks",
       "snapshot",
-      "test-disk1-us-central1-b",
+      "test-disk1-1337000003000-us-central1-b",
       "--snapshot-names=test-chromeos-prefix-1337000003000",
       "--zone=us-central1-b"
     ],
@@ -437,7 +457,7 @@
       "compute",
       "disks",
       "create",
-      "test-disk2-us-central1-b",
+      "test-disk2-1337000004500-us-central1-b",
       "--zone=us-central1-b",
       "--source-snapshot="
     ],
@@ -457,7 +477,7 @@
       "instances",
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk2-us-central1-b",
+      "--disk=test-disk2-1337000004500-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -465,6 +485,26 @@
     },
     "infra_step": true,
     "name": "source cache update.attach gcloud compute cache disks.attach disk (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--auto-delete",
+      "--disk=test-disk2-1337000004500-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.set disk to autodelete (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -646,7 +686,7 @@
       "compute",
       "disks",
       "snapshot",
-      "test-disk2-us-central1-b",
+      "test-disk2-1337000004500-us-central1-b",
       "--snapshot-names=test-chrome-prefix-1337000004500",
       "--zone=us-central1-b"
     ],
@@ -760,7 +800,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk1-us-central1-b",
+      "--disk=test-disk1-1337000003000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -778,7 +818,7 @@
       "compute",
       "disks",
       "delete",
-      "test-disk1-us-central1-b",
+      "test-disk1-1337000003000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -797,7 +837,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk2-us-central1-b",
+      "--disk=test-disk2-1337000004500-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -815,7 +855,7 @@
       "compute",
       "disks",
       "delete",
-      "test-disk2-us-central1-b",
+      "test-disk2-1337000004500-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {

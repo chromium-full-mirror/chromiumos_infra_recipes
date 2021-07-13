@@ -49,7 +49,9 @@ def RunSteps(api, properties):
       with api.gcloud.cleanup_gce_disks(), \
            api.gcloud.cleanup_mounted_disks():
         for cache in properties.cache_definition:
-          disk = '{}-{}'.format(cache.compute_disk, m.group('zone'))
+          gen_suffix = api.time.ms_since_epoch()
+          disk = '{}-{}-{}'.format(cache.compute_disk, gen_suffix,
+                                   m.group('zone'))
           if m.group('role') in ['staging']:
             disk = '{}-{}'.format('staging', disk)
           cat_res = api.gsutil.cat(
@@ -79,8 +81,7 @@ def RunSteps(api, properties):
               # via a single disk. We change into the source directory to sync.
               api.chrome.cache_sync(cache_path=mount_path)
           with api.step.nest('snapshot attached disk'):
-            snapshot_name = '{}-{}'.format(cache.snapshot_prefix,
-                                           api.time.ms_since_epoch())
+            snapshot_name = '{}-{}'.format(cache.snapshot_prefix, gen_suffix)
             version_file_path = api.path['cleanup'].join(cache.version_file)
             api.gcloud.snapshot_disk(disk, snapshot_name, m.group('zone'))
             api.file.write_raw('write version file', version_file_path,

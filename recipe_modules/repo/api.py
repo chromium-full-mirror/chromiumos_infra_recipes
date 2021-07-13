@@ -647,15 +647,23 @@ class RepoApi(recipe_api.RecipeApi):
     with self.m.step.nest('ensure clean checkout'), self.m.context(
         cwd=root_path, infra_steps=True):
       cmd = ['forall'] + (projects or [])
-      base_args = [
+      clean_args = [
           '--ignore-missing', '-j', '32', '-c', 'git', 'clean', '-d', '-f'
       ]
       try:
-        self._step(cmd + base_args,
+        self._step(cmd + clean_args,
                    stdout=self.m.raw_io.output(add_output_log=True))
       except recipe_api.StepFailure:  # pragma: nocover
         self.m.step.active_result.presentation.status = self.m.step.WARNING
-        self._step(['forall'] + base_args, 'retry clear git locks')
+        self._step(['forall'] + clean_args, 'retry clear git locks')
+
+      reset_args = ['-j', '32', '-c', 'git', 'reset', '--hard']
+      try:
+        self._step(cmd + reset_args,
+                   stdout=self.m.raw_io.output(add_output_log=True))
+      except recipe_api.StepFailure:  # pragma: nocover
+        self.m.step.active_result.presentation.status = self.m.step.WARNING
+        self._step(['forall'] + reset_args, 'retry git reset')
 
   @property
   def manifest_gitiles_commit(self):

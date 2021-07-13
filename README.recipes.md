@@ -3859,21 +3859,21 @@ Print out the auth creds currently on the bot.
 Args:
   step_name(str): Name of the step.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#313)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#338)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#357)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#382)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
 Upon exiting the context manager, each mounted disk is then iterated
 through and unmounted.
 
-&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#220)(self, instance, disk, zone, snapshot):**
+&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#221)(self, instance, disk, zone, snapshot):**
 
 Create a GCE disk.
 
@@ -3911,7 +3911,7 @@ Args:
 
 Returns: A string name of the instance.
 
-&mdash; **def [delete\_disk](/recipe_modules/gcloud/api.py#237)(self, instance, disk, zone):**
+&mdash; **def [delete\_disk](/recipe_modules/gcloud/api.py#238)(self, instance, disk, zone):**
 
 Delete a GCE disk.
 
@@ -3933,7 +3933,7 @@ Args:
   project(str): Google Cloud project name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#202)(self, instance, disk, zone):**
+&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#203)(self, instance, disk, zone):**
 
 Detach a disk to a GCE instance.
 
@@ -3945,7 +3945,7 @@ Args:
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#252)(self, name, mount_path, recipe_mount=False):**
+&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#253)(self, name, mount_path, recipe_mount=False):**
 
 Mount an attached disk to host.
 
@@ -3972,13 +3972,26 @@ Args:
 
 Returns: Path to the image tar file.
 
+&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#314)(self, instance, disk, zone):**
+
+Set a disk to autodelete when a GCE instance is deleted.
+
+GCE disks are not default to delete when the instance is
+deleted, thus to ensure cleanup we can flip the metadata
+to ensure the disks are deleted when the instance is removed.
+
+Args:
+  instance(str): GCE instance on which disk is attached.
+  disk(str): Google Cloud disk name.
+  zone(str): GCE zone to create instance (e.g. us-central1-b).
+
 &mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#41)(self, project):**
 
 Set the default project for gcloud command.
 Args:
   project(str): Google Cloud project name.
 
-&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#299)(self, disk, snapshot_name, zone):**
+&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#300)(self, disk, snapshot_name, zone):**
 
 Snapshot an attached disk on a GCE instance.
 
@@ -5581,7 +5594,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#666)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, cache_builder=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#674)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, cache_builder=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -5634,7 +5647,7 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#660)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#668)(self):**
 
 Return a Gitiles commit for the repo manifest.
 

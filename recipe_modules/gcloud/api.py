@@ -198,6 +198,7 @@ class GcloudApi(recipe_api.RecipeApi):
       self._dev_ref = chr(ord(self._dev_ref) + 1)
       self._attached_disks[name] = '/dev/sd{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
+      self.set_disk_autodelete(instance=instance, disk=disk, zone=zone)
 
   def detach_disk(self, instance, disk, zone):
     """Detach a disk to a GCE instance.
@@ -309,6 +310,30 @@ class GcloudApi(recipe_api.RecipeApi):
           'gcloud', 'compute', 'disks', 'snapshot', disk,
           '--snapshot-names={}'.format(snapshot_name), '--zone={}'.format(zone)
       ])
+
+  def set_disk_autodelete(self, instance, disk, zone):
+    """Set a disk to autodelete when a GCE instance is deleted.
+
+    GCE disks are not default to delete when the instance is
+    deleted, thus to ensure cleanup we can flip the metadata
+    to ensure the disks are deleted when the instance is removed.
+
+    Args:
+      instance(str): GCE instance on which disk is attached.
+      disk(str): Google Cloud disk name.
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('set disk to autodelete', [
+          'gcloud',
+          'compute',
+          'instances',
+          'set-disk-auto-delete',
+          instance,
+          '--auto-delete',
+          '--disk={}'.format(disk),
+          '--zone={}'.format(zone),
+      ], infra_step=True)
 
   @contextlib.contextmanager
   def cleanup_gce_disks(self):
