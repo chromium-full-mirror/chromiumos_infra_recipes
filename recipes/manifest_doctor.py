@@ -53,12 +53,21 @@ def RunSteps(api, properties):
     if not properties.min_milestone:
       raise StepFailure("min_milestone required")
 
+  manifest_doctor_path = ensure_manifest_doctor(api, properties)
+  if len(properties.buildspec_watch_paths) > 0:
+    with api.step.nest("create external buildspecs"):
+      cmd = [manifest_doctor_path, "public-buildspec"]
+      cmd += ["--paths", ",".join(properties.buildspec_watch_paths)]
+      if properties.push:
+        cmd += ["--push"]
+
+      api.step("run manifest_doctor", cmd)
+
   with api.bot_cost.build_cost_context(), api.workspace_util.setup_workspace(
   ), api.cros_sdk.cleanup_context():
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()
 
-    manifest_doctor_path = ensure_manifest_doctor(api, properties)
     with api.step.nest("branch local manifests"):
       with api.context(cwd=api.workspace_util.workspace_path):
         all_projects = api.repo.project_infos()
@@ -93,7 +102,10 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.properties(**{"min_milestone": 90}),
+      api.properties(**{
+          "min_milestone": 90,
+          "buildspec_watch_paths": ["release/", "test/"],
+      }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
               dict(project='chromeos/program/galaxy',
@@ -102,6 +114,9 @@ def GenTests(api):
                    path='src/project/galaxy/milkyway'),
               dict(project='chromeos/foo', path='src/foo'),
           ]),
+      api.post_check(post_process.StepCommandContains,
+                     'create external buildspecs.run manifest_doctor',
+                     ['--paths', 'release/,test/']),
       api.post_check(
           post_process.StepCommandContains,
           'branch local manifests.run manifest_doctor',
@@ -115,10 +130,12 @@ def GenTests(api):
 
   yield api.test(
       'push',
-      api.properties(**{
-          "push": True,
-          "min_milestone": 90
-      }),
+      api.properties(
+          **{
+              "push": True,
+              "min_milestone": 90,
+              "buildspec_watch_paths": ["release/", "test/"],
+          }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
               dict(project='chromeos/program/galaxy',
@@ -127,6 +144,9 @@ def GenTests(api):
                    path='src/project/galaxy/milkyway'),
               dict(project='chromeos/foo', path='src/foo'),
           ]),
+      api.post_check(post_process.StepCommandContains,
+                     'create external buildspecs.run manifest_doctor',
+                     ['--push']),
       api.post_check(
           post_process.StepCommandContains,
           'branch local manifests.run manifest_doctor',

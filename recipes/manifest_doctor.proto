@@ -19,6 +19,10 @@ message ManifestDoctorProperties {
     // is a dry run.
     bool push = 3;
 
-    // Minimum milestone to consider.
+    // Minimum milestone to consider for local manifest branching.
     int32 min_milestone = 4;
+
+    // Paths within the internal buildspec GS bucket to mirror to external
+    // buildspec bucket.
+    repeated string buildspec_watch_paths = 5;
 }
