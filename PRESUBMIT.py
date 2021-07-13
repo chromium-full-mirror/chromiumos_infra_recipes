@@ -6,7 +6,9 @@ import git_cl
 
 
 def CommonChecks(input_api, output_api):
-  results = []
+  file_filter = lambda x: x.LocalPath() == 'infra/config/recipes.cfg'
+  results = input_api.canned_checks.CheckJsonParses(input_api, output_api,
+                                                    file_filter=file_filter)
 
   # recipes.py test run
   results += input_api.RunTests([
