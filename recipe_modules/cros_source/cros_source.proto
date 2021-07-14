@@ -6,6 +6,24 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_source;
 
+message ManifestLocation {
+  // URL of the project the manifest is in, e.g.
+  // https://chrome-internal.googlesource.com/chromeos/manifest-versions
+  string manifest_repo_url = 1;
+
+  // Branch of repository to get manifest from, e.g.
+  // 'main' or 'release'.
+  string branch = 2;
+
+  // Path (relative to repository root) of manifest file, e.g.
+  // releasespecs/90/....xml.
+  string manifest_file = 3;
+
+  // GS path of the manifest to sync to, e.g.
+  // gs://buildspecs-internal/release/91/13818.0.0.xml.
+  string manifest_gs_path = 4;
+}
+
 message CrosSourceProperties {
 
   message SnapshotCas {
@@ -18,4 +36,9 @@ message CrosSourceProperties {
 
   // Feature flag: whether to allow mounting the external or custom overlay.
   bool enable_custom_overlays = 4;
+
+  // Manifest to sync to. If set, overrides the normal flow (which looks at
+  // fields like gitiles_commit) and downloads the manifest directly from the
+  // appropriate source (gitiles, gs, etc.).
+  ManifestLocation sync_to_manifest = 5;
 }

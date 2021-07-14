@@ -18,6 +18,7 @@ from google.protobuf.json_format import MessageToDict
 import json
 
 from recipe_engine import post_process
+from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 
 
 def RunSteps(api):
@@ -33,8 +34,8 @@ def DoRunSteps(api):
   extra_child_props = {}
   # If a release builder, need to pass information about the pinned manifest.
   if api.orch_menu.is_release_orchestrator:
-    extra_child_props['sync_to_manifest'] = MessageToDict(
-        api.cros_release.releasespec)
+    extra_child_props['$chromeos/cros_source'] = MessageToDict(
+        CrosSourceProperties(sync_to_manifest=api.cros_release.releasespec))
   api.orch_menu.plan_and_run_children(extra_child_props=extra_child_props)
 
   # Run any HW tests.

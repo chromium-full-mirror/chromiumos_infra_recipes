@@ -14,7 +14,7 @@ from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_ACCESSORY_USBPD,
                                   IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_GSC_FIRMWARE)
-from PB.recipes.chromeos.build_target import ManifestLocation
+from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
 MANIFEST_VERSIONS_URL = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 

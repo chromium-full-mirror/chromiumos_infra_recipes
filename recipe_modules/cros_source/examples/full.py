@@ -27,7 +27,7 @@ from recipe_engine.recipe_api import StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties)
+    CrosSourceProperties, ManifestLocation)
 from PB.recipe_modules.chromeos.cros_source.examples.full import FullProperties
 
 PROPERTIES = FullProperties
@@ -47,24 +47,8 @@ def RunSteps(api, properties):
       # Either checkout tip of tree, sync to a snapshot,
       # or sync to a manifest.
       api.cros_source.checkout_tip_of_tree()
-      api.cros_source.sync_to_gitiles_commit(api.buildbucket.gitiles_commit)
-      manifest_internal_url = (
-          'https://chrome-internal.googlesource.com/chromeos/manifest-versions')
-      api.cros_source.sync_to_pinned_manifest(manifest_internal_url, 'release',
-                                              'releasespecs/91/13818.0.0.xml')
+      api.cros_source.sync_checkout(api.buildbucket.gitiles_commit)
       _ = api.cros_source.pinned_manifest
-
-      manifest_gs_path = 'gs://buildspecs-internal/release/91/13818.0.0.xml'
-      api.cros_source.sync_to_pinned_manifest(manifest_gs_path=manifest_gs_path)
-
-      with api.assertions.assertRaises(StepFailure):
-        api.cros_source.sync_to_pinned_manifest(
-            'https://non-existent.com/not-authorized', 'release',
-            'releasespecs/91/13818.0.0.xml')
-      with api.assertions.assertRaises(StepFailure):
-        api.cros_source.sync_to_pinned_manifest(
-            manifest_url='https://non-existent.com/not-authorized',
-            manifest_path='releasespecs/91/13818.0.0.xml')
 
   # At this point should be dirty only for custom manifest cases.
   if properties.expected_snapshot_cas_digest:
@@ -302,3 +286,44 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess), cq=True,
       git_repo=api.src_state.external_manifest.url,
       gerrit_changes=[_manifest_change(api.src_state.internal_manifest)])
+
+  manifest_internal_url = (
+      'https://chrome-internal.googlesource.com/chromeos/manifest-versions')
+  yield api.cros_source.test(
+      'sync-to-manifest-gitiles', api.post_check(post_process.StatusSuccess),
+      cros_source_properties=CrosSourceProperties(
+          sync_to_manifest=ManifestLocation(
+              manifest_repo_url=manifest_internal_url,
+              branch='release',
+              manifest_file='releasespecs/91/13818.0.0.xml',
+          ),
+      ))
+
+  yield api.cros_source.test(
+      'sync-to-manifest-gitiles-bad-url',
+      api.post_check(post_process.StepFailure, 'sync to specified manifest'),
+      cros_source_properties=CrosSourceProperties(
+          sync_to_manifest=ManifestLocation(
+              manifest_repo_url='https://non-existent.com/not-authorized',
+              branch='release',
+              manifest_file='releasespecs/91/13818.0.0.xml',
+          ),
+      ))
+
+  yield api.cros_source.test(
+      'sync-to-manifest-gitiles-missing-args',
+      api.post_check(post_process.StepFailure, 'sync to specified manifest'),
+      cros_source_properties=CrosSourceProperties(
+          sync_to_manifest=ManifestLocation(
+              manifest_repo_url='https://non-existent.com/not-authorized',
+              manifest_file='releasespecs/91/13818.0.0.xml',
+          ),
+      ))
+
+  yield api.cros_source.test(
+      'sync-to-manifest-gs', api.post_check(post_process.StatusSuccess),
+      cros_source_properties=CrosSourceProperties(
+          sync_to_manifest=ManifestLocation(
+              manifest_gs_path='gs://buildspecs-internal/release/91/13818.0.0.xml'
+          ),
+      ))

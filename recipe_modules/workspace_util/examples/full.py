@@ -18,7 +18,6 @@ DEPS = [
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.workspace_util.examples.test import (
     TestInputProperties)
-from PB.recipes.chromeos.build_target import ManifestLocation
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 from recipe_engine import post_process
 
@@ -42,20 +41,6 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(len(want), len(api.workspace_util.commits))
     api.assertions.assertEqual(api.context.cwd,
                                api.workspace_util.workspace_path)
-
-  # Now try with the sync_to_manifest parameter.
-  with api.workspace_util.setup_workspace(), \
-      api.workspace_util.sync_to_commit(sync_to_manifest=ManifestLocation(
-        manifest_repo_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions',
-        branch = 'release',
-        manifest_file = 'releasespecs/91/13818.0.0.xml'
-      )):
-    pass
-  with api.workspace_util.setup_workspace(), \
-      api.workspace_util.sync_to_commit(sync_to_manifest=ManifestLocation(
-        manifest_gs_path='gs://buildspecs-internal/release/91/13818.0.0.xml'
-      )):
-    pass
 
   api.workspace_util.detect_toolchain_cls(None)
   api.assertions.assertEqual(properties.expected_toolchain_cls_applied,

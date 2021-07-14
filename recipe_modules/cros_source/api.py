@@ -60,6 +60,7 @@ class CrosSourceApi(RecipeApi):
         if properties.HasField('snapshot_cas') else None)
     self._is_source_dirty = bool(self._snapshot_cas)
     self._enable_custom_overlays = properties.enable_custom_overlays
+    self._sync_to_manifest = properties.sync_to_manifest
     # The currently active branch of the manifest.  Empty unless we switched
     # branches.
     self._manifest_branch = ''
@@ -1136,6 +1137,28 @@ class CrosSourceApi(RecipeApi):
       return new_commit
 
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
+
+  def sync_checkout(self, commit=None, manifest_url=None, **kwargs):
+    """Sync a checkout to the appropriate manifest.
+
+      If the module properties contain the `sync_to_manifest` field, that will
+      be used. Otherwise the given commit/manifest_url will be used.
+
+      Args:
+        commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
+            saved in cros_infra_config.configure_builder().
+        manifest_url: URL of manifest repo.  Default: internal manifest
+    """
+    if self._sync_to_manifest and self._sync_to_manifest.manifest_gs_path:
+      self.m.cros_source.sync_to_pinned_manifest(
+          manifest_gs_path=self._sync_to_manifest.manifest_gs_path, **kwargs)
+    elif self._sync_to_manifest and self._sync_to_manifest.manifest_repo_url:
+      self.m.cros_source.sync_to_pinned_manifest(
+          self._sync_to_manifest.manifest_repo_url,
+          self._sync_to_manifest.branch, self._sync_to_manifest.manifest_file,
+          **kwargs)
+    else:
+      self.m.cros_source.sync_to_gitiles_commit(commit, manifest_url, **kwargs)
 
   @exponential_retry(retries=3, condition=retry_timeouts)
   def sync_to_pinned_manifest(self, manifest_url='', manifest_branch='',

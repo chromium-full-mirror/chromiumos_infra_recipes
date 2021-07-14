@@ -19,8 +19,9 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-from PB.recipes.chromeos.build_target import (BuildTargetProperties,
-                                              ManifestLocation)
+from PB.recipe_modules.chromeos.cros_source.cros_source import (
+    CrosSourceProperties, ManifestLocation)
+from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 
 # TODO(crbug/1099259): Drop our properties.
@@ -39,8 +40,7 @@ def RunSteps(api, properties):
   with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
     with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
       with api.build_menu.configure_builder() as config, \
-          api.build_menu.setup_workspace_and_chroot(
-            sync_to_manifest=properties.sync_to_manifest):
+          api.build_menu.setup_workspace_and_chroot():
         return DoRunSteps(api, config, properties)
 
 
@@ -79,11 +79,12 @@ def GenTests(api):
       'release-build',
       api.properties(
           **{
-              'sync_to_manifest':
+              '$chromeos/cros_source':
                   MessageToDict(
-                      ManifestLocation(
-                          manifest_repo_url=manifest_url, branch='release',
-                          manifest_file='releasespecs/91/13818.0.0.xml'))
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='releasespecs/91/13818.0.0.xml')))
           }), api.post_check(post_process.MustRun,
                              'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
