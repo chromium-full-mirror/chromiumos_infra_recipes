@@ -4224,7 +4224,7 @@
       "[CLEANUP]/code-coverage_tmp_1",
       "--constants-file",
       "RECIPE_MODULE[chromeos::code_coverage]/resources/constants.json",
-      "--coverage-file",
+      "--path-to-coverage-file",
       "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
       "--build-target",
       "sarien",

@@ -500,14 +500,12 @@ def _parse_args(args):
       '--constants-file', required=True, type=str,
       help='absolute path to the file containing constants for package mapping, must exist'
   )
-  parser.add_argument('--path_to_coverage_file', required=True, type=str,
+  parser.add_argument('--path-to-coverage-file', required=True, type=str,
                       help='absolute path to the coverage file, must exist')
-  parser.add_argument('--build_target', required=True, type=str,
-                      help='name of the build target')
-
   parser.add_argument(
       '--output-dir', required=True, type=str,
       help='absolute path to the directory to store the metadata, must exist')
+
   parser.add_argument('--build-target', required=True, type=str,
                       help='the target code coverage was built for')
   parser.add_argument(

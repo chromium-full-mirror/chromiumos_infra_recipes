@@ -337,7 +337,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               self.metadata_dir,
               '--constants-file',
               self.resource('constants.json'),
-              '--coverage-file',
+              '--path-to-coverage-file',
               path_to_coverage_file,
               '--build-target',
               build_target_name,
