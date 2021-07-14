@@ -34,6 +34,7 @@ class BreakpadApi(RecipeApi):
                                 version='latest')
 
         self.m.cipd.ensure(self._breakpad_root, ensure_file)
+        self._breakpad_ensured = True
 
   def _download_and_log_gs_url(self, url, dest, args=None, **kwargs):
     """Call gsutil.download_url and log a link to the GS path.
