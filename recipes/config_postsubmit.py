@@ -15,7 +15,7 @@ Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 """
 
-from collections import namedtuple, defaultdict
+from collections import namedtuple
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -217,11 +217,12 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
     return []
 
 
-def _copy_to_internal(api, properties, project_infos):
-  """Aggregate config messages and copy them to config-internal
+def _aggregate_configs(api, properties, project_infos):
+  """Aggregate config messages and copy them to multiple locations.
 
-  This provides a single centralized location from which services can read all
-  device configurations.
+  1. config-internal - This provides a single centralized location from which
+  services can read all device configurations.
+  2. UFS datastore - This enables the usage of configs as schedulable labels.
   """
   configs = [
       IngestConfig(
@@ -287,7 +288,24 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
 
     api.git_txn.update_ref(config_project_info.remote, _merge_configs,
                            ref=config_project_info.branch)
-    return []
+
+  config_to_ufs_datastore = cwd.join(
+      'src/config/payload_utils/config_to_datastore.py')
+  ufs_env = "prod"
+
+  # only need to upload for not flattened configs; need to determine condition
+  with api.context(config_internal),\
+       api.step.nest("upload configs to ufs"):
+
+    api.step("upload generated configs to UFS datastore", [
+        "vpython",
+        config_to_ufs_datastore,
+        "hw_design/generated/configs.jsonproto",
+        "--env",
+        ufs_env,
+    ])
+
+  return []
 
 
 def _regenerate_suite_scheduler_configs(api, _properties, _project_infos):
@@ -368,7 +386,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 _ACTIONS = {
     PROPERTIES.REPLICATE_PUBLIC_CONFIG: _replicate_public_config,
     PROPERTIES.FLATTEN_CONFIGS: _flatten_configs,
-    PROPERTIES.COPY_TO_INTERNAL: _copy_to_internal,
+    PROPERTIES.COPY_TO_INTERNAL: _aggregate_configs,
     PROPERTIES.REGENERATE_SUITE_SCHEDULER: _regenerate_suite_scheduler_configs,
     PROPERTIES.REGENERATE_TEST_PLAN: _regenerate_test_plan,
 }
@@ -715,7 +733,7 @@ def GenTests(api):
 
   # import to internal config stage tests
   yield api.test(
-      'copy_internal_basic',
+      'aggregate_configs_basic',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -724,14 +742,20 @@ def GenTests(api):
       api.git.diff_check(True),
       api.post_process(
           post_process.MustRun,
-          'Do copy_to_internal and create CL'
+          'Do aggregate_configs and create CL'
           '.aggregating configs'
           '.update ref.git transaction.merge joined configs'
           ' to config-internal',
       ),
       api.post_process(
+          post_process.MustRun,
+          'Do aggregate_configs and create CL'
+          '.upload configs to ufs'
+          '.upload generated configs to UFS datastore',
+      ),
+      api.post_process(
           post_process.DoesNotRun,
-          'Do copy_to_internal and create CL'
+          'Do aggregate_configs and create CL'
           '.aggregating configs'
           '.update ref.git transaction.merge flattened configs'
           ' to config-internal',
@@ -739,7 +763,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'copy_internal_no_diff',
+      'aggregate_configs_no_diff',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -747,14 +771,20 @@ def GenTests(api):
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(False),
       api.post_process(
-          StepSummaryEquals, 'Do copy_to_internal and create CL'
+          StepSummaryEquals, 'Do aggregate_configs and create CL'
           '.aggregating configs'
           '.update ref.git transaction.diffing to find changes',
           "No changes to commit"),
+      api.post_process(
+          post_process.MustRun,
+          'Do aggregate_configs and create CL'
+          '.upload configs to ufs'
+          '.upload generated configs to UFS datastore',
+      ),
   )
 
   yield api.test(
-      'copy_internal_error',
+      'aggregate_configs_error',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -762,7 +792,7 @@ def GenTests(api):
       mock_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
-          'Do copy_to_internal and create CL'
+          'Do aggregate_configs and create CL'
           '.aggregating configs'
           '.update ref.git transaction.merge '
           'joined configs to config-internal', retcode=1),

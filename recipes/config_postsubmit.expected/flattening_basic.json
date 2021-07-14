@@ -1248,7 +1248,7 @@
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL"
+    "name": "Do aggregate_configs and create CL"
   },
   {
     "cmd": [
@@ -1268,7 +1268,7 @@
       ]
     },
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.repo forall",
+    "name": "Do aggregate_configs and create CL.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/config-internal|src/chromeos/config-internal|cros|refs/heads/main|refs/heads/main@@@",
@@ -1277,21 +1277,21 @@
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs",
+    "name": "Do aggregate_configs and create CL.aggregating configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1308,21 +1308,21 @@
       "hw_design/generated/configs.jsonproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.diffing to find changes",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.diffing to find changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.diffing to find changes.diff check",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.diffing to find changes.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -1335,7 +1335,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.git add",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1353,7 +1353,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.write commit message",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@Automerging and importing config changes.@@@",
@@ -1372,7 +1372,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.git commit",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1387,10 +1387,31 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "Do copy_to_internal and create CL.aggregating configs.update ref.git transaction.git push",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do aggregate_configs and create CL.upload configs to ufs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/config_to_datastore.py",
+      "hw_design/generated/configs.jsonproto",
+      "--env",
+      "prod"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
+    "name": "Do aggregate_configs and create CL.upload configs to ufs.upload generated configs to UFS datastore",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
