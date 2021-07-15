@@ -4329,6 +4329,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"critical\": \"YES\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"name\": \"vm-test\"@@@",

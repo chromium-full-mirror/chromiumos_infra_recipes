@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all tests passed.@@@"
+      "@@@STEP_TEXT@all critical tests passed.@@@"
     ]
   },
   {
@@ -4326,6 +4326,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"critical\": \"YES\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"name\": \"vm-test\"@@@",
@@ -4337,6 +4338,22 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"critical\": \"NO\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"name\": \"vm-test-2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"name\": \"vm-test-2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -4423,7 +4440,7 @@
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-inline\", \"htarget.hw.bvt-cq\", \"vm-test\"]@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-inline\", \"htarget.hw.bvt-cq\"]@@@"
     ]
   },
   {
@@ -4460,9 +4477,10 @@
   },
   {
     "cmd": [],
-    "name": "check test results.vm test results.vm-test",
+    "name": "check test results.vm test results.vm-test-2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@failed but is not critical@@@",
       "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },

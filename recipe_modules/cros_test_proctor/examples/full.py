@@ -59,13 +59,14 @@ def RunSteps(api, need_tests_builds_serialized):
 
 def GenTests(api):
 
-  def vm_test_build(name):
+  def vm_test_build(name, status=common_pb2.SUCCESS, critical=True):
     output = build_pb2.Build.Output()
     input_proto = build_pb2.Build.Input()
     output.properties.update({'name': name})
     input_proto.properties.update({'name': name})
-    return build_pb2.Build(output=output, input=input_proto,
-                           status=common_pb2.SUCCESS)
+    return build_pb2.Build(
+        output=output, input=input_proto, status=status,
+        critical=common_pb2.YES if critical else common_pb2.NO)
 
   def input_proto(snapshot, build_target, gerrit_changes=None):
     """Generate an instance of Build.Input.
@@ -81,10 +82,6 @@ def GenTests(api):
 
   def serialize_builds(builds):
     return [build_pb2.Build.SerializeToString(b) for b in builds]
-
-  vm_tests = [
-      vm_test_build('vm-test'),
-  ]
 
   cros_test_platforms = [
       build_pb2.Build(id=1234, builder={'builder': 'cros_test_platform'},
@@ -140,9 +137,10 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
           'collect skylab tasks v2.buildbucket.collect'),
-      api.buildbucket.simulated_collect_output(
-          vm_tests,
-          step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output([
+          vm_test_build('vm-test'),
+          vm_test_build('vm-test-2', status=common_pb2.FAILURE, critical=False)
+      ], step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
           [], step_name='run tests.collect tests.collect tast vm tests'))
 
@@ -176,7 +174,7 @@ def GenTests(api):
           multi_hw_tests, 'run tests.collect tests.'
           'collect skylab tasks v2.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
-          vm_tests,
+          [vm_test_build('vm-test')],
           step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
           [], step_name='run tests.collect tests.collect tast vm tests'))

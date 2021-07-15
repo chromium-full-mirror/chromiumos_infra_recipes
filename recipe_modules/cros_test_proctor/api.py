@@ -78,27 +78,29 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                           test_to_build_target_map, snapshot,
                                           dev=dev)
 
-      passed_tests = []
       with self.m.step.nest('collect tests'):
         test_results = self._collect_tests(test_tasks, timeout=self._timeout)
         # Record test results.
-        passed_tests = [
-            self.m.naming.get_test_title(test_result)
-            for test_result in (test_results.skylab + test_results.autotest_vm +
-                                test_results.tast_vm)
-            if not self.m.failures.is_critical_test_failure(test_result)
-        ]
+        passed_test_names = []
+        crit_failure_test_names = []
+        non_crit_failure_test_names = []
+        for test_result in (test_results.tast_vm + test_results.skylab +
+                            test_results.autotest_vm):
+          if test_result.status == common_pb2.SUCCESS:
+            passed_test_names.append(self.m.naming.get_test_title(test_result))
+          elif self.m.failures.is_critical_test_failure(test_result):
+            crit_failure_test_names.append(
+                self.m.naming.get_test_title(test_result))
+          else:
+            non_crit_failure_test_names.append(
+                self.m.naming.get_test_title(test_result))
 
-      failed_test_names = ([
-          self.m.naming.get_test_title(test_result)
-          for test_result in (test_results.skylab + test_results.autotest_vm +
-                              test_results.tast_vm)
-          if self.m.failures.is_critical_test_failure(test_result)
-      ])
-
-      if failed_test_names:
-        pres.step_text = ('{} test(s) failed'.format(len(failed_test_names)))
-      elif passed_tests:
+      if crit_failure_test_names:
+        pres.step_text = ('{} critical test(s) failed'.format(
+            len(crit_failure_test_names)))
+      elif non_crit_failure_test_names:
+        pres.step_text = 'all critical tests passed.'
+      elif passed_test_names:
         pres.step_text = ('all tests passed.')
       else:  #pragma: no cover
         # This shouldn't ever happen with multi-request
@@ -106,9 +108,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         pres.properties['no_tests_needed'] = True
 
     with self.m.step.nest('check test results'):
-      self.m.cros_history.set_passed_tests(passed_tests)
+      self.m.cros_history.set_passed_tests(passed_test_names)
       needs_test_bisection = self._needs_bisection(
-          failed_test_names, test_plan,
+          crit_failure_test_names, test_plan,
           self.m.cros_bisect.test_bisection_percent,
           self.m.cros_bisect.test_bisection_count)
 

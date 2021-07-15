@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 test(s) failed@@@"
+      "@@@STEP_TEXT@1 critical test(s) failed@@@"
     ]
   },
   {
