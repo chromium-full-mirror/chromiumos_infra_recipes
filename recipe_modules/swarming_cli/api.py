@@ -15,7 +15,6 @@ class SwarmingCli(recipe_api.RecipeApi):
 
   def __init__(self, *args, **kwargs):
     super(SwarmingCli, self).__init__(*args, **kwargs)
-    self._version = 'latest'
     self._client = 'swarming.py'
     self._checkout = None
 
@@ -27,7 +26,8 @@ class SwarmingCli(recipe_api.RecipeApi):
       cwd = self.m.path['cleanup'].join('swarming-client')
       self.m.git.checkout(
           'https://chromium.googlesource.com/infra/luci/client-py',
-          dir_path=cwd, submodules=False)
+          ref='14cadf852292035c5dc145de47f8af1000c9897a', dir_path=cwd,
+          submodules=False)
       self._checkout = cwd
       self._client = cwd.join('swarming.py')
 
