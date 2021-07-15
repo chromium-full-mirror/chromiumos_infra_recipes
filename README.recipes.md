@@ -137,7 +137,6 @@
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
-  * [cache_generate](#recipes-cache_generate) &mdash; Recipe for generating ChromeOS cache payloads.
   * [check_fit_image](#recipes-check_fit_image) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
   * [check_project_config](#recipes-check_project_config) &mdash; Checks a project conforms to its program's constraints.
   * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync)
@@ -181,7 +180,6 @@
   * [cros_build_api:tests/remove_endpoints](#recipes-cros_build_api_tests_remove_endpoints)
   * [cros_build_api:tests/version](#recipes-cros_build_api_tests_version)
   * [cros_cache:examples/full](#recipes-cros_cache_examples_full)
-  * [cros_cache:examples/missing_source_dir](#recipes-cros_cache_examples_missing_source_dir)
   * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings)
   * [cros_cq_depends:examples/ensure_manifest_cq_depends_fulfilled](#recipes-cros_cq_depends_examples_ensure_manifest_cq_depends_fulfilled)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
@@ -1827,40 +1825,29 @@ Log level used when calling Build API
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#228)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
 
-[DEPS](/recipe_modules/cros_cache/__init__.py#5): [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_cache/__init__.py#5): [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 API for working with CrOS cache.
 
-#### **class [CrosCacheApi](/recipe_modules/cros_cache/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosCacheApi](/recipe_modules/cros_cache/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific cache steps.
 
-&mdash; **def [create\_cache\_dir](/recipe_modules/cros_cache/api.py#24)(self, directory):**
+&mdash; **def [create\_cache\_dir](/recipe_modules/cros_cache/api.py#16)(self, directory):**
 
 Creates a working directory outside of recipe structure.
 
 Args:
   directory (Path):  Full path to directory to create.
 
-&mdash; **def [package\_source](/recipe_modules/cros_cache/api.py#32)(self, filename, source_path):**
+&mdash; **def [write\_and\_upload\_version](/recipe_modules/cros_cache/api.py#24)(self, gs_bucket, version_file, version):**
 
-Packages up the current checkout of source to a tar file for cache usage.
-
-Args:
-  filename (str): Base filename to create.
-  source_path (Path):  Location of the repo checkout to package.
-
-Returns:
-  archive_file (Path): Path to the created archive file.
-  version_file (Path): Path to the created version file.
-
-&mdash; **def [upload\_artifact](/recipe_modules/cros_cache/api.py#59)(self, gs_bucket, upload_file):**
-
-Uploads cache and version file to Google Storage.
+Write local version file and uploads to Google Storage.
 
 Args:
   gs_bucket (str): Target Google Storage bucket.
-  upload_file (Path):  Location of cache artifact file to upload.
+  version_file (str): Version file name.
+  version (str): Version to write to tracking file.
 ### *recipe_modules* / [cros\_cq\_depends](/recipe_modules/cros_cq_depends)
 
 [DEPS](/recipe_modules/cros_cq_depends/__init__.py#5): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5610,7 +5597,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#678)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, cache_builder=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#678)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -5622,8 +5609,6 @@ Args:
   projects (list[str]): Projects of concern or None if all projects
     are of concern. Used to perform optimizations where possible to only
     operate on the given projects.
-  cache_builder (bool): Boolean whether the checkout is part of the cache
-    builder.
 
 &mdash; **def [init](/recipe_modules/repo/api.py#148)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
 
@@ -6915,13 +6900,6 @@ Recipe for building a BuildTarget image.
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_build_count.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 &mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/examples/get_build_count.py#17)(api):**
-### *recipes* / [cache\_generate](/recipes/cache_generate.py)
-
-[DEPS](/recipes/cache_generate.py#8): [cros\_cache](#recipe_modules-cros_cache), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
-
-Recipe for generating ChromeOS cache payloads.
-
-&mdash; **def [RunSteps](/recipes/cache_generate.py#21)(api):**
 ### *recipes* / [check\_fit\_image](/recipes/check_fit_image.py)
 
 [DEPS](/recipes/check_fit_image.py#43): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7316,16 +7294,9 @@ returns a list of repos to make commits to.
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/version.py#12)(api):**
 ### *recipes* / [cros\_cache:examples/full](/recipe_modules/cros_cache/examples/full.py)
 
-[DEPS](/recipe_modules/cros_cache/examples/full.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_cache/examples/full.py#6): [cros\_cache](#recipe_modules-cros_cache), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-&mdash; **def [RunSteps](/recipe_modules/cros_cache/examples/full.py#16)(api):**
-
-&mdash; **def [attempt\_upload\_file](/recipe_modules/cros_cache/examples/full.py#27)(api, attempt):**
-### *recipes* / [cros\_cache:examples/missing\_source\_dir](/recipe_modules/cros_cache/examples/missing_source_dir.py)
-
-[DEPS](/recipe_modules/cros_cache/examples/missing_source_dir.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-&mdash; **def [RunSteps](/recipe_modules/cros_cache/examples/missing_source_dir.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_cache/examples/full.py#13)(api):**
 ### *recipes* / [cros\_cq\_depends:examples/cq\_depend\_strings](/recipe_modules/cros_cq_depends/examples/cq_depend_strings.py)
 
 [DEPS](/recipe_modules/cros_cq_depends/examples/cq_depend_strings.py#8): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -8377,7 +8348,7 @@ Recipe for signing ChromeOS images.
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#16)(api):**
 ### *recipes* / [source\_cache\_builder](/recipes/source_cache_builder.py)
 
-[DEPS](/recipes/source_cache_builder.py#8): [chrome](#recipe_modules-chrome), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/source_cache_builder.py#8): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [gcloud](#recipe_modules-gcloud), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 Recipe for generating ChromeOS source cache snapshots.
 

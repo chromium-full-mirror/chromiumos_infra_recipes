@@ -382,6 +382,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -393,18 +400,11 @@
       "[CLEANUP]/test-cache-version"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk.write version file",
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@test-cache-version@test-cache-prefix-1337000003000@@@",
       "@@@STEP_LOG_END@test-cache-version@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -428,10 +428,10 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.set test-cache_snapshot_version",
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.set test-cache-version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@test-cache_snapshot_version@\"test-cache-prefix-1337000003000\"@@@"
+      "@@@SET_BUILD_PROPERTY@test-cache-version@\"test-cache-prefix-1337000003000\"@@@"
     ]
   },
   {

@@ -20,10 +20,14 @@ message SourceCacheDefinition {
   string version_file = 5;
   // Command to utilize to update the cache.
   string command = 6;
+  // Default recovery snapshot version.
+  string recovery_snapshot = 7;
 }
 message SourceCacheBuilderProperties {
   // The list of the buildbucket pools to monitor and scale.
   repeated SourceCacheDefinition cache_definition = 1;
   // Google Storage bucket to write version files
   string cache_bucket = 2;
+  // Number of days of snapshots to retain.0
+  int32 retention_days = 3;
 }

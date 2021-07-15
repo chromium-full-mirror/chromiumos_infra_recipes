@@ -382,6 +382,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -393,18 +400,11 @@
       "[CLEANUP]/test-chromeos-version"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk.write version file",
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@test-chromeos-version@test-chromeos-prefix-1337000003000@@@",
       "@@@STEP_LOG_END@test-chromeos-version@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -428,10 +428,10 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.set chromiumos_snapshot_version",
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.set test-chromeos-version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@chromiumos_snapshot_version@\"test-chromeos-prefix-1337000003000\"@@@"
+      "@@@SET_BUILD_PROPERTY@test-chromeos-version@\"test-chromeos-prefix-1337000003000\"@@@"
     ]
   },
   {
@@ -699,6 +699,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -710,18 +717,11 @@
       "[CLEANUP]/test-chrome-version"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk (2).write version file",
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2).write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@test-chrome-version@test-chrome-prefix-1337000004500@@@",
       "@@@STEP_LOG_END@test-chrome-version@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -745,10 +745,10 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2).set chrome_snapshot_version",
+    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2).set test-chrome-version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@chrome_snapshot_version@\"test-chrome-prefix-1337000004500\"@@@"
+      "@@@SET_BUILD_PROPERTY@test-chrome-version@\"test-chrome-prefix-1337000004500\"@@@"
     ]
   },
   {

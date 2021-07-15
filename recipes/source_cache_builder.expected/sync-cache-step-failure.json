@@ -23,7 +23,10 @@
   },
   {
     "cmd": [],
-    "name": "source cache update"
+    "name": "source cache update",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "cmd": [],
@@ -36,7 +39,8 @@
     "cmd": [],
     "name": "source cache update.attach gcloud compute cache disks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -48,7 +52,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/test-cache-version"
+      "gs://chromeos-bot-cache/test-chromeos-version.txt"
     ],
     "infra_step": true,
     "name": "source cache update.attach gcloud compute cache disks.gsutil cat",
@@ -124,7 +128,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/snapshot/test-cache"
+      "[CLEANUP]/snapshot/chromeos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -140,13 +144,13 @@
       "sudo",
       "mount",
       "/dev/sdb",
-      "[CLEANUP]/snapshot/test-cache"
+      "[CLEANUP]/snapshot/chromeos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.mount disk test-cache",
+    "name": "source cache update.attach gcloud compute cache disks.mount disk chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -155,7 +159,8 @@
     "cmd": [],
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -175,11 +180,11 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[CLEANUP]/snapshot/test-cache/.recipes_state.json"
+      "[CLEANUP]/snapshot/chromeos/.recipes_state.json"
     ],
-    "cwd": "[CLEANUP]/snapshot/test-cache",
+    "cwd": "[CLEANUP]/snapshot/chromeos",
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/test-cache/.recipes_state.json",
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromeos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
@@ -204,9 +209,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/snapshot/test-cache"
+      "[CLEANUP]/snapshot/chromeos"
     ],
-    "cwd": "[CLEANUP]/snapshot/test-cache",
+    "cwd": "[CLEANUP]/snapshot/chromeos",
     "infra_step": true,
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.ensure root path",
     "~followup_annotations": [
@@ -224,7 +229,7 @@
       "--repo-rev=stable",
       "--verbose"
     ],
-    "cwd": "[CLEANUP]/snapshot/test-cache",
+    "cwd": "[CLEANUP]/snapshot/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -252,7 +257,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/snapshot/test-cache",
+    "cwd": "[CLEANUP]/snapshot/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -272,7 +277,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CLEANUP]/snapshot/test-cache",
+    "cwd": "[CLEANUP]/snapshot/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -292,7 +297,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/snapshot/test-cache",
+    "cwd": "[CLEANUP]/snapshot/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -319,7 +324,7 @@
       "8",
       "--force-remove-dirty"
     ],
-    "cwd": "[CLEANUP]/snapshot/test-cache",
+    "cwd": "[CLEANUP]/snapshot/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -344,48 +349,14 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[CLEANUP]/snapshot/test-cache/.recipes_state.json"
+      "[CLEANUP]/snapshot/chromeos/.recipes_state.json"
     ],
-    "cwd": "[CLEANUP]/snapshot/test-cache",
+    "cwd": "[CLEANUP]/snapshot/chromeos",
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/test-cache/.recipes_state.json (2)",
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromeos/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_END@.recipes_state.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "snapshot",
-      "test-disk1-1337000003000-us-central1-b",
-      "--snapshot-names=test-cache-prefix-1337000003000",
-      "--zone=us-central1-b"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk.snapshot disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -396,15 +367,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "test-cache-prefix-1337000003000",
-      "[CLEANUP]/test-cache-version"
+      "chromeos_default_recovery_snapshot",
+      "[CLEANUP]/test-chromeos-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.write version file",
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@test-cache-version@test-cache-prefix-1337000003000@@@",
-      "@@@STEP_LOG_END@test-cache-version@@@"
+      "@@@STEP_LOG_LINE@test-chromeos-version.txt@chromeos_default_recovery_snapshot@@@",
+      "@@@STEP_LOG_END@test-chromeos-version.txt@@@"
     ]
   },
   {
@@ -416,22 +387,22 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/test-cache-version",
-      "gs://chromeos-bot-cache/test-cache-version"
+      "[CLEANUP]/test-chromeos-version.txt",
+      "gs://chromeos-bot-cache/test-chromeos-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.gsutil upload test-cache-version",
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.gsutil upload test-chromeos-version.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/test-cache-version@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/test-chromeos-version.txt@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.set test-cache-version",
+    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.set test-chromeos-version.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@test-cache-version@\"test-cache-prefix-1337000003000\"@@@"
+      "@@@SET_BUILD_PROPERTY@test-chromeos-version.txt@\"chromeos_default_recovery_snapshot\"@@@"
     ]
   },
   {
@@ -444,13 +415,13 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CLEANUP]/snapshot/test-cache"
+      "[CLEANUP]/snapshot/chromeos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk.unmount disk test-cache",
+    "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk.unmount disk chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

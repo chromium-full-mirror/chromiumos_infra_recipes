@@ -17,7 +17,7 @@ DEPS = [
     'depot_tools/depot_tools',
     'depot_tools/gsutil',
     'chrome',
-    'easy',
+    'cros_cache',
     'gcloud',
     'repo',
     'src_state',
@@ -66,33 +66,34 @@ def RunSteps(api, properties):
                                              mount_path=cache.cache_directory,
                                              recipe_mount=True)
           with api.step.nest('sync mounted cache directories'):
-            if cache.command == 'repo':
-              with api.context(cwd=mount_path):
-                sync_opts = dict(force_sync=True, detach=True, jobs=20,
-                                 retry_fetches=8, timeout=10800,
-                                 force_remove_dirty=True)
-                init_opts = dict(verbose=True)
-                api.repo.ensure_synced_checkout(
-                    mount_path, api.src_state.internal_manifest.url,
-                    init_opts=init_opts, sync_opts=sync_opts,
-                    cache_builder=True)
-            if cache.command == 'gclient':
-              # Chrome cache consists of a local repo cache and src, both mounted
-              # via a single disk. We change into the source directory to sync.
-              api.chrome.cache_sync(cache_path=mount_path)
-          with api.step.nest('snapshot attached disk'):
             snapshot_name = '{}-{}'.format(cache.snapshot_prefix, gen_suffix)
-            version_file_path = api.path['cleanup'].join(cache.version_file)
+            try:
+              if cache.command == 'repo':
+                with api.context(cwd=mount_path):
+                  sync_opts = dict(force_sync=True, detach=True, jobs=20,
+                                   retry_fetches=8, timeout=10800,
+                                   force_remove_dirty=True)
+                  init_opts = dict(verbose=True)
+                  api.repo.ensure_synced_checkout(
+                      mount_path, api.src_state.internal_manifest.url,
+                      init_opts=init_opts, sync_opts=sync_opts)
+              if cache.command == 'gclient':
+                # Chrome cache consists of a local repo cache and src,
+                # both mounted via a single disk. We change into the
+                # source directory to sync.
+                api.chrome.cache_sync(cache_path=mount_path)
+            # If sync fails, recovery to known working for next execution.
+            except StepFailure:
+              api.cros_cache.write_and_upload_version(properties.cache_bucket,
+                                                      cache.version_file,
+                                                      cache.recovery_snapshot)
+              break
+          with api.step.nest('snapshot attached disk'):
             api.gcloud.snapshot_disk(disk, snapshot_name, m.group('zone'))
-            api.file.write_raw('write version file', version_file_path,
-                               snapshot_name)
           with api.step.nest('upload updated version file'):
-            api.gsutil.upload(version_file_path, properties.cache_bucket,
-                              cache.version_file,
-                              name='upload {}'.format(cache.version_file))
-            api.easy.set_properties_step(
-                **
-                {'{}_snapshot_version'.format(cache.cache_name): snapshot_name})
+            api.cros_cache.write_and_upload_version(properties.cache_bucket,
+                                                    cache.version_file,
+                                                    snapshot_name)
 
 
 def GenTests(api):
@@ -160,3 +161,26 @@ def GenTests(api):
           ],
           cache_bucket='chromeos-bot-cache',
       ))
+
+  yield api.test(
+      'sync-cache-step-failure',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  cache_directory='chromeos',
+                  compute_disk='test-disk1',
+                  snapshot_prefix='test-chromeos-prefix',
+                  version_file='test-chromeos-version.txt',
+                  command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+      ),
+      api.step_data((
+          'source cache update.attach gcloud compute cache disks.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromeos/.recipes_state.json (2)'
+      ), retcode=3),
+  )
