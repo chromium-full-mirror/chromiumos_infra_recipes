@@ -41,7 +41,8 @@ function check_staging() {
   check_bb_auth
   checks=("staging-Annealing" "staging-StarDoctor" "staging-DutTracker"
           "staging-amd64-generic-postsubmit" "staging-RoboCrop"
-          "staging-chrome-pupr-generator" "staging-backfiller")
+          "staging-chrome-pupr-generator" "staging-backfiller"
+          "staging-manifest-doctor")
   baddies=()
   echo "Looking for 5 consecutive successes in staging."
   for name in "${checks[@]}"; do
