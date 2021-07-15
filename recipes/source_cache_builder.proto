@@ -30,4 +30,6 @@ message SourceCacheBuilderProperties {
   string cache_bucket = 2;
   // Number of days of snapshots to retain.0
   int32 retention_days = 3;
+  // List of snapshots to exclude from cleanup
+  repeated string protected_snapshots = 4;
 }

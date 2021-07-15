@@ -5,6 +5,7 @@
 
 from recipe_engine import recipe_api
 import contextlib
+import datetime
 import os
 
 DUMMY_IMAGE = 'cos-rc-85-13310-1015-0'
@@ -309,7 +310,41 @@ class GcloudApi(recipe_api.RecipeApi):
       self.m.step('snapshot disk', [
           'gcloud', 'compute', 'disks', 'snapshot', disk,
           '--snapshot-names={}'.format(snapshot_name), '--zone={}'.format(zone)
-      ])
+      ], infra_step=True)
+
+  def delete_snapshots(self, snapshots):
+    """Delete the list of provided snapshots from GCE.
+
+    Args:
+      snapshots(list|str): A list of snapshot names.
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step(
+          'delete snapshots',
+          ['gcloud', 'compute', 'snapshots', 'delete', ' '.join(snapshots)],
+          infra_step=True)
+
+  def get_expired_snapshots(self, retention_days, protected_snapshots):
+    """Calculate the list of snapshots that have expired.
+
+    Args:
+      retention_days(int): Number of days to retain.
+      protected_snapshots(list|str): List of snapshots to exclude.
+    """
+    today = datetime.date.today()
+    lookback_date = today - datetime.timedelta(days=retention_days)
+    snapshot_list = []
+    snap_list = self.m.easy.stdout_json_step(
+        'list snapshots with filter', [
+            'gcloud', 'compute', 'snapshots', 'list', '--filter',
+            'creationTimestamp<{}'.format(lookback_date), '--format', 'json'
+        ], test_stdout=lambda: self.test_api.snapshot_list_data(),
+        infra_step=True)
+    for snap in snap_list:
+      snapshot_name = snap['name']
+      if snapshot_name not in protected_snapshots:
+        snapshot_list.append(snapshot_name)
+    return snapshot_list
 
   def set_disk_autodelete(self, instance, disk, zone):
     """Set a disk to autodelete when a GCE instance is deleted.

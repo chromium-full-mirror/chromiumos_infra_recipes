@@ -220,6 +220,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "snapshot disk"
   },
   {

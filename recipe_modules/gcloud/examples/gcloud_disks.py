@@ -4,10 +4,11 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'gcloud',
+    'recipe_engine/assertions',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'gcloud',
 ]
 
 
@@ -28,6 +29,20 @@ def RunSteps(api):
     api.gcloud.mount_disk(name='cache_test1', mount_path='cache1',
                           recipe_mount=True)
     api.gcloud.mount_disk(name='cache_test2', mount_path='cache2')
+    api.gcloud.snapshot_disk(disk='test_disk1',
+                             snapshot_name='test_disk1_snapshot',
+                             zone='us-central1-b')
+    api.gcloud.snapshot_disk(disk='test_disk2',
+                             snapshot_name='test_disk2_snapshot',
+                             zone='us-central1-b')
+    protected_snapshots = ['staging-chromeos-cache-snapshot-1625886728983']
+    snapshot_list = api.gcloud.get_expired_snapshots(
+        retention_days=7, protected_snapshots=protected_snapshots)
+    api.assertions.assertEqual([
+        'staging-chromeos-cache-snapshot-1625890262392',
+        'staging-chromeos-cache-snapshot-1625893935790'
+    ], snapshot_list)
+    api.gcloud.delete_snapshots(snapshots=snapshot_list)
 
   # Empty context
   with api.gcloud.cleanup_gce_disks(), \

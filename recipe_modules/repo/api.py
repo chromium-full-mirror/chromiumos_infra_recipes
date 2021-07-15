@@ -676,7 +676,7 @@ class RepoApi(recipe_api.RecipeApi):
       return self.m.git.gitiles_commit()
 
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
-                             sync_opts=None, projects=None):
+                             sync_opts=None, projects=None, skip_init=False):
     """Ensure the given repo checkout exists and is synced.
 
     Args:
@@ -687,12 +687,20 @@ class RepoApi(recipe_api.RecipeApi):
       projects (list[str]): Projects of concern or None if all projects
         are of concern. Used to perform optimizations where possible to only
         operate on the given projects.
+      skip_init (bool): Boolean on whether to skip executing repo init.
     """
     repo_state_path = root_path.join('.recipes_state.json')
     manifest_branch = (init_opts.get('manifest_branch') or
                        '') if init_opts else ''
     # Get cache state
     if self.m.path.exists(repo_state_path):
+      if skip_init:
+        repo_state = RepoState(state=RepoState.STATE_DIRTY,
+                               manifest_branch=manifest_branch,
+                               manifest_url=manifest_url)
+        # Write dirty state to proto to force a clean before sync.
+        self.m.file.write_proto('Write proto to {}'.format(repo_state_path),
+                                repo_state_path, repo_state, 'JSONPB')
       test_proto = None
       if self._test_data.enabled:
         test_proto = RepoState(
@@ -706,6 +714,7 @@ class RepoApi(recipe_api.RecipeApi):
           'Read proto from {}'.format(repo_state_path), repo_state_path,
           RepoState, 'JSONPB', test_proto=test_proto)
     else:
+      skip_init = False
       repo_state = RepoState(
           state=(RepoState.STATE_DIRTY if self.m.path.exists(
               root_path.join('.repo')) else RepoState.STATE_CLEAN),
@@ -748,7 +757,7 @@ class RepoApi(recipe_api.RecipeApi):
 
     # Clean cache if needed
     self._sync_checkout(root_path, manifest_url, init_opts, sync_opts, projects,
-                        clean)
+                        clean, skip_init)
     repo_state.state = RepoState.STATE_CLEAN
 
     self.m.file.write_proto('Write proto to {}'.format(repo_state_path),
@@ -756,7 +765,8 @@ class RepoApi(recipe_api.RecipeApi):
     return True
 
   def _sync_checkout(self, root_path, manifest_url, init_opts=None,
-                     sync_opts=None, projects=None, clean=False):
+                     sync_opts=None, projects=None, clean=False,
+                     skip_init=False):
     """Ensure the given repo checkout exists and is synced.
 
     Args:
@@ -800,7 +810,8 @@ class RepoApi(recipe_api.RecipeApi):
                 self.m.file.rmtree('remove .repo/%s' % manifest_dir,
                                    root_path.join('.repo', manifest_dir))
 
-            self.init(manifest_url, **init_opts)
+            if not skip_init:
+              self.init(manifest_url, **init_opts)
             if not clean:
               self._git_clean_checkout(root_path, projects)
             self.sync(**sync_opts)

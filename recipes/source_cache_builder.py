@@ -6,6 +6,7 @@
 """Recipe for generating ChromeOS source cache snapshots."""
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
@@ -16,8 +17,10 @@ DEPS = [
     'recipe_engine/time',
     'depot_tools/depot_tools',
     'depot_tools/gsutil',
+    'build_menu',
     'chrome',
     'cros_cache',
+    'easy',
     'gcloud',
     'repo',
     'src_state',
@@ -45,6 +48,7 @@ def RunSteps(api, properties):
       if not m:
         raise StepFailure(
             'failed to get zone from swarming host: {}'.format(infra_host))
+      is_staging = api.build_menu.is_staging
     with api.step.nest('attach gcloud compute cache disks'):
       with api.gcloud.cleanup_gce_disks(), \
            api.gcloud.cleanup_mounted_disks():
@@ -52,7 +56,7 @@ def RunSteps(api, properties):
           gen_suffix = api.time.ms_since_epoch()
           disk = '{}-{}-{}'.format(cache.compute_disk, gen_suffix,
                                    m.group('zone'))
-          if m.group('role') in ['staging']:
+          if is_staging:
             disk = '{}-{}'.format('staging', disk)
           cat_res = api.gsutil.cat(
               'gs://{}/{}'.format(properties.cache_bucket, cache.version_file),
@@ -76,7 +80,7 @@ def RunSteps(api, properties):
                   init_opts = dict(verbose=True)
                   api.repo.ensure_synced_checkout(
                       mount_path, api.src_state.internal_manifest.url,
-                      init_opts=init_opts, sync_opts=sync_opts)
+                      init_opts=init_opts, sync_opts=sync_opts, skip_init=True)
               if cache.command == 'gclient':
                 # Chrome cache consists of a local repo cache and src,
                 # both mounted via a single disk. We change into the
@@ -94,6 +98,13 @@ def RunSteps(api, properties):
             api.cros_cache.write_and_upload_version(properties.cache_bucket,
                                                     cache.version_file,
                                                     snapshot_name)
+    with api.step.nest('cleanup expired snapshots'):
+      snapshot_delete_list = api.gcloud.get_expired_snapshots(
+          retention_days=properties.retention_days,
+          protected_snapshots=properties.protected_snapshots)
+      api.easy.set_properties_step(expired_snapshots=snapshot_delete_list)
+      if not is_staging:
+        api.gcloud.delete_snapshots(snapshots=snapshot_delete_list)
 
 
 def GenTests(api):
@@ -116,10 +127,14 @@ def GenTests(api):
               ),
           ],
           cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
       ))
 
   yield api.test(
       'staging-execution',
+      api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
+                                    bucket='staging'),
       api.swarming.properties(
           bot_id='chromeos-ci-staging-us-central1-b-x16-0-nvcj'),
       api.properties(
@@ -134,6 +149,8 @@ def GenTests(api):
               ),
           ],
           cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
       ))
 
   yield api.test(
@@ -160,6 +177,8 @@ def GenTests(api):
               ),
           ],
           cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
       ))
 
   yield api.test(
@@ -179,6 +198,8 @@ def GenTests(api):
               ),
           ],
           cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
       ),
       api.step_data((
           'source cache update.attach gcloud compute cache disks.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromeos/.recipes_state.json (2)'
