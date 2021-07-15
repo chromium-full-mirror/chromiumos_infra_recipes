@@ -720,9 +720,9 @@
       "32",
       "-c",
       "git",
-      "clean",
-      "-d",
-      "-f"
+      "reset",
+      "--hard",
+      "HEAD"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env": {
@@ -747,12 +747,15 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "--ignore-missing",
       "-j",
       "32",
       "-c",
       "git",
-      "reset",
-      "--hard"
+      "clean",
+      "-x",
+      "-d",
+      "-f"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env": {
@@ -1152,9 +1155,9 @@
       "32",
       "-c",
       "git",
-      "clean",
-      "-d",
-      "-f"
+      "reset",
+      "--hard",
+      "HEAD"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -1179,12 +1182,15 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "--ignore-missing",
       "-j",
       "32",
       "-c",
       "git",
-      "reset",
-      "--hard"
+      "clean",
+      "-x",
+      "-d",
+      "-f"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {

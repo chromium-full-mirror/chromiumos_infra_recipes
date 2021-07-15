@@ -647,23 +647,27 @@ class RepoApi(recipe_api.RecipeApi):
     with self.m.step.nest('ensure clean checkout'), self.m.context(
         cwd=root_path, infra_steps=True):
       cmd = ['forall'] + (projects or [])
-      clean_args = [
-          '--ignore-missing', '-j', '32', '-c', 'git', 'clean', '-d', '-f'
+      reset_args = [
+          '--ignore-missing', '-j', '32', '-c', 'git', 'reset', '--hard', 'HEAD'
       ]
       try:
-        self._step(cmd + clean_args,
-                   stdout=self.m.raw_io.output(add_output_log=True))
-      except recipe_api.StepFailure:  # pragma: nocover
-        self.m.step.active_result.presentation.status = self.m.step.WARNING
-        self._step(['forall'] + clean_args, 'retry clear git locks')
-
-      reset_args = ['-j', '32', '-c', 'git', 'reset', '--hard']
-      try:
         self._step(cmd + reset_args,
-                   stdout=self.m.raw_io.output(add_output_log=True))
+                   stdout=self.m.raw_io.output(add_output_log=True),
+                   ok_ret='any')
       except recipe_api.StepFailure:  # pragma: nocover
         self.m.step.active_result.presentation.status = self.m.step.WARNING
         self._step(['forall'] + reset_args, 'retry git reset')
+
+      clean_args = [
+          '--ignore-missing', '-j', '32', '-c', 'git', 'clean', '-x', '-d', '-f'
+      ]
+      try:
+        self._step(cmd + clean_args,
+                   stdout=self.m.raw_io.output(add_output_log=True),
+                   ok_ret='any')
+      except recipe_api.StepFailure:  # pragma: nocover
+        self.m.step.active_result.presentation.status = self.m.step.WARNING
+        self._step(['forall'] + clean_args, 'retry clear git locks')
 
   @property
   def manifest_gitiles_commit(self):
@@ -696,6 +700,12 @@ class RepoApi(recipe_api.RecipeApi):
     if self.m.path.exists(repo_state_path):
       if cache_builder:
         skip_init = True
+        repo_state = RepoState(state=RepoState.STATE_DIRTY,
+                               manifest_branch=manifest_branch,
+                               manifest_url=manifest_url)
+        # Write dirty state to proto to force a clean before sync.
+        self.m.file.write_proto('Write proto to {}'.format(repo_state_path),
+                                repo_state_path, repo_state, 'JSONPB')
       test_proto = None
       if self._test_data.enabled:
         test_proto = RepoState(

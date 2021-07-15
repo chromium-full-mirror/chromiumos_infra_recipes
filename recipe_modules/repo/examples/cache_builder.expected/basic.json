@@ -7,6 +7,26 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
+      "{\n\"manifest_url\": \"http://manifest_url\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "[START_DIR]/repo/.recipes_state.json"
+    ],
+    "cwd": "[START_DIR]/repo/manifest-internal",
+    "infra_step": true,
+    "name": "Write proto to [START_DIR]/repo/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "[START_DIR]/repo/.recipes_state.json",
       "/path/to/tmp/json"
     ],
@@ -39,7 +59,7 @@
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
-    "name": "Write proto to [START_DIR]/repo/.recipes_state.json",
+    "name": "Write proto to [START_DIR]/repo/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
@@ -85,9 +105,9 @@
       "32",
       "-c",
       "git",
-      "clean",
-      "-d",
-      "-f"
+      "reset",
+      "--hard",
+      "HEAD"
     ],
     "cwd": "[START_DIR]/repo",
     "env_suffixes": {
@@ -109,12 +129,15 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "--ignore-missing",
       "-j",
       "32",
       "-c",
       "git",
-      "reset",
-      "--hard"
+      "clean",
+      "-x",
+      "-d",
+      "-f"
     ],
     "cwd": "[START_DIR]/repo",
     "env_suffixes": {
@@ -165,7 +188,7 @@
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
-    "name": "Write proto to [START_DIR]/repo/.recipes_state.json (2)",
+    "name": "Write proto to [START_DIR]/repo/.recipes_state.json (3)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",

@@ -662,9 +662,9 @@
       "32",
       "-c",
       "git",
-      "clean",
-      "-d",
-      "-f"
+      "reset",
+      "--hard",
+      "HEAD"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -688,12 +688,15 @@
       "forall",
       "chromeos/manifest-internal",
       "chromiumos/manifest",
+      "--ignore-missing",
       "-j",
       "32",
       "-c",
       "git",
-      "reset",
-      "--hard"
+      "clean",
+      "-x",
+      "-d",
+      "-f"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

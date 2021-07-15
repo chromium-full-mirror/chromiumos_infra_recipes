@@ -5610,7 +5610,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#674)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, cache_builder=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#678)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, cache_builder=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -5663,7 +5663,7 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#668)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#672)(self):**
 
 Return a Gitiles commit for the repo manifest.
 

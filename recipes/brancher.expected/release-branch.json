@@ -623,9 +623,9 @@
       "32",
       "-c",
       "git",
-      "clean",
-      "-d",
-      "-f"
+      "reset",
+      "--hard",
+      "HEAD"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -649,12 +649,15 @@
       "forall",
       "chromiumos/chromite",
       "chromeos/infra/config",
+      "--ignore-missing",
       "-j",
       "32",
       "-c",
       "git",
-      "reset",
-      "--hard"
+      "clean",
+      "-x",
+      "-d",
+      "-f"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {

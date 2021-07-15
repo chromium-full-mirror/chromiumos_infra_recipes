@@ -314,9 +314,9 @@
       "32",
       "-c",
       "git",
-      "clean",
-      "-d",
-      "-f"
+      "reset",
+      "--hard",
+      "HEAD"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -340,12 +340,15 @@
       "forall",
       "chromiumos/config",
       "chromeos/project/puff/duffy",
+      "--ignore-missing",
       "-j",
       "32",
       "-c",
       "git",
-      "reset",
-      "--hard"
+      "clean",
+      "-x",
+      "-d",
+      "-f"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
