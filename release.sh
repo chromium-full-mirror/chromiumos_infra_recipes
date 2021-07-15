@@ -7,6 +7,9 @@
 # Will release either the latest recipe bundle or the bundle indicated
 # by a -i instanceid argument. The script will prompt before doing
 # the release unless provided the -f argument.
+#
+# By default, we grep out the trivial recipe rolls to provide a cleaner output,
+# this can be bypassed with the -v option
 
 set -eu
 
@@ -18,6 +21,7 @@ function usage() {
   echo "Usage: $0 [-i instanceid] [-f]" >&2
   echo "-f bypasses the prompt" >&2
   echo "-s skips staging checks" >&2
+  echo "-v prints all pending changes, including trivial recipe rolls" >&2
   exit 1
 }
 
@@ -94,15 +98,17 @@ recipe-pending() {
 prompt="yes"
 cipd_target=""
 skip_staging_check=""
+verbose=""
 
 # Update to remote.
 git -C "${infra_recipes_root}" remote update > /dev/null
 
-while getopts "fi:s" opt; do
+while getopts "fi:sv" opt; do
   case $opt in
     f) prompt="no";;
     i) cipd_target=$OPTARG;;
     s) skip_staging_check="yes";;
+    v) verbose="yes";;
     *) usage;;
   esac
 done
@@ -118,10 +124,21 @@ fi
 
 
 echo "CIPD versions can be found here: https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/"
-printf "Here are the changes from the provided (or default main) environment:\n"
-pending=$(recipe-pending)
-echo "${pending}"
+echo
 
+echo "=== Checking for pending changes ==="
+printf "Here are the changes from the provided (or default main) environment:\n"
+
+if [[ "${verbose}" == "yes" ]]; then
+    printf " - Verbose specified, printing all changes\n"
+    pending=$(recipe-pending)
+else
+    pending=$(recipe-pending | grep -v " Roll recipe dependencies (trivial)")
+fi
+echo "${pending}"
+echo
+
+echo "=== Checking staging status ==="
 check_staging "${skip_staging_check}"
 
 if [[ $pending == "$no_changes" ]]; then
