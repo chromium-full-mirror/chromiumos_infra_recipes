@@ -193,9 +193,12 @@
       "list",
       "--filter",
       "creationTimestamp<2021-07-09",
-      "--filter name~staging-chromeos-cache-snapshot.* --filter name~staging-chrome-cache-snapshot.* ",
       "--format",
-      "json"
+      "json",
+      "--filter",
+      "name~staging-chromeos-cache-snapshot.*",
+      "--filter",
+      "name~staging-chrome-cache-snapshot.*"
     ],
     "infra_step": true,
     "name": "list snapshots with filter",

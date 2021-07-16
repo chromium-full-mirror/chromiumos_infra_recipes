@@ -335,17 +335,16 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     today = datetime.date.today()
     lookback_date = today - datetime.timedelta(days=retention_days)
-    filter_cmd = ''
+    list_cmd = [
+        'gcloud', 'compute', 'snapshots', 'list', '--filter',
+        'creationTimestamp<{}'.format(lookback_date), '--format', 'json'
+    ]
     for prefix in prefixes:
-      filter_cmd += '--filter name~{}.* '.format(prefix)
-    snapshot_list = []
+      list_cmd.extend(['--filter', 'name~{}.*'.format(prefix)])
     snap_list = self.m.easy.stdout_json_step(
-        'list snapshots with filter', [
-            'gcloud', 'compute', 'snapshots', 'list', '--filter',
-            'creationTimestamp<{}'.format(lookback_date), filter_cmd,
-            '--format', 'json'
-        ], test_stdout=lambda: self.test_api.snapshot_list_data(),
-        infra_step=True)
+        'list snapshots with filter', list_cmd,
+        test_stdout=lambda: self.test_api.snapshot_list_data(), infra_step=True)
+    snapshot_list = []
     for snap in snap_list:
       snapshot_name = snap['name']
       if protected_snapshots:
