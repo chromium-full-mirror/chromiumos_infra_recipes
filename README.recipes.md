@@ -3872,14 +3872,14 @@ Print out the auth creds currently on the bot.
 Args:
   step_name(str): Name of the step.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#373)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#381)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#417)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#425)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
@@ -3965,13 +3965,14 @@ Args:
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#327)(self, retention_days, protected_snapshots):**
+&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#327)(self, retention_days, prefixes, protected_snapshots=None):**
 
 Calculate the list of snapshots that have expired.
 
 Args:
   retention_days(int): Number of days to retain.
-  protected_snapshots(list|str): List of snapshots to exclude.
+  prefixes(list|str): List of prefixes to filter.
+  protected_snapshots(list|str): List of snapshots to preserve.
 
 &mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#254)(self, name, mount_path, recipe_mount=False):**
 
@@ -4000,7 +4001,7 @@ Args:
 
 Returns: Path to the image tar file.
 
-&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#349)(self, instance, disk, zone):**
+&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#357)(self, instance, disk, zone):**
 
 Set a disk to autodelete when a GCE instance is deleted.
 

@@ -514,6 +514,7 @@
       "list",
       "--filter",
       "creationTimestamp<2021-07-09",
+      "--filter name~test-cache-prefix.* ",
       "--format",
       "json"
     ],

@@ -49,10 +49,12 @@ def RunSteps(api, properties):
         raise StepFailure(
             'failed to get zone from swarming host: {}'.format(infra_host))
       is_staging = api.build_menu.is_staging
+      snapshot_prefixes = []
     with api.step.nest('attach gcloud compute cache disks'):
       with api.gcloud.cleanup_gce_disks(), \
            api.gcloud.cleanup_mounted_disks():
         for cache in properties.cache_definition:
+          snapshot_prefixes.append(cache.snapshot_prefix)
           gen_suffix = api.time.ms_since_epoch()
           disk = '{}-{}-{}'.format(cache.compute_disk, gen_suffix,
                                    m.group('zone'))
@@ -100,7 +102,7 @@ def RunSteps(api, properties):
                                                     snapshot_name)
     with api.step.nest('cleanup expired snapshots'):
       snapshot_delete_list = api.gcloud.get_expired_snapshots(
-          retention_days=properties.retention_days,
+          retention_days=properties.retention_days, prefixes=snapshot_prefixes,
           protected_snapshots=properties.protected_snapshots)
       api.easy.set_properties_step(expired_snapshots=snapshot_delete_list)
       if not is_staging:

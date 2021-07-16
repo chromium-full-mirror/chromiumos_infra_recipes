@@ -485,6 +485,7 @@
       "list",
       "--filter",
       "creationTimestamp<2021-07-09",
+      "--filter name~test-chromeos-prefix.* ",
       "--format",
       "json"
     ],

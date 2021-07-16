@@ -35,9 +35,13 @@ def RunSteps(api):
     api.gcloud.snapshot_disk(disk='test_disk2',
                              snapshot_name='test_disk2_snapshot',
                              zone='us-central1-b')
+    prefixes = [
+        'staging-chromeos-cache-snapshot', 'staging-chrome-cache-snapshot'
+    ]
     protected_snapshots = ['staging-chromeos-cache-snapshot-1625886728983']
     snapshot_list = api.gcloud.get_expired_snapshots(
-        retention_days=7, protected_snapshots=protected_snapshots)
+        retention_days=7, prefixes=prefixes,
+        protected_snapshots=protected_snapshots)
     api.assertions.assertEqual([
         'staging-chromeos-cache-snapshot-1625890262392',
         'staging-chromeos-cache-snapshot-1625893935790'

@@ -324,26 +324,34 @@ class GcloudApi(recipe_api.RecipeApi):
           ['gcloud', 'compute', 'snapshots', 'delete', ' '.join(snapshots)],
           infra_step=True)
 
-  def get_expired_snapshots(self, retention_days, protected_snapshots):
+  def get_expired_snapshots(self, retention_days, prefixes,
+                            protected_snapshots=None):
     """Calculate the list of snapshots that have expired.
 
     Args:
       retention_days(int): Number of days to retain.
-      protected_snapshots(list|str): List of snapshots to exclude.
+      prefixes(list|str): List of prefixes to filter.
+      protected_snapshots(list|str): List of snapshots to preserve.
     """
     today = datetime.date.today()
     lookback_date = today - datetime.timedelta(days=retention_days)
+    filter_cmd = ''
+    for prefix in prefixes:
+      filter_cmd += '--filter name~{}.* '.format(prefix)
     snapshot_list = []
     snap_list = self.m.easy.stdout_json_step(
         'list snapshots with filter', [
             'gcloud', 'compute', 'snapshots', 'list', '--filter',
-            'creationTimestamp<{}'.format(lookback_date), '--format', 'json'
+            'creationTimestamp<{}'.format(lookback_date), filter_cmd,
+            '--format', 'json'
         ], test_stdout=lambda: self.test_api.snapshot_list_data(),
         infra_step=True)
     for snap in snap_list:
       snapshot_name = snap['name']
-      if snapshot_name not in protected_snapshots:
-        snapshot_list.append(snapshot_name)
+      if protected_snapshots:
+        if snapshot_name in protected_snapshots:
+          continue
+      snapshot_list.append(snapshot_name)
     return snapshot_list
 
   def set_disk_autodelete(self, instance, disk, zone):
