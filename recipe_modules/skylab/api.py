@@ -29,10 +29,6 @@ class SkylabApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, **kwargs):
     super(SkylabApi, self).__init__(**kwargs)
-    # TODO(crbug.com/991703): Once there is a meaninful cipd package tag that
-    # corresponds to a CI-blessed version of the skylab tool, track it
-    # instead of the "latest" tag.
-    self._version = str(properties.skylab_version) or 'latest'
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._enable_retries = properties.enable_retries
