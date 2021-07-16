@@ -148,15 +148,3 @@ def GenTests(api):
   # upload_target_prebuilts skipping binhost commit and metadata
   # upload.
   yield api.test('dirty-source', test_data(dirty_source=True))
-
-  # TODO(crbug/1179353): Remove once public builders are rolled out.
-  yield api.test(
-      'switch-to-external', test_data(),
-      api.post_check(
-          MustRun, 'upload prebuilts.update binhost conf file.update ref'
-          '.gerrit transaction'),
-      api.step_data(
-          'upload prebuilts.update binhost conf file.update ref'
-          '.gerrit transaction.git push', stderr=api.raw_io.output(
-              ('remote:   https://chromium-review.googlesource'
-               '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))
