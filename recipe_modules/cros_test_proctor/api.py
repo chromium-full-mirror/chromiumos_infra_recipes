@@ -58,7 +58,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       with self.m.step.nest('schedule tests'):
         test_plan = self._get_test_plan(need_tests_builds, gerrit_changes,
                                         snapshot)
-        self._set_test_summary(test_plan)
 
         dev = False
         if need_tests_builds:
@@ -94,6 +93,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           else:
             non_crit_failure_test_names.append(
                 self.m.naming.get_test_title(test_result))
+        self._set_test_summary(test_plan, passed_test_names)
 
       if crit_failure_test_names:
         pres.step_text = ('{} critical test(s) failed'.format(
@@ -394,27 +394,31 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           count += 1
     return count
 
-  def _set_test_summary(self, test_plan):
+  def _set_test_summary(self, test_plan, passed_test_names):
     """Saves a summary of the test plan to the build output properties.
 
     Args:
-      test_plan (GenerateTestPlanResponse): the test plan.
+      test_plan (GenerateTestPlanResponse): The test plan.
+      passed_test_names (list[str]): The names of the passed tests.
     """
-    # A summary of the test plan is saved to the build output to assist
-    # analysis of test results by dashboards with access to the buildbucket
-    # tables.
+    # Use cases:
+    # * CQ test and build planning.
+    # * Assist analysis of test results by dashboards with access to the
+    #   buildbucket tables.
     test_summary = (
-        self._extract_test_summary(test_plan.hw_test_units, lambda unit: unit.
-                                   hw_test_cfg, lambda cfg: cfg.hw_test) +
-        self._extract_test_summary(test_plan.vm_test_units, lambda unit: unit.
-                                   vm_test_cfg, lambda cfg: cfg.vm_test) +
+        self._extract_test_summary(
+            test_plan.hw_test_units, lambda unit: unit.hw_test_cfg, lambda cfg:
+            cfg.hw_test, passed_test_names) + self._extract_test_summary(
+                test_plan.vm_test_units, lambda unit: unit.vm_test_cfg, lambda
+                cfg: cfg.vm_test, passed_test_names) +
         self._extract_test_summary(
             test_plan.direct_tast_vm_test_units, lambda unit: unit.
-            tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test))
+            tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test, passed_test_names))
 
     self.m.easy.set_properties_step(**{TEST_SUMMARY_KEY: test_summary})
 
-  def _extract_test_summary(self, units, cfg_func, tests_func):
+  def _extract_test_summary(self, units, cfg_func, tests_func,
+                            passed_test_names):
     """Returns a summary of the tests within `units`.
 
     Args:
@@ -424,6 +428,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           returns the *test_cfg field.
       tests_func (lambda): Lambda function that takes the *test_cfg field and
           returns the *test field holding the list of tests.
+      passed_test_names (list[str]): The names of the passed tests.
 
     Returns:
       list[dict]: A summary of tests, one item per test.
@@ -431,10 +436,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     result = []
     for unit in units:
       for test in tests_func(cfg_func(unit)):
+        name = test.common.display_name
+        status = 'SUCCESS' if name in passed_test_names else 'FAILURE'
         critical = test.common.critical and test.common.critical.value
         # This is extensible to other fields beyond criticality if needed in
         # future (did the test pass previously, did it pass this time, etc.).
-        result.append(dict(name=test.common.display_name, critical=critical))
+        result.append(dict(name=name, critical=critical, status=status))
     return result
 
   def _with_props_for_child_build(self, properties):

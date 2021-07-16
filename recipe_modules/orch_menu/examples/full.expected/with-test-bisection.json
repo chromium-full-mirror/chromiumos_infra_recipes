@@ -1343,14 +1343,6 @@
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.set test_summary",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@test_summary@[{\"critical\": true, \"name\": \"kip.hw.bvt-cq\"}]@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run tests.schedule tests.schedule hardware tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1702,6 +1694,14 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.collect tests.set test_summary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@test_summary@[{\"critical\": true, \"name\": \"kip.hw.bvt-cq\", \"status\": \"SUCCESS\"}]@@@"
     ]
   },
   {
