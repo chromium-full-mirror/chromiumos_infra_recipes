@@ -192,7 +192,7 @@
       "snapshots",
       "list",
       "--filter",
-      "creationTimestamp<2021-07-09",
+      "creationTimestamp<2021-07-12",
       "--format",
       "json",
       "--filter",

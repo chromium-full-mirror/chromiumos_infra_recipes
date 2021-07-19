@@ -361,16 +361,21 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
           task_state=TaskState(verdict=verdict))
 
     ctp_normal += self.m.buildbucket.simulated_collect_output([
-        _skylab_resp(id2,
-                     suite_names=['htarget.hw.bvt-cq', 'htarget.hw.bvt-inline'])
+        _skylab_resp(
+            id2, suite_names=[
+                'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
+                'htarget.hw.some-suite'
+            ])
     ], 'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
     ctp_bisect += self.m.buildbucket.simulated_collect_output(
         [_skylab_resp(id1, suite_names=['kip.hw.bvt-cq'])],
         'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
     ctp_failure += self.m.buildbucket.simulated_collect_output([
-        _skylab_resp(id2, suite_names=[
-            'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline'
-        ], passed=False)
+        _skylab_resp(
+            id2, suite_names=[
+                'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
+                'htarget.hw.some-suite'
+            ], passed=False)
     ], 'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
 
     # The only things we care about are output.properties.name and status.

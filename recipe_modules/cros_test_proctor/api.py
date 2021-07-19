@@ -67,7 +67,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         # We will not run tests that have already passed for this patch set.
         passed_tests = []
+        is_retry = False
         if enable_history and gerrit_changes:
+          is_retry = (
+              self.m.cq.active and
+              self.m.cros_history.is_retry(self.m.buildbucket.build))
           passed_tests = self.m.cros_history.get_passed_tests()
 
         test_to_build_target_map = {}
@@ -75,7 +79,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         test_tasks = self._schedule_tests(test_plan, passed_tests,
                                           self._timeout,
                                           test_to_build_target_map, snapshot,
-                                          dev=dev)
+                                          dev=dev, is_retry=is_retry)
 
       with self.m.step.nest('collect tests'):
         test_results = self._collect_tests(test_tasks, timeout=self._timeout)
@@ -148,7 +152,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       return build_target.name + '-tast-vm-informational'
 
   def _schedule_tests(self, test_plan, passed_tests, timeout,
-                      test_to_build_map=None, snapshot=None, dev=False):
+                      test_to_build_map=None, snapshot=None, dev=False,
+                      is_retry=False):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -162,16 +167,19 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
           the included builds were created.
       dev(boolean): Whether to use Skylab dev instance.
+      is_retry (bool): Whether this is a CQ retry.
 
     Returns:
       MetaTestTuple of lists of the tests scheduled.
     """
     skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests, timeout,
-                                               test_to_build_map, dev=dev)
+                                               test_to_build_map, is_retry,
+                                               dev=dev)
     autotest_vm_tests = self._schedule_autotest_vm_tests(
-        test_plan, passed_tests, snapshot, test_to_build_map)
+        test_plan, passed_tests, snapshot, test_to_build_map, is_retry)
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
-                                                 snapshot, test_to_build_map)
+                                                 snapshot, test_to_build_map,
+                                                 is_retry)
 
     return self.MetaTestTuple(skylab=skylab_tasks or [],
                               autotest_vm=autotest_vm_tests or [],
@@ -216,7 +224,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return failures
 
   def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
-                             test_to_build_map=None, dev=False):
+                             test_to_build_map=None, is_retry=False, dev=False):
     """Schedule skylab tests from the test_plan.
 
     Args:
@@ -227,6 +235,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       timeout (Duration): Timeout in duration_pb2.Duration.
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
+      is_retry (bool): Whether this is a CQ retry.
       dev(boolean): Whether to use Skylab dev instance.
 
     Returns:
@@ -239,6 +248,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       hw_build_targets = set()
       for unit in test_plan.hw_test_units:
         for test in unit.hw_test_cfg.hw_test:
+          # Do not run non-critical tests on retries.
+          if is_retry and not test.common.critical.value:
+            pass
           if test.common.display_name not in passed_tests:
             test_name = test.common.display_name
             build_target = unit.common.build_target
@@ -255,7 +267,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return skylab_tasks
 
   def _schedule_autotest_vm_tests(self, test_plan, passed_tests, snapshot,
-                                  test_to_build_map=None):
+                                  test_to_build_map=None, is_retry=False):
     """Schedule Autotest VM Tests from the test_plan.
 
     Args:
@@ -266,6 +278,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       snapshot (GitilesCommit): Start ref to be supplied to the tests.
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
+      is_retry (bool): Whether this is a CQ retry.
 
     Returns:
       list[Build] objects of the VM tests scheduled.
@@ -274,6 +287,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     test_to_build_map = {} if test_to_build_map is None else test_to_build_map
     for unit in test_plan.vm_test_units:
       for test in unit.vm_test_cfg.vm_test:
+        # Do not run non-critical tests on retries.
+        if is_retry and not test.common.critical.value:
+          pass
         if test.common.display_name not in passed_tests:
           test_name = test.common.display_name
           build_target = unit.common.build_target
@@ -298,7 +314,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return vm_tests
 
   def _schedule_tast_vm_tests(self, test_plan, passed_tests, snapshot,
-                              test_to_build_map=None):
+                              test_to_build_map=None, is_retry=False):
     """Schedule tast VM Tests from the test_plan.
 
     Args:
@@ -309,6 +325,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       snapshot (GitilesCommit): Start ref to be supplied to the tests.
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
+      is_retry (bool): Whether this is a CQ retry.
 
     Returns:
       list[Build] objects of the VM tests scheduled.
@@ -318,6 +335,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     for unit in test_plan.direct_tast_vm_test_units:
       for test in unit.tast_vm_test_cfg.tast_vm_test:
+        # Do not run non-critical tests on retries.
+        if is_retry and not test.common.critical.value:
+          pass
         if test.common.display_name not in passed_tests:
           test_name = test.common.display_name
           build_target = unit.common.build_target

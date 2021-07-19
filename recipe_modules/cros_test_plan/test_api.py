@@ -74,6 +74,23 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
     )
 
   @property
+  def non_critical_hw_test_unit(self):
+    return HwTestUnit(
+        common=self.test_unit_common(),
+        hw_test_cfg=HwTestCfg(
+            hw_test=[
+                HwTestCfg.HwTest(
+                    common=TestSuiteCommon(display_name='htarget.hw.some-suite',
+                                           critical={'value': False}),
+                    suite='some-suite',
+                    skylab_board='target',
+                    pool='my skylab pool',
+                ),
+            ],
+        ),
+    )
+
+  @property
   def direct_tast_vm_test_unit(self):
     return TastVmTestUnit(
         common=self.test_unit_common(),
@@ -124,7 +141,10 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   @property
   def generate_test_plan_response(self):
     return GenerateTestPlanResponse(
-        hw_test_units=[self.hw_test_unit, self.another_hw_test_unit],
+        hw_test_units=[
+            self.hw_test_unit, self.another_hw_test_unit,
+            self.non_critical_hw_test_unit
+        ],
         direct_tast_vm_test_units=[
             self.direct_tast_vm_test_unit, self.tast_vm_informational_test_unit
         ],

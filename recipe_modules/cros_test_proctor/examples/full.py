@@ -96,7 +96,10 @@ def GenTests(api):
 
   hw_tests = [
       api.skylab.test_with_multi_response(
-          id=4321, names=['htarget.hw.bvt-cq', 'htarget.hw.bvt-inline']),
+          id=4321, names=[
+              'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
+              'htarget.hw.some-suite'
+          ]),
   ]
 
   builds = [
@@ -122,6 +125,7 @@ def GenTests(api):
       api.properties(need_tests_builds_serialized=serialize_builds(builds)),
       # cq_orchestrator_build_with_gerrit_change(),
       api.cq(run_mode=api.cq.FULL_RUN),
+      api.cros_history.is_retry(True),
       api.properties(enable_history=True),
       api.properties(
           need_tests_builds_serialized=serialize_builds([
@@ -160,7 +164,10 @@ def GenTests(api):
 
   multi_hw_tests = [
       api.skylab.test_with_multi_response(
-          id=1234, names=['htarget.hw.bvt-cq', 'htarget.hw.bvt-inline']),
+          id=1234, names=[
+              'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
+              'htarget.hw.some-suite'
+          ]),
   ]
 
   yield api.test(
