@@ -97,7 +97,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         tast_vm_test_cfg=TastVmTestCfg(
             tast_vm_test=[
                 TastVmTestCfg.TastVmTest(
-                    common=TestSuiteCommon(display_name='ttarget.tast.sweet'),
+                    common=TestSuiteCommon(display_name='ttarget.tast.sweet',
+                                           critical={'value': True}),
                     suite_name='tast-suite',
                     tast_test_expr=[
                         TastVmTestCfg.TastTestExpr(test_expr='!informational'),
@@ -114,7 +115,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         tast_vm_test_cfg=TastVmTestCfg(
             tast_vm_test=[
                 TastVmTestCfg.TastVmTest(
-                    common=TestSuiteCommon(display_name='ttarget.tast.sweet'),
+                    common=TestSuiteCommon(display_name='ttarget.tast.sweet',
+                                           critical={'value': False}),
                     suite_name='tast-suite',
                     tast_test_expr=[
                         TastVmTestCfg.TastTestExpr(test_expr='informational'),
@@ -131,8 +133,25 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         vm_test_cfg=VmTestCfg(
             vm_test=[
                 VmTestCfg.VmTest(
-                    common=TestSuiteCommon(display_name='vtarget.vm.auto'),
+                    common=TestSuiteCommon(display_name='vtarget.vm.auto',
+                                           critical={'value': True}),
                     test_suite='autotest-suite',
+                ),
+            ],
+        ),
+    )
+
+  @property
+  def non_critical_vm_test_unit(self):
+    return VmTestUnit(
+        common=self.test_unit_common(),
+        vm_test_cfg=VmTestCfg(
+            vm_test=[
+                VmTestCfg.VmTest(
+                    common=TestSuiteCommon(
+                        display_name='vtarget.vm.another-auto',
+                        critical={'value': False}),
+                    test_suite='another-autotest-suite',
                 ),
             ],
         ),
@@ -148,5 +167,5 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         direct_tast_vm_test_units=[
             self.direct_tast_vm_test_unit, self.tast_vm_informational_test_unit
         ],
-        vm_test_units=[self.vm_test_unit],
+        vm_test_units=[self.vm_test_unit, self.non_critical_vm_test_unit],
     )
