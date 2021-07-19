@@ -66,17 +66,17 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           dev = environment == BuilderConfig.General.STAGING
 
         # We will not run tests that have already passed for this patch set.
-        passed_tests = []
+        previously_passed_tests = set()
         is_retry = False
         if enable_history and gerrit_changes:
           is_retry = (
               self.m.cq.active and
               self.m.cros_history.is_retry(self.m.buildbucket.build))
-          passed_tests = self.m.cros_history.get_passed_tests()
+          previously_passed_tests = self.m.cros_history.get_passed_tests()
 
         test_to_build_target_map = {}
 
-        test_tasks = self._schedule_tests(test_plan, passed_tests,
+        test_tasks = self._schedule_tests(test_plan, previously_passed_tests,
                                           self._timeout,
                                           test_to_build_target_map, snapshot,
                                           dev=dev, is_retry=is_retry)
@@ -97,7 +97,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           else:
             non_crit_failure_test_names.append(
                 self.m.naming.get_test_title(test_result))
-        self._set_test_summary(test_plan, passed_test_names)
+        self._set_test_summary(
+            test_plan, previously_passed_tests.union(set(passed_test_names)))
 
       if crit_failure_test_names:
         pres.step_text = ('{} critical test(s) failed'.format(
