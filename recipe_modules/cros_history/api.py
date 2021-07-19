@@ -21,6 +21,7 @@ FAILED_HW_TESTS_KEY = 'hw_test_failures'
 FAILED_TESTS_KEY = 'test_failures'
 PASSED_TESTS_KEY = 'passed_tests'
 SNAPSHOT_BUCKET = 'postsubmit'
+TEST_SUMMARY_KEY = 'test_summary'
 
 
 class CrosHistoryApi(recipe_api.RecipeApi):
@@ -78,10 +79,10 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       return latest_passed_builds
 
   def get_test_failure_builders(self):
-    """Get builders with the given patches that failed HW tests in the last run.
+    """Get builders with the given patches that failed tests in the last run.
 
     Returns:
-      set[str]: Names of builders with HW testing failures, if any.
+      set[str]: Names of builders with HW or VM testing failures, if any.
     """
     current_build = self.m.buildbucket.build
     past_builds = self.get_matching_builds(current_build)
@@ -92,6 +93,20 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
     build_output = json_format.MessageToDict(
         latest_completed_build.output.properties)
+
+    test_summary = build_output.get(TEST_SUMMARY_KEY, [])
+    critical_failed_test_names = [
+        test.get('name')
+        for test in test_summary
+        if test.get('status') == 'FAILURE' and test.get('critical')
+    ]
+    if critical_failed_test_names:
+      # Test names are of the form `{builder_name}.{test_type}.{suite_name}`.
+      return set([test.split('.')[0] for test in critical_failed_test_names])
+
+    # TODO(b/193794182): Remove inspection of the 'test_failures' output once
+    # all builds within the lookback time frame contain the status field in the
+    # test_summary.
     failed_tests = build_output.get(FAILED_TESTS_KEY, [])
     if not failed_tests:
       return set()

@@ -1930,11 +1930,11 @@ Args:
 
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#181)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#196)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -1947,7 +1947,7 @@ Args:
 Returns:
   list[Build] which meet the conditions ordered from latest to oldest.
 
-&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#39)(self, tags=None):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#40)(self, tags=None):**
 
 Retrieve passed builds with the same patches as current build.
 
@@ -1957,14 +1957,14 @@ Args:
 Returns:
   list([build_pb2.Build]): Passed builds with the most recent build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#105)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#120)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#142)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#157)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -1980,14 +1980,14 @@ Args:
 Returns:
   list[Build] builds with the same snapshot and additional filtering.
 
-&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#80)(self):**
+&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#81)(self):**
 
-Get builders with the given patches that failed HW tests in the last run.
+Get builders with the given patches that failed tests in the last run.
 
 Returns:
-  set[str]: Names of builders with HW testing failures, if any.
+  set[str]: Names of builders with HW or VM testing failures, if any.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#204)(self, build):**
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#219)(self, build):**
 
 Determine if this build is being retried.
 
@@ -1997,7 +1997,7 @@ Args:
 Returns:
   Boolean indicating if it is a retry.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#128)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#143)(self, tests):**
 
 Record the tests that passed in the current run.
 
@@ -2007,7 +2007,7 @@ have passed and which have not.
 Args:
   tests (sequence[str]): (Unique) names of the tests that passed.
 
-&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#34)(self):**
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#35)(self):**
 
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
