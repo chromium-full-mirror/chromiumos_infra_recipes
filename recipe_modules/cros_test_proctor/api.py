@@ -251,7 +251,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         for test in unit.hw_test_cfg.hw_test:
           # Do not run non-critical tests on retries.
           if is_retry and not test.common.critical.value:
-            pass
+            continue
           if test.common.display_name not in passed_tests:
             test_name = test.common.display_name
             build_target = unit.common.build_target
@@ -290,7 +290,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       for test in unit.vm_test_cfg.vm_test:
         # Do not run non-critical tests on retries.
         if is_retry and not test.common.critical.value:
-          pass
+          continue
         if test.common.display_name not in passed_tests:
           test_name = test.common.display_name
           build_target = unit.common.build_target
@@ -338,7 +338,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       for test in unit.tast_vm_test_cfg.tast_vm_test:
         # Do not run non-critical tests on retries.
         if is_retry and not test.common.critical.value:
-          pass
+          continue
         if test.common.display_name not in passed_tests:
           test_name = test.common.display_name
           build_target = unit.common.build_target
