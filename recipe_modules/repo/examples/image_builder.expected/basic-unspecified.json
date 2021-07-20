@@ -177,8 +177,7 @@
       "-c",
       "git",
       "reset",
-      "--hard",
-      "HEAD"
+      "--hard"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {

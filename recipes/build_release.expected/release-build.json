@@ -721,8 +721,7 @@
       "-c",
       "git",
       "reset",
-      "--hard",
-      "HEAD"
+      "--hard"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env": {
@@ -1156,8 +1155,7 @@
       "-c",
       "git",
       "reset",
-      "--hard",
-      "HEAD"
+      "--hard"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {

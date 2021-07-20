@@ -219,30 +219,32 @@ class GcloudApi(recipe_api.RecipeApi):
       ], infra_step=True)
     self._remove_cleanup_attached_disk(disk, instance, zone)
 
-  def create_disk(self, instance, disk, zone, snapshot):
+  def create_disk(self, disk, zone, snapshot, disk_type=None):
     """Create a GCE disk.
 
     Create a GCE disk from a provided snapshot name.
 
     Args:
-      instance(str): GCE instance disk is associated.
       disk(str): Google Cloud disk name.
       zone(str): GCE zone to create disk (e.g. us-central1-b).
       snapshot(str): Snapshot version use to create the disk.
+      disk_type(str): Type of GCE disk to create.
     """
+    cmd = [
+        'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
+        '--source-snapshot={}'.format(snapshot)
+    ]
+    if disk_type:
+      cmd.extend(['--type={}'.format(disk_type)])
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('create disk from snapshot', [
-          'gcloud', 'compute', 'disks', 'create', disk,
-          '--zone={}'.format(zone), '--source-snapshot={}'.format(snapshot)
-      ], infra_step=True)
+      self.m.step('create disk from snapshot', cmd, infra_step=True)
 
-  def delete_disk(self, instance, disk, zone):
+  def delete_disk(self, disk, zone):
     """Delete a GCE disk.
 
     Permanently delete a GCE disk from the project.
 
     Args:
-      instance(str): GCE instance disk is associated.
       disk(str): Google Cloud disk name.
       zone(str): GCE zone to create instance (e.g. us-central1-b).
     """
@@ -393,7 +395,7 @@ class GcloudApi(recipe_api.RecipeApi):
         with self.m.step.nest('clean up gce disk'):
           for disk, instance, zone in list(cleanup_gce_disks):
             self.detach_disk(instance, disk, zone)
-            self.delete_disk(instance, disk, zone)
+            self.delete_disk(disk, zone)
       self._cleanup_gce_stack.pop()
 
   def _add_cleanup_attached_disk(self, disk, instance, zone):

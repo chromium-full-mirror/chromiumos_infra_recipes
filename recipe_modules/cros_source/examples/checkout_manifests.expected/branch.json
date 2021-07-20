@@ -487,8 +487,7 @@
       "-c",
       "git",
       "reset",
-      "--hard",
-      "HEAD"
+      "--hard"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

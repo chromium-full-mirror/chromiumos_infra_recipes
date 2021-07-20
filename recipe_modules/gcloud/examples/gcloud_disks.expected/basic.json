@@ -7,7 +7,8 @@
       "create",
       "test_disk1",
       "--zone=us-central1-b",
-      "--source-snapshot=test-chromeos-snapshot"
+      "--source-snapshot=test-chromeos-snapshot",
+      "--type=pd-ssd"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -192,7 +193,7 @@
       "snapshots",
       "list",
       "--filter",
-      "creationTimestamp<2021-07-12",
+      "creationTimestamp<2021-07-13",
       "--format",
       "json",
       "--filter",

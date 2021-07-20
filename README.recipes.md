@@ -3873,31 +3873,31 @@ Print out the auth creds currently on the bot.
 Args:
   step_name(str): Name of the step.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#380)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#382)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#424)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#426)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
 Upon exiting the context manager, each mounted disk is then iterated
 through and unmounted.
 
-&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#222)(self, instance, disk, zone, snapshot):**
+&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#222)(self, disk, zone, snapshot, disk_type=None):**
 
 Create a GCE disk.
 
 Create a GCE disk from a provided snapshot name.
 
 Args:
-  instance(str): GCE instance disk is associated.
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create disk (e.g. us-central1-b).
   snapshot(str): Snapshot version use to create the disk.
+  disk_type(str): Type of GCE disk to create.
 
 &mdash; **def [create\_image](/recipe_modules/gcloud/api.py#94)(self, tar_path, target, uniq_id):**
 
@@ -3925,14 +3925,13 @@ Args:
 
 Returns: A string name of the instance.
 
-&mdash; **def [delete\_disk](/recipe_modules/gcloud/api.py#239)(self, instance, disk, zone):**
+&mdash; **def [delete\_disk](/recipe_modules/gcloud/api.py#242)(self, disk, zone):**
 
 Delete a GCE disk.
 
 Permanently delete a GCE disk from the project.
 
 Args:
-  instance(str): GCE instance disk is associated.
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
@@ -3947,7 +3946,7 @@ Args:
   project(str): Google Cloud project name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [delete\_snapshots](/recipe_modules/gcloud/api.py#315)(self, snapshots):**
+&mdash; **def [delete\_snapshots](/recipe_modules/gcloud/api.py#317)(self, snapshots):**
 
 Delete the list of provided snapshots from GCE.
 
@@ -3966,7 +3965,7 @@ Args:
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#327)(self, retention_days, prefixes, protected_snapshots=None):**
+&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#329)(self, retention_days, prefixes, protected_snapshots=None):**
 
 Calculate the list of snapshots that have expired.
 
@@ -3975,7 +3974,7 @@ Args:
   prefixes(list|str): List of prefixes to filter.
   protected_snapshots(list|str): List of snapshots to preserve.
 
-&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#254)(self, name, mount_path, recipe_mount=False):**
+&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#256)(self, name, mount_path, recipe_mount=False):**
 
 Mount an attached disk to host.
 
@@ -4002,7 +4001,7 @@ Args:
 
 Returns: Path to the image tar file.
 
-&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#356)(self, instance, disk, zone):**
+&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#358)(self, instance, disk, zone):**
 
 Set a disk to autodelete when a GCE instance is deleted.
 
@@ -4021,7 +4020,7 @@ Set the default project for gcloud command.
 Args:
   project(str): Google Cloud project name.
 
-&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#301)(self, disk, snapshot_name, zone):**
+&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#303)(self, disk, snapshot_name, zone):**
 
 Snapshot an attached disk on a GCE instance.
 
@@ -5624,7 +5623,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#678)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, skip_init=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#678)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -5636,7 +5635,6 @@ Args:
   projects (list[str]): Projects of concern or None if all projects
     are of concern. Used to perform optimizations where possible to only
     operate on the given projects.
-  skip_init (bool): Boolean on whether to skip executing repo init.
 
 &mdash; **def [init](/recipe_modules/repo/api.py#148)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
 

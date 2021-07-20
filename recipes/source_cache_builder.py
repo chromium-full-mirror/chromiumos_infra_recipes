@@ -64,8 +64,8 @@ def RunSteps(api, properties):
               'gs://{}/{}'.format(properties.cache_bucket, cache.version_file),
               infra_step=True, stdout=api.raw_io.output())
           ret = cat_res.stdout.strip()
-          api.gcloud.create_disk(instance=infra_host, disk=disk,
-                                 zone=m.group('zone'), snapshot=ret)
+          api.gcloud.create_disk(disk=disk, zone=m.group('zone'), snapshot=ret,
+                                 disk_type='pd-ssd')
           api.gcloud.attach_disk(name=cache.cache_name, instance=infra_host,
                                  disk=disk, zone=m.group('zone'))
           mount_path = api.gcloud.mount_disk(name=cache.cache_name,
@@ -82,7 +82,7 @@ def RunSteps(api, properties):
                   init_opts = dict(verbose=True)
                   api.repo.ensure_synced_checkout(
                       mount_path, api.src_state.internal_manifest.url,
-                      init_opts=init_opts, sync_opts=sync_opts, skip_init=True)
+                      init_opts=init_opts, sync_opts=sync_opts)
               if cache.command == 'gclient':
                 # Chrome cache consists of a local repo cache and src,
                 # both mounted via a single disk. We change into the

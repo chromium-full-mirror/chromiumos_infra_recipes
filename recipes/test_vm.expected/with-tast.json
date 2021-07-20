@@ -597,8 +597,7 @@
       "-c",
       "git",
       "reset",
-      "--hard",
-      "HEAD"
+      "--hard"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
