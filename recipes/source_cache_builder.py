@@ -105,8 +105,7 @@ def RunSteps(api, properties):
           retention_days=properties.retention_days, prefixes=snapshot_prefixes,
           protected_snapshots=properties.protected_snapshots)
       api.easy.set_properties_step(expired_snapshots=snapshot_delete_list)
-      if not is_staging:
-        api.gcloud.delete_snapshots(snapshots=snapshot_delete_list)
+      api.gcloud.delete_snapshots(snapshots=snapshot_delete_list)
 
 
 def GenTests(api):

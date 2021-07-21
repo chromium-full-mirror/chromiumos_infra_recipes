@@ -592,6 +592,23 @@
     ]
   },
   {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "snapshots",
+      "delete",
+      "staging-chromeos-cache-snapshot-1625890262392 staging-chromeos-cache-snapshot-1625893935790"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.cleanup expired snapshots.delete snapshots",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
