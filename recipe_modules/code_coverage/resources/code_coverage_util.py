@@ -54,7 +54,7 @@ def clean_file_name(file_name, constants, project_name, build_target_name,
   coverage_path = os.path.normpath(file_name)
 
   for mapping in constants[project_name]:
-    pre = os.path.join('/build', build_target_name, mapping['prefix'])
+    pre = '(/build/{})?/?{}'.format(build_target_name, mapping['prefix'])
     if re.match(pre, coverage_path):
       coverage_path = re.sub(pre, mapping['src_path'], coverage_path)
       return file_name_prepend + coverage_path

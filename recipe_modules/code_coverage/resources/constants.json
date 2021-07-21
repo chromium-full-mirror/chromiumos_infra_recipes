@@ -355,6 +355,10 @@
     {
       "src_path": "webserver",
       "prefix": "tmp/portage/chromeos-base/webserver-[^/]*/work/webserver-[^/]*/webserver"
+    },
+    {
+      "src_path": "",
+      "prefix": "/mnt/host/source/src/platform2/"
     }
   ]
 }

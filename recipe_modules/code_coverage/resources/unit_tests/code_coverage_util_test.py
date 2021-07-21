@@ -33,20 +33,20 @@ class CleanFileNamesInLlvmCoverageJsonTest(unittest.TestCase):
 
   def setUp(self):
     self.constants_file = {
-        "test": [
-            {
-                "src_path":
-                    "bluetooth",
-                "prefix":
-                    "tmp/portage/chromeos-base/bluetooth-[^/]*/work/bluetooth-[^/]*/bluetooth"
-            },
-            {
-                "src_path":
-                    "biod",
-                "prefix":
-                    "tmp/portage/chromeos-base/biod-[^/]*/work/biod-[^/]*/biod"
-            },
-        ]
+        "test": [{
+            "src_path":
+                "bluetooth",
+            "prefix":
+                "tmp/portage/chromeos-base/bluetooth-[^/]*/work/bluetooth-[^/]*/bluetooth"
+        }, {
+            "src_path":
+                "biod",
+            "prefix":
+                "tmp/portage/chromeos-base/biod-[^/]*/work/biod-[^/]*/biod"
+        }, {
+            "src_path": "",
+            "prefix": "/mnt/host/source/src/platform2/"
+        }]
     }
 
   def _getStructuredFile(self, file_names):
@@ -70,13 +70,14 @@ class CleanFileNamesInLlvmCoverageJsonTest(unittest.TestCase):
     data = self._getStructuredFile([
         '/build/sarien/var/cache/portage/chromeos-base/bluetooth/out/Default/../../../../../../../tmp/portage/chromeos-base/bluetooth-0.0.1-r666/work/bluetooth-0.0.1/bluetooth/common/bluetooth_daemon.h',
         '/build/sarien/var/cache/portage/chromeos-base/bluetooth/out/Default/../../../../../../../tmp/portage/chromeos-base/bluetooth-0.0.1-r666/work/bluetooth-0.0.1/bluetooth/common/dbus_daemon.cc',
-        '/build/sarien/tmp/portage/chromeos-base/biod-0.0.1-r2062/work/build/out/Default/../../../biod-0.0.1/biod/biod_config.cc'
+        '/build/sarien/tmp/portage/chromeos-base/biod-0.0.1-r2062/work/build/out/Default/../../../biod-0.0.1/biod/biod_config.cc',
+        '/build/sarien/var/cache/portage/chromeos-base/lorgnette/out/Default/../../../../../../../../../mnt/host/source/src/platform2/common-mk/testrunner.cc',
     ])
     result = code_coverage_util.clean_file_names_in_llvm_coverage_json(
         data, self.constants_file, 'test', 'sarien', '')
 
     result_filenames = [x['filename'] for x in result['data'][0]['files']]
-    self.assertEqual(len(result_filenames), 3)
+    self.assertEqual(len(result_filenames), 4)
     self.assertEqual(
         len([
             x for x in result_filenames
@@ -89,6 +90,8 @@ class CleanFileNamesInLlvmCoverageJsonTest(unittest.TestCase):
         ]), 1)
     self.assertEqual(
         len([x for x in result_filenames if x == 'biod/biod_config.cc']), 1)
+    self.assertEqual(
+        len([x for x in result_filenames if x == 'common-mk/testrunner.cc']), 1)
 
   def testRemapsAllFileNamesWithPrepends(self):
     data = self._getStructuredFile([
