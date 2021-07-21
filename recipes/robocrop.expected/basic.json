@@ -638,87 +638,19 @@
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::git]/resources/git_setup.py",
-      "--path",
-      "[CLEANUP]/swarming-client",
-      "--url",
-      "https://chromium.googlesource.com/infra/luci/client-py"
-    ],
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.git setup",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "origin",
-      "--progress"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "env": {
-      "PATH": "RECIPE_REPO[depot_tools]:<PATH>"
-    },
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "-f",
-      "14cadf852292035c5dc145de47f8af1000c9897a"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.read revision",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@<br/>checked out 'deadbeef'<br/>@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clean",
-      "-f",
-      "-d",
-      "-x"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.git clean",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
+      "[START_DIR]/cipd/swarming",
+      "tasks",
+      "-S",
       "chromeos-swarming.appspot.com",
-      "tasks/count?state=RUNNING&tags=role:cq&tags=bot_size:large&start=1336913601.5"
+      "-count",
+      "-start",
+      "1336913601.5",
+      "-state",
+      "RUNNING",
+      "-tag",
+      "role:cq",
+      "-tag",
+      "bot_size:large"
     ],
     "infra_step": true,
     "name": "scale bot groups.get current swarming stats.get task query result",
@@ -733,11 +665,19 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
+      "[START_DIR]/cipd/swarming",
+      "tasks",
+      "-S",
       "chromeos-swarming.appspot.com",
-      "tasks/count?state=PENDING&tags=role:cq&tags=bot_size:large&start=1336913603.0"
+      "-count",
+      "-start",
+      "1336913603.0",
+      "-state",
+      "PENDING",
+      "-tag",
+      "role:cq",
+      "-tag",
+      "bot_size:large"
     ],
     "infra_step": true,
     "name": "scale bot groups.get current swarming stats.get task query result (2)",
@@ -752,11 +692,19 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
+      "[START_DIR]/cipd/swarming",
+      "tasks",
+      "-S",
       "chromeos-swarming.appspot.com",
-      "tasks/count?state=RUNNING&tags=role:bar&tags=bot_size:large&start=1336913604.5"
+      "-count",
+      "-start",
+      "1336913604.5",
+      "-state",
+      "RUNNING",
+      "-tag",
+      "role:bar",
+      "-tag",
+      "bot_size:large"
     ],
     "infra_step": true,
     "name": "scale bot groups.get current swarming stats.get task query result (3)",
@@ -768,11 +716,19 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
+      "[START_DIR]/cipd/swarming",
+      "tasks",
+      "-S",
       "chromeos-swarming.appspot.com",
-      "tasks/count?state=PENDING&tags=role:bar&tags=bot_size:large&start=1336913606.0"
+      "-count",
+      "-start",
+      "1336913606.0",
+      "-state",
+      "PENDING",
+      "-tag",
+      "role:bar",
+      "-tag",
+      "bot_size:large"
     ],
     "infra_step": true,
     "name": "scale bot groups.get current swarming stats.get task query result (4)",

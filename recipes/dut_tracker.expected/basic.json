@@ -89,6 +89,50 @@
   },
   {
     "cmd": [
+      "[START_DIR]/cipd/swarming",
+      "tasks",
+      "-S",
+      "chromeos-swarming.appspot.com",
+      "-count",
+      "-start",
+      "1336913601.5",
+      "-state",
+      "RUNNING",
+      "-tag",
+      "label-board:atlas"
+    ],
+    "infra_step": true,
+    "name": "query swarming.querying atlas.get task query result",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/swarming",
+      "tasks",
+      "-S",
+      "chromeos-swarming.appspot.com",
+      "-count",
+      "-start",
+      "1336913603.0",
+      "-state",
+      "PENDING",
+      "-tag",
+      "label-board:atlas"
+    ],
+    "infra_step": true,
+    "name": "query swarming.querying atlas.get task query result (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
       "python",
       "-u",
       "RECIPE_MODULE[depot_tools::git]/resources/git_setup.py",
@@ -161,38 +205,6 @@
     "name": "query swarming.querying atlas.git clean",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
-      "chromeos-swarming.appspot.com",
-      "tasks/count?state=RUNNING&tags=label-board:atlas&start=1336913601.5"
-    ],
-    "infra_step": true,
-    "name": "query swarming.querying atlas.get task query result",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
-      "chromeos-swarming.appspot.com",
-      "tasks/count?state=PENDING&tags=label-board:atlas&start=1336913603.0"
-    ],
-    "infra_step": true,
-    "name": "query swarming.querying atlas.get task query result (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {

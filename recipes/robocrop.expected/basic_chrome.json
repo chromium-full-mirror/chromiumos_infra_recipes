@@ -271,87 +271,17 @@
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::git]/resources/git_setup.py",
-      "--path",
-      "[CLEANUP]/swarming-client",
-      "--url",
-      "https://chromium.googlesource.com/infra/luci/client-py"
-    ],
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.git setup",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "origin",
-      "--progress"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "env": {
-      "PATH": "RECIPE_REPO[depot_tools]:<PATH>"
-    },
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "-f",
-      "14cadf852292035c5dc145de47f8af1000c9897a"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.read revision",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@<br/>checked out 'deadbeef'<br/>@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clean",
-      "-f",
-      "-d",
-      "-x"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.git clean",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
+      "[START_DIR]/cipd/swarming",
+      "tasks",
+      "-S",
       "chromium-swarm.appspot.com",
-      "tasks/count?state=RUNNING&tags=pool:chromium.tests.robocrop&start=1336996401.5"
+      "-count",
+      "-start",
+      "1336996401.5",
+      "-state",
+      "RUNNING",
+      "-tag",
+      "pool:chromium.tests.robocrop"
     ],
     "infra_step": true,
     "name": "scale bot groups.get current swarming stats.get task query result",
@@ -363,11 +293,17 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
+      "[START_DIR]/cipd/swarming",
+      "tasks",
+      "-S",
       "chromium-swarm.appspot.com",
-      "tasks/count?state=PENDING&tags=pool:chromium.tests.robocrop&start=1336996403.0"
+      "-count",
+      "-start",
+      "1336996403.0",
+      "-state",
+      "PENDING",
+      "-tag",
+      "pool:chromium.tests.robocrop"
     ],
     "infra_step": true,
     "name": "scale bot groups.get current swarming stats.get task query result (2)",

@@ -26,30 +26,28 @@ class SwarmingCli(recipe_api.RecipeApi):
 
   def _ensure_py_checkout(self):
     """Ensures the Python swarming client is checked out."""
-    if self._py_checkout:
-      return
-    with self.m.context(infra_steps=True):
-      cwd = self.m.path['cleanup'].join('swarming-client')
-      self.m.git.checkout(
-          'https://chromium.googlesource.com/infra/luci/client-py',
-          ref='14cadf852292035c5dc145de47f8af1000c9897a', dir_path=cwd,
-          submodules=False)
-      self._py_checkout = cwd
-      self._py_client = cwd.join('swarming.py')
+    if not self._py_checkout:
+      with self.m.context(infra_steps=True):
+        cwd = self.m.path['cleanup'].join('swarming-client')
+        self.m.git.checkout(
+            'https://chromium.googlesource.com/infra/luci/client-py',
+            ref='14cadf852292035c5dc145de47f8af1000c9897a', dir_path=cwd,
+            submodules=False)
+        self._py_checkout = cwd
+        self._py_client = cwd.join('swarming.py')
 
   def _ensure_cipd_bin(self):
     """Ensures the CIPD swarming client is installed."""
-    if self._cipd_bin:
-      return
-    pkg_name = "infra/tools/luci/swarming/${platform}"
-    pkg_ref = _PKG_INSTANCE
-    with self.m.step.nest('ensure swarming bin from CIPD'):
-      with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd')
-        pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package(pkg_name, pkg_ref)
-        self.m.cipd.ensure(cipd_dir, pkgs)
-        self._cipd_bin = cipd_dir.join('swarming')
+    if not self._cipd_bin:
+      pkg_name = "infra/tools/luci/swarming/${platform}"
+      pkg_ref = _PKG_INSTANCE
+      with self.m.step.nest('ensure swarming bin from CIPD'):
+        with self.m.context(infra_steps=True):
+          cipd_dir = self.m.path['start_dir'].join('cipd')
+          pkgs = self.m.cipd.EnsureFile()
+          pkgs.add_package(pkg_name, pkg_ref)
+          self.m.cipd.ensure(cipd_dir, pkgs)
+          self._cipd_bin = cipd_dir.join('swarming')
 
   def _run_py(self, name, cmd, test_stdout=None):
     """Return a swarming command step from the Python client.
@@ -158,16 +156,12 @@ class SwarmingCli(recipe_api.RecipeApi):
       swarming_instance(str): string containing the name of the Swarming
         instance to query.
     """
-    query_args = ['state={}'.format(state)]
+    cmd = ['tasks', '-S', swarming_instance, '-count']
+    cmd.extend(['-start', str(self._calculate_epoch_start(lookback_hours))])
+    cmd.extend(['-state', state])
     for dim in dimensions:
-      query_args.append('tags={}'.format(dim))
-    query_args.append('start={}'.format(
-        self._calculate_epoch_start(lookback_hours)))
-    cmd = [
-        'query', '--swarming', swarming_instance,
-        'tasks/count?' + '&'.join(query_args)
-    ]
-    step = self._run_py(
+      cmd.extend(['-tag', dim])
+    step = self._run_bin(
         'get task query result', cmd, test_stdout=lambda: self.test_api.
         swarming_task_step_test_data(dimensions))
     return step
