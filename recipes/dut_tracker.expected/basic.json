@@ -33,6 +33,61 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "query swarming.querying atlas.ensure swarming bin from CIPD",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd",
+      "-ensure-file",
+      "infra/tools/luci/swarming/${platform} rwv6c0O12emItRR5j8EA8-wMOwg_yAQRpZKB4wurRgkC",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "query swarming.querying atlas.ensure swarming bin from CIPD.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-rwv6c0O12emItRR5\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/swarming/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/swarming",
+      "bots",
+      "-S",
+      "chromeos-swarming.appspot.com",
+      "-count",
+      "-dimension",
+      "label-board=atlas"
+    ],
+    "infra_step": true,
+    "name": "query swarming.querying atlas.get bot query result",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -106,22 +161,6 @@
     "name": "query swarming.querying atlas.git clean",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
-      "chromeos-swarming.appspot.com",
-      "bots/count?dimensions=label-board:atlas"
-    ],
-    "infra_step": true,
-    "name": "query swarming.querying atlas.get bot query result",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {

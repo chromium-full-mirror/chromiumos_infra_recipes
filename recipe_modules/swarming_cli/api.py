@@ -10,17 +10,23 @@ from datetime import timedelta
 from recipe_engine import recipe_api
 
 
+_PKG_INSTANCE = "rwv6c0O12emItRR5j8EA8-wMOwg_yAQRpZKB4wurRgkC"
+
+
 class SwarmingCli(recipe_api.RecipeApi):
   """A module that queries Swarming via the CLI."""
 
   def __init__(self, *args, **kwargs):
     super(SwarmingCli, self).__init__(*args, **kwargs)
-    self._client = 'swarming.py'
-    self._checkout = None
+    # TODO(b/186120266): Replace all Python-based methods with CIPD,
+    # and remove Python client/checkout.
+    self._py_client = 'swarming.py'
+    self._py_checkout = None
+    self._cipd_bin = None
 
-  def _ensure_checkout(self):
-    """Ensures swarming client is checked out."""
-    if self._checkout:
+  def _ensure_py_checkout(self):
+    """Ensures the Python swarming client is checked out."""
+    if self._py_checkout:
       return
     with self.m.context(infra_steps=True):
       cwd = self.m.path['cleanup'].join('swarming-client')
@@ -28,18 +34,44 @@ class SwarmingCli(recipe_api.RecipeApi):
           'https://chromium.googlesource.com/infra/luci/client-py',
           ref='14cadf852292035c5dc145de47f8af1000c9897a', dir_path=cwd,
           submodules=False)
-      self._checkout = cwd
-      self._client = cwd.join('swarming.py')
+      self._py_checkout = cwd
+      self._py_client = cwd.join('swarming.py')
 
-  def _run(self, name, cmd, test_stdout=None):
-    """Return a swarming command step.
+  def _ensure_cipd_bin(self):
+    """Ensures the CIPD swarming client is installed."""
+    if self._cipd_bin:
+      return
+    pkg_name = "infra/tools/luci/swarming/${platform}"
+    pkg_ref = _PKG_INSTANCE
+    with self.m.step.nest('ensure swarming bin from CIPD'):
+      with self.m.context(infra_steps=True):
+        cipd_dir = self.m.path['start_dir'].join('cipd')
+        pkgs = self.m.cipd.EnsureFile()
+        pkgs.add_package(pkg_name, pkg_ref)
+        self.m.cipd.ensure(cipd_dir, pkgs)
+        self._cipd_bin = cipd_dir.join('swarming')
+
+  def _run_py(self, name, cmd, test_stdout=None):
+    """Return a swarming command step from the Python client.
 
     Args:
       name: (str): name of the step.
       cmd (list[str]): swarming client subcommand to run.
     """
-    self._ensure_checkout()
-    return self.m.easy.stdout_json_step(name, [self._client] + list(cmd),
+    self._ensure_py_checkout()
+    return self.m.easy.stdout_json_step(name, [self._py_client] + list(cmd),
+                                        test_stdout=test_stdout,
+                                        infra_step=True)
+
+  def _run_bin(self, name, cmd, test_stdout=None):
+    """Return a swarming command step from the CIPD binary.
+
+    Args:
+      name: (str): name of the step.
+      cmd (list[str]): swarming client subcommand to run.
+    """
+    self._ensure_cipd_bin()
+    return self.m.easy.stdout_json_step(name, [self._cipd_bin] + list(cmd),
                                         test_stdout=test_stdout,
                                         infra_step=True)
 
@@ -49,17 +81,14 @@ class SwarmingCli(recipe_api.RecipeApi):
     Args:
       swarming_instance(str): string containing the name of the Swarming
         instance to query.
-      dimensions (tuple): string containing key, value dimensions to query swarming.
+      dimensions (iterable): strings formatted as "key:value" to query Swarming.
     """
-    dim_args = []
+    cmd = ['bots', '-S', swarming_instance, '-count']
     for dim in dimensions:
-      dim_args.append('dimensions={}'.format(dim))
-
-    cmd = [
-        'query', '--swarming', swarming_instance,
-        'bots/count?' + '&'.join(dim_args)
-    ]
-    step = self._run(
+      # Dims come delimited by ":", which is proper formatting for task queries.
+      # But for bot queries, we need them to be delimited by "=".
+      cmd.extend(['-dimension', dim.replace(':', '=')])
+    step = self._run_bin(
         'get bot query result', cmd, test_stdout=lambda: self.test_api.
         swarming_bot_step_test_data(dimensions))
     return step
@@ -92,53 +121,53 @@ class SwarmingCli(recipe_api.RecipeApi):
 
   def get_task_list(self, dimensions, state, lookback_hours, swarming_instance,
                     limit=None):
-    """Retrieves the list of tasks from Swarming based on dimensions.
+    """Retrieves the list of tasks from Swarming based on dimensions and state.
 
     Args:
-      dimensions (str): string containing key, value dimensions to query swarming.
+      dimensions (iterable): strings formatted as "key:value" to query Swarming.
       state (str): state of the tasks to query
       lookback_hours (int): Number of hours to query swarming on.
       swarming_instance(str): string containing the name of the Swarming
         instance to query.
       limit (int): Number of tasks to return.
     """
-    dim_args = ['state={}'.format(state)]
+    query_args = ['state={}'.format(state)]
     for dim in dimensions:
-      dim_args.append('tags={}'.format(dim))
-    dim_args.append('start={}'.format(
+      query_args.append('tags={}'.format(dim))
+    query_args.append('start={}'.format(
         self._calculate_epoch_start(lookback_hours)))
     cmd = [
         'query', '--swarming', swarming_instance,
-        'tasks/list?' + '&'.join(dim_args)
+        'tasks/list?' + '&'.join(query_args)
     ]
     if limit:
       cmd += ['--limit', str(limit)]
-    step = self._run(
+    step = self._run_py(
         'get task query result', cmd, test_stdout=lambda: self.test_api.
         swarming_task_list_test_data(dimensions))
     return step
 
   def get_task_counts(self, dimensions, state, lookback_hours,
                       swarming_instance):
-    """Retrieves the count of tasks from Swarming based on dimensions.
+    """Retrieves the count of tasks from Swarming based on filters.
 
     Args:
-      dimensions (str): string containing key, value dimensions to query swarming.
+      dimensions (iterable): strings formatted as 'key:value' to query Swarming.
       state (str): state of the tasks to query
       lookback_hours (int): Number of hours to query swarming on.
       swarming_instance(str): string containing the name of the Swarming
         instance to query.
     """
-    dim_args = ['state={}'.format(state)]
+    query_args = ['state={}'.format(state)]
     for dim in dimensions:
-      dim_args.append('tags={}'.format(dim))
-    dim_args.append('start={}'.format(
+      query_args.append('tags={}'.format(dim))
+    query_args.append('start={}'.format(
         self._calculate_epoch_start(lookback_hours)))
     cmd = [
         'query', '--swarming', swarming_instance,
-        'tasks/count?' + '&'.join(dim_args)
+        'tasks/count?' + '&'.join(query_args)
     ]
-    step = self._run(
+    step = self._run_py(
         'get task query result', cmd, test_stdout=lambda: self.test_api.
         swarming_task_step_test_data(dimensions))
     return step

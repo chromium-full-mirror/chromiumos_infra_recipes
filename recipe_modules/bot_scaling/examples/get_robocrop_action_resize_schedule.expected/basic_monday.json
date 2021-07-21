@@ -1,5 +1,54 @@
 [
   {
+    "cmd": [],
+    "name": "ensure swarming bin from CIPD"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd",
+      "-ensure-file",
+      "infra/tools/luci/swarming/${platform} rwv6c0O12emItRR5j8EA8-wMOwg_yAQRpZKB4wurRgkC",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "ensure swarming bin from CIPD.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-rwv6c0O12emItRR5\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/swarming/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/swarming",
+      "bots",
+      "-S",
+      "chromeos-swarming.appspot.com",
+      "-count"
+    ],
+    "infra_step": true,
+    "name": "get bot query result",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -68,21 +117,6 @@
       "query",
       "--swarming",
       "chromeos-swarming.appspot.com",
-      "bots/count?"
-    ],
-    "infra_step": true,
-    "name": "get bot query result",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
-      "chromeos-swarming.appspot.com",
       "tasks/count?state=RUNNING&start=1607297100.0"
     ],
     "infra_step": true,
@@ -109,11 +143,11 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
+      "[START_DIR]/cipd/swarming",
+      "bots",
+      "-S",
       "chromeos-swarming.appspot.com",
-      "bots/count?"
+      "-count"
     ],
     "infra_step": true,
     "name": "get bot query result (2)",

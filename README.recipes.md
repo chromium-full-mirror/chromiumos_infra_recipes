@@ -6006,22 +6006,22 @@ Ensure the CIPD support package is installed.
 &mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
 ### *recipe_modules* / [swarming\_cli](/recipe_modules/swarming_cli)
 
-[DEPS](/recipe_modules/swarming_cli/__init__.py#6): [easy](#recipe_modules-easy), [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/swarming_cli/__init__.py#6): [easy](#recipe_modules-easy), [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-#### **class [SwarmingCli](/recipe_modules/swarming_cli/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SwarmingCli](/recipe_modules/swarming_cli/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that queries Swarming via the CLI.
 
-&mdash; **def [get\_bot\_counts](/recipe_modules/swarming_cli/api.py#46)(self, swarming_instance, dimensions=None):**
+&mdash; **def [get\_bot\_counts](/recipe_modules/swarming_cli/api.py#78)(self, swarming_instance, dimensions=None):**
 
 Retrieves the count of bots from Swarming based on dimensions.
 
 Args:
   swarming_instance(str): string containing the name of the Swarming
     instance to query.
-  dimensions (tuple): string containing key, value dimensions to query swarming.
+  dimensions (iterable): strings formatted as "key:value" to query Swarming.
 
-&mdash; **def [get\_max\_pending\_time](/recipe_modules/swarming_cli/api.py#71)(self, dimensions, lookback_hours, swarming_instance):**
+&mdash; **def [get\_max\_pending\_time](/recipe_modules/swarming_cli/api.py#100)(self, dimensions, lookback_hours, swarming_instance):**
 
 Retrieves the list of tasks from Swarming based on dimensions.
 
@@ -6034,23 +6034,23 @@ Args:
 Returns:
   (float) Max pending time in hours.
 
-&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#121)(self, dimensions, state, lookback_hours, swarming_instance):**
+&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#150)(self, dimensions, state, lookback_hours, swarming_instance):**
 
-Retrieves the count of tasks from Swarming based on dimensions.
+Retrieves the count of tasks from Swarming based on filters.
 
 Args:
-  dimensions (str): string containing key, value dimensions to query swarming.
+  dimensions (iterable): strings formatted as 'key:value' to query Swarming.
   state (str): state of the tasks to query
   lookback_hours (int): Number of hours to query swarming on.
   swarming_instance(str): string containing the name of the Swarming
     instance to query.
 
-&mdash; **def [get\_task\_list](/recipe_modules/swarming_cli/api.py#93)(self, dimensions, state, lookback_hours, swarming_instance, limit=None):**
+&mdash; **def [get\_task\_list](/recipe_modules/swarming_cli/api.py#122)(self, dimensions, state, lookback_hours, swarming_instance, limit=None):**
 
-Retrieves the list of tasks from Swarming based on dimensions.
+Retrieves the list of tasks from Swarming based on dimensions and state.
 
 Args:
-  dimensions (str): string containing key, value dimensions to query swarming.
+  dimensions (iterable): strings formatted as "key:value" to query Swarming.
   state (str): state of the tasks to query
   lookback_hours (int): Number of hours to query swarming on.
   swarming_instance(str): string containing the name of the Swarming
