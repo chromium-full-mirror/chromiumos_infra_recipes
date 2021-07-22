@@ -70,7 +70,7 @@
         ]
       },
       "unitTests": {
-        "packageBlacklist": [],
+        "packageBlocklist": [],
         "ebuildsRunSpec": "RUN",
         "dependencies": "ALL_DEPENDENCIES"
       }
@@ -114,7 +114,7 @@
         ]
       },
       "unitTests": {
-        "packageBlacklist": [
+        "packageBlocklist": [
           {
             "packageName": "chromite",
             "category": "chromeos-base",
@@ -209,7 +209,7 @@
         }
       },
       "unitTests": {
-        "packageBlacklist": [
+        "packageBlocklist": [
           {
             "packageName": "chromite",
             "category": "chromeos-base",
@@ -264,7 +264,7 @@
         "applyGerritChanges": true
       },
       "unitTests": {
-        "packageBlacklist": [],
+        "packageBlocklist": [],
         "ebuildsRunSpec": "RUN",
         "dependencies": "ALL_DEPENDENCIES",
         "emptySysroot": false
@@ -319,7 +319,7 @@
         ]
       },
       "unitTests": {
-        "packageBlacklist": [],
+        "packageBlocklist": [],
         "ebuildsRunSpec": "RUN_EXIT",
         "dependencies": "ALL_DEPENDENCIES"
       }
@@ -346,7 +346,7 @@
         }
       },
       "unitTests": {
-        "packageBlacklist": [
+        "packageBlocklist": [
           {
             "packageName": "chromite",
             "category": "chromeos-base",
@@ -416,7 +416,7 @@
         }
       },
       "unitTests": {
-        "packageBlacklist": [
+        "packageBlocklist": [
           {
             "packageName": "chromite",
             "category": "chromeos-base",
@@ -450,7 +450,7 @@
         }
       },
       "unitTests": {
-        "packageBlacklist": [
+        "packageBlocklist": [
           {
             "packageName": "chromite",
             "category": "chromeos-base",
@@ -648,7 +648,7 @@
         }
       },
       "unitTests": {
-        "packageBlacklist": [
+        "packageBlocklist": [
           {
             "packageName": "chromite",
             "category": "chromeos-base",
@@ -753,7 +753,7 @@
         ]
       },
       "unitTests": {
-        "packageBlacklist": [
+        "packageBlocklist": [
           {
             "packageName": "chromite",
             "category": "chromeos-base",

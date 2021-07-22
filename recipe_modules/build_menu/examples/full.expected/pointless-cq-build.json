@@ -170,12 +170,12 @@
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@unit_tests {@@@",
-      "@@@STEP_LOG_LINE@builder config@  package_blacklist {@@@",
+      "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
+      "@@@STEP_LOG_LINE@builder config@  dependencies: ALL_DEPENDENCIES@@@",
+      "@@@STEP_LOG_LINE@builder config@  package_blocklist {@@@",
       "@@@STEP_LOG_LINE@builder config@    package_name: \"chromite\"@@@",
       "@@@STEP_LOG_LINE@builder config@    category: \"chromeos-base\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@  ebuilds_run_spec: RUN@@@",
-      "@@@STEP_LOG_LINE@builder config@  dependencies: ALL_DEPENDENCIES@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
     ]

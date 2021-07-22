@@ -492,7 +492,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
             BuildTargetUnitTestRequest(
                 build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
                 result_path=str(self.m.path.mkdtemp()),
-                package_blocklist=unit_tests.package_blacklist,
+                package_blocklist=unit_tests.package_blocklist,
                 packages=relevant_testable_packages,
                 flags=BuildTargetUnitTestRequest.Flags(
                     code_coverage=self._test_with_code_coverage,
