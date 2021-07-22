@@ -515,7 +515,7 @@
       "snapshots",
       "list",
       "--filter",
-      "creationTimestamp<2021-07-14",
+      "creationTimestamp<2021-07-15",
       "--format",
       "json",
       "--filter",
@@ -598,7 +598,8 @@
       "compute",
       "snapshots",
       "delete",
-      "staging-chromeos-cache-snapshot-1625890262392 staging-chromeos-cache-snapshot-1625893935790"
+      "staging-chromeos-cache-snapshot-1625890262392 staging-chromeos-cache-snapshot-1625893935790",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

@@ -321,10 +321,10 @@ class GcloudApi(recipe_api.RecipeApi):
       snapshots(list|str): A list of snapshot names.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step(
-          'delete snapshots',
-          ['gcloud', 'compute', 'snapshots', 'delete', ' '.join(snapshots)],
-          infra_step=True)
+      self.m.step('delete snapshots', [
+          'gcloud', 'compute', 'snapshots', 'delete', ' '.join(snapshots),
+          '--quiet'
+      ], infra_step=True)
 
   def get_expired_snapshots(self, retention_days, prefixes,
                             protected_snapshots=None):
