@@ -598,14 +598,32 @@
       "compute",
       "snapshots",
       "delete",
-      "staging-chromeos-cache-snapshot-1625890262392 staging-chromeos-cache-snapshot-1625893935790",
+      "staging-chromeos-cache-snapshot-1625890262392",
       "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.delete snapshots",
+    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-1625890262392",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "snapshots",
+      "delete",
+      "staging-chromeos-cache-snapshot-1625893935790",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-1625893935790",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
