@@ -338,22 +338,27 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     today = datetime.date.today()
     lookback_date = today - datetime.timedelta(days=retention_days)
-    list_cmd = [
-        'gcloud', 'compute', 'snapshots', 'list', '--filter',
-        'creationTimestamp<{}'.format(lookback_date), '--format', 'json'
-    ]
-    for prefix in prefixes:
-      list_cmd.extend(['--filter', 'name~{}.*'.format(prefix)])
-    snap_list = self.m.easy.stdout_json_step(
-        'list snapshots with filter', list_cmd,
-        test_stdout=lambda: self.test_api.snapshot_list_data(), infra_step=True)
+    list_cmd = ['gcloud', 'compute', 'snapshots', 'list', '--format', 'json']
     snapshot_list = []
-    for snap in snap_list:
-      snapshot_name = snap['name']
-      if protected_snapshots:
-        if snapshot_name in protected_snapshots:
-          continue
-      snapshot_list.append(snapshot_name)
+    cmd = []
+    for prefix in prefixes:
+      cmd.extend(list_cmd)
+      cmd.extend([
+          '--filter',
+          'creationTimestamp<{} AND name~{}-.*'.format(lookback_date, prefix)
+      ])
+      snap_list = self.m.easy.stdout_json_step(
+          'list snapshots with filter {}'.format(prefix), cmd,
+          test_stdout=lambda: self.test_api.snapshot_list_data(),
+          infra_step=True)
+      for snap in snap_list:
+        snapshot_name = snap['name']
+        if protected_snapshots:
+          if snapshot_name in protected_snapshots:
+            continue
+        if snapshot_name not in snapshot_list:
+          snapshot_list.append(snapshot_name)
+      del cmd[:]
     return snapshot_list
 
   def set_disk_autodelete(self, instance, disk, zone):

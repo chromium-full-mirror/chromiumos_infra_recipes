@@ -25,11 +25,11 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         "labelFingerprint":
             "42WmSpB8rSM=",
         "name":
-            "staging-chromeos-cache-snapshot-1625886728983",
+            "staging-chrome-cache-snapshot-1625886728983",
         "selfLink":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625886728983",
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-1625886728983",
         "sourceDisk":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central2-c/disks/staging-source-cache-disk-chromeos-us-central2-c",
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central2-c/disks/staging-source-cache-disk-chrome-us-central2-c",
         "sourceDiskId":
             "4287499025374294961",
         "status":

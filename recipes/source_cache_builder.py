@@ -64,8 +64,13 @@ def RunSteps(api, properties):
               'gs://{}/{}'.format(properties.cache_bucket, cache.version_file),
               infra_step=True, stdout=api.raw_io.output())
           ret = cat_res.stdout.strip()
-          api.gcloud.create_disk(disk=disk, zone=m.group('zone'), snapshot=ret,
-                                 disk_type='pd-ssd')
+          try:
+            api.gcloud.create_disk(disk=disk, zone=m.group('zone'),
+                                   snapshot=ret, disk_type='pd-ssd')
+          except StepFailure:
+            api.gcloud.create_disk(disk=disk, zone=m.group('zone'),
+                                   snapshot=cache.recovery_snapshot,
+                                   disk_type='pd-ssd')
           api.gcloud.attach_disk(name=cache.cache_name, instance=infra_host,
                                  disk=disk, zone=m.group('zone'))
           mount_path = api.gcloud.mount_disk(name=cache.cache_name,
@@ -204,5 +209,30 @@ def GenTests(api):
       ),
       api.step_data((
           'source cache update.attach gcloud compute cache disks.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromeos/.recipes_state.json (2)'
+      ), retcode=3),
+  )
+
+  yield api.test(
+      'create-disk-step-failure',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  cache_directory='chromeos',
+                  compute_disk='test-disk1',
+                  snapshot_prefix='test-chromeos-prefix',
+                  version_file='test-chromeos-version.txt',
+                  command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+      ),
+      api.step_data((
+          'source cache update.attach gcloud compute cache disks.create disk from snapshot'
       ), retcode=3),
   )
