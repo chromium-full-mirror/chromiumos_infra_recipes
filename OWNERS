@@ -1,20 +1,6 @@
 # Chrome OS CI team
-# TODO(crbug/1108077): Once depot_tools and gerrit agree on include syntax,
-# include chromiumos/chromite:/OWNERS.ci
 # Most of your recipes CLs should go to this group.
-andrewlamb@chromium.org
-brigitr@google.com
-ctmcnamara@chromium.org
-dhanyaganesh@chromium.org
-engeg@google.com
-jackneus@google.com
-jaquesc@google.com
-jaredloucks@google.com
-juahurta@google.com
-mikenichols@chromium.org
-navil@google.com
-seanabraham@chromium.org
-smcallis@google.com
+include chromiumos/chromite:/OWNERS.ci
 
 # Chrome OS SYD EngProd Team.
 abergman@google.com
