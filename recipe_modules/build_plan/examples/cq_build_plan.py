@@ -19,6 +19,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/properties',
     'build_plan',
+    'cros_history',
     'cros_infra_config',
     'cros_relevance',
     'git_footers',
@@ -109,7 +110,8 @@ def GenTests(api):
               'cave-cq',
           ],
       ),
-      api.git_footers.simulated_get_footers([], 'get build history'),
+      api.git_footers.simulated_get_footers([],
+                                            'check disallow recycled builds'),
       api.cros_relevance.simulated_get_necessary_builders([
           'arm-generic-cq',
           'arm64-generic-cq',
@@ -139,7 +141,8 @@ def GenTests(api):
               'cave-cq',
           ],
       ),
-      api.git_footers.simulated_get_footers(['coral-cq'], 'get build history'),
+      api.git_footers.simulated_get_footers(['coral-cq'],
+                                            'check disallow recycled builds'),
       api.cros_relevance.simulated_get_necessary_builders([
           'arm-generic-cq',
           'arm64-generic-cq',
@@ -167,7 +170,8 @@ def GenTests(api):
               'arm-generic-cq',
               'cave-cq',
           ], expected_completed_builds=[]),
-      api.git_footers.simulated_get_footers(['all'], 'get build history'),
+      api.git_footers.simulated_get_footers(['all'],
+                                            'check disallow recycled builds'),
       api.cros_relevance.simulated_get_necessary_builders([
           'arm-generic-cq',
           'arm64-generic-cq',
@@ -175,6 +179,42 @@ def GenTests(api):
           'coral-cq',
           'cave-cq',
       ]),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+  )
+
+  yield api.test(
+      'forced-rebuilds-test-failures',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(),
+      api.properties(
+          expected_build_requests=[
+              'atlas-cq',
+              'arm64-generic-cq',
+              'coral-cq',
+          ],
+          expected_completed_builds=[
+              'amd64-generic-slim-cq',
+              'cave-cq',
+          ],
+      ),
+      api.git_footers.simulated_get_footers(['test-failures'],
+                                            'check disallow recycled builds'),
+      api.cros_relevance.simulated_get_necessary_builders([
+          'arm-generic-cq',
+          'arm64-generic-cq',
+          'atlas-cq',
+          'coral-cq',
+          'cave-cq',
+      ]),
+      api.buildbucket.simulated_search_results([
+          api.cros_history.build_with_failed_tests(['coral-cq'])
+      ], 'check disallow recycled builds.find matching builds.buildbucket.search'
+                                              ),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -201,7 +241,8 @@ def GenTests(api):
               'cave-cq',
           ],
       ),
-      api.git_footers.simulated_get_footers([], 'get build history'),
+      api.git_footers.simulated_get_footers([],
+                                            'check disallow recycled builds'),
       api.git_footers.simulated_get_footers(['named-exp-from-cl'],
                                             'filter builds'),
       api.cros_relevance.simulated_get_necessary_builders([
@@ -238,7 +279,8 @@ def GenTests(api):
       api.cros_infra_config.override_builder_configs_test_data(
           api.cros_infra_config.builder_configs_test_data, ref=config_ref,
           binaryproto=False),
-      api.git_footers.simulated_get_footers([], 'get build history'),
+      api.git_footers.simulated_get_footers([],
+                                            'check disallow recycled builds'),
       api.cros_relevance.simulated_get_necessary_builders([
           'arm-generic-cq',
           'arm64-generic-cq',
@@ -265,7 +307,8 @@ def GenTests(api):
               'amd64-generic-slim-cq',
               'cave-cq',
           ]),
-      api.git_footers.simulated_get_footers([], 'get build history'),
+      api.git_footers.simulated_get_footers([],
+                                            'check disallow recycled builds'),
       api.cros_relevance.simulated_get_necessary_builders([
           'amd64-generic-slim-cq',
           'arm-generic-cq',

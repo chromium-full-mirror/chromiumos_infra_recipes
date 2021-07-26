@@ -29,19 +29,27 @@ def RunSteps(api, expected_builders):
 
 def GenTests(api):
 
-  yield api.test('No non-reusable builders',
-                 api.git_footers.simulated_get_footers([]),
-                 api.git_footers.simulated_get_footers([], step_number=2))
+  yield api.test(
+      'No non-reusable builders',
+      api.git_footers.simulated_get_footers(
+          [], parent_step_name='check disallow recycled builds'),
+      api.git_footers.simulated_get_footers(
+          [], parent_step_name='check disallow recycled builds', step_number=2))
 
   yield api.test(
       'Non-reusable builders',
       api.properties(expected_builders={'hersheys', 'snickers', 'milkyway'}),
-      api.git_footers.simulated_get_footers(['hersheys, snickers']),
-      api.git_footers.simulated_get_footers(['snickers, milkyway'],
-                                            step_number=2))
+      api.git_footers.simulated_get_footers(
+          ['hersheys, snickers'],
+          parent_step_name='check disallow recycled builds'),
+      api.git_footers.simulated_get_footers(
+          ['snickers, milkyway'],
+          parent_step_name='check disallow recycled builds', step_number=2))
 
   yield api.test(
       'No reusable builders', api.properties(expected_builders={'all'}),
-      api.git_footers.simulated_get_footers(['twix,milkyway']),
-      api.git_footers.simulated_get_footers(['snickers, all, milkyway'],
-                                            step_number=2))
+      api.git_footers.simulated_get_footers(
+          ['twix,milkyway'], parent_step_name='check disallow recycled builds'),
+      api.git_footers.simulated_get_footers(
+          ['snickers, all, milkyway'],
+          parent_step_name='check disallow recycled builds', step_number=2))

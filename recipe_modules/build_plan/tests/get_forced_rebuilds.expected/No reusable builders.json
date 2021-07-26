@@ -1,8 +1,18 @@
 [
   {
     "cmd": [],
-    "name": "get CL 1234 description",
+    "name": "check disallow recycled builds",
     "~followup_annotations": [
+      "@@@STEP_TEXT@rebuild all targets@@@",
+      "@@@STEP_LOG_LINE@found footer values@found value(s): all,twix,snickers,milkyway@@@",
+      "@@@STEP_LOG_END@found footer values@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check disallow recycled builds.get CL 1234 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
@@ -18,9 +28,9 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "name": "get CL 1234 description.read deploy_cipd.json",
+    "name": "check disallow recycled builds.get CL 1234 description.read deploy_cipd.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
@@ -43,9 +53,9 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "get CL 1234 description.ensure_installed",
+    "name": "check disallow recycled builds.get CL 1234 description.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -64,11 +74,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "get CL 1234 description.gerrit-fetch-changes",
+    "name": "check disallow recycled builds.get CL 1234 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -125,13 +135,17 @@
       "Disallow-Recycled-Builds"
     ],
     "infra_step": true,
-    "name": "read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
+    "name": "check disallow recycled builds.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "get CL 5678 description",
+    "name": "check disallow recycled builds.get CL 5678 description",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
@@ -144,11 +158,11 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "get CL 5678 description.gerrit-fetch-changes",
+    "name": "check disallow recycled builds.get CL 5678 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 5678, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -205,8 +219,11 @@
       "Disallow-Recycled-Builds"
     ],
     "infra_step": true,
-    "name": "read git footers (2)",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
+    "name": "check disallow recycled builds.read git footers (2)",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "name": "$result"

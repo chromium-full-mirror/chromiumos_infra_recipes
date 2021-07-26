@@ -102,7 +102,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
       if git_footers is not None:
         args.append(
             self.m.git_footers.simulated_get_footers(
-                git_footers, 'run builds.get build history'))
+                git_footers, 'run builds.check disallow recycled builds'))
       if cq and history_builds is not None:
         args.append(
             self.m.buildbucket.simulated_search_results(

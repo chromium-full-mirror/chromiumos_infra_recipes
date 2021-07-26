@@ -610,6 +610,28 @@
   },
   {
     "cmd": [],
+    "name": "check disallow recycled builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no forced rebuilds@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Disallow-Recycled-Builds"
+    ],
+    "infra_step": true,
+    "name": "check disallow recycled builds.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "get build history",
     "~followup_annotations": [
       "@@@STEP_TEXT@found 2 builds to recycle@@@"
@@ -656,21 +678,6 @@
       "@@@STEP_LINK@atlas-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
       "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@",
       "@@@STEP_LINK@arm64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Disallow-Recycled-Builds"
-    ],
-    "infra_step": true,
-    "name": "get build history.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

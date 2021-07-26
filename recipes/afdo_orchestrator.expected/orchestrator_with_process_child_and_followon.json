@@ -1194,10 +1194,10 @@
   },
   {
     "cmd": [],
-    "name": "run builds.get build history",
+    "name": "run builds.check disallow recycled builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found 0 builds to recycle@@@"
+      "@@@STEP_TEXT@no forced rebuilds@@@"
     ]
   },
   {
@@ -1209,10 +1209,18 @@
       "Disallow-Recycled-Builds"
     ],
     "infra_step": true,
-    "name": "run builds.get build history.read git footers",
+    "name": "run builds.check disallow recycled builds.read git footers",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.get build history",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found 0 builds to recycle@@@"
     ]
   },
   {

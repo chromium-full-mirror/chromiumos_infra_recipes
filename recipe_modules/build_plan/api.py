@@ -73,12 +73,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     if enable_history:
       if gerrit_changes:
+        forced_rebuilds = self._get_forced_rebuilds(gerrit_changes)
         with self.m.step.nest('get build history') as presentation:
           orch_config = self.m.cros_infra_config.config_or_default
           is_retry = (
               orch_config.id.type == BuilderConfig.Id.CQ and
               self.m.cros_history.is_retry(self.m.buildbucket.build))
-          forced_rebuilds = self._get_forced_rebuilds(gerrit_changes)
           completed_builds = self.get_completed_builds(child_specs,
                                                        forced_rebuilds)
           presentation.step_text = ('found {} build{} to recycle'.format(
@@ -235,7 +235,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     Args:
       api (RecipeApi): See RunSteps documentation.
       child_specs list(ChildSpec): List of child specs of cq-orchestrator.
-      force_rebuilds list(str): List of builder names that cannot be reused.
+      forced_rebuilds list(str): List of builder names that cannot be reused.
 
     Returns:
       A list of build_pb2.Build objects corresponding to the
@@ -245,8 +245,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
     with self.m.step.nest("get completed builds") as presentation:
       completed_builds = []
       passed_builds = self.m.cros_history.get_passed_builds()
-      if 'test-failures' in forced_rebuilds:
-        test_failure_builders = self.m.cros_history.get_test_failure_builders()
 
       skip_log = []
       for build in passed_builds:
@@ -261,13 +259,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
         if build.builder.builder in forced_rebuilds or 'all' in forced_rebuilds:
           skip_log.append(
               '{} is skipped because recycling was disabled for this builder.'
-              .format(build.builder.builder))
-          continue
-
-        if ('test-failures' in forced_rebuilds and
-            build.builder.builder in test_failure_builders):
-          skip_log.append(
-              '{} is skipped because recycling was disabled for builders that failed hw tests.'
               .format(build.builder.builder))
           continue
 
@@ -342,12 +333,32 @@ class BuildPlanApi(recipe_api.RecipeApi):
         run.
 
     Returns:
-      builders (set(str)): A set of builder names or 'all' if no builds can be
+      forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
         reused.
     """
-    builders = self.m.git_footers.get_footer_values(
-        gerrit_changes, self.DISALLOW_RECYCLED_BUILDS_FOOTER)
-    return {'all'} if 'all' in builders else builders
+    with self.m.step.nest('check disallow recycled builds') as pres:
+      forced_rebuilds = self.m.git_footers.get_footer_values(
+          gerrit_changes, self.DISALLOW_RECYCLED_BUILDS_FOOTER)
+
+      if not forced_rebuilds:
+        pres.step_text = 'no forced rebuilds'
+        return forced_rebuilds
+
+      pres.logs['found footer values'] = 'found value(s): %s' % ','.join(
+          list(forced_rebuilds))
+
+      if 'all' in forced_rebuilds:
+        pres.step_text = 'rebuild all targets'
+        return {'all'}
+
+      if 'test-failures' in forced_rebuilds:
+        test_failure_builders = self.m.cros_history.get_test_failure_builders()
+        forced_rebuilds.remove('test-failures')
+        forced_rebuilds.update(test_failure_builders)
+
+      pres.logs['forced rebuilds'] = forced_rebuilds
+      pres.step_text = 'force rebuild %s target(s)' % len(forced_rebuilds)
+      return forced_rebuilds
 
   def get_slim_builder_name(self, builder_name):
     """Returns to the name of the slim variant of the builder.
