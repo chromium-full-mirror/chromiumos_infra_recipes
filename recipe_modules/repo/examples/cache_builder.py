@@ -38,7 +38,8 @@ def RunSteps(api, properties):
     repo_state_path = repo_root.join('.recipes_state.json')
     api.path.mock_add_paths(repo_state_path)
     api.repo.ensure_synced_checkout(repo_root, manifest_url,
-                                    init_opts=init_opts, sync_opts=sync_opts)
+                                    init_opts=init_opts, sync_opts=sync_opts,
+                                    final_cleanup=True)
 
 
 def GenTests(api):

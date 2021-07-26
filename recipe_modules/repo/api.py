@@ -676,7 +676,8 @@ class RepoApi(recipe_api.RecipeApi):
       return self.m.git.gitiles_commit()
 
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
-                             sync_opts=None, projects=None):
+                             sync_opts=None, projects=None,
+                             final_cleanup=False):
     """Ensure the given repo checkout exists and is synced.
 
     Args:
@@ -687,12 +688,14 @@ class RepoApi(recipe_api.RecipeApi):
       projects (list[str]): Projects of concern or None if all projects
         are of concern. Used to perform optimizations where possible to only
         operate on the given projects.
+      final_cleanup (bool): Used by cache builder to ensure that all locks
+        and uncommitted files are cleaned up after the sync.
     """
     repo_state_path = root_path.join('.recipes_state.json')
     manifest_branch = (init_opts.get('manifest_branch') or
                        '') if init_opts else ''
     # Get cache state
-    if self.m.path.exists(repo_state_path):
+    if (self.m.path.exists(repo_state_path) and not final_cleanup):
       test_proto = None
       if self._test_data.enabled:
         test_proto = RepoState(
@@ -748,7 +751,8 @@ class RepoApi(recipe_api.RecipeApi):
 
     # Clean cache if needed
     self._sync_checkout(root_path, manifest_url, init_opts=init_opts,
-                        sync_opts=sync_opts, projects=projects, clean=clean)
+                        sync_opts=sync_opts, projects=projects, clean=clean,
+                        final_cleanup=final_cleanup)
     repo_state.state = RepoState.STATE_CLEAN
 
     self.m.file.write_proto('Write proto to {}'.format(repo_state_path),
@@ -756,7 +760,8 @@ class RepoApi(recipe_api.RecipeApi):
     return True
 
   def _sync_checkout(self, root_path, manifest_url, init_opts=None,
-                     sync_opts=None, projects=None, clean=False):
+                     sync_opts=None, projects=None, clean=False,
+                     final_cleanup=False):
     """Ensure the given repo checkout exists and is synced.
 
     Args:
@@ -768,6 +773,8 @@ class RepoApi(recipe_api.RecipeApi):
         are of concern. Used to perform optimizations where possible to only
         operate on the given projects.
       clean (bool): Boolean stating whether the cache is clean.
+      final_cleanup (bool): Boolean stating whether to perform a final
+        cleanup after the sync.
     """
     with self.m.step.nest('ensure synced checkout') as presentation:
       self.m.file.ensure_directory('ensure root path', root_path)
@@ -814,6 +821,8 @@ class RepoApi(recipe_api.RecipeApi):
               raise
             self.m.step('sleep 10 min, try repo again', ['sleep', '600'])
             clean = False
+        if final_cleanup:
+          self._git_clean_checkout(root_path, projects)
 
       # Verify that root_path/.repo exists, since repo will happily reuse a
       # repository in the cwd's ancestor directories.

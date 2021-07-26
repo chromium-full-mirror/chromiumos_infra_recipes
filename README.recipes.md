@@ -5626,7 +5626,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#678)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#678)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -5638,6 +5638,8 @@ Args:
   projects (list[str]): Projects of concern or None if all projects
     are of concern. Used to perform optimizations where possible to only
     operate on the given projects.
+  final_cleanup (bool): Used by cache builder to ensure that all locks
+    and uncommitted files are cleaned up after the sync.
 
 &mdash; **def [init](/recipe_modules/repo/api.py#148)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
 

@@ -89,7 +89,8 @@ def RunSteps(api, properties):
                           'staging-' if is_staging else ''))
                   api.repo.ensure_synced_checkout(
                       mount_path, api.src_state.internal_manifest.url,
-                      init_opts=init_opts, sync_opts=sync_opts)
+                      init_opts=init_opts, sync_opts=sync_opts,
+                      final_cleanup=True)
               if cache.command == 'gclient':
                 # Chrome cache consists of a local repo cache and src,
                 # both mounted via a single disk. We change into the
