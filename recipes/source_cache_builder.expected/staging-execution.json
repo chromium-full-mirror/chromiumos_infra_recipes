@@ -521,7 +521,7 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2021-07-16 AND name~test-cache-prefix-.*"
+      "creationTimestamp<2021-07-19 AND name~test-cache-prefix-.*"
     ],
     "infra_step": true,
     "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-cache-prefix",

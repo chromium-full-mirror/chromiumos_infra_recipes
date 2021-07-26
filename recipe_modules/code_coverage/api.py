@@ -65,6 +65,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
   def _code_coverage_root(self):
     return self.m.path['start_dir'].join('code_coverage')
 
+
   def upload_firmware_lcov(
       self, build_target_name, tarfile,
       step_name='upload code coverage data (firmware lcov)'):
@@ -257,11 +258,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       incremental_coverage_file = self._write_cleaned_coverage_file(
           fpath, build_target_name, incremental_settings, project_name_to_use)
 
-      for change in self.m.gerrit.gerrit_patch_sets:
+      for change in self.m.cros_infra_config.gerrit_changes:
         self.m.step(
             'upload {} for {} (ps #{})'.format(
-                self.m.path.basename(fpath), change.change_id,
-                change.patch_set),
+                self.m.path.basename(fpath), change.change, change.patchset),
             wrapper=['luci-auth', 'context', '--'],
             cmd=[
                 self._incremental_coverage_tool,
@@ -272,13 +272,13 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                 '--project',
                 change.project,
                 '--change_id',
-                change.change_id,
+                change.change,
                 '--patchset',
-                change.patch_set,
+                change.patchset,
                 '--uploader_name',
                 self.m.buildbucket.build.builder.builder,
                 '--uploader_id',
-                '{}_{}_{}'.format(change.change_id, change.patch_set,
+                '{}_{}_{}'.format(change.change, change.patchset,
                                   str(self.m.buildbucket.build.id)),
                 '--format',
                 coverage_type,

@@ -1359,7 +1359,7 @@ Args:
     with utf8, as it will be sent to the publish-message binary via JSON.
 ### *recipe_modules* / [code\_coverage](/recipe_modules/code_coverage)
 
-[DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 #### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -1371,7 +1371,7 @@ A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#96)(self, build_target_name, tarfile, coverage_type, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#97)(self, build_target_name, tarfile, coverage_type, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
 
 Uploads code coverage data to the requested external sources.
 
@@ -1384,7 +1384,7 @@ Args:
   absolute_cs_settings (CoverageFileSettings): settings for uploading coverage to code search.
   absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage to chromium.
 
-&mdash; **def [upload\_code\_coverage\_llvm\_json](/recipe_modules/code_coverage/api.py#81)(self, build_target_name, tarfile, step_name='upload code coverage data (code coverage llvm json)'):**
+&mdash; **def [upload\_code\_coverage\_llvm\_json](/recipe_modules/code_coverage/api.py#82)(self, build_target_name, tarfile, step_name='upload code coverage data (code coverage llvm json)'):**
 
 Uploads code coverage llvm json.
 
@@ -1393,7 +1393,7 @@ Args:
   tarfile (Path): path to tarfile.
   step_name (str): name for the step.
 
-&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#68)(self, build_target_name, tarfile, step_name='upload code coverage data (firmware lcov)'):**
+&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#69)(self, build_target_name, tarfile, step_name='upload code coverage data (firmware lcov)'):**
 
 Uploads firmware lcov code coverage.
 

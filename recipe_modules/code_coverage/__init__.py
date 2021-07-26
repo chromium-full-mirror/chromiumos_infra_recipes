@@ -16,8 +16,8 @@ DEPS = [
     'recipe_engine/archive',
     'depot_tools/gsutil',
     'cros_source',
-    'gerrit',
     'gitiles',
+    'cros_infra_config',
 ]
 
 from PB.recipe_modules.chromeos.code_coverage.code_coverage import (
