@@ -10,7 +10,7 @@ import json
 from PB.chromite.api.depgraph import ListRequest, SourcePath
 from PB.chromite.api.toolchain import LinterRequest
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.recipes.chromeos.build_target import BuildTargetProperties
+from PB.recipes.chromeos.build_linters import BuildLintersProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
@@ -32,36 +32,26 @@ DEPS = [
 # Our properties are processed and used by both the build_menu module, as well
 # as various downstream dashboards and other consumers of buildbucket output
 # properties.  They are not used directly within the recipe.
-PROPERTIES = BuildTargetProperties
+PROPERTIES = BuildLintersProperties
 
 
-class Error(Exception):
-  """Base error class for full linters recipe."""
-
-
-class ValidateGerritError(Error):
-  """Raised when there is not at least one Gerrit Change provided."""
-
-
-def _ValidateGerritChanges(api):
-  """Ensures there is at least one Gerrit Change provided."""
-  with api.step.nest('validate inputs') as presentation:
+def _ChangesRelevant(api, properties):
+  """Returns whether changes contain Rust and are in relevant repository."""
+  with api.step.nest('check for relevant changes') as presentation:
     gerrit_changes = api.src_state.gerrit_changes
     if not gerrit_changes:
       presentation.status = api.step.FAILURE
       presentation.step_text = 'No changes given: Build is POINTLESS.'
-      raise ValidateGerritError()
+      return False
 
-
-def _ChangesContainRust(api):
-  with api.step.nest('check for rust changes') as presentation:
-    for commit in api.src_state.gerrit_changes:
+    for commit in gerrit_changes:
       patchset = api.gerrit.fetch_patch_set_from_change(commit,
                                                         include_files=True)
-      if any(filename.endswith('.rs') for filename in patchset.file_infos):
-        presentation.step_text = 'Found rust changes'
-        return True
-    presentation.step_text = 'Did not find rust changes'
+      if patchset.project in properties.relevant_projects:
+        if any(filename.endswith('.rs') for filename in patchset.file_infos):
+          presentation.step_text = 'Found relevant changes'
+          return True
+    presentation.step_text = 'No relevant changes'
     return False
 
 
@@ -135,11 +125,7 @@ def _WriteComments(api, findings):
 
 
 def RunSteps(api, properties):
-  try:
-    _ValidateGerritChanges(api)
-  except ValidateGerritError:
-    return None
-  if not _ChangesContainRust(api):
+  if not _ChangesRelevant(api, properties):
     return None
   with api.build_menu.configure_builder() as config:
     with api.build_menu.setup_workspace_and_chroot():
@@ -211,65 +197,37 @@ def GenTests(api):
     """Generate kwargs for a test build."""
     kwargs.setdefault('cq', True)
     kwargs.setdefault('build_target', 'atlas')
+    kwargs.setdefault('input_properties',
+                      {'relevant_projects': ['fake-project']})
     kwargs.setdefault('gerrit_changes', changes[:1])
     return kwargs
 
-  # Invalid Inputs
+  # No changes provided
   yield api.build_menu.test(
-      'no-changes', api.post_check(post_process.StepFailure, 'validate inputs'),
-      api.post_check(post_process.DoesNotRun, 'check for rust changes'),
+      'no-changes',
+      api.post_check(post_process.StepFailure, 'check for relevant changes'),
+      api.post_check(post_process.DoesNotRun, 'configure builder'),
       api.post_check(post_process.StatusSuccess), revision=None, cq=False)
 
-  # Normal build with rust changes
+  # No changes to relevant projects
   yield api.build_menu.test(
-      'one-change', api.post_check(post_process.StepSuccess, 'validate inputs'),
-      api.post_check(post_process.StepSuccess, 'check for rust changes'),
-      api.post_check(post_process.StepSuccess, 'get rust files'),
-      api.post_check(post_process.StepSuccess, 'getting rust lints'),
-      api.post_check(post_process.StepSuccess,
-                     'write comments for linter findings'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.gerrit.set_gerrit_fetch_changes_response('check for rust changes',
+      'no-relevant-projects',
+      api.post_check(post_process.StepSuccess, 'check for relevant changes'),
+      api.post_check(post_process.DoesNotRun, 'configure builder'),
+      api.gerrit.set_gerrit_fetch_changes_response('check for relevant changes',
                                                    changes[:1], rust_edits),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'get rust files.get patch sets', changes[:1], rust_edits),
-      api.repo.project_infos_step_data('get rust files.filter rust files',
-                                       data=project_info),
-      api.post_check(post_process.StatusSuccess), **BuildTestArgs())
-
-  # Multiple change lists with rust changes
-  yield api.build_menu.test(
-      'multiple-changes',
-      api.post_check(post_process.StepSuccess, 'validate inputs'),
-      api.post_check(post_process.StepSuccess, 'check for rust changes'),
-      api.post_check(post_process.MustRun, 'get rust files.filter rust files'),
-      api.post_check(post_process.StepSuccess, 'get rust files'),
-      api.post_check(post_process.StepSuccess, 'getting rust lints'),
-      api.post_check(post_process.StepSuccess,
-                     'write comments for linter findings'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess),
-      api.repo.project_infos_step_data('get rust files.filter rust files',
-                                       data=project_info),
-      api.repo.project_infos_step_data('get rust files.filter rust files',
-                                       data=project_info, iteration=2),
-      api.gerrit.set_gerrit_fetch_changes_response('check for rust changes',
-                                                   [changes[0]], rust_edits),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'get rust files.get patch sets', [changes[0]], rust_edits),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'get rust files.get patch sets', [changes[1]], rust_edits,
-          iteration=2), **BuildTestArgs(gerrit_changes=changes))
+      **BuildTestArgs(input_properties={'relevant_projects': []}))
 
-  # Normal build no relevant changes
+  # No changes with Rust
   yield api.build_menu.test(
       'no-relevant-changes',
-      api.post_check(post_process.StepSuccess, 'check for rust changes'),
+      api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.DoesNotRun, 'get rust files'),
       api.post_check(post_process.DoesNotRun, 'getting rust lints'),
       api.post_check(post_process.StatusSuccess),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'check for rust changes', changes[:1], {
+          'check for relevant changes', changes[:1], {
               1: {
                   'change_id': '1',
                   'created': '2020-10-22 18:54:00.000000000',
@@ -284,6 +242,46 @@ def GenTests(api):
                   }
               }
           }), **BuildTestArgs())
+
+  # Normal build with rust changes
+  yield api.build_menu.test(
+      'one-change',
+      api.post_check(post_process.StepSuccess, 'check for relevant changes'),
+      api.post_check(post_process.StepSuccess, 'get rust files'),
+      api.post_check(post_process.StepSuccess, 'getting rust lints'),
+      api.post_check(post_process.StepSuccess,
+                     'write comments for linter findings'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.gerrit.set_gerrit_fetch_changes_response('check for relevant changes',
+                                                   changes[:1], rust_edits),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', changes[:1], rust_edits),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info),
+      api.post_check(post_process.StatusSuccess), **BuildTestArgs())
+
+  # Multiple change lists with rust changes
+  yield api.build_menu.test(
+      'multiple-changes',
+      api.post_check(post_process.StepSuccess, 'check for relevant changes'),
+      api.post_check(post_process.MustRun, 'get rust files.filter rust files'),
+      api.post_check(post_process.StepSuccess, 'get rust files'),
+      api.post_check(post_process.StepSuccess, 'getting rust lints'),
+      api.post_check(post_process.StepSuccess,
+                     'write comments for linter findings'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info, iteration=2),
+      api.gerrit.set_gerrit_fetch_changes_response('check for relevant changes',
+                                                   [changes[0]], rust_edits),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', [changes[0]], rust_edits),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', [changes[1]], rust_edits,
+          iteration=2), **BuildTestArgs(gerrit_changes=changes))
 
   # No source paths for project api.cros_source.find_project_paths
   edits_unknown_branch = {
@@ -303,15 +301,14 @@ def GenTests(api):
   }
   yield api.build_menu.test(
       'no-source-path',
-      api.post_check(post_process.StepSuccess, 'validate inputs'),
-      api.post_check(post_process.StepSuccess, 'check for rust changes'),
+      api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.StepFailure, 'get rust files'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.StatusFailure),
       api.repo.project_infos_step_data('get rust files.filter rust files',
                                        data=project_info),
-      api.gerrit.set_gerrit_fetch_changes_response('check for rust changes',
+      api.gerrit.set_gerrit_fetch_changes_response('check for relevant changes',
                                                    changes[:1],
                                                    edits_unknown_branch),
       api.gerrit.set_gerrit_fetch_changes_response(
@@ -321,7 +318,7 @@ def GenTests(api):
   # CROS Build API failure in DependencyService.List
   yield api.build_menu.test(
       'get-packages-failure',
-      api.post_check(post_process.StepSuccess, 'check for rust changes'),
+      api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.StepFailure, 'get affected packages'),
       api.post_check(post_process.DoesNotRun, 'getting rust lints'),
       api.post_check(post_process.DoesNotRun,
@@ -330,7 +327,7 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure),
       api.gerrit.set_gerrit_fetch_changes_response(
           'get rust files.get patch sets', changes[:1], rust_edits),
-      api.gerrit.set_gerrit_fetch_changes_response('check for rust changes',
+      api.gerrit.set_gerrit_fetch_changes_response('check for relevant changes',
                                                    changes[:1], rust_edits),
       api.repo.project_infos_step_data('get rust files.filter rust files',
                                        data=project_info),
@@ -341,7 +338,7 @@ def GenTests(api):
   # CROS Build API failure in ToolchainService.GetClippyLints
   yield api.build_menu.test(
       'get-clipy-lints-failure',
-      api.post_check(post_process.StepSuccess, 'check for rust changes'),
+      api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.StepFailure, 'getting rust lints'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
@@ -349,7 +346,7 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure),
       api.gerrit.set_gerrit_fetch_changes_response(
           'get rust files.get patch sets', changes[:1], rust_edits),
-      api.gerrit.set_gerrit_fetch_changes_response('check for rust changes',
+      api.gerrit.set_gerrit_fetch_changes_response('check for relevant changes',
                                                    changes[:1], rust_edits),
       api.repo.project_infos_step_data('get rust files.filter rust files',
                                        data=project_info),

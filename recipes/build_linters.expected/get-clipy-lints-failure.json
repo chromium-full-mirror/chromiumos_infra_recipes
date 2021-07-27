@@ -23,13 +23,9 @@
   },
   {
     "cmd": [],
-    "name": "validate inputs"
-  },
-  {
-    "cmd": [],
-    "name": "check for rust changes",
+    "name": "check for relevant changes",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Found rust changes@@@"
+      "@@@STEP_TEXT@Found relevant changes@@@"
     ]
   },
   {
@@ -40,7 +36,7 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
-    "name": "check for rust changes.read deploy_cipd.json",
+    "name": "check for relevant changes.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -65,7 +61,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "check for rust changes.ensure_installed",
+    "name": "check for relevant changes.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -86,7 +82,7 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "check for rust changes.gerrit-fetch-changes",
+    "name": "check for relevant changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
