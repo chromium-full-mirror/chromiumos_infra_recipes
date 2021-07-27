@@ -120,6 +120,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-o",
+      "discard,defaults",
       "/dev/sdb",
       "[CLEANUP]/snapshot/cache1"
     ],
@@ -145,6 +147,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-o",
+      "discard,defaults",
       "/dev/sdc",
       "/snapshot_mounts/cache2"
     ],
@@ -153,6 +157,30 @@
     },
     "infra_step": true,
     "name": "mount disk cache_test2"
+  },
+  {
+    "cmd": [
+      "sudo",
+      "sync",
+      "/dev/sdb"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "sync disk"
+  },
+  {
+    "cmd": [
+      "sudo",
+      "sync",
+      "/dev/sdc"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "sync disk (2)"
   },
   {
     "cmd": [
@@ -195,7 +223,7 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2021-07-20 AND name~staging-chromeos-cache-snapshot-.*"
+      "creationTimestamp<2012-05-07 AND name~staging-chromeos-cache-snapshot-.*"
     ],
     "infra_step": true,
     "name": "list snapshots with filter staging-chromeos-cache-snapshot",
@@ -268,7 +296,7 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2021-07-20 AND name~staging-chrome-cache-snapshot-.*"
+      "creationTimestamp<2012-05-07 AND name~staging-chrome-cache-snapshot-.*"
     ],
     "infra_step": true,
     "name": "list snapshots with filter staging-chrome-cache-snapshot",

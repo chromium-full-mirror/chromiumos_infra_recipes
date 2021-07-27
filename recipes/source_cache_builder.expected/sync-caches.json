@@ -140,6 +140,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-o",
+      "discard,defaults",
       "/dev/sdb",
       "[CLEANUP]/snapshot/chromeos"
     ],
@@ -429,7 +431,76 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk",
+    "name": "source cache update.attach gcloud compute cache disks.sync disk cache before snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "sync",
+      "/dev/sdb"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync disk cache before snapshot.sync disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.unmount disk for snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CLEANUP]/snapshot/chromeos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.unmount disk for snapshot.unmount disk chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.detach disk for snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=test-disk1-1337000003000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.detach disk for snapshot.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.snapshot synced disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -448,7 +519,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk.snapshot disk",
+    "name": "source cache update.attach gcloud compute cache disks.snapshot synced disk.snapshot disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -607,7 +678,9 @@
     "cmd": [
       "sudo",
       "mount",
-      "/dev/sdc",
+      "-o",
+      "discard,defaults",
+      "/dev/sdb",
       "[CLEANUP]/snapshot/chrome"
     ],
     "env": {
@@ -748,7 +821,76 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk (2)",
+    "name": "source cache update.attach gcloud compute cache disks.sync disk cache before snapshot (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "sync",
+      "/dev/sdb"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.sync disk cache before snapshot (2).sync disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.unmount disk for snapshot (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CLEANUP]/snapshot/chrome"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.unmount disk for snapshot (2).unmount disk chrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.detach disk for snapshot (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=test-disk2-1337000004500-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.attach gcloud compute cache disks.detach disk for snapshot (2).detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.attach gcloud compute cache disks.snapshot synced disk (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -767,7 +909,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.snapshot attached disk (2).snapshot disk",
+    "name": "source cache update.attach gcloud compute cache disks.snapshot synced disk (2).snapshot disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -827,122 +969,6 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CLEANUP]/snapshot/chromeos"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk.unmount disk chromiumos",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CLEANUP]/snapshot/chrome"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.clean up mounted compute disk.unmount disk chrome",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "detach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk1-1337000003000-us-central1-b",
-      "--zone=us-central1-b"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk.detach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "delete",
-      "test-disk1-1337000003000-us-central1-b",
-      "--zone=us-central1-b"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk.delete disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "detach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk2-1337000004500-us-central1-b",
-      "--zone=us-central1-b"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk.detach disk (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "delete",
-      "test-disk2-1337000004500-us-central1-b",
-      "--zone=us-central1-b"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.clean up gce disk.delete disk (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "source cache update.cleanup expired snapshots",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -957,7 +983,7 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2021-07-20 AND name~test-chromeos-prefix-.*"
+      "creationTimestamp<2012-05-07 AND name~test-chromeos-prefix-.*"
     ],
     "infra_step": true,
     "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-chromeos-prefix",
@@ -1031,7 +1057,7 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2021-07-20 AND name~test-chrome-prefix-.*"
+      "creationTimestamp<2012-05-07 AND name~test-chrome-prefix-.*"
     ],
     "infra_step": true,
     "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-chrome-prefix",

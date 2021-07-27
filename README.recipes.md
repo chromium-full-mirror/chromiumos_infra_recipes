@@ -3876,21 +3876,21 @@ Print out the auth creds currently on the bot.
 Args:
   step_name(str): Name of the step.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#388)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#404)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#432)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#448)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
 Upon exiting the context manager, each mounted disk is then iterated
 through and unmounted.
 
-&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#222)(self, disk, zone, snapshot, disk_type=None):**
+&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#237)(self, disk, zone, snapshot, disk_type=None):**
 
 Create a GCE disk.
 
@@ -3928,7 +3928,7 @@ Args:
 
 Returns: A string name of the instance.
 
-&mdash; **def [delete\_disk](/recipe_modules/gcloud/api.py#242)(self, disk, zone):**
+&mdash; **def [delete\_disk](/recipe_modules/gcloud/api.py#257)(self, disk, zone):**
 
 Delete a GCE disk.
 
@@ -3949,14 +3949,14 @@ Args:
   project(str): Google Cloud project name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [delete\_snapshots](/recipe_modules/gcloud/api.py#317)(self, snapshots):**
+&mdash; **def [delete\_snapshots](/recipe_modules/gcloud/api.py#332)(self, snapshots):**
 
 Delete the list of provided snapshots from GCE.
 
 Args:
   snapshots(list|str): A list of snapshot names.
 
-&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#204)(self, instance, disk, zone):**
+&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#218)(self, instance, disk, zone):**
 
 Detach a disk to a GCE instance.
 
@@ -3968,7 +3968,7 @@ Args:
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#330)(self, retention_days, prefixes, protected_snapshots=None):**
+&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#345)(self, retention_days, prefixes, protected_snapshots=None):**
 
 Calculate the list of snapshots that have expired.
 
@@ -3977,7 +3977,7 @@ Args:
   prefixes(list|str): List of prefixes to filter.
   protected_snapshots(list|str): List of snapshots to preserve.
 
-&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#256)(self, name, mount_path, recipe_mount=False):**
+&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#271)(self, name, mount_path, recipe_mount=False):**
 
 Mount an attached disk to host.
 
@@ -4004,7 +4004,7 @@ Args:
 
 Returns: Path to the image tar file.
 
-&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#364)(self, instance, disk, zone):**
+&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#380)(self, instance, disk, zone):**
 
 Set a disk to autodelete when a GCE instance is deleted.
 
@@ -4023,7 +4023,7 @@ Set the default project for gcloud command.
 Args:
   project(str): Google Cloud project name.
 
-&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#303)(self, disk, snapshot_name, zone):**
+&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#318)(self, disk, snapshot_name, zone):**
 
 Snapshot an attached disk on a GCE instance.
 
@@ -4037,6 +4037,24 @@ Args:
 The path to mount the snapshot disks.
 
 This is the path that the disks created from snapshots will be mounted.
+
+&mdash; **def [sync\_disk\_cache](/recipe_modules/gcloud/api.py#204)(self, name):**
+
+Force a local disk cache sync before snapshotting.
+
+Args:
+  name (str): Disk name to use to lookup the mount location.
+
+&mdash; **def [unmount\_disk](/recipe_modules/gcloud/api.py#302)(self, name, mount_path):**
+
+Unmount an attached disk to host.
+
+As a disk is unmounted, the disk is then removed from the stack
+that is used by the context manager to unmount as the task ends.
+
+Args:
+  name (str): An alphanumeric name for the mount, used for display.
+  mount_path(str): Directory to mount the disk.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
 [DEPS](/recipe_modules/gerrit/__init__.py#6): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

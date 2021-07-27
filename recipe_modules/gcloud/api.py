@@ -201,6 +201,20 @@ class GcloudApi(recipe_api.RecipeApi):
       self._add_cleanup_attached_disk(disk, instance, zone)
       self.set_disk_autodelete(instance=instance, disk=disk, zone=zone)
 
+  def sync_disk_cache(self, name):
+    """Force a local disk cache sync before snapshotting.
+
+    Args:
+      name (str): Disk name to use to lookup the mount location.
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      path_to_sync = self._attached_disks[name]
+      self.m.step('sync disk', [
+          'sudo',
+          'sync',
+          path_to_sync,
+      ], infra_step=True)
+
   def detach_disk(self, instance, disk, zone):
     """Detach a disk to a GCE instance.
 
@@ -218,6 +232,7 @@ class GcloudApi(recipe_api.RecipeApi):
           '--disk={}'.format(disk), '--zone={}'.format(zone)
       ], infra_step=True)
     self._remove_cleanup_attached_disk(disk, instance, zone)
+    self._dev_ref = chr(ord(self._dev_ref) - 1)
 
   def create_disk(self, disk, zone, snapshot, disk_type=None):
     """Create a GCE disk.
@@ -277,14 +292,14 @@ class GcloudApi(recipe_api.RecipeApi):
         mount_dir_cmd = ['mkdir', '-p', recipe_mount_path]
         self.m.step('ensure mount directory exists', mount_dir_cmd,
                     infra_step=True)
-      self.m.step(
-          'mount disk %s' % name,
-          ['sudo', 'mount', self._attached_disks[name], recipe_mount_path],
-          infra_step=True)
+      self.m.step('mount disk %s' % name, [
+          'sudo', 'mount', '-o', 'discard,defaults', self._attached_disks[name],
+          recipe_mount_path
+      ], infra_step=True)
       self._add_cleanup_mounted_disk(name, recipe_mount_path)
       return recipe_mount_path
 
-  def _unmount_disk(self, name, mount_path):
+  def unmount_disk(self, name, mount_path):
     """Unmount an attached disk to host.
 
     As a disk is unmounted, the disk is then removed from the stack
@@ -336,8 +351,9 @@ class GcloudApi(recipe_api.RecipeApi):
       prefixes(list|str): List of prefixes to filter.
       protected_snapshots(list|str): List of snapshots to preserve.
     """
-    today = datetime.date.today()
-    lookback_date = today - datetime.timedelta(days=retention_days)
+    lookback_date = (
+        self.m.time.utcnow() -
+        datetime.timedelta(days=retention_days)).strftime("%Y-%m-%d")
     list_cmd = ['gcloud', 'compute', 'snapshots', 'list', '--format', 'json']
     snapshot_list = []
     cmd = []
@@ -444,7 +460,7 @@ class GcloudApi(recipe_api.RecipeApi):
       if cleanup_mounted_disks:
         with self.m.step.nest('clean up mounted compute disk'):
           for name, mount_path in list(cleanup_mounted_disks):
-            self._unmount_disk(name, mount_path)
+            self.unmount_disk(name, mount_path)
       self._cleanup_mounted_stack.pop()
 
   def _add_cleanup_mounted_disk(self, name, mount_path):

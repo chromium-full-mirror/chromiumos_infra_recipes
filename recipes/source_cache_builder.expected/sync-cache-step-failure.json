@@ -144,6 +144,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-o",
+      "discard,defaults",
       "/dev/sdb",
       "[CLEANUP]/snapshot/chromeos"
     ],
@@ -556,7 +558,7 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2021-07-20 AND name~test-chromeos-prefix-.*"
+      "creationTimestamp<2012-05-07 AND name~test-chromeos-prefix-.*"
     ],
     "infra_step": true,
     "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-chromeos-prefix",

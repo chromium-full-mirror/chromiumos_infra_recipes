@@ -102,7 +102,15 @@ def RunSteps(api, properties):
                                                       cache.version_file,
                                                       cache.recovery_snapshot)
               break
-          with api.step.nest('snapshot attached disk'):
+          with api.step.nest('sync disk cache before snapshot'):
+            api.gcloud.sync_disk_cache(name=cache.cache_name)
+          with api.step.nest('unmount disk for snapshot'):
+            api.gcloud.unmount_disk(name=cache.cache_name,
+                                    mount_path=mount_path)
+          with api.step.nest('detach disk for snapshot'):
+            api.gcloud.detach_disk(instance=infra_host, disk=disk,
+                                   zone=m.group('zone'))
+          with api.step.nest('snapshot synced disk'):
             api.gcloud.snapshot_disk(disk, snapshot_name, m.group('zone'))
           with api.step.nest('upload updated version file'):
             api.cros_cache.write_and_upload_version(properties.cache_bucket,
