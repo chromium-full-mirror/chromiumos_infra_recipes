@@ -18,23 +18,7 @@ class SwarmingCli(recipe_api.RecipeApi):
 
   def __init__(self, *args, **kwargs):
     super(SwarmingCli, self).__init__(*args, **kwargs)
-    # TODO(b/186120266): Replace all Python-based methods with CIPD,
-    # and remove Python client/checkout.
-    self._py_client = 'swarming.py'
-    self._py_checkout = None
     self._cipd_bin = None
-
-  def _ensure_py_checkout(self):
-    """Ensures the Python swarming client is checked out."""
-    if not self._py_checkout:
-      with self.m.context(infra_steps=True):
-        cwd = self.m.path['cleanup'].join('swarming-client')
-        self.m.git.checkout(
-            'https://chromium.googlesource.com/infra/luci/client-py',
-            ref='14cadf852292035c5dc145de47f8af1000c9897a', dir_path=cwd,
-            submodules=False)
-        self._py_checkout = cwd
-        self._py_client = cwd.join('swarming.py')
 
   def _ensure_cipd_bin(self):
     """Ensures the CIPD swarming client is installed."""
@@ -48,18 +32,6 @@ class SwarmingCli(recipe_api.RecipeApi):
           pkgs.add_package(pkg_name, pkg_ref)
           self.m.cipd.ensure(cipd_dir, pkgs)
           self._cipd_bin = cipd_dir.join('swarming')
-
-  def _run_py(self, name, cmd, test_stdout=None):
-    """Return a swarming command step from the Python client.
-
-    Args:
-      name: (str): name of the step.
-      cmd (list[str]): swarming client subcommand to run.
-    """
-    self._ensure_py_checkout()
-    return self.m.easy.stdout_json_step(name, [self._py_client] + list(cmd),
-                                        test_stdout=test_stdout,
-                                        infra_step=True)
 
   def _run_bin(self, name, cmd, test_stdout=None):
     """Return a swarming command step from the CIPD binary.
@@ -87,7 +59,7 @@ class SwarmingCli(recipe_api.RecipeApi):
       # But for bot queries, we need them to be delimited by "=".
       cmd.extend(['-dimension', dim.replace(':', '=')])
     step = self._run_bin(
-        'get bot query result', cmd, test_stdout=lambda: self.test_api.
+        'get bot count query result', cmd, test_stdout=lambda: self.test_api.
         swarming_bot_step_test_data(dimensions))
     return step
 
@@ -99,7 +71,7 @@ class SwarmingCli(recipe_api.RecipeApi):
     """Retrieves the list of tasks from Swarming based on dimensions.
 
     Args:
-      dimensions (str): string containing key, value dimensions to query swarming.
+      dimensions (iterable): strings formatted as "key:value" to query Swarming.
       lookback_hours (int): Number of hours to query swarming on.
       swarming_instance(str): string containing the name of the Swarming
         instance to query.
@@ -107,13 +79,12 @@ class SwarmingCli(recipe_api.RecipeApi):
     Returns:
       (float) Max pending time in hours.
     """
-    task_list = self.get_task_list(dimensions, 'PENDING', lookback_hours,
-                                   swarming_instance, limit=1000)
-    now = self._swarming_time_to_datetime(task_list['now'])
+    tasks = self.get_task_list(dimensions, 'PENDING', lookback_hours,
+                               swarming_instance, limit=1000)
+    now = self.m.time.utcnow()
     oldest_time = now
-    items = task_list.get('items', [])
-    if items:
-      oldest_time = self._swarming_time_to_datetime(items[-1]['created_ts'])
+    if tasks:
+      oldest_time = self._swarming_time_to_datetime(tasks[-1]['created_ts'])
     # Hopefully there won't be tasks pending for days.
     return (now - oldest_time).seconds / 3600.0
 
@@ -129,20 +100,16 @@ class SwarmingCli(recipe_api.RecipeApi):
         instance to query.
       limit (int): Number of tasks to return.
     """
-    query_args = ['state={}'.format(state)]
+    cmd = ['tasks', '-S', swarming_instance]
+    cmd.extend(['start', str(self._calculate_epoch_start(lookback_hours))])
+    cmd.extend(['state', state])
     for dim in dimensions:
-      query_args.append('tags={}'.format(dim))
-    query_args.append('start={}'.format(
-        self._calculate_epoch_start(lookback_hours)))
-    cmd = [
-        'query', '--swarming', swarming_instance,
-        'tasks/list?' + '&'.join(query_args)
-    ]
+      cmd.extend(['-tag', dim])
     if limit:
-      cmd += ['--limit', str(limit)]
-    step = self._run_py(
-        'get task query result', cmd, test_stdout=lambda: self.test_api.
-        swarming_task_list_test_data(dimensions))
+      cmd.extend(['-limit', str(limit)])
+    step = self._run_bin(
+        'get task list query result', cmd,
+        test_stdout=lambda: self.test_api.swarming_task_list_test_data(self.m))
     return step
 
   def get_task_counts(self, dimensions, state, lookback_hours,
@@ -162,14 +129,14 @@ class SwarmingCli(recipe_api.RecipeApi):
     for dim in dimensions:
       cmd.extend(['-tag', dim])
     step = self._run_bin(
-        'get task query result', cmd, test_stdout=lambda: self.test_api.
+        'get task count query result', cmd, test_stdout=lambda: self.test_api.
         swarming_task_step_test_data(dimensions))
     return step
 
   def _calculate_epoch_start(self, lookback_hours=-24):
-    """Determines the epoch time needed for Swarming CL task queries.
+    """Determines the epoch time needed for Swarming CLI task queries.
 
-    Calculates current epoch time minus twenty-four hour delta.
+    Calculates current epoch time minus some number of hours.
 
     Args:
       lookback_hours (sint): signed int for number of hours to lookback
@@ -179,5 +146,4 @@ class SwarmingCli(recipe_api.RecipeApi):
       float, time since epoch in seconds.
     """
     hours_back = lookback_hours or -24
-    return ((self.m.time.utcnow() + timedelta(hours=hours_back)) -
-            datetime(1970, 1, 1)).total_seconds()
+    return self.m.time.time() + hours_back * 3600

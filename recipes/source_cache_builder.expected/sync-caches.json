@@ -957,7 +957,7 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2021-07-19 AND name~test-chromeos-prefix-.*"
+      "creationTimestamp<2021-07-20 AND name~test-chromeos-prefix-.*"
     ],
     "infra_step": true,
     "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-chromeos-prefix",
@@ -1031,7 +1031,7 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2021-07-19 AND name~test-chrome-prefix-.*"
+      "creationTimestamp<2021-07-20 AND name~test-chrome-prefix-.*"
     ],
     "infra_step": true,
     "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-chrome-prefix",

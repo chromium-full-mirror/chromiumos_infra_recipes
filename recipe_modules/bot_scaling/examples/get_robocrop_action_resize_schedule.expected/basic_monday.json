@@ -42,7 +42,7 @@
       "-count"
     ],
     "infra_step": true,
-    "name": "get bot query result",
+    "name": "get bot count query result",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -56,12 +56,12 @@
       "chromeos-swarming.appspot.com",
       "-count",
       "-start",
-      "1607297100.0",
+      "1607297100",
       "-state",
       "RUNNING"
     ],
     "infra_step": true,
-    "name": "get task query result",
+    "name": "get task count query result",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -75,12 +75,12 @@
       "chromeos-swarming.appspot.com",
       "-count",
       "-start",
-      "1607297100.0",
+      "1607297100",
       "-state",
       "PENDING"
     ],
     "infra_step": true,
-    "name": "get task query result (2)",
+    "name": "get task count query result (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -95,7 +95,7 @@
       "-count"
     ],
     "infra_step": true,
-    "name": "get bot query result (2)",
+    "name": "get bot count query result (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -109,12 +109,12 @@
       "chromeos-swarming.appspot.com",
       "-count",
       "-start",
-      "1607297100.0",
+      "1607297100",
       "-state",
       "RUNNING"
     ],
     "infra_step": true,
-    "name": "get task query result (3)",
+    "name": "get task count query result (3)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -128,12 +128,12 @@
       "chromeos-swarming.appspot.com",
       "-count",
       "-start",
-      "1607297100.0",
+      "1607297100",
       "-state",
       "PENDING"
     ],
     "infra_step": true,
-    "name": "get task query result (4)",
+    "name": "get task count query result (4)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"

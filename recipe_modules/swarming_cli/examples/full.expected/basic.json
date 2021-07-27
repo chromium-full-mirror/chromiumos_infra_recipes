@@ -46,7 +46,7 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "get bot query result",
+    "name": "get bot count query result",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"busy\": \"21\", @@@",
@@ -72,7 +72,7 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "get bot query result (2)",
+    "name": "get bot count query result (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -95,7 +95,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task query result",
+    "name": "get task count query result",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\", @@@",
@@ -121,7 +121,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task query result (2)",
+    "name": "get task count query result (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\", @@@",
@@ -132,91 +132,32 @@
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::git]/resources/git_setup.py",
-      "--path",
-      "[CLEANUP]/swarming-client",
-      "--url",
-      "https://chromium.googlesource.com/infra/luci/client-py"
-    ],
-    "infra_step": true,
-    "name": "git setup"
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "origin",
-      "--progress"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "env": {
-      "PATH": "RECIPE_REPO[depot_tools]:<PATH>"
-    },
-    "infra_step": true,
-    "name": "git fetch"
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "-f",
-      "14cadf852292035c5dc145de47f8af1000c9897a"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "infra_step": true,
-    "name": "git checkout"
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "infra_step": true,
-    "name": "read revision",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@<br/>checked out 'deadbeef'<br/>@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clean",
-      "-f",
-      "-d",
-      "-x"
-    ],
-    "cwd": "[CLEANUP]/swarming-client",
-    "infra_step": true,
-    "name": "git clean"
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/swarming-client/swarming.py",
-      "query",
-      "--swarming",
+      "[START_DIR]/cipd/swarming",
+      "tasks",
+      "-S",
       "chromeos-swarming.appspot.com",
-      "tasks/list?state=PENDING&tags=('role:cq', 'bot_size:large')&start=1336827204.5",
-      "--limit",
+      "start",
+      "1336827204.5",
+      "state",
+      "PENDING",
+      "-tag",
+      "role:cq",
+      "-tag",
+      "bot_size:large",
+      "-limit",
       "1000"
     ],
     "infra_step": true,
-    "name": "get task query result (3)",
+    "name": "get task list query result",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"items\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"created_ts\": \"2020-05-11T20:37:01.648454\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"created_ts\": \"2020-05-11T15:35:01.648454\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ], @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-05-11T20:48:03.437543\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created_ts\": \"2012-05-14T11:53:26.000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created_ts\": \"2012-05-14T10:53:26.000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },
