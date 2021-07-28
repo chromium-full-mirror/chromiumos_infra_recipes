@@ -173,6 +173,41 @@
     ]
   },
   {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/bot_scaling/generated/bot_policy.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "fetch HEAD:bot_scaling/generated/bot_policy.binaryproto (2)",
+    "timeout": 180
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "fetch HEAD:configs/bot-scaling/generated/bot_policy.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@missing_bot_fallbacks@[\"cq1\"]@@@",
+      "@@@STEP_LOG_END@missing_bot_fallbacks@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

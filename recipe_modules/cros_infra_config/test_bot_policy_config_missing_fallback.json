@@ -1,7 +1,52 @@
 {
   "botPolicies": [
     {
-      "botGroup": "cq",
+      "botGroup": "cq1",
+      "botType": {
+        "botSize": "large",
+        "coresPerBot": 32,
+        "memoryGb": 64
+      },
+      "scalingRestriction": {
+        "stepSize": 5,
+        "botCeiling": 100,
+        "botFloor": 5
+			},
+      "regionRestrictions": [
+        {
+          "region": "us-central1-b",
+          "prefix": "prefix-first",
+          "weight": 0.5
+        },
+        {
+          "region": "us-central2-d",
+          "prefix": "prefix-second",
+          "weight": 0.5
+        }
+      ],
+      "swarmingDimensions": [
+        {
+          "name": "role",
+          "value": "cq",
+          "values": [
+            "cq",
+            "bar"
+          ]
+        },
+        {
+          "name": "bot_size",
+          "value": "large",
+          "values": [
+            "large"
+          ]
+        }
+      ],
+      "policyMode": 2,
+      "swarmingInstance": "chromeos-swarming.appspot.com",
+      "application": "chromeos"
+    },
+    {
+      "botGroup": "cq2",
       "botType": {
         "botSize": "large",
         "coresPerBot": 32,
@@ -15,24 +60,14 @@
 			},
       "regionRestrictions": [
         {
-          "region": "us-central1-b",
-          "prefix": "prefix-first",
-          "weight": 0.245
-        },
-        {
-          "region": "us-central2-d",
-          "prefix": "prefix-second",
-          "weight": 0.31
-        },
-        {
           "region": "us-east1-d",
           "prefix": "prefix-third",
-          "weight": 0.245
+          "weight": 0.5
         },
         {
           "region": "us-west1-b",
           "prefix": "prefix-fourth",
-          "weight": 0.2
+          "weight": 0.5
         }
       ],
       "swarmingDimensions": [

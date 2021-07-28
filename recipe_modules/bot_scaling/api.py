@@ -45,9 +45,28 @@ class BotScalingApi(recipe_api.RecipeApi):
       ScalingAction, comprehensive action to be taken by RoboCrop.
     """
     scaling_actions = []
+    missing_bot_fallbacks = []
     for policy in bot_policy_config.bot_policies:
-      demand = self.get_swarming_demand(swarming_stats, policy.bot_group)
-      scaling_actions.append(self.get_scaling_action(demand, policy, configs))
+      # swarming_stats will be None when if there were errors fetching them
+      # In this case, set bots to bot_fallback configs
+      if swarming_stats is None:
+        # There should never be bot_policy configs with missing bot_fallback
+        # configs or bot_fallbacks set to 0, so just skip over those and make
+        # the step red.
+        if policy.scaling_restriction.bot_fallback:
+          demand = policy.scaling_restriction.bot_fallback
+          scaling_actions.append(
+              self.get_scaling_action(demand, policy, configs))
+        else:
+          missing_bot_fallbacks.append(policy.bot_group)
+      else:
+        demand = self.get_swarming_demand(swarming_stats, policy.bot_group)
+        scaling_actions.append(self.get_scaling_action(demand, policy, configs))
+    if missing_bot_fallbacks:
+      step = self.m.step.active_result
+      step.presentation.logs['missing_bot_fallbacks'] = self.m.json.dumps(
+          missing_bot_fallbacks)
+      step.presentation.status = self.m.step.EXCEPTION
 
     quota_usage = self._get_quota_usage(scaling_actions, configs)
 

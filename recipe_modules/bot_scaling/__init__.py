@@ -6,6 +6,9 @@
 DEPS = [
     'cros_history',
     'gce_provider',
+    'recipe_engine/json',
     'recipe_engine/time',
+    'recipe_engine/python',
+    'recipe_engine/step',
     'swarming_cli',
 ]

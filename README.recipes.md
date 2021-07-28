@@ -540,13 +540,13 @@ Args:
   child_builds (list[build_pb2.Build]): The child builds for this cq run.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
-[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 #### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that determines how to scale bot groups.
 
-&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#107)(self, demand, scaling_restriction):**
+&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#126)(self, demand, scaling_restriction):**
 
 Core function that scales bots based on demand.
 
@@ -558,7 +558,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#208)(self, bot_policy_config):**
+&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#227)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
 
@@ -569,7 +569,7 @@ Args:
 Returns:
   list(Config), GCE Provider config definitions.
 
-&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#224)(self, region_restrictions, config_map):**
+&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#243)(self, region_restrictions, config_map):**
 
 Sums the total number of configured bots per bot policy.
 
@@ -581,7 +581,7 @@ Args:
 Returns:
   int, sum of the total number of bots in GCE Provider
 
-&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#125)(self, bots_requested, region_restrictions):**
+&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#144)(self, bots_requested, region_restrictions):**
 
 Determines regional distribution of bot requests.
 
@@ -607,7 +607,7 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#57)(self, demand, bot_policy, configs):**
+&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#76)(self, demand, bot_policy, configs):**
 
 The function that creates a ScalingAction for a bot group.
 
@@ -619,7 +619,7 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&mdash; **def [get\_swarming\_demand](/recipe_modules/bot_scaling/api.py#154)(self, swarming_stats, bot_group):**
+&mdash; **def [get\_swarming\_demand](/recipe_modules/bot_scaling/api.py#173)(self, swarming_stats, bot_group):**
 
 Return the demand for bots in a bot group.
 
@@ -631,7 +631,7 @@ Args:
 Returns:
   int, the current demand for bots in the group.
 
-&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#173)(self, bot_policy_config):**
+&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#192)(self, bot_policy_config):**
 
 Determines the current Swarming stats per bot group.
 
@@ -642,7 +642,7 @@ Args:
 Returns:
   SwarmingStats:  bot and task stats named tuple.
 
-&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#312)(self, bot_policy_config):**
+&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#331)(self, bot_policy_config):**
 
 Reduces bot_policy_config fields prior to sending to bb tables.
 
@@ -654,7 +654,7 @@ Returns:
   str, scaled down config that only includes data needed
   for plx
 
-&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#359)(self, dimensions):**
+&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#378)(self, dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
@@ -664,7 +664,7 @@ Args:
 Returns:
   list, product of all swarming dimensions for querying.
 
-&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#273)(self, bot_policy_config, configs, application='ChromeOS'):**
+&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#292)(self, bot_policy_config, configs, application='ChromeOS'):**
 
 Sums the min and max bot numbers per bot policy.
 
@@ -677,7 +677,7 @@ Args:
 Returns:
   BotPolicy, updated to reflect ScalingRestriction values.
 
-&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#336)(self, robocrop_actions, configs):**
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#355)(self, robocrop_actions, configs):**
 
 Updates each GCE Provider config that is actionable.
 
@@ -6662,7 +6662,7 @@ The annealing builders run in serial and do the following:
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_robocrop_action.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_robocrop_action.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_robocrop_action.py#18)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_robocrop\_action\_resize\_schedule](/recipe_modules/bot_scaling/examples/get_robocrop_action_resize_schedule.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_robocrop_action_resize_schedule.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -8350,11 +8350,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [RunSteps](/recipe_modules/result_flow/examples/full.py#20)(api):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
-[DEPS](/recipes/robocrop.py#12): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/robocrop.py#15): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for scaling bots in Chrome and Chrome OS pools.
 
-&mdash; **def [RunSteps](/recipes/robocrop.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipes/robocrop.py#29)(api, properties):**
 ### *recipes* / [service\_version:examples/full](/recipe_modules/service_version/examples/full.py)
 
 [DEPS](/recipe_modules/service_version/examples/full.py#6): [service\_version](#recipe_modules-service_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
