@@ -70,7 +70,7 @@ def RunSteps(api, properties):
   dry_run = api.cq.active or properties.dry_run
   manifest_ref = properties.manifest_ref
   if not manifest_ref:
-    raise ValueError('must set manifest ref')
+    raise StepFailure('must set manifest ref')
 
   with api.cros_source.checkout_overlays_context():
     internal_manifest = api.src_state.internal_manifest
@@ -973,7 +973,7 @@ def GenTests(api):
   yield api.test(
       'missing-required-properties',
       api.properties(AnnealingProperties()),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusFailure),
   )
 
   # TODO(crbug/1169277) this will become multiple tests.

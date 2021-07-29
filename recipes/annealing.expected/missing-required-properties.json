@@ -201,21 +201,9 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/annealing.py\", line 73, in RunSteps",
-      "    raise ValueError('must set manifest ref')",
-      "ValueError: must set manifest ref"
-    ]
-  },
-  {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('must set manifest ref',)"
+      "failure": {},
+      "humanReason": "must set manifest ref"
     },
     "name": "$result"
   }
