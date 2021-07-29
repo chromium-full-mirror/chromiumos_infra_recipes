@@ -70,6 +70,7 @@
   * [pupr](#recipe_modules-pupr) &mdash; APIs for PUpr.
   * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
+  * [result_db](#recipe_modules-result_db)
   * [result_flow](#recipe_modules-result_flow)
   * [service_version](#recipe_modules-service_version)
   * [skylab](#recipe_modules-skylab)
@@ -360,6 +361,7 @@
   * [repo:tests/source_cache_feature](#recipes-repo_tests_source_cache_feature)
   * [repo:tests/source_cache_feature_bypass](#recipes-repo_tests_source_cache_feature_bypass)
   * [repo:tests/tmp_manifest](#recipes-repo_tests_tmp_manifest)
+  * [result_db:examples/full](#recipes-result_db_examples_full)
   * [result_flow:examples/full](#recipes-result_flow_examples_full)
   * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and Chrome OS pools.
   * [service_version:examples/full](#recipes-service_version_examples_full)
@@ -5775,6 +5777,37 @@ Args:
 &mdash; **def [version](/recipe_modules/repo/api.py#144)(self):**
 
 Prints the current version information of repo.
+### *recipe_modules* / [result\_db](/recipe_modules/result_db)
+
+[DEPS](/recipe_modules/result_db/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [ResultDBCommand](/recipe_modules/result_db/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for chromium tests on skylab to upload result to Result DB.
+
+&mdash; **def [args\_to\_dict](/recipe_modules/result_db/api.py#18)(self, args):**
+
+Convert autoserv test arguments to dict
+
+Args:
+    args - list of autoserv extra arguments, e.g. key=val or key:val.
+
+Returns:
+    dictionary
+
+&mdash; **def [upload](/recipe_modules/result_db/api.py#35)(self, builder_name, test_args):**
+
+Call the resultDB module to upload test result
+
+Args:
+  * builder_name - Luci builder name.
+  * test_args - A string of extra autotest arguments,
+      e.g. "key1=val1 key2=val2". Chromium tests use test_arg to pass
+      runtime parameters to our autotest wrapper. We reuse it to pipe
+      resultDB arguments, because it is easy to access in test runner
+      recipe.
+      test_args must contain result_format and result_file. For other
+      supported parameters, one may refer recipe_engine/resultdb module.
 ### *recipe_modules* / [result\_flow](/recipe_modules/result_flow)
 
 [DEPS](/recipe_modules/result_flow/__init__.py#4): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8343,6 +8376,11 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 [DEPS](/recipe_modules/repo/tests/tmp_manifest.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/tests/tmp_manifest.py#15)(api):**
+### *recipes* / [result\_db:examples/full](/recipe_modules/result_db/examples/full.py)
+
+[DEPS](/recipe_modules/result_db/examples/full.py#8): [result\_db](#recipe_modules-result_db), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+&mdash; **def [RunSteps](/recipe_modules/result_db/examples/full.py#16)(api):**
 ### *recipes* / [result\_flow:examples/full](/recipe_modules/result_flow/examples/full.py)
 
 [DEPS](/recipe_modules/result_flow/examples/full.py#6): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9005,6 +9043,7 @@ Basic tests for the urls recipe module.
 [recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/c5dc7a267c358f6ba391d200e2fb41d81ce35b23/README.recipes.md#recipe_modules-python
 [recipe_engine/recipe_modules/random]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/c5dc7a267c358f6ba391d200e2fb41d81ce35b23/README.recipes.md#recipe_modules-random
 [recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/c5dc7a267c358f6ba391d200e2fb41d81ce35b23/README.recipes.md#recipe_modules-raw_io
+[recipe_engine/recipe_modules/resultdb]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/c5dc7a267c358f6ba391d200e2fb41d81ce35b23/README.recipes.md#recipe_modules-resultdb
 [recipe_engine/recipe_modules/runtime]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/c5dc7a267c358f6ba391d200e2fb41d81ce35b23/README.recipes.md#recipe_modules-runtime
 [recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/c5dc7a267c358f6ba391d200e2fb41d81ce35b23/README.recipes.md#recipe_modules-scheduler
 [recipe_engine/recipe_modules/service_account]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/c5dc7a267c358f6ba391d200e2fb41d81ce35b23/README.recipes.md#recipe_modules-service_account
