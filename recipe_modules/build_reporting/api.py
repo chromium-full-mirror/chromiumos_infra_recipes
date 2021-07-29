@@ -16,8 +16,8 @@ message.
 
 The pub/sub topic to send status to is configurable through the `pubsub_project`
 and `pubsub_topic` properties for the module.  If not set, these default to
-`chromeos-bot` and `chromeos-builds-all`, which is intended to be the unfiltered
-top-level topic for all builds.
+`chromeos-build-reporting` and `chromeos-builds-all`, which is intended to be
+the unfiltered top-level topic for all builds.
 """
 
 import contextlib
@@ -35,7 +35,7 @@ from recipe_engine.recipe_api import InfraFailure, StepFailure
 
 def default_project(_staging):
   """Default cloud project containing the pubsub topic to send to."""
-  return 'chromeos-bot'
+  return 'chromeos-build-reporting'
 
 
 def default_topic(staging):

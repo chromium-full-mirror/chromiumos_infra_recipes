@@ -988,8 +988,8 @@ message.
 
 The pub/sub topic to send status to is configurable through the `pubsub_project`
 and `pubsub_topic` properties for the module.  If not set, these default to
-`chromeos-bot` and `chromeos-builds-all`, which is intended to be the unfiltered
-top-level topic for all builds.
+`chromeos-build-reporting` and `chromeos-builds-all`, which is intended to be
+the unfiltered top-level topic for all builds.
 
 #### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#74)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
