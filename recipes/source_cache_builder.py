@@ -84,9 +84,12 @@ def RunSteps(api, properties):
                   sync_opts = dict(force_sync=True, detach=True, jobs=20,
                                    retry_fetches=8, timeout=10800,
                                    force_remove_dirty=True)
-                  init_opts = dict(
-                      verbose=True, manifest_branch='{}snapshot'.format(
-                          'staging-' if is_staging else ''))
+                  manifest_branch = '{}snapshot'.format(
+                      'staging-' if is_staging else '')
+                  if cache.branch != 'main':
+                    manifest_branch = cache.branch
+                  init_opts = dict(verbose=True,
+                                   manifest_branch=manifest_branch)
                   api.repo.ensure_synced_checkout(
                       mount_path, api.src_state.internal_manifest.url,
                       init_opts=init_opts, sync_opts=sync_opts,
@@ -141,6 +144,8 @@ def GenTests(api):
                   snapshot_prefix='test-cache-prefix',
                   version_file='test-cache-version',
                   command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='release-R90-13816.B',
               ),
           ],
           cache_bucket='chromeos-bot-cache',
@@ -163,6 +168,8 @@ def GenTests(api):
                   snapshot_prefix='test-cache-prefix',
                   version_file='test-cache-version',
                   command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
               ),
           ],
           cache_bucket='chromeos-bot-cache',
@@ -183,6 +190,8 @@ def GenTests(api):
                   snapshot_prefix='test-chromeos-prefix',
                   version_file='test-chromeos-version',
                   command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
               ),
               dict(
                   cache_name='chrome',
@@ -191,6 +200,8 @@ def GenTests(api):
                   snapshot_prefix='test-chrome-prefix',
                   version_file='test-chrome-version',
                   command='gclient',
+                  recovery_snapshot='chrome_default_recovery_snapshot',
+                  branch='main',
               ),
           ],
           cache_bucket='chromeos-bot-cache',
@@ -212,6 +223,7 @@ def GenTests(api):
                   version_file='test-chromeos-version.txt',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
               ),
           ],
           cache_bucket='chromeos-bot-cache',
@@ -237,6 +249,7 @@ def GenTests(api):
                   version_file='test-chromeos-version.txt',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
               ),
           ],
           cache_bucket='chromeos-bot-cache',

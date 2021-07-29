@@ -22,6 +22,8 @@ message SourceCacheDefinition {
   string command = 6;
   // Default recovery snapshot version.
   string recovery_snapshot = 7;
+  // Git branch to sync cache.
+  string branch = 8;
 }
 message SourceCacheBuilderProperties {
   // The list of the buildbucket pools to monitor and scale.

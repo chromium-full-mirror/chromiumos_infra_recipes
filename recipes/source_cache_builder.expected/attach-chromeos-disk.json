@@ -166,7 +166,7 @@
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_CLEAN\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"release-R90-13816.B\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_CLEAN\"}@@@"
     ]
   },
   {
@@ -177,7 +177,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n\"manifest_branch\": \"release-R90-13816.B\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/snapshot/test-cache/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/snapshot/test-cache",
@@ -186,7 +186,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"release-R90-13816.B\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -196,7 +196,7 @@
     "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_TEXT@cache tracking snapshot branch@@@"
+      "@@@STEP_TEXT@cache tracking release-R90-13816.B branch@@@"
     ]
   },
   {
@@ -227,7 +227,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "snapshot",
+      "release-R90-13816.B",
       "--repo-rev=stable",
       "--verbose"
     ],
@@ -415,7 +415,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n\"manifest_branch\": \"release-R90-13816.B\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/snapshot/test-cache/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/snapshot/test-cache",
@@ -424,7 +424,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"release-R90-13816.B\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
