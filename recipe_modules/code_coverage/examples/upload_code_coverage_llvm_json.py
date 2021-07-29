@@ -57,6 +57,18 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
+      'cq-should-write-cleaned-and-filtered-coverage-file-for-incremental',
+      api.post_check(
+          post_process.MustRun,
+          'upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.write cleaned and filtered file'
+      ),
+      cq=True,
+      input_properties={
+          '$chromeos/code_coverage': dict(project='chromiumos/platform2')
+      },
+  )
+
+  yield api.build_menu.test(
       'non-cq-uploads-absolute-to-code-search-and-chromium',
       api.post_check(
           post_process.DoesNotRun,

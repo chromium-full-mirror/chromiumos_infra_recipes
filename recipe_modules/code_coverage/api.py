@@ -10,9 +10,11 @@ from recipe_engine.recipe_api import StepFailure
 class CoverageFileSettings:
   """Contains parameters used to drive different coverage upload workflows."""
 
-  def __init__(self, should_clean, clean_file_name_prepend):
+  def __init__(self, should_clean, clean_file_name_prepend,
+               filter_llvm_json_coverage_to_cl_files):
     self.should_clean = should_clean
     self.clean_file_name_prepend = clean_file_name_prepend
+    self.filter_llvm_json_coverage_to_cl_files = filter_llvm_json_coverage_to_cl_files
 
 
 DEFAULT_CODE_PROJECT = 'chromiumos/platform2'
@@ -77,7 +79,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         step_name (str): name for the step.
     """
     self.process_coverage_data(build_target_name, tarfile, 'LCOV', step_name,
-                               CoverageFileSettings(False, None))
+                               CoverageFileSettings(False, None, False))
 
   def upload_code_coverage_llvm_json(
       self, build_target_name, tarfile,
@@ -89,10 +91,11 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         tarfile (Path): path to tarfile.
         step_name (str): name for the step.
     """
-    self.process_coverage_data(build_target_name, tarfile, 'LLVM', step_name,
-                               CoverageFileSettings(True, ''),
-                               CoverageFileSettings(True, '/src/platform2/'),
-                               CoverageFileSettings(False, None))
+    self.process_coverage_data(
+        build_target_name, tarfile, 'LLVM', step_name,
+        CoverageFileSettings(True, '', True),
+        CoverageFileSettings(True, '/src/platform2/', False),
+        CoverageFileSettings(False, None, False))
 
   def process_coverage_data(self, build_target_name, tarfile, coverage_type,
                             step_name='upload code coverage data',
@@ -162,7 +165,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       return path_to_coverage_file
 
     tmp_dir = self.m.path.mkdtemp(prefix='cleaned-coverage')
-    out_file = tmp_dir.join('cleaned.file')
+    cleaned_path_file = tmp_dir.join('cleaned.file')
     self.m.python(
         'writing cleaned coverage file',
         self.resource('clean_coverage_file.py'), args=[
@@ -171,7 +174,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             '--constants-file',
             self.resource('constants.json'),
             '--output-file',
-            out_file,
+            cleaned_path_file,
             '--project-name',
             project_name,
             '--build-target',
@@ -180,8 +183,67 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             coverage_file_setting.clean_file_name_prepend,
         ], venv=True)
 
-    # Return the path to the new file.
-    return out_file
+    # Read the file and include it in the log for debugging purposes.
+    self.m.file.read_text('read cleaned.file', cleaned_path_file,
+                          include_log=True)
+
+    # Exit if the file does not need to be filtered.
+    if not coverage_file_setting.filter_llvm_json_coverage_to_cl_files:
+      return cleaned_path_file
+
+    # Filter the data to the changed files.
+    with self.m.step.nest('filter to changed files only') as presentation:
+      # Get the names of all the files in each cl.
+      patch_set_file_names = {}
+      with self.m.step.nest('get patch sets'):
+        patch_sets = [
+            self.m.gerrit.fetch_patch_set_from_change(commit,
+                                                      include_files=True)
+            for commit in self.m.cros_infra_config.gerrit_changes
+        ]
+
+        for patch_set in patch_sets:
+          for file in patch_set.file_infos.keys():
+            patch_set_file_names[file.strip().lower()] = True
+
+      # Write out the changed file names for debugging.
+      presentation.logs['output'] = [str(patch_set_file_names.keys())]
+      presentation.step_text = 'found %d file changes.' % len(
+          patch_set_file_names.keys())
+
+      # Rewrite the coverage llvm json file to only include the files from the cls.
+      data_to_clean = self.m.file.read_json(
+          'read coverage data from {}'.format(cleaned_path_file),
+          cleaned_path_file, test_data={
+              'data': [{
+                  'files': [{
+                      'filename': 'my/fake/file',
+                  }, {
+                      'filename': 'a_random/file.cc'
+                  }]
+              }],
+              'type': 'coverage',
+              'version': '0.0',
+          })
+
+      coverage_data = []
+      for data in data_to_clean['data']:
+        for file_data in data['files']:
+          if file_data['filename'].strip().lower() in patch_set_file_names:
+            coverage_data.append(file_data)
+
+      # Write out the results and return the path to the filtered file.
+      cleaned_and_filtered_path_file = tmp_dir.join('cleaned_and_filtered.file')
+      self.m.file.write_json(
+          'write cleaned and filtered file', cleaned_and_filtered_path_file, {
+              'data': [{
+                  'files': coverage_data
+              }],
+              'type': data_to_clean['type'],
+              'version': data_to_clean['version'],
+          }, include_log=True)
+
+      return cleaned_and_filtered_path_file
 
   def _upload_absolute_coverage_to_code_search(self, fpath, coverage_type,
                                                build_target_name,

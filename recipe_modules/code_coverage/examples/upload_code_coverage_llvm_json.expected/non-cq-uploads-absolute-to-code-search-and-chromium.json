@@ -4168,6 +4168,25 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
+    "infra_step": true,
+    "name": "upload code coverage data (code coverage llvm json).upload absolute coverage to Code Search.read cleaned.file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@cleaned.file@@@"
+    ]
+  },
+  {
+    "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",

@@ -18,6 +18,7 @@ DEPS = [
     'cros_source',
     'gitiles',
     'cros_infra_config',
+    'gerrit',
 ]
 
 from PB.recipe_modules.chromeos.code_coverage.code_coverage import (
