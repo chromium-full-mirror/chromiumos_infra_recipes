@@ -8,8 +8,10 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
+    'cros_build_api',
     'cros_infra_config',
     'gerrit',
+    'gitiles',
 ]
 
 from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import (

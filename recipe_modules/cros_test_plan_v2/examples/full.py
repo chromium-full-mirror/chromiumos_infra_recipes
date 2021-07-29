@@ -13,10 +13,11 @@ from recipe_engine import post_process
 from google.protobuf import text_format
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.chromiumos.test.api.coverage_rule import CoverageRule
 
 
 def RunSteps(api):
-  coverage_rules = api.cros_test_plan_v2.relevant_plans([
+  relevant_plans = api.cros_test_plan_v2.relevant_plans([
       GerritChange(
           host="chromium-review.googlesource.com",
           project="src/projectA",
@@ -32,11 +33,17 @@ def RunSteps(api):
   ])
 
   api.assertions.assertListEqual(
-      coverage_rules,
+      relevant_plans,
       [
           api.cros_test_plan_v2.test_api.kernel_source_test_plan(),
           api.cros_test_plan_v2.test_api.fp_source_test_plan(),
       ],
+  )
+
+  coverage_rules = api.cros_test_plan_v2.generate_coverage_rules(relevant_plans)
+  api.assertions.assertEqual(
+      coverage_rules,
+      [CoverageRule(name='kernel:4.4')],
   )
 
 

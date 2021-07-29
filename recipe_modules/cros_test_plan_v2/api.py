@@ -2,11 +2,17 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import base64
 
 from recipe_engine import recipe_api
 
+from google.protobuf import json_format
 from google.protobuf import text_format
 
+from PB.chromite.api import test as test_pb2
+from PB.chromiumos.build.api import system_image as system_image_pb2
+from PB.chromiumos.config.payload import flat_config as flat_config_pb2
+from PB.chromiumos.test.api import dut_attribute as dut_attribute_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 
 
@@ -89,3 +95,63 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._test_plan_path = cipd_dir.join('test_plan')
+
+  def _get_config_jsonpb(self, path, message, test_output_message):
+    """Fetch and parse a jsonpb from config-internal.
+
+    Args:
+      * path (str): Path to the jsonpb file within config-internal.
+      * message (google.protobuf.Message): A message to merge into.
+      * test_output_message (google.protobuf.Message): A message of the same
+          type as the 'message' arg to return as test data.
+    """
+    test_output_contents = base64.b64encode(
+        json_format.MessageToJson(test_output_message))
+    contents = self.m.gitiles.get_file('chrome-internal.googlesource.com',
+                                       'chromeos/config-internal', path,
+                                       public=False,
+                                       test_output_data=test_output_contents)
+    return json_format.Parse(contents, message)
+
+  def generate_coverage_rules(self, source_test_plans):
+    """Call the GetCoverageRules BuildAPI.
+
+    Args:
+      * source_test_plans (list[source_test_plan_pb2.SourceTestPlan]):
+          SourceTestPlans to include in the request.
+
+    Returns:
+      A list of generated CoverageRules.
+    """
+    # TODO(b/182898188): Read BuildMetadataList and FlatConfigList specific to
+    # the build when available. For now, just read the global one from
+    # config-internal.
+    build_metadata_list = self._get_config_jsonpb(
+        'build/generated/build_metadata.jsonproto',
+        message=system_image_pb2.SystemImage.BuildMetadataList(),
+        test_output_message=self.test_api.build_metadata_list(),
+    )
+
+    flat_config_list = self._get_config_jsonpb(
+        'hw_design/generated/flattened.jsonproto',
+        message=flat_config_pb2.FlatConfigList(),
+        test_output_message=self.test_api.flat_config_list(),
+    )
+
+    dut_attribute_list = self._get_config_jsonpb(
+        'dut_attributes/generated/dut_attributes.jsonproto',
+        message=dut_attribute_pb2.DutAttributeList(),
+        test_output_message=self.test_api.dut_attribute_list(),
+    )
+
+    request = test_pb2.GetCoverageRulesRequest(
+        source_test_plans=source_test_plans,
+        build_metadata_list=build_metadata_list,
+        flat_config_list=flat_config_list,
+        dut_attribute_list=dut_attribute_list,
+    )
+
+    return list(
+        self.m.cros_build_api.TestService.GetCoverageRules(
+            request).coverage_rules,
+    )
