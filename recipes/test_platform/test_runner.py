@@ -6,6 +6,7 @@
 """Recipe for the ChromeOS Skylab Test Runner."""
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusProperties
 from PB.recipe_modules.chromeos.phosphorus.phosphorus\
@@ -20,11 +21,13 @@ from google.protobuf import duration_pb2
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
+from recipe_engine import post_process
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface, error_messages
 
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -35,6 +38,7 @@ DEPS = [
     'cts_results_archive',
     'dut_interface',
     'phosphorus',
+    'result_db',
     'result_flow',
 ]
 
@@ -241,6 +245,12 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
     # the result files.
     archive_all_logs(api, interface=interface, test_metadata=test_metadata,
                      result=result)
+
+    if (test_metadata.test.autotest.test_args and
+        'enable_rdb=True' in test_metadata.test.autotest.test_args):
+      api.result_db.upload(api.buildbucket.builder_name,
+                           test_metadata.test.autotest.test_args)
+
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))
 
@@ -427,7 +437,13 @@ def GenTests(api):
     return (api.properties(
         TestRunnerProperties(request=_canned_multitest_request())))
 
-  def _canned_test_runner_request():
+  # An example request represents chromium tests which upload result
+  # to rdb.
+  def _request_properties_rdb(test_arg):
+    return (api.properties(
+        TestRunnerProperties(request=_canned_test_runner_request(test_arg))))
+
+  def _canned_test_runner_request(test_arg='foo=bar'):
     return {
         'prejob': {
             'provisionable_labels': {
@@ -437,7 +453,7 @@ def GenTests(api):
         'test': {
             'autotest': {
                 'name': 'dummy_name',
-                'test_args': 'foo=bar',
+                'test_args': test_arg,
                 'keyvals': {
                     'key1': 'value1',
                 },
@@ -831,4 +847,36 @@ def GenTests(api):
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+  )
+
+  CHROMIUM_TEST_ARGS = [
+      'result_format=gtest',
+      'artifact_directory=/tmp/artifact',
+      'result_file=[START_DIR]/chromium/output.json',
+      'enable_rdb=True',
+  ]
+  yield api.test(
+      'chormium_test_upload_result_to_rdb',
+      api.path.exists(api.path['start_dir'].join('chromium', 'output.json')),
+      api.buildbucket.ci_build(),
+      api.buildbucket.build(
+          build_pb2.Build(
+              id=42, builder=builder_pb2.BuilderID(
+                  project='chromeos',
+                  bucket='test_runner',
+                  builder='test_runner',
+              ), infra=build_pb2.BuildInfra(
+                  resultdb=build_pb2.BuildInfra.ResultDB(
+                      invocation='invocations/build:%d' % 42)))),
+      _misc_properties(),
+      _request_properties_rdb(' '.join(CHROMIUM_TEST_ARGS)),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      api.post_process(
+          post_process.MustRun,
+          'execution steps.original_test.upload chromium test result to rdb.'
+          'run rdb'),
   )
