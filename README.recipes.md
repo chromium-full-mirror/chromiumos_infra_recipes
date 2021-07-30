@@ -1870,12 +1870,13 @@ Args:
   manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
       namedtuples.
 
-&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#187)(self, gerrit_changes):**
+&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#187)(self, gerrit_changes, chunk_size=4):**
 
 Get Cq-Depend string for the given list of Gerrit changes.
 
 Args:
   gerrit_changes (list[GerritChange]): The changes on which to depend.
+  chunk_size (int): The number of CLs per 'Cq-Depend:' line.
 
 Return:
   str: The full Cq-Depend string.
@@ -1890,7 +1891,7 @@ Args:
 Returns:
   str: The reference string for the change, e.g. chromium:12345
 
-&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#201)(self, gerrit_changes):**
+&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#209)(self, gerrit_changes):**
 
 Mutually Cq-Depend all given Gerrit changes.
 

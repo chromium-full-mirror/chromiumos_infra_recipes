@@ -23,6 +23,20 @@ def RunSteps(api):
       change=456,
   )
 
+  many_gerrit_changes = [
+      GerritChange(host='buz-review.googlesource.com', change=x)
+      for x in range(0, 201)
+  ]
+
+  # Construct the expected string by hand (in another way).
+  many_expected_deps_str = []
+  for x in range(0, 201, 3):
+    many_expected_deps_str.append('Cq-Depend: buz:%s,buz:%s,buz:%s' %
+                                  (x, x + 1, x + 2))
+  api.assertions.assertEqual(
+      api.cros_cq_depends.get_cq_depend(many_gerrit_changes, chunk_size=3),
+      '\n'.join(many_expected_deps_str))
+
   api.assertions.assertEqual(
       api.cros_cq_depends.get_cq_depend_reference(gerrit_change), 'foo:123')
 

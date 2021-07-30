@@ -184,11 +184,12 @@ class CrosCqDependsApi(RecipeApi):
     assert match, 'cannot parse short host of {}'.format(gerrit_change.host)
     return '{}:{}'.format(match.group(1), gerrit_change.change)
 
-  def get_cq_depend(self, gerrit_changes):
+  def get_cq_depend(self, gerrit_changes, chunk_size=4):
     """Get Cq-Depend string for the given list of Gerrit changes.
 
     Args:
       gerrit_changes (list[GerritChange]): The changes on which to depend.
+      chunk_size (int): The number of CLs per 'Cq-Depend:' line.
 
     Return:
       str: The full Cq-Depend string.
@@ -196,7 +197,14 @@ class CrosCqDependsApi(RecipeApi):
     depends = map(self.get_cq_depend_reference, gerrit_changes)
     if len(depends) == 0:
       return ''
-    return 'Cq-Depend: {}'.format(','.join(depends))
+
+    chunks = []
+    while depends:
+      these_depends = depends[:chunk_size]
+      del depends[:chunk_size]
+      chunks.append('Cq-Depend: {}'.format(','.join(these_depends)))
+
+    return '\n'.join(chunks)
 
   def get_mutual_cq_depend(self, gerrit_changes):
     """Mutually Cq-Depend all given Gerrit changes.
