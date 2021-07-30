@@ -40,6 +40,8 @@ import json
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
 
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
 
 DEPS = [
@@ -299,7 +301,7 @@ def _execute_requests(api, requests, enumerations, config):
 def _ensure_all_requests_enumerated(requests, enumerations):
   missing = set(requests.keys()) - set(enumerations.keys())
   if missing:
-    raise ValueError('No enumerations for requests tagged %s' % missing)
+    raise StepFailure('No enumerations for requests tagged %s' % missing)
 
 
 def RunSteps(api, properties):
@@ -1214,7 +1216,8 @@ def GenTests(api):
       api.properties(
           CrosTestPlatformProperties(requests={'first': _test_request('foo')},
                                      config=_test_config('foo'))),
-      _empty_enumerate_response(api), api.expect_exception('ValueError'))
+      _empty_enumerate_response(api),
+      api.post_check(post_process.StatusFailure))
 
   yield api.test(
       'enumeration error',

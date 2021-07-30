@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "package invalid-package",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -11,27 +11,13 @@
     "name": "package invalid-package.validate instructions package_name: \"invalid-package\"\nref: \"foo-ref\"\nversion: \"foo-version\"\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 108, in RunSteps",
-      "    validate(api, instruction)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 44, in validate",
-      "    (instruction.package_name, package_passlist))",
-      "ValueError: Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64']"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError(u\"Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64']\",)"
+      "failure": {},
+      "humanReason": "Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64']"
     },
     "name": "$result"
   }

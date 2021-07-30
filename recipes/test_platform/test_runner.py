@@ -22,6 +22,7 @@ from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface, error_messages
 
 DEPS = [
@@ -96,11 +97,11 @@ def validate_request(api, test):
   * test (Request.Test): Test instance.
 
   Raises:
-    * ValueError if there are invalid properties.
+    * StepFailure if there are invalid properties.
   """
   with api.step.nest('validate request'):
     if not test.autotest.name:
-      raise ValueError("Test name must be specified")
+      raise StepFailure("Test name must be specified")
 
 
 def archive_all_logs(api, interface, test_metadata, result):
@@ -549,7 +550,7 @@ def GenTests(api):
       'test_name_missing',
       _misc_properties(),
       _request_properties_no_name(),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(

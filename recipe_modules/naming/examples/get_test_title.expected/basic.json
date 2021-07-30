@@ -1,22 +1,8 @@
 [
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/naming/examples/get_test_title.py\", line 12, in RunSteps",
-      "    api.naming.get_test_title(1234)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/naming/api.py\", line 44, in get_test_title",
-      "    raise TypeError('Expected Build or SkylabResult,' 'got %s' % type(test))",
-      "TypeError: Expected Build or SkylabResult,got <type 'int'>"
-    ]
-  },
-  {
     "failure": {
-      "humanReason": "Uncaught Exception: TypeError(\"Expected Build or SkylabResult,got <type 'int'>\",)"
+      "failure": {},
+      "humanReason": "Expected Build or SkylabResult,got <type 'int'>"
     },
     "name": "$result"
   }

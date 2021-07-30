@@ -1,20 +1,8 @@
 [
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 418, in RunSteps",
-      "    raise ValueError('gerrit_changes required as input.')",
-      "ValueError: gerrit_changes required as input."
-    ]
-  },
-  {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('gerrit_changes required as input.',)"
+      "failure": {},
+      "humanReason": "gerrit_changes required as input."
     },
     "name": "$result"
   }

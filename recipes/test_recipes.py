@@ -353,10 +353,10 @@ def _update_skipped_verifiers(api, verifiers):
 
     for skip_builder in skip_builders:
       if skip_builder not in verifiers:
-        raise ValueError(('Builder {} is specified in the {} footer, but is '
-                          'not in the builders list ({})').format(
-                              skip_builder, SKIP_BUILDERS_FOOTER,
-                              ' '.join(x.name for x in verifiers.values())))
+        raise StepFailure(('Builder {} is specified in the {} footer, but is '
+                           'not in the builders list ({})').format(
+                               skip_builder, SKIP_BUILDERS_FOOTER,
+                               ' '.join(x.name for x in verifiers.values())))
 
       verifiers[skip_builder].skipped = True
 
@@ -410,12 +410,12 @@ def RunSteps(api, properties):
 
   for verifier in verifiers.values():
     if not verifier.name.startswith('staging-'):
-      raise ValueError(
+      raise StepFailure(
           'only staging builders can be used (builder {} not valid)'.format(
               verifier.name))
 
   if not api.buildbucket.build.input.gerrit_changes:
-    raise ValueError('gerrit_changes required as input.')
+    raise StepFailure('gerrit_changes required as input.')
 
   verifiers = _update_skipped_verifiers(api, verifiers)
 
@@ -765,7 +765,7 @@ def GenTests(api):
       # The skipped builder isn't part of the specified builders.
       get_non_skipped_builders_test_data(skipped_builders=['other-builder']),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
-      api.expect_exception('ValueError'))
+      api.post_check(post_process.StatusFailure))
 
   yield api.test(
       'no_successful_builds', api.cq(run_mode=api.cq.FULL_RUN),
@@ -773,7 +773,7 @@ def GenTests(api):
       try_build(project='chromeos', bucket='infra', builder='test-recipes'))
 
   yield api.test('no_gerrit_changes', api.cq(run_mode=api.cq.FULL_RUN),
-                 api.expect_exception('ValueError'))
+                 api.post_check(post_process.StatusFailure))
 
   yield api.test(
       'invalid_builders', api.cq(run_mode=api.cq.FULL_RUN),
@@ -781,4 +781,4 @@ def GenTests(api):
           TestRecipesProperties(verifiers=[{
               'name': 'production-builder',
               'critical': True
-          }])), api.expect_exception('ValueError'))
+          }])), api.post_check(post_process.StatusFailure))

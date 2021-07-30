@@ -9,6 +9,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.test_vm import TestVmProperties
 
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 from google.protobuf import json_format
 
@@ -41,7 +42,7 @@ class NamingApi(recipe_api.RecipeApi):
     elif isinstance(test, self.m.skylab.SkylabResult):
       return self.get_skylab_result_title(test)
     else:
-      raise TypeError('Expected Build or SkylabResult,' 'got %s' % type(test))
+      raise StepFailure('Expected Build or SkylabResult,' 'got %s' % type(test))
 
   def get_hw_test_title(self, hw_test):
     """Get a string to describe the HW test.

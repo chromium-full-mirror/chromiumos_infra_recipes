@@ -3,25 +3,13 @@
     "cmd": [],
     "name": "validate properties",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/build_parallels_image.py\", line 68, in RunSteps",
-      "    raise ValueError('must set parallels_version')",
-      "ValueError: must set parallels_version"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('must set parallels_version',)"
+      "failure": {},
+      "humanReason": "must set parallels_version"
     },
     "name": "$result"
   }

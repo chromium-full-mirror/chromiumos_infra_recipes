@@ -89,27 +89,27 @@ def _sanitize_version_number(version):
 
 def _validate_properties(properties):
   """ Helper function that validates all necessary fields are present in the
-      |properties| struct. If they are not, ValueErrors are raised.
+      |properties| struct. If they are not, StepFailures are raised.
   """
   if not properties.version_file:
-    raise ValueError('must set version_file')
+    raise StepFailure('must set version_file')
 
   if not properties.vm_board_images:
-    raise ValueError('must set vm_board_images')
+    raise StepFailure('must set vm_board_images')
 
   if properties.builder_type not in (bc.Id.POSTSUBMIT, bc.Id.RELEASE):
-    raise ValueError('unknown builder_type: ' + str(properties.builder_type))
+    raise StepFailure('unknown builder_type: ' + str(properties.builder_type))
 
   for vm_board_image in properties.vm_board_images:
     board = vm_board_image.board
     if not board:
-      raise ValueError('must set board')
+      raise StepFailure('must set board')
 
     if not vm_board_image.destination_gs_bucket:
-      raise ValueError('must set destination_gs_bucket for {}'.format(board))
+      raise StepFailure('must set destination_gs_bucket for {}'.format(board))
 
     if not vm_board_image.destination_gs_path:
-      raise ValueError('must set destination_gs_path for {}'.format(board))
+      raise StepFailure('must set destination_gs_path for {}'.format(board))
 
 
 def FindPostsubmitBuilds(api, board, version_build_map):
@@ -541,16 +541,14 @@ def GenTests(api):
       'no-version-file',
       api.properties(**sludge_properties),
       api.properties(versionFile=''),
-      api.expect_exception('ValueError'),
-      api.post_check(post_process.StatusException),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(
       'no-vm-board-images',
       api.properties(**sludge_properties),
       api.properties(vmBoardImages=[]),
-      api.expect_exception('ValueError'),
-      api.post_check(post_process.StatusException),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(
@@ -564,8 +562,7 @@ def GenTests(api):
                   destination_gs_path='distfiles/sludge',
               ))
       ]),
-      api.expect_exception('ValueError'),
-      api.post_check(post_process.StatusException),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(
@@ -579,8 +576,7 @@ def GenTests(api):
                   destination_gs_path='distfiles/sludge',
               ))
       ]),
-      api.expect_exception('ValueError'),
-      api.post_check(post_process.StatusException),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(
@@ -594,16 +590,14 @@ def GenTests(api):
                   destination_gs_path='',
               ))
       ]),
-      api.expect_exception('ValueError'),
-      api.post_check(post_process.StatusException),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(
       'unknown-build-type',
       api.properties(**sludge_properties),
       api.properties(builderType=123),
-      api.expect_exception('ValueError'),
-      api.post_check(post_process.StatusException),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(

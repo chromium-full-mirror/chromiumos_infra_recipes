@@ -4,6 +4,8 @@
 # found in the LICENSE file.
 
 from PB.recipes.chromeos.test_platform import ctp_uprev
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/cipd',
@@ -28,18 +30,18 @@ def validate(api, instruction):
     * instruction (ctp_uprev.Instruction): A complete set of args for
       `cipd set-ref`.
   Raises:
-    A ValueError if validation fails.
+    A StepFailure if validation fails.
   """
   with api.step.nest('validate instructions %s' % instruction):
     if not instruction.ref:
-      raise ValueError('No ref to update for package %s' %
-                       instruction.package_name)
+      raise StepFailure('No ref to update for package %s' %
+                        instruction.package_name)
     if not instruction.version:
-      raise ValueError('No new version provided for package %s' %
-                       instruction.package_name)
+      raise StepFailure('No new version provided for package %s' %
+                        instruction.package_name)
     package_passlist = _package_passlist()
     if not instruction.package_name in package_passlist:
-      raise ValueError(
+      raise StepFailure(
           'Invalid package %s - only the following packages are allowed: %s' %
           (instruction.package_name, package_passlist))
 
@@ -154,7 +156,7 @@ def GenTests(api):
                       package_name='chromiumos/infra/phosphorus/linux-amd64',
                       version='foo-version')
               ]))),
-      api.expect_exception("ValueError"),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(
@@ -166,7 +168,7 @@ def GenTests(api):
                       package_name='chromiumos/infra/phosphorus/linux-amd64',
                       ref='foo-ref')
               ]))),
-      api.expect_exception("ValueError"),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(
@@ -177,5 +179,5 @@ def GenTests(api):
                   ctp_uprev.Instruction(package_name='invalid-package',
                                         ref='foo-ref', version='foo-version')
               ]))),
-      api.expect_exception("ValueError"),
+      api.post_check(post_process.StatusFailure),
   )

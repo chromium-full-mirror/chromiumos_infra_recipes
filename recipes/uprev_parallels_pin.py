@@ -70,17 +70,17 @@ VersionPin = namedtuple('VersionPin', ['version', 'test_image'])
 def RunSteps(api, properties):
   with api.step.nest('validate properties') as presentation:
     if not properties.HasField('package_info'):
-      raise ValueError('must set package_info')
+      raise StepFailure('must set package_info')
     if not properties.upstream_gs_bucket:
-      raise ValueError('must set upstream_gs_bucket')
+      raise StepFailure('must set upstream_gs_bucket')
     if not properties.upstream_gs_path:
-      raise ValueError('must set upstream_gs_path')
+      raise StepFailure('must set upstream_gs_path')
     if not properties.test_image_gs_bucket:
-      raise ValueError('must set test_image_gs_bucket')
+      raise StepFailure('must set test_image_gs_bucket')
     if not properties.test_image_gs_path:
-      raise ValueError('must set test_image_gs_path')
+      raise StepFailure('must set test_image_gs_path')
     if not properties.version_file:
-      raise ValueError('must set version_file')
+      raise StepFailure('must set version_file')
 
     presentation.step_text = 'all properties good'
 
@@ -488,7 +488,7 @@ def GenTests(api):
       'no-package', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'))
+      api.post_check(post_process.StatusFailure))
 
   props = good_props.copy()
   del props['upstream_gs_bucket']
@@ -496,7 +496,7 @@ def GenTests(api):
       'no-upstream-bucket', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'))
+      api.post_check(post_process.StatusFailure))
 
   props = good_props.copy()
   del props['upstream_gs_path']
@@ -504,7 +504,7 @@ def GenTests(api):
       'no-upstream-path', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'))
+      api.post_check(post_process.StatusFailure))
 
   props = good_props.copy()
   del props['version_file']
@@ -512,7 +512,7 @@ def GenTests(api):
       'no-version-file', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'))
+      api.post_check(post_process.StatusFailure))
 
   props = good_props.copy()
   del props['test_image_gs_bucket']
@@ -520,7 +520,7 @@ def GenTests(api):
       'no-test-image-bucket', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'))
+      api.post_check(post_process.StatusFailure))
 
   props = good_props.copy()
   del props['test_image_gs_path']
@@ -528,7 +528,7 @@ def GenTests(api):
       'no-test-image-path', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'))
+      api.post_check(post_process.StatusFailure))
 
   # Upstream version cannot be found.
   yield api.build_menu.test(

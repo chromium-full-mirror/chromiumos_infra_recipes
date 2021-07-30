@@ -354,7 +354,7 @@ class FailuresApi(RecipeApi):
     elif isinstance(test, self.m.skylab.SkylabResult):
       return self.is_critical_hw_test_failure(test)
     else:
-      raise TypeError('expected Build or SkylabResult,' 'got %s' % type(test))
+      raise StepFailure('expected Build or SkylabResult,' 'got %s' % type(test))
 
   def get_hwtest_status(self, hw_test):
     """Get the status of the hw_test.

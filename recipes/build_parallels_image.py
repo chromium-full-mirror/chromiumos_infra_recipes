@@ -57,15 +57,15 @@ VersionPin = namedtuple('VersionPin', ['version', 'test_image'])
 def RunSteps(api, properties):
   with api.step.nest('validate properties') as presentation:
     if not properties.build_gs_bucket:
-      raise ValueError('must set build_gs_bucket')
+      raise StepFailure('must set build_gs_bucket')
     if not properties.build_gs_path:
-      raise ValueError('must set build_gs_path')
+      raise StepFailure('must set build_gs_path')
     if not properties.test_image_gs_bucket:
-      raise ValueError('must set test_image_gs_bucket')
+      raise StepFailure('must set test_image_gs_bucket')
     if not properties.test_image_gs_path:
-      raise ValueError('must set test_image_gs_path')
+      raise StepFailure('must set test_image_gs_path')
     if not properties.parallels_version:
-      raise ValueError('must set parallels_version')
+      raise StepFailure('must set parallels_version')
 
     presentation.step_text = 'all properties good'
 
@@ -255,8 +255,7 @@ def GenTests(api):
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusFailure),
   )
 
   props = good_props.copy()
@@ -267,8 +266,7 @@ def GenTests(api):
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusFailure),
   )
 
   props = good_props.copy()
@@ -279,8 +277,7 @@ def GenTests(api):
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusFailure),
   )
 
   props = good_props.copy()
@@ -291,8 +288,7 @@ def GenTests(api):
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusFailure),
   )
 
   props = good_props.copy()
@@ -303,8 +299,7 @@ def GenTests(api):
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.expect_exception('ValueError'),
+      api.post_check(post_process.StatusFailure),
   )
 
   failureJson = json.loads('''[{

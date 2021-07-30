@@ -1,20 +1,8 @@
 [
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 415, in RunSteps",
-      "    verifier.name))",
-      "ValueError: only staging builders can be used (builder production-builder not valid)"
-    ]
-  },
-  {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('only staging builders can be used (builder production-builder not valid)',)"
+      "failure": {},
+      "humanReason": "only staging builders can be used (builder production-builder not valid)"
     },
     "name": "$result"
   }

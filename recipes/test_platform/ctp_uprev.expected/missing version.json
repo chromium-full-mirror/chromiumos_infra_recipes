@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "package chromiumos/infra/phosphorus/linux-amd64",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -11,27 +11,13 @@
     "name": "package chromiumos/infra/phosphorus/linux-amd64.validate instructions package_name: \"chromiumos/infra/phosphorus/linux-amd64\"\nref: \"foo-ref\"\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 108, in RunSteps",
-      "    validate(api, instruction)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_platform/ctp_uprev.py\", line 39, in validate",
-      "    instruction.package_name)",
-      "ValueError: No new version provided for package chromiumos/infra/phosphorus/linux-amd64"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError(u'No new version provided for package chromiumos/infra/phosphorus/linux-amd64',)"
+      "failure": {},
+      "humanReason": "No new version provided for package chromiumos/infra/phosphorus/linux-amd64"
     },
     "name": "$result"
   }

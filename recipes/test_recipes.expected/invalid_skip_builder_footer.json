@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "get non-skipped builders",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -113,23 +113,9 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 420, in RunSteps",
-      "    verifiers = _update_skipped_verifiers(api, verifiers)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/test_recipes.py\", line 359, in _update_skipped_verifiers",
-      "    ' '.join(x.name for x in verifiers.values())))",
-      "ValueError: Builder other-builder is specified in the Test-Recipes-Skip-Builder footer, but is not in the builders list (staging-Annealing staging-chromite-postsubmit staging-release-triggerer)"
-    ]
-  },
-  {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('Builder other-builder is specified in the Test-Recipes-Skip-Builder footer, but is not in the builders list (staging-Annealing staging-chromite-postsubmit staging-release-triggerer)',)"
+      "failure": {},
+      "humanReason": "Builder other-builder is specified in the Test-Recipes-Skip-Builder footer, but is not in the builders list (staging-Annealing staging-chromite-postsubmit staging-release-triggerer)"
     },
     "name": "$result"
   }

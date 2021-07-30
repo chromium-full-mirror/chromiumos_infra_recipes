@@ -5164,11 +5164,11 @@ Returns:
 
 API featuring shared helpers for naming things.
 
-#### **class [NamingApi](/recipe_modules/naming/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [NamingApi](/recipe_modules/naming/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with helpers for naming things.
 
-&mdash; **def [get\_all\_vm\_test\_title](/recipe_modules/naming/api.py#79)(self, vm_test):**
+&mdash; **def [get\_all\_vm\_test\_title](/recipe_modules/naming/api.py#80)(self, vm_test):**
 
 Get a string to describe the VM test.
 
@@ -5180,7 +5180,7 @@ Returns:
 Raises:
   ValueError if name not in vm_test.input.properties.
 
-&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#19)(self, build):**
+&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#20)(self, build):**
 
 Get a string to describe the build.
 
@@ -5190,7 +5190,7 @@ Args:
 Returns:
   str: A string describing the build.
 
-&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#109)(self, commit):**
+&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#110)(self, commit):**
 
 Get a string to describe the commit.
 
@@ -5202,7 +5202,7 @@ Args:
 Returns:
   str: The commit title.
 
-&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#46)(self, hw_test):**
+&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#47)(self, hw_test):**
 
 Get a string to describe the HW test.
 
@@ -5212,7 +5212,7 @@ Args:
 Returns:
   str: The HW test title.
 
-&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#124)(self, package):**
+&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#125)(self, package):**
 
 Get a string to describe the package.
 
@@ -5222,7 +5222,7 @@ Args:
 Returns:
   str: The package title.
 
-&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#68)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#69)(self, skylab_result):**
 
 Get a string to describe the HW test.
 
@@ -5232,7 +5232,7 @@ Args:
 Returns:
   str: The HW test title.
 
-&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#57)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#58)(self, skylab_task):**
 
 Get a string to describe the Skylab task.
 
@@ -5242,7 +5242,7 @@ Args:
 Returns:
   str: The Skylab task title.
 
-&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#30)(self, test):**
+&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#31)(self, test):**
 
 Get a string to describe the test.
 
@@ -5252,7 +5252,7 @@ Args:
 Returns:
   A str describing the test.
 
-&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#93)(self, vm_test):**
+&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#94)(self, vm_test):**
 
 Get a string to describe the VM test.
 
@@ -7899,7 +7899,7 @@ json files.
 
 [DEPS](/recipe_modules/failures/examples/is_critical_test_failure.py#6): [failures](#recipe_modules-failures)
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/is_critical_test_failure.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/is_critical_test_failure.py#13)(api):**
 ### *recipes* / [failures:examples/package\_failures](/recipe_modules/failures/examples/package_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/package_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8253,7 +8253,7 @@ Recipe for performing various manipulations on ChromeOS manifests.
 
 [DEPS](/recipe_modules/naming/examples/get_test_title.py#6): [naming](#recipe_modules-naming)
 
-&mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#13)(api):**
 ### *recipes* / [orch\_menu:examples/full](/recipe_modules/orch_menu/examples/full.py)
 
 [DEPS](/recipe_modules/orch_menu/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8632,15 +8632,15 @@ Updates test plan rules to reflect new risk-based rules
 &mdash; **def [RunSteps](/recipes/test_plan_filtering.py#232)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#45): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#47): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 Recipe for the ChromeOS Test Frontend.
 
 TODO: Migrate to a recipes repo owned by the test team.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#305)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#307)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#201)(api, requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#203)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -8650,23 +8650,23 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#267)(api, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#269)(api, requests):**
 
 Execute request in the correct backend.
 
 Args:
   requests: ExecutionRequests payload.
 
-&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#327)(api):**
+&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#329)(api):**
 
-&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#65)(api, properties):**
+&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#67)(api, properties):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#336)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#338)(api, requests, responses):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#244)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#246)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -8675,15 +8675,15 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#433)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#435)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#501)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#503)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#376)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#378)(api, enumerations, responses):**
 
-&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#84)(api, properties):**
+&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#86)(api, properties):**
 
 Get and validate requests from input properties.
 
@@ -8702,11 +8702,11 @@ Recipe that triggers cros_test_platform runs.
 &mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#41)(api, properties):**
 ### *recipes* / [test\_platform/ctp\_uprev](/recipes/test_platform/ctp_uprev.py)
 
-[DEPS](/recipes/test_platform/ctp_uprev.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/test_platform/ctp_uprev.py#10): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-&mdash; **def [RunSteps](/recipes/test_platform/ctp_uprev.py#102)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/ctp_uprev.py#104)(api, properties):**
 
-&mdash; **def [get\_current\_instance](/recipes/test_platform/ctp_uprev.py#57)(api, instruction):**
+&mdash; **def [get\_current\_instance](/recipes/test_platform/ctp_uprev.py#59)(api, instruction):**
 
 Get the current version of the ref.
 
@@ -8718,7 +8718,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#76)(api, instruction, package_tags={}):**
+&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#78)(api, instruction, package_tags={}):**
 
 Change CIPD ref of a package according to the instructions.
 
@@ -8731,7 +8731,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [validate](/recipes/test_platform/ctp_uprev.py#24)(api, instruction):**
+&mdash; **def [validate](/recipes/test_platform/ctp_uprev.py#26)(api, instruction):**
 
 Validate instructions for uprevving a specific package.
 
@@ -8739,7 +8739,7 @@ Args:
   * instruction (ctp_uprev.Instruction): A complete set of args for
     `cipd set-ref`.
 Raises:
-  A ValueError if validation fails.
+  A StepFailure if validation fails.
 ### *recipes* / [test\_platform/dut\_leaser](/recipes/test_platform/dut_leaser.py)
 
 [DEPS](/recipes/test_platform/dut_leaser.py#15): [phosphorus](#recipe_modules-phosphorus), [service\_version](#recipe_modules-service_version), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -8766,13 +8766,13 @@ Raises:
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#27): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [result\_db](#recipe_modules-result_db), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#28): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [result\_db](#recipe_modules-result_db), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#357)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#358)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#106)(api, interface, test_metadata, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#107)(api, interface, test_metadata, result):**
 
 Archive all test logs to Google Storage, updating result in the process.
 
@@ -8786,7 +8786,7 @@ apposite a test.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#295)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#296)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -8802,7 +8802,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [link](/recipes/test_platform/test_runner.py#64)(step, name, link):**
+&mdash; **def [link](/recipes/test_platform/test_runner.py#65)(step, name, link):**
 
 Add a link `link` named `link_name` to the `step` if it exists.
 
@@ -8811,7 +8811,7 @@ Args:
 * name (str): Link name.
 * link (str): Like URI to add.
 
-&mdash; **def [log](/recipes/test_platform/test_runner.py#52)(step, name, log):**
+&mdash; **def [log](/recipes/test_platform/test_runner.py#53)(step, name, log):**
 
 Add a `log` to a `step`'s log under `name` is it exists.
 
@@ -8820,7 +8820,7 @@ Args:
 * name (str): Log name.
 * log (Any): Object to add to log.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#266)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#267)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -8831,7 +8831,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#166)(api, result):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#167)(api, result):**
 
 Set the output properties that are part of the test_runner API.
 
@@ -8839,7 +8839,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#126)(api, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#127)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -8847,7 +8847,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result of all tests.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#91)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#92)(api, test):**
 
 Validate the TestRunnerProperties.
 
@@ -8856,7 +8856,7 @@ Args:
 * test (Request.Test): Test instance.
 
 Raises:
-  * ValueError if there are invalid properties.
+  * StepFailure if there are invalid properties.
 ### *recipes* / [test\_recipes](/recipes/test_recipes.py)
 
 [DEPS](/recipes/test_recipes.py#8): [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [recipe\_analyze](#recipe_modules-recipe_analyze), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

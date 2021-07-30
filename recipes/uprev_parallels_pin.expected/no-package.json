@@ -25,25 +25,13 @@
     "cmd": [],
     "name": "validate properties",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "RECIPE CRASH (Uncaught exception)",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@",
-      "The recipe has crashed at point 'Uncaught exception'!",
-      "",
-      "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/uprev_parallels_pin.py\", line 73, in RunSteps",
-      "    raise ValueError('must set package_info')",
-      "ValueError: must set package_info"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('must set package_info',)"
+      "failure": {},
+      "humanReason": "must set package_info"
     },
     "name": "$result"
   }
