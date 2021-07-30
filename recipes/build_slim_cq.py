@@ -16,6 +16,9 @@ DEPS = [
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipes.chromeos.build_target import BuildTargetProperties
+from PB.recipe_engine.result import RawResult
 
 
 def RunSteps(api):
@@ -23,12 +26,16 @@ def RunSteps(api):
       api.build_menu.setup_workspace_and_chroot() as is_relevant:
     if is_relevant:
       return DoRunSteps(api, config)
+    else:
+      return RawResult(status=common.SUCCESS,
+                       summary_markdown='Build was not relevant.')
 
 
 def DoRunSteps(api, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   if env_info.pointless:
-    return
+    return RawResult(status=common.SUCCESS,
+                     summary_markdown='Build was pointless.')
 
   try:
     api.build_menu.bootstrap_sysroot(config)
@@ -110,6 +117,18 @@ def GenTests(api):
       cq=True,
       build_target='atlas-slim',
   )
+
+  # This covers the Relevance check.
+  yield api.build_menu.test(
+      'prepare-for-build-pointless',
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.post_check(post_process.StatusSuccess), cq=True, build_target='coral',
+      input_properties=BuildTargetProperties(artifact_build=True),
+      artifact_pointless=True)
 
   # This covers the env_info.pointless check.
   yield api.build_menu.test(

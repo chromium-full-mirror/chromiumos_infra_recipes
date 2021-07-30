@@ -11,7 +11,9 @@ DEPS = [
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipes.chromeos.build_target import BuildTargetProperties
+from PB.recipe_engine.result import RawResult
 
 # TODO(crbug/1099259): Drop our properties.
 # Our properties are processed and used by both the build_menu module, as well
@@ -25,12 +27,17 @@ def RunSteps(api, properties):
       api.build_menu.setup_workspace_and_chroot() as is_relevant:
     if is_relevant:
       return DoRunSteps(api, config, properties)
+    else:
+      return RawResult(status=common.SUCCESS,
+                       summary_markdown='Build was not relevant.')
 
 
 def DoRunSteps(api, config, _properties):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   if env_info.pointless:
-    return
+    return RawResult(status=common.SUCCESS,
+                     summary_markdown='Build was pointless.')
+
   packages = env_info.packages
 
   # Artifacts are frequently of use even if the build failed.  For example, it
