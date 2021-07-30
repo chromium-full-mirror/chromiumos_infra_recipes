@@ -453,6 +453,7 @@ class GcloudApi(recipe_api.RecipeApi):
       self._zone = m.group('zone')
     with self.m.step.nest('create and attach disk'):
       is_staging = self.m.build_menu.is_staging
+      recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
       self._suffix = str(self.m.time.ms_since_epoch())[0:8]
       self._disk = '{}-{}-{}-{}'.format(cache_name, branch, self._suffix,
                                         self._zone)
@@ -467,9 +468,20 @@ class GcloudApi(recipe_api.RecipeApi):
             'read local snapshot version',
             self.snapshot_version_path.join(version_file),
             test_data='test-cache-snapshot-123')
-      remote_version = self.m.gsutil.cat(
-          'gs://{}/{}'.format(GCE_CACHE_BUCKET, version_file), infra_step=True,
-          stdout=self.m.raw_io.output()).stdout.strip()
+      try:
+        remote_version = self.m.gsutil.cat(
+            'gs://{}/{}'.format(GCE_CACHE_BUCKET, version_file),
+            infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
+      except self.m.step.StepFailure:
+        with self.m.step.nest(
+            'unable to find version file in GS bucket') as pres:
+          # This is intended behavior if a new cache builder is added.
+          # Rather than fail, default to an initial snapshot.
+          if recipe_mount:
+            pres.logs['version file not found'] = version_file
+            remote_version = recovery_snapshot
+          else:
+            raise
       try:
         snapshot = remote_version
         if local_version:

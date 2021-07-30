@@ -519,7 +519,7 @@
       "disks",
       "snapshot",
       "chromiumos-main-13370000-us-central1-b",
-      "--snapshot-names=test-chromeos-prefix-13370000",
+      "--snapshot-names=chromiumos-main-13370000",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -546,14 +546,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "test-chromeos-prefix-13370000",
+      "chromiumos-main-13370000",
       "[CLEANUP]/test-chromeos-version"
     ],
     "infra_step": true,
     "name": "source cache update.upload updated version file.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@test-chromeos-version@test-chromeos-prefix-13370000@@@",
+      "@@@STEP_LOG_LINE@test-chromeos-version@chromiumos-main-13370000@@@",
       "@@@STEP_LOG_END@test-chromeos-version@@@"
     ]
   },
@@ -581,7 +581,7 @@
     "name": "source cache update.upload updated version file.set test-chromeos-version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@test-chromeos-version@\"test-chromeos-prefix-13370000\"@@@"
+      "@@@SET_BUILD_PROPERTY@test-chromeos-version@\"chromiumos-main-13370000\"@@@"
     ]
   },
   {
@@ -930,7 +930,7 @@
       "disks",
       "snapshot",
       "chrome-main-13370000-us-central1-b",
-      "--snapshot-names=test-chrome-prefix-13370000",
+      "--snapshot-names=chrome-main-13370000",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -957,14 +957,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "test-chrome-prefix-13370000",
+      "chrome-main-13370000",
       "[CLEANUP]/test-chrome-version"
     ],
     "infra_step": true,
     "name": "source cache update.upload updated version file (2).write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@test-chrome-version@test-chrome-prefix-13370000@@@",
+      "@@@STEP_LOG_LINE@test-chrome-version@chrome-main-13370000@@@",
       "@@@STEP_LOG_END@test-chrome-version@@@"
     ]
   },
@@ -992,7 +992,7 @@
     "name": "source cache update.upload updated version file (2).set test-chrome-version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@test-chrome-version@\"test-chrome-prefix-13370000\"@@@"
+      "@@@SET_BUILD_PROPERTY@test-chrome-version@\"chrome-main-13370000\"@@@"
     ]
   },
   {
@@ -1011,10 +1011,10 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2012-05-07 AND name~test-chromeos-prefix-.*"
+      "creationTimestamp<2012-05-07 AND name~chromiumos-main-.*"
     ],
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-chromeos-prefix",
+    "name": "source cache update.cleanup expired snapshots.list snapshots with filter chromiumos-main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -1085,10 +1085,10 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2012-05-07 AND name~test-chrome-prefix-.*"
+      "creationTimestamp<2012-05-07 AND name~chrome-main-.*"
     ],
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-chrome-prefix",
+    "name": "source cache update.cleanup expired snapshots.list snapshots with filter chrome-main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",

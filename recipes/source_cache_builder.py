@@ -38,7 +38,10 @@ def RunSteps(api, properties):
     with api.gcloud.cleanup_gce_disks(), \
          api.gcloud.cleanup_mounted_disks():
       for cache in properties.cache_definition:
-        snapshot_prefixes.append(cache.snapshot_prefix)
+        snapshot_prefix = '{}-{}'.format(cache.cache_name, cache.branch)
+        if is_staging:
+          snapshot_prefix = 'staging-{}'.format(snapshot_prefix)
+        snapshot_prefixes.append(snapshot_prefix)
         with api.step.nest('create and mount cache disks'):
           #api.assertions.assertIsNone(str(cache.cache_name))
           api.gcloud.create_and_mount_disk(cache_name=cache.cache_name,
@@ -46,7 +49,7 @@ def RunSteps(api, properties):
                                            disk_type='pd-ssd',
                                            recipe_mount=True)
         with api.step.nest('sync mounted cache directories'):
-          snapshot_name = '{}-{}'.format(cache.snapshot_prefix,
+          snapshot_name = '{}-{}'.format(snapshot_prefix,
                                          api.gcloud.snapshot_suffix)
           disk = api.gcloud.gce_disk
           mount_path = api.gcloud.snapshot_builder_mount_path.join(
@@ -110,7 +113,6 @@ def GenTests(api):
           cache_definition=[
               dict(
                   cache_name='test-cache',
-                  snapshot_prefix='test-cache-prefix',
                   version_file='test-cache-version',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
@@ -132,7 +134,6 @@ def GenTests(api):
           cache_definition=[
               dict(
                   cache_name='test-cache',
-                  snapshot_prefix='test-cache-prefix',
                   version_file='test-cache-version',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
@@ -152,7 +153,6 @@ def GenTests(api):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  snapshot_prefix='test-chromeos-prefix',
                   version_file='test-chromeos-version',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
@@ -160,7 +160,6 @@ def GenTests(api):
               ),
               dict(
                   cache_name='chrome',
-                  snapshot_prefix='test-chrome-prefix',
                   version_file='test-chrome-version',
                   command='gclient',
                   recovery_snapshot='chrome_default_recovery_snapshot',
@@ -180,7 +179,6 @@ def GenTests(api):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  snapshot_prefix='test-chromeos-prefix',
                   version_file='test-chromeos-version.txt',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',

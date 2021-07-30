@@ -19,15 +19,18 @@ def RunSteps(api):
   # Multiple disks
   with api.gcloud.cleanup_gce_disks(), \
        api.gcloud.cleanup_mounted_disks():
-    api.gcloud.create_and_mount_disk(cache_name='test-cache')
+    api.gcloud.create_and_mount_disk(cache_name='chromiumos')
     api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
     api.assertions.assertEqual(api.gcloud.host_zone, 'us-central1-b')
     if api.build_menu.is_staging:
       api.assertions.assertEqual(
-          api.gcloud.gce_disk, 'staging-test-cache-main-13370000-us-central1-b')
+          api.gcloud.gce_disk, 'staging-chromiumos-main-13370000-us-central1-b')
     else:
       api.assertions.assertEqual(api.gcloud.gce_disk,
-                                 'test-cache-main-13370000-us-central1-b')
+                                 'chromiumos-main-13370000-us-central1-b')
+    api.gcloud.create_and_mount_disk(cache_name='chromiumos',
+                                     branch='release-R90-13816.B',
+                                     recipe_mount=True)
 
   # Empty context
   with api.gcloud.cleanup_gce_disks(), \
@@ -69,4 +72,16 @@ def GenTests(api):
       mock_path("test-cache-main-cache-snapshot-version.txt"),
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+  )
+  yield api.test(
+      'missing-version-file-in-storage-cache-builder',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.step_data(('create and attach disk (2).gsutil cat'), retcode=3),
+  )
+  yield api.test(
+      'missing-version-file-in-storage-build-instance',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.step_data(('create and attach disk.gsutil cat'), retcode=3),
   )

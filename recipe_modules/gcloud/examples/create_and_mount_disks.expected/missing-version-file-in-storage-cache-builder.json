@@ -27,10 +27,7 @@
   },
   {
     "cmd": [],
-    "name": "create and attach disk",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "create and attach disk"
   },
   {
     "cmd": [
@@ -64,26 +61,6 @@
     },
     "infra_step": true,
     "name": "create and attach disk.create disk from snapshot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "create",
-      "chromiumos-main-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--source-snapshot="
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -166,7 +143,10 @@
   },
   {
     "cmd": [],
-    "name": "create and attach disk (2)"
+    "name": "create and attach disk (2)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "cmd": [
@@ -182,7 +162,17 @@
     "infra_step": true,
     "name": "create and attach disk (2).gsutil cat",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk (2).unable to find version file in GS bucket",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@version file not found@chromiumos-release-R90-13816.B-cache-snapshot-version.txt@@@",
+      "@@@STEP_LOG_END@version file not found@@@"
     ]
   },
   {
@@ -193,7 +183,7 @@
       "create",
       "chromiumos-release-R90-13816.B-13370000-us-central1-b",
       "--zone=us-central1-b",
-      "--source-snapshot="
+      "--source-snapshot=initial-chromiumos-source-snapshot"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

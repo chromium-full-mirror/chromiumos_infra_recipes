@@ -37,15 +37,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CACHE]/infra_versions/test-cache-main-cache-snapshot-version.txt",
+      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt",
       "/path/to/tmp/"
     ],
     "infra_step": true,
     "name": "create and attach disk.read local snapshot version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@test-cache-main-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
-      "@@@STEP_LOG_END@test-cache-main-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
+      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -57,7 +57,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/test-cache-main-cache-snapshot-version.txt"
+      "gs://chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "create and attach disk.gsutil cat",
@@ -71,7 +71,7 @@
       "compute",
       "disks",
       "create",
-      "test-cache-main-13370000-us-central1-b",
+      "chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b",
       "--source-snapshot=test-cache-snapshot-123"
     ],
@@ -91,7 +91,7 @@
       "instances",
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-cache-main-13370000-us-central1-b",
+      "--disk=chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -111,7 +111,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=test-cache-main-13370000-us-central1-b",
+      "--disk=chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -127,7 +127,7 @@
     "cmd": [
       "mkdir",
       "-p",
-      "/snapshot_mounts/test-cache"
+      "/snapshot_mounts/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -145,13 +145,154 @@
       "-o",
       "discard,defaults",
       "/dev/sdb",
-      "/snapshot_mounts/test-cache"
+      "/snapshot_mounts/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.mount disk test-cache",
+    "name": "create and attach disk.mount disk chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get swarming hostname (2)"
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk (2)"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/infra_versions/chromiumos-release-R90-13816.B-cache-snapshot-version.txt",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "create and attach disk (2).read local snapshot version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@chromiumos-release-R90-13816.B-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
+      "@@@STEP_LOG_END@chromiumos-release-R90-13816.B-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-bot-cache/chromiumos-release-R90-13816.B-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "name": "create and attach disk (2).gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "--zone=us-central1-b",
+      "--source-snapshot=test-cache-snapshot-123"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (2).create disk from snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "attach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (2).attach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--auto-delete",
+      "--disk=chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (2).set disk to autodelete",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (2).create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "-o",
+      "discard,defaults",
+      "/dev/sdc",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (2).mount disk chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -163,13 +304,27 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "/snapshot_mounts/test-cache"
+      "/snapshot_mounts/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "clean up mounted compute disk.unmount disk test-cache",
+    "name": "clean up mounted compute disk.unmount disk chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up mounted compute disk.unmount disk chromiumos (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -185,7 +340,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-cache-main-13370000-us-central1-b",
+      "--disk=chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -203,7 +358,7 @@
       "compute",
       "disks",
       "delete",
-      "test-cache-main-13370000-us-central1-b",
+      "chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -211,6 +366,43 @@
     },
     "infra_step": true,
     "name": "clean up gce disk.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.detach disk (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.delete disk (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

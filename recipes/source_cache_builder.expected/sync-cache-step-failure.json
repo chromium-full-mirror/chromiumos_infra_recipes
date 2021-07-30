@@ -564,10 +564,10 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2012-05-07 AND name~test-chromeos-prefix-.*"
+      "creationTimestamp<2012-05-07 AND name~chromiumos-main-.*"
     ],
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.list snapshots with filter test-chromeos-prefix",
+    "name": "source cache update.cleanup expired snapshots.list snapshots with filter chromiumos-main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
