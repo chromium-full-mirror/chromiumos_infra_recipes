@@ -27,16 +27,23 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.get swarming hostname",
+    "name": "source cache update.create and mount cache disks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks",
+    "name": "source cache update.create and mount cache disks.get swarming hostname",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.create and mount cache disks.create and attach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -48,12 +55,12 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/test-chromeos-version"
+      "gs://chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.gsutil cat",
+    "name": "source cache update.create and mount cache disks.create and attach disk.gsutil cat",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -62,7 +69,7 @@
       "compute",
       "disks",
       "create",
-      "test-disk1-1337000003000-us-central1-b",
+      "chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b",
       "--source-snapshot=",
       "--type=pd-ssd"
@@ -71,9 +78,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.create disk from snapshot",
+    "name": "source cache update.create and mount cache disks.create and attach disk.create disk from snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -83,16 +90,16 @@
       "instances",
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk1-1337000003000-us-central1-b",
+      "--disk=chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.attach disk",
+    "name": "source cache update.create and mount cache disks.create and attach disk.attach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -103,16 +110,16 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=test-disk1-1337000003000-us-central1-b",
+      "--disk=chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.set disk to autodelete",
+    "name": "source cache update.create and mount cache disks.create and attach disk.set disk to autodelete",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -125,15 +132,15 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/snapshot/chromeos"
+      "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.create mount path",
+    "name": "source cache update.create and mount cache disks.create and attach disk.create mount path",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -143,29 +150,29 @@
       "-o",
       "discard,defaults",
       "/dev/sdb",
-      "[CLEANUP]/snapshot/chromeos"
+      "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.mount disk chromiumos",
+    "name": "source cache update.create and mount cache disks.create and attach disk.mount disk chromiumos",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories",
+    "name": "source cache update.sync mounted cache directories",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.set initial_repo_state",
+    "name": "source cache update.sync mounted cache directories.set initial_repo_state",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_CLEAN\"}@@@"
     ]
   },
@@ -178,13 +185,13 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[CLEANUP]/snapshot/chromeos/.recipes_state.json"
+      "[CLEANUP]/snapshot/chromiumos/.recipes_state.json"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromeos/.recipes_state.json",
+    "name": "source cache update.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromiumos/.recipes_state.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
@@ -193,9 +200,9 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@cache tracking snapshot branch@@@"
     ]
   },
@@ -209,13 +216,13 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/snapshot/chromeos"
+      "[CLEANUP]/snapshot/chromiumos"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.ensure root path",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure root path",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -231,7 +238,7 @@
       "--repo-rev=stable",
       "--verbose"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -241,17 +248,17 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.repo init",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo init",
     "timeout": 900,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.repo binary update",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -259,7 +266,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -269,9 +276,9 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.repo binary update.repo version",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update.repo version",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -279,7 +286,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -289,9 +296,9 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.repo binary update.repo selfupdate",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -299,7 +306,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -309,9 +316,9 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.repo binary update.repo version (2)",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -326,7 +333,7 @@
       "8",
       "--force-remove-dirty"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -336,17 +343,17 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.repo sync",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo sync",
     "timeout": 10800,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.ensure clean checkout",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -361,7 +368,7 @@
       "reset",
       "--hard"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -371,9 +378,9 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.ensure clean checkout.repo forall",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -391,7 +398,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -401,9 +408,9 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.ensure synced checkout.ensure clean checkout.repo forall (2)",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout.repo forall (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -416,13 +423,13 @@
       "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
-      "[CLEANUP]/snapshot/chromeos/.recipes_state.json"
+      "[CLEANUP]/snapshot/chromiumos/.recipes_state.json"
     ],
-    "cwd": "[CLEANUP]/snapshot/chromeos",
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromeos/.recipes_state.json (2)",
+    "name": "source cache update.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromiumos/.recipes_state.json (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
@@ -431,9 +438,9 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync disk cache before snapshot",
+    "name": "source cache update.sync disk cache before snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -446,37 +453,37 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync disk cache before snapshot.sync disk",
+    "name": "source cache update.sync disk cache before snapshot.sync disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.unmount disk for snapshot",
+    "name": "source cache update.unmount disk for snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CLEANUP]/snapshot/chromeos"
+      "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.unmount disk for snapshot.unmount disk chromiumos",
+    "name": "source cache update.unmount disk for snapshot.unmount disk chromiumos",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.detach disk for snapshot",
+    "name": "source cache update.detach disk for snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -486,23 +493,23 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk1-1337000003000-us-central1-b",
+      "--disk=chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.detach disk for snapshot.detach disk",
+    "name": "source cache update.detach disk for snapshot.detach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.snapshot synced disk",
+    "name": "source cache update.snapshot synced disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -511,24 +518,24 @@
       "compute",
       "disks",
       "snapshot",
-      "test-disk1-1337000003000-us-central1-b",
-      "--snapshot-names=test-chromeos-prefix-1337000003000",
+      "chromiumos-main-13370000-us-central1-b",
+      "--snapshot-names=test-chromeos-prefix-13370000",
       "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.snapshot synced disk.snapshot disk",
+    "name": "source cache update.snapshot synced disk.snapshot disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file",
+    "name": "source cache update.upload updated version file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -539,14 +546,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "test-chromeos-prefix-1337000003000",
+      "test-chromeos-prefix-13370000",
       "[CLEANUP]/test-chromeos-version"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.write version file",
+    "name": "source cache update.upload updated version file.write version file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@test-chromeos-version@test-chromeos-prefix-1337000003000@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@test-chromeos-version@test-chromeos-prefix-13370000@@@",
       "@@@STEP_LOG_END@test-chromeos-version@@@"
     ]
   },
@@ -563,18 +570,39 @@
       "gs://chromeos-bot-cache/test-chromeos-version"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.gsutil upload test-chromeos-version",
+    "name": "source cache update.upload updated version file.gsutil upload test-chromeos-version",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/test-chromeos-version@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file.set test-chromeos-version",
+    "name": "source cache update.upload updated version file.set test-chromeos-version",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@test-chromeos-version@\"test-chromeos-prefix-1337000003000\"@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@test-chromeos-version@\"test-chromeos-prefix-13370000\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.create and mount cache disks (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.create and mount cache disks (2).get swarming hostname",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.create and mount cache disks (2).create and attach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -586,12 +614,12 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/test-chrome-version"
+      "gs://chromeos-bot-cache/chrome-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.gsutil cat (2)",
+    "name": "source cache update.create and mount cache disks (2).create and attach disk.gsutil cat",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -600,7 +628,7 @@
       "compute",
       "disks",
       "create",
-      "test-disk2-1337000004500-us-central1-b",
+      "chrome-main-13370000-us-central1-b",
       "--zone=us-central1-b",
       "--source-snapshot=",
       "--type=pd-ssd"
@@ -609,9 +637,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.create disk from snapshot (2)",
+    "name": "source cache update.create and mount cache disks (2).create and attach disk.create disk from snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -621,16 +649,16 @@
       "instances",
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk2-1337000004500-us-central1-b",
+      "--disk=chrome-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.attach disk (2)",
+    "name": "source cache update.create and mount cache disks (2).create and attach disk.attach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -641,16 +669,16 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=test-disk2-1337000004500-us-central1-b",
+      "--disk=chrome-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.set disk to autodelete (2)",
+    "name": "source cache update.create and mount cache disks (2).create and attach disk.set disk to autodelete",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -669,9 +697,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.create mount path (2)",
+    "name": "source cache update.create and mount cache disks (2).create and attach disk.create mount path",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -687,23 +715,23 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.mount disk chrome",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome",
+    "name": "source cache update.create and mount cache disks (2).create and attach disk.mount disk chrome",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.sync mounted cache directories (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.sync mounted cache directories (2).sync chrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -719,9 +747,9 @@
       "[CLEANUP]/snapshot/chrome/src"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.ensure chrome src directory",
+    "name": "source cache update.sync mounted cache directories (2).sync chrome.ensure chrome src directory",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -737,9 +765,9 @@
       "[CLEANUP]/snapshot/chrome/chrome_cache"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.ensure chrome cache directory",
+    "name": "source cache update.sync mounted cache directories (2).sync chrome.ensure chrome cache directory",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -761,9 +789,9 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.gclient config",
+    "name": "source cache update.sync mounted cache directories (2).sync chrome.gclient config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -791,9 +819,9 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.populate git cache",
+    "name": "source cache update.sync mounted cache directories (2).sync chrome.populate git cache",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -813,17 +841,17 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync mounted cache directories (2).sync chrome.gclient sync",
+    "name": "source cache update.sync mounted cache directories (2).sync chrome.gclient sync",
     "timeout": 3600,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.sync disk cache before snapshot (2)",
+    "name": "source cache update.sync disk cache before snapshot (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -836,16 +864,16 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.sync disk cache before snapshot (2).sync disk",
+    "name": "source cache update.sync disk cache before snapshot (2).sync disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.unmount disk for snapshot (2)",
+    "name": "source cache update.unmount disk for snapshot (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -857,16 +885,16 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.unmount disk for snapshot (2).unmount disk chrome",
+    "name": "source cache update.unmount disk for snapshot (2).unmount disk chrome",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.detach disk for snapshot (2)",
+    "name": "source cache update.detach disk for snapshot (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -876,23 +904,23 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=test-disk2-1337000004500-us-central1-b",
+      "--disk=chrome-main-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.detach disk for snapshot (2).detach disk",
+    "name": "source cache update.detach disk for snapshot (2).detach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.snapshot synced disk (2)",
+    "name": "source cache update.snapshot synced disk (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -901,24 +929,24 @@
       "compute",
       "disks",
       "snapshot",
-      "test-disk2-1337000004500-us-central1-b",
-      "--snapshot-names=test-chrome-prefix-1337000004500",
+      "chrome-main-13370000-us-central1-b",
+      "--snapshot-names=test-chrome-prefix-13370000",
       "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.snapshot synced disk (2).snapshot disk",
+    "name": "source cache update.snapshot synced disk (2).snapshot disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2)",
+    "name": "source cache update.upload updated version file (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -929,14 +957,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "test-chrome-prefix-1337000004500",
+      "test-chrome-prefix-13370000",
       "[CLEANUP]/test-chrome-version"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2).write version file",
+    "name": "source cache update.upload updated version file (2).write version file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@test-chrome-version@test-chrome-prefix-1337000004500@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@test-chrome-version@test-chrome-prefix-13370000@@@",
       "@@@STEP_LOG_END@test-chrome-version@@@"
     ]
   },
@@ -953,18 +981,18 @@
       "gs://chromeos-bot-cache/test-chrome-version"
     ],
     "infra_step": true,
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2).gsutil upload test-chrome-version",
+    "name": "source cache update.upload updated version file (2).gsutil upload test-chrome-version",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/test-chrome-version@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.attach gcloud compute cache disks.upload updated version file (2).set test-chrome-version",
+    "name": "source cache update.upload updated version file (2).set test-chrome-version",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@test-chrome-version@\"test-chrome-prefix-1337000004500\"@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@test-chrome-version@\"test-chrome-prefix-13370000\"@@@"
     ]
   },
   {
@@ -997,8 +1025,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"7781563162436087524\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chrome-cache-snapshot-1625886728983\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-1625886728983\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chrome-cache-snapshot-16258867\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-16258867\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central2-c/disks/staging-source-cache-disk-chrome-us-central2-c\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"4287499025374294961\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -1015,8 +1043,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"4736713593347941175\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-1625890262392\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625890262392\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-16258902\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258902\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"2341635010697930119\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -1033,8 +1061,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"4629036345170629341\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-1625893935790\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625893935790\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-16258939\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258939\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"5316746804958893913\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -1071,8 +1099,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"7781563162436087524\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chrome-cache-snapshot-1625886728983\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-1625886728983\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chrome-cache-snapshot-16258867\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-16258867\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central2-c/disks/staging-source-cache-disk-chrome-us-central2-c\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"4287499025374294961\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -1089,8 +1117,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"4736713593347941175\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-1625890262392\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625890262392\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-16258902\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258902\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"2341635010697930119\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -1107,8 +1135,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"4629036345170629341\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-1625893935790\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625893935790\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-16258939\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258939\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"5316746804958893913\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -1127,7 +1155,7 @@
     "name": "source cache update.cleanup expired snapshots.set expired_snapshots",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@expired_snapshots@[\"staging-chrome-cache-snapshot-1625886728983\", \"staging-chromeos-cache-snapshot-1625890262392\", \"staging-chromeos-cache-snapshot-1625893935790\"]@@@"
+      "@@@SET_BUILD_PROPERTY@expired_snapshots@[\"staging-chrome-cache-snapshot-16258867\", \"staging-chromeos-cache-snapshot-16258902\", \"staging-chromeos-cache-snapshot-16258939\"]@@@"
     ]
   },
   {
@@ -1136,14 +1164,14 @@
       "compute",
       "snapshots",
       "delete",
-      "staging-chrome-cache-snapshot-1625886728983",
+      "staging-chrome-cache-snapshot-16258867",
       "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chrome-cache-snapshot-1625886728983",
+    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chrome-cache-snapshot-16258867",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1154,14 +1182,14 @@
       "compute",
       "snapshots",
       "delete",
-      "staging-chromeos-cache-snapshot-1625890262392",
+      "staging-chromeos-cache-snapshot-16258902",
       "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-1625890262392",
+    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-16258902",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1172,14 +1200,14 @@
       "compute",
       "snapshots",
       "delete",
-      "staging-chromeos-cache-snapshot-1625893935790",
+      "staging-chromeos-cache-snapshot-16258939",
       "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-1625893935790",
+    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-16258939",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

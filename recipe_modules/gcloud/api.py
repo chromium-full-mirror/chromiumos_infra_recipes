@@ -7,12 +7,19 @@ from recipe_engine import recipe_api
 import contextlib
 import datetime
 import os
+import re
 
 DUMMY_IMAGE = 'cos-rc-85-13310-1015-0'
 GCE_PREFIX = 'gce-tests'
 GCE_TEST_BUCKET = 'images-in-test'
 RAW_IMAGE_NAME = 'disk.raw'
 TEST_IMAGE_NAME = 'chromiumos_test_image.bin'
+GCE_CACHE_BUCKET = 'chromeos-bot-cache'
+
+_SWARMING_HOST_REGEXP = (r'^chromeos-ci-'
+                         r'(?P<role>\w*)-'
+                         r'(?P<zone>\w*-\w*-\w*)-'
+                         r'(?P<suffix>.*)')
 
 
 class GcloudApi(recipe_api.RecipeApi):
@@ -25,10 +32,13 @@ class GcloudApi(recipe_api.RecipeApi):
     self._cleanup_mounted_stack = [[]]
     self._attached_disks = {}
     self._dev_ref = 'a'
+    self._disk = None
+    self._suffix = None
+    self._zone = None
 
   @property
-  def _base_mount_path(self):
-    """Returns a Path to the base mount directory for this module."""
+  def snapshot_builder_mount_path(self):
+    """Returns a Path to the base mount directory for cache builder."""
     return self.m.path['cleanup'].join('snapshot')
 
   @property
@@ -38,6 +48,27 @@ class GcloudApi(recipe_api.RecipeApi):
     This is the path that the disks created from snapshots will be mounted.
     """
     return '/snapshot_mounts'
+
+  @property
+  def snapshot_version_path(self):
+    """The path to the local version file.
+
+    This is the path to the local version file that contains the snapshot
+    version that was used to create the local named cache.
+    """
+    return self.m.path['cache'].join('infra_versions')
+
+  @property
+  def snapshot_suffix(self):
+    return self._suffix
+
+  @property
+  def host_zone(self):
+    return self._zone
+
+  @property
+  def gce_disk(self):
+    return self._disk
 
   def set_gce_project(self, project):
     """Set the default project for gcloud command.
@@ -279,12 +310,10 @@ class GcloudApi(recipe_api.RecipeApi):
       mount_path(str): Directory to mount the disk.
       recipe_mount(bool): Whether mount needs to be in the path to use within
                         a recipe.
-
-    Returns: Path to the mounted disk
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       if recipe_mount:
-        recipe_mount_path = self._base_mount_path.join(mount_path)
+        recipe_mount_path = self.snapshot_builder_mount_path.join(mount_path)
         self.m.file.ensure_directory('create mount path', recipe_mount_path)
       else:
         recipe_mount_path = '{}/{}'.format(self.snapshot_mount_path, mount_path)
@@ -297,7 +326,6 @@ class GcloudApi(recipe_api.RecipeApi):
           recipe_mount_path
       ], infra_step=True)
       self._add_cleanup_mounted_disk(name, recipe_mount_path)
-      return recipe_mount_path
 
   def unmount_disk(self, name, mount_path):
     """Unmount an attached disk to host.
@@ -400,6 +428,61 @@ class GcloudApi(recipe_api.RecipeApi):
           '--disk={}'.format(disk),
           '--zone={}'.format(zone),
       ], infra_step=True)
+
+  def create_and_mount_disk(self, cache_name, branch='main', disk_type=None,
+                            recipe_mount=False):
+    """Determine the disk to create and mount from snapshot.
+
+    Grab the matching snapshot, create, attach, and mount the
+    source disk.
+
+    Args:
+      cache_name(str): Name of the cache file to use.
+      branch(str): Git branch.
+      disk_type(str): Type of GCE disk to create, defaults to standard
+        persistent disk.
+      recipe_mount(bool): Whether mount needs to be in the path to use within
+        a recipe.
+    """
+    with self.m.step.nest('get swarming hostname'):
+      infra_host = self.m.swarming.bot_id
+      m = re.search(_SWARMING_HOST_REGEXP, infra_host)
+      if not m:
+        raise self.m.step.StepFailure(
+            'failed to get zone from swarming host: {}'.format(infra_host))
+      self._zone = m.group('zone')
+    with self.m.step.nest('create and attach disk'):
+      is_staging = self.m.build_menu.is_staging
+      self._suffix = str(self.m.time.ms_since_epoch())[0:8]
+      self._disk = '{}-{}-{}-{}'.format(cache_name, branch, self._suffix,
+                                        self._zone)
+      version_file = '{}-{}-cache-snapshot-version.txt'.format(
+          cache_name, branch)
+      if is_staging:
+        self._disk = 'staging-{}'.format(self._disk)
+        version_file = '{}-{}'.format('staging', version_file)
+      local_version = None
+      if self.m.path.exists(self.snapshot_version_path):
+        local_version = self.m.file.read_text(
+            'read local snapshot version',
+            self.snapshot_version_path.join(version_file),
+            test_data='test-cache-snapshot-123')
+      remote_version = self.m.gsutil.cat(
+          'gs://{}/{}'.format(GCE_CACHE_BUCKET, version_file), infra_step=True,
+          stdout=self.m.raw_io.output()).stdout.strip()
+      try:
+        snapshot = remote_version
+        if local_version:
+          snapshot = local_version
+        self.create_disk(disk=self._disk, zone=self._zone, snapshot=snapshot,
+                         disk_type=disk_type)
+      except self.m.step.StepFailure:
+        self.create_disk(disk=self._disk, zone=self._zone,
+                         snapshot=remote_version, disk_type=disk_type)
+      self.attach_disk(name=cache_name, instance=infra_host, disk=self._disk,
+                       zone=self._zone)
+      self.mount_disk(name=cache_name, mount_path=cache_name,
+                      recipe_mount=recipe_mount)
 
   @contextlib.contextmanager
   def cleanup_gce_disks(self):

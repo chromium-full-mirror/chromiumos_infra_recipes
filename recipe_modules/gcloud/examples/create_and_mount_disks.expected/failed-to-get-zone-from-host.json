@@ -23,24 +23,16 @@
   },
   {
     "cmd": [],
-    "name": "source cache update"
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.cleanup expired snapshots",
+    "name": "get swarming hostname",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "source cache update.cleanup expired snapshots.set expired_snapshots",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@expired_snapshots@[]@@@"
-    ]
-  },
-  {
+    "failure": {
+      "failure": {},
+      "humanReason": "failed to get zone from swarming host: chromeos-ci-infra-x16-0-nvcj"
+    },
     "name": "$result"
   }
 ]

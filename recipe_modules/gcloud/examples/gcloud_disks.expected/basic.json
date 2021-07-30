@@ -1,5 +1,27 @@
 [
   {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "gcloud",
       "compute",
@@ -236,8 +258,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"7781563162436087524\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chrome-cache-snapshot-1625886728983\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-1625886728983\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chrome-cache-snapshot-16258867\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-16258867\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central2-c/disks/staging-source-cache-disk-chrome-us-central2-c\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"4287499025374294961\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -254,8 +276,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"4736713593347941175\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-1625890262392\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625890262392\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-16258902\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258902\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"2341635010697930119\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -272,8 +294,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"4629036345170629341\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-1625893935790\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625893935790\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-16258939\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258939\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"5316746804958893913\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -309,8 +331,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"7781563162436087524\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chrome-cache-snapshot-1625886728983\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-1625886728983\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chrome-cache-snapshot-16258867\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-16258867\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central2-c/disks/staging-source-cache-disk-chrome-us-central2-c\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"4287499025374294961\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -327,8 +349,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"4736713593347941175\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-1625890262392\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625890262392\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-16258902\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258902\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"2341635010697930119\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -345,8 +367,8 @@
       "@@@STEP_LOG_LINE@json.output@    \"id\": \"4629036345170629341\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#snapshot\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-1625893935790\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625893935790\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromeos-cache-snapshot-16258939\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258939\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDisk\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"sourceDiskId\": \"5316746804958893913\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"READY\", @@@",
@@ -366,14 +388,14 @@
       "compute",
       "snapshots",
       "delete",
-      "staging-chromeos-cache-snapshot-1625890262392",
+      "staging-chromeos-cache-snapshot-16258902",
       "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "delete snapshot staging-chromeos-cache-snapshot-1625890262392"
+    "name": "delete snapshot staging-chromeos-cache-snapshot-16258902"
   },
   {
     "cmd": [
@@ -381,14 +403,14 @@
       "compute",
       "snapshots",
       "delete",
-      "staging-chromeos-cache-snapshot-1625893935790",
+      "staging-chromeos-cache-snapshot-16258939",
       "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "delete snapshot staging-chromeos-cache-snapshot-1625893935790"
+    "name": "delete snapshot staging-chromeos-cache-snapshot-16258939"
   },
   {
     "cmd": [],

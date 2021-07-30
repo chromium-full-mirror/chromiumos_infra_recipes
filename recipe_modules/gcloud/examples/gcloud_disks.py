@@ -39,13 +39,13 @@ def RunSteps(api):
     prefixes = [
         'staging-chromeos-cache-snapshot', 'staging-chrome-cache-snapshot'
     ]
-    protected_snapshots = ['staging-chrome-cache-snapshot-1625886728983']
+    protected_snapshots = ['staging-chrome-cache-snapshot-16258867']
     snapshot_list = api.gcloud.get_expired_snapshots(
         retention_days=7, prefixes=prefixes,
         protected_snapshots=protected_snapshots)
     api.assertions.assertEqual([
-        'staging-chromeos-cache-snapshot-1625890262392',
-        'staging-chromeos-cache-snapshot-1625893935790'
+        'staging-chromeos-cache-snapshot-16258902',
+        'staging-chromeos-cache-snapshot-16258939'
     ], snapshot_list)
     api.gcloud.delete_snapshots(snapshots=snapshot_list)
 

@@ -25,9 +25,9 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         "labelFingerprint":
             "42WmSpB8rSM=",
         "name":
-            "staging-chrome-cache-snapshot-1625886728983",
+            "staging-chrome-cache-snapshot-16258867",
         "selfLink":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-1625886728983",
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-16258867",
         "sourceDisk":
             "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central2-c/disks/staging-source-cache-disk-chrome-us-central2-c",
         "sourceDiskId":
@@ -53,9 +53,9 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         "labelFingerprint":
             "42WmSpB8rSM=",
         "name":
-            "staging-chromeos-cache-snapshot-1625890262392",
+            "staging-chromeos-cache-snapshot-16258902",
         "selfLink":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625890262392",
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258902",
         "sourceDisk":
             "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d",
         "sourceDiskId":
@@ -81,9 +81,9 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         "labelFingerprint":
             "42WmSpB8rSM=",
         "name":
-            "staging-chromeos-cache-snapshot-1625893935790",
+            "staging-chromeos-cache-snapshot-16258939",
         "selfLink":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-1625893935790",
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258939",
         "sourceDisk":
             "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d",
         "sourceDiskId":
