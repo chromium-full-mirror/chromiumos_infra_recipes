@@ -27,23 +27,16 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.create and mount cache disks",
+    "name": "source cache update.get swarming hostname",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.create and mount cache disks.get swarming hostname",
+    "name": "source cache update.create and attach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.create and mount cache disks.create and attach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -58,9 +51,9 @@
       "gs://chromeos-bot-cache/staging-test-cache-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.gsutil cat",
+    "name": "source cache update.create and attach disk.gsutil cat",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -78,9 +71,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.create disk from snapshot",
+    "name": "source cache update.create and attach disk.create disk from snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -97,9 +90,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.attach disk",
+    "name": "source cache update.create and attach disk.attach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -117,9 +110,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.set disk to autodelete",
+    "name": "source cache update.create and attach disk.set disk to autodelete",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -138,9 +131,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.create mount path",
+    "name": "source cache update.create and attach disk.create mount path",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -156,9 +149,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.mount disk test-cache",
+    "name": "source cache update.create and attach disk.mount disk test-cache",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -546,14 +539,14 @@
       "/path/to/tmp/json",
       "copy",
       "staging-test-cache-main-13370000",
-      "[CLEANUP]/test-cache-version"
+      "[CLEANUP]/staging-test-cache-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "source cache update.upload updated version file.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@test-cache-version@staging-test-cache-main-13370000@@@",
-      "@@@STEP_LOG_END@test-cache-version@@@"
+      "@@@STEP_LOG_LINE@staging-test-cache-main-cache-snapshot-version.txt@staging-test-cache-main-13370000@@@",
+      "@@@STEP_LOG_END@staging-test-cache-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -565,22 +558,22 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/test-cache-version",
-      "gs://chromeos-bot-cache/test-cache-version"
+      "[CLEANUP]/staging-test-cache-main-cache-snapshot-version.txt",
+      "gs://chromeos-bot-cache/staging-test-cache-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.upload updated version file.gsutil upload test-cache-version",
+    "name": "source cache update.upload updated version file.gsutil upload staging-test-cache-main-cache-snapshot-version.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/test-cache-version@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/staging-test-cache-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.upload updated version file.set test-cache-version",
+    "name": "source cache update.upload updated version file.set staging-test-cache-main-cache-snapshot-version.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@test-cache-version@\"staging-test-cache-main-13370000\"@@@"
+      "@@@SET_BUILD_PROPERTY@staging-test-cache-main-cache-snapshot-version.txt@\"staging-test-cache-main-13370000\"@@@"
     ]
   },
   {

@@ -25,9 +25,14 @@ def RunSteps(api):
     if api.build_menu.is_staging:
       api.assertions.assertEqual(
           api.gcloud.gce_disk, 'staging-chromiumos-main-13370000-us-central1-b')
+      api.assertions.assertEqual(
+          api.gcloud.snapshot_version_file,
+          'staging-chromiumos-main-cache-snapshot-version.txt')
     else:
       api.assertions.assertEqual(api.gcloud.gce_disk,
                                  'chromiumos-main-13370000-us-central1-b')
+      api.assertions.assertEqual(api.gcloud.snapshot_version_file,
+                                 'chromiumos-main-cache-snapshot-version.txt')
     api.gcloud.create_and_mount_disk(cache_name='chromiumos',
                                      branch='release-R90-13816.B',
                                      recipe_mount=True)
@@ -74,13 +79,7 @@ def GenTests(api):
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
-      'missing-version-file-in-storage-cache-builder',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.step_data(('create and attach disk (2).gsutil cat'), retcode=3),
-  )
-  yield api.test(
-      'missing-version-file-in-storage-build-instance',
+      'missing-version-file-in-storage',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(('create and attach disk.gsutil cat'), retcode=3),

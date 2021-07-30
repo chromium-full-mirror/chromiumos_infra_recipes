@@ -30,23 +30,16 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.create and mount cache disks",
+    "name": "source cache update.get swarming hostname",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.create and mount cache disks.get swarming hostname",
+    "name": "source cache update.create and attach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.create and mount cache disks.create and attach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -61,9 +54,9 @@
       "gs://chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.gsutil cat",
+    "name": "source cache update.create and attach disk.gsutil cat",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -81,9 +74,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.create disk from snapshot",
+    "name": "source cache update.create and attach disk.create disk from snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -100,9 +93,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.attach disk",
+    "name": "source cache update.create and attach disk.attach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -120,9 +113,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.set disk to autodelete",
+    "name": "source cache update.create and attach disk.set disk to autodelete",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -141,9 +134,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.create mount path",
+    "name": "source cache update.create and attach disk.create mount path",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -159,9 +152,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and mount cache disks.create and attach disk.mount disk chromiumos",
+    "name": "source cache update.create and attach disk.mount disk chromiumos",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -446,14 +439,14 @@
       "/path/to/tmp/json",
       "copy",
       "chromeos_default_recovery_snapshot",
-      "[CLEANUP]/test-chromeos-version.txt"
+      "[CLEANUP]/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "source cache update.sync mounted cache directories.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@test-chromeos-version.txt@chromeos_default_recovery_snapshot@@@",
-      "@@@STEP_LOG_END@test-chromeos-version.txt@@@"
+      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@chromeos_default_recovery_snapshot@@@",
+      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -465,22 +458,22 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/test-chromeos-version.txt",
-      "gs://chromeos-bot-cache/test-chromeos-version.txt"
+      "[CLEANUP]/chromiumos-main-cache-snapshot-version.txt",
+      "gs://chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.sync mounted cache directories.gsutil upload test-chromeos-version.txt",
+    "name": "source cache update.sync mounted cache directories.gsutil upload chromiumos-main-cache-snapshot-version.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/test-chromeos-version.txt@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.sync mounted cache directories.set test-chromeos-version.txt",
+    "name": "source cache update.sync mounted cache directories.set chromiumos-main-cache-snapshot-version.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@test-chromeos-version.txt@\"chromeos_default_recovery_snapshot\"@@@"
+      "@@@SET_BUILD_PROPERTY@chromiumos-main-cache-snapshot-version.txt@\"chromeos_default_recovery_snapshot\"@@@"
     ]
   },
   {

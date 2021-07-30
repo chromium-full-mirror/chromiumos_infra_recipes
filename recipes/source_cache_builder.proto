@@ -10,14 +10,14 @@ package recipes.chromeos.source_cache_builder;
 message SourceCacheDefinition {
   // The name of the cache to be generated or updated.
   string cache_name = 1;
-  // Version file name to write
-  string version_file = 2;
   // Command to utilize to update the cache.
   string command = 3;
   // Default recovery snapshot version.
   string recovery_snapshot = 4;
   // Git branch to sync cache.
   string branch = 5;
+  // GCE disk type.
+  string disk_type = 6;
 }
 message SourceCacheBuilderProperties {
   // The list of the buildbucket pools to monitor and scale.

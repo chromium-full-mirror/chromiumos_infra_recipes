@@ -34,6 +34,7 @@ class GcloudApi(recipe_api.RecipeApi):
     self._dev_ref = 'a'
     self._disk = None
     self._suffix = None
+    self._version_file = None
     self._zone = None
 
   @property
@@ -69,6 +70,10 @@ class GcloudApi(recipe_api.RecipeApi):
   @property
   def gce_disk(self):
     return self._disk
+
+  @property
+  def snapshot_version_file(self):
+    return self._version_file
 
   def set_gce_project(self, project):
     """Set the default project for gcloud command.
@@ -457,31 +462,28 @@ class GcloudApi(recipe_api.RecipeApi):
       self._suffix = str(self.m.time.ms_since_epoch())[0:8]
       self._disk = '{}-{}-{}-{}'.format(cache_name, branch, self._suffix,
                                         self._zone)
-      version_file = '{}-{}-cache-snapshot-version.txt'.format(
+      self._version_file = '{}-{}-cache-snapshot-version.txt'.format(
           cache_name, branch)
       if is_staging:
         self._disk = 'staging-{}'.format(self._disk)
-        version_file = '{}-{}'.format('staging', version_file)
+        self._version_file = '{}-{}'.format('staging', self._version_file)
       local_version = None
       if self.m.path.exists(self.snapshot_version_path):
         local_version = self.m.file.read_text(
             'read local snapshot version',
-            self.snapshot_version_path.join(version_file),
+            self.snapshot_version_path.join(self._version_file),
             test_data='test-cache-snapshot-123')
       try:
         remote_version = self.m.gsutil.cat(
-            'gs://{}/{}'.format(GCE_CACHE_BUCKET, version_file),
+            'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
             infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
       except self.m.step.StepFailure:
         with self.m.step.nest(
             'unable to find version file in GS bucket') as pres:
           # This is intended behavior if a new cache builder is added.
           # Rather than fail, default to an initial snapshot.
-          if recipe_mount:
-            pres.logs['version file not found'] = version_file
-            remote_version = recovery_snapshot
-          else:
-            raise
+          pres.logs['version file not found'] = self._version_file
+          remote_version = recovery_snapshot
       try:
         snapshot = remote_version
         if local_version:

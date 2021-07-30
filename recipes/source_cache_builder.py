@@ -42,12 +42,10 @@ def RunSteps(api, properties):
         if is_staging:
           snapshot_prefix = 'staging-{}'.format(snapshot_prefix)
         snapshot_prefixes.append(snapshot_prefix)
-        with api.step.nest('create and mount cache disks'):
-          #api.assertions.assertIsNone(str(cache.cache_name))
-          api.gcloud.create_and_mount_disk(cache_name=cache.cache_name,
-                                           branch=cache.branch,
-                                           disk_type='pd-ssd',
-                                           recipe_mount=True)
+        api.gcloud.create_and_mount_disk(cache_name=cache.cache_name,
+                                         branch=cache.branch,
+                                         disk_type=cache.disk_type,
+                                         recipe_mount=True)
         with api.step.nest('sync mounted cache directories'):
           snapshot_name = '{}-{}'.format(snapshot_prefix,
                                          api.gcloud.snapshot_suffix)
@@ -76,9 +74,9 @@ def RunSteps(api, properties):
               api.chrome.cache_sync(cache_path=mount_path)
           # If sync fails, recovery to known working for next execution.
           except StepFailure:
-            api.cros_cache.write_and_upload_version(properties.cache_bucket,
-                                                    cache.version_file,
-                                                    cache.recovery_snapshot)
+            api.cros_cache.write_and_upload_version(
+                properties.cache_bucket, api.gcloud.snapshot_version_file,
+                cache.recovery_snapshot)
             break
         with api.step.nest('sync disk cache before snapshot'):
           api.gcloud.sync_disk_cache(name=cache.cache_name)
@@ -90,9 +88,9 @@ def RunSteps(api, properties):
         with api.step.nest('snapshot synced disk'):
           api.gcloud.snapshot_disk(disk, snapshot_name, api.gcloud.host_zone)
         with api.step.nest('upload updated version file'):
-          api.cros_cache.write_and_upload_version(properties.cache_bucket,
-                                                  cache.version_file,
-                                                  snapshot_name)
+          api.cros_cache.write_and_upload_version(
+              properties.cache_bucket, api.gcloud.snapshot_version_file,
+              snapshot_name)
     with api.step.nest('cleanup expired snapshots'):
       snapshot_delete_list = api.gcloud.get_expired_snapshots(
           retention_days=properties.retention_days, prefixes=snapshot_prefixes,
@@ -113,10 +111,10 @@ def GenTests(api):
           cache_definition=[
               dict(
                   cache_name='test-cache',
-                  version_file='test-cache-version',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='release-R90-13816.B',
+                  disk_type='pd-ssd',
               ),
           ],
           cache_bucket='chromeos-bot-cache',
@@ -134,10 +132,10 @@ def GenTests(api):
           cache_definition=[
               dict(
                   cache_name='test-cache',
-                  version_file='test-cache-version',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
+                  disk_type='pd-ssd',
               ),
           ],
           cache_bucket='chromeos-bot-cache',
@@ -153,17 +151,17 @@ def GenTests(api):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  version_file='test-chromeos-version',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
+                  disk_type='pd-ssd',
               ),
               dict(
                   cache_name='chrome',
-                  version_file='test-chrome-version',
                   command='gclient',
                   recovery_snapshot='chrome_default_recovery_snapshot',
                   branch='main',
+                  disk_type='pd-ssd',
               ),
           ],
           cache_bucket='chromeos-bot-cache',
@@ -179,10 +177,10 @@ def GenTests(api):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  version_file='test-chromeos-version.txt',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
+                  disk_type='pd-ssd',
               ),
           ],
           cache_bucket='chromeos-bot-cache',
