@@ -6816,13 +6816,13 @@ Recipe for building a Borealis rootfs image.
 &mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#17)(api):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
-[DEPS](/recipes/build_cq.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
+[DEPS](/recipes/build_cq.py#8): [build\_menu](#recipe_modules-build_menu)
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#31)(api, config, _properties):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#30)(api, config, _properties):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#23)(api, properties):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
 
 [DEPS](/recipes/build_firmware.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6998,7 +6998,7 @@ Recipe for building images for release.
 
 Recipe for building and testing a BuildTarget's packages.
 
-&mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#27)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#28)(api, config):**
 
 &mdash; **def [RunSteps](/recipes/build_slim_cq.py#21)(api):**
 ### *recipes* / [build\_target](/recipes/build_target.py)

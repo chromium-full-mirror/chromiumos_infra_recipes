@@ -20,8 +20,9 @@ from recipe_engine.recipe_api import StepFailure
 
 def RunSteps(api):
   with api.build_menu.configure_builder() as config, \
-      api.build_menu.setup_workspace_and_chroot():
-    return DoRunSteps(api, config)
+      api.build_menu.setup_workspace_and_chroot() as is_relevant:
+    if is_relevant:
+      return DoRunSteps(api, config)
 
 
 def DoRunSteps(api, config):

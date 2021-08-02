@@ -7,7 +7,6 @@
 
 DEPS = [
     'build_menu',
-    'test_util',
 ]
 
 from recipe_engine import post_process
