@@ -1107,6 +1107,9 @@
       "@@@STEP_LOG_LINE@all_programs_config.json@{@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@  \"programs\": [@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@    {@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@      \"repo\": {@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@        \"name\": \"chromeos/program/galaxy\"@@@",
+      "@@@STEP_LOG_LINE@all_programs_config.json@      },@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@      \"deviceProjects\": [@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@        {@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@          \"repo\": {@@@",
@@ -1216,6 +1219,14 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@generated/config.jsonproto@@@",
       "@@@STEP_SUMMARY_TEXT@(does not exist)@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@skipping, not in allowed projects@@@"
     ]
   },
   {
@@ -1335,6 +1346,23 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
+      "-m",
+      "chromiumos.config.payload.ConfigBundle",
+      "-a",
+      "chromiumos.config.payload.ConfigBundleList",
+      "-o",
+      "[CLEANUP]/tmp_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Do aggregate_configs and create CL.aggregating program configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "Do aggregate_configs and create CL.aggregating configs",
     "~followup_annotations": [
@@ -1365,10 +1393,29 @@
       "-a",
       "chromiumos.config.payload.ConfigBundleList",
       "-o",
-      "hw_design/generated/configs.jsonproto"
+      "[CLEANUP]/tmp_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/join_programs.py",
+      "-l",
+      "debug",
+      "-o",
+      "hw_design/generated/configs.jsonproto",
+      "-i",
+      "[CLEANUP]/tmp_tmp_2",
+      "-p",
+      "[CLEANUP]/tmp_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.joining program and project configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1450,6 +1497,48 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.chromeos/project/galaxy/milkyway.copy public config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do replicate_public_config and create CL.chromeos/program/galaxy",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/chromiumos_workspace/src/project_public/program/galaxy/sw_build_config"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Do replicate_public_config and create CL.chromeos/program/galaxy.remove dest dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "[CLEANUP]/chromiumos_workspace/src/program/galaxy/public_sw_build_config",
+      "[CLEANUP]/chromiumos_workspace/src/project_public/program/galaxy/sw_build_config"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Do replicate_public_config and create CL.chromeos/program/galaxy.copy public config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

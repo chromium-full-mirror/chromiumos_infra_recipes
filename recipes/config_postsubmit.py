@@ -238,12 +238,36 @@ def _aggregate_configs(api, properties, project_infos):
       project.repo_name for project in properties.allowed_projects
   ]
 
+  allowed_programs = [
+      program.repo_name for program in properties.allowed_programs
+  ]
+
   # get project info for internal config repo
   config_project_info = api.repo.project_info("chromeos/config-internal")
 
   cwd = api.context.cwd
   merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
+  program_join_script = cwd.join('src/config/payload_utils/join_programs.py')
   config_internal = cwd.join('src/config-internal')
+
+  # Get paths of all generated program payloads
+  files = []
+  for project_info in project_infos:
+    if not project_info.name in allowed_programs:
+      continue
+
+    path = cwd.join(project_info.path, 'generated/config.jsonproto')
+    if api.path.exists(path):
+      files.append(path)
+
+  program_configs_path = api.path.mkstemp()
+  # yapf: disable
+  api.step('aggregating program configs', [
+    'vpython', merge_script,
+    '-m', 'chromiumos.config.payload.ConfigBundle',
+    '-a', 'chromiumos.config.payload.ConfigBundleList',
+    '-o', program_configs_path] + files)
+  # yapf:enable
 
   def _merge_configs():
     outputs = []
@@ -260,10 +284,22 @@ def _aggregate_configs(api, properties, project_infos):
           files.append(path)
 
       # merge and import
+      project_configs_path = api.path.mkstemp()
       api.step('merge {} configs to config-internal'.format(config.name), [
           'vpython', merge_script, "-m", config.message_type, "-a",
-          config.aggregate_type, "-o", config.output_path
+          config.aggregate_type, "-o", project_configs_path
       ] + files)
+
+      # join with program definitions
+      # yapf: disable
+      api.step('joining program and project configs', [
+        'vpython', program_join_script,
+        '-l', 'debug',
+        '-o', config.output_path,
+        '-i', project_configs_path,
+        '-p', program_configs_path
+      ])
+      # yapf: enable
 
       outputs.append(config.output_path)
 
@@ -441,6 +477,10 @@ def RunSteps(api, properties):
 
     names = set()
     for program in all_program_configs.get("programs", []):
+      name = program.get("repo", {}).get("name")
+      if name:
+        names.add(name)
+
       for project in program.get("deviceProjects", []):
         name = project.get("repo", {}).get("name")
         if name:
@@ -506,9 +546,12 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def default_properties(allowed_projects=None):
+  def default_properties(allowed_projects=None, allowed_programs=None):
     if allowed_projects is None:
       allowed_projects = [{"repo_name": "chromeos/project/galaxy/milkyway"}]
+
+    if allowed_programs is None:
+      allowed_programs = [{"repo_name": "chromeos/program/galaxy"}]
 
     aclc = PROPERTIES.ActionCLConfig(
         reviewers='test1@google.com',
@@ -523,6 +566,7 @@ def GenTests(api):
                 "REPLICATE_PUBLIC_CONFIG": aclc,
                 "REGENERATE_TEST_PLAN": aclc,
             },
+            allowed_programs=allowed_programs,
             allowed_projects=allowed_projects,
         ))
 
@@ -531,6 +575,9 @@ def GenTests(api):
         'find config repos.reading DLM config',
         api.file.read_json({
             "programs": [{
+                "repo": {
+                    "name": "chromeos/program/galaxy",
+                },
                 "deviceProjects": [{
                     "repo": {
                         "name": "chromeos/project/galaxy/milkyway"
@@ -610,10 +657,15 @@ def GenTests(api):
     """
     check(step_odict[step].step_summary_text == expected)
 
-  def mock_payloads(fname):
+  def mock_project_payloads(fname):
     return api.path.exists(
         api.src_state.workspace_path.join(
             'src/project/galaxy/milkyway/generated/%s' % fname))
+
+  def mock_program_payloads():
+    return api.path.exists(
+        api.src_state.workspace_path.join(
+            'src/program/galaxy/generated/config.jsonproto'))
 
   def flatten_step_data(value):
     """Returns StepData for the call to flatten_config_payload.py call."""
@@ -630,7 +682,7 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_payloads("config.jsonproto"),
+      mock_project_payloads("config.jsonproto"),
       api.git.diff_check(True),
       flatten_step_data(1),
       api.post_process(
@@ -665,7 +717,7 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_payloads("config.jsonproto"),
+      mock_project_payloads("config.jsonproto"),
       api.git.diff_check(True),
       flatten_step_data(0),
       api.post_process(
@@ -680,8 +732,8 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_payloads("config.jsonproto"),
-      mock_payloads("joined.jsonproto"),
+      mock_project_payloads("config.jsonproto"),
+      mock_project_payloads("joined.jsonproto"),
       api.git.diff_check(False),
       flatten_step_data(1),
       api.post_process(
@@ -703,7 +755,7 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_payloads("config.jsonproto"),
+      mock_project_payloads("config.jsonproto"),
       flatten_step_data(1),
       api.step_data(
           'Do flatten_configs and create CL'
@@ -736,8 +788,9 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_payloads("config.jsonproto"),
-      mock_payloads("flattened.jsonproto"),
+      mock_project_payloads("config.jsonproto"),
+      mock_project_payloads("flattened.jsonproto"),
+      mock_program_payloads(),
       api.git.diff_check(True),
       api.post_process(
           post_process.MustRun,
@@ -766,8 +819,9 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_payloads("config.jsonproto"),
-      mock_payloads("flattened.jsonproto"),
+      mock_program_payloads(),
+      mock_project_payloads("config.jsonproto"),
+      mock_project_payloads("flattened.jsonproto"),
       api.git.diff_check(False),
       api.post_process(
           StepSummaryEquals, 'Do aggregate_configs and create CL'
@@ -787,8 +841,9 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_payloads("config.jsonproto"),
-      mock_payloads("flattened.jsonproto"),
+      mock_program_payloads(),
+      mock_project_payloads("config.jsonproto"),
+      mock_project_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
           'Do aggregate_configs and create CL'
@@ -802,8 +857,8 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_payloads("config.jsonproto"),
-      mock_payloads("flattened.jsonproto"),
+      mock_project_payloads("config.jsonproto"),
+      mock_project_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
           'Do regenerate_suite_scheduler_configs and create CL' \
@@ -823,8 +878,8 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_payloads("config.jsonproto"),
-      mock_payloads("flattened.jsonproto"),
+      mock_project_payloads("config.jsonproto"),
+      mock_project_payloads("flattened.jsonproto"),
       api.git.diff_check(True),
       api.step_data(
           'Do regenerate_test_plan and create CL' \

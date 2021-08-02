@@ -43,7 +43,7 @@ message ConfigPostsubmitProperties {
     bool send_to_cq = 5;
   }
 
-  message AllowedProjects {
+  message AllowedRepo {
       string repo_name = 1; // all_projects_configs.json repo name
   }
 
@@ -54,5 +54,8 @@ message ConfigPostsubmitProperties {
   // with out of date configs (think projects that were backfilled but are now
   // cancelled), which can break things.  Let's be explicit about which project
   // repos we're going to process.
-  repeated AllowedProjects allowed_projects = 2;
+  repeated AllowedRepo allowed_projects = 2;
+
+  // Same with programs for program config joining
+  repeated AllowedRepo allowed_programs = 3;
 }
