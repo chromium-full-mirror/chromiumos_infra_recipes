@@ -79,7 +79,7 @@ def GenTests(api):
               'https://chromium-review.googlesource.com/c/src/projectA/+/123/3',
               '-cl',
               'https://chromium-review.googlesource.com/c/src/projectB/+/456/7',
-              '-output',
+              '-out',
               '[CLEANUP]/test_plan_tmp_1/output.jsonproto',
           ],
       ),

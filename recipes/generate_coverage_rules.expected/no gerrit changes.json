@@ -1,0 +1,21 @@
+[
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[chromeos]/recipes/generate_coverage_rules.py\", line 31, in RunSteps",
+      "    raise ValueError('At least one GerritChange must be passed.')",
+      "ValueError: At least one GerritChange must be passed."
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: ValueError('At least one GerritChange must be passed.',)"
+    },
+    "name": "$result"
+  }
+]

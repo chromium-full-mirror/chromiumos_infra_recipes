@@ -284,6 +284,7 @@
   * [gcloud:examples/create_and_mount_disks](#recipes-gcloud_examples_create_and_mount_disks)
   * [gcloud:examples/full](#recipes-gcloud_examples_full)
   * [gcloud:examples/gcloud_disks](#recipes-gcloud_examples_gcloud_disks)
+  * [generate_coverage_rules](#recipes-generate_coverage_rules) &mdash; Recipe for generating CoverageRules for a given set of GerritChanges.
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change)
   * [gerrit:examples/add_change_comment](#recipes-gerrit_examples_add_change_comment)
@@ -7963,6 +7964,21 @@ An experimental recipe for running GCE tests.
 [DEPS](/recipe_modules/gcloud/examples/gcloud_disks.py#6): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/recipe_modules/gcloud/examples/gcloud_disks.py#15)(api):**
+### *recipes* / [generate\_coverage\_rules](/recipes/generate_coverage_rules.py)
+
+[DEPS](/recipes/generate_coverage_rules.py#19): [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+Recipe for generating CoverageRules for a given set of GerritChanges.
+
+This Recipe is a wrapper around functions in the cros_test_plan_v2 module. Since
+some calls (e.g. generate_coverage_rules) require a source checkout and SDK to
+be present, this Recipe is intended for use in contexts when these are not
+present, e.g. calls from the orchestrator.
+
+If a Recipe already has a checkout and SDK present, it should call the
+cros_test_plan_v2 functions directly.
+
+&mdash; **def [RunSteps](/recipes/generate_coverage_rules.py#28)(api):**
 ### *recipes* / [generator](/recipes/generator.py)
 
 [DEPS](/recipes/generator.py#36): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]

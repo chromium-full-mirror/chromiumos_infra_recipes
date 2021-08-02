@@ -59,7 +59,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='test_plan')
       output = messages_path.join("output.jsonproto")
 
-      cmd += ['-output', output]
+      cmd += ['-out', output]
 
       self.m.step('call test_plan', cmd)
 
