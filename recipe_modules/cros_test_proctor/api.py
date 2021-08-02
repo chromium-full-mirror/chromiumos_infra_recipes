@@ -9,7 +9,7 @@ from google.protobuf import duration_pb2
 
 from recipe_engine import recipe_api
 
-import structs
+from . import structs
 
 from PB.chromite.api.test import VmTestRequest
 from PB.chromiumos.builder_config import BuilderConfig

@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 import json
-import structs
+from . import structs
 
 from recipe_engine import recipe_test_api
 

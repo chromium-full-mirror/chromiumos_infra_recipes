@@ -3,9 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from future.standard_library import install_aliases
+install_aliases()
+
 from recipe_engine import recipe_api
 
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 KEY_PREFIX = 'chromeos.buildbucket:'
 

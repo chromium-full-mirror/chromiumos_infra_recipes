@@ -114,13 +114,11 @@ class Image(object):
       12: "dlc",
   }
 
-  _IMAGE_TYPE_ATOM_TO_ENUM = {
-      v: k for k, v in _IMAGE_TYPE_TO_PATH_ATOM.iteritems()
-  }
+  _IMAGE_TYPE_ATOM_TO_ENUM = {v: k for k, v in _IMAGE_TYPE_TO_PATH_ATOM.items()}
 
   # Construct regex for image types (e.g. '(base|recovery|dev|test)').
-  _IMAGE_TYPES_REGEXP = ('(' + '|'.join(
-      [_IMAGE_TYPE_TO_PATH_ATOM[x] for x in _SUPPORTED_IMAGE_TYPES]) + ')')
+  _IMAGE_TYPES_REGEXP = ('(' + '|'.join(_IMAGE_TYPE_TO_PATH_ATOM.values()) +
+                         ')')
 
   @property
   def uri(self):

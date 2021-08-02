@@ -5,8 +5,11 @@
 
 """APIs for dealing with Gitiles."""
 
+from future.standard_library import install_aliases
+install_aliases()
+
 import base64
-import urlparse
+from urllib.parse import urlunparse
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -99,8 +102,7 @@ class GitilesApi(recipe_api.RecipeApi):
     cred_cache_cmd = [] if public else ['-b', credential_cookie_location]
     ref = ref or 'HEAD'
     file_url_part = '/'.join((project, '+', ref, path))
-    url = urlparse.urlunparse(
-        ('https', host, file_url_part, None, 'format=TEXT', None))
+    url = urlunparse(('https', host, file_url_part, '', 'format=TEXT', ''))
     with self.m.step.nest('fetch gitiles file') as pres:
       data = self.m.easy.stdout_step('curl %s' % url,
                                      ['curl'] + cred_cache_cmd + [url],

@@ -141,8 +141,9 @@ def RunSteps(api, properties):
         # Retrieve version information from Gitiles API.
         if properties.HasField('gitiles_info'):
           gitiles_response = api.gitiles.get_file(
-              properties.gitiles_info.host, properties.gitiles_info.project,
-              properties.gitiles_info.path, ref=trigger.gitiles.ref,
+              str(properties.gitiles_info.host),
+              str(properties.gitiles_info.project),
+              str(properties.gitiles_info.path), ref=str(trigger.gitiles.ref),
               test_output_data='MTIzLjQ1Ni43ODkuMAo=')
 
         # If we we recieved a target version from Gitiles, override the tag

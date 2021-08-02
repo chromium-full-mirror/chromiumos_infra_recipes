@@ -48,7 +48,7 @@ class CrosScheduleTestApi(recipe_test_api.RecipeTestApi):
           t = datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
           dates[k] = (t +
                       timedelta(days=inc_days)).strftime('%Y-%m-%dT%H:%M:%S')
-        except TypeError, ValueError:
+        except (TypeError, ValueError):
           pass
 
       return dates

@@ -10,7 +10,7 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
-import structs
+from . import structs
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.lab import license as license_pb2

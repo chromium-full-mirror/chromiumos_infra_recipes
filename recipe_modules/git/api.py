@@ -5,11 +5,14 @@
 
 """API for working with git."""
 
+from future.standard_library import install_aliases
+install_aliases()
+
 import contextlib
 from datetime import timedelta
 import types
 from collections import namedtuple
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
