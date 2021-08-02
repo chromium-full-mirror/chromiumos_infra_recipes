@@ -253,7 +253,7 @@ class OrchMenuApi(RecipeApi):
     # The only property we need to validate is update_manifest_refs, and we want
     # to validate all of them.
     for field, value in self._properties.update_manifest_refs.ListFields():
-      if field.name is 'max_build_failure_ratio':
+      if field.name == 'max_build_failure_ratio':
         if value < 0.0 or value > 1.0:
           raise StepFailure('%s is out of range [0.0, 1.0] at %s' %
                             (field.name, value))
