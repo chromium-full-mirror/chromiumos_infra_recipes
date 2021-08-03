@@ -3798,7 +3798,7 @@
     "cmd": [],
     "name": "write results",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@tricium@\"{\\n\\\"comments\\\": [\\n{\\n\\\"category\\\": \\\"CargoClippy\\\", \\n\\\"path\\\": \\\"path/file.rs\\\", \\n\\\"message\\\": \\\"test message\\\", \\n\\\"startLine\\\": 1, \\n\\\"endLine\\\": 1\\n}\\n]\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@tricium@\"{\\n\\\"comments\\\": [\\n{\\n\\\"category\\\": \\\"CargoClippy\\\", \\n\\\"path\\\": \\\"path/file.rs\\\", \\n\\\"message\\\": \\\"test message\\\", \\n\\\"startLine\\\": 1, \\n\\\"endLine\\\": 2\\n}\\n]\\n}\"@@@"
     ]
   },
   {

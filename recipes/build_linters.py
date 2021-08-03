@@ -119,7 +119,7 @@ def _WriteComments(api, findings):
         api.tricium.add_comment('CargoClippy', finding.message,
                                 location.filepath,
                                 start_line=location.line_start,
-                                end_line=location.line_start)
+                                end_line=location.line_start + 1)
     presentation.step_text = 'Wrote %d ' % comment_count
   api.tricium.write_comments()
 
