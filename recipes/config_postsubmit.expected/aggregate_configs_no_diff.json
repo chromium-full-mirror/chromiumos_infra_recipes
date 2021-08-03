@@ -1213,20 +1213,29 @@
     "name": "Do flatten_configs and create CL"
   },
   {
+    "cmd": [
+      "vpython",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
+      "-m",
+      "chromiumos.config.payload.ConfigBundle",
+      "-a",
+      "chromiumos.config.payload.ConfigBundleList",
+      "-o",
+      "[CLEANUP]/tmp_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Do flatten_configs and create CL.aggregating program configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@generated/config.jsonproto@@@",
       "@@@STEP_SUMMARY_TEXT@(does not exist)@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.processing chromeos/program/galaxy",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@skipping, not in allowed projects@@@"
     ]
   },
   {
@@ -1293,10 +1302,29 @@
       "-a",
       "chromiumos.config.payload.FlatConfigList",
       "-o",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal/hw_design/generated/flattened.jsonproto"
+      "[CLEANUP]/tmp_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.merge flattened configs to config-internal",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/join_programs.py",
+      "-l",
+      "debug",
+      "-o",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/hw_design/generated/flattened.jsonproto",
+      "-i",
+      "[CLEANUP]/tmp_tmp_2",
+      "-p",
+      "[CLEANUP]/tmp_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.joining program and project configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1346,23 +1374,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython",
-      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
-      "-m",
-      "chromiumos.config.payload.ConfigBundle",
-      "-a",
-      "chromiumos.config.payload.ConfigBundleList",
-      "-o",
-      "[CLEANUP]/tmp_tmp_1"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "Do aggregate_configs and create CL.aggregating program configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "Do aggregate_configs and create CL.aggregating configs",
     "~followup_annotations": [
@@ -1393,29 +1404,10 @@
       "-a",
       "chromiumos.config.payload.ConfigBundleList",
       "-o",
-      "[CLEANUP]/tmp_tmp_2"
+      "hw_design/generated/configs.jsonproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/join_programs.py",
-      "-l",
-      "debug",
-      "-o",
-      "hw_design/generated/configs.jsonproto",
-      "-i",
-      "[CLEANUP]/tmp_tmp_2",
-      "-p",
-      "[CLEANUP]/tmp_tmp_1"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.joining program and project configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

@@ -106,23 +106,53 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
   return [CommitInfo(public_repo_path, message, [])]
 
 
-def _flatten_configs(api, _properties, project_infos):
+def _flatten_configs(api, properties, project_infos):
   flatten_script = api.context.cwd.join(
       'src/config/payload_utils/flatten_config_payload.py')
 
   allowed_projects = [
-      project.repo_name for project in _properties.allowed_projects
+      project.repo_name for project in properties.allowed_projects
   ]
+
+  allowed_programs = [
+      program.repo_name for program in properties.allowed_programs
+  ]
+
+  cwd = api.context.cwd
+  merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
+  program_join_script = cwd.join('src/config/payload_utils/join_programs.py')
 
   joined_config = 'generated/joined.jsonproto'
   config_bundle = 'generated/config.jsonproto'
   flat_config = 'generated/flattened.jsonproto'
+
+  # Get paths of all generated program payloads
+  files = []
+  for project_info in project_infos:
+    if not project_info.name in allowed_programs:
+      continue
+
+    path = cwd.join(project_info.path, 'generated/config.jsonproto')
+    if api.path.exists(path):
+      files.append(path)
+
+  program_configs_path = api.path.mkstemp()
+  # yapf: disable
+  api.step('aggregating program configs', [
+    'vpython', merge_script,
+    '-m', 'chromiumos.config.payload.ConfigBundle',
+    '-a', 'chromiumos.config.payload.ConfigBundleList',
+    '-o', program_configs_path] + files)
+  # yapf:enable
 
   flat_files = []
 
   # generated a temporary flattened.jsonproto in each project
   empty_flatten_payload = []
   for project_info in project_infos:
+    if not project_info.name.startswith("chromeos/project"):
+      continue
+
     with api.step.nest('processing %s' % project_info.name) as presentation,\
          api.context(api.context.cwd.join(project_info.path)):
 
@@ -174,16 +204,30 @@ def _flatten_configs(api, _properties, project_infos):
   output_path = config_internal.join('hw_design', flat_config)
 
   def _merge_flattened():
+    project_configs_path = api.path.mkstemp()
+
+    # Merge all the flattened projet configs together into a single payload
+    # yapf: disable
     cmd = [
         merge_script,
-        '-m',
-        'chromiumos.config.payload.FlatConfigList',
-        '-a',
-        'chromiumos.config.payload.FlatConfigList',
-        '-o',
-        output_path,
+        '-m', 'chromiumos.config.payload.FlatConfigList',
+        '-a', 'chromiumos.config.payload.FlatConfigList',
+        '-o', project_configs_path,
     ] + flat_files
+    # yapf: enable
+
     api.step('merge flattened configs to config-internal', ['vpython'] + cmd)
+
+    # join with program definitions
+    # yapf: disable
+    api.step('joining program and project configs', [
+      'vpython', program_join_script,
+      '-l', 'debug',
+      '-o', output_path,
+      '-i', project_configs_path,
+      '-p', program_configs_path
+    ])
+    # yapf: enable
 
     with api.step.nest("diffing to find changes") as presentation:
       if not api.git.diff_check(output_path):
@@ -238,36 +282,12 @@ def _aggregate_configs(api, properties, project_infos):
       project.repo_name for project in properties.allowed_projects
   ]
 
-  allowed_programs = [
-      program.repo_name for program in properties.allowed_programs
-  ]
-
   # get project info for internal config repo
   config_project_info = api.repo.project_info("chromeos/config-internal")
 
   cwd = api.context.cwd
   merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
-  program_join_script = cwd.join('src/config/payload_utils/join_programs.py')
   config_internal = cwd.join('src/config-internal')
-
-  # Get paths of all generated program payloads
-  files = []
-  for project_info in project_infos:
-    if not project_info.name in allowed_programs:
-      continue
-
-    path = cwd.join(project_info.path, 'generated/config.jsonproto')
-    if api.path.exists(path):
-      files.append(path)
-
-  program_configs_path = api.path.mkstemp()
-  # yapf: disable
-  api.step('aggregating program configs', [
-    'vpython', merge_script,
-    '-m', 'chromiumos.config.payload.ConfigBundle',
-    '-a', 'chromiumos.config.payload.ConfigBundleList',
-    '-o', program_configs_path] + files)
-  # yapf:enable
 
   def _merge_configs():
     outputs = []
@@ -284,22 +304,10 @@ def _aggregate_configs(api, properties, project_infos):
           files.append(path)
 
       # merge and import
-      project_configs_path = api.path.mkstemp()
       api.step('merge {} configs to config-internal'.format(config.name), [
           'vpython', merge_script, "-m", config.message_type, "-a",
-          config.aggregate_type, "-o", project_configs_path
+          config.aggregate_type, "-o", config.output_path
       ] + files)
-
-      # join with program definitions
-      # yapf: disable
-      api.step('joining program and project configs', [
-        'vpython', program_join_script,
-        '-l', 'debug',
-        '-o', config.output_path,
-        '-i', project_configs_path,
-        '-p', program_configs_path
-      ])
-      # yapf: enable
 
       outputs.append(config.output_path)
 
