@@ -1520,23 +1520,6 @@
   {
     "cmd": [
       "git",
-      "push",
-      "--dry-run",
-      "--porcelain",
-      "cros",
-      "HEAD:refs/heads/main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
-    "infra_step": true,
-    "name": "processing test_program/test_project.update ref.git transaction.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "rev-parse",
       "HEAD"
     ],

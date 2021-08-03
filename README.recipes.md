@@ -4842,7 +4842,7 @@ Returns:
   list[str]: The position number for the ref.
 ### *recipe_modules* / [git\_txn](/recipe_modules/git_txn)
 
-[DEPS](/recipe_modules/git_txn/__init__.py#5): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git_txn/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 API for updating remote git repositories transactionally.
 
@@ -4850,7 +4850,7 @@ API for updating remote git repositories transactionally.
 
 A module for executing git transactions.
 
-&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#141)(self, remote, update_callback, step_name='update ref', ref=None, dry_run=False, automerge=False, retries=3):**
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#148)(self, remote, update_callback, step_name='update ref', ref=None, dry_run=False, automerge=False, retries=3):**
 
 Transactionally update a remote git repository ref.
 
@@ -4883,7 +4883,7 @@ Args:
 Returns:
   bool: True if the transaction succeeded, false if it explicitly aborts.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#184)(self, remote, message, dest, data, automerge=False, ref=None):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#191)(self, remote, message, dest, data, automerge=False, ref=None):**
 
 Transactionally update a file in a remote git repository ref.
 
@@ -7219,7 +7219,7 @@ For more details on the input properties, see cl_factory.proto.
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#452)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#451)(api, properties):**
 
 &mdash; **def [backfill\_project](/recipes/config_backfill.py#336)(api, config):**
 
@@ -7257,7 +7257,7 @@ Hack around needing a full portage environment for reef/fizz.
 Reef/fizz require their baseboard overlay to include common files.  We can
 work around this by using symlinks to simulate the overlay.
 
-&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#395)(commits, errors, nmissing):**
+&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#394)(commits, errors, nmissing):**
 
 Generate markdown to be shown for the build status.
 
