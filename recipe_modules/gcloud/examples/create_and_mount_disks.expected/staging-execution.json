@@ -30,6 +30,13 @@
     "name": "create and attach disk"
   },
   {
+    "cmd": [],
+    "name": "create and attach disk.retrieve snapshot version from storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -41,7 +48,14 @@
       "gs://chromeos-bot-cache/staging-chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "create and attach disk.gsutil cat",
+    "name": "create and attach disk.retrieve snapshot version from storage.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk.create disk from snapshot version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -60,9 +74,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot",
+    "name": "create and attach disk.create disk from snapshot version.create disk from snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -79,9 +93,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.attach disk",
+    "name": "create and attach disk.create disk from snapshot version.attach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -99,9 +113,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.set disk to autodelete",
+    "name": "create and attach disk.create disk from snapshot version.set disk to autodelete",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -114,9 +128,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.ensure mount directory exists",
+    "name": "create and attach disk.create disk from snapshot version.ensure mount directory exists",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -132,9 +146,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.mount disk chromiumos",
+    "name": "create and attach disk.create disk from snapshot version.mount disk chromiumos",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -144,6 +158,13 @@
   {
     "cmd": [],
     "name": "create and attach disk (2)"
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk (2).retrieve snapshot version from storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -157,7 +178,14 @@
       "gs://chromeos-bot-cache/staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "create and attach disk (2).gsutil cat",
+    "name": "create and attach disk (2).retrieve snapshot version from storage.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk (2).create disk from snapshot version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -176,9 +204,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot",
+    "name": "create and attach disk (2).create disk from snapshot version.create disk from snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -195,9 +223,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).attach disk",
+    "name": "create and attach disk (2).create disk from snapshot version.attach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -215,9 +243,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).set disk to autodelete",
+    "name": "create and attach disk (2).create disk from snapshot version.set disk to autodelete",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -236,9 +264,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).create mount path",
+    "name": "create and attach disk (2).create disk from snapshot version.create mount path",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -254,9 +282,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).mount disk chromiumos",
+    "name": "create and attach disk (2).create disk from snapshot version.mount disk chromiumos",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -266,6 +294,13 @@
   {
     "cmd": [],
     "name": "create and attach disk (3)"
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk (3).retrieve snapshot version from storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -279,7 +314,14 @@
       "gs://chromeos-bot-cache/staging-rust-stabilize-rust-13836-b-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "create and attach disk (3).gsutil cat",
+    "name": "create and attach disk (3).retrieve snapshot version from storage.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk (3).create disk from snapshot version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -298,9 +340,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (3).create disk from snapshot",
+    "name": "create and attach disk (3).create disk from snapshot version.create disk from snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -317,9 +359,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (3).attach disk",
+    "name": "create and attach disk (3).create disk from snapshot version.attach disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -337,9 +379,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (3).set disk to autodelete",
+    "name": "create and attach disk (3).create disk from snapshot version.set disk to autodelete",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -358,9 +400,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (3).create mount path",
+    "name": "create and attach disk (3).create disk from snapshot version.create mount path",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -376,9 +418,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (3).mount disk rust",
+    "name": "create and attach disk (3).create disk from snapshot version.mount disk rust",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

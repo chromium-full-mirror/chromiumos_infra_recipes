@@ -31,6 +31,7 @@ class GcloudApi(recipe_api.RecipeApi):
     self._cleanup_gce_stack = [[]]
     self._cleanup_mounted_stack = [[]]
     self._attached_disks = {}
+    self._branch = None
     self._dev_ref = 'a'
     self._disk = None
     self._suffix = None
@@ -72,8 +73,16 @@ class GcloudApi(recipe_api.RecipeApi):
     return self._disk
 
   @property
+  def branch(self):
+    return self._branch
+
+  @property
   def snapshot_version_file(self):
     return self._version_file
+
+  @property
+  def gce_name_limit(self):
+    return 63
 
   def _is_rfc1035_compliant(self, branch):
     RFC_PATTERN = '^[a-z]([-a-z0-9]*[a-z0-9])?$'
@@ -475,15 +484,18 @@ class GcloudApi(recipe_api.RecipeApi):
             'failed to get zone from swarming host: {}'.format(infra_host))
       self._zone = m.group('zone')
     with self.m.step.nest('create and attach disk'):
+      self._branch = branch
       is_staging = self.m.build_menu.is_staging
       recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
       self._suffix = str(self.m.time.ms_since_epoch())[0:8]
       if not self._is_rfc1035_compliant(branch):
-        branch = self._scrub_special_characters(branch)
-      self._disk = '{}-{}-{}-{}'.format(cache_name, branch, self._suffix,
+        self._branch = self._scrub_special_characters(self._branch)
+      self._disk = '{}-{}-{}-{}'.format(cache_name, self._branch, self._suffix,
                                         self._zone)
+      self._disk = self._disk[:self.gce_name_limit] if len(
+          self._disk) > self.gce_name_limit else self._disk
       self._version_file = '{}-{}-cache-snapshot-version.txt'.format(
-          cache_name, branch)
+          cache_name, self._branch)
       if is_staging:
         self._disk = 'staging-{}'.format(self._disk)
         self._version_file = '{}-{}'.format('staging', self._version_file)
@@ -493,30 +505,32 @@ class GcloudApi(recipe_api.RecipeApi):
             'read local snapshot version',
             self.snapshot_version_path.join(self._version_file),
             test_data='test-cache-snapshot-123')
-      try:
-        remote_version = self.m.gsutil.cat(
-            'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
-            infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
-      except self.m.step.StepFailure:
-        with self.m.step.nest(
-            'unable to find version file in GS bucket') as pres:
-          # This is intended behavior if a new cache builder is added.
-          # Rather than fail, default to an initial snapshot.
-          pres.logs['version file not found'] = self._version_file
-          remote_version = recovery_snapshot
-      try:
-        snapshot = remote_version
-        if local_version:
-          snapshot = local_version
-        self.create_disk(disk=self._disk, zone=self._zone, snapshot=snapshot,
-                         disk_type=disk_type)
-      except self.m.step.StepFailure:
-        self.create_disk(disk=self._disk, zone=self._zone,
-                         snapshot=remote_version, disk_type=disk_type)
-      self.attach_disk(name=cache_name, instance=infra_host, disk=self._disk,
-                       zone=self._zone)
-      self.mount_disk(name=cache_name, mount_path=cache_name,
-                      recipe_mount=recipe_mount)
+      with self.m.step.nest('retrieve snapshot version from storage'):
+        try:
+          remote_version = self.m.gsutil.cat(
+              'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
+              infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
+        except self.m.step.StepFailure:
+          with self.m.step.nest(
+              'unable to find version file in GS bucket') as pres:
+            # This is intended behavior if a new cache builder is added.
+            # Rather than fail, default to an initial snapshot.
+            pres.logs['version file not found'] = self._version_file
+            remote_version = recovery_snapshot
+      with self.m.step.nest('create disk from snapshot version'):
+        try:
+          snapshot = remote_version
+          if local_version:
+            snapshot = local_version
+          self.create_disk(disk=self._disk, zone=self._zone, snapshot=snapshot,
+                           disk_type=disk_type)
+        except self.m.step.StepFailure:
+          self.create_disk(disk=self._disk, zone=self._zone,
+                           snapshot=remote_version, disk_type=disk_type)
+        self.attach_disk(name=cache_name, instance=infra_host, disk=self._disk,
+                         zone=self._zone)
+        self.mount_disk(name=cache_name, mount_path=cache_name,
+                        recipe_mount=recipe_mount)
 
   @contextlib.contextmanager
   def cleanup_gce_disks(self):

@@ -36,9 +36,11 @@ def RunSteps(api):
     api.gcloud.create_and_mount_disk(cache_name='chromiumos',
                                      branch='release-R90-13816.B',
                                      recipe_mount=True)
+    api.assertions.assertEqual(api.gcloud.branch, 'release-r90-13816-b')
     api.gcloud.create_and_mount_disk(cache_name='rust',
                                      branch='stabilize-rust-13836.B',
                                      recipe_mount=True)
+    api.assertions.assertEqual(api.gcloud.branch, 'stabilize-rust-13836-b')
 
 
   # Empty context
@@ -66,8 +68,9 @@ def GenTests(api):
       'create-disk-step-failure',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.step_data(('create and attach disk.create disk from snapshot'),
-                    retcode=3),
+      api.step_data((
+          'create and attach disk.create disk from snapshot version.create disk from snapshot'
+      ), retcode=3),
   )
   yield api.test(
       'staging-execution',
@@ -86,5 +89,7 @@ def GenTests(api):
       'missing-version-file-in-storage',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.step_data(('create and attach disk.gsutil cat'), retcode=3),
+      api.step_data((
+          'create and attach disk.retrieve snapshot version from storage.gsutil cat'
+      ), retcode=3),
   )
