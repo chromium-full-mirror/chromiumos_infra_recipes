@@ -9,10 +9,11 @@ import json
 
 from PB.chromite.api.depgraph import ListRequest, SourcePath
 from PB.chromite.api.toolchain import LinterRequest
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange, SUCCESS
 from PB.recipes.chromeos.build_linters import BuildLintersProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+from PB.recipe_engine.result import RawResult
 
 DEPS = [
     'recipe_engine/step',
@@ -81,11 +82,16 @@ def _GetRustFiles(api):
 
 def _GetAffectedPackages(api, filepaths):
   """Get a list of packages affected by changes to some list of files."""
-  with api.step.nest('get affected packages'):
-    return api.cros_build_api.DependencyService.List(
+  with api.step.nest('get affected packages') as presentation:
+    affected = api.cros_build_api.DependencyService.List(
         ListRequest(sysroot=api.build_menu.sysroot,
                     chroot=api.build_menu.chroot,
                     src_paths=filepaths)).package_deps
+    if not affected:
+      presentation.step_text = 'No packages affected for target platform'
+    else:
+      presentation.step_text = 'Found %d affected packages' % len(affected)
+    return affected
 
 
 def _ClippyLintPackages(api, affected_packages):
@@ -122,11 +128,13 @@ def _WriteComments(api, findings):
                                 end_line=location.line_start + 1)
     presentation.step_text = 'Wrote %d ' % comment_count
   api.tricium.write_comments()
+  return comment_count
 
 
 def RunSteps(api, properties):
   if not _ChangesRelevant(api, properties):
-    return None
+    return RawResult(status=SUCCESS,
+                     summary_markdown='No changes need linting.')
   with api.build_menu.configure_builder() as config:
     with api.build_menu.setup_workspace_and_chroot():
       return DoRunSteps(api, config, properties)
@@ -139,11 +147,17 @@ def DoRunSteps(api, config, _properties):
     api.build_menu.bootstrap_sysroot(config)
     rust_files = _GetRustFiles(api)
     affected_packages = _GetAffectedPackages(api, rust_files)
+    if not affected_packages:
+      return RawResult(status=SUCCESS,
+                       summary_markdown='No packages affected by changes.')
     api.cros_source.ensure_synced_cache(
         projects=['chromiumos/chromite'],
         cache_path_override=api.src_state.workspace_path)
     findings = _ClippyLintPackages(api, affected_packages)
-    _WriteComments(api, findings)
+    comment_count = _WriteComments(api, findings)
+    if comment_count:
+      return RawResult(status=SUCCESS,
+                       summary_markdown='Wrote %d findings.' % comment_count)
   except StepFailure:
     failing_build = True
     raise
@@ -221,7 +235,7 @@ def GenTests(api):
 
   # No changes with Rust
   yield api.build_menu.test(
-      'no-relevant-changes',
+      'no-rust-changes',
       api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.DoesNotRun, 'get rust files'),
       api.post_check(post_process.DoesNotRun, 'getting rust lints'),
@@ -242,6 +256,25 @@ def GenTests(api):
                   }
               }
           }), **BuildTestArgs())
+
+  # No affected packages relevant to target platform
+  yield api.build_menu.test(
+      'no-affected-packages',
+      api.post_check(post_process.StepSuccess, 'check for relevant changes'),
+      api.post_check(post_process.StepSuccess, 'get rust files'),
+      api.post_check(post_process.DoesNotRun, 'getting rust lints'),
+      api.post_check(post_process.DoesNotRun,
+                     'write comments for linter findings'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.gerrit.set_gerrit_fetch_changes_response('check for relevant changes',
+                                                   changes[:1], rust_edits),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'get rust files.get patch sets', changes[:1], rust_edits),
+      api.repo.project_infos_step_data('get rust files.filter rust files',
+                                       data=project_info),
+      api.build_menu.set_build_api_return('get affected packages',
+                                          'DependencyService/List', data='{}'),
+      api.post_check(post_process.StatusSuccess), **BuildTestArgs())
 
   # Normal build with rust changes
   yield api.build_menu.test(

@@ -3560,7 +3560,10 @@
   },
   {
     "cmd": [],
-    "name": "get affected packages"
+    "name": "get affected packages",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Found 2 affected packages@@@"
+    ]
   },
   {
     "cmd": [],
