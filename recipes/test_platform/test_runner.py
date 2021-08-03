@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 """Recipe for the ChromeOS Skylab Test Runner."""
+import base64
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
@@ -28,6 +29,7 @@ from RECIPE_MODULES.chromeos.dut_interface import dut_interface, error_messages
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -249,7 +251,7 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
                      result=result)
 
     if (test_metadata.test.autotest.test_args and
-        'enable_rdb=True' in test_metadata.test.autotest.test_args):
+        'resultdb_settings' in test_metadata.test.autotest.test_args):
       api.result_db.upload(api.buildbucket.builder_name,
                            test_metadata.test.autotest.test_args)
 
@@ -851,12 +853,15 @@ def GenTests(api):
       _successful_logs_archive_step(),
   )
 
-  CHROMIUM_TEST_ARGS = [
-      'result_format=gtest',
-      'artifact_directory=/tmp/artifact',
-      'result_file=[START_DIR]/chromium/output.json',
-      'enable_rdb=True',
-  ]
+  rdb_settings = api.json.dumps({
+      'result_format': 'gtest',
+      'artifact_directory': '/tmp/artifact',
+      'result_file': '[START_DIR]/chromium/output.json',
+      'base_tags': ['test_suite:cast_shell_browsertests'],
+      'base_variant': {
+          'test_suite': 'cast_shell_browsertests',
+      },
+  })
   yield api.test(
       'chormium_test_upload_result_to_rdb',
       api.path.exists(api.path['start_dir'].join('chromium', 'output.json')),
@@ -871,7 +876,8 @@ def GenTests(api):
                   resultdb=build_pb2.BuildInfra.ResultDB(
                       invocation='invocations/build:%d' % 42)))),
       _misc_properties(),
-      _request_properties_rdb(' '.join(CHROMIUM_TEST_ARGS)),
+      _request_properties_rdb('resultdb_settings=%s' %
+                              base64.b64encode(rdb_settings)),
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),

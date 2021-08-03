@@ -5843,23 +5843,23 @@ Args:
 Prints the current version information of repo.
 ### *recipe_modules* / [result\_db](/recipe_modules/result_db)
 
-[DEPS](/recipe_modules/result_db/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/result_db/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [ResultDBCommand](/recipe_modules/result_db/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ResultDBCommand](/recipe_modules/result_db/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [args\_to\_dict](/recipe_modules/result_db/api.py#18)(self, args):**
+&mdash; **def [extract\_resultdb\_settings](/recipe_modules/result_db/api.py#19)(self, test_args):**
 
-Convert autoserv test arguments to dict
+Extract resultdb settings from test_args.
 
 Args:
-    args - list of autoserv extra arguments, e.g. key=val or key:val.
+    test_args - A string of extra autotest arguments. See upload().
 
 Returns:
-    dictionary
+    json string
 
-&mdash; **def [upload](/recipe_modules/result_db/api.py#35)(self, builder_name, test_args):**
+&mdash; **def [upload](/recipe_modules/result_db/api.py#36)(self, builder_name, test_args):**
 
 Call the resultDB module to upload test result
 
@@ -5870,8 +5870,9 @@ Args:
       runtime parameters to our autotest wrapper. We reuse it to pipe
       resultDB arguments, because it is easy to access in test runner
       recipe.
-      test_args must contain result_format and result_file. For other
-      supported parameters, one may refer recipe_engine/resultdb module.
+      test_args must contain resultdb_settings, which is base64 compressed
+      json string, wrapping all resultdb parameters.
+      For supported parameters, refer recipe_engine/resultdb module.
 ### *recipe_modules* / [result\_flow](/recipe_modules/result_flow)
 
 [DEPS](/recipe_modules/result_flow/__init__.py#4): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8461,9 +8462,9 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [RunSteps](/recipe_modules/repo/tests/tmp_manifest.py#15)(api):**
 ### *recipes* / [result\_db:examples/full](/recipe_modules/result_db/examples/full.py)
 
-[DEPS](/recipe_modules/result_db/examples/full.py#8): [result\_db](#recipe_modules-result_db), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/result_db/examples/full.py#9): [result\_db](#recipe_modules-result_db), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-&mdash; **def [RunSteps](/recipe_modules/result_db/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/result_db/examples/full.py#18)(api):**
 ### *recipes* / [result\_flow:examples/full](/recipe_modules/result_flow/examples/full.py)
 
 [DEPS](/recipe_modules/result_flow/examples/full.py#6): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -8797,13 +8798,13 @@ Raises:
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#28): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [result\_db](#recipe_modules-result_db), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#29): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [result\_db](#recipe_modules-result_db), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#359)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#361)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#107)(api, interface, test_metadata, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#109)(api, interface, test_metadata, result):**
 
 Archive all test logs to Google Storage, updating result in the process.
 
@@ -8817,7 +8818,7 @@ apposite a test.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#297)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#299)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -8833,7 +8834,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#268)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#270)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -8844,7 +8845,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#65)(step, name, link):**
+&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#67)(step, name, link):**
 
 Add a link `link` named `link_name` to the `step` if it exists.
 
@@ -8853,7 +8854,7 @@ Args:
 * name (str): Link name.
 * link (str): Like URI to add.
 
-&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#53)(step, name, log):**
+&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#55)(step, name, log):**
 
 Add a `log` to a `step`'s log under `name` is it exists.
 
@@ -8862,7 +8863,7 @@ Args:
 * name (str): Log name.
 * log (Any): Object to add to log.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#168)(api, result):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#170)(api, result):**
 
 Set the output properties that are part of the test_runner API.
 
@@ -8870,7 +8871,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#127)(api, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#129)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -8878,7 +8879,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result of all tests.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#92)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#94)(api, test):**
 
 Validate the TestRunnerProperties.
 
