@@ -36,6 +36,10 @@ def RunSteps(api):
     api.gcloud.create_and_mount_disk(cache_name='chromiumos',
                                      branch='release-R90-13816.B',
                                      recipe_mount=True)
+    api.gcloud.create_and_mount_disk(cache_name='rust',
+                                     branch='stabilize-rust-13836.B',
+                                     recipe_mount=True)
+
 
   # Empty context
   with api.gcloud.cleanup_gce_disks(), \

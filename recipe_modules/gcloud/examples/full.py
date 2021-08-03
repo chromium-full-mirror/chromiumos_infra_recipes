@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'gcloud',
 ]
 
@@ -27,6 +28,24 @@ def RunSteps(api):
                          zone='us-central1-b')
   api.gcloud.delete_instance('image-name', project=GCE_PROJECT,
                              zone='us-central1-a')
+
+  compliance_tests = {
+      'main': True,
+      'release-R90-13816.B': False,
+      'main-main-main-main-main-main-main-123456789-123456789-123456789': False
+  }
+  for test, result in compliance_tests.items():
+    call_result = api.gcloud._is_rfc1035_compliant(test)
+    api.assertions.assertEqual(result, call_result)
+
+  scrubbing_tests = {
+      'main': 'main',
+      'release-R90-13816.B': 'release-r90-13816-b',
+      'MaIN': 'main',
+  }
+  for test, result in scrubbing_tests.items():
+    new_branch = api.gcloud._scrub_special_characters(test)
+    api.assertions.assertEqual(result, new_branch)
 
 
 def GenTests(api):

@@ -154,7 +154,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/staging-chromiumos-release-R90-13816.B-cache-snapshot-version.txt"
+      "gs://chromeos-bot-cache/staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "create and attach disk (2).gsutil cat",
@@ -168,7 +168,7 @@
       "compute",
       "disks",
       "create",
-      "staging-chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "staging-chromiumos-release-r90-13816-b-13370000-us-central1-b",
       "--zone=us-central1-b",
       "--source-snapshot="
     ],
@@ -188,7 +188,7 @@
       "instances",
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=staging-chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "--disk=staging-chromiumos-release-r90-13816-b-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -208,7 +208,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=staging-chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "--disk=staging-chromiumos-release-r90-13816-b-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -261,6 +261,128 @@
   },
   {
     "cmd": [],
+    "name": "get swarming hostname (3)"
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk (3)"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-bot-cache/staging-rust-stabilize-rust-13836-b-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "name": "create and attach disk (3).gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "staging-rust-stabilize-rust-13836-b-13370000-us-central1-b",
+      "--zone=us-central1-b",
+      "--source-snapshot="
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (3).create disk from snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "attach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=staging-rust-stabilize-rust-13836-b-13370000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (3).attach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--auto-delete",
+      "--disk=staging-rust-stabilize-rust-13836-b-13370000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (3).set disk to autodelete",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/snapshot/rust"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (3).create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "-o",
+      "discard,defaults",
+      "/dev/sdd",
+      "[CLEANUP]/snapshot/rust"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk (3).mount disk rust",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up mounted compute disk"
   },
   {
@@ -287,6 +409,20 @@
     },
     "infra_step": true,
     "name": "clean up mounted compute disk.unmount disk chromiumos (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CLEANUP]/snapshot/rust"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up mounted compute disk.unmount disk rust",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -339,7 +475,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=staging-chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "--disk=staging-chromiumos-release-r90-13816-b-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -357,7 +493,7 @@
       "compute",
       "disks",
       "delete",
-      "staging-chromiumos-release-R90-13816.B-13370000-us-central1-b",
+      "staging-chromiumos-release-r90-13816-b-13370000-us-central1-b",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -365,6 +501,43 @@
     },
     "infra_step": true,
     "name": "clean up gce disk.delete disk (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=staging-rust-stabilize-rust-13836-b-13370000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.detach disk (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "staging-rust-stabilize-rust-13836-b-13370000-us-central1-b",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.delete disk (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

@@ -75,6 +75,24 @@ class GcloudApi(recipe_api.RecipeApi):
   def snapshot_version_file(self):
     return self._version_file
 
+  def _is_rfc1035_compliant(self, branch):
+    RFC_PATTERN = '^[a-z]([-a-z0-9]*[a-z0-9])?$'
+    if not re.match(RFC_PATTERN, branch):
+      return False
+    if len(branch) > 63:
+      return False
+    return True
+
+  def _scrub_special_characters(self, branch):
+    """Removes special characters from branch names.
+    Args:
+      branch(str): Branch name to scrub for characters.
+
+    Returns:
+      String containing scrubbed branch name.
+    """
+    return re.sub('[^a-zA-Z0-9]+', '-', branch).lower()
+
   def set_gce_project(self, project):
     """Set the default project for gcloud command.
     Args:
@@ -460,6 +478,8 @@ class GcloudApi(recipe_api.RecipeApi):
       is_staging = self.m.build_menu.is_staging
       recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
       self._suffix = str(self.m.time.ms_since_epoch())[0:8]
+      if not self._is_rfc1035_compliant(branch):
+        branch = self._scrub_special_characters(branch)
       self._disk = '{}-{}-{}-{}'.format(cache_name, branch, self._suffix,
                                         self._zone)
       self._version_file = '{}-{}-cache-snapshot-version.txt'.format(
