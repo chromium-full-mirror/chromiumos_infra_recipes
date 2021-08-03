@@ -5,19 +5,12 @@
 
 """Recipe for orchestrating ChromeOS payloads (AU deltas etc)."""
 
-from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 import itertools
 import json
 from os import path
-import string
 
-from PB.recipes.chromeos.paygen import PaygenProperties
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
-from PB.chromite.api.payload import Build
-from PB.chromite.api.payload import GenerationRequest
-from PB.chromite.api.payload import SignedImage
-from PB.chromite.api.payload import UnsignedImage
 from PB.chromiumos.common import DeltaType
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -39,7 +32,7 @@ DEPS = [
 PROPERTIES = PaygenOrchestratorProperties
 
 
-# TODO(crbug.com/1122854): These are ugly, we should write a cros_channel module to handle.
+# TODO(crbug.com/1122854): We should write a cros_channel module to handle.
 def _long_channel_name(channel_enum_val):
   """Takes the integer enum value and outputs suffix'd string form."""
   return (PaygenOrchestratorProperties.Channel.Name(channel_enum_val).lower() +
@@ -55,9 +48,6 @@ def RunSteps(api, properties):
   # Set default values for unspecified properties.
   delta_types = properties.delta_types
   delta_types = delta_types or api.cros_paygen.default_delta_types
-
-  # Set default to builder name if we haven't specified au_testing_models.
-  au_testing_models = properties.au_testing_models or properties.builder_name
 
   # Get the current paygen configuration.
   with api.step.nest('discovering payload configuration') as pres:
@@ -120,7 +110,7 @@ def RunSteps(api, properties):
 
   # Find the src and tgt artifacts applicable for each configured payload
   # and construct the child requests. Report missing artifacts.
-  # TODO(crbug.com/1122854): Missing but expected artifacts are silently ignored.
+  # TODO(crbug.com/1122854): Missing artifacts are silently ignored.
   with api.step.nest('pairing artifacts') as pres:
 
     # Do N2N testing payloads.
@@ -183,14 +173,13 @@ def GenTests(api):
 
   yield api.test(
       'basic', get_props(), good_paygen_cfg,
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts (2).gsutil list'),
       api.cros_storage.test_listing(
-          'examining beta-channel.source artifacts.discover gs artifacts.gsutil list'
-      ),
-      api.cros_storage.test_listing(
-          'examining beta-channel.source artifacts.discover gs artifacts (2).gsutil list'
-      ),
-      api.cros_storage.test_listing(
-          'examining beta-channel.target artifacts.discover gs artifacts.gsutil list',
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
@@ -202,14 +191,14 @@ def GenTests(api):
   # Successful lists but don't find a suitable pair in get_requests().
   yield api.test(
       'no-pairs', get_props(), good_paygen_cfg,
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts (2).gsutil list'),
       api.cros_storage.test_listing(
-          'examining beta-channel.source artifacts.discover gs artifacts.gsutil list'
-      ),
-      api.cros_storage.test_listing(
-          'examining beta-channel.source artifacts.discover gs artifacts (2).gsutil list'
-      ),
-      api.cros_storage.test_listing(
-          'examining beta-channel.target artifacts.discover gs artifacts.gsutil list',
-          test_data='gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-factory-R87-13505.15.0-coral.tar.xz'
-      ), api.post_check(post_process.StatusSuccess),
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.15.0/'
+          'ChromeOS-factory-R87-13505.15.0-coral.tar.xz'),
+      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DoesNotRun, 'running children'))

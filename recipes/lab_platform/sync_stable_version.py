@@ -24,7 +24,7 @@ def fetch_and_commit(api):
   Returns:
     A string gerrit CL link.
   """
-  with api.step.nest('fetch and commit') as step:
+  with api.step.nest('fetch and commit'):
     api.stable_version.fetch_and_commit()
 
 
@@ -32,10 +32,11 @@ def validate_stable_version(api):
   """Validate the remote stable version config file.
 
   Returns: JSON response with validation result"""
-  with api.step.nest('validate stable version') as step:
+  with api.step.nest('validate stable version'):
     api.stable_version.validate_stable_version()
 
 
+# pylint: disable=unused-argument
 def RunSteps(api, properties):
   # TODO(xixuan): Re-consider the whole processes:
   #   1. log the CL link of automatic stable version update.

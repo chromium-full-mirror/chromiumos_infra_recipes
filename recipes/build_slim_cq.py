@@ -56,7 +56,7 @@ def DoRunSteps(api, config):
                                        force_all_deps=install_all_packages,
                                        include_rev_deps=True):
       api.build_menu.build_and_test_images(config)
-  except StepFailure:
+  except StepFailure as sf:
     failing_build = True
   finally:
     api.build_menu.upload_artifacts(config, failing_build=failing_build)

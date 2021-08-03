@@ -50,7 +50,7 @@ _24_HOURS = 24 * 60 * 60
 
 
 # API STEP HELPERS
-def log(step, name, log):
+def s_log(step, name, log):
   """Add a `log` to a `step`'s log under `name` is it exists.
 
   Args:
@@ -62,7 +62,7 @@ def log(step, name, log):
     step.presentation.logs[name] = log
 
 
-def link(step, name, link):
+def s_link(step, name, link):
   """Add a link `link` named `link_name` to the `step` if it exists.
 
   Args:
@@ -86,7 +86,7 @@ def _set_step_status(api, step_name, summary, failure_condition=True):
   with api.step.nest(step_name) as step:
     if failure_condition:
       step.presentation.status = api.step.FAILURE
-    log(step=step, name='summary', log=summary)
+    s_log(step=step, name='summary', log=summary)
 
 
 def validate_request(api, test):
@@ -133,8 +133,9 @@ def summarize_results(api, result):
   """
   with api.step.nest('test results') as step:
     if result.get_stainless_log_url():
-      link(step=step, name='Autotest logs', link=result.get_stainless_log_url())
-      log(step=step, name='JSON output', log=result.to_json())
+      s_link(step=step, name='Autotest logs',
+             link=result.get_stainless_log_url())
+      s_log(step=step, name='JSON output', log=result.to_json())
     for prejob in result.get_prejob_steps():
       _set_step_status(
           api=api, step_name=prejob.name, summary=prejob.human_readable_summary,
@@ -313,12 +314,12 @@ def execution_steps(api, properties):
   global_result = interface.build_empty_result()
 
   with api.step.nest('inputs') as step:
-    log(step, 'request', json_format.MessageToJson(properties.request))
-    log(step, 'config', json_format.MessageToJson(properties.config))
+    s_log(step, 'request', json_format.MessageToJson(properties.request))
+    s_log(step, 'config', json_format.MessageToJson(properties.config))
     # Use parent_build_id rather than the related parent_buildbucket_id tag,
     # since that doesn't seem to work here. https://crbug.com/1171511
     if properties.request.parent_build_id:
-      link(
+      s_link(
           step=step, name='parent CTP', link=api.buildbucket.build_url(
               build_id=properties.request.parent_build_id))
 
@@ -374,10 +375,10 @@ def GenTests(api):
   _gs_root = "gs://bucket/foo/bar"
   _sync_subdir = "synchronous_subdir"
 
-  def _set_build_id(id, tags=None):
+  def _set_build_id(bid, tags=None):
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags) if tags else []
-    return api.buildbucket.build(build_pb2.Build(id=id, tags=bb_tags))
+    return api.buildbucket.build(build_pb2.Build(id=bid, tags=bb_tags))
 
   def _build_with_execution_timeout(timeout_s):
     # NB: The input Build does not have start_time set, because buildbucket has
@@ -555,7 +556,7 @@ def GenTests(api):
 
   yield api.test(
       'success',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -671,7 +672,7 @@ def GenTests(api):
 
   yield api.test(
       'link_to_all_archived_logs',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -690,7 +691,7 @@ def GenTests(api):
 
   yield api.test(
       'get_results_crash',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -704,7 +705,7 @@ def GenTests(api):
 
   yield api.test(
       'results_summary',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -734,7 +735,7 @@ def GenTests(api):
 
   yield api.test(
       'failed_prejob_with_missing_failures_in_result',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -744,7 +745,7 @@ def GenTests(api):
 
   yield api.test(
       'failed_run-test_with_missing_failures_in_result',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -755,7 +756,7 @@ def GenTests(api):
 
   yield api.test(
       'successful_run-test_with_multiple_tests',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       _request_properties_multitest(),
       _mock_load_step(test_id='multi_test_2'),
@@ -768,7 +769,7 @@ def GenTests(api):
 
   yield api.test(
       'failed_fetch-crashes',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -783,7 +784,7 @@ def GenTests(api):
       crashes_rtd_only=["foobar.meta"])
   yield api.test(
       'successful_fetch-crashes-with-missed-crashes',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -806,7 +807,7 @@ def GenTests(api):
 
   yield api.test(
       'skip_result_flow_pubsub_due_to_missing_topic',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       api.properties(
           TestRunnerProperties(
@@ -829,7 +830,7 @@ def GenTests(api):
 
   yield api.test(
       'skip_result_flow_pubsub_due_to_missing_project',
-      _set_build_id(id=42),
+      _set_build_id(bid=42),
       _misc_properties(),
       api.properties(
           TestRunnerProperties(

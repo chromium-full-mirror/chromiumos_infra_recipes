@@ -79,16 +79,14 @@ def parse_versions_file(step_name, api, path):
   # Seek to end of FIT header output, this is denoted by a line of hyphens
   offset = 0
   version = None
-  for offset in range(len(contents)):
-    line = contents[offset]
-
+  for i, line in enumerate(contents):
     # Check for version string
-    match = re.search("Version:\s*([^\s]*)", line)
+    match = re.search(r'Version:\s*([^\s]*)', line)
     if match:
       version = match.group(1)
 
     if is_all_char(line, "-"):
-      offset += 1
+      offset = i + 1
       break
 
   if not version:
@@ -377,7 +375,7 @@ def GenTests(api):
       api.properties(**properties_dict()) + \
       api.test_util.test_build(extra_changes=changes).build + \
       api.gerrit.set_gerrit_fetch_changes_response(
-        "", changes=changes, values_dict=changed_files)
+          "", changes=changes, values_dict=changed_files)
 
   def mock_file(step_name, text):
     """Mock text file contents for given step name"""
@@ -387,10 +385,6 @@ def GenTests(api):
     return mock_file(
         'checking change %d.checking %s.read modified file' %
         (change, filename), text)
-
-  # Putting this in a test will break it and make it print the step names for us
-  bad_step_data = api.step_data("__bad_step_name__",
-                                stdout=api.raw_io.output(""))
 
   # Define a basic set of changes to input to the builder
   basic_config = [("foo", ["fitimage-test.bin", "fitimage-test-versions.txt"])]
@@ -435,8 +429,9 @@ def GenTests(api):
                   "pchc.bin":
                       "647f0526e7416808a6d3447099d75104647f0526e7416808a6d3447099d75104"
               })),
-      api.post_process(post_process.ResultReasonRE,
-                       "Error\(s\) occurred when checking FIT image versions:"),
+      api.post_process(
+          post_process.ResultReasonRE,
+          r"Error\(s\) occurred when checking FIT image versions:"),
   )
 
   # Fail if no version information in reference file

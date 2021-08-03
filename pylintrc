@@ -44,12 +44,21 @@ init-hook='import sys; sys.path.extend([".recipe_deps/_pb", ".recipe_deps/recipe
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
 # We leave many of the style warnings to judgement/peer review.
-# TODO: Re-enable wrong-import-order/wrong-import-position.
+# TODO(b/181977305): Re-enable the following:
+#
+#   bad-continuation <-- fights with git cl presubmits.
+#   wrong-import-order
+#   wrong-import-position
+#   line-too-long
+#   ...and more based on case by case and workload.
 disable=
+    bad-continuation,
     consider-iterating-dictionary,
     file-ignored,
     fixme,
+    import-error,
     invalid-name,
+    line-too-long,
     locally-disabled,
     locally-enabled,
     missing-docstring,

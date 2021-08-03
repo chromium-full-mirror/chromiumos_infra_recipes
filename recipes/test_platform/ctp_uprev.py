@@ -75,7 +75,7 @@ def get_current_instance(api, instruction):
                                      id=instance_id)
 
 
-def uprev_package(api, instruction, package_tags={}):
+def uprev_package(api, instruction, package_tags=None):
   """Change CIPD ref of a package according to the instructions.
 
   Args:
@@ -87,7 +87,7 @@ def uprev_package(api, instruction, package_tags={}):
   Raises:
     A StepFailure if the CIPD tool call fails.
   """
-  release_version = 'ctp_' + api.time.utcnow().isoformat()
+  package_tags = package_tags or {}
   with api.step.nest(
       'uprev the "%s" ref of the "%s" package to "%s"' %
       (instruction.ref, instruction.package_name, instruction.version)):

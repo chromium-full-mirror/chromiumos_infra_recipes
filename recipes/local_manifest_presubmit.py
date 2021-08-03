@@ -5,8 +5,6 @@
 
 """Runs the presubmit for a project with checkout per local manifest."""
 
-import contextlib
-
 from recipe_engine import post_process
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2

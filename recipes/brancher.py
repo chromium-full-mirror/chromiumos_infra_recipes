@@ -65,21 +65,23 @@ def GenTests(api):
   yield api.test(
       'release-branch',
       api.step_data(
-          'create branch.create branch from buildspec manifest 89/13729.0.0.xml',
+          'create branch.'
+          'create branch from buildspec manifest 89/13729.0.0.xml',
           stdout=api.raw_io.output(TEST_STDOUT)),
       api.properties(
           BrancherProperties(source_version='R89-13729.0.0',
                              branch_info=Branch(type=Branch.RELEASE))),
       api.post_check(
-          post_process.StepCommandContains,
-          'create branch.create branch from buildspec manifest 89/13729.0.0.xml',
+          post_process.StepCommandContains, 'create branch.'
+          'create branch from buildspec manifest 89/13729.0.0.xml',
           ['create', '--buildspec-manifest', '89/13729.0.0.xml', '--release']),
   )
 
   yield api.test(
       'stabilize-branch-descriptor',
       api.step_data(
-          'create branch.create branch from buildspec manifest 89/13729.0.0.xml',
+          'create branch'
+          '.create branch from buildspec manifest 89/13729.0.0.xml',
           stdout=api.raw_io.output(TEST_STDOUT)),
       api.properties(
           BrancherProperties(
@@ -88,9 +90,8 @@ def GenTests(api):
                                  name='this should not be used anywhere',
                                  descriptor="foo"))),
       api.post_check(
-          post_process.StepCommandContains,
-          'create branch.create branch from buildspec manifest 89/13729.0.0.xml',
-          [
+          post_process.StepCommandContains, 'create branch.'
+          'create branch from buildspec manifest 89/13729.0.0.xml', [
               'create', '--buildspec-manifest', '89/13729.0.0.xml',
               '--stabilize', '--descriptor', 'foo'
           ]),

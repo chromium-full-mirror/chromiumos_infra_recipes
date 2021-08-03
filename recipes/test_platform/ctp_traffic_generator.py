@@ -5,7 +5,6 @@
 """Recipe that triggers cros_test_platform runs.
 """
 
-from google.protobuf import duration_pb2
 from google.protobuf import struct_pb2
 from google.protobuf import timestamp_pb2
 from google.protobuf.json_format import MessageToDict
@@ -14,12 +13,6 @@ from PB.recipes.chromeos.test_platform.ctp_traffic_generator import Properties
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as bb_service
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
-from PB.testplans.target_test_requirements_config import HwTestCfg
-from PB.testplans.target_test_requirements_config import TestSuiteCommon
-from PB.testplans.generate_test_plan import BuildPayload
-from PB.testplans.generate_test_plan import HwTestUnit
-from PB.testplans.generate_test_plan import TestUnitCommon
-from PB.test_platform.request import Request
 
 from recipe_engine import post_process
 

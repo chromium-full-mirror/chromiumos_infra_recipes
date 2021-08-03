@@ -61,6 +61,5 @@ def RunSteps(api):
                          zone='us-central1-b')
 
 
-
 def GenTests(api):
   yield api.test('basic')

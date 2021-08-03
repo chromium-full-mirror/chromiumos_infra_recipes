@@ -17,7 +17,6 @@ from google.protobuf.struct_pb2 import Struct
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
-from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.builder_config import BuilderConfig as bc
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as bb_build

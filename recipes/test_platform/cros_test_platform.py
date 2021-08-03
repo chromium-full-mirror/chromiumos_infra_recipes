@@ -3,12 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for the ChromeOS Test Frontend.
+"""Recipe for the ChromeOS Test Frontend."""
 
-TODO: Migrate to a recipes repo owned by the test team.
-"""
-
-from PB.chromite.api import test_metadata
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.test_platform.cros_test_platform import \
   CrosTestPlatformProperties
@@ -22,10 +18,6 @@ from PB.test_platform import result_flow as result_flow_pb2
 from PB.test_platform import service_version as service_version_pb
 from PB.test_platform.steps.enumeration import \
   EnumerationRequest, EnumerationRequests
-from PB.test_platform.steps.enumeration import \
-  EnumerationResponse, EnumerationResponses
-from PB.test_platform import migration
-from PB.test_platform.steps import enumeration
 from PB.test_platform.steps.execution import ExecuteRequest, ExecuteRequests
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
 from PB.test_platform.request import Request
@@ -34,7 +26,6 @@ from PB.test_platform.config.config import Config
 from PB.test_platform.steps.execute.build import Build
 
 import collections
-import contextlib
 import json
 
 from google.protobuf import duration_pb2
@@ -64,7 +55,7 @@ CTP_RELEASE_VERSION_TAG = 'ctp_release_version'
 PROPERTIES = CrosTestPlatformProperties
 
 
-def output_ctp_release_timestamp_tag(api, properties):
+def output_ctp_release_timestamp_tag(api):
   """Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   """
   with api.step.nest('get ctp release version tag') as step:
@@ -167,7 +158,7 @@ def _validate_scheduling_params(api, requests):
   validation_error = False
   with api.step.nest('validate scheduling parameters') as step:
     for t, r in requests.iteritems():
-      error = _get_scheduling_error(api, r)
+      error = _get_scheduling_error(r)
       if error:
         validation_error = True
         step.presentation.logs[t] = [error]
@@ -182,7 +173,7 @@ _MANAGED_POOL_ALLOW_LIST = (
 )
 
 
-def _get_scheduling_error(api, request):
+def _get_scheduling_error(request):
   managed_pool = request.params.scheduling.managed_pool
   if managed_pool not in _MANAGED_POOL_ALLOW_LIST:
     return ('Pool %s not supported. See go/managed-pools-deprecation' %
@@ -197,7 +188,7 @@ def _get_scheduling_error(api, request):
       return ('priority and qs_account should not both be set. ' +
               'Got priority: %d and qs_account: %s' % (priority, qs_account))
     if priority < 50 or priority > 255:
-      return ('priority %d is out of valid range [50, 255]' % priority)
+      return 'priority %d is out of valid range [50, 255]' % priority
 
 
 def enumerate_tests(api, requests):
@@ -306,7 +297,7 @@ def _ensure_all_requests_enumerated(requests, enumerations):
 
 def RunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
-  output_ctp_release_timestamp_tag(api, properties)
+  output_ctp_release_timestamp_tag(api)
   link_to_parent(api)
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.
@@ -336,7 +327,7 @@ def link_to_parent(api):
 
 
 def postprocess(api, requests, responses):
-  with api.step.nest('postprocess') as step:
+  with api.step.nest('postprocess'):
     for tag, response in responses.iteritems():
       request = requests[tag]
       if not request.params.metadata.debug_symbols_archive_url:
@@ -355,7 +346,7 @@ def postprocess(api, requests, responses):
       if not test_results:
         continue
 
-      with api.step.nest(tag) as step:
+      with api.step.nest(tag):
         pp_request = CrosTestPostprocessRequest(
             debug_symbols_archive_url=request.params.metadata
             .debug_symbols_archive_url,
@@ -447,38 +438,36 @@ def set_output_properties(api, responses):
         marshalled)
 
 
-def _log_enumeration_errors(api, enumeration):
-  if enumeration.error_summary:
+def _log_enumeration_errors(api, enum):
+  if enum.error_summary:
     with api.step.nest('enumeration error') as step:
-      step.logs['summary'] = [enumeration.error_summary]
+      step.logs['summary'] = [enum.error_summary]
       step.presentation.status = api.step.FAILURE
 
 
 # The odd-looking string.replaced items below are listed as such to aid in code
 # searchability. Users are most likely to search for these things after seeing
 # them in Milo, and in Milo we display them with spaces rather than underscores.
-_SUCCESSFUL_TASK_STATES = map(
-    lambda s: s.replace(' ', '_'),
-    [
+_SUCCESSFUL_TASK_STATES = [
+    s.replace(' ', '_') for s in [
         'passed',
         # Flakes are failed test runs that later succeed. e.g. if we run a test
         # and it fails, but then we retry it and the retry succeeds, we call the
         # first run a flake and the second run a pass.
         'flaked',
         'skipped',
-    ],
-)
-_UNSUCCESSFUL_TASK_STATES = map(
-    lambda s: s.replace(' ', '_'),
-    [
+    ]
+]
+_UNSUCCESSFUL_TASK_STATES = [
+    s.replace(' ', '_') for s in [
         'failed all attempts',
         'bot parameters rejected',
         'timed out waiting for dut',
         'cancelled before run',
         'cancelled during run',
         'other',
-    ],
-)
+    ]
+]
 
 _TaskResultsByState = collections.namedtuple(
     '_TaskResultsByState', _SUCCESSFUL_TASK_STATES + _UNSUCCESSFUL_TASK_STATES)
@@ -657,10 +646,10 @@ def _generic_passing_execute_response(api):
 
 def GenTests(api):
 
-  def _set_build_id(id, tags=None):
+  def _set_build_id(bid, tags=None):
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags) if tags else []
-    return api.buildbucket.build(build_pb2.Build(id=id, tags=bb_tags))
+    return api.buildbucket.build(build_pb2.Build(id=bid, tags=bb_tags))
 
   # Missing request and requests should cause a recipe crash
   yield api.test('no requests')
@@ -790,7 +779,7 @@ def GenTests(api):
   # Config set the result flow pubsub project and topic should push build ID.
   yield api.test(
       'Config has pubsub topic to publish CTP build ID',
-      _set_build_id(id=42, tags={'parent_buildbucket_id': '1234'}),
+      _set_build_id(bid=42, tags={'parent_buildbucket_id': '1234'}),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},

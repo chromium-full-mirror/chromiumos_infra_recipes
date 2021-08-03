@@ -21,6 +21,8 @@ import urlparse
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.packages import UprevVersionedPackageRequest
+
+# pylint: disable=unused-import
 from PB.recipes.chromeos.generator import (
     SendToCqPolicy, DO_NOTHING, DRY_RUN, FULL_RUN, ABANDON, SUBMIT,
     OutdatedClsPolicy, OUTDATED_DO_NOTHING, OUTDATED_LEAVE_COMMENT,
@@ -160,7 +162,6 @@ def RunSteps(api, properties):
       policy_info = trigger_policies.pop()
       policy = policy_info.policy
       if policy_info.branch:
-        branch = policy_info.branch
         pres.step_text = 'using {} {}'.format(policy_info.branch,
                                               policy_info.reference.hash)
         api.cros_source.checkout_branch(api.src_state.internal_manifest.url,

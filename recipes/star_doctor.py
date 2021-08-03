@@ -199,7 +199,7 @@ def _get_clone(api, repo_url):
 
 def _update_release_time(api, tl_cfg_fpath):
   """Update the infra/config/releases/timeline_configuration.json time field."""
-  with api.step.nest("update configured release time") as pres:
+  with api.step.nest("update configured release time"):
     step_result = api.json.read(
         'read json', tl_cfg_fpath, step_test_data=lambda: api.json.test_api.
         output({"time": "2021-04-06T16:00:40Z"}))

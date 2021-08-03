@@ -3,10 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import datetime
-
-from recipe_engine.util import exponential_retry
-
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import CrosTestPostprocessRequest, TestResult
 from PB.test_platform.common.task import TaskLogData
 

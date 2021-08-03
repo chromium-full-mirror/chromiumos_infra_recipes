@@ -24,7 +24,6 @@ def RunSteps(api):
   for action in robocrop_swarming_action.scaling_actions:
     api.assertions.assertEqual(action.actionable, ScalingAction.YES)
 
-
   # If swarming_stats is None, robocrop should use bot_fallback configs
   bot_policy_config = api.cros_infra_config.get_bot_policy_config()
   robocrop_swarming_action = api.bot_scaling.get_robocrop_action(

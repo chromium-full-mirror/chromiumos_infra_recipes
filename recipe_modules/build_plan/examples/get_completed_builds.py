@@ -83,4 +83,3 @@ def GenTests(api):
           'forced_rebuilds': {'amd64-generic-cq'},
           'expected_completed': []
       }))
-

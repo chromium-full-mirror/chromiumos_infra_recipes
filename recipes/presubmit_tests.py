@@ -44,7 +44,6 @@ def RunSteps(api, properties):
 
 
 def _FullCheckout(api, properties):
-  gitiles_commit = api.src_state.gitiles_commit
   gerrit_changes = api.src_state.gerrit_changes
   is_staging = api.cros_infra_config.is_staging
   project_names = properties.project_names

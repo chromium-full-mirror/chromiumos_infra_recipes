@@ -19,7 +19,7 @@ from PB.chromite.api.test import ChromitePytestRequest, ChromiteUnitTestRequest
 
 
 def RunSteps(api):
-  with api.build_menu.configure_builder() as config, \
+  with api.build_menu.configure_builder(), \
       api.build_menu.setup_workspace_and_chroot():
     api.cros_build_api.TestService.ChromitePytest(
         ChromitePytestRequest(chroot=api.cros_sdk.chroot),

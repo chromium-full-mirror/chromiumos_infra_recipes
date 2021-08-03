@@ -94,15 +94,14 @@ def get_current_instance(api, instruction):
 
 
 def _release_version_tag(package_name):
-  ci_packages = map(lambda x: _GO_BINARY_CIPD_PACKAGE_PATTERN % x,
-                    _CI_GO_BINARIES)
+  ci_packages = [_GO_BINARY_CIPD_PACKAGE_PATTERN % x for x in _CI_GO_BINARIES]
   if package_name in ci_packages:
     return (_CI_RELEASE_VERSION_TAG, 'ci_{}')
   # CTP is the default because it is the orginal use case.
   return (_CTP_RELEASE_VERSION_TAG, 'ctp_{}')
 
 
-def uprev_package(api, instruction, package_tags={}):
+def uprev_package(api, instruction, package_tags=None):
   """Change CIPD ref of a package according to the instructions.
 
   Args:
@@ -114,6 +113,7 @@ def uprev_package(api, instruction, package_tags={}):
   Raises:
     A StepFailure if the CIPD tool call fails.
   """
+  package_tags = package_tags or {}
   with api.step.nest(
       'uprev the "%s" ref of the "%s" package to "%s"' %
       (instruction.ref, instruction.package_name, instruction.version)):
@@ -130,7 +130,7 @@ def uprev_package(api, instruction, package_tags={}):
 def RunSteps(api, properties):
   release_tag_time = api.time.utcnow().isoformat()
   for instruction in properties.config.instructions:
-    with api.step.nest('package %s' % instruction.package_name) as presentation:
+    with api.step.nest('package %s' % instruction.package_name):
       validate(api, instruction)
       properties.response.old_versions.extend(
           [get_current_instance(api, instruction)])

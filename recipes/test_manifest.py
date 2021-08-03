@@ -46,7 +46,6 @@ def RunSteps(api, properties):
         yield
 
   with _setup():
-    gitiles_commit = api.src_state.gitiles_commit
     gerrit_changes = api.src_state.gerrit_changes
 
     commits = []
@@ -91,8 +90,6 @@ def GenTests(api):
   internal_exists = api.path.exists(
       api.src_state.workspace_path.join(
           'src/chromeos/manifest-internal/default.xml'))
-  external_exists = api.path.exists(
-      api.src_state.workspace_path.join('src/chromiumos/manifest/default.xml'))
   common_args = [
       api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(post_process.DoesNotRun,

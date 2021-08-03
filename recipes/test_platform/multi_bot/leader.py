@@ -3,9 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.test_platform.multibot.common import MultiBotConfig, HostInfoStore
-from PB.test_platform.multibot.leader_transitions import (
-    FollowersState, LeaderTransitionMessage)
 from PB.test_platform.multibot.requests import LeaderRequest
 
 DEPS = [
@@ -17,6 +14,7 @@ DEPS = [
 PROPERTIES = LeaderRequest
 
 
+# pylint: disable=unused-argument
 def RunSteps(api, properties):
   # Properties is a LeaderRequest object.
 

@@ -24,11 +24,11 @@ PROPERTIES = AfdoOrchestratorProperties
 def RunSteps(api, properties):
   with api.orch_menu.setup_orchestrator(missing_ok=True) as config:
     if config:
-      DoRunSteps(api, properties, config)
+      DoRunSteps(api, properties)
     return api.orch_menu.create_recipe_result()
 
 
-def DoRunSteps(api, properties, config):
+def DoRunSteps(api, properties):
 
   # Run the child builders.
   api.orch_menu.plan_and_run_children()

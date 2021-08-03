@@ -3,9 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.test_platform.multibot.common import MultiBotConfig, HostInfoStore
-from PB.test_platform.multibot.follower_transitions import (FollowerStateChange,
-                                                            FollowerEvent)
 from PB.test_platform.multibot.requests import FollowerRequest
 
 DEPS = [
@@ -17,6 +14,7 @@ DEPS = [
 PROPERTIES = FollowerRequest
 
 
+# pylint: disable=unused-argument
 def RunSteps(api, properties):
   # Properties is a FollowerRequest object.
 

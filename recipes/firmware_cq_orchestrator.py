@@ -20,9 +20,6 @@ DEPS = [
     'test_util',
 ]
 
-import re
-
-from recipe_engine.recipe_api import StepFailure
 from recipe_engine.post_process import (PropertyEquals, StatusSuccess,
                                         StatusFailure)
 

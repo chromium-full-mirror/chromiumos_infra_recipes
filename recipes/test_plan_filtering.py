@@ -229,7 +229,9 @@ def _find_test_plan_files(api):
   return step_result.stdout.strip().splitlines()
 
 
+# pylint: disable=unused-argument
 def RunSteps(api, properties):
+
   # BEGIN INTERNAL METHOD DEFINITIONS
   def _filter_all_test_plans():
     """ Callback for git_txn.update_refs.

@@ -9,8 +9,6 @@ from recipe_engine import post_process
 from google.protobuf import json_format as jsonpb
 
 from PB.recipes.chromeos.robocrop import RoboCropProperties
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_engine import result as result_pb2
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -27,7 +25,6 @@ PROPERTIES = RoboCropProperties
 
 
 def RunSteps(api, properties):
-  pools_to_monitor = properties.pools_to_monitor or ['cq', 'postsubmit']
   application = properties.application or 'ChromeOS'
 
   with api.step.nest('scale bot groups'):
@@ -46,18 +43,21 @@ def RunSteps(api, properties):
           bot_policy_config=jsonpb.MessageToDict(reduced_bot_policy))
       pres.logs['bot_policy_config'] = jsonpb.MessageToJson(updated_bot_policy)
 
-    swarming_fetch_error = None
+    has_swarming_fetch_error = False
     try:
       with api.step.nest('get current swarming stats') as pres:
         swarming_status = api.bot_scaling.get_swarming_stats(bot_policy_config)
         api.easy.set_properties_step(swarming_stats=swarming_status)
         pres.logs['swarming_stats'] = str(swarming_status)
     except api.step.InfraFailure as e:
+      has_swarming_fetch_error = True
       swarming_fetch_error = e
       swarming_status = None
 
       warning_step = api.step('Warning: using bot_fallback configs', [])
-      warning_step.presentation.step_text = 'Using bot_fallback configs due to errors when fetching swarming stats'
+      warning_step.presentation.step_text = ('Using bot_fallback configs due to'
+                                             ' errors when fetching swarming'
+                                             ' stats')
       warning_step.presentation.status = api.step.EXCEPTION
 
     with api.step.nest('compute scaling actions') as pres:
@@ -73,7 +73,7 @@ def RunSteps(api, properties):
         pres.logs['final_gce_config'] = jsonpb.MessageToJson(
             gce_updated_configs)
 
-    if swarming_fetch_error:
+    if has_swarming_fetch_error:
       raise swarming_fetch_error
 
 

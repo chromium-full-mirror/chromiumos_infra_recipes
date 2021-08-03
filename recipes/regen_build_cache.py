@@ -5,12 +5,8 @@
 
 """Recipe for the Chrome OS Build Metadata Cache Regnerator."""
 
-import collections
-
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.binhost import RegenBuildCacheRequest
-from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
-from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 
 from RECIPE_MODULES.chromeos.util import util
 

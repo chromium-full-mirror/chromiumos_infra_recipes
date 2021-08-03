@@ -90,7 +90,7 @@ def RunSteps(api, properties):
         cl_infos = api.repo.project_infos(regexes=list(properties.repo_regexes))
         if len(cl_infos) == 0:
           regexes = ', '.join(
-              map(lambda v: '"{}"'.format(v), properties.repo_regexes))
+              ['"{}"'.format(v) for v in properties.repo_regexes])
           raise ValueError(
               'No matching projects found, for regex: {}'.format(regexes))
 
@@ -231,7 +231,7 @@ def _set_source_cq_depends(api, changes, gc_infos, gerrit_changes):
   with api.step.nest('applying Cq-Depend to input projects'):
     for info, change in zip(gc_infos, gerrit_changes):
       with api.step.nest('applying Cq-Depend to {}'
-                         .format(info.name)) as pres, \
+                         .format(info.name)), \
           api.context(cwd=api.cros_source.workspace_path.join(info.path)):
 
         # For the change description commands to work we must be operating
@@ -393,25 +393,24 @@ def _make_gerrit_commands(api, hashtags, changes):
   """
   owner_constraint = 'owner:{}'.format(
       api.buildbucket.build.infra.swarming.task_service_account)
-  hashtag_constraints = ' '.join(
-      map(lambda t: 'hashtag:{}'.format(t), hashtags))
+  hashtag_constraints = ' '.join(['hashtag:{}'.format(t) for t in hashtags])
   reviews = []
   verifies = []
   commits = []
   abandons = []
   if _has_changes_on_host(changes, 'chromium-review.googlesource.com'):
-    format = ['', owner_constraint, hashtag_constraints]
-    reviews.append(_CR_TEMPLATE.format(*format))
-    verifies.append(_V_TEMPLATE.format(*format))
-    commits.append(_CQ_TEMPLATE.format(*format))
-    abandons.append(_ABANDON_TEMPLATE.format(*format))
+    cl_format = ['', owner_constraint, hashtag_constraints]
+    reviews.append(_CR_TEMPLATE.format(*cl_format))
+    verifies.append(_V_TEMPLATE.format(*cl_format))
+    commits.append(_CQ_TEMPLATE.format(*cl_format))
+    abandons.append(_ABANDON_TEMPLATE.format(*cl_format))
   if _has_changes_on_host(
       changes, 'chrome-internal-review.googlesource.com'):  # pragma: nocover
-    format = ['-i', owner_constraint, hashtag_constraints]
-    reviews.append(_CR_TEMPLATE.format(*format))
-    verifies.append(_V_TEMPLATE.format(*format))
-    commits.append(_CQ_TEMPLATE.format(*format))
-    abandons.append(_ABANDON_TEMPLATE.format(*format))
+    cl_format = ['-i', owner_constraint, hashtag_constraints]
+    reviews.append(_CR_TEMPLATE.format(*cl_format))
+    verifies.append(_V_TEMPLATE.format(*cl_format))
+    commits.append(_CQ_TEMPLATE.format(*cl_format))
+    abandons.append(_ABANDON_TEMPLATE.format(*cl_format))
   if not reviews:  # pragma: nocover
     return None
   commands = 'Review commands:\n' + '\n'.join(reviews)

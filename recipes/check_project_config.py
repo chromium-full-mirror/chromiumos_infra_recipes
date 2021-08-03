@@ -5,11 +5,8 @@
 
 """Checks a project conforms to its program's constraints."""
 
-import contextlib
-
 from recipe_engine import post_process
 
-from PB.project_mgmt.project import LocalManifest
 from PB.recipes.chromeos.check_project_config import (
     CheckProjectConfigProperties,
     ConfigBundleCheckoutPath,
@@ -148,8 +145,9 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def properties_dict(extra_props={}):
+  def properties_dict(extra_props=None):
     """Returns a dict of basic valid properties, updated with extra_props."""
+    extra_props = extra_props or {}
     props = {
         'manifest_groups': ['partner-config'],
         'local_manifests': [
@@ -281,9 +279,9 @@ def GenTests(api):
       })),
       project_config_cq_build(api),
       api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE, (
-          '.*local_manifests cannot be specified if manifest_branch is specified.*'
-      )),
+      api.post_process(post_process.ResultReasonRE,
+                       ('.*local_manifests cannot be specified '
+                        'if manifest_branch is specified.*')),
       api.post_process(post_process.DropExpectation),
   )
 

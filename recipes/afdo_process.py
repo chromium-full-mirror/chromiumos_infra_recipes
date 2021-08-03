@@ -14,7 +14,6 @@ DEPS = [
 ]
 
 from PB.chromiumos.common import ArtifactsByService
-from PB.chromiumos.common import BuildTarget
 from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
 
 PROPERTIES = AfdoProcessProperties

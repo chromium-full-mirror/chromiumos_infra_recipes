@@ -23,7 +23,6 @@ from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
 from PB.recipes.chromeos.build_target import BuildTargetProperties
 
-
 # TODO(crbug/1099259): Drop our properties.
 # Our properties are processed and used by both the build_menu module, as well
 # as various downstream dashboards and other consumers of buildbucket output

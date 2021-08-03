@@ -76,7 +76,7 @@ def DoRunSteps(api, properties):
   # Rather than hack the prebuilts into the sysroot, just rebuild.
   # TODO(evanhernandez): Find a way to stop doing this. It's wasteful.
   if properties.test_harness == VmTestRequest.AUTOTEST:
-    with api.step.nest('build autotest packages') as bap_pres:
+    with api.step.nest('build autotest packages'):
 
       packages = [
           PackageInfo(category='chromeos-base', package_name='autotest-all')

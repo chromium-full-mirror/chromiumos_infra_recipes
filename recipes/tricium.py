@@ -5,8 +5,7 @@
 
 """Recipe for running tricium on CLs."""
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
-                                                              GitilesCommit)
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
 
 DEPS = [

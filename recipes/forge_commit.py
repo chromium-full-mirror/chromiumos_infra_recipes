@@ -5,7 +5,6 @@
 
 """Recipe for forcing forge commit failure.
 
-
 Recipe used to force a forge commit failure so the failure response
 can be analyzed to determine what user is being used for the invocation.
 See https://crbug.com/1068743.
@@ -45,7 +44,8 @@ def RunSteps(api):
     zips = api.file.glob_paths('glob traces', api.depot_tools.root,
                                'traces/*.zip')
     zips = (['zcat'] + zips) if zips else None
-    not zips or api.step('dump git-cl trace logs', zips)
+    if zips:
+      api.step('dump git-cl trace logs', zips)
 
 
 def GenTests(api):

@@ -25,7 +25,6 @@ from recipe_engine import post_process
 import PB.chromiumos.common as common_pb2
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen import PaygenProperties
-from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 
 PROPERTIES = PaygenProperties
 
@@ -94,10 +93,6 @@ def GenTests(api):
   full_payload_uri = (
       'gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
       'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc')
-
-  delta_payload_uri = (
-      'gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
-      'chromeos_12345.0.0-12345.0.0_zork_canary-channel_delta_test.bin-abc')
 
   yield api.test(
       'dryrun',

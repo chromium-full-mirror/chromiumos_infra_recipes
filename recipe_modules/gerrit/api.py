@@ -194,7 +194,6 @@ class GerritApi(RecipeApi):
   PatchSet = PatchSet
   Label = Label
 
-
   def __init__(self, *args, **kwargs):
     """Initialize GerritApi."""
     super(GerritApi, self).__init__(*args, **kwargs)
