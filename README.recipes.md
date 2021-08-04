@@ -2905,13 +2905,13 @@ Returns:
 
 A module for interacting with the ChromeOS Sheriff-o-Matic.
 
-&mdash; **def [get\_annotation](/recipe_modules/cros_som/api.py#76)(self, step_name):**
+&mdash; **def [get\_annotation](/recipe_modules/cros_som/api.py#77)(self, step_name):**
 
 Return a `SomAnnotation` for `step_name`.
 
 None if there is no annotation for the step.
 
-&mdash; **def [get\_silence\_reason](/recipe_modules/cros_som/api.py#101)(self, annotation):**
+&mdash; **def [get\_silence\_reason](/recipe_modules/cros_som/api.py#102)(self, annotation):**
 
 Return the reason an annotation is silenced, None if there is no silence.
 

@@ -52,7 +52,8 @@ class CrosSomApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosSomApi, self).__init__(*args, **kwargs)
-    som_url = properties.som_url or 'https://sheriff-o-matic.appspot.com/chromeos'
+    som_url = str(
+        properties.som_url) or 'https://sheriff-o-matic.appspot.com/chromeos'
     self._annotations_url = urljoin(som_url, '/api/v1/annotations/chromeos')
     # A map from 'key' to `SomAnnotation`. Lazily loaded.
     self._key_to_annotation = {}
