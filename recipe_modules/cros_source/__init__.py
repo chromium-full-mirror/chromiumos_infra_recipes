@@ -17,7 +17,6 @@ DEPS = {
     'cros_build_api': 'cros_build_api',
     'cros_infra_config': 'cros_infra_config',
     'easy': 'easy',
-    'gcloud': 'gcloud',
     'gerrit': 'gerrit',
     'git': 'git',
     'gitiles': 'gitiles',

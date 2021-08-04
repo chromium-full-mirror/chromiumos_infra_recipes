@@ -13,6 +13,6 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/swarming',
     'recipe_engine/time',
-    'cros_infra_config',
+    'build_menu',
     'easy',
 ]

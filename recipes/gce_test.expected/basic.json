@@ -1,5 +1,27 @@
 [
   {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "gcloud",
       "config",
@@ -90,7 +112,7 @@
       "tar",
       "--format=oldgnu",
       "-Sczf",
-      "2491483.tar.gz",
+      "8361843.tar.gz",
       "disk.raw"
     ],
     "cwd": "[CLEANUP]/image-archive_tmp_1/image",
@@ -112,14 +134,14 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/image-archive_tmp_1/image/2491483.tar.gz",
-      "gs://images-in-test/betty-arc-r/2491483.tar.gz"
+      "[CLEANUP]/image-archive_tmp_1/image/8361843.tar.gz",
+      "gs://images-in-test/betty-arc-r/8361843.tar.gz"
     ],
     "infra_step": true,
     "name": "create image.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/images-in-test/betty-arc-r/2491483.tar.gz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/images-in-test/betty-arc-r/8361843.tar.gz@@@"
     ]
   },
   {
@@ -128,8 +150,8 @@
       "compute",
       "images",
       "create",
-      "betty-arc-r-2491483",
-      "--source-uri=gs://images-in-test/betty-arc-r/2491483.tar.gz"
+      "betty-arc-r-8361843",
+      "--source-uri=gs://images-in-test/betty-arc-r/8361843.tar.gz"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -145,8 +167,8 @@
       "compute",
       "instances",
       "create",
-      "betty-arc-r-2491483",
-      "--image=betty-arc-r-2491483",
+      "betty-arc-r-8361843",
+      "--image=betty-arc-r-8361843",
       "--project=chromeos-gce-tests",
       "--machine-type=n1-standard-4",
       "--no-scopes",
@@ -166,7 +188,7 @@
       "compute",
       "instances",
       "delete",
-      "betty-arc-r-2491483",
+      "betty-arc-r-8361843",
       "--quiet",
       "--zone=us-central1-a",
       "--project=chromeos-gce-tests"
@@ -182,7 +204,7 @@
       "compute",
       "images",
       "delete",
-      "betty-arc-r-2491483",
+      "betty-arc-r-8361843",
       "--quiet"
     ],
     "env": {

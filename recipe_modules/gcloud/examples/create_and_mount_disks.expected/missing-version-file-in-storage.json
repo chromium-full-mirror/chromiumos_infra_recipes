@@ -33,22 +33,6 @@
     ]
   },
   {
-    "cmd": [
-      "gcloud",
-      "config",
-      "set",
-      "project",
-      "chromeos-bot"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "create and attach disk.set gcloud project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "create and attach disk.retrieve snapshot version from storage",
     "~followup_annotations": [
@@ -98,8 +82,7 @@
       "create",
       "chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b",
-      "--source-snapshot=initial-chromiumos-source-snapshot",
-      "--quiet"
+      "--source-snapshot=initial-chromiumos-source-snapshot"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -118,8 +101,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromiumos-main-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -184,66 +166,12 @@
     ]
   },
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "get swarming hostname (2)"
   },
   {
     "cmd": [],
     "name": "create and attach disk (2)"
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "config",
-      "set",
-      "project",
-      "chromeos-bot"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "create and attach disk (2).set gcloud project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CACHE]/infra_versions/chromiumos-release-r90-13816-b-cache-snapshot-version.txt",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "create and attach disk (2).read local snapshot version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
-      "@@@STEP_LOG_END@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
-    ]
   },
   {
     "cmd": [],
@@ -284,8 +212,7 @@
       "create",
       "chromiumos-release-r90-13816-b-13370000-us-central1-b",
       "--zone=us-central1-b",
-      "--source-snapshot=test-cache-snapshot-123",
-      "--quiet"
+      "--source-snapshot="
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -304,8 +231,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromiumos-release-r90-13816-b-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -376,66 +302,12 @@
     ]
   },
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "test-cache-snapshot-123",
-      "[CACHE]/infra_versions/chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot version.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
-      "@@@STEP_LOG_END@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "get swarming hostname (3)"
   },
   {
     "cmd": [],
     "name": "create and attach disk (3)"
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "config",
-      "set",
-      "project",
-      "chromeos-bot"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "create and attach disk (3).set gcloud project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CACHE]/infra_versions/rust-stabilize-rust-13836-b-cache-snapshot-version.txt",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "create and attach disk (3).read local snapshot version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@rust-stabilize-rust-13836-b-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
-      "@@@STEP_LOG_END@rust-stabilize-rust-13836-b-cache-snapshot-version.txt@@@"
-    ]
   },
   {
     "cmd": [],
@@ -476,8 +348,7 @@
       "create",
       "rust-stabilize-rust-13836-b-13370000-us-central1-b",
       "--zone=us-central1-b",
-      "--source-snapshot=test-cache-snapshot-123",
-      "--quiet"
+      "--source-snapshot="
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -496,8 +367,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=rust-stabilize-rust-13836-b-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -568,25 +438,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "test-cache-snapshot-123",
-      "[CACHE]/infra_versions/rust-stabilize-rust-13836-b-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "name": "create and attach disk (3).create disk from snapshot version.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@rust-stabilize-rust-13836-b-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
-      "@@@STEP_LOG_END@rust-stabilize-rust-13836-b-cache-snapshot-version.txt@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "clean up mounted compute disk"
   },
@@ -644,8 +495,7 @@
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromiumos-main-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -663,8 +513,7 @@
       "disks",
       "delete",
       "chromiumos-main-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -683,8 +532,7 @@
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromiumos-release-r90-13816-b-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -702,8 +550,7 @@
       "disks",
       "delete",
       "chromiumos-release-r90-13816-b-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -722,8 +569,7 @@
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=rust-stabilize-rust-13836-b-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -741,8 +587,7 @@
       "disks",
       "delete",
       "rust-stabilize-rust-13836-b-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

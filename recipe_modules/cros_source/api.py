@@ -706,21 +706,16 @@ class CrosSourceApi(RecipeApi):
         self.m.git.remote_update(step_name=step_name)
 
   @contextlib.contextmanager
-  def checkout_overlays_context(self, mount_cache=True, snapshot_mount=False):
+  def checkout_overlays_context(self, mount_cache=True):
     """Returns a context where overlays can be mounted.
 
     Args:
       mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
-      snapshot_mount (bool): Whether to utilize the snapshot mount location,
-        rather than the image preload directory.  Default: False
     """
     with self.m.overlayfs.cleanup_context():
       self._have_overlayfs_cleanup_context = True
       if not self._enable_custom_overlays and mount_cache:
-        lower_dir = self.preload_path
-        if snapshot_mount:
-          lower_dir = '{}/chromiumos'.format(self.m.gcloud.snapshot_mount_path)
-        self.m.overlayfs.mount('chromiumos', lower_dir, self.cache_path,
+        self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
                                persist=True)
         self.m.path.mock_add_paths(self.cache_path.join('.repo'))
         # Explicitly do not mount the workspace overlay at this time, to prevent

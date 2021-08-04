@@ -40,22 +40,6 @@
     ]
   },
   {
-    "cmd": [
-      "gcloud",
-      "config",
-      "set",
-      "project",
-      "chromeos-bot"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "source cache update.create and attach disk.set gcloud project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "source cache update.create and attach disk.retrieve snapshot version from storage",
     "~followup_annotations": [
@@ -95,7 +79,6 @@
       "test-cache-release-r90-13816-b-13370000-us-central1-b",
       "--zone=us-central1-b",
       "--source-snapshot=",
-      "--quiet",
       "--type=pd-ssd"
     ],
     "env": {
@@ -115,8 +98,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=test-cache-release-r90-13816-b-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -184,24 +166,6 @@
     "name": "source cache update.create and attach disk.create disk from snapshot version.mount disk test-cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "",
-      "[CACHE]/infra_versions/test-cache-release-r90-13816-b-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot version.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@test-cache-release-r90-13816-b-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -537,8 +501,7 @@
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=test-cache-release-r90-13816-b-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

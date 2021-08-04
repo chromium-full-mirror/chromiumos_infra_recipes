@@ -40,22 +40,6 @@
     ]
   },
   {
-    "cmd": [
-      "gcloud",
-      "config",
-      "set",
-      "project",
-      "chromeos-bot"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "source cache update.create and attach disk.set gcloud project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "source cache update.create and attach disk.retrieve snapshot version from storage",
     "~followup_annotations": [
@@ -95,7 +79,6 @@
       "chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b",
       "--source-snapshot=",
-      "--quiet",
       "--type=pd-ssd"
     ],
     "env": {
@@ -115,8 +98,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromiumos-main-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -184,24 +166,6 @@
     "name": "source cache update.create and attach disk.create disk from snapshot version.mount disk chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "",
-      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot version.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -537,8 +501,7 @@
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromiumos-main-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -643,41 +606,6 @@
     ]
   },
   {
-    "cmd": [
-      "gcloud",
-      "config",
-      "set",
-      "project",
-      "chromeos-bot"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "source cache update.create and attach disk (2).set gcloud project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CACHE]/infra_versions/chrome-main-cache-snapshot-version.txt",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "source cache update.create and attach disk (2).read local snapshot version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@chrome-main-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
-      "@@@STEP_LOG_END@chrome-main-cache-snapshot-version.txt@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "source cache update.create and attach disk (2).retrieve snapshot version from storage",
     "~followup_annotations": [
@@ -716,8 +644,7 @@
       "create",
       "chrome-main-13370000-us-central1-b",
       "--zone=us-central1-b",
-      "--source-snapshot=test-cache-snapshot-123",
-      "--quiet",
+      "--source-snapshot=",
       "--type=pd-ssd"
     ],
     "env": {
@@ -737,8 +664,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chrome-main-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -806,25 +732,6 @@
     "name": "source cache update.create and attach disk (2).create disk from snapshot version.mount disk chrome",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "test-cache-snapshot-123",
-      "[CACHE]/infra_versions/chrome-main-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "name": "source cache update.create and attach disk (2).create disk from snapshot version.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@chrome-main-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
-      "@@@STEP_LOG_END@chrome-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -1012,8 +919,7 @@
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chrome-main-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--quiet"
+      "--zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

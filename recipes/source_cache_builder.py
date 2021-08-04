@@ -13,9 +13,9 @@ DEPS = [
     'recipe_engine/swarming',
     'depot_tools/depot_tools',
     'depot_tools/gsutil',
+    'build_menu',
     'chrome',
     'cros_cache',
-    'cros_infra_config',
     'easy',
     'gcloud',
     'repo',
@@ -33,7 +33,7 @@ PROPERTIES = SourceCacheBuilderProperties
 def RunSteps(api, properties):
   with api.step.nest('source cache update'):
     snapshot_prefixes = []
-    is_staging = api.cros_infra_config.is_staging
+    is_staging = api.build_menu.is_staging
     infra_host = api.swarming.bot_id
     with api.gcloud.cleanup_gce_disks(), \
          api.gcloud.cleanup_mounted_disks():
