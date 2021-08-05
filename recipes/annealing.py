@@ -34,6 +34,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'cros_build_api',
     'cros_cq_depends',
     'cros_infra_config',
@@ -41,6 +42,7 @@ DEPS = [
     'cros_source',
     'cros_tags',
     'easy',
+    'gcloud',
     'gerrit',
     'git',
     'git_footers',
@@ -72,184 +74,195 @@ def RunSteps(api, properties):
   if not manifest_ref:
     raise StepFailure('must set manifest ref')
 
-  with api.cros_source.checkout_overlays_context():
-    internal_manifest = api.src_state.internal_manifest
-    external_manifest = api.src_state.external_manifest
+  with api.gcloud.cleanup_gce_disks(), \
+         api.gcloud.cleanup_mounted_disks():
+    snapshot_mount = False
+    if api.cros_infra_config.is_staging:
+      api.gcloud.create_and_mount_disk(cache_name='chromiumos')
+      snapshot_mount = True
+    with api.cros_source.checkout_overlays_context(
+        snapshot_mount=snapshot_mount):
 
-    # Do this before anything else.  Most notably, if it is called while in
-    # internal_manifest.path, HEAD stops tracking the lowerdir in the overlayfs,
-    # which means we fail when the cache updates manifest-internal.  See
-    # crbug/1148052.
-    api.cros_source.ensure_synced_cache(is_staging=is_staging)
+      internal_manifest = api.src_state.internal_manifest
+      external_manifest = api.src_state.external_manifest
 
-    with api.context(cwd=internal_manifest.path):
-      if not api.cq.active:
-        api.cros_source.checkout_tip_of_tree()
+      # Do this before anything else.  Most notably, if it is called while in
+      # internal_manifest.path, HEAD stops tracking the lowerdir in the overlayfs,
+      # which means we fail when the cache updates manifest-internal.  See
+      # crbug/1148052.
+      api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
-      if api.cq.active and not commit.id:
-        # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
-        # This may be different from a provided GitilesCommit, but that is OK.
-        ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)
-        commit.host = commit.host or api.src_state.internal_manifest.host
-        commit.project = commit.project or internal_manifest.project
-        commit.ref = ref
-        commit.id = api.git.fetch_ref(internal_manifest.url, ref)
+      with api.context(cwd=internal_manifest.path):
+        if not api.cq.active:
+          api.cros_source.checkout_tip_of_tree()
 
-      if commit.id:
-        with api.step.nest('recreating older run'):
-          properties.dry_run = True
-          # Check out the gitiles_commit we received, and declare the prior
-          # commit in each manifest to be the prior commit. Start by forcing a
-          # checkout on the right branch.
-          branch = (
-              commit.ref[len('refs/heads/'):]
-              if commit.ref.startswith('refs/heads/') else commit.ref)
-          api.cros_source.ensure_synced_cache(
-              cache_path_override=workspace_path, is_staging=is_staging,
-              init_opts=dict(manifest_branch=branch))
-          api.cros_source.sync_to_gitiles_commit(commit)
-          prior_internal = api.git.fetch_refs(internal_manifest.url, commit.id,
-                                              count=2)[-1]
-          test_data = api.git_footers.test_api.step_test_data_factory('e' * 40)
-          footers = api.git_footers.from_ref(commit.id,
-                                             key='Cr-External-Snapshot',
-                                             step_test_data=test_data)
-          if not footers:
-            raise StepFailure('missing Cr-External-Snapshot footer')
-          prior_external = footers[0] if footers else None
-          with api.context(cwd=workspace_path):
-            api.repo.init(internal_manifest.url,
-                          manifest_branch=internal_manifest.branch)
+        if api.cq.active and not commit.id:
+          # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
+          # This may be different from a provided GitilesCommit, but that is OK.
+          ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)
+          commit.host = commit.host or api.src_state.internal_manifest.host
+          commit.project = commit.project or internal_manifest.project
+          commit.ref = ref
+          commit.id = api.git.fetch_ref(internal_manifest.url, ref)
 
-      prior_internal = prior_internal or api.git.fetch_ref(
-          internal_manifest.url, manifest_ref)
+        if commit.id:
+          with api.step.nest('recreating older run'):
+            properties.dry_run = True
+            # Check out the gitiles_commit we received, and declare the prior
+            # commit in each manifest to be the prior commit. Start by forcing a
+            # checkout on the right branch.
+            branch = (
+                commit.ref[len('refs/heads/'):]
+                if commit.ref.startswith('refs/heads/') else commit.ref)
+            api.cros_source.ensure_synced_cache(
+                cache_path_override=workspace_path, is_staging=is_staging,
+                init_opts=dict(manifest_branch=branch))
+            api.cros_source.sync_to_gitiles_commit(commit)
+            prior_internal = api.git.fetch_refs(internal_manifest.url,
+                                                commit.id, count=2)[-1]
+            test_data = api.git_footers.test_api.step_test_data_factory('e' *
+                                                                        40)
+            footers = api.git_footers.from_ref(commit.id,
+                                               key='Cr-External-Snapshot',
+                                               step_test_data=test_data)
+            if not footers:
+              raise StepFailure('missing Cr-External-Snapshot footer')
+            prior_external = footers[0] if footers else None
+            with api.context(cwd=workspace_path):
+              api.repo.init(internal_manifest.url,
+                            manifest_branch=internal_manifest.branch)
 
-      with api.context(cwd=external_manifest.path):
-        prior_external = prior_external or api.git.fetch_ref(
-            external_manifest.url, manifest_ref)
+        prior_internal = prior_internal or api.git.fetch_ref(
+            internal_manifest.url, manifest_ref)
 
-        # Sync mirrored manifest files from manifest-internal to manifest.
-        diffs = _sync_manifest(api, properties, manifest_ref, prior_internal,
-                               prior_external, internal_manifest,
-                               external_manifest)
+        with api.context(cwd=external_manifest.path):
+          prior_external = prior_external or api.git.fetch_ref(
+              external_manifest.url, manifest_ref)
 
-        # One or more uprevs did not complete, end recipe and
-        # do not generate snapshot
-        if not _uprev_packages(api, properties, workspace_path, diffs, dry_run):
-          raise StepFailure('Failed to uprev all changes')
+          # Sync mirrored manifest files from manifest-internal to manifest.
+          diffs = _sync_manifest(api, properties, manifest_ref, prior_internal,
+                                 prior_external, internal_manifest,
+                                 external_manifest)
 
-        api.easy.set_properties_step(dry_run=properties.dry_run)
+          # One or more uprevs did not complete, end recipe and
+          # do not generate snapshot
+          if not _uprev_packages(api, properties, workspace_path, diffs,
+                                 dry_run):
+            raise StepFailure('Failed to uprev all changes')
 
-        prior_external = (
-            manifest_ref if properties.use_ref_not_id else prior_external)
-        prior_internal = (
-            manifest_ref if properties.use_ref_not_id else prior_internal)
-        # Generate a public snapshot of the manifest in the manifest/ repo.  We
-        # need to do this _first_ so that we can fill in the
-        # Cr-External-Snapshot footer in in the internal snapshot commit.
-        external_snapshot_ref = None
-        # Generate the manifest from public repo
-        snapshot_xml_extern = api.repo.manifest(
-            external_manifest.path.join('default.xml'), pinned=True,
-            step_name='generate external manifest')
+          api.easy.set_properties_step(dry_run=properties.dry_run)
 
-      # snapshot internal manifest
-      snapshot_xml_intern = api.repo.manifest(
-          pinned=True, step_name='generate internal manifest')
-      manifest_diffs = api.repo.diff_remote_and_local_manifests(
-          internal_manifest.url, manifest_ref, snapshot_xml_intern,
-          use_merge_base=True)
+          prior_external = (
+              manifest_ref if properties.use_ref_not_id else prior_external)
+          prior_internal = (
+              manifest_ref if properties.use_ref_not_id else prior_internal)
+          # Generate a public snapshot of the manifest in the manifest/ repo.  We
+          # need to do this _first_ so that we can fill in the
+          # Cr-External-Snapshot footer in in the internal snapshot commit.
+          external_snapshot_ref = None
+          # Generate the manifest from public repo
+          snapshot_xml_extern = api.repo.manifest(
+              external_manifest.path.join('default.xml'), pinned=True,
+              step_name='generate external manifest')
 
-      # TODO(athilenius): It would be nice to set the 'Info' column here.
-      gerrit_commits = []
-      if manifest_diffs is not None:
-        # If there are zero diffs (empty array) then there is nothing
-        # interesting to be done.
-        if len(manifest_diffs) == 0:
-          return
+        # snapshot internal manifest
+        snapshot_xml_intern = api.repo.manifest(
+            pinned=True, step_name='generate internal manifest')
+        manifest_diffs = api.repo.diff_remote_and_local_manifests(
+            internal_manifest.url, manifest_ref, snapshot_xml_intern,
+            use_merge_base=True)
 
-        # Pushing to staging-infra-{$BRANCH} may fail since the commit histories
-        # have different acestors. If we can verify that they are reachable
-        # through a prior commit we will ignore the CQ depends.
-        # Make sure that we have not lost commits.  If the new revision at a
-        # path is older than the prior one, provide a clearer failure message
-        # than the one we get in cros_cq_depends.
-        # See b/176121817 and ci.chromium.org/b/8860265036779649984.
-        # TODO(crbug/1169277): If the change is in a pinned entry in the
-        # manifest, ignore the downrev.  Once that is happening, drop
-        # properties.ignore_downrev_paths.
-        with api.step.nest('check reachability') as reach_pres:
-          downrevs = []
-          for diff in manifest_diffs:
-            with api.context(cwd=workspace_path.join(diff.path)):
-              if (not api.git.is_reachable(diff.from_rev) and
-                  diff.path not in properties.ignore_downrev_paths):
-                downrevs.append('{}: {} is not an ancestor of {}'.format(
-                    diff.path, diff.from_rev, diff.to_rev))
+        # TODO(athilenius): It would be nice to set the 'Info' column here.
+        gerrit_commits = []
+        if manifest_diffs is not None:
+          # If there are zero diffs (empty array) then there is nothing
+          # interesting to be done.
+          if len(manifest_diffs) == 0:
+            return
 
-          if downrevs:
-            # TODO(crbug/1169277): Add code to distinguish these cases, and make
-            # the error only apply to case #1.
-            # There are 3 cases that can lead to an unreachable prior version:
-            # 1. Commits were lost from the git repo.  (bug).
-            # 2. A pinned-entry in the manifest has a change that reverts an
-            #    uprev in that repo.  (not a bug)
-            # 3. A manifest entry changes branches. (not a bug)
-            # Of the set, #1 is generally the least likely to occur, so this is
-            # a warning (which is ignored by LUCI/Milo) for now.
-            reach_pres.logs['downrevs'] = downrevs
-            reach_pres.step_text = 'some downrevs occurred'
+          # Pushing to staging-infra-{$BRANCH} may fail since the commit histories
+          # have different acestors. If we can verify that they are reachable
+          # through a prior commit we will ignore the CQ depends.
+          # Make sure that we have not lost commits.  If the new revision at a
+          # path is older than the prior one, provide a clearer failure message
+          # than the one we get in cros_cq_depends.
+          # See b/176121817 and ci.chromium.org/b/8860265036779649984.
+          # TODO(crbug/1169277): If the change is in a pinned entry in the
+          # manifest, ignore the downrev.  Once that is happening, drop
+          # properties.ignore_downrev_paths.
+          with api.step.nest('check reachability') as reach_pres:
+            downrevs = []
+            for diff in manifest_diffs:
+              with api.context(cwd=workspace_path.join(diff.path)):
+                if (not api.git.is_reachable(diff.from_rev) and
+                    diff.path not in properties.ignore_downrev_paths):
+                  downrevs.append('{}: {} is not an ancestor of {}'.format(
+                      diff.path, diff.from_rev, diff.to_rev))
 
-        # Otherwise we need to ensure all of those diffs have fulfilled deps.
-        try:
-          api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(
-              manifest_diffs)
-        except StepFailure:
-          if not properties.ignore_cq_depends_failure:
-            raise
+            if downrevs:
+              # TODO(crbug/1169277): Add code to distinguish these cases, and make
+              # the error only apply to case #1.
+              # There are 3 cases that can lead to an unreachable prior version:
+              # 1. Commits were lost from the git repo.  (bug).
+              # 2. A pinned-entry in the manifest has a change that reverts an
+              #    uprev in that repo.  (not a bug)
+              # 3. A manifest entry changes branches. (not a bug)
+              # Of the set, #1 is generally the least likely to occur, so this is
+              # a warning (which is ignored by LUCI/Milo) for now.
+              reach_pres.logs['downrevs'] = downrevs
+              reach_pres.step_text = 'some downrevs occurred'
 
-        # Then, get the diffs. We are specifically interested in what
-        # gerrit changes have landed.
-        gerrit_commits, jobs = _get_gerrit_changes(api, manifest_diffs,
-                                                   properties.path_triggers)
+          # Otherwise we need to ensure all of those diffs have fulfilled deps.
+          try:
+            api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(
+                manifest_diffs)
+          except StepFailure:
+            if not properties.ignore_cq_depends_failure:
+              raise
 
-      # Generate Cr-Snapshot-Identifer (b/171751551).
-      with api.step.nest('fetch previous snapshot identifier'):
-        api.git.fetch_ref(internal_manifest.url, prior_internal)
-        test_data = api.git_footers.test_api.step_test_data_factory('1000000')
-        snapshot_identifier_footers = api.git_footers.from_ref(
-            'FETCH_HEAD', key='Cr-Snapshot-Identifier',
-            step_test_data=test_data)
-        if not snapshot_identifier_footers:
-          raise StepFailure('missing Cr-Snapshot-Identifier footer')
-        snapshot_identifier = int(snapshot_identifier_footers[0])
-        snapshot_identifier += 1
+          # Then, get the diffs. We are specifically interested in what
+          # gerrit changes have landed.
+          gerrit_commits, jobs = _get_gerrit_changes(api, manifest_diffs,
+                                                     properties.path_triggers)
 
-      # And publish.
-      with api.step.nest('publish external snapshot'), \
-          api.context(cwd=external_manifest.path):
-        external_snapshot_commit = _publish_snapshot(
-            api, external_manifest.url, manifest_ref, prior_external,
-            external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
-            disable_gerrit=True, dry_run=dry_run,
-            footers=[('Cr-Snapshot-Identifier', str(snapshot_identifier))])
-        external_snapshot_ref = external_snapshot_commit.id
+        # Generate Cr-Snapshot-Identifer (b/171751551).
+        with api.step.nest('fetch previous snapshot identifier'):
+          api.git.fetch_ref(internal_manifest.url, prior_internal)
+          test_data = api.git_footers.test_api.step_test_data_factory('1000000')
+          snapshot_identifier_footers = api.git_footers.from_ref(
+              'FETCH_HEAD', key='Cr-Snapshot-Identifier',
+              step_test_data=test_data)
+          if not snapshot_identifier_footers:
+            raise StepFailure('missing Cr-Snapshot-Identifier footer')
+          snapshot_identifier = int(snapshot_identifier_footers[0])
+          snapshot_identifier += 1
 
-      with api.step.nest('publish internal snapshot'):
-        internal_snapshot_commit = _publish_snapshot(
-            api, internal_manifest.url, manifest_ref, prior_internal,
-            internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
-            gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
-            footers=[('Cr-External-Snapshot', external_snapshot_ref),
-                     ('Cr-Snapshot-Identifier', str(snapshot_identifier))],
-            dry_run=dry_run)
+        # And publish.
+        with api.step.nest('publish external snapshot'), \
+            api.context(cwd=external_manifest.path):
+          external_snapshot_commit = _publish_snapshot(
+              api, external_manifest.url, manifest_ref, prior_external,
+              external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
+              disable_gerrit=True, dry_run=dry_run,
+              footers=[('Cr-Snapshot-Identifier', str(snapshot_identifier))])
+          external_snapshot_ref = external_snapshot_commit.id
 
-        # Set output.properties.commit, this will also set the commit as the
-        # build output.
-        api.src_state.gitiles_commit = internal_snapshot_commit
+        with api.step.nest('publish internal snapshot'):
+          internal_snapshot_commit = _publish_snapshot(
+              api, internal_manifest.url, manifest_ref, prior_internal,
+              internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
+              gerrit_commits,
+              properties.disable_gerrit_commits_in_commit_message, footers=[
+                  ('Cr-External-Snapshot', external_snapshot_ref),
+                  ('Cr-Snapshot-Identifier', str(snapshot_identifier))
+              ], dry_run=dry_run)
 
-      if jobs and not properties.dry_run:
-        _schedule_triggered_builds(api, internal_snapshot_commit, jobs)
+          # Set output.properties.commit, this will also set the commit as the
+          # build output.
+          api.src_state.gitiles_commit = internal_snapshot_commit
+
+        if jobs and not properties.dry_run:
+          _schedule_triggered_builds(api, internal_snapshot_commit, jobs)
 
 
 def _sync_manifest(api, _properties, manifest_ref, prior_internal,
@@ -513,11 +526,24 @@ def GenTests(api):
   # closer to the actual manifests we process.
   yield api.test(
       'basic',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+  )
+
+  yield api.test(
+      'staging-basic',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.buildbucket.generic_build(builder="staging-Annealing",
+                                    bucket='staging'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
   )
 
   yield api.test(
       'no-snapshot-identifier',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -541,6 +567,8 @@ def GenTests(api):
 
   yield api.test(
       'snapshot-manifest-has-manifest-change',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -563,6 +591,8 @@ def GenTests(api):
 
   yield api.test(
       'snapshot-manifest-has-manifest-change-that-triggers',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(
               manifest_ref='snapshot', path_triggers=[
@@ -594,6 +624,8 @@ def GenTests(api):
 
   yield api.test(
       'sync-manifests-has-manifest-change',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='main', publish_uprevs=True)),
       api.git.diff_check(True),
@@ -601,12 +633,16 @@ def GenTests(api):
 
   yield api.test(
       'staging-sync-manifests-has-manifest-change',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='main')),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'uprev-manifest-changes',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='main', publish_uprevs=True,
                               dry_run=False)), api.git.diff_check(True),
@@ -632,6 +668,8 @@ def GenTests(api):
   # No changes in the manifest at all.
   yield api.test(
       'no-change',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -654,6 +692,8 @@ def GenTests(api):
   # Manifest changes, but no gerrit change to go with it.
   yield api.test(
       'no-gerrit-change',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -678,6 +718,8 @@ def GenTests(api):
   # Dry Run: manifest changes, but no gerrit change to go with it.
   yield api.test(
       'dry-run',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=True)),
       api.step_data(
@@ -702,6 +744,8 @@ def GenTests(api):
 
   yield api.test(
       'retry-fetch-first',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
@@ -740,6 +784,8 @@ def GenTests(api):
 
   yield api.test(
       'retry-fast-forward',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
@@ -779,6 +825,8 @@ def GenTests(api):
 
   yield api.test(
       'retry-no-change',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
@@ -791,6 +839,8 @@ def GenTests(api):
 
   yield api.test(
       'retry-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
                               publish_uprevs=True)),
@@ -832,6 +882,8 @@ def GenTests(api):
 
   yield api.test(
       'retry-unknown',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(('push uprevs.push to src/private-overlay.git push '
@@ -855,6 +907,8 @@ def GenTests(api):
   # CQ: manifest changes, but no gerrit change to go with it.
   yield api.test(
       'cq-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.buildbucket.ci_build(project='chromeos',
                                git_repo=api.src_state.internal_manifest.url,
                                git_ref='refs/heads/snapshot'),
@@ -882,6 +936,8 @@ def GenTests(api):
 
   yield api.test(
       'cq-build-no-footer',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.buildbucket.ci_build(project='chromeos',
                                git_repo=api.src_state.internal_manifest.url,
                                git_ref='refs/heads/snapshot'),
@@ -897,6 +953,8 @@ def GenTests(api):
   # CQ without bb commit: manifest changes, but no gerrit change to go with it.
   yield api.test(
       'cq-build-no-commit',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
@@ -921,6 +979,8 @@ def GenTests(api):
 
   yield api.test(
       'only-ignored-gerrit-change',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -946,6 +1006,8 @@ def GenTests(api):
 
   yield api.test(
       'disable-commits-in-commit-message',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot',
                               disable_gerrit_commits_in_commit_message=True)),
@@ -972,6 +1034,8 @@ def GenTests(api):
 
   yield api.test(
       'missing-required-properties',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties()),
       api.post_check(post_process.StatusFailure),
   )
@@ -979,6 +1043,8 @@ def GenTests(api):
   # TODO(crbug/1169277) this will become multiple tests.
   yield api.test(
       'downrev',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -1004,6 +1070,8 @@ def GenTests(api):
 
   yield api.test(
       'downrev-staging-allow-cq-depends',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='staging-snapshot', dry_run=True,
                               publish_uprevs=False)),
@@ -1030,6 +1098,8 @@ def GenTests(api):
 
   yield api.test(
       'crbug-1169277-ignored-downrev',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot',
                               ignore_downrev_paths=['NAME'])),
@@ -1057,6 +1127,8 @@ def GenTests(api):
 
   yield api.test(
       'cq-deps-failure',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',

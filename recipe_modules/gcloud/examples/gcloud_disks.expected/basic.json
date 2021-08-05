@@ -1,27 +1,5 @@
 [
   {
-    "cmd": [],
-    "name": "configure chroot path"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "/preload/chromeos-sdk"
-    ],
-    "infra_step": true,
-    "name": "configure chroot path.create preload path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "compute",
@@ -30,6 +8,7 @@
       "test_disk1",
       "--zone=us-central1-b",
       "--source-snapshot=test-chromeos-snapshot",
+      "--quiet",
       "--type=pd-ssd"
     ],
     "env": {
@@ -46,7 +25,8 @@
       "create",
       "test_disk2",
       "--zone=us-central1-b",
-      "--source-snapshot=test-chrome-snapshot"
+      "--source-snapshot=test-chrome-snapshot",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -62,7 +42,8 @@
       "attach-disk",
       "test_bot1",
       "--disk=test_disk1",
-      "--zone=us-central1-b"
+      "--zone=us-central1-b",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -95,7 +76,8 @@
       "attach-disk",
       "test_bot1",
       "--disk=test_disk2",
-      "--zone=us-central1-b"
+      "--zone=us-central1-b",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -456,7 +438,8 @@
       "detach-disk",
       "test_bot1",
       "--disk=test_disk1",
-      "--zone=us-central1-b"
+      "--zone=us-central1-b",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -474,7 +457,8 @@
       "disks",
       "delete",
       "test_disk1",
-      "--zone=us-central1-b"
+      "--zone=us-central1-b",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -493,7 +477,8 @@
       "detach-disk",
       "test_bot1",
       "--disk=test_disk2",
-      "--zone=us-central1-b"
+      "--zone=us-central1-b",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -511,7 +496,8 @@
       "disks",
       "delete",
       "test_disk2",
-      "--zone=us-central1-b"
+      "--zone=us-central1-b",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -544,7 +530,8 @@
       "detach-disk",
       "test_bot1",
       "--disk=test_disk3",
-      "--zone=us-central1-b"
+      "--zone=us-central1-b",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

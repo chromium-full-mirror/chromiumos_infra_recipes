@@ -37,6 +37,20 @@ class OverlayfsApi(recipe_api.RecipeApi):
     """Returns bool of whether the path contains overlay directories."""
     return self.m.path.exists(upperdir)
 
+  def cleanup_overlay_directories(self, cache_name):
+    """Remove the upper and workdiretories to reset a named cache mount.
+
+    Resets the status of an overlayfs mount by removing both the work and
+    upper directories.  This is typically used if the status of the lower
+    directory changes.
+
+    Args:
+      cache_name (str): Name of the named cache to cleanup.
+    """
+    del_path = '{}/*'.format(self.m.path['cache'].join(cache_name))
+    self.m.step('cleanup overlayfs working directories',
+                ['rm', '-rf', del_path], infra_step=True)
+
   def mount(self, name, lowerdir_path, mount_path, persist=False):
     """Mount an OverlayFS.
 

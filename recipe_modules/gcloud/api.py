@@ -15,6 +15,7 @@ GCE_TEST_BUCKET = 'images-in-test'
 RAW_IMAGE_NAME = 'disk.raw'
 TEST_IMAGE_NAME = 'chromiumos_test_image.bin'
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
+GCE_BUILD_PROJECT = 'chromeos-bot'
 
 _SWARMING_HOST_REGEXP = (r'^chromeos-ci-'
                          r'(?P<role>\w*)-'
@@ -250,13 +251,8 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('attach disk', [
-          'gcloud',
-          'compute',
-          'instances',
-          'attach-disk',
-          instance,
-          '--disk={}'.format(disk),
-          '--zone={}'.format(zone),
+          'gcloud', 'compute', 'instances', 'attach-disk', instance,
+          '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
       ], infra_step=True)
       # Increment the device reference; /dev/sda is root device.
       self._dev_ref = chr(ord(self._dev_ref) + 1)
@@ -292,7 +288,7 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('detach disk', [
           'gcloud', 'compute', 'instances', 'detach-disk', instance,
-          '--disk={}'.format(disk), '--zone={}'.format(zone)
+          '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
       ], infra_step=True)
     self._remove_cleanup_attached_disk(disk, instance, zone)
     self._dev_ref = chr(ord(self._dev_ref) - 1)
@@ -310,7 +306,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     cmd = [
         'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
-        '--source-snapshot={}'.format(snapshot)
+        '--source-snapshot={}'.format(snapshot), '--quiet'
     ]
     if disk_type:
       cmd.extend(['--type={}'.format(disk_type)])
@@ -328,7 +324,8 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('delete disk', [
-          'gcloud', 'compute', 'disks', 'delete', disk, '--zone={}'.format(zone)
+          'gcloud', 'compute', 'disks', 'delete', disk,
+          '--zone={}'.format(zone), '--quiet'
       ], infra_step=True)
 
   def mount_disk(self, name, mount_path, recipe_mount=False):
@@ -484,8 +481,9 @@ class GcloudApi(recipe_api.RecipeApi):
             'failed to get zone from swarming host: {}'.format(infra_host))
       self._zone = m.group('zone')
     with self.m.step.nest('create and attach disk'):
+      self.set_gce_project(GCE_BUILD_PROJECT)
       self._branch = branch
-      is_staging = self.m.build_menu.is_staging
+      is_staging = self.m.cros_infra_config.is_staging
       recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
       self._suffix = str(self.m.time.ms_since_epoch())[0:8]
       if not self._is_rfc1035_compliant(branch):
@@ -500,10 +498,10 @@ class GcloudApi(recipe_api.RecipeApi):
         self._disk = 'staging-{}'.format(self._disk)
         self._version_file = '{}-{}'.format('staging', self._version_file)
       local_version = None
-      if self.m.path.exists(self.snapshot_version_path):
+      local_version_path = self.snapshot_version_path.join(self._version_file)
+      if self.m.path.exists(local_version_path):
         local_version = self.m.file.read_text(
-            'read local snapshot version',
-            self.snapshot_version_path.join(self._version_file),
+            'read local snapshot version', local_version_path,
             test_data='test-cache-snapshot-123')
       with self.m.step.nest('retrieve snapshot version from storage'):
         try:
@@ -527,10 +525,16 @@ class GcloudApi(recipe_api.RecipeApi):
         except self.m.step.StepFailure:
           self.create_disk(disk=self._disk, zone=self._zone,
                            snapshot=remote_version, disk_type=disk_type)
+          self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
+        if not self.m.path.exists(local_version_path) and self.m.path.exists(
+            self.m.path['cache'].join(cache_name).join('upperdir')):
+          self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
         self.attach_disk(name=cache_name, instance=infra_host, disk=self._disk,
                          zone=self._zone)
         self.mount_disk(name=cache_name, mount_path=cache_name,
                         recipe_mount=recipe_mount)
+        self.m.file.write_text('write version file', local_version_path,
+                               snapshot)
 
   @contextlib.contextmanager
   def cleanup_gce_disks(self):

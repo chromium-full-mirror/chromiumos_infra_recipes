@@ -547,6 +547,15 @@
   },
   {
     "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/mount_a/*"
+    ],
+    "infra_step": true,
+    "name": "cleanup overlayfs working directories"
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[START_DIR]/fake"
     ],

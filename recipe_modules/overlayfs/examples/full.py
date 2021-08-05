@@ -31,6 +31,9 @@ def RunSteps(api):
         api.overlayfs.mount('b', lowerdir_path, mount_b)
       api.overlayfs.mount('c', lowerdir_path, mount_c)
 
+  # Cleanup workdirs
+  api.overlayfs.cleanup_overlay_directories(cache_name='mount_a')
+
   # Empty context
   with api.overlayfs.cleanup_context():
     pass

@@ -55,6 +55,9 @@ def GenTests(api):
     return api.path.exists(
         api.path['cache'].join('infra_versions').join(version_file))
 
+  def mock_directory(cache_name):
+    return api.path.exists(api.path['cache'].join(cache_name).join('upperdir'))
+
   yield api.test(
       'basic',
       api.swarming.properties(
@@ -81,7 +84,7 @@ def GenTests(api):
   )
   yield api.test(
       'local-version-file-exists',
-      mock_path("test-cache-main-cache-snapshot-version.txt"),
+      mock_path("chromiumos-main-cache-snapshot-version.txt"),
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )
@@ -92,4 +95,10 @@ def GenTests(api):
       api.step_data((
           'create and attach disk.retrieve snapshot version from storage.gsutil cat'
       ), retcode=3),
+  )
+  yield api.test(
+      'upperdir-with-no-local-version',
+      mock_directory('chromiumos'),
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )

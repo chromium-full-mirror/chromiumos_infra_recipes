@@ -27,10 +27,7 @@
   },
   {
     "cmd": [],
-    "name": "create and attach disk",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "create and attach disk"
   },
   {
     "cmd": [
@@ -52,8 +49,7 @@
     "cmd": [],
     "name": "create and attach disk.retrieve snapshot version from storage",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -70,17 +66,7 @@
     "infra_step": true,
     "name": "create and attach disk.retrieve snapshot version from storage.gsutil cat",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create and attach disk.retrieve snapshot version from storage.unable to find version file in GS bucket",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@version file not found@chromiumos-main-cache-snapshot-version.txt@@@",
-      "@@@STEP_LOG_END@version file not found@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -98,7 +84,7 @@
       "create",
       "chromiumos-main-13370000-us-central1-b",
       "--zone=us-central1-b",
-      "--source-snapshot=initial-chromiumos-source-snapshot",
+      "--source-snapshot=",
       "--quiet"
     ],
     "env": {
@@ -106,6 +92,18 @@
     },
     "infra_step": true,
     "name": "create and attach disk.create disk from snapshot version.create disk from snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/*"
+    ],
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot version.cleanup overlayfs working directories",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -191,14 +189,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "initial-chromiumos-source-snapshot",
+      "",
       "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "create and attach disk.create disk from snapshot version.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
       "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
@@ -273,6 +270,18 @@
     },
     "infra_step": true,
     "name": "create and attach disk (2).create disk from snapshot version.create disk from snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/*"
+    ],
+    "infra_step": true,
+    "name": "create and attach disk (2).create disk from snapshot version.cleanup overlayfs working directories",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
