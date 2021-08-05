@@ -1,0 +1,177 @@
+[
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/external/github.com/neverware/shim-build/",
+      "[CLEANUP]/tmp_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "git clone",
+    "timeout": 180
+  },
+  {
+    "cmd": [],
+    "name": "build shim"
+  },
+  {
+    "cmd": [
+      "make",
+      "build-no-cache"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "name": "build shim.make build-no-cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
+      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "make",
+      "copy"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "name": "build shim.make copy",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload build logs",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs publish dir@https://console.cloud.google.com/storage/browser/cloudready-shim/2021-08-06-0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/stderr.txt_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "upload build logs.write stderr.txt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@stderr.txt_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/stderr.txt_tmp_1",
+      "gs://cloudready-shim/2021-08-06-0/stderr.txt"
+    ],
+    "infra_step": true,
+    "name": "upload build logs.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/cloudready-shim/2021-08-06-0/stderr.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/stdout.txt_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "upload build logs.write stdout.txt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@stdout.txt_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/stdout.txt_tmp_1",
+      "gs://cloudready-shim/2021-08-06-0/stdout.txt"
+    ],
+    "infra_step": true,
+    "name": "upload build logs.gsutil upload (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/cloudready-shim/2021-08-06-0/stdout.txt@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload 32 bit binary",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs publish dir@https://console.cloud.google.com/storage/browser/cloudready-shim/2021-08-06-0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[START_DIR]/install/shimia32.efi",
+      "gs://cloudready-shim/2021-08-06-0/shimia32.efi"
+    ],
+    "infra_step": true,
+    "name": "upload 32 bit binary.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/cloudready-shim/2021-08-06-0/shimia32.efi@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload 64 bit binary",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs publish dir@https://console.cloud.google.com/storage/browser/cloudready-shim/2021-08-06-0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[START_DIR]/install/shimx64.efi",
+      "gs://cloudready-shim/2021-08-06-0/shimx64.efi"
+    ],
+    "infra_step": true,
+    "name": "upload 64 bit binary.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/cloudready-shim/2021-08-06-0/shimx64.efi@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
