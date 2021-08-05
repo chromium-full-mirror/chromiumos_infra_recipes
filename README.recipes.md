@@ -1946,7 +1946,7 @@ Get builds with the matching builder and gerrit_changes.
 Args:
   build (build_pb2.Build): build to match for.
   statuses ([common_pb2.Status]): query for builds with these statuses.
-  start_build_id (int): query builds older than this ID.
+  start_build_id (int): exclude builds older than this ID.
   limit (int): number of results to return. Latest first.
 
 Returns:

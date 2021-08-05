@@ -200,7 +200,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Args:
       build (build_pb2.Build): build to match for.
       statuses ([common_pb2.Status]): query for builds with these statuses.
-      start_build_id (int): query builds older than this ID.
+      start_build_id (int): exclude builds older than this ID.
       limit (int): number of results to return. Latest first.
 
     Returns:
@@ -250,7 +250,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       builder (BuilderID): query for only this builder.
       limit (int): limit the list returned to this number.
       statuses ([common_pb2.Status]): query for builds with these statuses.
-      start_build_id: query builds older than this ID.
+      start_build_id: exclude builds older than this ID.
       tags ([common_pb2.StringPair]): get builds with these tags only. If
         'snapshot' is specified then it will insert 'buildset' tag for SHA1.
 
