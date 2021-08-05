@@ -3896,21 +3896,21 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [branch](/recipe_modules/gcloud/api.py#76)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#539)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#542)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#583)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#586)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
 Upon exiting the context manager, each mounted disk is then iterated
 through and unmounted.
 
-&mdash; **def [create\_and\_mount\_disk](/recipe_modules/gcloud/api.py#461)(self, cache_name, branch='main', disk_type=None, recipe_mount=False):**
+&mdash; **def [create\_and\_mount\_disk](/recipe_modules/gcloud/api.py#461)(self, cache_name, branch='main', disk_type=None, recipe_mount=False, dry_run=False):**
 
 Determine the disk to create and mount from snapshot.
 
@@ -3924,6 +3924,7 @@ Args:
     persistent disk.
   recipe_mount(bool): Whether mount needs to be in the path to use within
     a recipe.
+  dry_run(bool): Whether to mount or just dry run through the steps.
 
 &mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#296)(self, disk, zone, snapshot, disk_type=None):**
 

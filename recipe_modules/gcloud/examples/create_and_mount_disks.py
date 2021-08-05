@@ -39,7 +39,7 @@ def RunSteps(api):
     api.assertions.assertEqual(api.gcloud.branch, 'release-r90-13816-b')
     api.gcloud.create_and_mount_disk(cache_name='rust',
                                      branch='stabilize-rust-13836.B',
-                                     recipe_mount=True)
+                                     recipe_mount=True, dry_run=True)
     api.assertions.assertEqual(api.gcloud.branch, 'stabilize-rust-13836-b')
 
 

@@ -78,8 +78,7 @@ def RunSteps(api, properties):
          api.gcloud.cleanup_mounted_disks():
     snapshot_mount = False
     if api.cros_infra_config.is_staging:
-      api.gcloud.create_and_mount_disk(cache_name='chromiumos')
-      snapshot_mount = True
+      api.gcloud.create_and_mount_disk(cache_name='chromiumos', dry_run=True)
     with api.cros_source.checkout_overlays_context(
         snapshot_mount=snapshot_mount):
 

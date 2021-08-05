@@ -87,6 +87,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache update.create and attach disk.create disk from snapshot version.set snapshot_version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "gcloud",
       "compute",

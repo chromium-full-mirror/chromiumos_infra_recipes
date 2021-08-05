@@ -459,7 +459,7 @@ class GcloudApi(recipe_api.RecipeApi):
       ], infra_step=True)
 
   def create_and_mount_disk(self, cache_name, branch='main', disk_type=None,
-                            recipe_mount=False):
+                            recipe_mount=False, dry_run=False):
     """Determine the disk to create and mount from snapshot.
 
     Grab the matching snapshot, create, attach, and mount the
@@ -472,6 +472,7 @@ class GcloudApi(recipe_api.RecipeApi):
         persistent disk.
       recipe_mount(bool): Whether mount needs to be in the path to use within
         a recipe.
+      dry_run(bool): Whether to mount or just dry run through the steps.
     """
     with self.m.step.nest('get swarming hostname'):
       infra_host = self.m.swarming.bot_id
@@ -516,25 +517,27 @@ class GcloudApi(recipe_api.RecipeApi):
             pres.logs['version file not found'] = self._version_file
             remote_version = recovery_snapshot
       with self.m.step.nest('create disk from snapshot version'):
-        try:
-          snapshot = remote_version
-          if local_version:
-            snapshot = local_version
-          self.create_disk(disk=self._disk, zone=self._zone, snapshot=snapshot,
-                           disk_type=disk_type)
-        except self.m.step.StepFailure:
-          self.create_disk(disk=self._disk, zone=self._zone,
-                           snapshot=remote_version, disk_type=disk_type)
-          self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
-        if not self.m.path.exists(local_version_path) and self.m.path.exists(
-            self.m.path['cache'].join(cache_name).join('upperdir')):
-          self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
-        self.attach_disk(name=cache_name, instance=infra_host, disk=self._disk,
-                         zone=self._zone)
-        self.mount_disk(name=cache_name, mount_path=cache_name,
-                        recipe_mount=recipe_mount)
-        self.m.file.write_text('write version file', local_version_path,
-                               snapshot)
+        snapshot = remote_version
+        if local_version:
+          snapshot = local_version
+        self.m.easy.set_properties_step(snapshot_version=snapshot)
+        if not dry_run:
+          try:
+            self.create_disk(disk=self._disk, zone=self._zone,
+                             snapshot=snapshot, disk_type=disk_type)
+          except self.m.step.StepFailure:
+            self.create_disk(disk=self._disk, zone=self._zone,
+                             snapshot=remote_version, disk_type=disk_type)
+            self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
+          if not local_version and self.m.path.exists(
+              self.m.path['cache'].join(cache_name).join('upperdir')):
+            self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
+          self.attach_disk(name=cache_name, instance=infra_host,
+                           disk=self._disk, zone=self._zone)
+          self.mount_disk(name=cache_name, mount_path=cache_name,
+                          recipe_mount=recipe_mount)
+          self.m.file.write_text('write version file', local_version_path,
+                                 snapshot)
 
   @contextlib.contextmanager
   def cleanup_gce_disks(self):
