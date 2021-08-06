@@ -253,7 +253,8 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
     if (test_metadata.test.autotest.test_args and
         'resultdb_settings' in test_metadata.test.autotest.test_args):
       api.result_db.upload(api.buildbucket.builder_name,
-                           test_metadata.test.autotest.test_args)
+                           test_metadata.test.autotest.test_args,
+                           interface.get_results_directory(test_metadata))
 
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))
@@ -856,7 +857,7 @@ def GenTests(api):
   rdb_settings = api.json.dumps({
       'result_format': 'gtest',
       'artifact_directory': '/tmp/artifact',
-      'result_file': '[START_DIR]/chromium/output.json',
+      'result_file': 'output.json',
       'base_tags': ['test_suite:cast_shell_browsertests'],
       'base_variant': {
           'test_suite': 'cast_shell_browsertests',
@@ -864,7 +865,6 @@ def GenTests(api):
   })
   yield api.test(
       'chormium_test_upload_result_to_rdb',
-      api.path.exists(api.path['start_dir'].join('chromium', 'output.json')),
       api.buildbucket.ci_build(),
       api.buildbucket.build(
           build_pb2.Build(
@@ -883,6 +883,17 @@ def GenTests(api):
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      api.post_process(
+          post_process.StepCommandContains,
+          'execution steps.original_test.upload chromium test result '
+          'to rdb.run rdb',
+          [
+              '[START_DIR]/cipd/result_adapter/result_adapter',
+              'gtest',
+              '-result-file',
+              'dummy-results-dir/autoserv_test/chromium/results/output.json',
+          ],
+      ),
       api.post_process(
           post_process.MustRun,
           'execution steps.original_test.upload chromium test result to rdb.'

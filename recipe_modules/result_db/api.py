@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import base64
+import os
 import re
 
 from recipe_engine import recipe_api
@@ -33,7 +34,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
         args_dict[match.group(1).lower()] = match.group(2)
     return base64.b64decode(args_dict.get('resultdb_settings', ''))
 
-  def upload(self, builder_name, test_args):
+  def upload(self, builder_name, test_args, base_dir):
     """Call the resultDB module to upload test result
 
     Args:
@@ -46,6 +47,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
           test_args must contain resultdb_settings, which is base64 compressed
           json string, wrapping all resultdb parameters.
           For supported parameters, refer recipe_engine/resultdb module.
+      * base_dir - The path of the base test results on the drone server.
+          Chromium test result can be found at
+          base_dir/autoserv_test/chromium/results.
     """
     rdb_settings = self.extract_resultdb_settings(test_args)
     assert rdb_settings, ('test_args should contain resultdb_settings to '
@@ -58,13 +62,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
         'result_format')
     assert configs.get('result_file') is not None, ('result_file '
                                                     'should not be empty.')
+    # Test results on Drone server are not stored in swarming [start_dir],
+    # e.g. "/usr/local/autotest/results/swarming-12345678/1".
+    # So use general os.path to join.
+    base = os.path.join(base_dir, 'autoserv_test', 'chromium', 'results')
     with self.m.step.nest('upload chromium test result to rdb') as rdb_step:
-      if not self.m.path.exists(configs.get('result_file')):
-        rdb_step.presentation.step_text = (
-            'Result file %s '
-            'does not exist.') % configs.get('result_file')
-        raise self.m.step.StepFailure(self.m.step.FAILURE)
-
+      result_file = os.path.join(base, configs.get('result_file'))
       # ResultDB in CrOS recipes only supports uploading result file,
       # so the cmd must accompany the result_adapter.
       self._ensure_result_adapter_executables()
@@ -72,12 +75,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
           self._result_adapter,
           configs.get('result_format'),
           '-result-file',
-          configs.get('result_file'),
+          result_file,
       ]
       if configs.get('artifact_directory'):
         result_adapter += [
             '-artifact-directory',
-            configs.get('artifact_directory')
+            os.path.join(base, configs.get('artifact_directory')),
         ]
 
       # Skylab tests can not wrap directly by rdb now. We only care the

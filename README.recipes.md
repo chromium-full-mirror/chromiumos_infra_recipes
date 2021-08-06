@@ -5843,13 +5843,13 @@ Args:
 Prints the current version information of repo.
 ### *recipe_modules* / [result\_db](/recipe_modules/result_db)
 
-[DEPS](/recipe_modules/result_db/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/result_db/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [ResultDBCommand](/recipe_modules/result_db/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ResultDBCommand](/recipe_modules/result_db/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [extract\_resultdb\_settings](/recipe_modules/result_db/api.py#19)(self, test_args):**
+&mdash; **def [extract\_resultdb\_settings](/recipe_modules/result_db/api.py#20)(self, test_args):**
 
 Extract resultdb settings from test_args.
 
@@ -5859,7 +5859,7 @@ Args:
 Returns:
     json string
 
-&mdash; **def [upload](/recipe_modules/result_db/api.py#36)(self, builder_name, test_args):**
+&mdash; **def [upload](/recipe_modules/result_db/api.py#37)(self, builder_name, test_args, base_dir):**
 
 Call the resultDB module to upload test result
 
@@ -5873,6 +5873,9 @@ Args:
       test_args must contain resultdb_settings, which is base64 compressed
       json string, wrapping all resultdb parameters.
       For supported parameters, refer recipe_engine/resultdb module.
+  * base_dir - The path of the base test results on the drone server.
+      Chromium test result can be found at
+      base_dir/autoserv_test/chromium/results.
 ### *recipe_modules* / [result\_flow](/recipe_modules/result_flow)
 
 [DEPS](/recipe_modules/result_flow/__init__.py#4): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8462,9 +8465,9 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 &mdash; **def [RunSteps](/recipe_modules/repo/tests/tmp_manifest.py#15)(api):**
 ### *recipes* / [result\_db:examples/full](/recipe_modules/result_db/examples/full.py)
 
-[DEPS](/recipe_modules/result_db/examples/full.py#9): [result\_db](#recipe_modules-result_db), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/result_db/examples/full.py#9): [result\_db](#recipe_modules-result_db), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-&mdash; **def [RunSteps](/recipe_modules/result_db/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/result_db/examples/full.py#19)(api):**
 ### *recipes* / [result\_flow:examples/full](/recipe_modules/result_flow/examples/full.py)
 
 [DEPS](/recipe_modules/result_flow/examples/full.py#6): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -8802,7 +8805,7 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#361)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#362)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#109)(api, interface, test_metadata, result):**
 
@@ -8818,7 +8821,7 @@ apposite a test.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#299)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#300)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -8834,7 +8837,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#270)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#271)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
