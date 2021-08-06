@@ -107,7 +107,6 @@ class ResultDBCommand(recipe_api.RecipeApi):
           require_build_inv=True,
           exonerate_unexpected_pass=configs.get('exonerate_unexpected_pass',
                                                 True),
-          include=True,
       )
       return self.m.step('run rdb', cmd)
 
