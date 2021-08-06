@@ -36,12 +36,12 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'recipe_engine/uuid',
+    'cros_resultdb',
     'cros_tags',
     'cros_test_runner',
     'cts_results_archive',
     'dut_interface',
     'phosphorus',
-    'result_db',
     'result_flow',
 ]
 
@@ -252,9 +252,9 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
 
     if (test_metadata.test.autotest.test_args and
         'resultdb_settings' in test_metadata.test.autotest.test_args):
-      api.result_db.upload(api.buildbucket.builder_name,
-                           test_metadata.test.autotest.test_args,
-                           interface.get_results_directory(test_metadata))
+      api.cros_resultdb.upload(api.buildbucket.builder_name,
+                               test_metadata.test.autotest.test_args,
+                               interface.get_results_directory(test_metadata))
 
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))

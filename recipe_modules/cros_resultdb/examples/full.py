@@ -12,16 +12,17 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/properties',
-    'result_db',
+    'cros_resultdb',
 ]
 
 
 def RunSteps(api):
-  api.result_db.upload('skylab_test_runner', api.properties.get('test_args'),
-                       'dummy-results-dir')
+  api.cros_resultdb.upload('skylab_test_runner',
+                           api.properties.get('test_args'), 'dummy-results-dir')
   if 'result_adapter_cached' in api.properties:
-    api.result_db.upload('skylab_test_runner', api.properties.get('test_args'),
-                         'dummy-results-dir')
+    api.cros_resultdb.upload('skylab_test_runner',
+                             api.properties.get('test_args'),
+                             'dummy-results-dir')
 
 
 def GenTests(api):

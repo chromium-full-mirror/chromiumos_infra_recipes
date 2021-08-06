@@ -31,6 +31,7 @@
   * [cros_release](#recipe_modules-cros_release) &mdash; An API for providing release related operations (e.
   * [cros_release_config](#recipe_modules-cros_release_config) &mdash; An API for managing release config.
   * [cros_relevance](#recipe_modules-cros_relevance)
+  * [cros_resultdb](#recipe_modules-cros_resultdb)
   * [cros_schedule](#recipe_modules-cros_schedule) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_som](#recipe_modules-cros_som)
@@ -70,7 +71,6 @@
   * [pupr](#recipe_modules-pupr) &mdash; APIs for PUpr.
   * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
-  * [result_db](#recipe_modules-result_db)
   * [result_flow](#recipe_modules-result_flow)
   * [service_version](#recipe_modules-service_version)
   * [skylab](#recipe_modules-skylab)
@@ -224,6 +224,7 @@
   * [cros_relevance:examples/pointless](#recipes-cros_relevance_examples_pointless)
   * [cros_relevance:examples/toolchain](#recipes-cros_relevance_examples_toolchain)
   * [cros_relevance:tests/filter_slim_builds](#recipes-cros_relevance_tests_filter_slim_builds)
+  * [cros_resultdb:examples/full](#recipes-cros_resultdb_examples_full)
   * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full)
   * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils)
   * [cros_sdk:examples/existing_sdk_cache](#recipes-cros_sdk_examples_existing_sdk_cache)
@@ -363,7 +364,6 @@
   * [repo:tests/source_cache_feature](#recipes-repo_tests_source_cache_feature)
   * [repo:tests/source_cache_feature_bypass](#recipes-repo_tests_source_cache_feature_bypass)
   * [repo:tests/tmp_manifest](#recipes-repo_tests_tmp_manifest)
-  * [result_db:examples/full](#recipes-result_db_examples_full)
   * [result_flow:examples/full](#recipes-result_flow_examples_full)
   * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and Chrome OS pools.
   * [service_version:examples/full](#recipes-service_version_examples_full)
@@ -2644,6 +2644,41 @@ Returns:
 &emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/cros_relevance/api.py#64)(self):**
 
 Whether there are toolchain CLs applied to the source tree.
+### *recipe_modules* / [cros\_resultdb](/recipe_modules/cros_resultdb)
+
+[DEPS](/recipe_modules/cros_resultdb/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for chromium tests on skylab to upload result to Result DB.
+
+&mdash; **def [extract\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#20)(self, test_args):**
+
+Extract resultdb settings from test_args.
+
+Args:
+    test_args - A string of extra autotest arguments. See upload().
+
+Returns:
+    json string
+
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#37)(self, builder_name, test_args, base_dir):**
+
+Call the resultDB module to upload test result
+
+Args:
+  * builder_name - Luci builder name.
+  * test_args - A string of extra autotest arguments,
+      e.g. "key1=val1 key2=val2". Chromium tests use test_arg to pass
+      runtime parameters to our autotest wrapper. We reuse it to pipe
+      resultDB arguments, because it is easy to access in test runner
+      recipe.
+      test_args must contain resultdb_settings, which is base64 compressed
+      json string, wrapping all resultdb parameters.
+      For supported parameters, refer recipe_engine/resultdb module.
+  * base_dir - The path of the base test results on the drone server.
+      Chromium test result can be found at
+      base_dir/autoserv_test/chromium/results.
 ### *recipe_modules* / [cros\_schedule](/recipe_modules/cros_schedule)
 
 [DEPS](/recipe_modules/cros_schedule/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -5841,41 +5876,6 @@ Args:
 &mdash; **def [version](/recipe_modules/repo/api.py#144)(self):**
 
 Prints the current version information of repo.
-### *recipe_modules* / [result\_db](/recipe_modules/result_db)
-
-[DEPS](/recipe_modules/result_db/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-#### **class [ResultDBCommand](/recipe_modules/result_db/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-Module for chromium tests on skylab to upload result to Result DB.
-
-&mdash; **def [extract\_resultdb\_settings](/recipe_modules/result_db/api.py#20)(self, test_args):**
-
-Extract resultdb settings from test_args.
-
-Args:
-    test_args - A string of extra autotest arguments. See upload().
-
-Returns:
-    json string
-
-&mdash; **def [upload](/recipe_modules/result_db/api.py#37)(self, builder_name, test_args, base_dir):**
-
-Call the resultDB module to upload test result
-
-Args:
-  * builder_name - Luci builder name.
-  * test_args - A string of extra autotest arguments,
-      e.g. "key1=val1 key2=val2". Chromium tests use test_arg to pass
-      runtime parameters to our autotest wrapper. We reuse it to pipe
-      resultDB arguments, because it is easy to access in test runner
-      recipe.
-      test_args must contain resultdb_settings, which is base64 compressed
-      json string, wrapping all resultdb parameters.
-      For supported parameters, refer recipe_engine/resultdb module.
-  * base_dir - The path of the base test results on the drone server.
-      Chromium test result can be found at
-      base_dir/autoserv_test/chromium/results.
 ### *recipe_modules* / [result\_flow](/recipe_modules/result_flow)
 
 [DEPS](/recipe_modules/result_flow/__init__.py#4): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7664,6 +7664,11 @@ returns a list of repos to make commits to.
 [DEPS](/recipe_modules/cros_relevance/tests/filter_slim_builds.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 &mdash; **def [RunSteps](/recipe_modules/cros_relevance/tests/filter_slim_builds.py#22)(api, expected_builders):**
+### *recipes* / [cros\_resultdb:examples/full](/recipe_modules/cros_resultdb/examples/full.py)
+
+[DEPS](/recipe_modules/cros_resultdb/examples/full.py#9): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/examples/full.py#19)(api):**
 ### *recipes* / [cros\_schedule:examples/full](/recipe_modules/cros_schedule/examples/full.py)
 
 [DEPS](/recipe_modules/cros_schedule/examples/full.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -8463,11 +8468,6 @@ Recipe for the Chrome OS Build Metadata Cache Regnerator.
 [DEPS](/recipe_modules/repo/tests/tmp_manifest.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 &mdash; **def [RunSteps](/recipe_modules/repo/tests/tmp_manifest.py#15)(api):**
-### *recipes* / [result\_db:examples/full](/recipe_modules/result_db/examples/full.py)
-
-[DEPS](/recipe_modules/result_db/examples/full.py#9): [result\_db](#recipe_modules-result_db), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
-
-&mdash; **def [RunSteps](/recipe_modules/result_db/examples/full.py#19)(api):**
 ### *recipes* / [result\_flow:examples/full](/recipe_modules/result_flow/examples/full.py)
 
 [DEPS](/recipe_modules/result_flow/examples/full.py#6): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -8801,7 +8801,7 @@ Raises:
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#29): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [result\_db](#recipe_modules-result_db), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#29): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 Recipe for the ChromeOS Skylab Test Runner.
 
