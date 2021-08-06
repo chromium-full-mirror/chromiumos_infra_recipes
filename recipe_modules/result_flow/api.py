@@ -75,7 +75,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
     req = PublishRequest(build_id=self.m.buildbucket.build.id,
                          should_poll_for_completion=should_poll_for_completion,
                          parent_uid=parent_uid)
-    pubsub = PubSubConfig(project=project_id, topic=topic_id)
+    PubSubConfig(project=project_id, topic=topic_id)
     if build_type == 'ctp':
       req.ctp.project = project_id
       req.ctp.topic = topic_id

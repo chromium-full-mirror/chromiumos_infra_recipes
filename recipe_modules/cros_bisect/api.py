@@ -8,7 +8,6 @@
 import collections
 
 from google.protobuf import json_format as jsonpb
-from google.protobuf import struct_pb2
 
 from PB.chromiumos.common import PackageInfo
 from PB.testplans.generate_test_plan import BuildPayload

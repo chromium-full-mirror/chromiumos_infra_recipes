@@ -11,16 +11,13 @@ import contextlib
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
-from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromite.api.test import BuildTestServiceContainersRequest
-from PB.chromiumos.common import IMAGE_TYPE_RECOVERY, IMAGE_TYPE_ACCESSORY_RWSIG
 from PB.chromiumos.common import PackageInfo
-from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import Profile
 
@@ -68,6 +65,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.cros_infra_config.experiments)
 
   @property
+  def artifact_build(self):
+    return self._artifact_build
+
+  @property
   def build_target(self):
     return self._build_target
 
@@ -86,6 +87,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
   @property
   def gerrit_changes(self):
     return self.m.cros_infra_config.gerrit_changes
+
+  @property
+  def force_relevant_build(self):
+    return self._force_relevant_build
 
   @property
   def is_staging(self):
@@ -181,7 +186,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       config = self.m.cros_source.configure_builder(commit, changes,
                                                     is_staging=is_staging)
       targets = targets or [self.build_target]
-      if (changes and config and not config.build.apply_gerrit_changes):
+      if changes and config and not config.build.apply_gerrit_changes:
         raise recipe_api.StepFailure(
             'Changes provided, but builder does not apply changes')
       if config and config.id.name and self.build_target.name:
@@ -257,15 +262,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
     config = self.config_or_default
 
     relevance = Relevance.UNKNOWN
-    if self._artifact_build:
+    if self.artifact_build:
       # Early check to see if the build is pointless. (No chroot nor
       # sysroot yet.)
       relevance = self.m.sysroot_util.update_for_artifact_build(
           None, config.artifacts, force_relevance=self._force_relevant_build)
 
-    if not self._artifact_build or relevance != Relevance.POINTLESS:
+    if not self.artifact_build or relevance != Relevance.POINTLESS:
       self.m.cros_sdk.uprev_packages()
-      timeout = None if config.build.sdk_update.compile_source else 'DEFAULT'
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, use_image=self.is_staging,
           timeout_sec=None if config.build.sdk_update.compile_source or
@@ -426,12 +430,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
       relevant_packages.append(
           PackageInfo(category='virtual', package_name='implicit-system'))
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
-      # TODO(crbug/1112425): config.build.portage_profile is migrating.
-      profile = Profile(name=config.build.portage_profile.profile)
       with self.m.context(env={'DEPOT_TOOLS_COLLECT_METRICS': '0'}):
         self.m.sysroot_util.install_packages(
             config, self.dep_graph, relevant_packages,
-            artifact_build=self._artifact_build,
+            artifact_build=self.artifact_build,
             package_indexes=self._package_indexes, timeout_sec=timeout_sec,
             name=name, dryrun=dryrun)
 
@@ -545,7 +547,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
                                               chroot=self.m.cros_sdk.chroot,
                                               version=version),
             timeout=1 * 60 * 60)
-        errors = []
         presentation.step_text = (
             'Test containers (gcr.io/chromeos-bot) build/push result for'
             ' %s: %s ' % (version, str(response.results)))

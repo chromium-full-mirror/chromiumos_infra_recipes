@@ -10,14 +10,9 @@ from __future__ import division
 from collections import defaultdict, namedtuple
 import contextlib
 
-from google.protobuf.json_format import MessageToDict
-from google.protobuf.json_format import ParseDict
-
 from recipe_engine.recipe_api import RecipeApi, StepFailure
-
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
@@ -455,15 +450,15 @@ class OrchMenuApi(RecipeApi):
     if new_build_requests:
       # Add in extra_props.
       if extra_props:
-        for i in range(len(new_build_requests)):
+        for i, req in enumerate(new_build_requests):
           # Only set the value if it's not set already.
           # We don't want to clobber anything.
           for key, val in extra_props.items():
-            if key not in new_build_requests[i].properties:
-              new_build_requests[i].properties[key] = val
-            elif new_build_requests[i].properties[key] != val:
+            if key not in req.properties:
+              req.properties[key] = val
+            elif req.properties[key] != val:
               log_msg = 'extra_props mismatch: [{}] = {} but had extra_prop value {}'.format(
-                  key, new_build_requests[i].properties[key], val)
+                  key, req.properties[key], val)
 
       # Implement sleepy builds for GoB smoothing: crbug.com/1063143
       with self.m.step.nest('schedule new builds') as presentation:

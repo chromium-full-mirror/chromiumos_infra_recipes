@@ -19,7 +19,7 @@ from recipe_engine import post_process
 
 
 def RunSteps(api):
-  config = api.cros_infra_config.configure_builder()
+  api.cros_infra_config.configure_builder()
   with api.workspace_util.setup_workspace():
     staging = api.cros_infra_config.is_staging
     api.workspace_util.sync_to_commit(staging=staging)

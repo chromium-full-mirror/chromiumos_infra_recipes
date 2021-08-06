@@ -11,7 +11,6 @@ import collections
 import json
 import logging
 import os
-import re
 import sys
 import time
 import zlib
@@ -143,7 +142,7 @@ def _to_compressed_format(line_data, block_data):
 
     # Merge two lines iff they have continous line number and exactly the same
     # count. For example: (101, 10) and (102, 10).
-    if (is_continous_line and has_same_count):
+    if is_continous_line and has_same_count:
       continue
 
     lines.append({

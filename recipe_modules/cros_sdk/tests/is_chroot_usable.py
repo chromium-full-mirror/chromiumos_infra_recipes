@@ -16,7 +16,6 @@ DEPS = [
 from recipe_engine.recipe_api import Property
 
 from PB.chromiumos.sdk_cache_state import SdkCacheState
-from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
 
 PROPERTIES = {
     'is_chroot_usable': Property(default=False),

@@ -8,8 +8,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
-from google.protobuf import struct_pb2
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',

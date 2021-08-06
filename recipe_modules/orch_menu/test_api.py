@@ -225,7 +225,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         'bisect_properties', 'ctp_normal', 'ctp_bisect', 'ctp_failure'
     ])
 
-    def _child_build_msg(name, with_history=False, **kwargs):
+    def _child_build_msg(name, **kwargs):
       """Return the Build message for a child build."""
       kwargs.setdefault('status', 'SUCCESS')
       return self.m.test_util.test_child_build(name, **kwargs).message

@@ -11,8 +11,6 @@ DEPS = [
     'test_util',
 ]
 
-from PB.chromiumos import common
-
 from PB.recipe_modules.chromeos.build_menu.tests.is_staging import (
     StagingProperties)
 
@@ -29,7 +27,7 @@ def RunSteps(api, properties):
   if properties.provide_is_staging:
     kwargs['is_staging'] = is_staging
 
-  with api.build_menu.configure_builder(**kwargs) as config:
+  with api.build_menu.configure_builder(**kwargs):
     api.easy.set_properties_step(is_staging=str(api.build_menu.is_staging))
     if properties.expected_is_staging:
       api.assertions.assertTrue(api.build_menu.is_staging)

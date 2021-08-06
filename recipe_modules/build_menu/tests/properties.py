@@ -27,9 +27,9 @@ PROPERTIES = TestProperties
 def RunSteps(api, properties):
   actual = MessageToDict(
       BuildMenuProperties(
-          build_target=api.build_menu._build_target,
-          force_relevant_build=api.build_menu._force_relevant_build,
-          artifact_build=api.build_menu._artifact_build),
+          build_target=api.build_menu.build_target,
+          force_relevant_build=api.build_menu.force_relevant_build,
+          artifact_build=api.build_menu.artifact_build),
       including_default_value_fields=True)
   expected = MessageToDict(properties.expected_properties,
                            including_default_value_fields=True)

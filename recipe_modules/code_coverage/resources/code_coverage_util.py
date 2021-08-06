@@ -25,7 +25,7 @@ def is_valid_llvm_coverage_json_file(data):
            and 'version' in json_data \
            and 'data' in json_data \
            and json_data['type'] == 'llvm.coverage.json.export'
-  except Exception as e:
+  except ValueError:
     return False
 
 

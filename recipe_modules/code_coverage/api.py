@@ -7,7 +7,7 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 
-class CoverageFileSettings:
+class CoverageFileSettings(object):
   """Contains parameters used to drive different coverage upload workflows."""
 
   def __init__(self, should_clean, clean_file_name_prepend,
@@ -202,8 +202,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         ]
 
         for patch_set in patch_sets:
-          for file in patch_set.file_infos.keys():
-            patch_set_file_names[file.strip().lower()] = True
+          for f in patch_set.file_infos.keys():
+            patch_set_file_names[f.strip().lower()] = True
 
       # Write out the changed file names for debugging.
       presentation.logs['output'] = [str(patch_set_file_names.keys())]

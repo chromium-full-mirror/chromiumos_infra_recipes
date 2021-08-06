@@ -11,8 +11,6 @@ DEPS = [
     'metadata_json',
 ]
 
-from collections import namedtuple
-from google.protobuf import struct_pb2
 from PB.chromiumos.common import BuildTarget
 
 

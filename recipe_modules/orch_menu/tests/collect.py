@@ -26,6 +26,7 @@ def RunSteps(api, properties):
   if properties.child_target.name:
     child_targets_dict[properties.build_target.name] = properties.child_target
 
+  # pylint: disable=protected-access
   api.assertions.assertEqual(
       properties.expected_collect,
       api.orch_menu._collect_value(build.builder.builder, child_specs_dict,

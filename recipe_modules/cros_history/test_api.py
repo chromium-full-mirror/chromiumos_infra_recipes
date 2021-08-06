@@ -13,7 +13,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 
-from google.protobuf import struct_pb2
 from google.protobuf import timestamp_pb2
 
 

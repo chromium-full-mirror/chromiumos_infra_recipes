@@ -9,10 +9,6 @@ DEPS = [
     'cros_bisect',
 ]
 
-from recipe_engine.config import List
-from recipe_engine.recipe_api import Property
-
-from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2

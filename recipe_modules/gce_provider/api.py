@@ -4,14 +4,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.chromiumos.bot_scaling import ScalingAction
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 #from PB.go.chromium.org.luci.gce.api.config.v1 import service as service_pb2
 
 from recipe_engine import recipe_api
 from google.protobuf import json_format
-
-import json
 
 GCE_PROVIDER_URL = 'gce-provider.appspot.com'
 
@@ -24,18 +21,18 @@ class GceProvider(recipe_api.RecipeApi):
 
   """
 
-  def update_gce_config(self, id, config):
+  def update_gce_config(self, bid, config):
     """Function to update the config in GCE Provider.
 
     Args:
-      id (str):  bot group prefix to update.
+      bid (str):  bot group prefix to update.
       config(Config): GCE Provider config object
 
     Returns:
       Config, GCE Provider Config defintion with updated values.
     """
     req = {
-        'id': id,
+        'id': bid,
         'config': json_format.MessageToDict(config),
         'updateMask': {
             'paths': ['config.current_amount'],
@@ -60,7 +57,7 @@ class GceProvider(recipe_api.RecipeApi):
       req = {'id': prefix}
       step = self._run(
           'Get', req,
-          test_stdout=lambda: self.test_api.get_current_config_step_test_data())
+          test_stdout=self.test_api.get_current_config_step_test_data)
       configs.append(
           json_format.ParseDict(step, Config(), ignore_unknown_fields=True))
     return Configs(vms=configs)

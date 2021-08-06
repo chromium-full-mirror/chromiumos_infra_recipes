@@ -65,9 +65,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         previously_passed_tests = set()
         is_retry = False
         if enable_history and gerrit_changes:
-          is_retry = (
-              self.m.cq.active and
-              self.m.cros_history.is_retry(self.m.buildbucket.build))
+          is_retry = (self.m.cq.active and self.m.cros_history.is_retry())
           previously_passed_tests = self.m.cros_history.get_passed_tests()
 
         test_to_build_target_map = {}

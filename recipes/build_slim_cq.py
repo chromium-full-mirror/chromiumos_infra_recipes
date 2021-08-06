@@ -85,7 +85,7 @@ def _should_install_all_packages(api, config, packages):
       presentation.properties[
           'subset_of_packages_built'] = 'ALL_FOR_TOOLCHAIN_CLS'
       return True
-    if api.cros_history.is_retry(api.buildbucket.build):
+    if api.cros_history.is_retry():
       presentation.step_text = 'Build all packages on retries'
       presentation.properties['subset_of_packages_built'] = 'ALL_ON_RETRY'
       return True
