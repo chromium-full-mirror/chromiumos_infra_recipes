@@ -1,0 +1,33 @@
+[
+  {
+    "cmd": [],
+    "name": "find matching builds"
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:21Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"builder\": {\"project\": \"chromeos\", \"builder\": \"bojack-cq\", \"bucket\": \"cq\"}, \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"input\": {\"gitilesCommit\": {\"project\": \"chromeos\", \"host\": \"chromium.googlesource.com\", \"ref\": \"refs/heads/main\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}}, \"infra\": {\"swarming\": {\"priority\": 30}, \"resultdb\": {\"invocation\": \"invocations/build:123\"}}, \"id\": \"123\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@bojack-cq@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -230,7 +230,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       if is_retry is not None:
         return is_retry
 
-    return len(self.get_matching_builds(self.m.buildbucket.build)) > 1
+    builds = self.get_matching_builds(self.m.buildbucket.build)
+    # TODO(b/195943622): Remove the filtering of builds here once we are
+    # confident that get_matching_builds returns the correct list.
+    builds = [b for b in builds if b.id != self.m.buildbucket.build.id]
+    return len(builds) >= 1
 
   @staticmethod
   def _buildset_tag_from_snapshot(snapshot):
