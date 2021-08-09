@@ -65,8 +65,6 @@ class GitTxnApi(recipe_api.RecipeApi):
     Returns:
       bool: True if the transaction succeeded, false if it explicitly aborts.
     """
-    is_staging = self.m.cros_infra_config.is_staging
-
     if not ref.startswith('refs/for/'):
       ref = 'refs/for/%s' % ref
     dest_ref = 'HEAD:%s' % ref
@@ -80,11 +78,9 @@ class GitTxnApi(recipe_api.RecipeApi):
 
       # The output that contains the gerrit change URL comes from the stderr
       # not the stdout.
-      if not is_staging:
-        push_stderr = self.m.git.push(remote, dest_ref, capture_stderr=True,
-                                      retry=False, dry_run=dry_run).stderr
-
-      if not (dry_run or is_staging):
+      push_stderr = self.m.git.push(remote, dest_ref, capture_stderr=True,
+                                    retry=False, dry_run=dry_run).stderr
+      if not dry_run:
         # Push local changes up to git and capture the stdout.
         # Retrieve GerritChange from the stdout
         change_url = self._get_change_url(push_stderr)
@@ -115,8 +111,6 @@ class GitTxnApi(recipe_api.RecipeApi):
 
     Raises:
         TooManyAttempts: if the number of attempts exceeds |retries|."""
-    is_staging = self.m.cros_infra_config.is_staging
-
     step_name = 'git transaction'
     for i in range(retries + 1):
       if i > 0:
@@ -128,9 +122,8 @@ class GitTxnApi(recipe_api.RecipeApi):
 
         try:
           dest_ref = 'HEAD:%s' % ref
-          if not is_staging:
-            self.m.git.push(remote, dest_ref, capture_stdout=True, retry=False,
-                            dry_run=dry_run)
+          self.m.git.push(remote, dest_ref, capture_stdout=True, retry=False,
+                          dry_run=dry_run)
           return True
         except recipe_api.StepFailure as ex:
           # TODO(b/180405278): React to the error message in a more accurate

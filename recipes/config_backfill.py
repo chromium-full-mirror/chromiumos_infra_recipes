@@ -375,6 +375,7 @@ def backfill_project(api, config):
           project_info.remote,
           config_merger(api, config, path_cros_repo, presentation),
           ref=project_info.branch,
+          dry_run=api.cros_infra_config.is_staging,
       )
 
       commit_hash = ""
@@ -605,10 +606,11 @@ def GenTests(api):
           }),
       mock_workspace_path('src/project/test_program/test_project'),
       api.post_process(
-          post_process.DoesNotRun,
+          post_process.StepCommandContains,
           "processing test_program/test_project"
           ".update ref.git transaction"
           ".git push",
+          ["git", "push", "--dry-run"],
       ),
       api.post_process(post_process.StatusSuccess),
   )
