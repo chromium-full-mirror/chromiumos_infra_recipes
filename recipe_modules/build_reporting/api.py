@@ -33,15 +33,15 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure, StepFailure
 
 
-def default_project(_staging):
+def default_project(staging):
   """Default cloud project containing the pubsub topic to send to."""
+  if staging:
+    return 'chromeos-build-reporting-dev'
   return 'chromeos-build-reporting'
 
 
 def default_topic(staging):
   """Default pubsub topic to send updates to."""
-  if staging:
-    return 'chromeos-builds-all-staging'
   return 'chromeos-builds-all'
 
 
