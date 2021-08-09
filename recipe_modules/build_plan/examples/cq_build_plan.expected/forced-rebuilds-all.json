@@ -646,7 +646,15 @@
     "cmd": [],
     "name": "get build history.find matching builds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/8922054662172514000)@@@",
+      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/8922054662172514001)@@@",
+      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/8922054662172514002)@@@",
+      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/8922054662172514003)@@@",
+      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/8922054662172514004)@@@",
+      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/8922054662172514005)@@@",
+      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/8922054662172514006)@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
     ]
   },
   {

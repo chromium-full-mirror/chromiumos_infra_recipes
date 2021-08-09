@@ -3087,7 +3087,8 @@
     "cmd": [],
     "name": "Determine which packages to build.find matching builds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
     ]
   },
   {

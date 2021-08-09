@@ -1,7 +1,11 @@
 [
   {
     "cmd": [],
-    "name": "find matching builds"
+    "name": "find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/123)@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
+    ]
   },
   {
     "cmd": [

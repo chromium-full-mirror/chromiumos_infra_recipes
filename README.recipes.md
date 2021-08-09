@@ -1993,7 +1993,7 @@ Get builders with the given patches that failed tests in the last run.
 Returns:
   set[str]: Names of builders with HW or VM testing failures, if any.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#219)(self, build):**
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#224)(self, build):**
 
 Determine if this build is being retried.
 

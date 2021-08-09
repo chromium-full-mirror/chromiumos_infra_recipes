@@ -12,7 +12,9 @@
     "cmd": [],
     "name": "get change test history.find matching builds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/123)@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
     ]
   },
   {

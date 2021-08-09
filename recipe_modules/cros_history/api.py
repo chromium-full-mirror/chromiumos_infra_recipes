@@ -208,13 +208,18 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
     # TODO(crbug/1040552): compare builder_config.build attributes as part of
     # declaring a match.
-    with self.m.step.nest('find matching builds'):
+    with self.m.step.nest('find matching builds') as presentation:
       # This intentionally uses build.input.gerrit_changes, rather than
       # self.m.cq.ordered_gerrit_changes, because the buildbucket search
       # relies on that ordering of changes.
-      return self._get_patch_history(patches=build.input.gerrit_changes,
-                                     builder=build.builder, statuses=statuses,
-                                     start_build_id=start_build_id, limit=limit)
+      builds = self._get_patch_history(patches=build.input.gerrit_changes,
+                                       builder=build.builder, statuses=statuses,
+                                       start_build_id=start_build_id,
+                                       limit=limit)
+      presentation.logs['matching builds'] = [
+          '(https://ci.chromium.org/b/%s)' % str(b.id) for b in builds
+      ]
+      return builds
 
   def is_retry(self, build):
     """Determine if this build is being retried.

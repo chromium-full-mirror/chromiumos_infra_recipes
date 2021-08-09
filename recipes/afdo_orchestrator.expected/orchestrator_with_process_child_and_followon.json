@@ -837,7 +837,8 @@
     "cmd": [],
     "name": "find inflight orchestrator.find matching builds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
     ]
   },
   {
@@ -5147,7 +5148,8 @@
     "cmd": [],
     "name": "run tests.schedule tests.get change test history.find matching builds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
     ]
   },
   {
