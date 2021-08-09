@@ -16,12 +16,12 @@ from PB.chromiumos.common import (CHANNEL_UNSPECIFIED, CHANNEL_DEV,
 
 def RunSteps(api):
   api.cros_release.massage_channels([CHANNEL_STABLE, CHANNEL_DEV])
-  api.cros_release._validate_sign_types([IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE])
+  api.cros_release.validate_sign_types([IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE])
 
   with api.assertions.assertRaises(api.step.StepFailure):
     api.cros_release.massage_channels([CHANNEL_UNSPECIFIED])
   with api.assertions.assertRaises(api.step.StepFailure):
-    api.cros_release._validate_sign_types([IMAGE_TYPE_TEST_GUEST_VM])
+    api.cros_release.validate_sign_types([IMAGE_TYPE_TEST_GUEST_VM])
 
 
 def GenTests(api):

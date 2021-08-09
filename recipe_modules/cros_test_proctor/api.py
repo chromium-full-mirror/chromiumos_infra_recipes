@@ -13,13 +13,9 @@ from . import structs
 
 from PB.chromite.api.test import VmTestRequest
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.test_vm import TestVmProperties
 from PB.recipes.chromeos.tast_vm import TastVmProperties
-from PB.testplans.common import ProtoBytes
-from PB.testplans.generate_test_plan import GenerateTestPlanRequest
-from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 
 TEST_SUMMARY_KEY = 'test_summary'
 
@@ -30,9 +26,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, **kwargs):
     super(CrosTestProctorApi, self).__init__(**kwargs)
-    self._timeout = properties.timeout
-    if not self._timeout.seconds:
-      self._timeout = duration_pb2.Duration(seconds=7 * 60 * 60)
+    self.timeout = properties.timeout
+    if not self.timeout.seconds:
+      self.timeout = duration_pb2.Duration(seconds=7 * 60 * 60)
     self._vm_bucket = properties.vm_bucket or "staging"
 
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
@@ -76,13 +72,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         test_to_build_target_map = {}
 
-        test_tasks = self._schedule_tests(test_plan, previously_passed_tests,
-                                          self._timeout,
-                                          test_to_build_target_map, snapshot,
-                                          dev=dev, is_retry=is_retry)
+        test_tasks = self.schedule_tests(test_plan, previously_passed_tests,
+                                         self.timeout, test_to_build_target_map,
+                                         snapshot, dev=dev, is_retry=is_retry)
 
       with self.m.step.nest('collect tests'):
-        test_results = self._collect_tests(test_tasks, timeout=self._timeout)
+        test_results = self._collect_tests(test_tasks, timeout=self.timeout)
         # Record test results.
         passed_test_names = []
         crit_failure_test_names = []
@@ -152,9 +147,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     else:
       return build_target.name + '-tast-vm-informational'
 
-  def _schedule_tests(self, test_plan, passed_tests, timeout,
-                      test_to_build_map=None, snapshot=None, dev=False,
-                      is_retry=False):
+  def schedule_tests(self, test_plan, passed_tests, timeout,
+                     test_to_build_map=None, snapshot=None, dev=False,
+                     is_retry=False):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -174,8 +169,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       MetaTestTuple of lists of the tests scheduled.
     """
     skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests, timeout,
-                                               test_to_build_map, is_retry,
-                                               dev=dev)
+                                               test_to_build_map, is_retry)
     autotest_vm_tests = self._schedule_autotest_vm_tests(
         test_plan, passed_tests, snapshot, test_to_build_map, is_retry)
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
@@ -225,7 +219,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return failures
 
   def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
-                             test_to_build_map=None, is_retry=False, dev=False):
+                             test_to_build_map=None, is_retry=False):
     """Schedule skylab tests from the test_plan.
 
     Args:

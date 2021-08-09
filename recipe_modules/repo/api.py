@@ -695,7 +695,7 @@ class RepoApi(recipe_api.RecipeApi):
     manifest_branch = (init_opts.get('manifest_branch') or
                        '') if init_opts else ''
     # Get cache state
-    if (self.m.path.exists(repo_state_path) and not final_cleanup):
+    if self.m.path.exists(repo_state_path) and not final_cleanup:
       test_proto = None
       if self._test_data.enabled:
         test_proto = RepoState(

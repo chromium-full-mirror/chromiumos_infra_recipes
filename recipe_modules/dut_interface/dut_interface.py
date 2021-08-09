@@ -96,11 +96,12 @@ class DUTInterface(object):  # pragma: no cover
     pass
 
   @abstractmethod
-  def fetch_crashes(self, metadata):
+  def fetch_crashes(self, metadata, max_duration_seconds):
     """Retrieves crash information in case of a crash.
 
     Args:
     * metadata (DUTTestMetadata): Input information relevant to one test.
+    * max_duration_seconds (int): The longest amount of time this test may run.
 
     Returns:
       dut_results.DUTFetchCrashResponse: The crash information.

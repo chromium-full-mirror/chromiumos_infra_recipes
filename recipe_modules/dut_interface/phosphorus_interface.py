@@ -6,10 +6,10 @@
 import os
 
 from . import dut_interface
-from .phosphorus_results import *
+from .phosphorus_results import PhosphorusResult, PhosphorusPrejobDUTResponse, PhosphorusTestDUTResponse, PhosphorusFetchCrashDUTResponse
 
 from google.protobuf.timestamp_pb2 import Timestamp
-from PB.test_platform import phosphorus, skylab_test_runner, skylab_local_state
+from PB.test_platform import phosphorus, skylab_test_runner
 
 
 class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
@@ -41,7 +41,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
   def submit_pre_job(self, metadata, max_duration_seconds):
     prejob_properties = self._properties.request.prejob
 
-    with self._api.step.nest('Phosphorus: run prejob') as step:
+    with self._api.step.nest('Phosphorus: run prejob'):
       with self._api.context(infra_steps=True):
         prejob_request = phosphorus.prejob.PrejobRequest(
             config=metadata.phosphorus_config,
@@ -57,7 +57,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
             metadata.test_id, self._api.phosphorus.prejob(prejob_request))
 
   def run_test(self, metadata):
-    with self._api.step.nest('Phosphorus: run test') as step:
+    with self._api.step.nest('Phosphorus: run test'):
       run_test_request = phosphorus.runtest.RunTestRequest(
           config=metadata.phosphorus_config,
           dut_hostnames=[self.read_dut_hostname()],
@@ -76,7 +76,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
                     max_duration_seconds=_SECONDS_IN_30_MINUTES):
     crash_response = self._fetch_crashes(metadata, max_duration_seconds)
     try:
-      with self._api.step.nest('ensure all crashes were fetched') as step:
+      with self._api.step.nest('ensure all crashes were fetched'):
         if len(crash_response.crashes_rtd_only) != 0:
           raise self._api.step.StepFailure("Missing %d crashes" %
                                            len(crash_response.crashes_rtd_only))
@@ -98,7 +98,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     Returns: The information for this crash.
     """
-    with self._api.step.nest('Phosphorus: fetch crashes') as step:
+    with self._api.step.nest('Phosphorus: fetch crashes'):
       fetch_crashes_request = phosphorus.fetchcrashes.FetchCrashesRequest(
           config=metadata.phosphorus_config,
           dut_hostname=self.read_dut_hostname(), upload_crashes=self._properties
@@ -108,7 +108,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
       return self._api.phosphorus.fetch_crashes(fetch_crashes_request)
 
   def upload_to_google_storage(self, metadata):
-    with self._api.step.nest('Phosphorus: upload to GS') as step:
+    with self._api.step.nest('Phosphorus: upload to GS'):
       self._api.phosphorus.upload_to_gs(
           phosphorus.upload_to_gs.UploadToGSRequest(
               config=metadata.phosphorus_config,
@@ -116,7 +116,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
               gs_directory=metadata.gs_url))
 
   def upload_to_tko(self, metadata, run_test_response):
-    with self._api.step.nest('Phosphorus: upload to TKO') as step:
+    with self._api.step.nest('Phosphorus: upload to TKO'):
       with self._api.context(infra_steps=True):
         self._api.phosphorus.upload_to_tko(
             phosphorus.upload_to_tko.UploadToTkoRequest(
@@ -150,7 +150,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     return tko_metadata
 
   def parse_test_results(self, metadata):
-    with self._api.step.nest('Phosphorus: get test results') as step:
+    with self._api.step.nest('Phosphorus: get test results'):
       with self._api.context(infra_steps=True):
         return PhosphorusResult(
             self._api.phosphorus.parse(metadata.load_response.results_dir))

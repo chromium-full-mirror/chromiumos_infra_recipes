@@ -36,7 +36,7 @@ GCLIENT_CACHE_CONFIG = [
 CHROMIUM_REBUILD_REGEXES = {
     'chromiumos/overlays/chromiumos-overlay': [
         re.compile('chromeos-base/chromeos-chrome/'
-                   'chromeos-chrome-[0-9].+\.ebuild$')
+                   r'chromeos-chrome-[0-9].+\.ebuild$')
     ],
 }
 
@@ -400,7 +400,7 @@ class ChromeApi(recipe_api.RecipeApi):
         response = self.m.cros_build_api.PackageService.NeedsChromeSource(
             NeedsChromeSourceRequest(install_request=request,
                                      chroot=self.m.cros_sdk.chroot))
-      except Exception as e:
+      except StepFailure as e:
         with self.m.step.nest('ignored exception') as pres:
           pres.logs['caught exception'] = [repr(e)]
         response = self._fallback_needs_chrome_source(request=request,

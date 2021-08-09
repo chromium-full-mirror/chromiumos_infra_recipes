@@ -52,6 +52,7 @@ init-hook='import sys; sys.path.extend([".recipe_deps/_pb", ".recipe_deps/recipe
 #   line-too-long
 #   ...and more based on case by case and workload.
 disable=
+    attribute-defined-outside-init,
     bad-continuation,
     consider-iterating-dictionary,
     file-ignored,

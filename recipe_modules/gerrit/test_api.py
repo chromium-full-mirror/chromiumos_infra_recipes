@@ -86,18 +86,18 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
       (StepTestData) test data instance for the test.
     """
     iteration = '' if iteration == 1 else ' (%d)' % iteration
-    resp = []
+    respList = []
     for change in changes:
       request = dict(host=change.host, change_number=change.change,
                      patch_set=change.patchset)
       values = dict(project=change.project) if change.project else {}
       values.update(values_dict.get(change.change, {}))
-      resp.append(self.test_response(request, change, values))
+      respList.append(self.test_response(request, change, values))
 
-    resp = dict(changes=resp)
+    respDict = dict(changes=respList)
     prefix = '%s.' % step_name if step_name else ''
     step_name = '%sgerrit-fetch-changes%s' % (prefix, iteration)
-    return self.step_data(step_name, stdout=self.m.json.output(resp))
+    return self.step_data(step_name, stdout=self.m.json.output(respDict))
 
   def test_gerrit_fetch_changes(self, request, gerrit_changes):
     return {

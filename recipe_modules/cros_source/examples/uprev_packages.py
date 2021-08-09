@@ -12,7 +12,7 @@ from recipe_engine import post_process
 
 
 def RunSteps(api):
-  response = api.cros_source.uprev_packages(api.src_state.workspace_path)
+  _ = api.cros_source.uprev_packages(api.src_state.workspace_path)
 
 
 # add post checks

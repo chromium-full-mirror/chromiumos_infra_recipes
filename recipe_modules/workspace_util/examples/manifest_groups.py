@@ -16,7 +16,6 @@ DEPS = [
 ]
 
 from PB.chromiumos import common
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.workspace_util.examples.test import (
     TestInputProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
@@ -25,13 +24,10 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
-  commit = api.buildbucket.gitiles_commit
-  changes = api.buildbucket.build.input.gerrit_changes
-
   # Configure the builder so that we have
   # self.m.cros_source.gitiles_commit. All of our tests will be with
   # builders that have configs.
-  config = api.cros_source.configure_builder()
+  _ = api.cros_source.configure_builder()
   cache_dir = api.cros_cache.create_cache_dir('temp_cache')
   with api.workspace_util.sync_to_manifest_groups(
       ['group1', 'group2'],

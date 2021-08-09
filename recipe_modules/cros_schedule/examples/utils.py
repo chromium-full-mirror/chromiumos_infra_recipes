@@ -10,15 +10,11 @@ DEPS = [
     'cros_schedule',
 ]
 
-from recipe_engine import post_process
-
 from PB.recipe_modules.chromeos.cros_schedule.examples.test import (
     TestInputProperties)
 
-PROPERTIES = TestInputProperties
 
-
-def RunSteps(api, properties):
+def RunSteps(api):
   api.cros_schedule.get_last_branched_mstone()
   api.cros_schedule.get_last_branched_mstone_n()
 

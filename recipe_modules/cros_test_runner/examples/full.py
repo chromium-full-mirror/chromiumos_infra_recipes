@@ -21,7 +21,7 @@ def RunSteps(api):
   with api.step.nest('callsite-execute-luciexe'):
     api.cros_test_runner.is_enabled()
     api.cros_test_runner.execute_luciexe()
-    api.cros_test_runner._ensure_cros_test_runner()
+    api.cros_test_runner.ensure_cros_test_runner()
 
 
 def GenTests(api):

@@ -73,7 +73,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     if enable_history:
       if gerrit_changes:
-        forced_rebuilds = self._get_forced_rebuilds(gerrit_changes)
+        forced_rebuilds = self.get_forced_rebuilds(gerrit_changes)
         with self.m.step.nest('get build history') as presentation:
           orch_config = self.m.cros_infra_config.config_or_default
           is_retry = (
@@ -321,7 +321,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     # return reduced list
     return best_builds_list
 
-  def _get_forced_rebuilds(self, gerrit_changes):
+  def get_forced_rebuilds(self, gerrit_changes):
     """Gets a list of builders whose builds should not be reused.
 
     Compiles a list of all builders whose builds should not be reused as

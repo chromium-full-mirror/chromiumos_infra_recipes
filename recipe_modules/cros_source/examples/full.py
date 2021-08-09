@@ -23,7 +23,6 @@ DEPS = [
 ]
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.cros_source.cros_source import (

@@ -13,8 +13,6 @@ DEPS = [
 ]
 
 from google.protobuf.json_format import MessageToDict
-from PB.recipe_modules.chromeos.repo.examples import common
-from PB.chromiumos.repo_cache_state import RepoState
 from PB.recipe_modules.chromeos.repo.examples.image_builder import (
     ImageBuilderProperties)
 

@@ -12,8 +12,7 @@ import json
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
-from PB.chromiumos.chromiumdash import (FetchMilestoneScheduleResponse,
-                                        Milestone)
+from PB.chromiumos.chromiumdash import (FetchMilestoneScheduleResponse)
 
 
 class CrosScheduleApi(recipe_api.RecipeApi):

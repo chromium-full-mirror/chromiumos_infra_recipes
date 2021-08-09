@@ -17,7 +17,6 @@ from PB.test_platform.taskstate import TaskState
 from recipe_engine.recipe_api import Property
 
 from google.protobuf import json_format
-from google.protobuf import struct_pb2
 
 DEPS = [
     'recipe_engine/assertions',
@@ -52,9 +51,10 @@ def RunSteps(api, need_tests_builds_serialized):
   gerrit_changes = []
   if need_tests_builds:
     gerrit_changes = need_tests_builds[0].input.gerrit_changes
-  test_plan = api.cros_test_proctor.run_proctor(
-      need_tests_builds=need_tests_builds, snapshot=snapshot,
-      gerrit_changes=gerrit_changes, enable_history=True)
+  _ = api.cros_test_proctor.run_proctor(need_tests_builds=need_tests_builds,
+                                        snapshot=snapshot,
+                                        gerrit_changes=gerrit_changes,
+                                        enable_history=True)
 
 
 def GenTests(api):
@@ -68,7 +68,7 @@ def GenTests(api):
         output=output, input=input_proto, status=status,
         critical=common_pb2.YES if critical else common_pb2.NO)
 
-  def input_proto(snapshot, build_target, gerrit_changes=None):
+  def input_proto(snapshot, build_target):
     """Generate an instance of Build.Input.
 
     Args:
@@ -103,21 +103,23 @@ def GenTests(api):
   ]
 
   builds = [
-      build_pb2.Build(
-          id=8922054662172514000, builder={'builder': 'amd64-generic-cq'},
-          status=common_pb2.SUCCESS,
-          input=input_proto(None, 'amd64-generic',
-                            [common_pb2.GerritChange(change=123)])),
-      build_pb2.Build(
-          id=8922054662172514001, builder={'builder': 'arm-generic-cq'},
-          status=common_pb2.STARTED,
-          input=input_proto(None, 'arm-generic',
-                            [common_pb2.GerritChange(change=123)])),
-      build_pb2.Build(
-          id=8922054662172514002, builder={'builder': 'atlas-cq'},
-          status=common_pb2.STARTED,
-          input=input_proto(None, 'atlas',
-                            [common_pb2.GerritChange(change=123)])),
+      build_pb2.Build(id=8922054662172514000,
+                      builder={'builder': 'amd64-generic-cq'},
+                      status=common_pb2.SUCCESS, input=input_proto(
+                          None,
+                          'amd64-generic',
+                      )),
+      build_pb2.Build(id=8922054662172514001,
+                      builder={'builder': 'arm-generic-cq'},
+                      status=common_pb2.STARTED, input=input_proto(
+                          None,
+                          'arm-generic',
+                      )),
+      build_pb2.Build(id=8922054662172514002, builder={'builder': 'atlas-cq'},
+                      status=common_pb2.STARTED, input=input_proto(
+                          None,
+                          'atlas',
+                      )),
   ]
 
   yield api.test(
@@ -149,17 +151,17 @@ def GenTests(api):
           [], step_name='run tests.collect tests.collect tast vm tests'))
 
   builds = [
-      build_pb2.Build(
-          id=8922054662172514000,
-          builder={'builder': 'amd64-generic-postsubmit'},
-          status=common_pb2.SUCCESS, critical=common_pb2.YES,
-          input=input_proto(None, 'amd64-generic',
-                            [common_pb2.GerritChange(change=123)])),
-      build_pb2.Build(
-          id=8922054662172514001, builder={'builder': 'arm-generic-postsubmit'},
-          status=common_pb2.FAILURE, critical=common_pb2.NO,
-          input=input_proto('COMMIT_SHA', 'target',
-                            [common_pb2.GerritChange(change=123)])),
+      build_pb2.Build(id=8922054662172514000,
+                      builder={'builder': 'amd64-generic-postsubmit'},
+                      status=common_pb2.SUCCESS, critical=common_pb2.YES,
+                      input=input_proto(
+                          None,
+                          'amd64-generic',
+                      )),
+      build_pb2.Build(id=8922054662172514001,
+                      builder={'builder': 'arm-generic-postsubmit'},
+                      status=common_pb2.FAILURE, critical=common_pb2.NO,
+                      input=input_proto('COMMIT_SHA', 'target')),
   ]
 
   multi_hw_tests = [

@@ -14,8 +14,6 @@ from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 
-from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
-
 
 def RunSteps(api):
   chroot = Chroot()

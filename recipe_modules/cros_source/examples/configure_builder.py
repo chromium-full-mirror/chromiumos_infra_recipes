@@ -13,13 +13,10 @@ DEPS = [
 ]
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
                                                               GitilesCommit)
-from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties)
 from PB.recipe_modules.chromeos.cros_source.examples.configure_builder import (
     ConfigureBuilderProperties)
 
@@ -34,8 +31,6 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  host = 'chromium.googlesource.com'
-  project = 'project'
   branch = 'firmware-board-11111.B'
   revision = '{}-HEAD-SHA'.format(branch)
   refspec = 'refs/heads/{}'.format(branch)
@@ -59,12 +54,12 @@ def GenTests(api):
     return api.gerrit.set_gerrit_fetch_changes_response(name, changes,
                                                         values_dict)
 
-  def props(host=None, project=None, ref=None, id=None):
+  def props(host=None, project=None, ref=None, cid=None):
     host = host or api.src_state.internal_manifest.host
     project = project or api.src_state.internal_manifest.project
     ref = ref or api.src_state.internal_manifest.ref
-    id = id or api.src_state.internal_manifest.id
-    commit = GitilesCommit(host=host, project=project, ref=ref, id=id)
+    cid = cid or api.src_state.internal_manifest.id
+    commit = GitilesCommit(host=host, project=project, ref=ref, id=cid)
     return api.properties(ConfigureBuilderProperties(expected_commit=commit))
 
   change1 = _change(555)
@@ -74,19 +69,19 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'basic', manifest_branch,
-      props(ref='refs/heads/snapshot', id='snapshot-HEAD-SHA'),
+      props(ref='refs/heads/snapshot', cid='snapshot-HEAD-SHA'),
       api.post_check(post_process.StatusSuccess), gerrit_changes=[change1],
       revision=None)
 
   yield api.cros_source.test(
-      'change-on-branch', manifest_branch, props(ref=refspec, id=revision),
+      'change-on-branch', manifest_branch, props(ref=refspec, cid=revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1], values_dict={555: dict(branch=branch)}),
       gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
       'change-on-two-branches', manifest_branch, props(ref=refspec,
-                                                       id=revision),
+                                                       cid=revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1, change2], values_dict={
           555: dict(branch=branch),
@@ -94,8 +89,8 @@ def GenTests(api):
       }), gerrit_changes=[change1, change2], revision=None)
 
   yield api.cros_source.test(
-      'change-on-diff-branches', manifest_branch, props(ref=refspec,
-                                                        id=revision),
+      'change-on-diff-branches', manifest_branch,
+      props(ref=refspec, cid=revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1, change2], values_dict={
           555: dict(branch=branch),
@@ -104,7 +99,7 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'conf-change', manifest_branch,
-      props(ref='refs/heads/snapshot', id='snapshot-HEAD-SHA'),
+      props(ref='refs/heads/snapshot', cid='snapshot-HEAD-SHA'),
       api.post_check(post_process.StatusSuccess),
       api.cros_infra_config.override_builder_configs_test_data(
           BuilderConfigs(), ref='refs/changes/57/557/1', binaryproto=False,
@@ -122,14 +117,14 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'change-on-release-branch', manifest_branch,
-      props(ref=R90_refspec, id=R90_revision),
+      props(ref=R90_refspec, cid=R90_revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1], values_dict={555: dict(branch=R90_branch)}),
       gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
       'change-on-stabilize-branch', manifest_branch,
-      props(ref=stabilize_refspec, id=stabilize_revision),
+      props(ref=stabilize_refspec, cid=stabilize_revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1],
                      values_dict={555: dict(branch=stabilize_branch)}),

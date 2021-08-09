@@ -3,12 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from google.protobuf import json_format
-
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.test_platform.skylab_test_runner.steps.test_execution import RunTestsRequest, RunTestsResponse
 
 
 class CrosTestRunnerCommand(recipe_api.RecipeApi):
@@ -33,7 +30,7 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
 
     Returns: None
     """
-    self._ensure_cros_test_runner()
+    self.ensure_cros_test_runner()
     build = build_pb2.Build()
     build.CopyFrom(self.m.buildbucket.build)
     for ofield in ['output', 'status', 'summary_markdown', 'steps']:
@@ -43,7 +40,7 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
 
     return None
 
-  def _ensure_cros_test_runner(self):
+  def ensure_cros_test_runner(self):
     """Ensure the cros_test_runner CLI is installed."""
     if self._cipd_dir:
       return

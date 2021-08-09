@@ -12,7 +12,6 @@ DEPS = [
     'sysroot_util',
 ]
 
-from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.recipe_modules.chromeos.sysroot_util.examples.test import (
     TestInputProperties)
@@ -23,7 +22,7 @@ PROPERTIES = TestInputProperties
 def RunSteps(api, properties):
   name = properties.builder_name or 'orderfile-generate-toolchain'
 
-  build_config = api.cros_infra_config.get_builder_config(name)
+  _ = api.cros_infra_config.get_builder_config(name)
 
   sysroot = api.sysroot_util.create_sysroot(BuildTarget(name='eve'))
   api.assertions.assertEqual(sysroot, api.sysroot_util.sysroot)

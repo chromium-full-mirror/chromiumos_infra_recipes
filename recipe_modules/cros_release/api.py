@@ -36,7 +36,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         IMAGE_TYPE_GSC_FIRMWARE
     ])
 
-  def _validate_sign_types(self, sign_types):
+  def validate_sign_types(self, sign_types):
     """Takes an array of IMAGE_TYPE enums and validates them or raises StepFailure."""
     if not set(sign_types).issubset(self._supported_sign_types):
       raise StepFailure('attempting to sign type not in supported sign types')
@@ -157,7 +157,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     bucket = 'staging' if self.m.build_menu.is_staging else 'release'
 
     version = self.m.cros_version.version
-    with self.m.step.nest('generate payloads') as presentation:
+    with self.m.step.nest('generate payloads'):
       paygen_properties = {
           'builder_name': self.m.build_menu.build_target.name,
           'target_chromeos_version': version.platform_version,
@@ -197,7 +197,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           .format(gs_bucket=gs_bucket, gs_path=gs_path))
       sysroot = Sysroot(build_target=self.m.build_menu.build_target)
       # Validate sign types given.
-      self._validate_sign_types(self._sign_types)
+      self.validate_sign_types(self._sign_types)
       return self.m.cros_artifacts.push_image(
           self.m.build_menu.chroot, gs_image_dir, sysroot,
           sign_types=self._sign_types,

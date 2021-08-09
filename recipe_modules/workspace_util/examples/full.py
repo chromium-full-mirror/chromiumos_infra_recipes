@@ -15,11 +15,9 @@ DEPS = [
     'workspace_util',
 ]
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.workspace_util.examples.test import (
     TestInputProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
-from recipe_engine import post_process
 
 PROPERTIES = TestInputProperties
 

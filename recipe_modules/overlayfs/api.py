@@ -8,11 +8,7 @@
 See: https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt
 """
 
-import collections
 import contextlib
-import tempfile
-
-from recipe_engine import config_types
 from recipe_engine import recipe_api
 
 
@@ -148,7 +144,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
 
   def _cleanup_unmount(self, name, mount_path):
     """Track unmount for cleanup_context.
-    
+
     As an overlay is unmounted, the item is then removed from the stack
     to avoid attempting to unmount at a later time.
     """

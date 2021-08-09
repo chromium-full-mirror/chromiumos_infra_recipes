@@ -21,7 +21,7 @@ import repository_util
 import code_coverage_util
 
 
-def _extract_coverage_info(segments):
+def extract_coverage_info(segments):
   """Returns the line and sub-line block coverage info based on the segments.
 
   Args:
@@ -131,7 +131,7 @@ def _extract_coverage_info(segments):
 
 
 def _to_compressed_format(line_data, block_data):
-  """Turns output of `_extract_coverage_info` to a compressed format."""
+  """Turns output of `extract_coverage_info` to a compressed format."""
   lines = []
   # Aggregate contiguous blocks of lines with the exact same hit count.
   last_index = 0
@@ -169,7 +169,7 @@ def _to_compressed_format(line_data, block_data):
   return lines, uncovered_blocks
 
 
-def _rebase_line_and_block_data(line_data, block_data, line_mapping):
+def rebase_line_and_block_data(line_data, block_data, line_mapping):
   """Rebases the line numbers of the data according to the diff mapping.
 
   If the file is not in the mapping, then this function is non-op.
@@ -206,8 +206,8 @@ def _rebase_line_and_block_data(line_data, block_data, line_mapping):
   return rebased_line_data, rebased_block_data
 
 
-def _to_compressed_file_record(file_coverage_data, constants_file, build_target,
-                               project_name, diff_mapping=None):
+def to_compressed_file_record(file_coverage_data, constants_file, build_target,
+                              project_name, diff_mapping=None):
   """Converts the given Clang file coverage data to coverage metadata format.
 
   Coverage metadata format:
@@ -260,12 +260,12 @@ def _to_compressed_file_record(file_coverage_data, constants_file, build_target,
   if coverage_path is None:
     return None
 
-  line_data, block_data = _extract_coverage_info(segments)
+  line_data, block_data = extract_coverage_info(segments)
   line_data = sorted(line_data.items(), key=lambda x: x[0])
   if diff_mapping is not None and coverage_path in diff_mapping:
     line_mapping = diff_mapping[coverage_path]
-    line_data, block_data = _rebase_line_and_block_data(line_data, block_data,
-                                                        line_mapping)
+    line_data, block_data = rebase_line_and_block_data(line_data, block_data,
+                                                       line_mapping)
 
   lines, uncovered_blocks = _to_compressed_format(line_data, block_data)
   # Convert the filesystem path to a source-absolute (GN-style) path.
@@ -360,8 +360,8 @@ def _convert_clang_summary_to_metadata(clang_summary):
   } for k, v in sorted(clang_summary.iteritems())]
 
 
-def _load_files_coverage_data(coverage_files, constants_file, build_target,
-                              project_name, diff_mapping):
+def load_files_coverage_data(coverage_files, constants_file, build_target,
+                             project_name, diff_mapping):
   """Loads coverage data from json files
 
   Args:
@@ -382,9 +382,9 @@ def _load_files_coverage_data(coverage_files, constants_file, build_target,
 
     for datum in data['data']:
       for file_data in datum['files']:
-        record = _to_compressed_file_record(file_data, constants_file,
-                                            build_target, project_name,
-                                            diff_mapping)
+        record = to_compressed_file_record(file_data, constants_file,
+                                           build_target, project_name,
+                                           diff_mapping)
         if record is not None:
           path = record['path']
           if path in path_to_coverage_file:
@@ -420,8 +420,8 @@ def _load_files_coverage_data(coverage_files, constants_file, build_target,
   return file_coverage_data.values()
 
 
-def _convert_metadata(coverage_files, checkout_dir, project_dir, output_dir,
-                      constants_file, build_target, project_name, diff_mapping):
+def convert_metadata(coverage_files, checkout_dir, project_dir, output_dir,
+                     constants_file, build_target, project_name, diff_mapping):
   """Convert coverage metadata from LLVM format.
 
   Args:
@@ -437,9 +437,9 @@ def _convert_metadata(coverage_files, checkout_dir, project_dir, output_dir,
   """
   logging.info('Processing coverage data ...')
   start_time = time.time()
-  files_coverage_data = _load_files_coverage_data(coverage_files,
-                                                  constants_file, build_target,
-                                                  project_name, diff_mapping)
+  files_coverage_data = load_files_coverage_data(coverage_files, constants_file,
+                                                 build_target, project_name,
+                                                 diff_mapping)
 
   per_directory_coverage_data = {}
   if diff_mapping is None:
@@ -546,11 +546,11 @@ def main():
     with open(params.diff_mapping_path) as f:
       diff_mapping = json.load(f)
 
-  compressed_data = _convert_metadata([params.path_to_coverage_file],
-                                      params.checkout_dir, params.project_dir,
-                                      params.output_dir, params.constants_file,
-                                      params.build_target, params.project_name,
-                                      diff_mapping)
+  compressed_data = convert_metadata([params.path_to_coverage_file],
+                                     params.checkout_dir, params.project_dir,
+                                     params.output_dir, params.constants_file,
+                                     params.build_target, params.project_name,
+                                     diff_mapping)
 
   with open(os.path.join(params.output_dir, 'all.json.gz'), 'wb') as f:
     f.write(zlib.compress(json.dumps(compressed_data)))

@@ -5,7 +5,6 @@
 
 """APIs for CrOS Portage."""
 
-import re
 import datetime
 
 from recipe_engine import recipe_api

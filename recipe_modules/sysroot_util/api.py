@@ -24,7 +24,6 @@ from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateResponse
 from PB.chromiumos.common import IMAGE_TYPE_BASE
 from PB.chromiumos.common import ImageType
-from PB.chromiumos.common import Profile
 
 
 class SysrootUtilApi(recipe_api.RecipeApi):
@@ -93,7 +92,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     Returns:
       Sysroot
     """
-    package_index = package_indexes or []
+    package_indexes = package_indexes or []
     test_data = test_data or json_format.MessageToJson(
         SysrootCreateResponse(
             sysroot=Sysroot(path='/build/%s' %

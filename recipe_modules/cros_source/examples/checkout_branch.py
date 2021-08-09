@@ -17,8 +17,6 @@ from recipe_engine import post_process
 from PB.recipe_modules.chromeos.cros_source.examples.checkout_branch import (
     CheckoutBranchProperties)
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
-
 PROPERTIES = CheckoutBranchProperties
 
 

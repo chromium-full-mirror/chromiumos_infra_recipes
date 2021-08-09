@@ -7,7 +7,7 @@
 
 from . import dut_results
 
-from PB.test_platform import phosphorus, skylab_test_runner
+from PB.test_platform import phosphorus
 from PB.test_platform.skylab_test_runner.result import Result
 
 

@@ -13,8 +13,6 @@ DEPS = [
 ]
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget
 from PB.recipe_modules.chromeos.sysroot_util.tests.test import (
     TestInputProperties)
 

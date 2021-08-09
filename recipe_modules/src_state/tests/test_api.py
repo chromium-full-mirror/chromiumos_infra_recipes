@@ -11,7 +11,7 @@ DEPS = [
 
 def RunSteps(api):
   try:
-    api.src_state.test_api._ManifestProject.by_name(
+    api.src_state.test_api.ManifestProject.by_name(
         'foo', api.src_state.test_api.workspace_path)
   except KeyError:
     pass

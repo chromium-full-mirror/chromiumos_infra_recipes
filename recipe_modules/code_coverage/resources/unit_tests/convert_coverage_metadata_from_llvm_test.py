@@ -36,7 +36,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     expected_line_data = dict([(1, 1), (2, 1), (3, 1), (4, 1), (5, 0), (6, 0),
                                (7, 0)])
     expected_block_data = {2: [[18, 24]], 4: [[4, -1]]}
-    line_data, block_data = converter._extract_coverage_info(segments)
+    line_data, block_data = converter.extract_coverage_info(segments)
     self.assertDictEqual(expected_line_data, line_data)
     self.assertDictEqual(expected_block_data, block_data)
 
@@ -45,7 +45,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
 
     expected_line_data = dict([(1, 1)])
     expected_block_data = {}
-    line_data, block_data = converter._extract_coverage_info(segments)
+    line_data, block_data = converter.extract_coverage_info(segments)
     self.assertDictEqual(expected_line_data, line_data)
     self.assertDictEqual(expected_block_data, block_data)
 
@@ -56,11 +56,11 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
 
     expected_line_data = dict([(3, 0), (4, 0), (8, 0), (9, 0), (10, 0)])
     expected_block_data = {}
-    line_data, block_data = converter._extract_coverage_info(segments)
+    line_data, block_data = converter.extract_coverage_info(segments)
     self.assertDictEqual(expected_line_data, line_data)
     self.assertDictEqual(expected_block_data, block_data)
 
-  def mocked_open(filename, _):
+  def mocked_open(self, filename, _):
     if filename == CONSTANTS_FILE:
       content = '{"chromiumos/platform2":[{"prefix": "base-[^/]*/base","src_path":"base"}]}'
     else:
@@ -178,9 +178,9 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
         }],
     }
     self.maxDiff = None
-    record = converter._to_compressed_file_record(file_coverage_data,
-                                                  CONSTANTS_FILE, build_target,
-                                                  project_name)
+    record = converter.to_compressed_file_record(file_coverage_data,
+                                                 CONSTANTS_FILE, build_target,
+                                                 project_name)
     self.assertDictEqual(expected_record, record)
 
   # This test uses made-up segments, and the intention is to test that for
@@ -228,9 +228,9 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
         ]
     }
     self.maxDiff = None
-    record = converter._to_compressed_file_record(file_coverage_data,
-                                                  CONSTANTS_FILE, build_target,
-                                                  project_name)
+    record = converter.to_compressed_file_record(file_coverage_data,
+                                                 CONSTANTS_FILE, build_target,
+                                                 project_name)
     self.assertDictEqual(expected_record, record)
 
   def test_rebase_line_and_block_data(self):
@@ -240,8 +240,8 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     diff_mapping = {'base/base.cc': {'2': [16, 'A line added by the patch.']}}
 
     rebased_line_data, rebased_block_data = (
-        converter._rebase_line_and_block_data(line_data, block_data,
-                                              diff_mapping[file_name]))
+        converter.rebase_line_and_block_data(line_data, block_data,
+                                             diff_mapping[file_name]))
 
     expected_line_data = [(16, 1)]
     expected_block_data = {16: [[18, 24]]}
@@ -281,9 +281,9 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
         }
     }
 
-    record = converter._to_compressed_file_record(file_coverage_data,
-                                                  CONSTANTS_FILE, build_target,
-                                                  project_name, diff_mapping)
+    record = converter.to_compressed_file_record(file_coverage_data,
+                                                 CONSTANTS_FILE, build_target,
+                                                 project_name, diff_mapping)
 
     expected_record = {
         'path':
@@ -368,12 +368,12 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     coverage_files = ['coverage.json']
     build_target = 'betty'
     project_name = 'chromiumos/platform2'
-    files_coverage_data = converter._load_files_coverage_data(
+    files_coverage_data = converter.load_files_coverage_data(
         coverage_files, CONSTANTS_FILE, build_target, project_name, None)
     self.maxDiff = None
     self.assertListEqual(expected_files_coverage_data, files_coverage_data)
 
-  @mock.patch.object(converter, '_load_files_coverage_data')
+  @mock.patch.object(converter, 'load_files_coverage_data')
   @mock.patch.object(converter.repository_util, 'get_file_revisions')
   def test_generate_metadata_for_full_repo_coverage(
       self, mock_GetFileRevisions, mock_load_files_coverage_data):
@@ -428,7 +428,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
         },
     ]
 
-    compressed_data = converter._convert_metadata(
+    compressed_data = converter.convert_metadata(
         coverage_files=['/path/to/coverage_files'],
         checkout_dir='/path/to/checkout_dir',
         project_dir='project_dir',

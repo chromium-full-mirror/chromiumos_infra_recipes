@@ -16,10 +16,6 @@ from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
-from recipe_engine.recipe_api import Property
-
-PROPERTIES = AnalysisServiceProperties
-
 # Test JSON protos.
 INSTALL_PACKAGES_REQUEST = """
 {
@@ -40,7 +36,7 @@ INSTALL_PACKAGES_RESPONSE = """
 """
 
 
-def RunSteps(api, properties):
+def RunSteps(api):
   test_step_data = api.step('basic_with_stdout', cmd=['echo', 'hello world'],
                             stdout=api.raw_io.output(),
                             stderr=api.raw_io.output())

@@ -30,7 +30,7 @@ class SrcStateApi(recipe_test_api.RecipeTestApi):
   """Source State related attributes for Chrome OS recipes."""
 
   # This is here only for test coverage.
-  _ManifestProject = common.ManifestProject
+  ManifestProject = common.ManifestProject
 
   @property
   def default_ref(self):

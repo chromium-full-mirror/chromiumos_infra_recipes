@@ -36,14 +36,14 @@ class GitilesApi(recipe_api.RecipeApi):
     # name.
     if branch.startswith('refs/heads/'):
       branch = branch[len('refs/heads/'):]
-    input = {
+    gitiles_input = {
         'branch': {
             'host': host,
             'project': project,
             'branch': branch,
         },
     }
-    res = self.m.support.call('gitiles-fetch-ref', input,
+    res = self.m.support.call('gitiles-fetch-ref', gitiles_input,
                               test_output_data=test_output_data)
     return res['branch']['revision']
 

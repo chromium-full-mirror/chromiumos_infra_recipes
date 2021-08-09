@@ -5,8 +5,6 @@
 
 from recipe_engine import post_process
 from PB.chromiumos.branch import Branch
-from PB.recipe_modules.chromeos.cros_branch.cros_branch import (
-    CrosBranchProperties)
 
 DEPS = [
     'recipe_engine/assertions',

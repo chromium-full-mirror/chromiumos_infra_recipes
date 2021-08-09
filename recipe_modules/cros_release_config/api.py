@@ -71,7 +71,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     return None
 
   def _get_emails(self, people):
-    return list(map(lambda k: k.email, people))
+    return [k.email for k in people]
 
   def _get_builder_expiration_date(self, builder):
     """Get the expiration date for the builder.
@@ -175,11 +175,11 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         raise StepFailure("malformated legacy config")
 
       builder_block = legacy_block[len("RELEASES = ["):-1].strip()
-      builders = map(lambda x: x, builder_block.split("),"))
+      builders = [x for x in builder_block.split("),")]
       # Filter out empty strings.
-      builders = filter(lambda x: x, builders)
+      builders = [x for x in builders if x]
       # Add back ), to end of blocks.
-      builders = list(map(lambda x: x + "),", builders))
+      builders = [x + ")," for x in builders]
 
       def get_builder_info(builder_text):
         # This regex collects any leading comments as well as the branch name
@@ -189,7 +189,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         if not res:
           return None
         comment_block = (res.group('cmts') or "").strip()
-        comments = list(map(lambda x: x.strip(), comment_block.split('\n')))
+        comments = [x.strip() for x in comment_block.split('\n')]
         BuilderInfo = namedtuple('BuilderInfo',
                                  ['comments', 'branch_name', 'milestone'])
         branch_name = res.group('branch')

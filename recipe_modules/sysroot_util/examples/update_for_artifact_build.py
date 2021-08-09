@@ -12,8 +12,6 @@ DEPS = [
     'sysroot_util',
 ]
 
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget
 from PB.recipe_modules.chromeos.sysroot_util.examples.test import (
     TestInputProperties)
 
@@ -27,13 +25,12 @@ def RunSteps(api, properties):
   artifacts = build_config.artifacts
 
   # Early check: this can be done before the chroot and sysroot are created.
-  relevance = api.sysroot_util.update_for_artifact_build(None, artifacts)
-  # relevance == POINTLESS may cause the recipe to terminate early.
+  _ = api.sysroot_util.update_for_artifact_build(None, artifacts)
 
   # Later check, since some artifacts need the chroot and sysroot to be able to
   # complete their update.
-  relevance = api.sysroot_util.update_for_artifact_build(
-      api.cros_sdk.chroot, artifacts, name='final')
+  _ = api.sysroot_util.update_for_artifact_build(api.cros_sdk.chroot, artifacts,
+                                                 name='final')
 
 
 def GenTests(api):

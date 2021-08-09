@@ -13,7 +13,6 @@ import re
 from collections import defaultdict, namedtuple
 from google.protobuf.json_format import MessageToDict
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
@@ -393,7 +392,7 @@ class CrosSourceApi(RecipeApi):
         all projects.
       * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
       current value.
-      * manifest_branch_override (str): If provided this will override the 
+      * manifest_branch_override (str): If provided this will override the
         manifest_branch value in init_opts. If None then use the value returned
         from configure_builder()
     """

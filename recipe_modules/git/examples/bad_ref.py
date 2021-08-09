@@ -13,9 +13,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  commit_id = 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
-  remote = 'https://mygithost.google.com/somerepo'
-  api.assertions.assertFalse(api.git.is_reachable("abcdef"))
+  revision = 'abcdef'
+  api.assertions.assertFalse(api.git.is_reachable(revision))
 
 
 def GenTests(api):

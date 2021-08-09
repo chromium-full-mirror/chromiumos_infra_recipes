@@ -13,9 +13,9 @@ import shutil
 import code_coverage_util
 
 
-def _clean_file_paths(path_to_coverage_file, path_to_constants_file,
-                      path_to_output_file, project_name, build_target_name,
-                      file_name_prepend):
+def clean_file_paths(path_to_coverage_file, path_to_constants_file,
+                     path_to_output_file, project_name, build_target_name,
+                     file_name_prepend):
   """Cleans the file paths in a given coverage file and writes out the results.
 
     Args:
@@ -87,9 +87,9 @@ def main():
   if os.path.exists(params.output_file):
     raise RuntimeError('Output file %s already exists' % params.output_file)
 
-  _clean_file_paths(params.coverage_file, params.constants_file,
-                    params.output_file, params.project_name,
-                    params.build_target, params.file_name_prepend)
+  clean_file_paths(params.coverage_file, params.constants_file,
+                   params.output_file, params.project_name, params.build_target,
+                   params.file_name_prepend)
 
 
 if __name__ == '__main__':

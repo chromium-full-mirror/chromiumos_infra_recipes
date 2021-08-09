@@ -302,8 +302,7 @@ class GerritApi(RecipeApi):
     """
     patch_sets = self.fetch_patch_sets([change], include_files=include_files,
                                        test_output_data=test_output_data)
-    patch_sets = list(
-        filter(lambda x: x.patch_set == change.patchset, patch_sets))
+    patch_sets = [x for x in patch_sets if x.patch_set == change.patchset]
     if not patch_sets:
       raise StepFailure('missing gerrit patch')
     return patch_sets[0]

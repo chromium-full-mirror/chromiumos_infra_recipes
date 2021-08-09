@@ -113,8 +113,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
 
     return self._create(branch, manifest_args, **kwargs)
 
-  def create_from_file(self, manifest_file, branch, manifest_src=None,
-                       **kwargs):
+  def create_from_file(self, manifest_file, branch, **kwargs):
     """Call `cros branch create`, branching from the file specified in
       manifest_file.
 

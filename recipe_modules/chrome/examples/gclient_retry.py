@@ -13,33 +13,31 @@ DEPS = [
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
 
-from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
-
 
 def RunSteps(api):
   chroot = Chroot()
   build_target = BuildTarget()
-  with api.step.nest('internal checkout passes retry') as test_step:
+  with api.step.nest('internal checkout passes retry'):
     api.chrome.sync(
         chrome_root=api.path['start_dir'].join('chrome'),
         chroot=chroot,
         build_target=build_target,
         internal=True,
     )
-  with api.step.nest('external checkout passes retry') as test_step:
+  with api.step.nest('external checkout passes retry'):
     api.chrome.sync(
         chrome_root=api.path['start_dir'].join('chrome'),
         chroot=chroot,
         build_target=build_target,
         internal=True,
     )
-  with api.step.nest('internal checkout fails retry') as test_step:
+  with api.step.nest('internal checkout fails retry'):
     api.assertions.assertRaises(
         api.step.InfraFailure, api.chrome.sync,
         chrome_root=api.path['start_dir'].join('chrome'), chroot=chroot,
         build_target=build_target, internal=True)
 
-  with api.step.nest('external checkout fails retry') as test_step:
+  with api.step.nest('external checkout fails retry'):
     api.assertions.assertRaises(
         api.step.InfraFailure, api.chrome.sync,
         chrome_root=api.path['start_dir'].join('chrome'), chroot=chroot,
