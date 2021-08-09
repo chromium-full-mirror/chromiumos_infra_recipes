@@ -5,8 +5,6 @@
 
 """Recipe for building the Cloudready shim."""
 
-from datetime import datetime
-
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -14,6 +12,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/time',
     'depot_tools/gsutil',
     'git',
 ]
@@ -33,7 +32,7 @@ def RunSteps(api):
         stderr=api.raw_io.output(name='stderr', add_output_log=True))
     api.step('make copy', ['make', 'copy'])
 
-  gs_dir = "{}-{}".format(datetime.today().strftime('%Y-%m-%d'),
+  gs_dir = "{}-{}".format(api.m.time.utcnow().strftime('%Y-%m-%d'),
                           api.buildbucket.build.id)
   link_name = 'gs publish dir'
   link_value = ('https://console.cloud.google.com/storage/browser/{}/{}'.format(
@@ -66,4 +65,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic', api.time.seed(1613694623.0))
