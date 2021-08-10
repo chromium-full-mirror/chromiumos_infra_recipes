@@ -7,6 +7,7 @@
 
 import contextlib
 import json
+import multiprocessing
 import re
 
 from collections import defaultdict, namedtuple
@@ -180,6 +181,16 @@ class CrosSourceApi(RecipeApi):
   def snapshot_cas_digest(self):
     """Returns the snapshot digest in use or None."""
     return self._snapshot_cas.digest if self._snapshot_cas else None
+
+  def _determine_sync_jobs(self):
+    """Determines the number of jobs to use for sync based on CPUs."""
+    if self._test_data.enabled:
+      jobs = 8
+    elif multiprocessing.cpu_count() > 32:  #pragma: no cover
+      jobs = 32
+    else:  #pragma: no cover
+      jobs = multiprocessing.cpu_count()
+    return jobs
 
   def configure_builder(self, commit=None, changes=None, is_staging=None,
                         default_main=False, name='configure builder'):
@@ -446,6 +457,7 @@ class CrosSourceApi(RecipeApi):
               ) if 'chromeos.cros_source.use_released_repo_on_staging' in
           self.m.cros_infra_config.experiments else {})
     sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
+    sync_opts['jobs'] = self._determine_sync_jobs()
     local_manifests = init_opts.get('local_manifests')
     groups = init_opts.get('groups')
     verbose = init_opts.get('verbose')
@@ -633,6 +645,7 @@ class CrosSourceApi(RecipeApi):
       self.m.repo.init(manifest_url, **my_init_opts)
 
       my_sync_opts = dict(**DEFAULT_CHECKOUT_SYNC_OPTS)
+      my_sync_opts['jobs'] = self._determine_sync_jobs()
       my_sync_opts.update(sync_opts or {})
       my_sync_opts['projects'] = projects
       self.m.repo.sync(**my_sync_opts)
@@ -693,6 +706,8 @@ class CrosSourceApi(RecipeApi):
         init_opts.update(STAGING_INIT_OPTS)
       sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, verbose=verbose,
                        retry_fetches=retry_fetches)
+      sync_opts['jobs'] = self._determine_sync_jobs()
+
       if not self.m.repo.ensure_synced_checkout(
           sync_path, manifest.url, init_opts=init_opts, sync_opts=sync_opts,
           projects=projects):
@@ -980,6 +995,7 @@ class CrosSourceApi(RecipeApi):
         sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, manifest_name=default_file,
                          current_branch=True, no_tags=False, retry_fetches=2,
                          detach=False, force_sync=True, no_manifest_update=True)
+        sync_opts['jobs'] = self._determine_sync_jobs()
 
         manifest_url = 'file://%s' % new_dir
         if not self.m.repo.ensure_synced_checkout(
@@ -1265,6 +1281,7 @@ class CrosSourceApi(RecipeApi):
       snapshot_xml = self._get_manifest(gitiles_commit, projects=projects)
       # Force_sync to ensure that we get the snapshot that we want.
       sync_opts = dict(detach=True, **DEFAULT_CHECKOUT_SYNC_OPTS)
+      sync_opts['jobs'] = self._determine_sync_jobs()
       if gitiles_commit.ref not in ('refs/heads/snapshot', 'refs/heads/main',
                                     'refs/heads/staging-snapshot'):
         # TODO(b/186770501): Changing branches can take a while.
