@@ -163,9 +163,9 @@
       "curl",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.jsonproto?format=TEXT"
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/fake_config.jsonproto?format=TEXT"
     ],
-    "name": "fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.jsonproto?format=TEXT",
+    "name": "fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/fake_config.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -214,6 +214,7 @@
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
       "@@@STEP_LOG_LINE@request@  \"dutAttributeList\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"dutAttributes\": [@@@",
       "@@@STEP_LOG_LINE@request@      {@@@",
@@ -258,7 +259,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildMetadataList\": {\n    \"values\": [\n      {\n        \"buildTarget\": {\n          \"portageBuildTarget\": {\n            \"overlayName\": \"overlayA\"\n          }\n        }\n      }\n    ]\n  }, \n  \"dutAttributeList\": {\n    \"dutAttributes\": [\n      {\n        \"id\": {\n          \"value\": \"attribute1\"\n        }\n      }\n    ]\n  }, \n  \"sourceTestPlans\": [\n    {\n      \"requirements\": {\n        \"kernelVersions\": {}\n      }\n    }, \n    {\n      \"requirements\": {\n        \"fingerprint\": {}\n      }\n    }\n  ], \n  \"flatConfigList\": {\n    \"values\": [\n      {\n        \"hwDesign\": {\n          \"name\": \"design1\"\n        }\n      }\n    ]\n  }\n}",
+      "{\n  \"buildMetadataList\": {\n    \"values\": [\n      {\n        \"buildTarget\": {\n          \"portageBuildTarget\": {\n            \"overlayName\": \"overlayA\"\n          }\n        }\n      }\n    ]\n  }, \n  \"chroot\": {}, \n  \"dutAttributeList\": {\n    \"dutAttributes\": [\n      {\n        \"id\": {\n          \"value\": \"attribute1\"\n        }\n      }\n    ]\n  }, \n  \"sourceTestPlans\": [\n    {\n      \"requirements\": {\n        \"kernelVersions\": {}\n      }\n    }, \n    {\n      \"requirements\": {\n        \"fingerprint\": {}\n      }\n    }\n  ], \n  \"flatConfigList\": {\n    \"values\": [\n      {\n        \"hwDesign\": {\n          \"name\": \"design1\"\n        }\n      }\n    ]\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -277,6 +278,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    ]@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"dutAttributeList\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"dutAttributes\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      {@@@",

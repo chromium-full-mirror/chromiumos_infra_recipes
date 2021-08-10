@@ -113,12 +113,13 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                                        test_output_data=test_output_contents)
     return json_format.Parse(contents, message)
 
-  def generate_coverage_rules(self, source_test_plans):
+  def generate_coverage_rules(self, source_test_plans, chroot):
     """Call the GetCoverageRules BuildAPI.
 
     Args:
       * source_test_plans (list[source_test_plan_pb2.SourceTestPlan]):
           SourceTestPlans to include in the request.
+      * chroot (chromiumos.Chroot): The chroot to run the command in.
 
     Returns:
       A list of generated CoverageRules.
@@ -132,8 +133,13 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         test_output_message=self.test_api.build_metadata_list(),
     )
 
+    # Passing the full flattened config to the Build API endpoint seems to cause
+    # the Swarming task to fail. Pass the small, fake config as a placeholder.
+    #
+    # TODO(b/182898188): Investigate further why the full config causes failure,
+    # and possible workarounds.
     flat_config_list = self._get_config_jsonpb(
-        'hw_design/generated/flattened.jsonproto',
+        'hw_design/generated/fake_config.jsonproto',
         message=flat_config_pb2.FlatConfigList(),
         test_output_message=self.test_api.flat_config_list(),
     )
@@ -145,6 +151,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     )
 
     request = test_pb2.GetCoverageRulesRequest(
+        chroot=chroot,
         source_test_plans=source_test_plans,
         build_metadata_list=build_metadata_list,
         flat_config_list=flat_config_list,

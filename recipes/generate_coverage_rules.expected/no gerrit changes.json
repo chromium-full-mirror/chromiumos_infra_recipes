@@ -1,13 +1,35 @@
 [
   {
     "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "RECIPE CRASH (Uncaught exception)",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@",
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/generate_coverage_rules.py\", line 31, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/generate_coverage_rules.py\", line 29, in RunSteps",
       "    raise ValueError('At least one GerritChange must be passed.')",
       "ValueError: At least one GerritChange must be passed."
     ]

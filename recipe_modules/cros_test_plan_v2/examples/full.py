@@ -13,6 +13,7 @@ from recipe_engine import post_process
 from google.protobuf import text_format
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.chromiumos.common import Chroot
 from PB.chromiumos.test.api.coverage_rule import CoverageRule
 
 
@@ -40,7 +41,8 @@ def RunSteps(api):
       ],
   )
 
-  coverage_rules = api.cros_test_plan_v2.generate_coverage_rules(relevant_plans)
+  coverage_rules = api.cros_test_plan_v2.generate_coverage_rules(
+      relevant_plans, chroot=Chroot())
   api.assertions.assertEqual(
       coverage_rules,
       [CoverageRule(name='kernel:4.4')],
