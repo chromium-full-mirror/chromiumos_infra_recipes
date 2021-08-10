@@ -1565,147 +1565,32 @@
     ]
   },
   {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromium/src",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.repo forall (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "symbolic-ref",
-      "--short",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.git symbolic-ref",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@branch@main@@@",
-      "@@@STEP_LOG_END@branch@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "cros",
-      "refs/change/foo"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.git fetch",
-    "timeout": 60,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromium/src/+/1@@@"
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 2}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/1@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromium/src",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rebase",
-      "--force-rebase",
-      "cros/main"
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "-X",
+      "POST",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 2}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/1/review"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.git rebase",
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/1/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "cros",
-      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.git checkout (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

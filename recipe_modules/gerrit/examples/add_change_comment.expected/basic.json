@@ -5,7 +5,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@comment text@my comment@@@",
       "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/project/+/123@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/project/+/123@@@"
     ]
   },
   {

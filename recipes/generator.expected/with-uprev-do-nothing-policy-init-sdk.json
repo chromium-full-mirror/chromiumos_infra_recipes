@@ -2330,7 +2330,7 @@
     "name": "generate CLs.create gerrit change for src/overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -2417,7 +2417,7 @@
     "name": "generate CLs.create gerrit change for src/private-overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -2519,7 +2519,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
     ]
   },
   {
@@ -2589,7 +2589,7 @@
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
     ]
   },
   {
@@ -2696,7 +2696,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
     ]
   },
   {
@@ -2766,7 +2766,7 @@
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
     ]
   },
   {
@@ -2872,7 +2872,7 @@
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DO_NOTHING.@@@",
       "@@@STEP_LOG_LINE@comment text@Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).@@@",
       "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
     ]
   },
   {
@@ -2936,7 +2936,7 @@
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DO_NOTHING.@@@",
       "@@@STEP_LOG_LINE@comment text@Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. Reviewers may also want to abandon the open CL(s).@@@",
       "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
     ]
   },
   {

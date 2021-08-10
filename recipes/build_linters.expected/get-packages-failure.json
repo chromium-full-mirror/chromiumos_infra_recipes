@@ -2770,7 +2770,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/fake-project/+/1/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/fake-project/+/1/1@@@"
     ]
   },
   {

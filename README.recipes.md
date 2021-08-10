@@ -4406,7 +4406,7 @@ Args:
   mount_path(str): Directory to mount the disk.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
-[DEPS](/recipe_modules/gerrit/__init__.py#6): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gerrit/__init__.py#6): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -4420,7 +4420,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#622)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#591)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -4428,7 +4428,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#544)(self, gerrit_change, comment):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#513)(self, gerrit_change, comment):**
 
 Add a comment to the given Gerrit change.
 
@@ -4506,7 +4506,7 @@ The gerrit patches last fetched.
 
 These may or may not include files, but always include commit info.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#565)(self, gerrit_change, memoize=False):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#534)(self, gerrit_change, memoize=False):**
 
 Get the description of the given Gerrit change.
 
@@ -4551,7 +4551,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#660)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#629)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -4564,7 +4564,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#593)(self, gerrit_change, description, amend_local=False):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#562)(self, gerrit_change, description, amend_local=False):**
 
 Set the description of the given Gerrit change.
 
@@ -4575,18 +4575,20 @@ Args:
   amend_local (bool): Should you amend the description of the HEAD local
       change as well.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#492)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#479)(self, gerrit_change, labels, branch=None, ref=None):**
 
 Set the given labels for the given Gerrit change.
 
 Args:
   gerrit_change (GerritChange): The change of interest.
   labels (dict): Mapping from label (Label) to value (int).
+  branch (str): The remote branch to update.
+  ref (str): The remote ref to update.
 
 Returns:
-  str: The new label ref (primarily for testing).
+  str: The refspec used to push the labels.
 
-&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#458)(self, gerrit_change, labels, fetch_ref=None, dest_ref=None, branch=None):**
+&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#458)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
   set_change_labels only works when the change exists in the local checkout.
@@ -4595,14 +4597,11 @@ Set the given labels for the given Gerrit change.
 Args:
   gerrit_change (GerritChange): The change of interest.
   labels (dict): Mapping from label (Label) to value (int).
-  fetch_ref (str): The ref at which the change can be fetched.
-  dest_ref (str): The ref at which the change can be pushed.
-  branch (str): The remote branch to update.
 
 Returns:
-  str: The new label ref (primarily for testing).
+  str: The applied labels (primarily for testing).
 
-&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#636)(self, gerrit_change, retries=0):**
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#605)(self, gerrit_change, retries=0):**
 
 Submits the given change.
 
@@ -5161,7 +5160,7 @@ API for updating remote git repositories transactionally.
 
 A module for executing git transactions.
 
-&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#141)(self, remote, update_callback, step_name='update ref', ref=None, dry_run=False, automerge=False, retries=3):**
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#140)(self, remote, update_callback, step_name='update ref', ref=None, dry_run=False, automerge=False, retries=3):**
 
 Transactionally update a remote git repository ref.
 
@@ -5194,7 +5193,7 @@ Args:
 Returns:
   bool: True if the transaction succeeded, false if it explicitly aborts.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#184)(self, remote, message, dest, data, automerge=False, ref=None):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#183)(self, remote, message, dest, data, automerge=False, ref=None):**
 
 Transactionally update a file in a remote git repository ref.
 
@@ -5218,7 +5217,7 @@ Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
 ### *recipe_modules* / [gitiles](/recipe_modules/gitiles)
 
-[DEPS](/recipe_modules/gitiles/__init__.py#6): [easy](#recipe_modules-easy), [support](#recipe_modules-support), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gitiles/__init__.py#6): [easy](#recipe_modules-easy), [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -5285,6 +5284,20 @@ Args:
 
 Returns:
   (str) The url for the repo.
+
+&mdash; **def [set\_change\_labels](/recipe_modules/gitiles/api.py#118)(self, change_num, labels, base_url=None, credential_cookie_location=None, test_output_data=None):**
+
+Set the labels on a gerrit change using Gerrit and Gitiles REST API.
+
+Args:
+  change_num (int): The number of the change to label.
+  labels (dict): Mapping from label (Label) to value (int).
+  base_url (str): Base URL to curl against.
+  credential_cookie_location (str): Path to git credential cookie.
+  test_output_data (dict): Test output for set_change_labels.
+
+Returns:
+  str: The applied labels (primarily for testing).
 ### *recipe_modules* / [goma](/recipe_modules/goma)
 
 [DEPS](/recipe_modules/goma/__init__.py#5): [support](#recipe_modules-support), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -8767,7 +8780,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [RunSteps](/recipes/generator.py#69)(api, properties):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#401)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#400)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
