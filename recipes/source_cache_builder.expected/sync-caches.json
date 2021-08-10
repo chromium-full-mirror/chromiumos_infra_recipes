@@ -99,20 +99,28 @@
       "gcloud",
       "compute",
       "disks",
-      "create",
-      "chromiumos-main-13370000-us-central1-b",
-      "--zone=us-central1-b",
-      "--source-snapshot=",
-      "--quiet",
-      "--type=pd-ssd"
+      "list",
+      "--format",
+      "json(name)",
+      "--filter",
+      "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros"
     ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
     "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot version.create disk from snapshot",
+    "name": "source cache update.create and attach disk.create disk from snapshot version.check whether disks exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-main-16285361-us-central2-c-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -122,7 +130,7 @@
       "instances",
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromiumos-main-13370000-us-central1-b",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -143,7 +151,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=chromiumos-main-13370000-us-central1-b",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -544,7 +552,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromiumos-main-13370000-us-central1-b",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -570,7 +578,7 @@
       "compute",
       "disks",
       "snapshot",
-      "chromiumos-main-13370000-us-central1-b",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--snapshot-names=chromiumos-main-13370000",
       "--zone=us-central1-b"
     ],
@@ -710,8 +718,37 @@
       "gcloud",
       "compute",
       "disks",
+      "list",
+      "--format",
+      "json(name)",
+      "--filter",
+      "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr"
+    ],
+    "infra_step": true,
+    "name": "source cache update.create and attach disk (2).create disk from snapshot version.check whether disks exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-main-16285361-us-central2-c-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
       "create",
-      "chrome-main-13370000-us-central1-b",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
       "--zone=us-central1-b",
       "--source-snapshot=",
       "--quiet",
@@ -733,7 +770,7 @@
       "instances",
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chrome-main-13370000-us-central1-b",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -754,7 +791,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=chrome-main-13370000-us-central1-b",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -1007,7 +1044,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chrome-main-13370000-us-central1-b",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -1033,7 +1070,7 @@
       "compute",
       "disks",
       "snapshot",
-      "chrome-main-13370000-us-central1-b",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
       "--snapshot-names=chrome-main-13370000",
       "--zone=us-central1-b"
     ],

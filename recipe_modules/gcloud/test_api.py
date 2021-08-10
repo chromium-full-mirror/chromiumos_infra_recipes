@@ -97,3 +97,14 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         "storageLocations": ["us"]
     }]
     return snapshot_list
+
+  def disk_list_data(self):
+    """Returns list of disks in json format."""
+    disk_list = [{
+        "name": "staging-chromiumos-main-16285361-us-central2-c-cros"
+    }, {
+        "name": "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros"
+    }, {
+        "name": "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90"
+    }]
+    return disk_list

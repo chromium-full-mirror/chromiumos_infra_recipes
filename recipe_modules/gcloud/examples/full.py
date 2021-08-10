@@ -29,6 +29,51 @@ def RunSteps(api):
   api.gcloud.delete_instance('image-name', project=GCE_PROJECT,
                              zone='us-central1-a')
 
+  disk_exists_tests = {
+      'chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros': True,
+      'chromiumos-release-r93-14092-b-16285369-us-central2-c': False
+  }
+  for test, result in disk_exists_tests.items():
+    api.assertions.assertEqual(result, api.gcloud.disk_exists(disk=test))
+
+  suffix_test = [
+      {
+          'cache': 'chromiumos',
+          'branch': 'main',
+          'result': 'cros',
+      },
+      {
+          'cache': 'chrome',
+          'branch': 'main',
+          'result': 'cr',
+      },
+      {
+          'cache': 'chrome',
+          'branch': 'release-R90-13816.B',
+          'result': 'crr90',
+      },
+      {
+          'cache': 'chromiumos',
+          'branch': 'release-R90-13816.B',
+          'result': 'crosr90',
+      },
+      {
+          'cache': 'foo',
+          'branch': 'stabilize-rust-13836.B',
+          'result': 'stabilize',
+      },
+      {
+          'cache': 'chromeosSDK',
+          'branch': 'main',
+          'result': 'sdk',
+      },
+  ]
+  for test in suffix_test:
+    api.assertions.assertEqual(
+        test['result'],
+        api.gcloud._determine_disk_suffix(cache=test['cache'],
+                                          branch=test['branch']))
+
   compliance_tests = {
       'main': True,
       'release-R90-13816.B': False,

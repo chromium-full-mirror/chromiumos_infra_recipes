@@ -35,8 +35,7 @@ def RunSteps(api, properties):
     snapshot_prefixes = []
     is_staging = api.cros_infra_config.is_staging
     infra_host = api.swarming.bot_id
-    with api.gcloud.cleanup_gce_disks(), \
-         api.gcloud.cleanup_mounted_disks():
+    with api.gcloud.cleanup_mounted_disks():
       for cache in properties.cache_definition:
         api.gcloud.create_and_mount_disk(cache_name=cache.cache_name,
                                          branch=cache.branch,
@@ -192,24 +191,4 @@ def GenTests(api):
       api.step_data((
           'source cache update.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromiumos/.recipes_state.json (2)'
       ), retcode=3),
-  )
-
-  yield api.test(
-      'truncate-snapshot-name-to-limit',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.properties(
-          cache_definition=[
-              dict(
-                  cache_name='chromiumos-long-name-cache-truncate-test',
-                  command='repo',
-                  recovery_snapshot='chromeos_default_recovery_snapshot',
-                  branch='release-R90-13816.B',
-                  disk_type='pd-ssd',
-              ),
-          ],
-          cache_bucket='chromeos-bot-cache',
-          retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
-      ),
   )

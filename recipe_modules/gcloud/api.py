@@ -35,6 +35,7 @@ class GcloudApi(recipe_api.RecipeApi):
     self._branch = None
     self._dev_ref = 'a'
     self._disk = None
+    self._snapshot_suffix = None
     self._suffix = None
     self._version_file = None
     self._zone = None
@@ -63,7 +64,7 @@ class GcloudApi(recipe_api.RecipeApi):
 
   @property
   def snapshot_suffix(self):
-    return self._suffix
+    return self._snapshot_suffix
 
   @property
   def host_zone(self):
@@ -236,6 +237,27 @@ class GcloudApi(recipe_api.RecipeApi):
           'gcloud', 'compute', 'instances', 'delete', instance, '--quiet',
           '--zone={}'.format(zone), '--project={}'.format(project)
       ])
+
+  def disk_exists(self, disk):
+    """List disk associated with provided instance.
+
+    Args:
+      disk(str): Name of the disk to retrieve.
+
+    Returns:
+      Bool of whether the disk exists or not.
+    """
+    list_cmd = [
+        'gcloud', 'compute', 'disks', 'list', '--format', 'json(name)',
+        '--filter', 'name={}'.format(disk)
+    ]
+    output = self.m.easy.stdout_json_step(
+        'check whether disks exists: {}'.format(disk), list_cmd,
+        test_stdout=lambda: self.test_api.disk_list_data(), infra_step=True)
+    for gce_disk in output:
+      if disk == gce_disk['name']:
+        return True
+    return False
 
   def attach_disk(self, name, instance, disk, zone):
     """Attach a disk to a GCE instance.
@@ -458,6 +480,28 @@ class GcloudApi(recipe_api.RecipeApi):
           '--zone={}'.format(zone),
       ], infra_step=True)
 
+  def _determine_disk_suffix(self, cache, branch):
+    """Determine the name of the disk to create.
+
+    Args:
+      cache(str): Name of the cache disk to create.
+      branch(str): Git branch.
+    Returns:
+      A string formatted disk suffix.
+    """
+    disk_suffix = ''
+    if cache == 'chromiumos':
+      disk_suffix = 'cros'
+    elif cache == 'chrome':
+      disk_suffix = 'cr'
+    elif cache == 'chromeosSDK':
+      disk_suffix = 'sdk'
+    if 'release' in branch:
+      disk_suffix = '{}{}'.format(disk_suffix, branch.split('-')[1]).lower()
+    if 'stabilize' in branch:
+      disk_suffix = '{}{}'.format(disk_suffix, 'stabilize')
+    return disk_suffix
+
   def create_and_mount_disk(self, cache_name, branch='main', disk_type=None,
                             recipe_mount=False, dry_run=False):
     """Determine the disk to create and mount from snapshot.
@@ -486,18 +530,18 @@ class GcloudApi(recipe_api.RecipeApi):
       self._branch = branch
       is_staging = self.m.cros_infra_config.is_staging
       recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
-      self._suffix = str(self.m.time.ms_since_epoch())[0:8]
       if not self._is_rfc1035_compliant(branch):
         self._branch = self._scrub_special_characters(self._branch)
-      self._disk = '{}-{}-{}-{}'.format(cache_name, self._branch, self._suffix,
-                                        self._zone)
-      self._disk = self._disk[:self.gce_name_limit] if len(
-          self._disk) > self.gce_name_limit else self._disk
+      self._suffix = self._determine_disk_suffix(cache=cache_name,
+                                                 branch=branch)
+      self._snapshot_suffix = str(self.m.time.ms_since_epoch())[0:8]
+      self._disk = '{}-{}'.format(infra_host, self._suffix)
       self._version_file = '{}-{}-cache-snapshot-version.txt'.format(
           cache_name, self._branch)
       if is_staging:
-        self._disk = 'staging-{}'.format(self._disk)
         self._version_file = '{}-{}'.format('staging', self._version_file)
+      self._disk = self._disk[:self.gce_name_limit] if len(
+          self._disk) > self.gce_name_limit else self._disk
       local_version = None
       local_version_path = self.snapshot_version_path.join(self._version_file)
       if self.m.path.exists(local_version_path):
@@ -522,16 +566,19 @@ class GcloudApi(recipe_api.RecipeApi):
           snapshot = local_version
         self.m.easy.set_properties_step(snapshot_version=snapshot)
         if not dry_run:
-          try:
-            self.create_disk(disk=self._disk, zone=self._zone,
-                             snapshot=snapshot, disk_type=disk_type)
-          except self.m.step.StepFailure:
-            self.create_disk(disk=self._disk, zone=self._zone,
-                             snapshot=remote_version, disk_type=disk_type)
-            self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
-          if not local_version and self.m.path.exists(
-              self.m.path['cache'].join(cache_name).join('upperdir')):
-            self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
+          if not self.disk_exists(disk=self._disk):
+            try:
+              self.create_disk(disk=self._disk, zone=self._zone,
+                               snapshot=snapshot, disk_type=disk_type)
+            except self.m.step.StepFailure:
+              self.create_disk(disk=self._disk, zone=self._zone,
+                               snapshot=remote_version, disk_type=disk_type)
+              self.m.overlayfs.cleanup_overlay_directories(
+                  cache_name=cache_name)
+            if not local_version and self.m.path.exists(
+                self.m.path['cache'].join(cache_name).join('upperdir')):
+              self.m.overlayfs.cleanup_overlay_directories(
+                  cache_name=cache_name)
           self.attach_disk(name=cache_name, instance=infra_host,
                            disk=self._disk, zone=self._zone)
           self.mount_disk(name=cache_name, mount_path=cache_name,
@@ -555,7 +602,6 @@ class GcloudApi(recipe_api.RecipeApi):
         with self.m.step.nest('clean up gce disk'):
           for disk, instance, zone in list(cleanup_gce_disks):
             self.detach_disk(instance, disk, zone)
-            self.delete_disk(disk, zone)
       self._cleanup_gce_stack.pop()
 
   def _add_cleanup_attached_disk(self, disk, instance, zone):
