@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/step',
     'recipe_engine/time',
     'build_menu',
     'cloud_pubsub',

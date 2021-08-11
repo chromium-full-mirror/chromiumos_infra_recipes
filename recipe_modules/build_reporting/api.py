@@ -24,6 +24,7 @@ import contextlib
 import functools
 import types
 
+from google.protobuf.json_format import MessageToJson
 from google.protobuf.timestamp_pb2 import Timestamp
 
 # infra/proto/src/chromiumos/builder_report.proto
@@ -151,15 +152,15 @@ class BuildReportingApi(recipe_api.RecipeApi):
       build_report.type = self._build_type
       self._build_type_sent = True
 
-    # The publish-message binary requires that messages be base64 encoded to
-    # avoid issues with binary data and strings.
-    #
-    # TODO(b/190725318): Add human readable message.
-    self.m.cloud_pubsub.publish_message(
-        self.pubsub_project,
-        self.pubsub_topic,
-        build_report.SerializeToString().encode('base64'),
-    )
+    with self.m.step.nest('build status pubsub update') as pres:
+      pres.logs['message'] = MessageToJson(build_report)
+      self.m.cloud_pubsub.publish_message(
+          self.pubsub_project,
+          self.pubsub_topic,
+          # The publish-message binary requires that messages be base64 encoded to
+          # avoid issues with binary data and strings.
+          build_report.SerializeToString().encode('base64'),
+      )
 
     # Aggregate sent messages so we have a copy of the final status on our side.
     self._build_report.MergeFrom(build_report)

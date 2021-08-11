@@ -23,7 +23,24 @@
   },
   {
     "cmd": [],
-    "name": "publish message"
+    "name": "build status pubsub update",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  }, @@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_RELEASE\", @@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -34,9 +51,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "publish message.read deploy_cipd.json",
+    "name": "build status pubsub update.publish message.read deploy_cipd.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
@@ -60,9 +77,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "publish message.ensure_installed",
+    "name": "build status pubsub update.publish message.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -81,10 +98,10 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
-    "name": "publish message.publish-message",
+    "name": "build status pubsub update.publish message.publish-message",
     "stdin": "{\"data\": \"CAAQARoDCMgB\\n\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -93,17 +110,55 @@
   },
   {
     "cmd": [],
-    "name": "publish message (2)"
+    "name": "build status pubsub update (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"release\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"channels\": [@@@",
+      "@@@STEP_LOG_LINE@message@        \"CHANNEL_BETA\", @@@",
+      "@@@STEP_LOG_LINE@message@        \"CHANNEL_DEV\", @@@",
+      "@@@STEP_LOG_LINE@message@        \"CHANNEL_CANARY\"@@@",
+      "@@@STEP_LOG_LINE@message@      ], @@@",
+      "@@@STEP_LOG_LINE@message@      \"build\": \"12345.123.0\", @@@",
+      "@@@STEP_LOG_LINE@message@      \"milestone\": 12@@@",
+      "@@@STEP_LOG_LINE@message@    }, @@@",
+      "@@@STEP_LOG_LINE@message@    \"models\": [@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"name\": \"fooble\"@@@",
+      "@@@STEP_LOG_LINE@message@      }, @@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"name\": \"barble\"@@@",
+      "@@@STEP_LOG_LINE@message@      }, @@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"name\": \"bazble\"@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    ], @@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"release-R12-12345.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  }, @@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update (2).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
-    "name": "publish message (2).publish-message",
+    "name": "build status pubsub update (2).publish message.publish-message",
     "stdin": "{\"data\": \"CAAiSwoVChNyZWxlYXNlLVIxMi0xMjM0NS5CEhQIDBILMTIzNDUuMTIzLjAaAwIDBBoICgZmb29i\\nbGUaCAoGYmFyYmxlGggKBmJhemJsZQ==\\n\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -112,17 +167,41 @@
   },
   {
     "cmd": [],
-    "name": "publish message (3)"
+    "name": "build status pubsub update (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_SYNC\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\", @@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:23Z\", @@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T17:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  }, @@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update (3).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
-    "name": "publish message (3).publish-message",
+    "name": "build status pubsub update (3).publish message.publish-message",
     "stdin": "{\"data\": \"CAAqKRInCglTVEVQX1NZTkMSGhBkGhYKBgjDgMT9BBIMCJSNxf0EEIDKte4B\\n\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -131,17 +210,40 @@
   },
   {
     "cmd": [],
-    "name": "publish message (4)"
+    "name": "build status pubsub update (4)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"3457ed415f59b37aab2a2fd80382f782c70391c2b25396abd833892f5b5eef60\", @@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"RELEASE_IMAGE\", @@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/garble.tgz\"@@@",
+      "@@@STEP_LOG_LINE@message@      }, @@@",
+      "@@@STEP_LOG_LINE@message@      \"created\": \"2012-05-14T12:53:27.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ], @@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update (4).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
-    "name": "publish message (4).publish-message",
+    "name": "build status pubsub update (4).publish message.publish-message",
     "stdin": "{\"data\": \"CAA6fAhkEigKJmdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9nYXJibGUudGd6GkAzNDU3ZWQ0\\nMTVmNTliMzdhYWIyYTJmZDgwMzgyZjc4MmM3MDM5MWMyYjI1Mzk2YWJkODMzODkyZjViNWVlZjYw\\nIgwIx4DE/QQQgMq17gE=\\n\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -150,17 +252,33 @@
   },
   {
     "cmd": [],
-    "name": "publish message (5)"
+    "name": "build status pubsub update (5)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@message@  }, @@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update (5).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
     "infra_step": true,
-    "name": "publish message (5).publish-message",
+    "name": "build status pubsub update (5).publish message.publish-message",
     "stdin": "{\"data\": \"CAAaAghk\\n\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
