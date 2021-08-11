@@ -7,3 +7,5 @@
 /bundle/
 support/cipd-bin
 .idea/
+.coverage
+.total_coverage
