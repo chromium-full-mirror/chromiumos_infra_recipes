@@ -46,7 +46,7 @@ def default_topic(staging):
   return 'chromeos-builds-all'
 
 
-class _MessageDelegate:
+class _MessageDelegate(object):
   """
   MessageDelegate wraps a protobuf message, adding a publish() function.
 
@@ -66,6 +66,15 @@ class _MessageDelegate:
   # check whether a function is overloaded or not.
   def __getattr__(self, attr):
     return getattr(self._msg, attr)
+
+  # Set attribute requests to the underlying message. This essentially creates
+  # an allowlist of attributes set in the _MessageDelegate instances.
+  def __setattr__(self, attr, value):
+    if attr in ['_msg', '_send_func']:
+      # set them to self.
+      super(_MessageDelegate, self).__setattr__(attr, value)
+    else:
+      setattr(self._msg, attr, value)
 
   def publish(self):
     self._send_func()
@@ -295,24 +304,21 @@ class BuildReportingApi(recipe_api.RecipeApi):
       step_name: Predefined step name, one of BuildReport.StepDetails.StepName
 
     Return:
-      Handle which can be used to set the step status manually.
+      Handle which is used to set the step status.
     """
 
-    # Workaround for not having nonlocal in Python 2.  This lets us mutate the
-    # status value in the handle closures below because we're not rebinding
-    # notlocal (which is the actual variable closed over).
-    class notlocal:
-      status = self.STEP_SUCCESS
+    class Handle(object):
 
-    class handle:
+      # The default status.
+      status = self.STEP_SUCCESS
 
       @staticmethod
       def fail():
-        notlocal.status = self.STEP_FAILURE
+        Handle.status = self.STEP_FAILURE
 
       @staticmethod
       def infra_fail():
-        notlocal.status = self.STEP_INFRA_FAILURE
+        Handle.status = self.STEP_INFRA_FAILURE
 
     # Publish the initial step status.
     step_info = self.create_step_info(
@@ -322,15 +328,16 @@ class BuildReportingApi(recipe_api.RecipeApi):
     step_info.publish()
 
     try:
-      yield handle
+      yield Handle
     except InfraFailure:
-      handle.infra_fail()
+      Handle.infra_fail()
       raise
     except StepFailure:
-      handle.fail()
+      Handle.fail()
       raise
     finally:
       # Publish the final step time.
       step_info.runtime.end.FromDatetime(self.m.time.utcnow())
-      step_info.status = notlocal.status
+      #step_info._msg.status = Handle.status
+      step_info.status = Handle.status
       step_info.publish()

@@ -6288,7 +6288,7 @@
       "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
       "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
       "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\", @@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_INFRA_FAILURE\", @@@",
       "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
       "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:23Z\", @@@",
       "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:54:30.500Z\"@@@",
@@ -6316,7 +6316,7 @@
     },
     "infra_step": true,
     "name": "build status pubsub update (2).publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBABKi0SKwoMU1RFUF9PVkVSQUxMEhsQyAEaFgoGCMOAxP0EEgwIhoHE/QQQgMq1\\n7gE=\\n\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBABKiwSKgoMU1RFUF9PVkVSQUxMEhoQZhoWCgYIw4DE/QQSDAiGgcT9BBCAyrXu\\nAQ==\\n\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
