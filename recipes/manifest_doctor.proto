@@ -25,4 +25,14 @@ message ManifestDoctorProperties {
     // Paths within the internal buildspec GS bucket to mirror to external
     // buildspec bucket.
     repeated string buildspec_watch_paths = 5;
+
+    // Programs/projects to consider for project buildspec creation, e.g.
+    // galaxy/milkyway. Supports wildcards, e.g. galaxy/*.
+    repeated string project_buildspecs = 6;
+
+    // Paths within manifest-versions to watch for project buildspec creation.
+    repeated string project_buildspec_watch_paths = 7;
+
+    // Milestones to consider within project_buildspec_watch_paths.
+    int32 project_buildspec_min_milestone = 8;
 }

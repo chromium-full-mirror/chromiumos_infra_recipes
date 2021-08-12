@@ -63,6 +63,15 @@ def RunSteps(api, properties):
 
       api.step("run manifest_doctor", cmd)
 
+  if len(properties.project_buildspec_watch_paths) > 0:
+    with api.step.nest("create partner buildspecs"):
+      cmd = [manifest_doctor_path, "project-buildspec"]
+      cmd += ["--paths", ",".join(properties.project_buildspec_watch_paths)]
+      cmd += ["--min_milestone", properties.project_buildspec_min_milestone]
+      cmd += ["--projects", ",".join(properties.project_buildspecs)]
+
+      api.step("run manifest_doctor", cmd)
+
   with api.bot_cost.build_cost_context(), api.workspace_util.setup_workspace(
   ), api.cros_sdk.cleanup_context():
     api.cros_source.ensure_synced_cache()
@@ -102,10 +111,15 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.properties(**{
-          "min_milestone": 90,
-          "buildspec_watch_paths": ["release/", "test/"],
-      }),
+      api.properties(
+          **{
+              "min_milestone": 90,
+              "buildspec_watch_paths": ["release/", "test/"],
+              "project_buildspec_watch_paths":
+                  ["full/buildspecs/", "buildspecs/"],
+              "project_buildspec_min_milestone": 90,
+              "project_buildspecs": ["galaxy/", "foo/bar"],
+          }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
               dict(project='chromeos/program/galaxy',
@@ -117,6 +131,12 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'create external buildspecs.run manifest_doctor',
                      ['--paths', 'release/,test/']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'create partner buildspecs.run manifest_doctor', [
+              '--paths', 'full/buildspecs/,buildspecs/', '--min_milestone',
+              '90', '--projects', 'galaxy/,foo/bar'
+          ]),
       api.post_check(
           post_process.StepCommandContains,
           'branch local manifests.run manifest_doctor',

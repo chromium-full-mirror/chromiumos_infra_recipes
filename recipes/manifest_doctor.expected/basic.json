@@ -77,6 +77,26 @@
   },
   {
     "cmd": [],
+    "name": "create partner buildspecs"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/manifest_doctor",
+      "project-buildspec",
+      "--paths",
+      "full/buildspecs/,buildspecs/",
+      "--min_milestone",
+      "90",
+      "--projects",
+      "galaxy/,foo/bar"
+    ],
+    "name": "create partner buildspecs.run manifest_doctor",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "configure builder"
   },
   {
