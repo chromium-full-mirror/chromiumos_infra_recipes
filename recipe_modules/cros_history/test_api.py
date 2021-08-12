@@ -25,21 +25,24 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     """Return value for is_retry when testing."""
     return value
 
-  def build_with_passed_tests(self, tests, build_id=123, start_time=1562475240):
+  def build_with_passed_tests(self, tests, build_id=123,
+                              create_time=1562475240):
     """Generate a test build with the 'passed_tests' property.
 
     Args:
       tests (list[str]): List of tests names that passed.
       build_id (int): The id for the build.
-      start_time (int): The start_time for the build in seconds.
+      create_time (int): The create_time for the build in seconds.
 
     Returns:
       Build: Containing the expected 'passed_tests' and 'test_summary' output
         property.
     """
     build = build_pb2.Build(
-        id=build_id, builder=builder_pb2.BuilderID(builder='atlas-cq'),
-        end_time=timestamp_pb2.Timestamp(seconds=start_time + 1),
+        id=build_id, builder=builder_pb2.BuilderID(builder='cq-orchestrator'),
+        create_time=timestamp_pb2.Timestamp(seconds=create_time),
+        start_time=timestamp_pb2.Timestamp(seconds=create_time + 1),
+        end_time=timestamp_pb2.Timestamp(seconds=create_time + 2),
         status=common_pb2.SUCCESS)
     build.output.properties.update({'passed_tests': tests})
     build.output.properties.update({
@@ -53,35 +56,24 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     return build
 
   def build_with_failed_tests(self, builder_names, build_id=123,
-                              start_time=1562475240):
+                              create_time=1562475240):
     """Generate a test build with the failed tests in the output.
 
     Args:
       tests (list[str]): List of builder names that failed hw testing.
       build_id (int): The id for the build.
-      start_time (int): The start_time for the build in seconds.
+      create_time (int): The create_time for the build in seconds.
 
     Returns:
       Build: Containing the expected 'test_failures' and 'test_summary'
         property.
     """
     build = build_pb2.Build(
-        id=build_id, builder=builder_pb2.BuilderID(builder='atlas-cq'),
-        start_time=timestamp_pb2.Timestamp(seconds=start_time),
-        end_time=timestamp_pb2.Timestamp(seconds=start_time + 1),
+        id=build_id, builder=builder_pb2.BuilderID(builder='cq-orchestrator'),
+        create_time=timestamp_pb2.Timestamp(seconds=create_time),
+        start_time=timestamp_pb2.Timestamp(seconds=create_time + 1),
+        end_time=timestamp_pb2.Timestamp(seconds=create_time + 2),
         status=common_pb2.FAILURE)
-
-    build.output.properties.update({
-        'test_failures': {
-            "hw_test_failures": [{
-                'test_spec':
-                    jsonpb.MessageToJson(
-                        HwTestUnit(
-                            common=TestUnitCommon(builder_name=builder_name)))
-            } for builder_name in builder_names],
-            "needs_bisection": False
-        }
-    })
 
     build.output.properties.update({
         'test_summary': [{

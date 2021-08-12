@@ -5,6 +5,11 @@
 
 from recipe_engine.recipe_api import Property
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
+from google.protobuf import timestamp_pb2
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -28,9 +33,9 @@ def GenTests(api):
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_failed_tests(
               ['my-little-builder', 'your-little-builder'], build_id=2,
-              start_time=12345),
+              create_time=12345),
           api.cros_history.build_with_failed_tests([], build_id=1,
-                                                   start_time=12346)
+                                                   create_time=12346)
       ], 'find matching builds.buildbucket.search'),
       api.properties(**{'expected_builder_names': []}))
 
@@ -39,9 +44,9 @@ def GenTests(api):
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_failed_tests(
               ['my-little-builder', 'your-little-builder'], build_id=1,
-              start_time=12346),
-          api.cros_history.build_with_failed_tests(['previous-little-builder'],
-                                                   build_id=2, start_time=12345)
+              create_time=12346),
+          api.cros_history.build_with_failed_tests(
+              ['previous-little-builder'], build_id=2, create_time=12345)
       ], 'find matching builds.buildbucket.search'),
       api.properties(**{
           'expected_builder_names':
@@ -49,12 +54,16 @@ def GenTests(api):
       }))
 
   yield api.test(
-      'no-test-failure-value',
+      'latest-missing-test-summary-field',
       api.buildbucket.simulated_search_results([
-          api.cros_history.build_with_passed_tests(
-              ['my-little-builder', 'your-little-builder'])
+          build_pb2.Build(id=1, create_time=timestamp_pb2.Timestamp(
+              seconds=12346), start_time=timestamp_pb2.Timestamp(seconds=12347),
+                          end_time=timestamp_pb2.Timestamp(seconds=12348),
+                          status=common_pb2.CANCELED),
+          api.cros_history.build_with_failed_tests(
+              ['previous-little-builder'], build_id=2, create_time=12345)
       ], 'find matching builds.buildbucket.search'),
-      api.properties(**{'expected_builder_names': []}))
+      api.properties(**{'expected_builder_names': ['previous-little-builder']}))
 
   yield api.test(
       'no-past-builds',
