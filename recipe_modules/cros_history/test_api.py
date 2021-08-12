@@ -39,10 +39,9 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
         property.
     """
     build = build_pb2.Build(
-        id=build_id,
-        builder=builder_pb2.BuilderID(builder='atlas-cq'),
-        start_time=timestamp_pb2.Timestamp(seconds=start_time),
-    )
+        id=build_id, builder=builder_pb2.BuilderID(builder='atlas-cq'),
+        end_time=timestamp_pb2.Timestamp(seconds=start_time + 1),
+        status=common_pb2.SUCCESS)
     build.output.properties.update({'passed_tests': tests})
     build.output.properties.update({
         'test_summary': [{
@@ -68,10 +67,10 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
         property.
     """
     build = build_pb2.Build(
-        id=build_id,
-        builder=builder_pb2.BuilderID(builder='atlas-cq'),
+        id=build_id, builder=builder_pb2.BuilderID(builder='atlas-cq'),
         start_time=timestamp_pb2.Timestamp(seconds=start_time),
-    )
+        end_time=timestamp_pb2.Timestamp(seconds=start_time + 1),
+        status=common_pb2.FAILURE)
 
     build.output.properties.update({
         'test_failures': {

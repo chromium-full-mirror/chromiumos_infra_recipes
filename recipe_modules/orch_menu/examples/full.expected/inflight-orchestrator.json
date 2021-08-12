@@ -927,7 +927,7 @@
     "name": "find inflight orchestrator.find matching builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/8922054662172513001)@@@",
+      "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/8922054662172513001@@@",
       "@@@STEP_LOG_END@matching builds@@@"
     ]
   },

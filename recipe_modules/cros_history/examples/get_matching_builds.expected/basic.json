@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "find matching builds",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@matching builds@(https://ci.chromium.org/b/100)@@@",
+      "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/100@@@",
       "@@@STEP_LOG_END@matching builds@@@"
     ]
   },

@@ -22,6 +22,12 @@ FAILED_TESTS_KEY = 'test_failures'
 PASSED_TESTS_KEY = 'passed_tests'
 SNAPSHOT_BUCKET = 'postsubmit'
 TEST_SUMMARY_KEY = 'test_summary'
+TERMINAL_STATUSES = [
+    common_pb2.SUCCESS,
+    common_pb2.FAILURE,
+    common_pb2.INFRA_FAILURE,
+    common_pb2.CANCELED,
+]
 
 
 class CrosHistoryApi(recipe_api.RecipeApi):
@@ -85,7 +91,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       set[str]: Names of builders with HW or VM testing failures, if any.
     """
     current_build = self.m.buildbucket.build
-    past_builds = self.get_matching_builds(current_build)
+    past_builds = self.get_matching_builds(current_build,
+                                           statuses=TERMINAL_STATUSES)
     if not past_builds:
       return set()
     past_builds.sort(key=lambda build: build.start_time.seconds)
@@ -125,7 +132,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('get change test history') as presentation:
       current_build = self.m.buildbucket.build
-      past_builds = self.get_matching_builds(current_build)
+      past_builds = self.get_matching_builds(current_build,
+                                             statuses=TERMINAL_STATUSES)
 
       all_passed_tests = set()
       for build in past_builds:
@@ -217,7 +225,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
                                        start_build_id=start_build_id,
                                        limit=limit)
       presentation.logs['matching builds'] = [
-          '(https://ci.chromium.org/b/%s)' % str(b.id) for b in builds
+          'https://ci.chromium.org/b/%s' % str(b.id) for b in builds
       ]
       return builds
 
@@ -235,10 +243,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       if is_retry is not None:
         return is_retry
 
-    builds = self.get_matching_builds(self.m.buildbucket.build)
-    # TODO(b/195943622): Remove the filtering of builds here once we are
-    # confident that get_matching_builds returns the correct list.
-    builds = [b for b in builds if b.id != self.m.buildbucket.build.id]
+    builds = self.get_matching_builds(self.m.buildbucket.build,
+                                      statuses=TERMINAL_STATUSES)
     return len(builds) >= 1
 
   @staticmethod
