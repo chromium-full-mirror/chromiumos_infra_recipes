@@ -2094,8 +2094,20 @@
   },
   {
     "cmd": [],
-    "name": "fetch gitiles file",
+    "name": "generate coverage rules"
+  },
+  {
+    "cmd": [],
+    "name": "generate coverage rules.write BuildAPI inputs",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
       "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
       "@@@STEP_LOG_LINE@data@    {@@@",
@@ -2118,15 +2130,46 @@
       "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
+    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"values\": [\n    {\n      \"buildTarget\": {\n        \"portageBuildTarget\": {\n          \"overlayName\": \"overlayA\"\n        }\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "generate coverage rules.write BuildAPI inputs.write build_metadata.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@{@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@    {@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@        \"portageBuildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@          \"overlayName\": \"overlayA\"@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@        }@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@      }@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@    }@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@  ]@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@}@@@",
+      "@@@STEP_LOG_END@build_metadata.jsonproto@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "fetch gitiles file (2)",
+    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file (2)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
       "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
       "@@@STEP_LOG_LINE@data@    {@@@",
@@ -2144,18 +2187,47 @@
       "curl",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/fake_config.jsonproto?format=TEXT"
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.jsonproto?format=TEXT"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/fake_config.jsonproto?format=TEXT",
+    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.jsonproto?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"values\": [\n    {\n      \"hwDesign\": {\n        \"name\": \"design1\"\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_2/flattened.jsonproto"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "generate coverage rules.write BuildAPI inputs.write flattened.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@flattened.jsonproto@{@@@",
+      "@@@STEP_LOG_LINE@flattened.jsonproto@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@flattened.jsonproto@    {@@@",
+      "@@@STEP_LOG_LINE@flattened.jsonproto@      \"hwDesign\": {@@@",
+      "@@@STEP_LOG_LINE@flattened.jsonproto@        \"name\": \"design1\"@@@",
+      "@@@STEP_LOG_LINE@flattened.jsonproto@      }@@@",
+      "@@@STEP_LOG_LINE@flattened.jsonproto@    }@@@",
+      "@@@STEP_LOG_LINE@flattened.jsonproto@  ]@@@",
+      "@@@STEP_LOG_LINE@flattened.jsonproto@}@@@",
+      "@@@STEP_LOG_END@flattened.jsonproto@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "fetch gitiles file (3)",
+    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file (3)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
       "@@@STEP_LOG_LINE@data@  \"dutAttributes\": [@@@",
       "@@@STEP_LOG_LINE@data@    {@@@",
@@ -2176,51 +2248,63 @@
       "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "fetch gitiles file (3).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT",
+    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file (3).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"dutAttributes\": [\n    {\n      \"id\": {\n        \"value\": \"attribute1\"\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "generate coverage rules.write BuildAPI inputs.write dut_attributes.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@{@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@  \"dutAttributes\": [@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@    {@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@      \"id\": {@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@        \"value\": \"attribute1\"@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@      }@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@    }@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@  ]@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@}@@@",
+      "@@@STEP_LOG_END@dut_attributes.jsonproto@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.TestService/GetCoverageRules",
+    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildMetadataList\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"values\": [@@@",
-      "@@@STEP_LOG_LINE@request@      {@@@",
-      "@@@STEP_LOG_LINE@request@        \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"portageBuildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"overlayName\": \"overlayA\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    ]@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"dutAttributeList\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"dutAttributes\": [@@@",
-      "@@@STEP_LOG_LINE@request@      {@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"value\": \"attribute1\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    ]@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"sourceTestPlans\": [@@@",
       "@@@STEP_LOG_LINE@request@    {}, @@@",
       "@@@STEP_LOG_LINE@request@    {}@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"flatConfigList\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"values\": [@@@",
-      "@@@STEP_LOG_LINE@request@      {@@@",
-      "@@@STEP_LOG_LINE@request@        \"hwDesign\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"name\": \"design1\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    ]@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/tmp_tmp_2/flattened.jsonproto\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -2236,50 +2320,33 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildMetadataList\": {\n    \"values\": [\n      {\n        \"buildTarget\": {\n          \"portageBuildTarget\": {\n            \"overlayName\": \"overlayA\"\n          }\n        }\n      }\n    ]\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"dutAttributeList\": {\n    \"dutAttributes\": [\n      {\n        \"id\": {\n          \"value\": \"attribute1\"\n        }\n      }\n    ]\n  }, \n  \"sourceTestPlans\": [\n    {}, \n    {}\n  ], \n  \"flatConfigList\": {\n    \"values\": [\n      {\n        \"hwDesign\": {\n          \"name\": \"design1\"\n        }\n      }\n    ]\n  }\n}",
+      "{\n  \"buildMetadataList\": {\n    \"path\": \"[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto\", \n    \"location\": 2\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"dutAttributeList\": {\n    \"path\": \"[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto\", \n    \"location\": 2\n  }, \n  \"sourceTestPlans\": [\n    {}, \n    {}\n  ], \n  \"flatConfigList\": {\n    \"path\": \"[CLEANUP]/tmp_tmp_2/flattened.jsonproto\", \n    \"location\": 2\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "call chromite.api.TestService/GetCoverageRules.write input file",
+    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@{@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"buildMetadataList\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"values\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@          \"portageBuildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@            \"overlayName\": \"overlayA\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@          }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"location\": 2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"dutAttributeList\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"dutAttributes\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"id\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@          \"value\": \"attribute1\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"location\": 2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"sourceTestPlans\": [@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {}, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {}@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"flatConfigList\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"values\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"hwDesign\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@          \"name\": \"design1\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    ]@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CLEANUP]/tmp_tmp_2/flattened.jsonproto\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@    \"location\": 2@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
       "@@@STEP_LOG_LINE@input_proto.json@}@@@",
       "@@@STEP_LOG_END@input_proto.json@@@"
@@ -2302,9 +2369,9 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "call chromite.api.TestService/GetCoverageRules.call build API script",
+    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2325,16 +2392,16 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.TestService/GetCoverageRules.read output file",
+    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.TestService/GetCoverageRules.call response",
+    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]

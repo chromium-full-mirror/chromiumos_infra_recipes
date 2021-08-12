@@ -11,6 +11,7 @@ from google.protobuf import text_format
 
 from PB.chromite.api import test as test_pb2
 from PB.chromiumos.build.api import system_image as system_image_pb2
+from PB.chromiumos import common as common_pb2
 from PB.chromiumos.config.payload import flat_config as flat_config_pb2
 from PB.chromiumos.test.api import dut_attribute as dut_attribute_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
@@ -96,14 +97,16 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
         self._test_plan_path = cipd_dir.join('test_plan')
 
-  def _get_config_jsonpb(self, path, message, test_output_message):
-    """Fetch and parse a jsonpb from config-internal.
+  def _download_config_pb(self, path, test_output_message):
+    """Fetch a protobuf from config-internal and write to a local temp file.
 
     Args:
-      * path (str): Path to the jsonpb file within config-internal.
-      * message (google.protobuf.Message): A message to merge into.
-      * test_output_message (google.protobuf.Message): A message of the same
-          type as the 'message' arg to return as test data.
+      * path (str): Path to the file within config-internal.
+      * test_output_message (google.protobuf.Message): A message to write as
+        test data.
+
+    Returns:
+      * Path to the tempfile where the protobuf was written.
     """
     test_output_contents = base64.b64encode(
         json_format.MessageToJson(test_output_message))
@@ -111,7 +114,11 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                                        'chromeos/config-internal', path,
                                        public=False,
                                        test_output_data=test_output_contents)
-    return json_format.Parse(contents, message)
+
+    basename = self.m.path.basename(path)
+    output = self.m.path.join(self.m.path.mkdtemp(), basename)
+    self.m.file.write_raw('write {}'.format(basename), output, contents)
+    return output
 
   def generate_coverage_rules(self, source_test_plans, chroot):
     """Call the GetCoverageRules BuildAPI.
@@ -124,41 +131,44 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     Returns:
       A list of generated CoverageRules.
     """
-    # TODO(b/182898188): Read BuildMetadataList and FlatConfigList specific to
-    # the build when available. For now, just read the global one from
-    # config-internal.
-    build_metadata_list = self._get_config_jsonpb(
-        'build/generated/build_metadata.jsonproto',
-        message=system_image_pb2.SystemImage.BuildMetadataList(),
-        test_output_message=self.test_api.build_metadata_list(),
-    )
+    with self.m.step.nest('generate coverage rules'):
+      with self.m.step.nest('write BuildAPI inputs'):
+        # TODO(b/182898188): Read BuildMetadataList and FlatConfigList specific to
+        # the build when available. For now, just read the global one from
+        # config-internal.
+        build_metadata_list = self._download_config_pb(
+            'build/generated/build_metadata.jsonproto',
+            test_output_message=self.test_api.build_metadata_list(),
+        )
 
-    # Passing the full flattened config to the Build API endpoint seems to cause
-    # the Swarming task to fail. Pass the small, fake config as a placeholder.
-    #
-    # TODO(b/182898188): Investigate further why the full config causes failure,
-    # and possible workarounds.
-    flat_config_list = self._get_config_jsonpb(
-        'hw_design/generated/fake_config.jsonproto',
-        message=flat_config_pb2.FlatConfigList(),
-        test_output_message=self.test_api.flat_config_list(),
-    )
+        flat_config_list = self._download_config_pb(
+            'hw_design/generated/flattened.jsonproto',
+            test_output_message=self.test_api.flat_config_list(),
+        )
 
-    dut_attribute_list = self._get_config_jsonpb(
-        'dut_attributes/generated/dut_attributes.jsonproto',
-        message=dut_attribute_pb2.DutAttributeList(),
-        test_output_message=self.test_api.dut_attribute_list(),
-    )
+        dut_attribute_list = self._download_config_pb(
+            'dut_attributes/generated/dut_attributes.jsonproto',
+            test_output_message=self.test_api.dut_attribute_list(),
+        )
 
-    request = test_pb2.GetCoverageRulesRequest(
-        chroot=chroot,
-        source_test_plans=source_test_plans,
-        build_metadata_list=build_metadata_list,
-        flat_config_list=flat_config_list,
-        dut_attribute_list=dut_attribute_list,
-    )
+      request = test_pb2.GetCoverageRulesRequest(
+          chroot=chroot,
+          source_test_plans=source_test_plans,
+          build_metadata_list=common_pb2.Path(
+              path=str(build_metadata_list),
+              location=common_pb2.Path.OUTSIDE,
+          ),
+          flat_config_list=common_pb2.Path(
+              path=str(flat_config_list),
+              location=common_pb2.Path.OUTSIDE,
+          ),
+          dut_attribute_list=common_pb2.Path(
+              path=str(dut_attribute_list),
+              location=common_pb2.Path.OUTSIDE,
+          ),
+      )
 
-    return list(
-        self.m.cros_build_api.TestService.GetCoverageRules(
-            request).coverage_rules,
-    )
+      return list(
+          self.m.cros_build_api.TestService.GetCoverageRules(
+              request).coverage_rules,
+      )

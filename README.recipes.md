@@ -3400,11 +3400,11 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [generate\_coverage\_rules](/recipe_modules/cros_test_plan_v2/api.py#116)(self, source_test_plans, chroot):**
+&mdash; **def [generate\_coverage\_rules](/recipe_modules/cros_test_plan_v2/api.py#123)(self, source_test_plans, chroot):**
 
 Call the GetCoverageRules BuildAPI.
 
@@ -3416,9 +3416,9 @@ Args:
 Returns:
   A list of generated CoverageRules.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#26)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#27)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#35)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#36)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
