@@ -93,6 +93,19 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
             testingconfig_path.join('target_test_requirements_lts.binaryproto'),
             testingconfig_path.join('target_test_requirements.binaryproto'))
         cmd.extend(['--local_config_dir', config_path])
+      # Shamefully replicate this hack for rubik temporarily.
+      # TODO(b:191392307): Remove this with real branched config.
+      elif self.m.buildbucket.build.builder.builder.endswith('-main-release'):
+        config_path = self.m.path.mkdtemp(prefix='rubik-configs')
+        self.m.git.clone(INFRA_CONFIG_URL, target_path=config_path,
+                         timeout_sec=3 * 60)
+        testingconfig_path = config_path.join('testingconfig').join('generated')
+        self.m.file.copy(
+            'copy Rubik config',
+            testingconfig_path.join(
+                'target_test_requirements_rubik.binaryproto'),
+            testingconfig_path.join('target_test_requirements.binaryproto'))
+        cmd.extend(['--local_config_dir', config_path])
 
       self.m.step('call test_planner', cmd, infra_step=True)
 

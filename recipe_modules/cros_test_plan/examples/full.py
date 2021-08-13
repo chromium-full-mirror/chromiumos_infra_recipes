@@ -34,6 +34,16 @@ def GenTests(api):
   )
 
   yield api.test(
+      'rubik-temp',
+      api.buildbucket.ci_build(project='chromeos', bucket='staging',
+                               builder='staging-atlas-kernelnext-main-release'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'generate test plan.ensure test_planner.ensure_installed',
+          ['chromiumos/infra/test_plan_generator/${platform} staging']),
+  )
+
+  yield api.test(
       'staging',
       api.buildbucket.ci_build(
           project='chromeos',
