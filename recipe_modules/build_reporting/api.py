@@ -338,6 +338,5 @@ class BuildReportingApi(recipe_api.RecipeApi):
     finally:
       # Publish the final step time.
       step_info.runtime.end.FromDatetime(self.m.time.utcnow())
-      #step_info._msg.status = Handle.status
       step_info.status = Handle.status
       step_info.publish()
