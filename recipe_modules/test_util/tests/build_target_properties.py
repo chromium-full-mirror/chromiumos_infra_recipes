@@ -13,7 +13,7 @@ from PB.chromiumos import common
 
 def RunSteps(api):
   api.assertions.assertRaises(ValueError,
-                              api.test_util.test_api.build_target_properties,
+                              api.test_util.test_api.build_menu_properties,
                               build_target=common.BuildTarget(name='foo'),
                               build_target_name='bar')
 

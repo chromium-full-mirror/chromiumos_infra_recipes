@@ -17,7 +17,7 @@ from recipe_engine import recipe_test_api
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
-from PB.recipes.chromeos.build_target import BuildTargetProperties
+from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 
 
 class TestUtilApi(recipe_test_api.RecipeTestApi):
@@ -34,7 +34,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     Args:
       build_target_name (str): Name of the build_target, or None for no
           build_target.
-      input_properties (BuildTargetProperties or dict): input properties, or
+      input_properties (BuildMenuProperties or dict): input properties, or
           None.
       kwargs (dict): see test_build()
 
@@ -193,13 +193,12 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
 
     return _test_build_return(msg, ret)
 
-  def build_target_properties(self, build_target_name=None, **kwargs):
+  def build_menu_properties(self, build_target_name=None, **kwargs):
     """Helper for updating input.properties in a Build message.
 
     Args:
       build_target_name (str): The name to use for the build_target, or None.
-      kwargs (dict): Other key value pairs for BuildTargetProperties.
-
+      kwargs (dict): Other key value pairs for BuildMenuProperties.
     Raises:
       ValueError if build_target_name and build_target are both set.
 
@@ -210,5 +209,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       if kwargs.get('build_target'):
         raise ValueError('Both build_target and build_target_name given.')
       kwargs['build_target'] = BuildTarget(name=build_target_name)
-    return MessageToDict(
-        BuildTargetProperties(**kwargs), preserving_proto_field_name=True)
+    return {
+        '$chromeos/build_menu':
+            MessageToDict(
+                BuildMenuProperties(**kwargs), preserving_proto_field_name=True)
+    }

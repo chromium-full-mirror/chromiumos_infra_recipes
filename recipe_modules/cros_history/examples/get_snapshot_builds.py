@@ -31,11 +31,12 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def build(build_id, builder, build_target):
+  def build(build_id, builder, build_target=None):
     ret = build_pb2.Build(id=build_id,
                           builder=builder_pb2.BuilderID(builder=builder))
-    ret.input.properties.update(
-        api.test_util.build_target_properties(build_target_name=build_target))
+    if build_target:
+      ret.input.properties.update(
+          api.test_util.build_menu_properties(build_target_name=build_target))
     return ret
 
   yield api.test(

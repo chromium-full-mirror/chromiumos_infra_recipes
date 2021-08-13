@@ -12,6 +12,7 @@ DEPS = [
     'cros_infra_config',
     'cros_history',
     'cros_relevance',
+    'test_util',
 ]
 
 from recipe_engine import post_process
@@ -127,7 +128,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusSuccess), cq=True, build_target='coral',
-      input_properties=BuildTargetProperties(artifact_build=True),
+      input_properties=api.test_util.build_menu_properties(artifact_build=True),
       artifact_pointless=True)
 
   # This covers the env_info.pointless check.

@@ -269,10 +269,10 @@
     "name": "get snapshot builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"STARTED\", \"input\": {\"properties\": {\"build_target\": {\"name\": \"amd64-generic\"}}, \"gerritChanges\": [{\"change\": \"1234\"}]}, \"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514002\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"properties\": {\"build_target\": {\"name\": \"amd64-generic\"}}, \"gerritChanges\": [{\"change\": \"1234\"}]}, \"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514003\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"STARTED\", \"input\": {\"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}, \"gerritChanges\": [{\"change\": \"1234\"}]}, \"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514002\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}, \"gerritChanges\": [{\"change\": \"1234\"}]}, \"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514003\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"properties\": {}}, \"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514005\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SCHEDULED\", \"input\": {\"properties\": {\"build_target\": {\"name\": \"amd64-generic\"}}, \"gerritChanges\": [{\"change\": \"1234\"}]}, \"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514004\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SCHEDULED\", \"input\": {\"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}, \"gerritChanges\": [{\"change\": \"1234\"}]}, \"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514004\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@amd64-generic-postsubmit@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
     ]

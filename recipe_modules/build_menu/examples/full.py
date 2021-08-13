@@ -71,9 +71,10 @@ def GenTests(api):
   # Release build.
   yield api.build_menu.test(
       'release-build',
-      api.properties(**{'$chromeos/build_menu': {
-          'is_cloudready': True,
-      }}), build_target='cloudready-release-R90-13816.B', bucket='release')
+      api.properties(**api.test_util.build_menu_properties(
+          build_target_name='cloudready-release-R90-13816.B')),
+      build_target='cloudready-release-R90-13816.B', bucket='release')
+
 
   # Run the other tests that we only run in the module.
   yield api.build_menu.test(

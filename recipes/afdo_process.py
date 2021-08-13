@@ -13,6 +13,8 @@ DEPS = [
     'test_util',
 ]
 
+from google.protobuf.json_format import MessageToDict
+
 from PB.chromiumos.common import ArtifactsByService
 from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
 
@@ -49,9 +51,13 @@ def GenTests(api):
   def test(name, builder='benchmark-afdo-process', input_artifacts=None,
            artifact_pointless=False, **kwargs):
     kwargs['builder'] = builder
-    input_props = AfdoProcessProperties(artifact_build=True)
+
+    afdo_props = AfdoProcessProperties(artifact_build=True)
     for artifact in input_artifacts or []:
-      input_props.input_artifacts.add().CopyFrom(artifact)
+      afdo_props.input_artifacts.add().CopyFrom(artifact)
+    input_props = MessageToDict(afdo_props, preserving_proto_field_name=True)
+    input_props.update(api.test_util.build_menu_properties(artifact_build=True))
+
     ret = api.test_util.test_child_build('chell', input_properties=input_props,
                                          **kwargs).build
     if artifact_pointless:

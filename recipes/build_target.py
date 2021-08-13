@@ -131,7 +131,7 @@ def GenTests(api):
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StatusSuccess), cq=True,
-      input_properties=BuildTargetProperties(artifact_build=True),
+      input_properties=api.test_util.build_menu_properties(artifact_build=True),
       artifact_pointless=True)
 
   # Failed artifact_build must not publish
@@ -145,7 +145,7 @@ def GenTests(api):
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
-      input_properties=BuildTargetProperties(artifact_build=True),
+      input_properties=api.test_util.build_menu_properties(artifact_build=True),
   )
 
   yield api.build_menu.test(

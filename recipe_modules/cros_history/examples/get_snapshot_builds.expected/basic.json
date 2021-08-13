@@ -27,8 +27,8 @@
     "name": "get snapshot builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"input\": {\"properties\": {\"build_target\": {\"name\": \"eve\"}}}, \"builder\": {\"builder\": \"eve-snapshot\"}, \"id\": \"123\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"input\": {\"properties\": {\"build_target\": {\"name\": \"bob\"}}}, \"builder\": {\"builder\": \"bob-snapshot\"}, \"id\": \"231\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"input\": {\"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"eve\"}}}}, \"builder\": {\"builder\": \"eve-snapshot\"}, \"id\": \"123\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"input\": {\"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"bob\"}}}}, \"builder\": {\"builder\": \"bob-snapshot\"}, \"id\": \"231\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cq-orchestrator\"}, \"id\": \"312\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@eve-snapshot@https://cr-buildbucket.appspot.com/build/123@@@",

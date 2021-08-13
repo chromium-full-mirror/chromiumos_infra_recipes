@@ -23,6 +23,5 @@ class BuildPlanTestApi(recipe_test_api.RecipeTestApi):
         gerrit_changes=[common_pb2.GerritChange(change=1234)],
         gitiles_commit=snapshot)
     msg.properties.update(
-        self.m.test_util.build_target_properties(
-            build_target_name=build_target))
+        self.m.test_util.build_menu_properties(build_target_name=build_target))
     return msg
