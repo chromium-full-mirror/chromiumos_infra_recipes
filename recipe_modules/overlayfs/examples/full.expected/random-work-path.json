@@ -549,10 +549,19 @@
     "cmd": [
       "rm",
       "-rf",
-      "[CACHE]/mount_a/*"
+      "[CACHE]/mount_a/upperdir"
     ],
     "infra_step": true,
-    "name": "cleanup overlayfs working directories"
+    "name": "cleanup overlayfs upperdir"
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/mount_a/workdir"
+    ],
+    "infra_step": true,
+    "name": "cleanup overlayfs workdir"
   },
   {
     "cmd": [

@@ -35,7 +35,8 @@ def RunSteps(api, properties):
     snapshot_prefixes = []
     is_staging = api.cros_infra_config.is_staging
     infra_host = api.swarming.bot_id
-    with api.gcloud.cleanup_mounted_disks():
+    with api.gcloud.cleanup_gce_disks(), \
+         api.gcloud.cleanup_mounted_disks():
       for cache in properties.cache_definition:
         api.gcloud.create_and_mount_disk(cache_name=cache.cache_name,
                                          branch=cache.branch,

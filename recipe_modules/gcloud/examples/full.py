@@ -29,12 +29,14 @@ def RunSteps(api):
   api.gcloud.delete_instance('image-name', project=GCE_PROJECT,
                              zone='us-central1-a')
 
-  disk_exists_tests = {
-      'chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros': True,
-      'chromiumos-release-r93-14092-b-16285369-us-central2-c': False
+  snapshot_exists_tests = {
+      'chromiumos-main-16287984': True,
+      'staging-chromiumos-release-r93-14092-b-16287710': True,
+      'chrome-release-r93-14092-b-99999999': False,
   }
-  for test, result in disk_exists_tests.items():
-    api.assertions.assertEqual(result, api.gcloud.disk_exists(disk=test))
+  for test, result in snapshot_exists_tests.items():
+    api.assertions.assertEqual(result,
+                               api.gcloud.snapshot_exists(snapshot=test))
 
   suffix_test = [
       {

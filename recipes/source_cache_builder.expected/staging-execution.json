@@ -99,35 +99,6 @@
       "gcloud",
       "compute",
       "disks",
-      "list",
-      "--format",
-      "json(name)",
-      "--filter",
-      "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-"
-    ],
-    "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot version.check whether disks exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-main-16285361-us-central2-c-cros\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-",
       "--zone=us-central1-b",

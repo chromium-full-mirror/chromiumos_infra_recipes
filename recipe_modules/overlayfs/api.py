@@ -43,9 +43,12 @@ class OverlayfsApi(recipe_api.RecipeApi):
     Args:
       cache_name (str): Name of the named cache to cleanup.
     """
-    del_path = '{}/*'.format(self.m.path['cache'].join(cache_name))
-    self.m.step('cleanup overlayfs working directories',
-                ['rm', '-rf', del_path], infra_step=True)
+    overlay_directories = ['upperdir', 'workdir']
+    for directory in overlay_directories:
+      self.m.step(
+          'cleanup overlayfs %s' % directory,
+          ['rm', '-rf', self.m.path['cache'].join(cache_name, directory)],
+          infra_step=True)
 
   def mount(self, name, lowerdir_path, mount_path, persist=False):
     """Mount an OverlayFS.

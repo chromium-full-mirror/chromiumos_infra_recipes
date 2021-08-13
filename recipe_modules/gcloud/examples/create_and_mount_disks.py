@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'build_menu',
@@ -107,6 +108,15 @@ def GenTests(api):
       mock_directory('chromiumos'),
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+  )
+  yield api.test(
+      'local-version-snapshot-exists',
+      mock_directory('chromiumos'),
+      mock_path('chromiumos-main-cache-snapshot-version.txt'),
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.step_data('create and attach disk.read local snapshot version',
+                    stdout=api.raw_io.output_text('chromiumos-main-16287984')),
   )
   yield api.test(
       'fail-to-create-disk-from-local-version',
