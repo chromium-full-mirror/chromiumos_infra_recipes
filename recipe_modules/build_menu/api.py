@@ -35,19 +35,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   # TODO(crbug/1099259): Migrate the common build_target properties to the
   # module, and stop looking at the global properties.
-  def __init__(self, props, glob_props, *args, **kwargs):
+  def __init__(self, props, *args, **kwargs):
     super(BuildMenuApi, self).__init__(*args, **kwargs)
     self._chroot_created = False
     self._dep_graph = None
     self._target_versions = None
-    # Our properties: BuildMenuProperties ($chromeos/build_menu).
-    # TODO(crbug/1099259): Inherit missing properties from the recipe.
-    if not props.build_target.name:
-      props.build_target.CopyFrom(glob_props.build_target)
-    props.force_relevant_build = (
-        props.force_relevant_build or glob_props.force_relevant_build)
-    props.artifact_build = (props.artifact_build or glob_props.artifact_build)
-
     self._build_target = props.build_target
     self._force_relevant_build = props.force_relevant_build
     self._artifact_build = props.artifact_build

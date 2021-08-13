@@ -556,14 +556,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       target = ParseDict(build.input.properties['$chromeos/build_menu'],
                          BuildMenuProperties(),
                          ignore_unknown_fields=True).build_target
-      if target.name:
-        return target
-
-    # TODO(crbug/1099259): Once everyone is looking at (and setting) the
-    # build_menu properties, stop looking at the global ones.
-    target = ParseDict(build.input.properties, BuildTargetProperties(),
-                       ignore_unknown_fields=True).build_target
-    return target if target and target.name else None
+      return target
 
   def get_build_target_name(self, build=None):
     """Return the build target name from input properties.

@@ -50,10 +50,6 @@ def GenTests(api):
   args = dict(build_target=build_target, force_relevant_build=True,
               artifact_build=True)
 
-  yield api.build_menu.test('only-recipe', test_props(**args),
-                            build_target=None,
-                            input_properties=BuildTargetProperties(**args))
-
   yield api.build_menu.test('only-module', test_props(**args),
                             build_target=None,
                             input_properties={'$chromeos/build_menu': args})
