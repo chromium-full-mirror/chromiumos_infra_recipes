@@ -133,7 +133,6 @@
   * [build_reporting:examples/full](#recipes-build_reporting_examples_full)
   * [build_reporting:tests/full](#recipes-build_reporting_tests_full)
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
-  * [build_target](#recipes-build_target) &mdash; Recipe for building a BuildTarget image.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
@@ -7068,15 +7067,6 @@ Recipe for building and testing a BuildTarget's packages.
 &mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#34)(api, config):**
 
 &mdash; **def [RunSteps](/recipes/build_slim_cq.py#24)(api):**
-### *recipes* / [build\_target](/recipes/build_target.py)
-
-[DEPS](/recipes/build_target.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
-
-Recipe for building a BuildTarget image.
-
-&mdash; **def [DoRunSteps](/recipes/build_target.py#24)(api, config):**
-
-&mdash; **def [RunSteps](/recipes/build_target.py#17)(api):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
