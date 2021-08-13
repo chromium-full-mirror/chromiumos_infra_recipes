@@ -8,11 +8,11 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import (
     ProctorProperties)
-from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.test_platform.taskstate import TaskState
 from recipe_engine.recipe_api import Property
 
@@ -77,7 +77,7 @@ def GenTests(api):
       * gerrit_changes list(GerritChange): Changes being tested in the build.
     """
     return api.test_util.test_build(
-        cq=True, revision=snapshot, input_properties=BuildTargetProperties(
+        cq=True, revision=snapshot, input_properties=BuildMenuProperties(
             build_target=BuildTarget(name=build_target))).message.input
 
   def serialize_builds(builds):

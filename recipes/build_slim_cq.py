@@ -18,7 +18,6 @@ DEPS = [
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.recipe_engine.result import RawResult
 
 

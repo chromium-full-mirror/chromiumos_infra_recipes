@@ -13,13 +13,8 @@ DEPS = [
     'test_util',
 ]
 
-from PB.recipes.chromeos.build_target import BuildTargetProperties
 
-PROPERTIES = BuildTargetProperties
-
-
-# pylint: disable=unused-argument
-def RunSteps(api, properties):
+def RunSteps(api):
   with api.build_menu.configure_builder(), \
       api.build_menu.setup_workspace_and_chroot():
     return

@@ -17,7 +17,6 @@ from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
                                                               GitilesCommit)
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
-from PB.recipes.chromeos.build_target import BuildTargetProperties
 from PB.testplans.test_retry import SuiteRetryCfg
 
 CHROME_OS_REPO_URL = (

@@ -33,8 +33,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
   ]
 
-  # TODO(crbug/1099259): Migrate the common build_target properties to the
-  # module, and stop looking at the global properties.
   def __init__(self, props, *args, **kwargs):
     super(BuildMenuApi, self).__init__(*args, **kwargs)
     self._chroot_created = False
@@ -79,10 +77,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
   @property
   def gerrit_changes(self):
     return self.m.cros_infra_config.gerrit_changes
-
-  @property
-  def force_relevant_build(self):
-    return self._force_relevant_build
 
   @property
   def is_staging(self):

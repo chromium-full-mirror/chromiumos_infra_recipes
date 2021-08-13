@@ -49,7 +49,7 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
                                                 retcode)
 
   def test(self, name, *args, **kwargs):
-    """A test, with build and BuildTargetProperties,
+    """A test, with build and BuildMenuProperties,
 
     This function creates a test child_build from kwargs, and then calls
     api.test() to create the TestData for a test.

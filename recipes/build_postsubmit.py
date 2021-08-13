@@ -12,22 +12,15 @@ DEPS = [
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
-from PB.recipes.chromeos.build_target import BuildTargetProperties
-
-# TODO(crbug/1099259): Drop our properties.
-# Our properties are processed and used by both the build_menu module, as well
-# as various downstream dashboards and other consumers of buildbucket output
-# properties.  They are not used directly within the recipe.
-PROPERTIES = BuildTargetProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api):
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
-    return DoRunSteps(api, config, properties)
+    return DoRunSteps(api, config)
 
 
-def DoRunSteps(api, config, _properties):
+def DoRunSteps(api, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   packages = env_info.packages
 

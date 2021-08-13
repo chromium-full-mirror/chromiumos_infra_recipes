@@ -15,8 +15,8 @@ from google.protobuf.json_format import ParseDict
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.recipe_modules.chromeos.test_util.examples.full import TestProperties
-from PB.recipes.chromeos.build_target import BuildTargetProperties
 
 PROPERTIES = TestProperties
 
@@ -27,7 +27,7 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(build.builder.bucket, properties.expected_bucket)
   api.assertions.assertEqual(build.builder.builder, properties.expected_builder)
 
-  props = ParseDict(build.input.properties, BuildTargetProperties(),
+  props = ParseDict(build.input.properties, BuildMenuProperties(),
                     ignore_unknown_fields=True)
   api.assertions.assertEqual(properties.expected_build_target,
                              props.build_target.name)
@@ -60,7 +60,7 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(api.buildbucket.build.exe,
                                properties.expected_executable)
 
-  props = ParseDict(build.output.properties, BuildTargetProperties(),
+  props = ParseDict(build.output.properties, BuildMenuProperties(),
                     ignore_unknown_fields=True)
   if properties.expected_output_build_target_name:
     api.assertions.assertEqual(properties.expected_output_build_target_name,
@@ -91,7 +91,7 @@ def GenTests(api):
   yield api.test(
       'child-with-properties-message',
       api.test_util.test_child_build(
-          'amd64-generic', input_properties=BuildTargetProperties(
+          'amd64-generic', input_properties=BuildMenuProperties(
               force_relevant_build=True)).build,
       api.properties(
           TestProperties(expected_project='chromeos',
@@ -118,7 +118,7 @@ def GenTests(api):
       'with-properties-message',
       api.test_util.test_build(
           builder='amd64-generic-postsubmit',
-          input_properties=BuildTargetProperties(
+          input_properties=BuildMenuProperties(
               build_target=BuildTarget(name='amd64-generic'))).build,
       api.properties(
           TestProperties(expected_project='chromeos',
@@ -255,9 +255,9 @@ def GenTests(api):
       'with-output-properties-message',
       api.test_util.test_build(
           builder='amd64-generic-postsubmit',
-          input_properties=BuildTargetProperties(
+          input_properties=BuildMenuProperties(
               build_target=BuildTarget(name='amd64-generic')),
-          output_properties=BuildTargetProperties(
+          output_properties=BuildMenuProperties(
               build_target=BuildTarget(name='changed'))).build,
       api.properties(
           TestProperties(expected_project='chromeos',
