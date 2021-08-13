@@ -6,22 +6,8 @@ syntax = "proto3";
 
 package recipes.chromeos.build_linters;
 
-import "chromiumos/common.proto";
-
 message BuildLintersProperties {
-  // The build target being built.
-  chromiumos.BuildTarget build_target = 1;
-
-  // Override for pointless build check.
-  bool force_relevant_build = 2;
-
-  // Whether this is an artifact build (calls ArtifactsService/PrepareForBuild.)
-  bool artifact_build = 3;
-
-  // Manifest to sync to before building.
-  reserved 4;
-
-  repeated string relevant_projects = 5;
-
+  // List of projects which are relevant.
+  repeated string relevant_projects = 1;
 
 }

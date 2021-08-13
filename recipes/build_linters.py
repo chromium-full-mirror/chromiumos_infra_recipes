@@ -29,10 +29,6 @@ DEPS = [
     'workspace_util',
 ]
 
-# TODO(crbug/1099259): Drop our properties.
-# Our properties are processed and used by both the build_menu module, as well
-# as various downstream dashboards and other consumers of buildbucket output
-# properties.  They are not used directly within the recipe.
 PROPERTIES = BuildLintersProperties
 
 
