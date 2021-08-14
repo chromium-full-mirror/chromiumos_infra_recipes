@@ -4,12 +4,23 @@
 # found in the LICENSE file.
 
 import os
+from collections import namedtuple
 
 from . import dut_interface
 from .phosphorus_results import PhosphorusResult, PhosphorusPrejobDUTResponse, PhosphorusTestDUTResponse, PhosphorusFetchCrashDUTResponse
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from PB.test_platform import phosphorus, skylab_test_runner
+
+
+DeviceUnderTest = namedtuple(
+    'DeviceUnderTest', ['hostname', 'board', 'model', 'software_dependencies'])
+MatchRequest = namedtuple(
+    'MatchRequest', ['board', 'model', 'software_dependencies', 'is_primary'])
+
+
+class MatchDutException(Exception):
+  pass
 
 
 class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
@@ -28,6 +39,90 @@ class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
         test_id=self.passthrough_test_id)
     self.phosphorus_config = interface.build_config(
         self.load_response.results_dir)
+    # A DeviceUnderTest namedtuple that represents primary DUT.
+    self.primary_dut = None
+    # A list of DeviceUnderTest namedtuples that represent peer DUTs.
+    self.peer_duts = []
+
+  def build_dut_topology(self, prejob):
+    """Determine primary dut and peer duts based on a testrunner prejob
+    request. In a multi-DUT case, a scheduling unit contains multiple
+    DUTs, this method will choice which DUTs will be used and primary/peer
+    relations, based on metadata of prejob request and hardware specification
+    of DUTs from the scheduling unit.
+
+    Args:
+    * prejob (test_platform.skylab_test_runner.Request.Prejob): The prejob
+              request with software/hardware attributes and dependencies
+              for primary and peer duts.
+    """
+    # We need to process cases that requested explict model before model
+    # agnostic requests, so use two queues here.
+    board_queue = []
+    model_queue = []
+    # Handle primary DUT request first.
+    primary = self._create_match_request(prejob, True)
+    if primary.model:
+      model_queue.append(primary)
+    else:
+      board_queue.append(primary)
+    # Add match request for secondary(peer) DUTs.
+    for s_prejob in prejob.secondary_devices:
+      req = self._create_match_request(s_prejob, False)
+      if req.model:
+        model_queue.append(req)
+      else:
+        board_queue.append(req)
+    loaded_duts = self.load_response.dut_topology
+    # We need process model queue first because model agnostic(board only)
+    # requests have wider selections.
+    self._process_match_request(model_queue, loaded_duts)
+    self._process_match_request(board_queue, loaded_duts)
+
+  def _create_match_request(self, prejob_request, is_primary):
+    return MatchRequest(
+        board=prejob_request.software_attributes.build_target.name,
+        model=prejob_request.hardware_attributes.model,
+        software_dependencies=prejob_request.software_dependencies,
+        is_primary=is_primary)
+
+  def _process_match_request(self, match_queue, loaded_duts):
+    for req in match_queue:
+      dut = self._match_dut(req, loaded_duts)
+      if req.is_primary:
+        self.primary_dut = dut
+      else:
+        self.peer_duts.append(dut)
+
+  def _match_dut(self, request, loaded_duts):
+    """Helper method to match a DUT request with a hardware resource(hostname)
+    based on metadata of the request and the hardware resource(e.g. board).
+
+    Args:
+    * request (MatchRequest): Information to match a DUT from loaded_duts.
+    * loaded_duts (test_platform.skylab_local_state.load.LoadResponse.dut_topology):
+          A list of DUTs metadata that loaded from a DUT or scheduling unit.
+
+    Returns: A DeviceUnderTest namedtuple
+    """
+    matched_index = -1
+    for i, dut in enumerate(loaded_duts):
+      # Match based on model if explict model requested as a board
+      # can have different models.
+      if request.model:
+        if request.model == dut.model:
+          matched_index = i
+          break
+      elif request.board == dut.board:
+        matched_index = i
+        break
+    if matched_index > -1:
+      dut = loaded_duts.pop(matched_index)
+      return DeviceUnderTest(dut.hostname, dut.board, dut.model,
+                             request.software_dependencies)
+    # We shouldn't hit this point as if a bot is matched to a test, it should
+    # contain DUTs that can satisfy all resource requests from the test.
+    raise MatchDutException("Failed to match loaded DUT with prejob request.")
 
 
 class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
@@ -40,17 +135,25 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
 
   def submit_pre_job(self, metadata, max_duration_seconds):
     prejob_properties = self._properties.request.prejob
+    # Construct addtional provision targets for multi-DUTs use case.
+    addtional_targets = []
+    for target in metadata.peer_duts:
+      t = phosphorus.prejob.PrejobRequest.ProvisionTarget(
+          dut_hostname=target.hostname,
+          software_dependencies=target.software_dependencies)
+      addtional_targets.append(t)
 
     with self._api.step.nest('Phosphorus: run prejob'):
       with self._api.context(infra_steps=True):
         prejob_request = phosphorus.prejob.PrejobRequest(
             config=metadata.phosphorus_config,
-            dut_hostname=self.read_dut_hostname(),
+            dut_hostname=metadata.primary_dut.hostname,
             desired_provisionable_labels=prejob_properties.provisionable_labels,
             existing_provisionable_labels=metadata.load_response
             .provisionable_labels,
             software_dependencies=prejob_properties.software_dependencies,
-            use_tls=prejob_properties.use_tls)
+            use_tls=prejob_properties.use_tls,
+            addtional_targets=addtional_targets)
         prejob_request.deadline.MergeFrom(
             self.get_deadline(max_duration_seconds))
         return PhosphorusPrejobDUTResponse(
@@ -60,14 +163,14 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     with self._api.step.nest('Phosphorus: run test'):
       run_test_request = phosphorus.runtest.RunTestRequest(
           config=metadata.phosphorus_config,
-          dut_hostnames=[self.read_dut_hostname()],
+          dut_hostnames=[metadata.primary_dut.hostname],
           autotest=phosphorus.runtest.RunTestRequest.Autotest(
               name=metadata.test.autotest.name,
               test_args=metadata.test.autotest.test_args,
               display_name=metadata.test.autotest.display_name,
               keyvals=self._with_gs_logs_keyval(metadata),
               is_client_test=metadata.test.autotest.is_client_test,
-          ))
+              peer_duts=[dut.hostname for dut in metadata.peer_duts]))
       run_test_request.deadline.MergeFrom(self.get_deadline())
       return PhosphorusTestDUTResponse(
           metadata.test_id, self._api.phosphorus.run_test(run_test_request))
@@ -101,8 +204,9 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     with self._api.step.nest('Phosphorus: fetch crashes'):
       fetch_crashes_request = phosphorus.fetchcrashes.FetchCrashesRequest(
           config=metadata.phosphorus_config,
-          dut_hostname=self.read_dut_hostname(), upload_crashes=self._properties
-          .request.execution_param.upload_crashes, use_staging=False)
+          dut_hostname=metadata.primary_dut.hostname, upload_crashes=self
+          ._properties.request.execution_param.upload_crashes,
+          use_staging=False)
       fetch_crashes_request.deadline.MergeFrom(
           self.get_deadline(max_duration_seconds))
       return self._api.phosphorus.fetch_crashes(fetch_crashes_request)
@@ -168,14 +272,18 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
             .harness.ssp_base_image_name,
             test_results_dir=os.path.join(results_dir, "autoserv_test")))
 
-  def save_and_seal_skylab_local_state(self, dut_state):
+  def save_and_seal_skylab_local_state(self, dut_state, metadata):
     with self._api.step.nest('Phosphorus: save local DUT state'):
-      self._api.phosphorus.save_and_seal_skylab_local_state(dut_state)
+      self._api.phosphorus.save_and_seal_skylab_local_state(
+          dut_state=dut_state, dut_name=metadata.primary_dut.hostname,
+          peer_duts=[dut.hostname for dut in metadata.peer_duts])
 
-  def save_skylab_local_state(self, dut_state):
+  def save_skylab_local_state(self, dut_state, metadata):
     with self._api.step.nest(
         'Phosphorus: mark local DUT state: {}'.format(dut_state)):
-      self._api.phosphorus.save_skylab_local_state(dut_state)
+      self._api.phosphorus.save_skylab_local_state(
+          dut_state=dut_state, dut_name=metadata.primary_dut.hostname,
+          peer_duts=[dut.hostname for dut in metadata.peer_duts])
 
   def load_skylab_local_state(self, test_id):
     with self._api.step.nest('Phosphorus: load skylab local state'):
@@ -273,7 +381,13 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     return metadata.load_response.results_dir
 
   def build_test_metadata(self, test_id, test):
-    return PhosphorusTestMetadata(self, test_id, test)
+    metadata = PhosphorusTestMetadata(self, test_id, test)
+    try:
+      metadata.build_dut_topology(self._properties.request.prejob)
+    except MatchDutException:
+      raise self._api.step.InfraFailure(
+          "Failed to match loaded DUT with prejob request.")
+    return metadata
 
   @staticmethod
   def build_empty_result():

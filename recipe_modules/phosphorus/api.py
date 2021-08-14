@@ -33,6 +33,9 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     self._cmd = None
     self._version = str(properties.version.cipd_label)
     self._config = properties.config
+    # dut_hostname represents schedulable unit from inventory(e.g. UFS),
+    # which can be hostname of a DUT itself(single DUT use case), or
+    # name of a scheduling unit(multi-DUTs use case).
     self._dut_hostname = self._dut_hostname_from_bot_id(
         env_vars.SWARMING_BOT_ID)
     self._dut_id = env_vars.SKYLAB_DUT_ID
@@ -176,38 +179,44 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       self._local_state_results_dir = result.results_dir
       return result
 
-  def save_skylab_local_state(self, dut_state):
+  def save_skylab_local_state(self, dut_state, dut_name, peer_duts):
     """Update the local DUT state file.
 
     Args:
       * dut_state: DUT state string (e.g. 'ready').
+      * dut_name: Hostname of the primary DUT.
+      * peer_duts: A list of hostnames for peer DUTs.
 
     Raises:
       * InfraFailure
     """
-    return self._save_skylab_local_state(dut_state, False)
+    return self._save_skylab_local_state(dut_state, dut_name, peer_duts, False)
 
-  def save_and_seal_skylab_local_state(self, dut_state):
+  def save_and_seal_skylab_local_state(self, dut_state, dut_name, peer_duts):
     """Update the local DUT state file and seal the results directory.
 
     Args:
       * dut_state: DUT state string (e.g. 'ready').
+      * dut_name: Hostname of the primary DUT.
+      * peer_duts: A list of hostnames for peer DUTs.
+
 
     Raises:
       * InfraFailure
     """
-    return self._save_skylab_local_state(dut_state, True)
+    return self._save_skylab_local_state(dut_state, dut_name, peer_duts, True)
 
-  def _save_skylab_local_state(self, dut_state, seal_results_dir):
+  def _save_skylab_local_state(self, dut_state, dut_name, peer_duts,
+                               seal_results_dir):
     with self.m.context(infra_steps=True):
       if not self._local_state_results_dir:
         raise ValueError(
             'Results directory not set. Did you call load() first?')
-
-      request = SaveRequest(config=self._config, dut_name=self._dut_hostname,
+      request = SaveRequest(config=self._config, dut_name=dut_name,
                             dut_id=self._dut_id, dut_state=dut_state,
                             results_dir=self._local_state_results_dir,
-                            seal_results_dir=seal_results_dir)
+                            seal_results_dir=seal_results_dir,
+                            peer_duts=peer_duts)
       self._run('save', request, SaveRequest)
 
   def build_parallels_image_provision(self, image_gs_path,

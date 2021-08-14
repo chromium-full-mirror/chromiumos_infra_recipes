@@ -244,15 +244,18 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"dutState\": \"baz-state\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"placeholder-dut-id\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"peerDuts\": [@@@",
+      "@@@STEP_LOG_LINE@request@    \"dummy-dut2\"@@@",
+      "@@@STEP_LOG_LINE@request@  ], @@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"placeholder-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy-dut1\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"placeholder-results-dir\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"placeholder-dut-id\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -266,7 +269,7 @@
     ],
     "infra_step": true,
     "name": "call `phosphorus` (13).save",
-    "stdin": "{\n  \"dutState\": \"baz-state\", \n  \"dutId\": \"placeholder-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"resultsDir\": \"placeholder-results-dir\", \n  \"dutName\": \"placeholder\"\n}",
+    "stdin": "{\n  \"dutState\": \"baz-state\", \n  \"peerDuts\": [\n    \"dummy-dut2\"\n  ], \n  \"resultsDir\": \"placeholder-results-dir\", \n  \"dutName\": \"dummy-dut1\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutId\": \"placeholder-dut-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -277,9 +280,12 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"dutState\": \"qux-state\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"peerDuts\": [@@@",
+      "@@@STEP_LOG_LINE@request@    \"dummy-dut2\"@@@",
+      "@@@STEP_LOG_LINE@request@  ], @@@",
       "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"placeholder-results-dir\", @@@",
       "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy-dut1\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
       "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
@@ -300,7 +306,7 @@
     ],
     "infra_step": true,
     "name": "call `phosphorus` (14).save",
-    "stdin": "{\n  \"dutState\": \"qux-state\", \n  \"resultsDir\": \"placeholder-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"placeholder\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutId\": \"placeholder-dut-id\"\n}",
+    "stdin": "{\n  \"dutState\": \"qux-state\", \n  \"peerDuts\": [\n    \"dummy-dut2\"\n  ], \n  \"resultsDir\": \"placeholder-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy-dut1\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutId\": \"placeholder-dut-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

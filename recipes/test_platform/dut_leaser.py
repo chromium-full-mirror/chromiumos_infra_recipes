@@ -34,8 +34,12 @@ def RunSteps(api, properties):
                       properties.lease_length_minutes % 60)):
     with api.step.nest('update DUT state to %s' % _DUT_STATE_NEEDS_REPAIR):
       # Load the local state to set the results directory to save to.
-      api.phosphorus.load_skylab_local_state(_DUT_LEASER_TEST_ID)
-      api.phosphorus.save_and_seal_skylab_local_state(_DUT_STATE_NEEDS_REPAIR)
+      load_response = api.phosphorus.load_skylab_local_state(
+          _DUT_LEASER_TEST_ID)
+      api.phosphorus.save_and_seal_skylab_local_state(
+          dut_state=_DUT_STATE_NEEDS_REPAIR,
+          dut_name=load_response.dut_topology[0].hostname,
+          peer_duts=[dut.hostname for dut in load_response.dut_topology[1:]])
 
     with api.step.nest('sleep for remainder of lease'):
       remaining_seconds = int(lease_end_seconds - api.time.time())
@@ -73,7 +77,9 @@ def GenTests(api):
           stdout=api.raw_io.output(
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
-                      results_dir='dummy-results-dir')))),
+                      results_dir='dummy-results-dir', dut_topology=[
+                          skylab_local_state.load.Dut(hostname="dummy-hostname")
+                      ])))),
   )
 
   yield api.test(

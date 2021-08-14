@@ -259,7 +259,7 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))
 
-    interface.save_and_seal_skylab_local_state(dut_state)
+    interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
     publish_to_result_flow(api, properties.config, properties.request,
                            should_poll_for_completion=True)
@@ -334,7 +334,8 @@ def execution_steps(api, properties):
         validate_request(api, test)
         test_metadata = interface.build_test_metadata(test_id, test)
         # Needs to be distinct per test as logs are uploaded for each test separately.
-        interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR)
+        interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR,
+                                          test_metadata)
 
         dut_state = _DUT_STATE_NEEDS_REPAIR
         max_duration_sec = (
@@ -442,6 +443,11 @@ def GenTests(api):
     return (api.properties(
         TestRunnerProperties(request=_canned_multitest_request())))
 
+  # An example request with multiple duts requested in prejob field.
+  def _request_properties_multiduts():
+    return (api.properties(
+        TestRunnerProperties(request=_canned_milti_duts_request())))
+
   # An example request represents chromium tests which upload result
   # to rdb.
   def _request_properties_rdb(test_arg):
@@ -453,7 +459,15 @@ def GenTests(api):
         'prejob': {
             'provisionable_labels': {
                 'label1': 'value1'
-            }
+            },
+            'software_attributes': {
+                'build_target': {
+                    'name': 'fake_board',
+                },
+            },
+            'software_dependencies': [{
+                'chromeos_build': 'fake_build',
+            },]
         },
         'test': {
             'autotest': {
@@ -478,7 +492,15 @@ def GenTests(api):
             'provisionable_labels': {
                 'label1': 'value1',
                 'label2': 'value2',
-            }
+            },
+            'software_attributes': {
+                'build_target': {
+                    'name': 'fake_board',
+                },
+            },
+            'software_dependencies': [{
+                'chromeos_build': 'fake_build',
+            },]
         },
         'tests': {
             'multi_test_2':
@@ -495,6 +517,45 @@ def GenTests(api):
         }
     }
 
+  def _canned_milti_duts_request():
+    return {
+        'prejob': {
+            'provisionable_labels': {
+                'label1': 'value1'
+            },
+            'software_attributes': {
+                'build_target': {
+                    'name': 'fake_board',
+                },
+            },
+            'software_dependencies': [{
+                'chromeos_build': 'fake_build',
+            },],
+            'secondary_devices': [{
+                'software_attributes': {
+                    'build_target': {
+                        'name': 'fake_board2',
+                    }
+                },
+                'software_dependencies': [{
+                    'chromeos_build': 'fake_build2',
+                }]
+            },]
+        },
+        'test': {
+            'autotest': {
+                'name': 'dummy_name',
+                'test_args': 'foo=bar',
+                'keyvals': {
+                    'key1': 'value1',
+                },
+                'is_client_test': True,
+                'display_name': 'fancy_name'
+            }
+        },
+        'parent_build_id': 12345,
+    }
+
   # Required for steps following `skylab_local_state load`.
   def _mock_load_step(test_id=_DUMMY_TEST_ID):
     return (api.step_data(
@@ -502,7 +563,11 @@ def GenTests(api):
         '`phosphorus`.load' % test_id, stdout=api.raw_io.output(
             json_format.MessageToJson(
                 skylab_local_state.load.LoadResponse(
-                    results_dir='dummy-results-dir')))))
+                    results_dir='dummy-results-dir', dut_topology=[
+                        skylab_local_state.load.Dut(hostname='fake_host',
+                                                    board='fake_board',
+                                                    model='fake_model'),
+                    ])))))
 
   def _successful_prejob_step(test_id=_DUMMY_TEST_ID):
     return _prejob_step_with_state(phosphorus.prejob.PrejobResponse.SUCCEEDED,
@@ -563,6 +628,30 @@ def GenTests(api):
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'success_multi_duts',
+      _set_build_id(bid=42),
+      _misc_properties(),
+      _request_properties_multiduts(),
+      api.step_data(
+          'execution steps.original_test.Phosphorus: load skylab local state.'
+          'call `phosphorus`.load', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  skylab_local_state.load.LoadResponse(
+                      results_dir='dummy-results-dir', dut_topology=[
+                          skylab_local_state.load.Dut(hostname='fake_hostname',
+                                                      board='fake_board',
+                                                      model='fake_model'),
+                          skylab_local_state.load.Dut(hostname='fake_hostname2',
+                                                      board='fake_board2',
+                                                      model='fake_model2')
+                      ])))),
       _successful_prejob_step(),
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
@@ -662,7 +751,11 @@ def GenTests(api):
           'call `phosphorus`.load', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
-                      results_dir='dummy-results-dir')))),
+                      results_dir='dummy-results-dir', dut_topology=[
+                          skylab_local_state.load.Dut(hostname="fake_hostname",
+                                                      board="fake_board",
+                                                      model="fake_model")
+                      ])))),
       _successful_prejob_step(),
       api.step_data(
           'execution steps.original_test.Phosphorus: run test.call `phosphorus`'

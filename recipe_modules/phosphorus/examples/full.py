@@ -52,12 +52,16 @@ def RunSteps(api):
   api.phosphorus.read_dut_hostname()
 
   with api.assertions.assertRaises(ValueError):
-    api.phosphorus.save_skylab_local_state('foo-state')
+    api.phosphorus.save_skylab_local_state('foo-state', 'dummy-dut1',
+                                           ['dummy-dut2'])
   with api.assertions.assertRaises(ValueError):
-    api.phosphorus.save_and_seal_skylab_local_state('bar-state')
+    api.phosphorus.save_and_seal_skylab_local_state('bar-state', 'dummy-dut1',
+                                                    ['dummy-dut2'])
   api.phosphorus.load_skylab_local_state('test-id')
-  api.phosphorus.save_skylab_local_state('baz-state')
-  api.phosphorus.save_and_seal_skylab_local_state('qux-state')
+  api.phosphorus.save_skylab_local_state('baz-state', 'dummy-dut1',
+                                         ['dummy-dut2'])
+  api.phosphorus.save_and_seal_skylab_local_state('qux-state', 'dummy-dut1',
+                                                  ['dummy-dut2'])
   _ = api.phosphorus.parse('/path/to/results')
 
 

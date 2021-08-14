@@ -149,20 +149,22 @@ class DUTInterface(object):  # pragma: no cover
     pass
 
   @abstractmethod
-  def save_and_seal_skylab_local_state(self, dut_state):
+  def save_and_seal_skylab_local_state(self, dut_state, metadata):
     """Save and seal skylab local state on DUT.
 
     Args:
     * dut_state (str): The desired state.
+    * metadata (DUTTestMetadata): Input information relevant to one test.
     """
     pass
 
   @abstractmethod
-  def save_skylab_local_state(self, dut_state):
+  def save_skylab_local_state(self, dut_state, metadata):
     """Save skylab local state on DUT.
 
     Args:
     * dut_state (str): The desired state.
+    * metadata (DUTTestMetadata): Input information relevant to one test.
     """
     pass
 

@@ -5531,7 +5531,7 @@ Args:
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#213)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
+&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#222)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
 
 Provisions a DUT with the given Chrome OS image and Parallels DLC.
 
@@ -5542,7 +5542,7 @@ Args:
   max_duration_sec (int): Maximum duration of the provision operation, in
     seconds. Defaults to two hours.
 
-&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#235)(self, dut_state):**
+&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#244)(self, dut_state):**
 
 Saves the given DUT state in UFS.
 
@@ -5552,21 +5552,21 @@ or needs_repair).
 Args:
   dut_state (str): The new DUT state. E.g. "needs_repair" or "ready".
 
-&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#102)(self, request):**
+&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#105)(self, request):**
 
 Fetch crashes via the `fetch-crashes` subcommand.
 
 Args:
   request: a FetchCrashesRequest.
 
-&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#164)(self, test_id):**
+&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#167)(self, test_id):**
 
 Load the local DUT state file.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [parse](/recipe_modules/phosphorus/api.py#128)(self, results_dir):**
+&mdash; **def [parse](/recipe_modules/phosphorus/api.py#131)(self, results_dir):**
 
 Extract test results from an results directory.
 
@@ -5575,52 +5575,57 @@ Args:
 
 Returns: Result.
 
-&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#84)(self, request):**
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#87)(self, request):**
 
 Run a prejob or a provision via `prejob` subcommand.
 
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#266)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#275)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#93)(self, request):**
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#96)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#190)(self, dut_state):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#195)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file and seal the results directory.
 
 Args:
   * dut_state: DUT state string (e.g. 'ready').
+  * dut_name: Hostname of the primary DUT.
+  * peer_duts: A list of hostnames for peer DUTs.
+
 
 Raises:
   * InfraFailure
 
-&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#179)(self, dut_state):**
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#182)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file.
 
 Args:
   * dut_state: DUT state string (e.g. 'ready').
+  * dut_name: Hostname of the primary DUT.
+  * peer_duts: A list of hostnames for peer DUTs.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#111)(self, request):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#114)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#120)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#123)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 
@@ -8846,7 +8851,7 @@ Raises:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#362)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#363)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#109)(api, interface, test_metadata, result):**
 
