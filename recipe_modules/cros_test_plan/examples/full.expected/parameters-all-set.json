@@ -3197,37 +3197,6 @@
   },
   {
     "cmd": [
-      "git",
-      "clone",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config",
-      "[CLEANUP]/rubik-configs_tmp_1"
-    ],
-    "infra_step": true,
-    "name": "generate test plan.git clone",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/rubik-configs_tmp_1/testingconfig/generated/target_test_requirements_rubik.binaryproto",
-      "[CLEANUP]/rubik-configs_tmp_1/testingconfig/generated/target_test_requirements.binaryproto"
-    ],
-    "infra_step": true,
-    "name": "generate test plan.copy Rubik config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
       "[START_DIR]/cipd/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
@@ -3236,8 +3205,16 @@
       "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
       "--manifest_file",
       "[CLEANUP]/chromiumos_workspace/manifest-internal/snapshot.xml",
-      "--local_config_dir",
-      "[CLEANUP]/rubik-configs_tmp_1"
+      "--gitiles_repo",
+      "chromeos/infra/config",
+      "--gitiles_branch",
+      "release-R93-14092.B",
+      "--board_priority_config",
+      "something/bpcp.binary_proto",
+      "--source_tree_config",
+      "something/sttp.binary_proto",
+      "--target_test_requirements",
+      "something/ttrp.binary_proto"
     ],
     "infra_step": true,
     "name": "generate test plan.call test_planner",

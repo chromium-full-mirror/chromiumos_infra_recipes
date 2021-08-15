@@ -80,32 +80,25 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       # fetching it from the network.
       cmd.extend(['--manifest_file', self.m.cros_source.branch_manifest_file])
 
-      # This is a very hacky way of reading in LTS specific testing configs.
-      # Delete once rubik has a better way of specifying separate testing
-      # config per branch.
-      if self.m.buildbucket.build.builder.builder.startswith('lts-cq-'):
-        config_path = self.m.path.mkdtemp(prefix='lts-configs')
-        self.m.git.clone(INFRA_CONFIG_URL, target_path=config_path,
-                         timeout_sec=3 * 60)
-        testingconfig_path = config_path.join('testingconfig').join('generated')
-        self.m.file.copy(
-            'copy LTS config',
-            testingconfig_path.join('target_test_requirements_lts.binaryproto'),
-            testingconfig_path.join('target_test_requirements.binaryproto'))
-        cmd.extend(['--local_config_dir', config_path])
-      # Shamefully replicate this hack for rubik temporarily.
-      # TODO(b:191392307): Remove this with real branched config.
-      elif self.m.buildbucket.build.builder.builder.endswith('-main-release'):
-        config_path = self.m.path.mkdtemp(prefix='rubik-configs')
-        self.m.git.clone(INFRA_CONFIG_URL, target_path=config_path,
-                         timeout_sec=3 * 60)
-        testingconfig_path = config_path.join('testingconfig').join('generated')
-        self.m.file.copy(
-            'copy Rubik config',
-            testingconfig_path.join(
-                'target_test_requirements_rubik.binaryproto'),
-            testingconfig_path.join('target_test_requirements.binaryproto'))
-        cmd.extend(['--local_config_dir', config_path])
+      if self._properties.source_gitiles_repo:
+        cmd.extend(['--gitiles_repo', self._properties.source_gitiles_repo])
+      if self._properties.source_gitiles_branch:
+        cmd.extend(['--gitiles_branch', self._properties.source_gitiles_branch])
+      if self._properties.board_priority_config_path:
+        cmd.extend([
+            '--board_priority_config',
+            self._properties.board_priority_config_path
+        ])
+      if self._properties.source_tree_test_config_path:
+        cmd.extend([
+            '--source_tree_config',
+            self._properties.source_tree_test_config_path
+        ])
+      if self._properties.target_test_requirements_path:
+        cmd.extend([
+            '--target_test_requirements',
+            self._properties.target_test_requirements_path
+        ])
 
       self.m.step('call test_planner', cmd, infra_step=True)
 

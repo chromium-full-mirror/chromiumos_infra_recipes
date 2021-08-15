@@ -16,4 +16,27 @@ message CrosTestPlanProperties {
     // Cipd ref to use for test plan generator.
     // Defaults to "staging" or "prod".
     string test_plan_generator_cipd_ref = 3;
+
+    // TODO(b:191392307): Consider keeping this unbranched, currently the
+    // cros_test_plan will use the same git repo/branch pair to fetch all these
+    // files but since this is based on lab capacity we might not want to have
+    // to push the current state to each branch.
+    // Path to the board priority binary proto.
+    // (e.g. testingconfig/generated/board_priority.binaryproto)
+    string board_priority_config_path = 4;
+
+    // Path to the source tree test config binary proto.
+    // (e.g. testingconfig/generated/source_tree_test_config.binaryproto)
+    string source_tree_test_config_path = 5;
+
+    // Path to the target test requirements input proto.
+    // (e.g. testingconfig/generated/target_test_requirements.binaryproto)
+    string target_test_requirements_path = 6;
+
+    // Parameters to set which branched test plan is selected.
+    // Which gitiles repo to select from (e.g. chromeos/infra/config).
+    string source_gitiles_repo = 7;
+
+    // Which branch from the repo to use (e.g. release-R93-14092.B).
+    string source_gitiles_branch = 8;
 }
