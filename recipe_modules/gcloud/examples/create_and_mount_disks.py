@@ -127,3 +127,13 @@ def GenTests(api):
           'create and attach disk (2).create disk from snapshot version.create disk from snapshot'
       ), retcode=3),
   )
+
+  yield api.test(
+      'detach-disk-not-attached',
+      mock_directory('chromiumos'),
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-disk'),
+      api.step_data((
+          'create and attach disk (2).create disk from snapshot version.detach disk'
+      ), retcode=3),
+  )

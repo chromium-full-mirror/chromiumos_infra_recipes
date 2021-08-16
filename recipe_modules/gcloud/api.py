@@ -394,6 +394,27 @@ class GcloudApi(recipe_api.RecipeApi):
         return True
     return False
 
+  def disk_exists(self, disk):
+    """Check whether a disk exists.
+
+    Args:
+      disk(str): Name of the disk to check.
+
+    Returns:
+      Bool of whether the disk exists or not.
+    """
+    list_cmd = [
+        'gcloud', 'compute', 'disks', 'list', '--format', 'json(name)',
+        '--filter', 'name={}'.format(disk)
+    ]
+    output = self.m.easy.stdout_json_step(
+        'check whether disk exists: {}'.format(disk), list_cmd,
+        test_stdout=lambda: self.test_api.disk_exists_data(), infra_step=True)
+    for gce_disk in output:
+      if disk == gce_disk['name']:
+        return True
+    return False
+
   def snapshot_disk(self, disk, snapshot_name, zone):
     """Snapshot an attached disk on a GCE instance.
 
@@ -566,6 +587,17 @@ class GcloudApi(recipe_api.RecipeApi):
           snapshot = local_version
         self.m.easy.set_properties_step(snapshot_version=snapshot)
         if not dry_run:
+          if self.disk_exists(disk=self._disk):
+            try:
+              # Make sure the disk is not attached, as you cannot
+              # delete an attached disk.
+              self.detach_disk(instance=infra_host, disk=self._disk,
+                               zone=self._zone)
+            except self.m.step.StepFailure:
+              # TODO(b/196835607): Remove exception handling, check
+              # whether disk is attached.
+              pass
+            self.delete_disk(disk=self._disk, zone=self._zone)
           try:
             self.create_disk(disk=self._disk, zone=self._zone,
                              snapshot=snapshot, disk_type=disk_type)

@@ -99,6 +99,75 @@
       "gcloud",
       "compute",
       "disks",
+      "list",
+      "--format",
+      "json(name)",
+      "--filter",
+      "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros"
+    ],
+    "infra_step": true,
+    "name": "source cache update.create and attach disk.create disk from snapshot version.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.create and attach disk.create disk from snapshot version.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.create and attach disk.create disk from snapshot version.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
@@ -182,7 +251,7 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/sdb",
+      "/dev/sda",
       "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
@@ -498,7 +567,7 @@
     "cmd": [
       "sudo",
       "sync",
-      "/dev/sdb"
+      "/dev/sda"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -736,6 +805,75 @@
       "gcloud",
       "compute",
       "disks",
+      "list",
+      "--format",
+      "json(name)",
+      "--filter",
+      "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr"
+    ],
+    "infra_step": true,
+    "name": "source cache update.create and attach disk (2).create disk from snapshot version.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.create and attach disk (2).create disk from snapshot version.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.create and attach disk (2).create disk from snapshot version.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
       "--zone=us-central1-b",
@@ -819,7 +957,7 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/sdb",
+      "/dev/sd`",
       "[CLEANUP]/snapshot/chrome"
     ],
     "env": {
@@ -987,7 +1125,7 @@
     "cmd": [
       "sudo",
       "sync",
-      "/dev/sdb"
+      "/dev/sd`"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
