@@ -89,6 +89,8 @@ def RunSteps(api, properties):
                                  zone=api.gcloud.host_zone)
         with api.step.nest('snapshot synced disk'):
           api.gcloud.snapshot_disk(disk, snapshot_name, api.gcloud.host_zone)
+        with api.step.nest('delete disk'):
+          api.gcloud.delete_disk(disk=disk, zone=api.gcloud.host_zone)
         with api.step.nest('upload updated version file'):
           api.cros_cache.write_and_upload_version(
               properties.cache_bucket, api.gcloud.snapshot_version_file,

@@ -585,6 +585,32 @@
   },
   {
     "cmd": [],
+    "name": "source cache update.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.delete disk.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "source cache update.upload updated version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1042,6 +1068,32 @@
     },
     "infra_step": true,
     "name": "source cache update.snapshot synced disk (2).snapshot disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.delete disk (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.delete disk (2).delete disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
