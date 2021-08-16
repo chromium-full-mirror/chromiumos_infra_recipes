@@ -43,6 +43,9 @@ def RunSteps(api, properties):
 
     api.assertions.assertEqual(api.orch_menu.is_release_orchestrator,
                                properties.is_release_orchestrator)
+    is_postsubmit_orch = build.builder.builder == 'postsubmit-orchestrator'
+    api.assertions.assertEqual(api.orch_menu.is_postsubmit_orchestrator,
+                               is_postsubmit_orch)
 
     expected_changes = build.input.gerrit_changes
     # Add any changes from the config.
@@ -108,7 +111,8 @@ def GenTests(api):
                      'update manifest ref refs/heads/test.git push'),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test')),
-      with_manifest_refs=True, with_history=True)
+      builder='postsubmit-orchestrator', with_manifest_refs=True,
+      with_history=True)
 
   yield api.orch_menu.test(
       'release-orchestrator', data.ctp_normal,

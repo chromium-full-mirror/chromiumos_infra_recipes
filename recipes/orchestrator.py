@@ -36,6 +36,8 @@ def DoRunSteps(api):
   if api.orch_menu.is_release_orchestrator:
     extra_child_props['$chromeos/cros_source'] = MessageToDict(
         CrosSourceProperties(sync_to_manifest=api.cros_release.releasespec))
+  elif api.orch_menu.is_postsubmit_orchestrator:
+    extra_child_props['commit_overlay_binhost'] = True
   api.orch_menu.plan_and_run_children(extra_child_props=extra_child_props)
 
   # Run any HW tests.

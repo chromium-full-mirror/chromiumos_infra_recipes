@@ -100,6 +100,7 @@ class OrchMenuApi(RecipeApi):
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
     self._is_release_orchestrator = False
+    self._is_postsubmit_orchestrator = False
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
@@ -132,6 +133,10 @@ class OrchMenuApi(RecipeApi):
   @property
   def is_release_orchestrator(self):
     return self._is_release_orchestrator
+
+  @property
+  def is_postsubmit_orchestrator(self):
+    return self._is_postsubmit_orchestrator
 
   def _get_manifest_info(self, external=False):
     """Return information about a manifest repo.
@@ -208,6 +213,9 @@ class OrchMenuApi(RecipeApi):
             self.m.cros_version.bump_version()
             self.m.cros_release.create_releasespec(
                 gs_location=BUILDSPEC_GS_PATH)
+
+        if self.m.buildbucket.build.builder.builder == 'postsubmit-orchestrator':
+          self._is_postsubmit_orchestrator = True
 
       if config:
         # Update the start ref to indicate we've begun processing the snapshot.
