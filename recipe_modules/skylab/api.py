@@ -93,13 +93,15 @@ class SkylabApi(recipe_api.RecipeApi):
         req.params.hardware_attributes.model = ''
         req.params.time.maximum_duration.seconds = timeout.seconds
         image_path = uht.unit.common.build_payload.artifacts_gs_path
-        gs_url = ('gs://' + uht.unit.common.build_payload.artifacts_gs_bucket +
-                  '/' + uht.unit.common.build_payload.artifacts_gs_path)
+        image_bucket = uht.unit.common.build_payload.artifacts_gs_bucket
+        gs_url = ('gs://' + image_bucket + '/' + image_path)
         req.params.metadata.test_metadata_url = gs_url
         req.params.metadata.debug_symbols_archive_url = gs_url
         self._set_pool(req.params.scheduling, uht.hw_test.pool)
         sw_dep = req.params.software_dependencies.add()
         sw_dep.chromeos_build = image_path
+        sw_dep_gsc_bucket = req.params.software_dependencies.add()
+        sw_dep_gsc_bucket.chromeos_build_gcs_bucket = image_bucket
         req.params.scheduling.qs_account = self._qs_account
         req.params.software_attributes.build_target.name = uht.hw_test.skylab_board
         suite_to_create = req.test_plan.suite.add()

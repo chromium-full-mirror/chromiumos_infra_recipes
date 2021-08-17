@@ -128,6 +128,10 @@ class PaygenTestConfig(object):
         'build_target_name': self._build_target_name,
         'tgt_archive_basename': self._tgt_archive_basename
     }
+
+    self._chromeos_build_gcs_bucket = ('gs://%s' %
+                                       urlparse(self._tgt_payload_uri).netloc)
+
     self._suite_name = (
         self._PAYGEN_AU_SUITE_TEMPLATE % self._tgt_channel.split('-')[0])
     self._unique_name_suffix = self._UNIQUE_NAME_SUFFIX_TEMPLATE % {
@@ -272,6 +276,9 @@ class PaygenTestConfig(object):
       params.hardware_attributes.model = model
     sw_dep = params.software_dependencies.add()
     sw_dep.chromeos_build = self._chromeos_build_name
+    sw_dep_gs = params.software_dependencies.add()
+    sw_dep_gs.chromeos_build_gcs_bucket = self._chromeos_build_gcs_bucket
+
     # TODO(crbug.com/1122854): Some non-unibuild boards run on a DUT with a
     # different board label (e.g. eve-arc-r maps to eve).
     params.software_attributes.build_target.name = self._build_target_name
