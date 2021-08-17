@@ -1318,6 +1318,8 @@
       "debug",
       "-o",
       "[CLEANUP]/chromiumos_workspace/src/config-internal/hw_design/generated/flattened.jsonproto",
+      "-b",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/hw_design/generated/flattened.binaryproto",
       "-i",
       "[CLEANUP]/tmp_tmp_2",
       "-p",

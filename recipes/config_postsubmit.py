@@ -125,6 +125,7 @@ def _flatten_configs(api, properties, project_infos):
   joined_config = 'generated/joined.jsonproto'
   config_bundle = 'generated/config.jsonproto'
   flat_config = 'generated/flattened.jsonproto'
+  binary_flat_config = 'generated/flattened.binaryproto'
 
   # Get paths of all generated program payloads
   files = []
@@ -202,6 +203,7 @@ def _flatten_configs(api, properties, project_infos):
   merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
   config_internal = cwd.join('src/config-internal')
   output_path = config_internal.join('hw_design', flat_config)
+  binary_output_path = config_internal.join('hw_design', binary_flat_config)
 
   def _merge_flattened():
     project_configs_path = api.path.mkstemp()
@@ -224,6 +226,7 @@ def _flatten_configs(api, properties, project_infos):
       'vpython', program_join_script,
       '-l', 'debug',
       '-o', output_path,
+      '-b', binary_output_path,
       '-i', project_configs_path,
       '-p', program_configs_path
     ])
@@ -235,7 +238,7 @@ def _flatten_configs(api, properties, project_infos):
         return False  # abort transaction
 
     # commit files
-    api.git.add([output_path])
+    api.git.add([output_path, binary_output_path])
 
     automation_id = 'config_postsubmit/merge_flattened'
     message = \
