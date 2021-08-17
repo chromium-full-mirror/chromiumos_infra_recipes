@@ -125,7 +125,6 @@ def _flatten_configs(api, properties, project_infos):
   joined_config = 'generated/joined.jsonproto'
   config_bundle = 'generated/config.jsonproto'
   flat_config = 'generated/flattened.jsonproto'
-  binary_flat_config = 'generated/flattened.binaryproto'
 
   # Get paths of all generated program payloads
   files = []
@@ -179,8 +178,6 @@ def _flatten_configs(api, properties, project_infos):
           input_config,
           "--output",
           flat_config,
-          "--binary-output",
-          binary_flat_config,
       ]
 
       result = api.step(

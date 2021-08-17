@@ -1244,9 +1244,7 @@
       "--input",
       "generated/joined.jsonproto",
       "--output",
-      "generated/flattened.jsonproto",
-      "--binary-output",
-      "generated/flattened.binaryproto"
+      "generated/flattened.jsonproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/project/galaxy/milkyway",
     "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway.generate flat payload",
