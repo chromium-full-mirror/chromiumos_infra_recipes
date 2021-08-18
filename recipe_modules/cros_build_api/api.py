@@ -5,7 +5,6 @@
 
 """API for working with the protobuf-based Build API."""
 
-from collections import namedtuple
 import functools
 import hashlib
 
@@ -103,10 +102,6 @@ class MethodService(Stub):
 # and has_endpoint checks should be used.
 class PackageService(Stub):
   """Stub for PackageService."""
-
-
-class PayloadService(Stub):
-  """Stub for PayloadService."""
 
 
 class PayloadService(Stub):

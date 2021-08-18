@@ -11,7 +11,6 @@ DEPS = [
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
 from google.protobuf import duration_pb2
 
@@ -24,7 +23,7 @@ def RunSteps(api):
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.common.display_name = 'please_wait_on_me'
   task = api.skylab.test_api.skylab_task(
-      id=1234,
+      bid=1234,
       url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b8899866335707109280',
       test=hw_test, unit=hw_test_unit)
 
@@ -32,7 +31,7 @@ def RunSteps(api):
   another_hw_test = another_hw_test_unit.hw_test_cfg.hw_test[0]
   another_hw_test.common.display_name = 'please_wait_on_me_too'
   another_task = api.skylab.test_api.skylab_task(
-      id=1234,
+      bid=1234,
       url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b8899866335707109280',
       test=another_hw_test,
       unit=another_hw_test_unit,
@@ -43,7 +42,6 @@ def RunSteps(api):
   api.assertions.assertEqual(len(responses), 2)
 
   expected_tasks = [r.task for r in responses]
-  expected_statuses = [r.status for r in responses]
   api.assertions.assertEqual(expected_tasks, [task, another_task])
 
 

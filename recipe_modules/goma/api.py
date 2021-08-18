@@ -120,7 +120,6 @@ class GomaApi(recipe_api.RecipeApi):
     if self._upload_stats_counterz:
       bq_errors = self._process_counterz_and_stats(install_pkg_response,
                                                    goma_log_dir,
-                                                   build_target_name,
                                                    is_staging)
 
     gs_tuple = None
@@ -136,14 +135,13 @@ class GomaApi(recipe_api.RecipeApi):
     return GomaResults(gs_bucket, gs_path, bq_errors)
 
   def _process_counterz_and_stats(self, install_pkg_response, goma_log_dir,
-                                  build_target_name, is_staging):
+                                  is_staging):
     """Process counterz and stats, uploading data to BigQuery.
 
     Args:
       install_pkg_response (chromite.api.InstallPackagesResponse): May contain
         goma artifacts.
       goma_log_dir (str): Log directory that contains the goma log files.
-      build_target_name (str): Build target string.
       is_staging (bool): If being run in staging environment instead of prod.
 
     Returns:
@@ -184,7 +182,7 @@ class GomaApi(recipe_api.RecipeApi):
           json_message = json_format.MessageToJson(
               compile_event, preserving_proto_field_name=True)
           # Call bq-insert support tool.
-          input = {
+          support_input = {
               'project_id': self._bigquery_project_id,
               'dataset_id': self._bigquery_dataset_id,
               'table_name': self._bigquery_table_name,
@@ -194,15 +192,15 @@ class GomaApi(recipe_api.RecipeApi):
           }
           test_output_data = {}
           if self._bigquery_verbose:
-            presentation.logs['support_input'] = [str(input)]
+            presentation.logs['support_input'] = [str(support_input)]
             presentation.logs['compile_event_json'] = json_message
           # TODO(crbug.com/1041899): Replace this disable-in-staging with a
           # BigQuery upload that staging has permission so that staging tests
           # the same flow and so that we have a non-prod BigQuery table to do
           # use for pre-prod integration tests.
           if not is_staging:
-            result = self.m.support.call('bq-insert', input,
-                                         test_output_data=test_output_data)
+            self.m.support.call('bq-insert', support_input,
+                                test_output_data=test_output_data)
 
     return None
 

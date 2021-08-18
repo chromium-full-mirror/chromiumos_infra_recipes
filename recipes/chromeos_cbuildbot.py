@@ -54,7 +54,7 @@ def DoRunSteps(api):
     cbb_extra_args = json.loads(cbb_extra_args)
 
   # Apply our adjusted configuration.
-  api.chromite.configure(api.properties, {}, CBB_EXTRA_ARGS=cbb_extra_args)
+  api.chromite.configure(CBB_EXTRA_ARGS=cbb_extra_args)
 
   # Fetch chromite and pinned depot tools.
   api.chromite.checkout_chromite()

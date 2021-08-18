@@ -15,7 +15,6 @@ DEPS = [
     'workspace_util',
 ]
 
-from PB.chromiumos import common
 from PB.recipe_modules.chromeos.workspace_util.examples.test import (
     TestInputProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse

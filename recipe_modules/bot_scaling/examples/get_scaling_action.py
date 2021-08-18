@@ -9,7 +9,7 @@ DEPS = [
     'bot_scaling',
 ]
 
-from PB.chromiumos.bot_scaling import BotPolicy, BotPolicyCfg, ScalingAction
+from PB.chromiumos.bot_scaling import BotPolicy, ScalingAction
 
 
 def RunSteps(api):

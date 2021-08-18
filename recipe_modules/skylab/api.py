@@ -3,9 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
-from collections import namedtuple
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
@@ -14,7 +11,6 @@ from . import structs
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.lab import license as license_pb2
-from PB.test_platform.skylab_tool.result import WaitTasksResult
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
 from PB.test_platform.taskstate import TaskState
@@ -110,7 +106,7 @@ class SkylabApi(recipe_api.RecipeApi):
         suite_to_create.name = uht.hw_test.suite
         self._set_license_labels(req, uht.hw_test.licenses)
 
-        tags = self._get_ctp_tags(uht.hw_test, uht.unit, image_path)
+        tags = self._get_ctp_tags(uht.hw_test, image_path)
         request_tags = [
             '{}:{}'.format(key, value) for key, value in tags.items()
         ]
@@ -149,7 +145,7 @@ class SkylabApi(recipe_api.RecipeApi):
       dimension = "label-license:" + license_pb2.LicenseType.Name(lic)
       request.params.freeform_attributes.swarming_dimensions.append(dimension)
 
-  def _get_ctp_tags(self, test, unit, image_path):
+  def _get_ctp_tags(self, test, image_path):
     result = {
         'label-pool': test.pool,
         'build': image_path,
@@ -192,7 +188,7 @@ class SkylabApi(recipe_api.RecipeApi):
       try:
         hw_tests = self.m.buildbucket.collect_builds(
             [task_id], timeout=timeout_seconds)[task_id]
-      except recipe_api.StepFailure as ex:  #pragma: no cover
+      except recipe_api.StepFailure:  #pragma: no cover
         # Mark the step as an INFRA_FAILURE and get the output
         # properties of underlying recipes.
         presentation.status = 'EXCEPTION'

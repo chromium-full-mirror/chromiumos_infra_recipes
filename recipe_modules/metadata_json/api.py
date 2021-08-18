@@ -6,8 +6,6 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import step as step_pb2
-from PB.recipe_modules.chromeos.metadata_json.metadata_json import (
-    MetadataJsonProperties)
 from google.protobuf import timestamp_pb2
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure

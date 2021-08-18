@@ -8,9 +8,6 @@ DEPS = [
     'cros_storage',
 ]
 
-from PB.chromite.api.payload import Build as Build_pb2
-from PB.chromite.api.payload import SignedImage as SignedImage_pb2
-from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 from PB.chromiumos.common import ImageType
 
 

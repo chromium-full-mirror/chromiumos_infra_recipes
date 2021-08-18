@@ -3,9 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from copy import deepcopy
-import json
-
 from PB.recipe_modules.chromeos.cros_paygen.examples.test import GetRequestTestInputProperties
 
 from recipe_engine import post_process
@@ -20,8 +17,6 @@ PROPERTIES = GetRequestTestInputProperties
 
 
 def RunSteps(api, properties):
-  payload_cfg = json.loads(properties.payload_cfg)
-
   if properties.request_type == GetRequestTestInputProperties.SIGNED:
     tgts = properties.signed_tgts
   elif properties.request_type == GetRequestTestInputProperties.UNSIGNED:

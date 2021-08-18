@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=protected-access
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
@@ -29,16 +31,16 @@ def RunSteps(api):
   test_dlc_image = (
       api.cros_storage.DLCImage(test_artifact_root, 'termina-dlc', 'package',
                                 'dlc.img'))
-  src_test_dlc_image = (
-      api.cros_storage.DLCImage(src_test_artifact_root, 'termina-dlc',
-                                'package', 'gvtgcmjugztghjioi4bbf32rlvybuioo'))
+
+  api.cros_storage.DLCImage(src_test_artifact_root, 'termina-dlc', 'package',
+                            'gvtgcmjugztghjioi4bbf32rlvybuioo')
 
   unsigned_full_payload = api.cros_storage.FullPayload(test_unsigned_image,
                                                        'abc123')
   unsigned_delta_payload = api.cros_storage.DeltaPayload(
       test_unsigned_image, src_test_unsigned_image, 'abc123')
-  src_full_payload = api.cros_storage.FullPayload(src_test_unsigned_image,
-                                                  'abc123')
+
+  api.cros_storage.FullPayload(src_test_unsigned_image, 'abc123')
   delta_dlc_payload = api.cros_storage.DeltaDLCPayload(
       test_dlc_image, test_dlc_image, 'gvtgcmjugztghjioi4bbf32rlvybuioo')
 

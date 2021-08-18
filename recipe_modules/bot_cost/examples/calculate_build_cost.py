@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=protected-access
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -22,7 +24,7 @@ PROPERTIES = TestProperties
 
 def RunSteps(api, properties):
   with api.bot_cost.build_cost_context():
-    with api.step.nest(properties.name) as test_step:
+    with api.step.nest(properties.name):
       build_cost = api.bot_cost._calculate_build_cost()
       if properties.expect_cost:
         api.assertions.assertNotEqual(0, build_cost)

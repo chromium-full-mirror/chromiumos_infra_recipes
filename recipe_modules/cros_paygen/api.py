@@ -3,7 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=protected-access
+
 """API for working with Paygen and its config."""
+
+from future.standard_library import install_aliases
+install_aliases()
 
 from google.protobuf import duration_pb2
 from google.protobuf.json_format import MessageToDict
@@ -13,6 +18,8 @@ import json
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 from os import path
+# pylint: disable=no-name-in-module
+from urllib.parse import urlparse
 
 from PB.chromite.api import test_metadata
 from PB.chromite.api.payload import DLCImage as DLCImage_pb2
@@ -595,7 +602,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       A list[ScheduleBuildRequest] for the delta test payloads.
     """
     # If FORCE_NO_TESTS create schedule requests with only GenerationRequests.
-    if (test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS):
+    if test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
       return [self._create_bb_schedule_request(gen_req) for gen_req in gen_reqs]
 
     always_test_delta = (
@@ -641,7 +648,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       A list[ScheduleBuildRequest] for the full test payloads.
     """
     # If FORCE_NO_TESTS create schedule requests with only GenerationRequests.
-    if (test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS):
+    if test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
       return [self._create_bb_schedule_request(gen_req) for gen_req in gen_reqs]
 
     always_test_full = (

@@ -21,11 +21,8 @@ the unfiltered top-level topic for all builds.
 """
 
 import contextlib
-import functools
-import types
 
 from google.protobuf.json_format import MessageToJson
-from google.protobuf.timestamp_pb2 import Timestamp
 
 # infra/proto/src/chromiumos/builder_report.proto
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
@@ -41,7 +38,7 @@ def default_project(staging):
   return 'chromeos-build-reporting'
 
 
-def default_topic(staging):
+def default_topic():
   """Default pubsub topic to send updates to."""
   return 'chromeos-builds-all'
 
@@ -102,7 +99,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
   @property
   def pubsub_topic(self):
-    return self._pubsub_topic or default_topic(self.m.build_menu.is_staging)
+    return self._pubsub_topic or default_topic()
 
   @property
   def build_type(self):

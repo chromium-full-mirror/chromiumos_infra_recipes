@@ -10,12 +10,11 @@ import collections
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
-from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api import artifacts
 from PB.chromite.api import firmware
 from PB.chromite.api import toolchain
-from PB.chromite.api.image import PushImageRequest, PushImageResponse
+from PB.chromite.api.image import PushImageRequest
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb
 from PB.chromiumos.common import ArtifactsByService
@@ -315,7 +314,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       resp = service.Get(req, infra_step=True, test_output_data=test_data)
     except Exception as e:  # pragma: nocover
       self.m.disk_usage.track(step_name='track disk usage', depth=2,
-                              dir=self.m.path['cache'])
+                              d=self.m.path['cache'])
       raise e
 
     # Create files_by_artifact.
@@ -376,7 +375,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       self.m.disk_usage.track(step_name='track disk usage', depth=0)
       self.m.disk_usage.track(
           step_name='track disk usage', depth=1,
-          dir='/'.join(str(self.m.path['cache']).split('/')[:-2]))
+          d='/'.join(str(self.m.path['cache']).split('/')[:-2]))
       raise e
 
     return {
@@ -586,7 +585,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       (UploadedArtifacts) information about uploaded artifacts.
     """
     assert _kwonly == (), 'keyword parameters passed as positional'
-    uploaded_artifacts = {}
+    uploaded_artifacts = None
     with self.m.step.nest(name) as presentation:
       outpath = self.m.path.mkdtemp(prefix='artifacts')
       func = private_bundle_func or self._bundle_artifacts
@@ -678,8 +677,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Args:
       uploaded_artifacts (UploadedArtifacts): The uploaded artifacts
     """
-    artifacts = {k: v for k, v in uploaded_artifacts._asdict().items()}
-    self.m.easy.set_properties_step(artifacts=artifacts,
+    these_artifacts = {k: v for k, v in uploaded_artifacts._asdict().items()}
+    self.m.easy.set_properties_step(artifacts=these_artifacts,
                                     step_name='output artifact GS paths')
 
   def download_artifact(self, build_payload, artifact, name=None):

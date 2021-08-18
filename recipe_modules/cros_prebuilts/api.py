@@ -93,8 +93,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         uri = METADATA_GS_DIR_TMPL.format(gs_bucket=gs_bucket,
                                           snapshot=snapshot, target=target,
                                           profile=profile.name)
-        step_data = self.m.gsutil(['rsync', uri, download_dir],
-                                  multithreaded=True)
+        self.m.gsutil(['rsync', uri, download_dir], multithreaded=True)
 
         listdir_test_data = []
         if self._test_data.enabled:
@@ -184,7 +183,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           empty if the prebuilts are public.
       location (str): The Google Storage URI where the prebuilts were uploaded.
     """
-    with self.m.step.nest('upload metadata') as presentation:
+    with self.m.step.nest('upload metadata'):
       version = self.m.cros_version.version
       commit = self.m.cros_infra_config.gitiles_commit
       target = build_target.name if build_target else 'Unknown'
@@ -259,7 +258,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       tuple(str, str): google storage bucket and full file path.
     """
     assert binhost.uri.startswith('gs://'), (
-        'binhosts URI %s does not appear to be a google storage path' % uri)
+        'binhosts URI %s does not appear to be a google storage path' %
+        binhost.uri)
     uri = binhost.uri[len('gs://'):]
     parts = uri.split('/', 1)
     assert len(parts) == 2, '%s would not split into bucket and path' % uri

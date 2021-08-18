@@ -7,15 +7,12 @@ from collections import namedtuple
 from datetime import timedelta, time
 
 from PB.chromiumos.bot_scaling import ApplicationUtilization, BotPolicy, ReducedBotPolicyCfg, ResourceUtilization, RoboCropAction, ScalingAction
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
-from google.protobuf import field_mask_pb2
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
 import itertools
-import json
 
 TASK_STATES = ['RUNNING', 'PENDING']
 EXECUTION_HOUR_PERCENTILE = .16
@@ -203,7 +200,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     task_stats = []
     for policy in bot_policy_config.bot_policies:
       dimensions = self.unpack_policy_dimensions(policy.swarming_dimensions)
-      bot_stats_hold = []
+      bot_stats_hold = None
       task_stats_hold = []
       for dim in dimensions:
         # Bot counts get duplicated, due to the way dimensions are associated,
@@ -276,9 +273,6 @@ class BotScalingApi(recipe_api.RecipeApi):
 
   def _get_scheduled_weekday_daytime_min_max(self, config):
     schedules = config.amount.change
-    utc_now = self.m.time.utcnow()
-    pst_now = utc_now - timedelta(hours=8)
-
     for schedule in schedules:
       # Weekday daytime schedules always start at 8:00
       # See resize_on_mtv_workday() in chrome-internal.googlesource.com/infradata/config.git/+/HEAD/starlark/common/envs/chrome.star
@@ -468,14 +462,14 @@ class BotScalingApi(recipe_api.RecipeApi):
     """
     return {c.prefix: c for c in configs.vms}
 
-  def _bot_swarming_stats(self, bot_group, cli_stats, min, max):
+  def _bot_swarming_stats(self, bot_group, cli_stats, b_min, b_max):
     """Helper method that formats the bot stats into a named tuple.
 
     Args:
       bot_group (str): name of bot group associated with stats.
       cli_stats (dict): swarming CLI dict of bot stats.
-      min (int): bot floor from config
-      max (int): bot ceiling from config
+      b_min (int): bot floor from config
+      b_max (int): bot ceiling from config
 
     Returns:
       BotStats: Swarming bot stats named tuple.
@@ -484,7 +478,7 @@ class BotScalingApi(recipe_api.RecipeApi):
                     int(cli_stats.get('count', 0)),
                     int(cli_stats.get('dead', 0)),
                     int(cli_stats.get('maintenance', 0)),
-                    int(cli_stats.get('quarantined', 0)), min, max)
+                    int(cli_stats.get('quarantined', 0)), b_min, b_max)
 
   def _task_swarming_stats(self, bot_group, state, task_stats, cli_stats):
     """Helper method that formats the bot stats into a named tuple.

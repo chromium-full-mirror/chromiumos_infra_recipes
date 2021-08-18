@@ -21,7 +21,6 @@ from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
     TestInputProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 from recipe_engine import post_process
-from google.protobuf.json_format import MessageToDict
 
 PROPERTIES = TestInputProperties
 

@@ -15,9 +15,7 @@ DEPS = [
 ]
 
 import collections
-import json
 
-from PB.chromiumos import common
 from PB.chromiumos import builder_config
 from PB.recipe_modules.chromeos.failures.examples.build_failures import (
     BuildProperties)

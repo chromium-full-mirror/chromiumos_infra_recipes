@@ -8,12 +8,8 @@ DEPS = [
     'goma',
 ]
 
-from PB.recipe_modules.chromeos.goma.examples.test import TestInputProperties
 
-PROPERTIES = TestInputProperties
-
-
-def RunSteps(api, properties):
+def RunSteps(api):
   api.goma.initialize(also_bq_upload=True)
   api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
   api.assertions.assertEqual(

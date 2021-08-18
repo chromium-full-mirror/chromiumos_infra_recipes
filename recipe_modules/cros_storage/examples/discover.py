@@ -9,9 +9,6 @@ DEPS = [
     'cros_storage',
 ]
 
-from PB.chromiumos.common import ImageType
-
-
 def RunSteps(api):
   expected_results = api.properties.get('expected_results')
   images = api.cros_storage.discover_gs_artifacts(

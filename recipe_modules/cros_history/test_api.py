@@ -5,13 +5,9 @@
 
 from recipe_engine import recipe_test_api
 
-from google.protobuf import json_format as jsonpb
-
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.testplans.generate_test_plan import HwTestUnit
-from PB.testplans.generate_test_plan import TestUnitCommon
 
 from google.protobuf import timestamp_pb2
 

@@ -5,12 +5,8 @@
 
 """Basic tests for the urls recipe module."""
 
-import json
-from google.protobuf import json_format
-
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.urls.urls import UrlsProperties
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 

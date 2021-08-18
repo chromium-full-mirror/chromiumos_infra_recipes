@@ -184,8 +184,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
-  def _download_binproto(self, filename, step_test_data, timeout=None,
-                         application='ChromeOS', message=None):
+  def download_binproto(self, filename, step_test_data, timeout=None,
+                        application='ChromeOS', message=None):
     """Helper method to fetch a file from gititles."""
     repo = CHROME_OS_REPO_URL
     if application == 'Chrome':
@@ -213,9 +213,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     # Step nesting needs to happen here or it shows up many times in Milo,
     # once for each builder.
-    return self._download_binproto('generated/builder_configs',
-                                   self.test_api.builder_configs_step_test_data,
-                                   message=BuilderConfigs())
+    return self.download_binproto('generated/builder_configs',
+                                  self.test_api.builder_configs_step_test_data,
+                                  message=BuilderConfigs())
 
   def _get_name_to_builder_config(self, force_reload=False):
     """Helper method that returns the name to BuilderConfig map.
@@ -306,13 +306,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     if application == 'Chrome':
       return BotPolicyCfg.FromString(
-          self._download_binproto('configs/bot-scaling/generated/bot_policy',
-                                  self.test_api.bot_policy_test_data_chrome,
-                                  application='Chrome', message=BotPolicyCfg()))
+          self.download_binproto('configs/bot-scaling/generated/bot_policy',
+                                 self.test_api.bot_policy_test_data_chrome,
+                                 application='Chrome', message=BotPolicyCfg()))
     return BotPolicyCfg.FromString(
-        self._download_binproto('bot_scaling/generated/bot_policy',
-                                self.test_api.bot_policy_test_data,
-                                message=BotPolicyCfg()))
+        self.download_binproto('bot_scaling/generated/bot_policy',
+                               self.test_api.bot_policy_test_data,
+                               message=BotPolicyCfg()))
 
   def get_vm_retry_config(self):
     """Get SuiteRetryCfg as defined in infra/config for tast vm.
@@ -321,9 +321,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       SuiteRetryCfg as defined in the config repo.
     """
     return SuiteRetryCfg.FromString(
-        self._download_binproto('testingconfig/generated/vm_retry',
-                                self.test_api.vm_retry_test_data,
-                                message=SuiteRetryCfg()))
+        self.download_binproto('testingconfig/generated/vm_retry',
+                               self.test_api.vm_retry_test_data,
+                               message=SuiteRetryCfg()))
 
   def get_dut_tracking_config(self):
     """Get TrackingPolicyCfg as defined in infra/config.
@@ -332,9 +332,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       TrackingPolicyCfg as defined in the config repo.
     """
     return TrackingPolicyCfg.FromString(
-        self._download_binproto('testingconfig/generated/dut_tracking',
-                                self.test_api.dut_tracking_test_data,
-                                message=TrackingPolicyCfg()))
+        self.download_binproto('testingconfig/generated/dut_tracking',
+                               self.test_api.dut_tracking_test_data,
+                               message=TrackingPolicyCfg()))
 
   def _has_valid_commit(self, config, commit, manifest):
     """Determine if the builder has a valid commit.

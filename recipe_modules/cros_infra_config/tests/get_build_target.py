@@ -9,7 +9,6 @@ DEPS = [
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 
 def RunSteps(api):

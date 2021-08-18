@@ -387,8 +387,7 @@ class GcloudApi(recipe_api.RecipeApi):
     ]
     output = self.m.easy.stdout_json_step(
         'check whether snapshot exists: {}'.format(snapshot), list_cmd,
-        test_stdout=lambda: self.test_api.snapshot_exists_data(),
-        infra_step=True)
+        test_stdout=self.test_api.snapshot_exists_data, infra_step=True)
     for snap in output:
       if snapshot == snap['name']:
         return True
@@ -409,7 +408,7 @@ class GcloudApi(recipe_api.RecipeApi):
     ]
     output = self.m.easy.stdout_json_step(
         'check whether disk exists: {}'.format(disk), list_cmd,
-        test_stdout=lambda: self.test_api.disk_exists_data(), infra_step=True)
+        test_stdout=self.test_api.disk_exists_data, infra_step=True)
     for gce_disk in output:
       if disk == gce_disk['name']:
         return True
@@ -465,8 +464,7 @@ class GcloudApi(recipe_api.RecipeApi):
       ])
       snap_list = self.m.easy.stdout_json_step(
           'list snapshots with filter {}'.format(prefix), cmd,
-          test_stdout=lambda: self.test_api.snapshot_list_data(),
-          infra_step=True)
+          test_stdout=self.test_api.snapshot_list_data, infra_step=True)
       for snap in snap_list:
         snapshot_name = snap['name']
         if protected_snapshots:

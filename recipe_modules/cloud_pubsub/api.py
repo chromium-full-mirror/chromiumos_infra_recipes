@@ -25,11 +25,11 @@ class CloudPubsubApi(recipe_api.RecipeApi):
         with utf8, as it will be sent to the publish-message binary via JSON.
     """
     with self.m.step.nest('publish message'), self.m.context(infra_steps=True):
-      input = {
+      publish_input = {
           'project_id': project_id,
           'topic_id': topic_id,
           'data': data,
       }
       test_output_data = {'message_id': '12345'}
-      self.m.support.call('publish-message', input,
+      self.m.support.call('publish-message', publish_input,
                           test_output_data=test_output_data)

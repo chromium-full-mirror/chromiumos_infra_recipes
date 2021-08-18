@@ -108,6 +108,7 @@ class EasyApi(recipe_api.RecipeApi):
           lambda: self.m.json.test_api.output_stream(test_stdout()))
     ok_ret = {0}
     if ignore_exceptions:
+      # pylint: disable=redefined-variable-type
       ok_ret = 'any'
     step_data = self.step(name, cmd, stdout=self.m.json.output(),
                           step_test_data=step_test_data, ok_ret=ok_ret,

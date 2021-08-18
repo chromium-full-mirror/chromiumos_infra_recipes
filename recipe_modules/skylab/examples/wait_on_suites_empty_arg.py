@@ -9,7 +9,6 @@ DEPS = [
     'skylab',
 ]
 
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from google.protobuf import duration_pb2
 
 

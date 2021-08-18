@@ -66,7 +66,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # e.g. "/usr/local/autotest/results/swarming-12345678/1".
     # So use general os.path to join.
     base = os.path.join(base_dir, 'autoserv_test', 'chromium', 'results')
-    with self.m.step.nest('upload chromium test result to rdb') as rdb_step:
+    with self.m.step.nest('upload chromium test result to rdb'):
       result_file = os.path.join(base, configs.get('result_file'))
       # ResultDB in CrOS recipes only supports uploading result file,
       # so the cmd must accompany the result_adapter.
@@ -91,8 +91,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       var = {'builder': builder_name}
       var.update(configs.get('base_variant', {}))
 
-      base_tags = map(lambda x: tuple(x.split(':', 1)),
-                      configs.get('base_tags', []))
+      base_tags = [tuple(x.split(':', 1)) for x in configs.get('base_tags', [])]
 
       # wrap it with rdb-stream
       cmd = self.m.resultdb.wrap(

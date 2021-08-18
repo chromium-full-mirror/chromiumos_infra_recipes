@@ -9,9 +9,6 @@ DEPS = [
     'cros_bisect',
 ]
 
-from recipe_engine.config import List
-from recipe_engine.recipe_api import Property
-
 from PB.chromiumos.common import PackageInfo
 
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (

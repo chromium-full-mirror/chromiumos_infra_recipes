@@ -9,9 +9,6 @@ DEPS = [
     'cros_sdk',
 ]
 
-from PB.chromiumos import common
-
-
 def RunSteps(api):
   workspace = api.path['cleanup'].join('workspace')
 

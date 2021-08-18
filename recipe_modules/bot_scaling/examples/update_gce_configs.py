@@ -11,7 +11,6 @@ DEPS = [
     'cros_infra_config',
 ]
 
-from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
 

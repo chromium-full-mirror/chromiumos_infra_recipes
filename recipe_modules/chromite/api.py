@@ -144,16 +144,13 @@ class ChromiteApi(recipe_api.RecipeApi):
     self.cros_sdk('build packages', ['./build_packages', '--board', board],
                   args, **kwargs)
 
-  def configure(self, properties, config_map, **KWARGS):
+  def configure(self, **KWARGS):
     """Loads configuration from build properties into this recipe config.
 
     Args:
-      properties (Properties): The build properties object.
-      config_map (dict): The configuration map to use.
       KWARGS: Additional keyword arguments to forward to the configuration.
     """
     builder_group = self.m.cros_infra_config.current_builder_group
-    builder = self.m.buildbucket.builder_name
 
     if builder_group is None:
       self.set_config('main_swarming', **KWARGS)
@@ -195,7 +192,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     # python2 a context manager to insert that directory at the front of PATH.
     return self.m.context(env_prefixes={'PATH': [python_bin]})
 
-  def run(self, args=None, goma_dir=None):
+  def run(self, goma_dir=None):
     """Runs the configured 'cbuildbot' build.
 
     This workflow uses the registered configuration dictionary to make group-
@@ -214,7 +211,6 @@ class ChromiteApi(recipe_api.RecipeApi):
     - Executes the 'cbuildbot' command.
 
     Args:
-      args (list): Initial argument list, expanded based on other values.
       goma_dir: Goma client path used for simplechrome.
                 Goma client for ChromeOS chroot should be located in sibling
                 directory so that cbuildbot can find it automatically.

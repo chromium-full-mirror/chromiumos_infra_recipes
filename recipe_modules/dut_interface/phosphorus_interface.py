@@ -10,7 +10,7 @@ from . import dut_interface
 from .phosphorus_results import PhosphorusResult, PhosphorusPrejobDUTResponse, PhosphorusTestDUTResponse, PhosphorusFetchCrashDUTResponse
 
 from google.protobuf.timestamp_pb2 import Timestamp
-from PB.test_platform import phosphorus, skylab_test_runner
+from PB.test_platform import phosphorus
 
 
 DeviceUnderTest = namedtuple(

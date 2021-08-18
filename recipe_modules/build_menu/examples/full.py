@@ -22,8 +22,6 @@ PROPERTIES = FullProperties
 
 
 def RunSteps(api, properties):
-  build_target = properties.build_target or common.BuildTarget(name='eve')
-
   with api.build_menu.configure_builder(
       missing_ok=properties.missing_config_ok) as config:
     api.assertions.assertEqual(config, api.build_menu.config)

@@ -60,12 +60,13 @@
 # [VPYTHON:END]
 
 import os
-import hashlib
 import sys
 import posixpath
 import re
 
 import requests
+
+# pylint: disable=superfluous-parens
 
 # Python 2.x compat
 try:
@@ -74,7 +75,7 @@ except NameError:
   FileNotFoundError = IOError  # pylint: disable=redefined-builtin
 
 
-class Pulp:
+class Pulp(object):
 
   def __init__(self, url, existent):
     self.url = url
@@ -101,7 +102,7 @@ class Pulp:
       with open(os.path.join(path, fn), 'wb') as f:
         f.write(rv.content)
 
-  def _sync_file(self, fn, path, csum, sz):
+  def _sync_file(self, fn, path):
 
     self.existent.seek(0)
     for line in self.existent:
@@ -137,7 +138,7 @@ class Pulp:
         fn, csum, sz = line.rsplit(",", 2)
       except ValueError as e:
         continue
-      self._sync_file(fn, path, csum, int(sz))
+      self._sync_file(fn, path)
 
     # success
     return 0

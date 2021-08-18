@@ -1,30 +1,32 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=superfluous-parens
+
 import argparse
 import logging
 import os
+from os.path import isdir, join
 import sys
 
-from os.path import isdir, join
 
 
 def _track_free():
   os.system('df -h .')
 
 
-def _track_usage(dir, depth=0):
-  for file in os.listdir(dir):
-    os.system('du -sh ' + join(dir, file))
+def _track_usage(d, depth=0):
+  for f in os.listdir(d):
+    os.system('du -sh ' + join(d, f))
 
   print('~' * 60)
   # Recurse if needed
   if depth > 0:
-    for file in os.listdir(dir):
-      if isdir(join(dir, file)) and not file.startswith('.'):
-        _track_usage(join(dir, file), depth - 1)
+    for f in os.listdir(d):
+      if isdir(join(d, f)) and not f.startswith('.'):
+        _track_usage(join(d, f), depth - 1)
 
 
 def main():
@@ -36,8 +38,8 @@ def main():
 
   try:
     _track_free()
-    dir = args.dir or os.getcwd()
-    _track_usage(dir, args.depth)
+    d = args.dir or os.getcwd()
+    _track_usage(d, args.depth)
   except Exception as e:  # pylint: disable=broad-except
     logging.error(str(e))
 

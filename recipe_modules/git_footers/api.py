@@ -142,7 +142,7 @@ class GitFootersApi(recipe_api.RecipeApi):
     if footer_text.startswith(footer + ":"):
       footer_text = footer_text[len(footer) + 1:].lstrip()
     new_footer = "{}: {}".format(footer, footer_text)
-    for i in range(len(footers)):
+    for i, _ in enumerate(footers):
       # Exists, edit existing footer.
       if footers[i].startswith(footer):
         footers[i] = new_footer

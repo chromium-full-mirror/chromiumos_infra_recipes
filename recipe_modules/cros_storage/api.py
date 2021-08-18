@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=protected-access,redefined-variable-type
+
 """API featuring shared helpers for locating and naming stored artifacts.
 
    Much of the inspiration for this module came from:
@@ -12,7 +14,6 @@
    to one of these needs to be reflected in the other.
 """
 
-import json
 from os import path
 import re
 
@@ -32,7 +33,7 @@ class UnsupportedImageTypeException(Exception):
   pass
 
 
-class ArtifactRoot():
+class ArtifactRoot(object):
   """The directory root of the build."""
 
   _URI_TEMPLATE = 'gs://%(bucket)s/%(channel)s/%(build_target_name)s/%(version)s'
@@ -53,6 +54,10 @@ class ArtifactRoot():
   def version(self):
     """The string version (e.g. '13373.1.0')."""
     return self._version
+
+  @version.setter
+  def version(self, value):
+    self._version = value
 
   @property
   def channel(self):
@@ -666,7 +671,7 @@ class CrosStorageApi(recipe_api.RecipeApi):
   # This is the list of available URL parsers, used for discovery.
   all_artifact_types = image_types + payload_types
 
-  def discover_gs_artifacts(self, prefix_uri, parse_types=all_artifact_types):
+  def discover_gs_artifacts(self, prefix_uri, parse_types=None):
     """Discover and return all the GS artifacts found in a given ArtifactRoot.
 
     We assume that each uri will match at most a single ParserOption and we
@@ -680,6 +685,7 @@ class CrosStorageApi(recipe_api.RecipeApi):
     Returns:
       list[artifact_type]: list of artifacts found in the prefix.
     """
+    parse_types = parse_types or CrosStorageApi.all_artifact_types[:]
     with self.m.step.nest('discover gs artifacts') as presentation:
       recursive_uri = path.join(prefix_uri, '**')
       gsutil_ls_stdout = self.m.raw_io.output_text(name='ls results',

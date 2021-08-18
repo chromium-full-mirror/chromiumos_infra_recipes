@@ -11,7 +11,7 @@ DEPS = [
     'recipe_engine/time',
 ]
 
-from PB.chromiumos.bot_scaling import BotPolicy, BotPolicyCfg
+from PB.chromiumos.bot_scaling import BotPolicy
 from recipe_engine import post_process
 
 MONDAY_3_25_PM = 1607383500

@@ -42,7 +42,7 @@
       "-file",
       "/dev/stdin",
       "-attributes",
-      "{}"
+      "null"
     ],
     "infra_step": true,
     "name": "ipc_pubsub: publish",

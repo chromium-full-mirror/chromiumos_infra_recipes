@@ -15,7 +15,6 @@ from PB.chromite.api import sysroot as sysroot_pb
 from PB.chromite.api.artifacts import BuildSetupResponse
 
 from PB.chromiumos import common
-from PB.chromiumos.builder_config import BuilderConfig
 
 from PB.recipe_modules.chromeos.cros_artifacts.examples.test import (
     TestInputProperties)
@@ -88,7 +87,7 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  missing = api.cros_build_api.remove_endpoints(['ArtifactsService/BuildSetup'])
+  api.cros_build_api.remove_endpoints(['ArtifactsService/BuildSetup'])
   yield api.test(
       'testing_pointless',
       api.properties(

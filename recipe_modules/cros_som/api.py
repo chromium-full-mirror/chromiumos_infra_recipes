@@ -8,6 +8,7 @@ install_aliases()
 
 from recipe_engine import recipe_api
 
+# pylint: disable=no-name-in-module1
 from urllib.parse import urljoin
 
 KEY_PREFIX = 'chromeos.buildbucket:'

@@ -10,10 +10,7 @@ from google.protobuf import json_format
 from google.protobuf import text_format
 
 from PB.chromite.api import test as test_pb2
-from PB.chromiumos.build.api import system_image as system_image_pb2
 from PB.chromiumos import common as common_pb2
-from PB.chromiumos.config.payload import flat_config as flat_config_pb2
-from PB.chromiumos.test.api import dut_attribute as dut_attribute_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 
 

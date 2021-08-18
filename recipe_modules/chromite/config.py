@@ -2,7 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import os
 import re
 
 from recipe_engine.config import config_item_context, ConfigGroup
@@ -88,10 +87,6 @@ def base(c):
   c.repositories['tryjob'] = []
   c.repositories['chromium'] = []
   c.repositories['cros_manifest'] = []
-
-  # Determine if we're manually specifying the tryjob branch in the extra
-  # args. If we are, use that as the branch version.
-  chromite_branch = c.chromite_branch
 
   # Resolve branch version, if available.
   assert c.chromite_branch, "A Chromite branch must be configured."

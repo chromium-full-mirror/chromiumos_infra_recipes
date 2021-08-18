@@ -12,7 +12,6 @@ from recipe_engine import recipe_api
 from . import structs
 
 from PB.chromite.api.test import VmTestRequest
-from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.test_vm import TestVmProperties
 from PB.recipes.chromeos.tast_vm import TastVmProperties
@@ -55,12 +54,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         test_plan = self._get_test_plan(need_tests_builds, gerrit_changes,
                                         snapshot)
 
-        dev = False
-        if need_tests_builds:
-          environment = self.m.cros_infra_config.get_builder_config(
-              need_tests_builds[0].builder.builder).general.environment
-          dev = environment == BuilderConfig.General.STAGING
-
         # We will not run tests that have already passed for this patch set.
         previously_passed_tests = set()
         is_retry = False
@@ -72,7 +65,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         test_tasks = self.schedule_tests(test_plan, previously_passed_tests,
                                          self.timeout, test_to_build_target_map,
-                                         snapshot, dev=dev, is_retry=is_retry)
+                                         snapshot, is_retry=is_retry)
 
       with self.m.step.nest('collect tests'):
         test_results = self._collect_tests(test_tasks, timeout=self.timeout)
@@ -146,8 +139,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       return build_target.name + '-tast-vm-informational'
 
   def schedule_tests(self, test_plan, passed_tests, timeout,
-                     test_to_build_map=None, snapshot=None, dev=False,
-                     is_retry=False):
+                     test_to_build_map=None, snapshot=None, is_retry=False):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -160,7 +152,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           build_targets to be populated.
       snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
           the included builds were created.
-      dev(boolean): Whether to use Skylab dev instance.
       is_retry (bool): Whether this is a CQ retry.
 
     Returns:
@@ -229,7 +220,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
       is_retry (bool): Whether this is a CQ retry.
-      dev(boolean): Whether to use Skylab dev instance.
 
     Returns:
       list[SkylabTask] of the tests scheduled.

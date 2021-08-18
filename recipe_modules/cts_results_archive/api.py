@@ -15,17 +15,17 @@ class CTSResultsArchive(recipe_api.RecipeApi):
     super(CTSResultsArchive, self).__init__(**kwargs)
     self._properties = properties
 
-  def archive(self, dir):
+  def archive(self, d_dir):
     """Archive CTS result files to CTS specific GS buckets.
 
     This module determines if any CTS results files should uploaded to the CTS
     GS buckets and archives them if required.
 
-    @param dir: The results directory to process.
+    @param d_dir: The results directory to process.
     """
     with self.m.step.nest('Archive CTS results') as step:
       json_input = {
-          'dir': dir,
+          'dir': d_dir,
           'cts_results_gsurl': self._properties.cts_results_gsurl,
           'cts_apfe_gsurl': self._properties.cts_apfe_gsurl,
       }

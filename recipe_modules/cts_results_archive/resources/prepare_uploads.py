@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=redefined-variable-type
+
 import argparse
 import glob
 import gzip
@@ -11,7 +13,6 @@ import logging
 import os
 import re
 import shutil
-import subprocess
 import sys
 import tarfile
 import urllib
@@ -30,6 +31,11 @@ CTS_COMPRESSED_RESULT_TYPES = {
 
 # Autotest test to collect list of CTS tests
 TEST_LIST_COLLECTOR = 'tradefed-run-collect-tests-only'
+
+
+class HostKeyvalError(Exception):
+  """An exception throwing when there is an error with the hostkeyval."""
+  pass
 
 
 def main():
@@ -53,11 +59,11 @@ def main():
 
   # Input format
   data = json.load(opts.json_input)
-  dir = data['dir']
+  d_dir = data['dir']
   cts_results_gsurl = data['cts_results_gsurl']
   cts_apfe_gsurl = data['cts_apfe_gsurl']
 
-  instructions = _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl)
+  instructions = _prepare_uploads(d_dir, cts_results_gsurl, cts_apfe_gsurl)
 
   # Output format
   json.dump(
@@ -75,7 +81,7 @@ def main():
   return 0
 
 
-def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
+def _prepare_uploads(d_dir, cts_results_gsurl, cts_apfe_gsurl):
   """Prepare artifacts for CTS uploads.
 
     Upload testResult.xml.gz/test_result.xml.gz file to cts_results_bucket.
@@ -86,7 +92,7 @@ def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
         information.
     """
   instructions = []
-  for test_dir in glob.glob(os.path.join(dir, '*')):
+  for test_dir in glob.glob(os.path.join(d_dir, '*')):
     cts_path = os.path.join(test_dir, 'cheets_CTS.*', 'results', '*',
                             TIMESTAMP_PATTERN)
     cts_v2_path = os.path.join(test_dir, 'cheets_CTS_*', 'results', '*',
@@ -111,18 +117,18 @@ def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
   return instructions
 
 
-def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
+def _prepare_uploads_for_test(d_dir, path, result_pattern, result_gs_bucket,
                               apfe_gs_bucket):
   instructions = []
 
-  keyval = _parse_job_keyval(dir)
+  keyval = _parse_job_keyval(d_dir)
   build = keyval.get('build')
-  host_keyval = _parse_host_keyval(dir, keyval.get('hostname'))
+  host_keyval = _parse_host_keyval(d_dir, keyval.get('hostname'))
   labels = urllib.unquote(host_keyval.get('labels'))
   try:
     host_model_name = re.search(r'model:(\w+)', labels).group(1)
   except AttributeError:
-    logging.exception('Error in parsing %s/host_keyval/%s', dir,
+    logging.exception('Error in parsing %s/host_keyval/%s', d_dir,
                       keyval.get('hostname'))
     host_model_name = ''
 
@@ -159,7 +165,7 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
     # CTS v2 pipeline requires device info in 'board.model' format.
     # e.g. coral.robo-release, eve.eve-release, hatch.kohaku-kernelnext-release
     board_name, board_variant, build_version = re.search(
-        "(\w+)(.*)/(.*)", build).groups()
+        r"(\w+)(.*)/(.*)", build).groups()
 
     build_name_divo_format = (
         board_name + '.' + host_model_name + board_variant + '/' +
@@ -315,11 +321,12 @@ def _read_keyval(path):
     if match:
       key = match.group(1)
       value = match.group(2)
-      if re.search('^\d+$', value):
+      if re.search(r'^\d+$', value):
         value = int(value)
-      elif re.search('^(\d+\.)?\d+$', value):
+        keyval[key] = value
+      elif re.search(r'^(\d+\.)?\d+$', value):
         value = float(value)
-      keyval[key] = value
+        keyval[key] = value
     else:
       raise ValueError('Invalid format line: %s' % line)
   f.close()
@@ -365,4 +372,5 @@ def _deserialize_labels_from_host_info(path):
 
 
 if __name__ == '__main__':
-  exit(main())
+  main()
+  sys.exit()

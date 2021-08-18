@@ -17,10 +17,8 @@ from PB.chromiumos.generate_build_plan import GenerateBuildPlanResponse
 from PB.testplans.common import ProtoBytes as testplans_proto_bytes
 from PB.testplans.pointless_build import PointlessBuildCheckRequest
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 
-from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
 
@@ -416,7 +414,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       builders (set(str)): A set of builder names or 'all' if no slim builds
         should be run.
     """
-    with self.m.step.nest('check disallow slim builds') as pres:
+    with self.m.step.nest('check disallow slim builds'):
       builders = self.m.git_footers.get_footer_values(
           gerrit_changes, self.DISALLOW_SLIM_BUILDS_FOOTER)
       return {'all'} if 'all' in builders else builders

@@ -10,7 +10,6 @@ DEPS = [
 
 # infra/proto/src/chromiumos/builder_report.proto
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-from PB.chromiumos.common import Channel
 
 BuildStatus = BuildReport.BuildStatus
 StepDetails = BuildReport.StepDetails

@@ -61,7 +61,7 @@ def DoRunSteps(api, config):
   finally:
     api.build_menu.upload_artifacts(config, failing_build=failing_build)
     if failing_build:
-      raise
+      raise sf
 
 
 def _should_install_all_packages(api, config, packages):

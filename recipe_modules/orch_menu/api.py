@@ -458,7 +458,7 @@ class OrchMenuApi(RecipeApi):
     if new_build_requests:
       # Add in extra_props.
       if extra_props:
-        for i, req in enumerate(new_build_requests):
+        for _, req in enumerate(new_build_requests):
           # Only set the value if it's not set already.
           # We don't want to clobber anything.
           for key, val in extra_props.items():

@@ -15,7 +15,7 @@ from recipe_engine import post_process
 def RunSteps(api):
   with api.step.nest('nested step'), api.gs_step_logging.log_step_to_gs(
       'testbucket/testprefix'):
-    step_data = api.step(
+    api.step(
         'basic with stdout',
         cmd=['echo', 'hello world'],
         stdout=api.raw_io.output(),

@@ -11,8 +11,6 @@ DEPS = [
     'cros_infra_config',
 ]
 
-from PB.chromiumos.bot_scaling import ScalingAction
-
 
 def RunSteps(api):
   bot_policy_config = api.bot_scaling.test_api.robocrop_bot_policy_config(

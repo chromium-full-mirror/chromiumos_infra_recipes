@@ -9,9 +9,7 @@ DEPS = [
     'cros_test_plan',
 ]
 
-from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.testplans.generate_test_plan import BuildPayload
 
 
 def RunSteps(api):

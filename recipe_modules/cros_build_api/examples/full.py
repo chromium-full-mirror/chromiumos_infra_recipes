@@ -9,21 +9,7 @@ DEPS = [
     'cros_build_api',
 ]
 
-import json
-
-from google.protobuf import empty_pb2
-
-from PB.chromite.api import api as meta_api
-from PB.chromite.api import artifacts
 from PB.chromite.api import binhost
-from PB.chromite.api import depgraph
-from PB.chromite.api import image
-from PB.chromite.api import packages
-from PB.chromite.api import sdk
-from PB.chromite.api import sysroot
-from PB.chromite.api import test
-from PB.chromite.api import toolchain
-from PB.chromite.api import build_api_test
 from PB.chromiumos.common import BuildTarget
 
 from PB.recipe_modules.chromeos.analysis_service.analysis_service import (

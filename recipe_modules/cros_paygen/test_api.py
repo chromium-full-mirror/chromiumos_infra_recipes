@@ -9,9 +9,7 @@ This module provides helpers to make testing Chrome OS recipes simpler and more
 consistent.
 """
 
-import json
 import os
-from google.protobuf.json_format import MessageToJson
 from recipe_engine import recipe_test_api
 
 from PB.chromite.api.payload import Build as Build_pb2

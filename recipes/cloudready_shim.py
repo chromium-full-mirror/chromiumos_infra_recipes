@@ -45,10 +45,10 @@ def RunSteps(api):
 
   with api.step.nest('upload build logs') as presentation:
     presentation.links[link_name] = link_value
-    for file, contents in logs.items():
-      tmp_log_file = api.path.mkstemp(file)
-      api.file.write_raw('write {}'.format(file), tmp_log_file, contents)
-      gs_path = api.path.join(gs_dir, file)
+    for f, contents in logs.items():
+      tmp_log_file = api.path.mkstemp(f)
+      api.file.write_raw('write {}'.format(f), tmp_log_file, contents)
+      gs_path = api.path.join(gs_dir, f)
       api.gsutil.upload(tmp_log_file, CLOUDREADY_SHIM_BUCKET, gs_path)
 
   files = {

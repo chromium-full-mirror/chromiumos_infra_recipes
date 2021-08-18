@@ -9,13 +9,13 @@ from recipe_engine import recipe_api
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
 
 class UrlsApi(recipe_api.RecipeApi):
   """A module for creating links to tasks."""
 
+  # pylint: disable=unused-argument
   def __init__(self, properties, **kwargs):
     super(UrlsApi, self).__init__(**kwargs)
 

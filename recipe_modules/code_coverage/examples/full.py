@@ -37,5 +37,5 @@ def GenTests(api):
           retcode=2, stdout=api.raw_io.output('lol')),
       api.post_check(lambda check, steps: check(steps[
           'upload code coverage data'].output_properties[
-              'process_coverage_data_failure'] == True)),
+              'process_coverage_data_failure'] is True)),
   )

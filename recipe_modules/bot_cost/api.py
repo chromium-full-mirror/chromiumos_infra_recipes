@@ -191,7 +191,6 @@ class BotCostApi(RecipeApi):
     total_child_build_cost = 0
     child_builds_missing_cost = []
 
-    orch_build_id = self.m.buildbucket.build.id
     for build in child_builds:
       if 'build_cost' in build.output.properties:
         total_child_build_cost += build.output.properties['build_cost']

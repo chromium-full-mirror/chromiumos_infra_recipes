@@ -12,6 +12,7 @@ import contextlib
 from datetime import timedelta
 import types
 from collections import namedtuple
+# pylint: disable=no-name-in-module
 from urllib.parse import urlparse
 
 from recipe_engine import recipe_api

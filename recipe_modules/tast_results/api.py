@@ -109,11 +109,11 @@ class TastResultsApi(recipe_api.RecipeApi):
 
   def missing_test_cases(self, tests, test_cases):
     """Create missing tests cases.
-    
+
     Args:
       tests list(str): list of tests that should have run.
       test_cases list(TestCaseResult): test_cases in the results.json.
-    
+
     Returns: list(TestCaseResult) the missing tests cases.
     """
     reported_tests = set([tc.name for tc in test_cases])

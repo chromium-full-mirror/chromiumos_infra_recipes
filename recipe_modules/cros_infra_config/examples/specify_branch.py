@@ -13,7 +13,6 @@ DEPS = [
 
 from recipe_engine import post_process
 
-from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
 

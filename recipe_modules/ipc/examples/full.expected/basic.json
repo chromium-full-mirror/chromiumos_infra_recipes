@@ -42,7 +42,7 @@
       "-file",
       "/dev/stdin",
       "-attributes",
-      "{\"baz\": \"quux\", \"foo\": \"bar\"}"
+      "{}"
     ],
     "infra_step": true,
     "name": "ipc_pubsub: publish",

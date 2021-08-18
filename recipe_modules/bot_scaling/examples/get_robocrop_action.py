@@ -42,7 +42,7 @@ def RunSteps(api):
   # If bot_fallback is missing for a bot_group, there should not be a scaling
   # action for it but a warning step should be shown.
   missing_fallback_bot_policy_config = BotPolicyCfg.FromString(
-      api.cros_infra_config._download_binproto(
+      api.cros_infra_config.download_binproto(
           'configs/bot-scaling/generated/bot_policy',
           api.cros_infra_config.test_api.bot_policy_test_data_missing_fallback,
           application='Chrome'))

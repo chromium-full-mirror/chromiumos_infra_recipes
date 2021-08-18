@@ -16,7 +16,7 @@ from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
-from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
+from PB.test_platform.steps.execution import ExecuteResponses
 from PB.test_platform.taskstate import TaskState
 
 from google.protobuf import struct_pb2
@@ -52,7 +52,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         pool='recipe_test_pool',
     )
 
-  def skylab_task(self, id=None, url=None, test=None, unit=None):
+  def skylab_task(self, bid=None, url=None, test=None, unit=None):
     if test is None and unit is None:
       unit = self.hw_test_unit()  # pragma: no cover
       test = unit.hw_test_cfg.hw_test[0]  # pragma: no cover
@@ -60,7 +60,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
       test = unit.hw_test_cfg.hw_test[0]  # pragma: no cover
     else:
       unit = self.hw_test_unit(hw_tests=[test])
-    return structs.SkylabTask(id=id or 1234, url=url or 'https://google.com',
+    return structs.SkylabTask(id=bid or 1234, url=url or 'https://google.com',
                               test=test, unit=unit)
 
   def skylab_result(self, task=None, status=common_pb2.SUCCESS,
@@ -90,14 +90,14 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
   #######################
 
   def test_with_multi_response(
-      self, id, names, task_state=TaskState(verdict=TaskState.VERDICT_PASSED),
+      self, bid, names, task_state=TaskState(verdict=TaskState.VERDICT_PASSED),
       exclude_json=False):
-    return self._with_multi_response(id, names, task_state,
+    return self._with_multi_response(bid, names, task_state,
                                      _json=not exclude_json)
 
-  def _with_multi_response(self, id, names, task_state, _json=True):
+  def _with_multi_response(self, bid, names, task_state, _json=True):
     return build_pb2.Build(
-        id=id, output=build_pb2.Build.Output(
+        id=bid, output=build_pb2.Build.Output(
             properties=self._multi_response(names, task_state, _json)))
 
   def _multi_response(self, names, task_state, _json):

@@ -192,12 +192,11 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
       ret.update(enable_history=True, assert_singleton=True)
     return ret
 
-  def standard_test_data(self, extra_output_properties=None, **kwargs):
+  def standard_test_data(self, extra_output_properties=None):
     """Return the standard test builds for testing orchestrators.
 
     Args:
       extra_output_properties (dict): Extra output properties, or None.
-      **kwargs (dict): Arguments to pass to test_util.test_build.
 
     Returns:
       namedtuple containing:
@@ -357,7 +356,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     def _skylab_resp(task_id, suite_names=None, passed=True):
       verdict = TaskState.VERDICT_PASSED if passed else TaskState.VERDICT_FAILED
       return self.m.skylab.test_with_multi_response(
-          id=task_id, names=suite_names or [],
+          bid=task_id, names=suite_names or [],
           task_state=TaskState(verdict=verdict))
 
     ctp_normal += self.m.buildbucket.simulated_collect_output([

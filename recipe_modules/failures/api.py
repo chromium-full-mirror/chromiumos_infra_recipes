@@ -165,8 +165,6 @@ class FailuresApi(RecipeApi):
     if not packages:
       return
 
-    short_message = ','.join([p.package_name for p in packages])
-
     if len(packages) == 1:
       long_message = 'failed to install {}'.format(
           self.m.naming.get_package_title(packages[0]))
@@ -201,8 +199,7 @@ class FailuresApi(RecipeApi):
       message = '{} images failed'.format(len(failed_images))
       presentation.step_text = message
       presentation.status = self.m.step.FAILURE
-      failed_types = map(lambda image: ImageType.Name(image.type),
-                         failed_images)
+      failed_types = [ImageType.Name(image.type) for image in failed_images]
       presentation.logs['list of failed images'] = failed_types
       raise StepFailure(message)
 

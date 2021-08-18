@@ -22,7 +22,7 @@ def RunSteps(api):
       api.assertions.assertEqual(stat.dead, 0)
       api.assertions.assertEqual(stat.maintenance, 0)
       api.assertions.assertEqual(stat.quarantined, 0)
-      api.assertions.assertEqual(stat.min, 5),
+      api.assertions.assertEqual(stat.min, 5)
       api.assertions.assertEqual(stat.max, 100)
 
   test_stats = {'RUNNING': 23, 'PENDING': 23}

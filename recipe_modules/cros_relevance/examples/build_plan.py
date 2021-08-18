@@ -15,7 +15,6 @@ DEPS = [
 ]
 
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.recipe_modules.chromeos.cros_relevance.examples.build_plan import (
     BuildPlanTest)

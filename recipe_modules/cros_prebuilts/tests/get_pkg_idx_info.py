@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=protected-access
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -19,8 +21,6 @@ from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
     CrosPrebuiltsProperties)
 from PB.recipe_modules.chromeos.cros_prebuilts.tests.get_pkg_idx_info import (
     GetPkgIdxInfoProperties, TestDataMap)
-
-from recipe_engine import post_process
 
 PROPERTIES = GetPkgIdxInfoProperties
 

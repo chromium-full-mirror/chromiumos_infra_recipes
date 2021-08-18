@@ -40,6 +40,7 @@ class exponential_retry(object):
       for i in xrange(self.retries):
         try:
           return f(*args, **kwargs)
+        # pylint: disable=broad-except
         except Exception as e:
           if (i + 1) >= self.retries or not self.condition(e):
             raise

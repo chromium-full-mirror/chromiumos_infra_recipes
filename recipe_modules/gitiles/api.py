@@ -9,6 +9,7 @@ from future.standard_library import install_aliases
 install_aliases()
 
 import base64
+# pylint: disable=no-name-in-module
 from urllib.parse import urlunparse
 
 from recipe_engine import recipe_api

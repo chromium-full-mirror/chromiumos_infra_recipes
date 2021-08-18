@@ -10,8 +10,7 @@ DEPS = [
     'cros_infra_config',
 ]
 
-from PB.chromiumos.bot_scaling import BotPolicy, BotPolicyCfg
-import json
+from PB.chromiumos.bot_scaling import BotPolicy
 
 
 def RunSteps(api):

@@ -3,7 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from google.protobuf import json_format
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
 
@@ -14,10 +13,8 @@ DEPS = [
     'cros_infra_config',
 ]
 
-PROPERTIES = CrosInfraConfigProperties
 
-
-def RunSteps(api, properties):
+def RunSteps(api):
   props = api.cros_infra_config.props_for_child_build
   # Log what we got.
   with api.step.nest('props') as step:

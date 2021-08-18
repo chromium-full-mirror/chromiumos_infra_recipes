@@ -19,7 +19,6 @@ DEPS = [
 ]
 
 from google.protobuf import json_format
-from recipe_engine import recipe_test_api
 from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
@@ -64,7 +63,10 @@ def RunSteps(api, properties):
     # It's hard to set buildbucket properties for these tests so we
     # get coverage by creating a dict that returns multiple items with the
     # same key, knowing that the impl of this module calls dict.items().
-    class FakeDict:
+    class FakeDict(object):
+
+      def __init__(self):
+        pass
 
       def items(self):
         return [('foo', 'bar'), ('foo', 'baz')]

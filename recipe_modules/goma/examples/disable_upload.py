@@ -15,7 +15,6 @@ from PB.chromiumos import common
 from PB.chromite.api.sysroot import InstallPackagesResponse
 from PB.chromiumos.common import GomaArtifacts
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
-from PB.recipe_modules.chromeos.goma.examples.test import TestInputProperties
 
 
 def RunSteps(api):

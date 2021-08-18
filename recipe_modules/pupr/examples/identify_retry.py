@@ -12,7 +12,6 @@ DEPS = [
 import collections
 
 from PB.recipes.chromeos.generator import (
-    RetryClPolicy,
     NO_RETRY,
     RETRY_LATEST_OR_LATEST_PINNED,
     RETRY_LATEST_PINNED,

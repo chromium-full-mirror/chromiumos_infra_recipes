@@ -5,7 +5,6 @@
 # found in the LICENSE file.
 
 from datetime import datetime
-from datetime import timedelta
 
 from recipe_engine import recipe_api
 

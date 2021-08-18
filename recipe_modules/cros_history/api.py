@@ -8,8 +8,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.testplans.generate_test_plan import TestUnitCommon
-from PB.testplans.generate_test_plan import HwTestUnit
 
 from recipe_engine import recipe_api
 

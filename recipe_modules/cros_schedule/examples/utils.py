@@ -10,10 +10,6 @@ DEPS = [
     'cros_schedule',
 ]
 
-from PB.recipe_modules.chromeos.cros_schedule.examples.test import (
-    TestInputProperties)
-
-
 def RunSteps(api):
   api.cros_schedule.get_last_branched_mstone()
   api.cros_schedule.get_last_branched_mstone_n()
