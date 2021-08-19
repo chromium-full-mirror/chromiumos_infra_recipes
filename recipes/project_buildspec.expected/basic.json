@@ -42,7 +42,7 @@
       "[START_DIR]/cipd/manifest_doctor",
       "project-buildspec",
       "--buildspec",
-      "foo/1.2.3.xml",
+      "buildspecs/foo/1.2.3.xml",
       "--program",
       "galaxy",
       "--project",

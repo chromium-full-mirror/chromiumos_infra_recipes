@@ -59,16 +59,17 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.properties(**{
-          "buildspec": "foo/1.2.3.xml",
-          "program": "galaxy",
-          "project": "milkyway"
-      }),
+      api.properties(
+          **{
+              "buildspec": "buildspecs/foo/1.2.3.xml",
+              "program": "galaxy",
+              "project": "milkyway"
+          }),
       api.post_check(post_process.StepCommandContains,
                      'create program/project buildspec(s).run manifest_doctor',
                      [
-                         '--buildspec', 'foo/1.2.3.xml', '--program', 'galaxy',
-                         '--project', 'milkyway'
+                         '--buildspec', 'buildspecs/foo/1.2.3.xml', '--program',
+                         'galaxy', '--project', 'milkyway'
                      ]),
   )
 

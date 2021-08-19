@@ -69,6 +69,8 @@ def RunSteps(api, properties):
       cmd += ["--paths", ",".join(properties.project_buildspec_watch_paths)]
       cmd += ["--min_milestone", properties.project_buildspec_min_milestone]
       cmd += ["--projects", ",".join(properties.project_buildspecs)]
+      if properties.push:
+        cmd += ["--push"]
 
       api.step("run manifest_doctor", cmd)
 
@@ -155,6 +157,10 @@ def GenTests(api):
               "push": True,
               "min_milestone": 90,
               "buildspec_watch_paths": ["release/", "test/"],
+              "project_buildspec_watch_paths":
+                  ["full/buildspecs/", "buildspecs/"],
+              "project_buildspec_min_milestone": 90,
+              "project_buildspecs": ["galaxy/", "foo/bar"],
           }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
@@ -166,6 +172,9 @@ def GenTests(api):
           ]),
       api.post_check(post_process.StepCommandContains,
                      'create external buildspecs.run manifest_doctor',
+                     ['--push']),
+      api.post_check(post_process.StepCommandContains,
+                     'create partner buildspecs.run manifest_doctor',
                      ['--push']),
       api.post_check(
           post_process.StepCommandContains,

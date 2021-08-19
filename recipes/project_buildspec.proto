@@ -17,7 +17,7 @@ message ProjectBuildspecProperties {
 
     // Path to manifest within manifest-versions repo, relative to
     // https://chrome-internal.googlesource.com/chromeos/manifest-versions/+/HEAD/buildspecs/
-    // e.g. 85/13277.0.0.xml
+    // e.g. buildspecs/85/13277.0.0.xml or full/buildspecs/94/14137.0.0-rc1.xml.
     string buildspec = 3;
 
     // Name of the program to create the program-specific buildspec for.
