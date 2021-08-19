@@ -22,12 +22,12 @@ METADATA_GS_FILE_TMPL = '{builder}-{build_id}-{kind}.json'
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
   """A module for uploading package prebuilts."""
 
-  def __init__(self, properties, **kwargs):
+  def __init__(self, properties, global_props, **kwargs):
     super(CrosPrebuiltsApi, self).__init__(**kwargs)
     self._use_staging_branch = properties.use_staging_branch
     self._enable_snapshot_prebuilts = properties.enable_snapshot_prebuilts
     self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts
-    self._disable_overlay_commits = properties.disable_overlay_commits
+    self._commit_overlay_binhost = global_props.commit_overlay_binhost
 
   @property
   def _build_id(self):
@@ -444,7 +444,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       # flag.
 
       overlay_commit = (
-          self.m.buildbucket.build.id and not self._disable_overlay_commits and
+          self.m.buildbucket.build.id and self._commit_overlay_binhost and
           self._profile_or_default(profile) == self._profile_or_default(None))
 
       if overlay_commit:

@@ -6,6 +6,11 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_prebuilts;
 
+message GlobalProperties {
+  // Whether to commit BINHOST.conf to git overlay.
+  bool commit_overlay_binhost = 1;
+}
+
 message CrosPrebuiltsProperties {
   // If true, the prebuilt conf file will be uploaded to a branch
   // named "staging" instead of the real branch. Should only be set in
@@ -19,6 +24,7 @@ message CrosPrebuiltsProperties {
   // package_index_files to SysrootService/Create.  By default, none are sent.
   uint32 send_snapshot_prebuilts = 3;
 
-  // Whether to disable commiting BINHOST.conf to git overlay.
+  // (DEPRECATED) Whether to disable commiting BINHOST.conf to git overlay.
+  // Using commit_overlay_binhost instead.
   bool disable_overlay_commits = 4;
 }

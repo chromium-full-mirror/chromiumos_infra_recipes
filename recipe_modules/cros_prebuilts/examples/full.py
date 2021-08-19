@@ -57,14 +57,14 @@ def GenTests(api):
 
   def test_data(private=False, use_staging=False,
                 enable_snapshot_prebuilts=True, send_snapshot_prebuilts=4,
-                disable_overlay_commits=False, profile=None,
+                commit_overlay_binhost=True, profile=None,
                 expected_package_indexes=None, dirty_source=False):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     target = 'amd64-generic'
 
     non_base_profile = (profile and profile.name and profile.name != 'base')
-    expect_commit = not (disable_overlay_commits or non_base_profile or
-                         dirty_source)
+    expect_commit = (
+        commit_overlay_binhost and not non_base_profile and not dirty_source)
 
     if expected_package_indexes is None:
       count = send_snapshot_prebuilts
@@ -86,8 +86,9 @@ def GenTests(api):
             CrosPrebuiltsProperties(
                 use_staging_branch=use_staging,
                 enable_snapshot_prebuilts=enable_snapshot_prebuilts,
-                send_snapshot_prebuilts=send_snapshot_prebuilts,
-                disable_overlay_commits=disable_overlay_commits)
+                send_snapshot_prebuilts=send_snapshot_prebuilts),
+        'commit_overlay_binhost':
+            commit_overlay_binhost
     }
 
     # Forcing cros_source to claim dirty source.
@@ -139,7 +140,7 @@ def GenTests(api):
                        '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))
 
   yield api.test('disable-overlay-commits',
-                 test_data(disable_overlay_commits=True))
+                 test_data(commit_overlay_binhost=False))
 
   yield api.test('with-profile',
                  test_data(profile=Profile(name='generic_build')))

@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
-    CrosPrebuiltsProperties)
+    GlobalProperties, CrosPrebuiltsProperties)
 
 DEPS = [
     'depot_tools/gsutil',
@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/runtime',
     'recipe_engine/step',
     'recipe_engine/swarming',
@@ -27,3 +28,4 @@ DEPS = [
 ]
 
 PROPERTIES = CrosPrebuiltsProperties
+GLOBAL_PROPERTIES = GlobalProperties
