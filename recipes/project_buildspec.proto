@@ -20,11 +20,7 @@ message ProjectBuildspecProperties {
     // e.g. buildspecs/85/13277.0.0.xml or full/buildspecs/94/14137.0.0-rc1.xml.
     string buildspec = 3;
 
-    // Name of the program to create the program-specific buildspec for.
-    // If the specified program does not have a local_manifest, no program-specific
-	// buildspec will be created.
-    string program = 4;
-
-    // Name of the project to create the project-specific buildspec for.
-    string project = 5;
+    // Projects to create the project-specific buildspec for, e.g. galaxy/milkyway.
+    // Supports wildcards, e.g. galaxy/milk* or galaxy/*.
+    repeated string projects = 4;
 }

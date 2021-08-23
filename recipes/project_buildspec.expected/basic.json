@@ -43,10 +43,8 @@
       "project-buildspec",
       "--buildspec",
       "buildspecs/foo/1.2.3.xml",
-      "--program",
-      "galaxy",
-      "--project",
-      "milkyway"
+      "--projects",
+      "galaxy/milkyway,foo/*"
     ],
     "name": "create program/project buildspec(s).run manifest_doctor",
     "~followup_annotations": [

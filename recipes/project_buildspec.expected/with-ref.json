@@ -43,9 +43,7 @@
       "project-buildspec",
       "--buildspec",
       "",
-      "--program",
-      "",
-      "--project",
+      "--projects",
       ""
     ],
     "name": "create program/project buildspec(s).run manifest_doctor",
