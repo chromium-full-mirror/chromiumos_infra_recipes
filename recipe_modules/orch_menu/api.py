@@ -214,7 +214,8 @@ class OrchMenuApi(RecipeApi):
             self.m.cros_release.create_releasespec(
                 gs_location=BUILDSPEC_GS_PATH)
 
-        if self.m.buildbucket.build.builder.builder == 'postsubmit-orchestrator':
+        if self.m.buildbucket.build.builder.builder.endswith(
+            'postsubmit-orchestrator'):
           self._is_postsubmit_orchestrator = True
 
       if config:
