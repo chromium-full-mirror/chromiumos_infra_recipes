@@ -621,6 +621,7 @@
       "--json-output",
       "/path/to/tmp/json"
     ],
+    "infra_step": true,
     "name": "execution steps.multi_test_2.Archive CTS results.prepare uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",

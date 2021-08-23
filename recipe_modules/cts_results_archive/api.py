@@ -39,6 +39,7 @@ class CTSResultsArchive(recipe_api.RecipeApi):
               '--json-output',
               self.m.json.output(),
           ],
+          infra_step=True,
           step_test_data=lambda: self.m.json.test_api.output({
               'instructions': [{
                   'name': 'fake-instruction',

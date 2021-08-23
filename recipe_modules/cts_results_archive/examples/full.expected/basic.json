@@ -19,6 +19,7 @@
       "--json-output",
       "/path/to/tmp/json"
     ],
+    "infra_step": true,
     "name": "Archive CTS results.prepare uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
