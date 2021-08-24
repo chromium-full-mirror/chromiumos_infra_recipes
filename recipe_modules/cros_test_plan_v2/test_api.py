@@ -9,6 +9,7 @@ from PB.chromiumos.build.api.portage import Portage
 from PB.chromiumos.config.api.design import Design
 from PB.chromiumos.config.payload.flat_config import FlatConfigList, FlatConfig
 from PB.chromiumos.test.api.dut_attribute import DutAttributeList, DutAttribute
+from PB.chromiumos.test.api.coverage_rule import CoverageRule
 from PB.chromiumos.test.plan.source_test_plan import SourceTestPlan
 
 BuildMetadata = SystemImage.BuildMetadata
@@ -52,3 +53,10 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
   def dut_attribute_list():
     return DutAttributeList(
         dut_attributes=[DutAttribute(id=DutAttribute.Id(value='attribute1'))])
+
+  @staticmethod
+  def coverage_rules():
+    return [
+        CoverageRule(name='kernel:4.4'),
+        CoverageRule(name='kernel:5.2'),
+    ]

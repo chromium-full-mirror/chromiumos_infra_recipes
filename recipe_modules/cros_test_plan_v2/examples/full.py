@@ -10,10 +10,9 @@ DEPS = [
 
 from recipe_engine import post_process
 
-from google.protobuf import text_format
+from google.protobuf import text_format, json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.chromiumos.common import Chroot
 from PB.chromiumos.test.api.coverage_rule import CoverageRule
 
 
@@ -41,11 +40,11 @@ def RunSteps(api):
       ],
   )
 
-  coverage_rules = api.cros_test_plan_v2.generate_coverage_rules(
-      relevant_plans, chroot=Chroot())
+  coverage_rules = api.cros_test_plan_v2.generate_coverage_rules(relevant_plans)
   api.assertions.assertEqual(
       coverage_rules,
-      [CoverageRule(name='kernel:4.4')],
+      [CoverageRule(name='kernel:4.4'),
+       CoverageRule(name='kernel:5.2')],
   )
 
 
@@ -69,6 +68,11 @@ def GenTests(api):
               ),
           ),
       ),
+      api.step_data(
+          'generate coverage rules.read output [CLEANUP]/tmp_tmp_1/coverage_rules.jsonproto',
+          api.raw_io.output('\n'.join(
+              json_format.MessageToJson(rule).replace('\n', '')
+              for rule in api.cros_test_plan_v2.coverage_rules()))),
       api.post_process(
           post_process.StepCommandContains,
           'find relevant plans.call test_plan',

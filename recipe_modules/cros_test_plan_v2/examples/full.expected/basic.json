@@ -118,14 +118,89 @@
   },
   {
     "cmd": [],
-    "name": "generate coverage rules.write BuildAPI inputs",
+    "name": "generate coverage rules.ensure docker image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@docker version@1.2.3@@@",
+      "@@@STEP_LOG_END@docker version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "which",
+      "docker"
+    ],
+    "name": "generate coverage rules.ensure docker image.ensure docker installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "docker",
+      "version"
+    ],
+    "name": "generate coverage rules.ensure docker image.docker version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@1.2.3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/cloud-platform",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "generate coverage rules.ensure docker image.get access token for default account",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[infra::docker]/resources/docker_login.py",
+      "--server",
+      "gcr.io",
+      "--service-account-token-file",
+      "extra.secret.token.should.not.be.logged",
+      "--config-file",
+      "[CLEANUP]/.docker"
+    ],
+    "name": "generate coverage rules.ensure docker image.docker login",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "docker",
+      "--config",
+      "[CLEANUP]/.docker",
+      "pull",
+      "gcr.io/chromeos-bot/testplan:prod"
+    ],
+    "name": "generate coverage rules.ensure docker image.docker pull testplan:prod",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate coverage rules.write input files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file",
+    "name": "generate coverage rules.write input files.fetch gitiles file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
@@ -149,7 +224,7 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT"
     ],
-    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
+    "name": "generate coverage rules.write input files.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -166,7 +241,7 @@
       "[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto"
     ],
     "infra_step": true,
-    "name": "generate coverage rules.write BuildAPI inputs.write build_metadata.jsonproto",
+    "name": "generate coverage rules.write input files.write build_metadata.jsonproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build_metadata.jsonproto@{@@@",
@@ -185,7 +260,7 @@
   },
   {
     "cmd": [],
-    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file (2)",
+    "name": "generate coverage rules.write input files.fetch gitiles file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
@@ -205,9 +280,9 @@
       "curl",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.jsonproto?format=TEXT"
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.binaryproto?format=TEXT"
     ],
-    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.jsonproto?format=TEXT",
+    "name": "generate coverage rules.write input files.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.binaryproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -221,27 +296,27 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"values\": [\n    {\n      \"hwDesign\": {\n        \"name\": \"design1\"\n      }\n    }\n  ]\n}",
-      "[CLEANUP]/tmp_tmp_2/flattened.jsonproto"
+      "[CLEANUP]/tmp_tmp_1/flattened.binaryproto"
     ],
     "infra_step": true,
-    "name": "generate coverage rules.write BuildAPI inputs.write flattened.jsonproto",
+    "name": "generate coverage rules.write input files.write flattened.binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@flattened.jsonproto@{@@@",
-      "@@@STEP_LOG_LINE@flattened.jsonproto@  \"values\": [@@@",
-      "@@@STEP_LOG_LINE@flattened.jsonproto@    {@@@",
-      "@@@STEP_LOG_LINE@flattened.jsonproto@      \"hwDesign\": {@@@",
-      "@@@STEP_LOG_LINE@flattened.jsonproto@        \"name\": \"design1\"@@@",
-      "@@@STEP_LOG_LINE@flattened.jsonproto@      }@@@",
-      "@@@STEP_LOG_LINE@flattened.jsonproto@    }@@@",
-      "@@@STEP_LOG_LINE@flattened.jsonproto@  ]@@@",
-      "@@@STEP_LOG_LINE@flattened.jsonproto@}@@@",
-      "@@@STEP_LOG_END@flattened.jsonproto@@@"
+      "@@@STEP_LOG_LINE@flattened.binaryproto@{@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@    {@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@      \"hwDesign\": {@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@        \"name\": \"design1\"@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@      }@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@    }@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@  ]@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@}@@@",
+      "@@@STEP_LOG_END@flattened.binaryproto@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file (3)",
+    "name": "generate coverage rules.write input files.fetch gitiles file (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
@@ -263,7 +338,7 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT"
     ],
-    "name": "generate coverage rules.write BuildAPI inputs.fetch gitiles file (3).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT",
+    "name": "generate coverage rules.write input files.fetch gitiles file (3).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -277,10 +352,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"dutAttributes\": [\n    {\n      \"id\": {\n        \"value\": \"attribute1\"\n      }\n    }\n  ]\n}",
-      "[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto"
+      "[CLEANUP]/tmp_tmp_1/dut_attributes.jsonproto"
     ],
     "infra_step": true,
-    "name": "generate coverage rules.write BuildAPI inputs.write dut_attributes.jsonproto",
+    "name": "generate coverage rules.write input files.write dut_attributes.jsonproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@dut_attributes.jsonproto@{@@@",
@@ -296,40 +371,25 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules",
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "requirements {\n  kernel_versions {\n  }\n}\n",
+      "[CLEANUP]/tmp_tmp_1/source_test_plans_0.textpb"
+    ],
+    "infra_step": true,
+    "name": "generate coverage rules.write [CLEANUP]/tmp_tmp_1/source_test_plans_0.textpb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildMetadataList\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"location\": 2@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutAttributeList\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"location\": 2@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"sourceTestPlans\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"requirements\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"kernelVersions\": {}@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"requirements\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fingerprint\": {}@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ], @@@",
-      "@@@STEP_LOG_LINE@request@  \"flatConfigList\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/tmp_tmp_2/flattened.jsonproto\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"location\": 2@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"coverage_rules\": [{\"name\": \"kernel:4.4\"}]}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_LINE@source_test_plans_0.textpb@requirements {@@@",
+      "@@@STEP_LOG_LINE@source_test_plans_0.textpb@  kernel_versions {@@@",
+      "@@@STEP_LOG_LINE@source_test_plans_0.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@source_test_plans_0.textpb@}@@@",
+      "@@@STEP_LOG_END@source_test_plans_0.textpb@@@"
     ]
   },
   {
@@ -340,62 +400,53 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildMetadataList\": {\n    \"path\": \"[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto\", \n    \"location\": 2\n  }, \n  \"chroot\": {}, \n  \"dutAttributeList\": {\n    \"path\": \"[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto\", \n    \"location\": 2\n  }, \n  \"sourceTestPlans\": [\n    {\n      \"requirements\": {\n        \"kernelVersions\": {}\n      }\n    }, \n    {\n      \"requirements\": {\n        \"fingerprint\": {}\n      }\n    }\n  ], \n  \"flatConfigList\": {\n    \"path\": \"[CLEANUP]/tmp_tmp_2/flattened.jsonproto\", \n    \"location\": 2\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+      "requirements {\n  fingerprint {\n  }\n}\n",
+      "[CLEANUP]/tmp_tmp_1/source_test_plans_1.textpb"
     ],
     "infra_step": true,
-    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules.write input file",
+    "name": "generate coverage rules.write [CLEANUP]/tmp_tmp_1/source_test_plans_1.textpb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"buildMetadataList\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"location\": 2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"dutAttributeList\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"location\": 2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"sourceTestPlans\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"requirements\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"kernelVersions\": {}@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"requirements\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        \"fingerprint\": {}@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"flatConfigList\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CLEANUP]/tmp_tmp_2/flattened.jsonproto\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"location\": 2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@source_test_plans_1.textpb@requirements {@@@",
+      "@@@STEP_LOG_LINE@source_test_plans_1.textpb@  fingerprint {@@@",
+      "@@@STEP_LOG_LINE@source_test_plans_1.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@source_test_plans_1.textpb@}@@@",
+      "@@@STEP_LOG_END@source_test_plans_1.textpb@@@"
     ]
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.TestService/GetCoverageRules"
+      "python",
+      "-u",
+      "RECIPE_MODULE[infra::docker]/resources/docker_run.py",
+      "--config-file",
+      "[CLEANUP]/.docker",
+      "--image",
+      "gcr.io/chromeos-bot/testplan:prod",
+      "--dir-map",
+      "[CLEANUP]/tmp_tmp_1",
+      "/input",
+      "--",
+      "generate",
+      "-alsologtostderr",
+      "-v",
+      "2",
+      "-dutattributes",
+      "/input/dut_attributes.jsonproto",
+      "-buildmetadata",
+      "/input/build_metadata.jsonproto",
+      "-flatconfiglist",
+      "/input/flattened.binaryproto",
+      "-out",
+      "/input/coverage_rules.jsonproto",
+      "-plan",
+      "/input/source_test_plans_0.textpb",
+      "-plan",
+      "/input/source_test_plans_1.textpb"
     ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules.call build API script",
+    "name": "generate coverage rules.docker run",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -406,27 +457,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "[CLEANUP]/tmp_tmp_1/coverage_rules.jsonproto",
       "/path/to/tmp/"
     ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
     "infra_step": true,
-    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules.read output file",
+    "name": "generate coverage rules.read output [CLEANUP]/tmp_tmp_1/coverage_rules.jsonproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate coverage rules.call chromite.api.TestService/GetCoverageRules.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
