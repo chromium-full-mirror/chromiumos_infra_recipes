@@ -5,16 +5,21 @@
 import git_cl
 from subprocess2 import CalledProcessError
 
+UNLINTABLE_FILES = set(['recipes.py'])
+
 
 def PylintCheck(input_api, output_api):
   """Run pylint checks for modified files."""
   pylint_errors = []
   for affected in input_api.AffectedFiles():
-    if str(affected).endswith(".py"):
+    affected_str = str(affected)
+    if affected_str.endswith(".py"):
+      if affected_str in UNLINTABLE_FILES:
+        continue
       try:
         input_api.subprocess.check_output(
             ['pylint', '--rcfile', 'pylintrc',
-             '%s' % (affected)])
+             '%s' % (affected_str)])
       except CalledProcessError as error:
         pylint_errors.append("%s" % error)
   if pylint_errors:
