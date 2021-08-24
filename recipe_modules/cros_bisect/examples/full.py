@@ -98,8 +98,8 @@ def GenTests(api):
           }),
       api.properties(
           TestInputProperties(expected_test_child_builders=[
-              'bar-snapshot',
-              'foo-snapshot',
+              'bar-postsubmit',
+              'foo-postsubmit',
           ])),
   )
 

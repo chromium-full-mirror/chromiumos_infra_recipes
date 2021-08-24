@@ -177,7 +177,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
     child_builders = set()
     for failure in self._test.hw_test_failures:
       hw_test_unit = jsonpb.Parse(failure.test_spec, HwTestUnit())
-      child_builders.add(hw_test_unit.common.build_target.name + '-snapshot')
+      child_builders.add(hw_test_unit.common.build_target.name + '-postsubmit')
     return sorted(child_builders)
 
   def get_test_plan(self, builds):
