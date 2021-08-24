@@ -58,6 +58,9 @@ def RunSteps(api, properties):
       api.src_state.gerrit_changes,
       ignore_missing_projects=properties.ignore_missing_projects)
 
+  if api.src_state.gerrit_changes:
+    api.cros_source.checkout_gerrit_change(api.src_state.gerrit_changes[0])
+
   archive_path = api.path['start_dir'].join('commits.tar')
   api.cros_source.create_project_commits_archive(archive_path, commits)
   projects = api.cros_source.checkout_project_commits_archive(archive_path)

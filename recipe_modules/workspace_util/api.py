@@ -122,6 +122,23 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       if not self._keep_all_changes:
         self.m.src_state.gerrit_changes = self._applied_changes
 
+  def checkout_change(self, change=None, name='checkout gerrit change'):
+    """Check out a gerrit change using the gerrit refs/changes/... workflow.
+
+      Differs from apply_changes in that the change is directly checked out,
+      not cherry picked (so the patchset parent will be accurate). Used for
+      things like tricium where line number matters.
+
+    Args:
+      change (GerritChange): Change to check out.
+      name (string): Step name.  Default: "checkout gerrit change".
+    """
+    if not change:
+      return
+
+    with self.m.step.nest(name):
+      self.m.cros_source.checkout_gerrit_change(change)
+
   def detect_toolchain_cls(self, chroot, gitiles_commit=None,
                            gerrit_changes=None, test_value=None, name=None):
     """Check for toolchain changes.

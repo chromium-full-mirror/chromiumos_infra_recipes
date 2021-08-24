@@ -34,6 +34,11 @@ def RunSteps(api, properties):
       api.workspace_util.sync_to_commit():
     api.workspace_util.apply_changes(
         ignore_missing_projects=properties.ignore_missing_projects)
+    if changes:
+      api.workspace_util.checkout_change(changes[0])
+    else:
+      # Shouldn't do anything.
+      api.workspace_util.checkout_change()
     want = changes if config.build.apply_gerrit_changes and changes else []
     api.assertions.assertEqual(len(want), len(api.workspace_util.patch_sets))
     api.assertions.assertEqual(len(want), len(api.workspace_util.commits))

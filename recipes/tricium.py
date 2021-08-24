@@ -103,7 +103,7 @@ def _FullCheckout(api):
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context(), \
       api.workspace_util.sync_to_commit(staging=is_staging,
                                         projects=[commit.project]):
-    api.workspace_util.apply_changes()
+    api.workspace_util.checkout_change(change=api.src_state.gerrit_changes[0])
     workpath = api.workspace_util.workspace_path
 
     with api.step.nest('get project info') as presentation:

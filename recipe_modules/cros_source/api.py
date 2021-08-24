@@ -805,6 +805,30 @@ class CrosSourceApi(RecipeApi):
     return self._apply_gerrit_patch_sets(
         patch_sets, ignore_missing_projects=ignore_missing_projects)
 
+  def checkout_gerrit_change(self, change):
+    """Check out a gerrit change using the gerrit refs/changes/... workflow.
+
+      Differs from apply_changes in that the change is directly checked out,
+      not cherry picked (so the patchset parent will be accurate). Used for
+      things like tricium where line number matters.
+
+    Args:
+      change (GerritChange): Change to check out.
+      name (string): Step name.  Default: "checkout gerrit change".
+    """
+    patch = self.m.gerrit.fetch_patch_sets([change])[0]
+    project_path = self.find_project_paths(change.project, patch.branch)[0]
+    with self.m.context(cwd=self.workspace_path.join(project_path)):
+      # Convert e.g. chromium-review.googlesource.com to e.g.
+      # chromium.googlesource.com.
+      remote_url = 'https://{}/{}'.format(
+          change.host.replace('-review', ''), change.project)
+      # Construct a ref like 'refs/changes/89/123456789/13'.
+      change_ref = 'refs/changes/{}/{}/{}'.format(
+          str(change.change)[-2:], change.change, change.patchset)
+      self.m.git.fetch(remote_url, refspecs=[change_ref])
+      self.m.git.checkout('FETCH_HEAD')
+
   def _apply_manifest_patch_sets(self, patch_sets):
     """Apply any manifest patch sets, and make them active.
 

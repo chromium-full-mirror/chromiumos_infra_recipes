@@ -3031,6 +3031,18 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
   * step_name (str): Name for the step, or None for default.
 
+&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#808)(self, change):**
+
+Check out a gerrit change using the gerrit refs/changes/... workflow.
+
+  Differs from apply_changes in that the change is directly checked out,
+  not cherry picked (so the patchset parent will be accurate). Used for
+  things like tricium where line number matters.
+
+Args:
+  change (GerritChange): Change to check out.
+  name (string): Step name.  Default: "checkout gerrit change".
+
 &mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#508)(self, commit=None, is_staging=False, checkout_external=False, test_footers=None):**
 
 Check out the manifest projects.
@@ -3066,7 +3078,7 @@ Args:
   snapshot_mount (bool): Whether to utilize the snapshot mount location,
     rather than the image preload directory.  Default: False
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1405)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1429)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -3106,7 +3118,7 @@ Args:
 Returns:
   BuilderConfig or None
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1362)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1386)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -3213,7 +3225,7 @@ The cached image checkout path.
 This is the cached version of source that is included in the base image of
 the bot, used as an initial reference path.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1459)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1483)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -3231,7 +3243,7 @@ Return:
 
 Returns the snapshot digest in use or None.
 
-&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1171)(self, commit=None, manifest_url=None, \*\*kwargs):**
+&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1195)(self, commit=None, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the appropriate manifest.
 
@@ -3243,7 +3255,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   manifest_url: URL of manifest repo.  Default: internal manifest
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1262)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1286)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -3254,7 +3266,7 @@ Args:
   manifest_url: URL of manifest repo.  Default: internal manifest
   kwargs (dict): additional args for repo.sync_manifest.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1193)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1217)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -3271,7 +3283,7 @@ Args:
     gs://buildspecs-internal/release/91/13818.0.0.xml. Takes precendence over
     manifest_url/branch/path.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1438)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1462)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
 
 Uprev packages.
 
@@ -6647,9 +6659,21 @@ Args:
       (e.g. because of Cq-Depend grouping); the changes will be discarded
       instead of failing during application.
 
+&mdash; **def [checkout\_change](/recipe_modules/workspace_util/api.py#125)(self, change=None, name='checkout gerrit change'):**
+
+Check out a gerrit change using the gerrit refs/changes/... workflow.
+
+  Differs from apply_changes in that the change is directly checked out,
+  not cherry picked (so the patchset parent will be accurate). Used for
+  things like tricium where line number matters.
+
+Args:
+  change (GerritChange): Change to check out.
+  name (string): Step name.  Default: "checkout gerrit change".
+
 &emsp; **@property**<br>&mdash; **def [commits](/recipe_modules/workspace_util/api.py#31)(self):**
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#125)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#142)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -6699,7 +6723,7 @@ Args:
   projects (List[str]): Project names or paths to return info for. Defaults
     to all projects.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#162)(self, manifest_groups, local_manifests=None, cache_path_override=None, gitiles_commit=None, manifest_branch=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#179)(self, manifest_groups, local_manifests=None, cache_path_override=None, gitiles_commit=None, manifest_branch=None):**
 
 Returns a context with manifest groups checked out to cwd.
 
