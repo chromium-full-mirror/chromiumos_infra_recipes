@@ -83,6 +83,19 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/test/cros_chroot/sdk_cache_state.json"
+    ],
+    "infra_step": true,
+    "name": "remove sdk version file"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
       "copy",
       "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"version\": 3\n}",
       "[CLEANUP]/test/cros_chroot/sdk_cache_state.json"

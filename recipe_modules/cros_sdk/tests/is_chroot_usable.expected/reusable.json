@@ -63,6 +63,22 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CACHE]/cros_chroot/sdk_cache_state.json"
+    ],
+    "infra_step": true,
+    "name": "is chroot usable.remove sdk version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "git",
       "merge-base",
       "--is-ancestor",

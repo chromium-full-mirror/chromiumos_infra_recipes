@@ -158,6 +158,22 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CACHE]/cros_chroot/sdk_cache_state.json"
+    ],
+    "infra_step": true,
+    "name": "check SDK in named cache.remove sdk version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "check SDK in preload cache",
     "~followup_annotations": [
@@ -174,25 +190,6 @@
       "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash on disk: @@@",
       "@@@STEP_LOG_END@sdk snapshot hash@@@",
       "@@@SET_BUILD_PROPERTY@sdk_cache@\"preload\"@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CACHE]/cros_chroot/sdk_cache_state.json",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "check SDK in preload cache.read sdk cache state json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@@@@",
-      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
     ]
   },
   {

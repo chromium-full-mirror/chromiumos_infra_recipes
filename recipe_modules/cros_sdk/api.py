@@ -146,6 +146,7 @@ class CrosSdkApi(RecipeApi):
     if self.m.path.exists(self._sdk_cache_state_file):
       sdk_state = self.m.file.read_proto(step_name, self._sdk_cache_state_file,
                                          SdkCacheState, 'JSONPB')
+      self.m.file.remove('remove sdk version file', self._sdk_cache_state_file)
     sdk_state.version = sdk_state.version or _DEFAULT_SDK_CACHE_VERSION
     return sdk_state
 
