@@ -138,6 +138,22 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     else:
       return build_target.name + '-tast-vm-informational'
 
+  def _filter_snapshot_test_plan(self, test_plan):
+    """Filter tests out of test_plan selectively. See b/197748687.
+
+    Args:
+      test_plan (GenerateTestPlanResponse): Test plan for the input builds.
+
+    Returns:
+      GenerateTestPlanResponse of tests that run.
+    """
+    # This filter will be more sophisticated soon to launch HW tests
+    # only on boards that have idle DUTs. For now, cut out all HW tests.
+    if self.m.buildbucket.build.builder.builder == "snapshot-orchestrator":
+      test_plan.ClearField("hw_test_units")
+
+    return test_plan
+
   def schedule_tests(self, test_plan, passed_tests, timeout,
                      test_to_build_map=None, snapshot=None, is_retry=False):
     """Schedule all tests from the test_plan.
@@ -157,6 +173,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       MetaTestTuple of lists of the tests scheduled.
     """
+    test_plan = self._filter_snapshot_test_plan(test_plan)
     skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests, timeout,
                                                test_to_build_map, is_retry)
     autotest_vm_tests = self._schedule_autotest_vm_tests(

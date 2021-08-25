@@ -9,6 +9,7 @@ from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_test_proctor',
     'cros_test_plan',
@@ -51,3 +52,10 @@ def GenTests(api):
       'retry',
       api.properties(is_retry=True, passed_tests=passed_tests,
                      expected_tests_run_count=len(expected_tests_run)))
+
+  yield api.test(
+      'retry-filter',
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='snapshot-orchestrator'),
+      api.properties(is_retry=True, passed_tests=passed_tests,
+                     expected_tests_run_count=0))
