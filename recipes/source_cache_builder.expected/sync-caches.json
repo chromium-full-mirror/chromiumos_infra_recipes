@@ -1251,10 +1251,7 @@
       "--cache-dir",
       "../chrome_cache",
       "https://chromium.googlesource.com/chromium/src.git",
-      "--reset-fetch-config",
-      "--no-fetch-tags",
-      "--ref",
-      "refs/heads/main"
+      "--reset-fetch-config"
     ],
     "cwd": "[CLEANUP]/snapshot/chrome/src",
     "env_suffixes": {
@@ -1276,7 +1273,9 @@
       "python",
       "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
-      "sync"
+      "sync",
+      "--with_branch_heads",
+      "--with_tags"
     ],
     "cwd": "[CLEANUP]/snapshot/chrome/src",
     "env_suffixes": {

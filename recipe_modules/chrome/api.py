@@ -106,15 +106,14 @@ class ChromeApi(recipe_api.RecipeApi):
             '../chrome_cache',
             CHROMIUM_GIT_URL,
             '--reset-fetch-config',
-            '--no-fetch-tags',
-            '--ref',
-            'refs/heads/main',
         ]
         self.m.python('populate git cache',
                       self.m.depot_tools.root.join('git_cache.py'), cache_cmd,
                       infra_step=True)
         gclient_sync_cmd = [
             'sync',
+            '--with_branch_heads',
+            '--with_tags',
         ]
         self.m.python('gclient sync',
                       self.m.depot_tools.root.join('gclient.py'),
