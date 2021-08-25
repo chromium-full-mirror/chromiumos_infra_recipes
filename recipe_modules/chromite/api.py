@@ -267,6 +267,13 @@ class ChromiteApi(recipe_api.RecipeApi):
     # Add custom args, if there are any.
     cbb_args.extend(self.c.cbb.extra_args)
 
+    # Create, attach, and mount chromiumos cache snapshot drive
+    self.m.gcloud.create_and_mount_disk(cache_name='chromiumos',
+                                        branch=self.c.chromite_branch,
+                                        dry_run=False)
+    # Create, attach, and mount chrome cache snapshot drive
+    self.m.gcloud.create_and_mount_disk(cache_name='chrome', dry_run=False)
+
     # Run cbuildbot.
     # TODO(dgarrett): stop adjusting path here, and pass into cbuildbot_launcher
     # instead.

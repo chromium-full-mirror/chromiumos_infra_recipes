@@ -11,13 +11,15 @@ import json
 import re
 
 DEPS = [
-    'bot_cost',
-    'chromite',
-    'cros_infra_config',
-    'depot_tools/gitiles',
     'recipe_engine/legacy_annotation',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/swarming',
+    'depot_tools/gitiles',
+    'bot_cost',
+    'chromite',
+    'cros_infra_config',
+    'gcloud',
 ]
 
 
@@ -67,6 +69,8 @@ def DoRunSteps(api):
   # Use the system python, not "bundled python" so that we have access
   # to system python packages.
   with api.chromite.with_system_python(), \
+       api.gcloud.cleanup_gce_disks(), \
+       api.gcloud.cleanup_mounted_disks(), \
        api.bot_cost.build_cost_context():
     api.chromite.run()
 
@@ -103,7 +107,7 @@ def GenTests(api):
   yield api.test(
       'swarming_builder',
       api.properties(
-          bot_id='test',
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj',
           cbb_config='swarming-build-config',
       ),
   )
@@ -111,8 +115,10 @@ def GenTests(api):
   # Tests the summary_markdown generation, only works on failure for now
   yield api.test(
       'swarming_builder_fails',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
-          bot_id='test',
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj',
           cbb_config='swarming-build-config',
           buildset='cros/main_buildbucket_id/8904538489270332096',
       ),
@@ -123,6 +129,8 @@ def GenTests(api):
   # Test a plain tryjob.
   yield api.test(
       'tryjob_simple',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(cbb_config='tryjob_config',
                      cbb_extra_args='["--remote-trybot"]',
                      email='user@google.com', **common_properties),
@@ -131,6 +139,8 @@ def GenTests(api):
   # Test a tryjob with a branch and CLs.
   yield api.test(
       'tryjob_complex',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           cbb_config='tryjob_config',
           cbb_extra_args='["--remote-trybot", "-b", "release-R65-10323.B",'
@@ -141,6 +151,8 @@ def GenTests(api):
   # Test a tryjob with a branch and CLs.
   yield api.test(
       'main_builder',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(branch='', cbb_branch='worker_branch',
                      cbb_config='main_config', **common_properties),
   )
@@ -148,6 +160,8 @@ def GenTests(api):
   # Test a tryjob with a branch and CLs.
   yield api.test(
       'complex_worker_builder',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(branch='', cbb_branch='worker_branch',
                      cbb_config='worker_config', cbb_master_build_id=123,
                      **common_properties),
@@ -156,6 +170,8 @@ def GenTests(api):
   # Test empty string args.
   yield api.test(
       'empty_string_args',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(cbb_config='tryjob_config', cbb_extra_args='',
                      email='user@google.com', **common_properties),
   )
@@ -164,6 +180,8 @@ def GenTests(api):
   # can happen.
   yield api.test(
       'tuple_args',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(cbb_config='tryjob_config',
                      cbb_extra_args=('--remote-trybot', '-foo'),
                      email='user@google.com', **common_properties),
@@ -171,6 +189,8 @@ def GenTests(api):
 
   yield api.test(
       'goma_canary',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           cbb_config='amd64-generic-goma-canary-chromium-pfq-informational',
           cbb_goma_canary=True, email='user@google.com', **common_properties),
