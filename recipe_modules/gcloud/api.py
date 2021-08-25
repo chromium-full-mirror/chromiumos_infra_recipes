@@ -237,6 +237,18 @@ class GcloudApi(recipe_api.RecipeApi):
           '--zone={}'.format(zone), '--project={}'.format(project)
       ])
 
+  def _determine_dev_id(self):
+    """Determine which dev ids are in use."""
+    blkid_cmd = ['lsblk', '--json', '--output', 'name']
+    blkid = 'a'
+    output = self.m.easy.stdout_json_step(
+        'pull the blk ids attached', blkid_cmd,
+        test_stdout=self.test_api.blkid_test_data, infra_step=True)
+    for blk in output['blockdevices']:
+      if 'sd' in blk['name']:
+        blkid = blk['name'].split('sd')[1]
+    return blkid
+
   def attach_disk(self, name, instance, disk, zone):
     """Attach a disk to a GCE instance.
 
@@ -250,12 +262,12 @@ class GcloudApi(recipe_api.RecipeApi):
       zone(str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self._dev_ref = chr(ord(self._determine_dev_id()) + 1)
       self.m.step('attach disk', [
           'gcloud', 'compute', 'instances', 'attach-disk', instance,
           '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
       ], infra_step=True)
       # Increment the device reference; /dev/sda is root device.
-      self._dev_ref = chr(ord(self._dev_ref) + 1)
       self._attached_disks[name] = '/dev/sd{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
       self.set_disk_autodelete(instance=instance, disk=disk, zone=zone)
@@ -291,7 +303,6 @@ class GcloudApi(recipe_api.RecipeApi):
           '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
       ], infra_step=True)
     self._remove_cleanup_attached_disk(disk, instance, zone)
-    self._dev_ref = chr(ord(self._dev_ref) - 1)
 
   def create_disk(self, disk, zone, snapshot, disk_type=None):
     """Create a GCE disk.

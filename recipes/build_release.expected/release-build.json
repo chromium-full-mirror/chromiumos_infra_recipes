@@ -7683,6 +7683,13 @@
   },
   {
     "cmd": [],
+    "name": "set snapshot_mount",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@snapshot_mount@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_to_manifest\", \"manifest_branch\": \"release\", \"manifest_path\": \"releasespecs/91/13818.0.0.xml\", \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}@@@"

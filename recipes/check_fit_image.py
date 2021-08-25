@@ -141,7 +141,8 @@ def RunSteps(api, properties):
 
   api.cros_source.configure_builder()
 
-  with api.cros_source.checkout_overlays_context():
+  with api.cros_source.checkout_overlays_context(
+      snapshot_mount=api.cros_infra_config.is_staging):
     # sync down projects
     gerrit_changes = api.src_state.gerrit_changes
     project_paths = _sync_projects(gerrit_changes)

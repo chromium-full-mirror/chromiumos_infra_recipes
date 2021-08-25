@@ -121,3 +121,63 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         "name": "chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90"
     }]
     return disk_list
+
+  def blkid_test_data(self):
+    """Returns dict of local disks in json format."""
+    blkid_dict = {
+        "blockdevices": [{
+            "name": "loop0"
+        }, {
+            "name": "loop1"
+        }, {
+            "name": "loop2"
+        }, {
+            "name": "loop3"
+        }, {
+            "name": "loop4"
+        }, {
+            "name": "loop5"
+        }, {
+            "name":
+                "loop6",
+            "children": [{
+                "name":
+                    "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool_tmeta",
+                "children": [{
+                    "name":
+                        "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool-tpool",
+                    "children": [{
+                        "name":
+                            "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool"
+                    }, {
+                        "name":
+                            "cros_b+s+w+ir+cache+cros_chroot+chroot_000-chroot"
+                    }]
+                }]
+            }, {
+                "name":
+                    "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool_tdata",
+                "children": [{
+                    "name":
+                        "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool-tpool",
+                    "children": [{
+                        "name":
+                            "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool"
+                    }, {
+                        "name":
+                            "cros_b+s+w+ir+cache+cros_chroot+chroot_000-chroot"
+                    }]
+                }]
+            }]
+        }, {
+            "name": "sda",
+            "children": [{
+                "name": "sda1"
+            }, {
+                "name": "sda14"
+            }, {
+                "name": "sda15"
+            }]
+        }]
+    }
+    return blkid_dict

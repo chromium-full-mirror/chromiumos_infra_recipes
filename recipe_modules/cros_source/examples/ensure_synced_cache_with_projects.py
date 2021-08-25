@@ -5,6 +5,8 @@
 
 DEPS = [
     'recipe_engine/context',
+    'recipe_engine/swarming',
+    'cros_infra_config',
     'cros_source',
     'repo',
 ]
@@ -20,9 +22,14 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic-success')
+  yield api.test(
+      'basic-success',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'))
 
   yield api.test(
       'basic-failure', api.repo.fail_repo_sync(True),
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepFailure,
                      'sync cached directory.retry cache sync'))

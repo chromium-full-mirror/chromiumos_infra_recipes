@@ -128,7 +128,7 @@ def RunSteps(api, properties):
   # the uprev handler.
   gitiles_response = None
 
-  with api.cros_source.checkout_overlays_context(), \
+  with api.cros_source.checkout_overlays_context(snapshot_mount=api.cros_infra_config.is_staging), \
       api.cros_sdk.cleanup_context():
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()

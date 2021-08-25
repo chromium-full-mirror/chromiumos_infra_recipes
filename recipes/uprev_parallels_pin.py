@@ -47,6 +47,7 @@ DEPS = [
     'build_menu',
     'cros_artifacts',
     'cros_build_api',
+    'cros_infra_config',
     'cros_sdk',
     'cros_source',
     'easy',
@@ -268,7 +269,8 @@ def commit_pin_uprev(api, properties, package, new_version_pin):
     new_version_pin (VersionPin): the new version pin data.
   """
   with api.step.nest('update VERSION-PIN') as presentation:
-    with api.cros_source.checkout_overlays_context():
+    with api.cros_source.checkout_overlays_context(
+        snapshot_mount=api.cros_infra_config.is_staging):
       api.cros_source.ensure_synced_cache()
       set_version_pin(api, properties, new_version_pin)
 
@@ -695,6 +697,8 @@ def GenTests(api):
   })
   yield api.build_menu.test(
       'uprev-success-staging', api.properties(**good_props),
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       good_snapshot_search,
       # Simulate no uprev required. Staging builder should still run.
       api.step_data(

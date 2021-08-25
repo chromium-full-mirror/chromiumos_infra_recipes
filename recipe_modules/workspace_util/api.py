@@ -56,7 +56,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     """
     if not self.m.cros_infra_config.is_configured:
       self.m.cros_source.configure_builder(default_main=default_main)
-    with self.m.cros_source.checkout_overlays_context():
+    with self.m.cros_source.checkout_overlays_context(
+        snapshot_mount=self.m.cros_infra_config.is_staging):
       yield
 
   @contextlib.contextmanager
@@ -238,7 +239,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       manifest_url = self.m.src_state.internal_manifest.url
 
     with self.m.cros_source.checkout_overlays_context(
-        mount_cache=not cache_path_override):
+        mount_cache=not cache_path_override,
+        snapshot_mount=self.m.cros_infra_config.is_staging):
       self.m.cros_source.ensure_synced_cache(
           gitiles_commit=gitiles_commit, manifest_url=manifest_url,
           init_opts=init_opts, cache_path_override=cache_path_override,

@@ -5117,6 +5117,13 @@
   },
   {
     "cmd": [],
+    "name": "set snapshot_mount",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@snapshot_mount@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}}@@@"

@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'depot_tools/depot_tools',
     'build_menu',
     'cros_artifacts',
@@ -518,6 +519,8 @@ def GenTests(api):
 
   yield test(
       'staging-release',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(MustRun, 'bump version'),
@@ -532,6 +535,8 @@ def GenTests(api):
 
   yield test(
       'old-staging-release',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(MustRun, 'bump version'),

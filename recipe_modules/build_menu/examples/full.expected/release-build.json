@@ -6982,6 +6982,13 @@
   },
   {
     "cmd": [],
+    "name": "set snapshot_mount",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@snapshot_mount@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"release-R90-13816.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/release-R90-13816.B\"}}@@@"

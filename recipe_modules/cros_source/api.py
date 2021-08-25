@@ -728,11 +728,17 @@ class CrosSourceApi(RecipeApi):
       snapshot_mount (bool): Whether to utilize the snapshot mount location,
         rather than the image preload directory.  Default: False
     """
-    with self.m.overlayfs.cleanup_context():
+    with self.m.gcloud.cleanup_gce_disks(), \
+        self.m.gcloud.cleanup_mounted_disks(), \
+        self.m.overlayfs.cleanup_context():
       self._have_overlayfs_cleanup_context = True
       if not self._enable_custom_overlays and mount_cache:
         lower_dir = self.preload_path
         if snapshot_mount:
+          branch = self.manifest_branch if self.manifest_branch else 'main'
+          self.m.gcloud.create_and_mount_disk(cache_name='chromiumos',
+                                              branch=branch, disk_type='pd-ssd',
+                                              dry_run=False)
           lower_dir = '{}/chromiumos'.format(self.m.gcloud.snapshot_mount_path)
         self.m.overlayfs.mount('chromiumos', lower_dir, self.cache_path,
                                persist=True)
@@ -743,6 +749,7 @@ class CrosSourceApi(RecipeApi):
       try:
         yield
       finally:
+        self.m.easy.set_properties_step(snapshot_mount=snapshot_mount)
         self.m.easy.set_properties_step(source_sync_target=self._sync_target)
         self._have_overlayfs_cleanup_context = False
 

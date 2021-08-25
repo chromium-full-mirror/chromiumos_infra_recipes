@@ -5297,6 +5297,14 @@
   },
   {
     "cmd": [],
+    "name": "build chromiumos with upreved Parallels.set snapshot_mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@snapshot_mount@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build chromiumos with upreved Parallels.set source_sync_target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -6285,6 +6293,14 @@
     "name": "update VERSION-PIN.upload CL to gerrit.set labels on CL 1.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update VERSION-PIN.set snapshot_mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@snapshot_mount@false@@@"
     ]
   },
   {

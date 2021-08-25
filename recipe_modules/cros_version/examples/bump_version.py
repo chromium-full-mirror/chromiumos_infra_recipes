@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/file',
+    'recipe_engine/swarming',
     'cros_infra_config',
     'cros_version',
     'src_state',
@@ -61,6 +62,8 @@ def GenTests(api):
 
   yield api.test(
       'staging',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       orchestrator(builder='staging-main-release-orchestrator'),
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',

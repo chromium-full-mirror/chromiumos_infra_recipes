@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
+    'recipe_engine/swarming',
     'cros_source',
     'src_state',
 ]
@@ -23,7 +24,8 @@ PROPERTIES = CheckoutBranchProperties
 def RunSteps(api, properties):
 
   api.cros_source.configure_builder(default_main=False)
-  with api.cros_source.checkout_overlays_context():
+  with api.cros_source.checkout_overlays_context(
+      snapshot_mount=properties.is_staging):
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache(is_staging=properties.is_staging)
       branch_name = 'staging-snapshot' if properties.is_staging else 'snapshot'
@@ -59,6 +61,8 @@ def GenTests(api):
   yield api.cros_source.test(
       'staging-snapshot',
       staging,
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           CheckoutBranchProperties(branch_name=staging, is_staging=True)),
       api.step_data(

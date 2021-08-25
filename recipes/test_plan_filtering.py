@@ -267,7 +267,8 @@ Cr-Automation-Id: {}""" \
   # END INTERNAL METHOD DEFINITIONS
 
   api.cros_source.configure_builder()
-  with api.cros_source.checkout_overlays_context():
+  with api.cros_source.checkout_overlays_context(
+      snapshot_mount=api.cros_infra_config.is_staging):
     api.cros_source.ensure_synced_cache(
         projects=[INFRA_CONFIG_PATH, CONFIG_PATH, CONFIG_INTERNAL_PATH])
     api.cros_source.checkout_tip_of_tree()
