@@ -10,7 +10,15 @@ UNLINTABLE_FILES = set(['recipes.py'])
 
 def PylintCheck(input_api, output_api):
   """Run pylint checks for modified files."""
+
   pylint_errors = []
+
+  # Find pylint (currently v1.5).
+  canned_checks_path = input_api.canned_checks.__file__
+  canned_checks_path = input_api.os_path.abspath(canned_checks_path)
+  depot_tools_path = input_api.os_path.dirname(canned_checks_path)
+  pylint_path = input_api.os_path.join(depot_tools_path, 'pylint-1.5')
+
   for affected in input_api.AffectedFiles(include_deletes=False):
     affected_str = str(affected)
     if affected_str.endswith(".py"):
@@ -18,7 +26,7 @@ def PylintCheck(input_api, output_api):
         continue
       try:
         input_api.subprocess.check_output(
-            ['pylint', '--rcfile', 'pylintrc',
+            [pylint_path, '--rcfile', 'pylintrc',
              '%s' % (affected_str)])
       except CalledProcessError as error:
         pylint_errors.append("%s" % error)
