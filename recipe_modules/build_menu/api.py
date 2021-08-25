@@ -15,11 +15,9 @@ from recipe_engine import recipe_api
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
-from PB.chromite.api.test import BuildTargetUnitTestRequest
-from PB.chromite.api.test import BuildTestServiceContainersRequest
-from PB.chromiumos.common import PackageInfo
+from PB.chromite.api.test import BuildTargetUnitTestRequest, BuildTestServiceContainersRequest
+from PB.chromiumos.common import PackageInfo, Profile
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import Profile
 
 
 class BuildMenuApi(recipe_api.RecipeApi):
@@ -198,7 +196,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
             build.builder.builder))
 
   @contextlib.contextmanager
-  def setup_workspace_and_chroot(self, no_chroot_timeout=False):
+  def setup_workspace_and_chroot(self, no_chroot_timeout=False,
+                                 apply_changes=True):
     """Setup the workspace and chroot for the builder.
 
     This context manager sets up the workspace path.
@@ -206,16 +205,23 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       no_chroot_timeout (bool): whether to allow unlimited time to create the
           chroot.
+      apply_changes (bool): whether to apply gerrit changes on top of the
+          checkout.
 
     Returns:
       (bool): Whether the build is relevant.
     """
-    with self.setup_workspace():
+    with self.setup_workspace(apply_changes=apply_changes):
       yield self.setup_chroot(no_chroot_timeout)
 
   @contextlib.contextmanager
-  def setup_workspace(self):
-    """Setup the workspace for the builder."""
+  def setup_workspace(self, apply_changes=True):
+    """Setup the workspace for the builder.
+
+    Args:
+      apply_changes (bool): whether to apply gerrit changes on top of the
+          checkout.
+    """
     # If we do not have a config, use an empty one.
     config = self.config_or_default
 
@@ -225,8 +231,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # Apply any appropriate gerrit changes.
       ignore_missing_projects = (
           config.general.manifest == BuilderConfig.General.PUBLIC)
-      self.m.workspace_util.apply_changes(
-          ignore_missing_projects=ignore_missing_projects)
+      if apply_changes:
+        self.m.workspace_util.apply_changes(
+            ignore_missing_projects=ignore_missing_projects)
 
       # The Chrome OS verison can be reported once the workspace is synced.
       version = self.m.cros_version.version
