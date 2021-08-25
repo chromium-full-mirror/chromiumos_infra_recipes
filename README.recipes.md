@@ -414,6 +414,7 @@
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties)
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
   * [tricium](#recipes-tricium) &mdash; Recipe for running tricium on CLs.
+  * [upload_debug_symbols](#recipes-upload_debug_symbols) &mdash; Recipe for uploading debug symbols to the crash service.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
@@ -9918,6 +9919,31 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 Recipe for running tricium on CLs.
 
 &mdash; **def [RunSteps](/recipes/tricium.py#32)(api):**
+### *recipes* / [upload\_debug\_symbols](/recipes/upload_debug_symbols.py)
+
+[DEPS](/recipes/upload_debug_symbols.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Recipe for uploading debug symbols to the crash service.
+
+&mdash; **def [RunSteps](/recipes/upload_debug_symbols.py#47)(api, properties):**
+
+Invoke the upload debug symbols builder.
+
+&mdash; **def [ensure\_cipd\_package](/recipes/upload_debug_symbols.py#23)(api, cipd_package_location, cipd_ref, package_name):**
+
+Use the recipe_engine CIPD api to fetch and store the package locally.
+
+Args:
+  cipd_package_location (str): CIPD location where the package is stored.
+    E.g. chromiumos/infra/upload_debug_symbols/${platform}
+  cipd_ref (String): Instance of package to use. Typically, prod or staging.
+  package_name (String): Name of package minus extra location information.
+    E.g. upload_debug_symbols, manifest_doctor, branch_util.
+
+Returns:
+  Path: Path to the locally stored package.
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
 [DEPS](/recipes/uprev_guest_vm_pin.py#30): [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

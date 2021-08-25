@@ -1,0 +1,29 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.upload_debug_symbols;
+
+message UploadDebugSymbolsProperties {
+  // Package ref to target in CIPD.
+  // Default: prod
+  string cipd_ref = 1;
+
+  // Location in Google storage in which to fetch debug symbols from.
+  // E.g. gs://chromeos-debug-symbols/some-release-area/debug.tgz
+  string google_storage_path = 2;
+
+  // Maximum number of concurrent workers to be ran in the builder.
+  int32 worker_count = 3;
+
+  // The total number of retries allowed.
+  int32 retry_count = 4;
+
+  // Bool stating if the builder being ran in a staging environment.
+  bool is_staging = 5;
+
+  // Bool stating whether or not to dry run the uploads.
+  bool dry_run = 6;
+}
