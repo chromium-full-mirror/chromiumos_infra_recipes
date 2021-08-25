@@ -11,7 +11,7 @@ UNLINTABLE_FILES = set(['recipes.py'])
 def PylintCheck(input_api, output_api):
   """Run pylint checks for modified files."""
   pylint_errors = []
-  for affected in input_api.AffectedFiles():
+  for affected in input_api.AffectedFiles(include_deletes=False):
     affected_str = str(affected)
     if affected_str.endswith(".py"):
       if affected_str in UNLINTABLE_FILES:
