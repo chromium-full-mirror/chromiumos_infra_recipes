@@ -24,9 +24,8 @@ def RunSteps(api):
     api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
     api.assertions.assertEqual(api.gcloud.host_zone, 'us-central1-b')
     if api.build_menu.is_staging:
-      api.assertions.assertEqual(
-          api.gcloud.gce_disk,
-          'chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros')
+      api.assertions.assertRegexpMatches(
+          api.gcloud.gce_disk, r'chromeos-\w*-\w*-us-central1-b-x16-0-\w*-cros')
       api.assertions.assertEqual(
           api.gcloud.snapshot_version_file,
           'staging-chromiumos-main-cache-snapshot-version.txt')
@@ -39,14 +38,14 @@ def RunSteps(api):
     api.assertions.assertEqual(api.gcloud.branch, 'release-r90-13816-b')
     api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
     api.assertions.assertRegexpMatches(
-        api.gcloud.gce_disk, 'chromeos-ci-infra-us-central1-b-x16-0-.*-crosr90')
+        api.gcloud.gce_disk, r'chromeos-\w*-\w*-us-central1-b-x16-0-.*-crosr90')
     api.gcloud.create_and_mount_disk(cache_name='chromiumos',
                                      branch='stabilize-rust-13836.B',
                                      recipe_mount=True, dry_run=True)
     api.assertions.assertEqual(api.gcloud.branch, 'stabilize-rust-13836-b')
     api.assertions.assertRegexpMatches(
         api.gcloud.gce_disk,
-        'chromeos-ci-infra-us-central1-b-x16-0-.*-crosstabilize')
+        r'chromeos-\w*-\w*-us-central1-b-x16-0-.*-crosstabilize')
     api.gcloud.delete_disk(disk=api.gcloud.gce_disk, zone='us-central1-b')
     api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
 
@@ -88,6 +87,13 @@ def GenTests(api):
                                     bucket='staging'),
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+  )
+  yield api.test(
+      'release-staging-execution',
+      api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
+                                    bucket='staging'),
+      api.swarming.properties(
+          bot_id='chromeos-release-staging-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
       'local-version-file-exists',

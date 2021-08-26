@@ -17,7 +17,7 @@ TEST_IMAGE_NAME = 'chromiumos_test_image.bin'
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
 GCE_BUILD_PROJECT = 'chromeos-bot'
 
-_SWARMING_HOST_REGEXP = (r'^chromeos-ci-'
+_SWARMING_HOST_REGEXP = (r'^chromeos-\w*-'
                          r'(?P<role>\w*)-'
                          r'(?P<zone>\w*-\w*-\w*)-'
                          r'(?P<suffix>.*)')
