@@ -1,6 +1,34 @@
 [
   {
     "cmd": [],
+    "name": "check for .dmp files"
+  },
+  {
+    "cmd": [],
+    "name": "check for .dmp files.check gs://chromeos-autotest-results/swarming-1234",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://chromeos-autotest-results/swarming-1234/**"
+    ],
+    "infra_step": true,
+    "name": "check for .dmp files.check gs://chromeos-autotest-results/swarming-1234.gsutil list",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "download test results"
   },
   {
