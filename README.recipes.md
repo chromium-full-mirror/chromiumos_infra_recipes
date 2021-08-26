@@ -9176,7 +9176,7 @@ Basic tests for the urls recipe module.
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/982aad0e2af601a55fd441570f76acff15e345d3/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/982aad0e2af601a55fd441570f76acff15e345d3/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/982aad0e2af601a55fd441570f76acff15e345d3/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/8490c57854547d4c76f6c9ec6ae713e9697d3058/recipes/README.recipes.md#recipe_modules-docker
+[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/e3f096d60c08ffdfd9f58e2f05b3639cedd64f53/recipes/README.recipes.md#recipe_modules-docker
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a357987df4e8bee834c80cace3066518004e7e27/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a357987df4e8bee834c80cace3066518004e7e27/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a357987df4e8bee834c80cace3066518004e7e27/README.recipes.md#recipe_modules-buildbucket
