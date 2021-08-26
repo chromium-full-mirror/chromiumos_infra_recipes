@@ -100,7 +100,7 @@ def _FullCheckout(api):
       api.tricium.analyzers.SPELLCHECKER,
   ]
 
-  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context(), \
+  with api.workspace_util.setup_workspace(), \
       api.workspace_util.sync_to_commit(staging=is_staging,
                                         projects=[commit.project]):
     api.workspace_util.checkout_change(change=api.src_state.gerrit_changes[0])
