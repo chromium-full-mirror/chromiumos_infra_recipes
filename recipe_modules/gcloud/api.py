@@ -48,7 +48,7 @@ class GcloudApi(recipe_api.RecipeApi):
   def snapshot_mount_path(self):
     """The path to mount the snapshot disks.
 
-    This is the path that the disks created from snapshots will be mounted.
+    This is the path that the disks created from image will be mounted.
     """
     return '/snapshot_mounts'
 
@@ -56,7 +56,7 @@ class GcloudApi(recipe_api.RecipeApi):
   def snapshot_version_path(self):
     """The path to the local version file.
 
-    This is the path to the local version file that contains the snapshot
+    This is the path to the local version file that contains the image
     version that was used to create the local named cache.
     """
     return self.m.path['cache'].join('infra_versions')
@@ -324,6 +324,27 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('create disk from snapshot', cmd, infra_step=True)
 
+  def create_disk_from_image(self, disk, zone, image, disk_type=None):
+    """Create a GCE disk.
+
+    Create a GCE disk from a provided snapshot name.
+
+    Args:
+      disk(str): Google Cloud disk name.
+      zone(str): GCE zone to create disk (e.g. us-central1-b).
+      image(str): Image version use to create the disk.
+      disk_type(str): Type of GCE disk to create.
+    """
+    cmd = [
+        'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
+        '--image_project={}'.format(GCE_BUILD_PROJECT),
+        '--image={}'.format(image), '--quiet'
+    ]
+    if disk_type:
+      cmd.extend(['--type={}'.format(disk_type)])
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('create disk from image', cmd, infra_step=True)
+
   def delete_disk(self, disk, zone):
     """Delete a GCE disk.
 
@@ -425,6 +446,20 @@ class GcloudApi(recipe_api.RecipeApi):
         return True
     return False
 
+  def create_image_from_disk(self, disk, image_name, zone):
+    """Create an image from specified disk.
+
+    Args:
+      disk(str): Google Cloud disk name.
+      image_name(str): The name to give the image.
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('create image from disk', [
+          'gcloud', 'compute', 'images', 'create', image_name,
+          '--source-disk={}'.format(disk), '--zone={}'.format(zone)
+      ], infra_step=True)
+
   def snapshot_disk(self, disk, snapshot_name, zone):
     """Snapshot an attached disk on a GCE instance.
 
@@ -485,6 +520,51 @@ class GcloudApi(recipe_api.RecipeApi):
           snapshot_list.append(snapshot_name)
       del cmd[:]
     return snapshot_list
+
+  def get_expired_images(self, retention_days, prefixes, protected_images=None):
+    """Calculate the list of snapshots that have expired.
+
+    Args:
+      retention_days(int): Number of days to retain.
+      prefixes(list|str): List of prefixes to filter.
+      protected_images(list|str): List of images to preserve.
+    """
+    lookback_date = (
+        self.m.time.utcnow() -
+        datetime.timedelta(days=retention_days)).strftime("%Y-%m-%d")
+    list_cmd = ['gcloud', 'compute', 'images', 'list', '--format', 'json']
+    image_list = []
+    cmd = []
+    for prefix in prefixes:
+      cmd.extend(list_cmd)
+      cmd.extend([
+          '--filter',
+          'creationTimestamp<{} AND name~{}-.*'.format(lookback_date, prefix)
+      ])
+      images = self.m.easy.stdout_json_step(
+          'list images with filter {}'.format(prefix), cmd,
+          test_stdout=self.test_api.images_list_data, infra_step=True)
+      for image in images:
+        image_name = image['name']
+        if protected_images:
+          if image_name in protected_images:
+            continue
+        if image_name not in image_list:
+          image_list.append(image_name)
+      del cmd[:]
+    return image_list
+
+  def delete_images(self, images):
+    """Delete the list of provided images from GCE.
+
+    Args:
+      images(list|str): A list of image names.
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      for image in images:
+        self.m.step('delete image {}'.format(image),
+                    ['gcloud', 'compute', 'images', 'delete', image, '--quiet'],
+                    infra_step=True)
 
   def set_disk_autodelete(self, instance, disk, zone):
     """Set a disk to autodelete when a GCE instance is deleted.

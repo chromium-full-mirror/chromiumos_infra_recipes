@@ -28,4 +28,6 @@ message SourceCacheBuilderProperties {
   int32 retention_days = 3;
   // List of snapshots to exclude from cleanup
   repeated string protected_snapshots = 4;
+  // List of images to exclude from cleanup
+  repeated string protected_images = 5;
 }

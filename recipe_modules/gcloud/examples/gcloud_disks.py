@@ -21,6 +21,11 @@ def RunSteps(api):
                            disk_type='pd-ssd')
     api.gcloud.create_disk(disk='test_disk2', zone='us-central1-b',
                            snapshot='test-chrome-snapshot')
+    api.gcloud.create_disk_from_image(disk='test_disk1', zone='us-central1-b',
+                                      image='test-chromeos-snapshot',
+                                      disk_type='pd-ssd')
+    api.gcloud.create_disk_from_image(disk='test_disk2', zone='us-central1-b',
+                                      image='test-chrome-snapshot')
     api.gcloud.attach_disk(name='cache_test1', instance='test_bot1',
                            disk='test_disk1', zone='us-central1-b')
     api.gcloud.attach_disk(name='cache_test2', instance='test_bot1',
@@ -36,6 +41,12 @@ def RunSteps(api):
     api.gcloud.snapshot_disk(disk='test_disk2',
                              snapshot_name='test_disk2_snapshot',
                              zone='us-central1-b')
+    api.gcloud.create_image_from_disk(disk='test_disk1',
+                                      image_name='test_disk1_snapshot',
+                                      zone='us-central1-b')
+    api.gcloud.create_image_from_disk(disk='test_disk2',
+                                      image_name='test_disk2_snapshot',
+                                      zone='us-central1-b')
     prefixes = [
         'staging-chromeos-cache-snapshot', 'staging-chrome-cache-snapshot'
     ]
@@ -48,6 +59,14 @@ def RunSteps(api):
         'staging-chromeos-cache-snapshot-16258939'
     ], snapshot_list)
     api.gcloud.delete_snapshots(snapshots=snapshot_list)
+    image_list = api.gcloud.get_expired_images(
+        retention_days=7, prefixes=prefixes,
+        protected_images=protected_snapshots)
+    api.assertions.assertEqual([
+        'staging-chromeos-cache-snapshot-16258939',
+        'staging-chromeos-cache-snapshot-16258902',
+    ], image_list)
+    api.gcloud.delete_images(images=image_list)
 
   # Empty context
   with api.gcloud.cleanup_gce_disks(), \

@@ -181,3 +181,122 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         }]
     }
     return blkid_dict
+
+  def images_list_data(self):
+    """Returns a list of images in json format."""
+    images_list = [{
+        "archiveSizeBytes":
+            "84563945856",
+        "creationTimestamp":
+            "2021-07-09T22:12:18.806-07:00",
+        "diskSizeGb":
+            "150",
+        "guestOsFeatures": [{
+            "type": "SEV_CAPABLE"
+        }, {
+            "type": "VIRTIO_SCSI_MULTIQUEUE"
+        }, {
+            "type": "UEFI_COMPATIBLE"
+        }],
+        "id":
+            "285866261851149625",
+        "kind":
+            "compute#image",
+        "labelFingerprint":
+            "42WmSpB8rSM=",
+        "licenseCodes": ["5926592092274602096", "1002001"],
+        "licenses": [
+            "https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/licenses/ubuntu-1804-lts",
+            "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
+        ],
+        "name":
+            "staging-chromeos-cache-snapshot-16258939",
+        "selfLink":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/images/chromeos-bionic-21030700-6937fbe1116",
+        "sourceDisk":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b/disks/proto-chromeos-bionic",
+        "sourceDiskId":
+            "2312027915646714963",
+        "sourceType":
+            "RAW",
+        "status":
+            "READY",
+        "storageLocations": ["us"]
+    }, {
+        "archiveSizeBytes":
+            "108697230208",
+        "creationTimestamp":
+            "2021-07-09T22:12:18.806-07:00",
+        "diskSizeGb":
+            "200",
+        "guestOsFeatures": [{
+            "type": "VIRTIO_SCSI_MULTIQUEUE"
+        }, {
+            "type": "SEV_CAPABLE"
+        }, {
+            "type": "UEFI_COMPATIBLE"
+        }],
+        "id":
+            "3774636035690476222",
+        "kind":
+            "compute#image",
+        "labelFingerprint":
+            "42WmSpB8rSM=",
+        "licenseCodes": ["5926592092274602096", "1002001"],
+        "licenses": [
+            "https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/licenses/ubuntu-1804-lts",
+            "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
+        ],
+        "name":
+            "staging-chromeos-cache-snapshot-16258902",
+        "selfLink":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/images/chromeos-bionic-21081200-6dc0a9d8240",
+        "sourceDisk":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b/disks/proto-chromeos-bionic",
+        "sourceDiskId":
+            "2984261989078459033",
+        "sourceType":
+            "RAW",
+        "status":
+            "READY",
+        "storageLocations": ["us"]
+    }, {
+        "archiveSizeBytes":
+            "108697230208",
+        "creationTimestamp":
+            "2021-07-09T22:12:18.806-07:00",
+        "diskSizeGb":
+            "200",
+        "guestOsFeatures": [{
+            "type": "VIRTIO_SCSI_MULTIQUEUE"
+        }, {
+            "type": "SEV_CAPABLE"
+        }, {
+            "type": "UEFI_COMPATIBLE"
+        }],
+        "id":
+            "3774636035690476222",
+        "kind":
+            "compute#image",
+        "labelFingerprint":
+            "42WmSpB8rSM=",
+        "licenseCodes": ["5926592092274602096", "1002001"],
+        "licenses": [
+            "https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/licenses/ubuntu-1804-lts",
+            "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
+        ],
+        "name":
+            "staging-chrome-cache-snapshot-16258867",
+        "selfLink":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/images/chromeos-bionic-21081200-6dc0a9d8240",
+        "sourceDisk":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b/disks/proto-chromeos-bionic",
+        "sourceDiskId":
+            "2984261989078459033",
+        "sourceType":
+            "RAW",
+        "status":
+            "READY",
+        "storageLocations": ["us"]
+    }]
+    return images_list

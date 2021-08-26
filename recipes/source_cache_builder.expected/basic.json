@@ -41,6 +41,21 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache update.cleanup expired images",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.cleanup expired images.set expired_images",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@expired_images@[]@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

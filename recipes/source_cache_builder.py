@@ -33,6 +33,7 @@ PROPERTIES = SourceCacheBuilderProperties
 def RunSteps(api, properties):
   with api.step.nest('source cache update'):
     snapshot_prefixes = []
+    image_prefixes = []
     is_staging = api.cros_infra_config.is_staging
     infra_host = api.swarming.bot_id
     with api.gcloud.cleanup_gce_disks(), \
@@ -46,6 +47,7 @@ def RunSteps(api, properties):
         if is_staging:
           snapshot_prefix = 'staging-{}'.format(snapshot_prefix)
         snapshot_prefixes.append(snapshot_prefix)
+        image_prefixes.append(snapshot_prefix)
         with api.step.nest('sync mounted cache directories'):
           snapshot_name = '{}-{}'.format(snapshot_prefix,
                                          api.gcloud.snapshot_suffix)
@@ -89,6 +91,9 @@ def RunSteps(api, properties):
                                  zone=api.gcloud.host_zone)
         with api.step.nest('snapshot synced disk'):
           api.gcloud.snapshot_disk(disk, snapshot_name, api.gcloud.host_zone)
+        with api.step.nest('create image from disk'):
+          api.gcloud.create_image_from_disk(disk=disk, image_name=snapshot_name,
+                                            zone=api.gcloud.host_zone)
         with api.step.nest('delete disk'):
           api.gcloud.delete_disk(disk=disk, zone=api.gcloud.host_zone)
         with api.step.nest('upload updated version file'):
@@ -101,6 +106,12 @@ def RunSteps(api, properties):
           protected_snapshots=properties.protected_snapshots)
       api.easy.set_properties_step(expired_snapshots=snapshot_delete_list)
       api.gcloud.delete_snapshots(snapshots=snapshot_delete_list)
+    with api.step.nest('cleanup expired images'):
+      image_delete_list = api.gcloud.get_expired_images(
+          retention_days=properties.retention_days, prefixes=image_prefixes,
+          protected_images=properties.protected_images)
+      api.easy.set_properties_step(expired_images=image_delete_list)
+      api.gcloud.delete_images(images=image_delete_list)
 
 
 def GenTests(api):
