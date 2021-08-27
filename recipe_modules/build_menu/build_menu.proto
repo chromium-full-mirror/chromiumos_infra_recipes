@@ -25,4 +25,20 @@ message BuildMenuProperties {
   // Also set by the chromeos.build_menu.force_empty_toolchain_targets
   // experiment.
   bool force_empty_toolchain_targets = 5;
+
+  // If set, call the BuildTestServiceContainers endpoint when collecting
+  // artifacts.  The version string for tagging container images is generated
+  // from the format string.
+  //
+  // The format string is taken as-is and any fields delimited by {} are
+  // replaced with their respective value.  Supported fields:
+  //   * {build-target}  The build target for the board (eg: amd64-generic)
+  //   * {cros-version}  The current chromeos version string (eg: R86-1.2.3)
+  //   * {bbid}          The buildbucket Id of the current builder.
+  //   * {staging?}      If running in staging, then evaluates to 'staging-',
+  //                     otherwise the empty string
+  //
+  // Example, for CQ we use:
+  //   {staging?}{build-target}-cq/{cros-version}-{bbid}
+  string container_version_format = 6;
 }

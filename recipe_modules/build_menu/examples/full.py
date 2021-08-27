@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/properties',
     'build_menu',
     'cros_bisect',
+    'cros_build_api',
     'test_util',
 ]
 
@@ -58,7 +59,16 @@ def DoRunSteps(api, properties):
 
 def GenTests(api):
   # Normal CQ build, with one gerrit_change.
-  yield api.build_menu.test('cq-build', cq=True)
+  yield api.build_menu.test(
+      'cq-build',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            container_version_format=\
+              '{staging?}{build-target}-cq/{cros-version}-{bbid}'
+          )
+      ),
+      cq=True,
+  )
 
   # Slim CQ build, with one gerrit_change.
   yield api.build_menu.test('slim-cq-build', cq=True, build_target='atlas-slim')
@@ -72,7 +82,6 @@ def GenTests(api):
       api.properties(**api.test_util.build_menu_properties(
           build_target_name='cloudready-release-R90-13816.B')),
       build_target='cloudready-release-R90-13816.B', bucket='release')
-
 
   # Run the other tests that we only run in the module.
   yield api.build_menu.test(
@@ -165,3 +174,36 @@ def GenTests(api):
       build_target='sarien', input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True)
       })
+
+  # Cq build with bad container version string, should throw exception
+  yield api.build_menu.test(
+    'bad-container-version',
+    api.properties(
+      **api.test_util.build_menu_properties(
+        container_version_format=\
+        '{staging?}{build-target}-cq/{unknown-field}'
+      )
+    ),
+    api.expect_exception('RuntimeError'),
+    api.post_check(post_process.StatusException),
+    api.post_check(
+      post_process.ResultReasonRE,
+      'Unknown fields found in version format string',
+    ),
+    cq=True,
+  )
+
+  # Cq build with bad container version string, should throw exception
+  yield api.build_menu.test(
+    'no-container-endpoint',
+    api.properties(
+      **api.test_util.build_menu_properties(
+        container_version_format=\
+        '{staging?}{build-target}-cq/{cros-version}-{bbid}'
+      )
+    ),
+    api.cros_build_api.remove_endpoints(
+      ['TestService/BuildTestServiceContainers']
+    ),
+    cq=True,
+  )

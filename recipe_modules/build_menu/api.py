@@ -7,6 +7,7 @@
 
 import collections
 import contextlib
+import re
 
 from google.protobuf import json_format
 
@@ -33,6 +34,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   def __init__(self, props, *args, **kwargs):
     super(BuildMenuApi, self).__init__(*args, **kwargs)
+    self._container_version_fmt = props.container_version_format
     self._chroot_created = False
     self._dep_graph = None
     self._target_versions = None
@@ -67,6 +69,39 @@ class BuildMenuApi(recipe_api.RecipeApi):
   @property
   def config_or_default(self):
     return self.m.cros_infra_config.config_or_default
+
+  @property
+  def container_version(self):
+    """Return the version string for containers.
+
+    Run through the format string, and replace any allowed fields with
+    their runtime values. If any unknown fields are encountered, then a
+    RuntimeError is thrown.
+    """
+
+    staging_prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
+
+    # Replace any explicitly allowed fields
+    ALLOWED_FIELDS = {
+        '{build-target}': self._build_target,
+        '{cros-version}': self.m.cros_version.version.legacy_version,
+        '{bbid}': self.m.buildbucket.build.id or 'led-launch',
+        '{staging?}': staging_prefix,
+    }
+    version = self._container_version_fmt
+    for field, value in ALLOWED_FIELDS.items():
+      version = version.replace(field, str(value))
+
+    # Make sure that no residual fields are left
+    fields = re.findall(r'(\{[^{}]+\})', version)
+    if fields:
+      raise RuntimeError(
+          'Unknown fields found in version format string: {}'.format(
+              ','.join(["'{}'".format(field) for field in fields]),
+          ),
+      )
+
+    return version
 
   @property
   def gitiles_commit(self):
@@ -522,28 +557,37 @@ class BuildMenuApi(recipe_api.RecipeApi):
     config = config or self.config_or_default
     sysroot = sysroot or self.sysroot or Sysroot(build_target=self.build_target)
 
+    artifacts = None
     if self.m.cros_artifacts.has_output_artifacts(
         config.artifacts.artifacts_info):
-      return self.m.cros_artifacts.upload_artifacts(
+      artifacts = self.m.cros_artifacts.upload_artifacts(
           config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
           artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
           sysroot=sysroot, failing_build=failing_build,
           private_bundle_func=private_bundle_func)
 
-    if self.m.cros_build_api.has_endpoint(self.m.cros_build_api.TestService,
-                                          'BuildTestServiceContainers'):
+    if self.container_version:
       with self.m.step.nest(
           'build & upload test service containers') as presentation:
-        version = self.m.cros_version.version.legacy_version
-        response = self.m.cros_build_api.TestService.BuildTestServiceContainers(
-            BuildTestServiceContainersRequest(build_target=self.build_target,
-                                              chroot=self.m.cros_sdk.chroot,
-                                              version=version),
-            timeout=1 * 60 * 60)
-        presentation.step_text = (
-            'Test containers (gcr.io/chromeos-bot) build/push result for'
-            ' %s: %s ' % (version, str(response.results)))
-    return {}
+        if not self.m.cros_build_api.has_endpoint(
+            self.m.cros_build_api.TestService, 'BuildTestServiceContainers'):
+          presentation.step_summary_text = "No endpoint, skipping"
+        else:
+          BuildTestServiceContainers = \
+            self.m.cros_build_api.TestService.BuildTestServiceContainers
+
+          version = self.container_version
+          response = BuildTestServiceContainers(
+              BuildTestServiceContainersRequest(
+                  build_target=self.build_target,
+                  chroot=self.m.cros_sdk.chroot,
+                  version=version,
+              ), timeout=1 * 60 * 60)
+          presentation.step_text = (
+              'Test containers (gcr.io/chromeos-bot) build/push result for'
+              ' {}: {} '.format(version, str(response.results)))
+
+    return artifacts
 
   def upload_prebuilts(self, config=None):
     """Upload prebuilts from the build.
