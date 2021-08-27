@@ -1385,13 +1385,6 @@
   },
   {
     "cmd": [],
-    "name": "set snapshot_mount",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@snapshot_mount@null@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"main\", \"call\": \"checkout_tip_of_tree\"}@@@"

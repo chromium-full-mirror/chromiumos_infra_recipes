@@ -705,13 +705,6 @@
   },
   {
     "cmd": [],
-    "name": "set snapshot_mount",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@snapshot_mount@false@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"checkout_manifests\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/release-R88-13597.B\"}}@@@"

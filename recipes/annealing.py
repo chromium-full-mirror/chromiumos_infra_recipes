@@ -76,6 +76,8 @@ def RunSteps(api, properties):
 
   with api.gcloud.cleanup_gce_disks(), \
          api.gcloud.cleanup_mounted_disks():
+    api.gcloud.create_and_mount_disk(cache_name='chromiumos',
+                                     disk_type='pd-ssd', dry_run=False)
     with api.cros_source.checkout_overlays_context(snapshot_mount=True):
 
       internal_manifest = api.src_state.internal_manifest
