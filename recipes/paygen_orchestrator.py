@@ -23,7 +23,6 @@ DEPS = [
     'recipe_engine/step',
     'cros_build_api',
     'cros_paygen',
-    'cros_sdk',
     'cros_source',
     'cros_storage',
     'workspace_util',

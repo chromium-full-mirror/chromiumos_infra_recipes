@@ -11,7 +11,6 @@ DEPS = [
     'recipe_engine/step',
     'cros_branch',
     'cros_release_config',
-    'cros_sdk',
     'cros_source',
     'easy',
     'workspace_util',
@@ -46,7 +45,7 @@ def RunSteps(api, properties):
     api.easy.set_properties_step(branch_name=branch_name)
 
   if branch_type == Branch.RELEASE:
-    with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
+    with api.workspace_util.setup_workspace():
       api.cros_source.ensure_synced_cache(projects=[
           api.cros_release_config.LEGACY_CONFIG_PROJECT,
           api.cros_release_config.CONFIG_PROJECT

@@ -14,7 +14,6 @@ DEPS = [
     'depot_tools/depot_tools',
     'bot_cost',
     'cros_infra_config',
-    'cros_sdk',
     'cros_source',
     'gerrit',
     'git',
@@ -62,7 +61,7 @@ def _FullCheckout(api, properties):
   # TODO(crbug/1039875): Update this to only checkout the required repos, as
   # well as any that are listed as dependencies by the repos being tested,
   # rather than doing a full checkout every time.
-  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context(), \
+  with api.workspace_util.setup_workspace(), \
       api.workspace_util.sync_to_commit(staging=is_staging):
     api.workspace_util.apply_changes()
     workpath = api.workspace_util.workspace_path

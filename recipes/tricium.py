@@ -17,7 +17,6 @@ DEPS = [
     'depot_tools/depot_tools',
     'bot_cost',
     'cros_infra_config',
-    'cros_sdk',
     'cros_source',
     'cros_version',
     'gerrit',

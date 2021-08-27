@@ -17,7 +17,6 @@ DEPS = [
     'recipe_engine/step',
     'bot_cost',
     'cros_infra_config',
-    'cros_sdk',
     'cros_source',
     'repo',
     'workspace_util',
@@ -74,8 +73,7 @@ def RunSteps(api, properties):
 
       api.step("run manifest_doctor", cmd)
 
-  with api.bot_cost.build_cost_context(), api.workspace_util.setup_workspace(
-  ), api.cros_sdk.cleanup_context():
+  with api.bot_cost.build_cost_context(), api.workspace_util.setup_workspace():
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()
 
