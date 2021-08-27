@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 import base64
+import re
 
 from recipe_engine import recipe_api
 
@@ -36,6 +37,67 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         self._properties.platform_test_plan_docker_tag.encode('utf-8') or
         default_ref)
     self._docker_image = "{}:{}".format(docker_image_name, docker_tag)
+
+    # Map from (host, project) -> ProjectMigrationConfig, for lookup when
+    # enabled_on_changes is called.
+    self._host_project_to_migration_config = {
+        (mc.host, mc.project): mc for mc in self._properties.migration_configs
+    }
+
+  def enabled_on_changes(self, gerrit_changes):
+    """Returns true if test planning v2 is enabled on gerrit_changes.
+
+    Config controlling what changes are enabled is in the ProjectMigrationConfig
+    of this module's properties.
+    """
+    with self.m.step.nest('check test planning v2 enabled') as presentation:
+      if not gerrit_changes:
+        raise ValueError('gerrit_changes must be non-empty')
+
+      for gc in gerrit_changes:
+        migration_config = self._host_project_to_migration_config.get(
+            (gc.host, gc.project))
+
+        # If there is no ProjectMigrationConfig for a (host, project) pair, do
+        # not enable v2.
+        if not migration_config:
+          presentation.step_text = (
+              'no migration config found for ({}, {}), not enabling test planning v2'
+              .format(gc.host, gc.project))
+          return False
+
+        if not migration_config.file_allowlist_regexps:
+          raise ValueError(
+              'file_allowlist_regexps must be non-empty, got config "{}"'
+              .format(migration_config))
+
+        patch_set = self.m.gerrit.fetch_patch_set_from_change(
+            gc, include_files=True)
+
+        for path in patch_set.file_infos:
+          in_allowlist = False
+          for regexp in migration_config.file_allowlist_regexps:
+            if re.match('^{}$'.format(regexp), path):
+              in_allowlist = True
+              break
+
+          # All files in the change must be in the allowlist.
+          if not in_allowlist:
+            presentation.step_text = (
+                'path "{}" not in allow list, not enabling test planning v2'
+                .format(path))
+            return False
+
+          # All files in the change must not be in the blocklist.
+          for regexp in migration_config.file_blocklist_regexps:
+            if re.match('^{}$'.format(regexp), path):
+              presentation.step_text = (
+                  'path "{}" in block list, not enabling test planning v2'
+                  .format(path))
+              return False
+
+      presentation.step_text = 'enabling test planning v2'
+      return True
 
   def relevant_plans(self, gerrit_changes):
     """Call test_plan relevant-plans.

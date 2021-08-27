@@ -250,6 +250,8 @@
   * [cros_storage:examples/full](#recipes-cros_storage_examples_full)
   * [cros_tags:examples/full](#recipes-cros_tags_examples_full)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
+  * [cros_test_plan_v2:examples/disabled_on_changes](#recipes-cros_test_plan_v2_examples_disabled_on_changes)
+  * [cros_test_plan_v2:examples/enabled_on_changes](#recipes-cros_test_plan_v2_examples_enabled_on_changes)
   * [cros_test_plan_v2:examples/full](#recipes-cros_test_plan_v2_examples_full)
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full)
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full)
@@ -3488,11 +3490,18 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [generate\_coverage\_rules](/recipe_modules/cros_test_plan_v2/api.py#141)(self, source_test_plans):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#47)(self, gerrit_changes):**
+
+Returns true if test planning v2 is enabled on gerrit_changes.
+
+Config controlling what changes are enabled is in the ProjectMigrationConfig
+of this module's properties.
+
+&mdash; **def [generate\_coverage\_rules](/recipe_modules/cros_test_plan_v2/api.py#203)(self, source_test_plans):**
 
 Runs the platform testplan Docker image to get CoverageRules.
 
@@ -3503,9 +3512,9 @@ Args:
 Returns:
   A list of generated CoverageRules.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#23)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#24)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#40)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#102)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -8412,6 +8421,20 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#20)(api):**
+### *recipes* / [cros\_test\_plan\_v2:examples/disabled\_on\_changes](/recipe_modules/cros_test_plan_v2/examples/disabled_on_changes.py)
+
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/disabled_on_changes.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/disabled_on_changes.py#33)(api):**
+### *recipes* / [cros\_test\_plan\_v2:examples/enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/examples/enabled_on_changes.py)
+
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/enabled_on_changes.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/enabled_on_changes.py#33)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/full](/recipe_modules/cros_test_plan_v2/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

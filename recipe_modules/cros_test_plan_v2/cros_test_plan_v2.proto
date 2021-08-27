@@ -25,4 +25,33 @@ message CrosTestPlanV2Properties {
   // Defaults to "staging" or "prod", based on the
   // cros_infra_config.is_staging property.
   string platform_test_plan_docker_tag = 4;
+
+  // Configure changes in a project to be migrated to v2 test planning.
+  message ProjectMigrationConfig {
+    // Gerrit hostname of the project being migrated, e.g.
+    // "chromium-review.googlesource.com". Required.
+    string host = 1;
+
+    // Gerrit project being migrated, e.g. "chromium/src". Required.
+    string project = 2;
+
+    // Allowlist and blocklist of file regexps that can be migrated. The
+    // allowlist is required (to migrate all changes in a project, specify
+    // ".*"). The blocklist is not required (default is no files are
+    // blocklisted). A change will be migrated iff all affected files are in at
+    // least one expression in the allowlist, and none are in any expressions in
+    // the blocklist.
+    //
+    // Expressions must be compatible with the re module in the Python standard
+    // library. When checking a match, '^' and '$' are added at the front and
+    // back of the pattern, respectively, i.e. the pattern must match the entire
+    // path string.
+    repeated string file_allowlist_regexps = 3;
+    repeated string file_blocklist_regexps = 4;
+  }
+
+  // Projects to be migrated to v2 test planning. Note that a CQ run will use v2
+  // test planning only if all Gerrit changes is the CQ are allowed by these
+  // migration configs.
+  repeated ProjectMigrationConfig migration_configs = 5;
 }
