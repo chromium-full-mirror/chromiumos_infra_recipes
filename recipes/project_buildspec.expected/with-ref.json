@@ -44,7 +44,8 @@
       "--buildspec",
       "",
       "--projects",
-      ""
+      "",
+      "--push"
     ],
     "name": "create program/project buildspec(s).run manifest_doctor",
     "~followup_annotations": [

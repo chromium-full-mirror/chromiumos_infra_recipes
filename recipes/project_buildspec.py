@@ -51,6 +51,8 @@ def RunSteps(api, properties):
       cmd = [manifest_doctor_path, "project-buildspec"]
       cmd += ["--buildspec", properties.buildspec]
       cmd += ["--projects", ",".join(properties.projects)]
+      if not properties.dry_run:
+        cmd += ["--push"]
 
       api.step("run manifest_doctor", cmd)
 
@@ -64,8 +66,11 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'create program/project buildspec(s).run manifest_doctor',
                      [
-                         '--buildspec', 'buildspecs/foo/1.2.3.xml',
-                         '--projects', 'galaxy/milkyway,foo/*'
+                         '--buildspec',
+                         'buildspecs/foo/1.2.3.xml',
+                         '--projects',
+                         'galaxy/milkyway,foo/*',
+                         '--push',
                      ]),
   )
 

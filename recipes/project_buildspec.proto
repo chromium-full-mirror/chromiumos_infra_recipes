@@ -23,4 +23,7 @@ message ProjectBuildspecProperties {
     // Projects to create the project-specific buildspec for, e.g. galaxy/milkyway.
     // Supports wildcards, e.g. galaxy/milk* or galaxy/*.
     repeated string projects = 4;
+
+    // Whether this is a dry run.
+    bool dry_run = 5;
 }
