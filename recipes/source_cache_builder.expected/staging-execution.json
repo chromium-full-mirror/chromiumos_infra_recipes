@@ -716,7 +716,7 @@
       "create",
       "staging-test-cache-main-13370000",
       "--source-disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-",
-      "--zone=us-central1-b"
+      "--source-disk-zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

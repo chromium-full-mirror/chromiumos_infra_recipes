@@ -757,7 +757,7 @@
       "create",
       "chromiumos-main-13370000",
       "--source-disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--zone=us-central1-b"
+      "--source-disk-zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -1430,7 +1430,7 @@
       "create",
       "chrome-main-13370000",
       "--source-disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
-      "--zone=us-central1-b"
+      "--source-disk-zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

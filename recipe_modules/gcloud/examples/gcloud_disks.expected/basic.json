@@ -441,7 +441,7 @@
       "create",
       "test_disk1_snapshot",
       "--source-disk=test_disk1",
-      "--zone=us-central1-b"
+      "--source-disk-zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -457,7 +457,7 @@
       "create",
       "test_disk2_snapshot",
       "--source-disk=test_disk2",
-      "--zone=us-central1-b"
+      "--source-disk-zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

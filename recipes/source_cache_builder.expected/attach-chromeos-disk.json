@@ -717,7 +717,7 @@
       "create",
       "test-cache-release-r90-13816-b-13370000",
       "--source-disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-r90",
-      "--zone=us-central1-b"
+      "--source-disk-zone=us-central1-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

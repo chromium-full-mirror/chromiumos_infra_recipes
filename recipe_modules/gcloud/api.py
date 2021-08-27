@@ -457,7 +457,7 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('create image from disk', [
           'gcloud', 'compute', 'images', 'create', image_name,
-          '--source-disk={}'.format(disk), '--zone={}'.format(zone)
+          '--source-disk={}'.format(disk), '--source-disk-zone={}'.format(zone)
       ], infra_step=True)
 
   def snapshot_disk(self, disk, snapshot_name, zone):
