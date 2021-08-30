@@ -19,3 +19,9 @@ class BreakpadTestApi(recipe_test_api.RecipeTestApi):
         .format(test_result.log_data.gs_url, filename),
         stdout=self.m.raw_io.output_text('TEST_MINIDUMP_STDOUT'),
         retcode=retcode)
+
+  def gsutil_download_test_data(self, retcode=None):
+    return self.step_data(
+        'symbolicate dump.gsutil download_url',
+        stdout=self.m.raw_io.output_text('TEST_GSUTIL_DOWNLOAD_STDOUT'),
+        retcode=retcode)

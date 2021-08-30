@@ -119,3 +119,13 @@ def GenTests(api):
       # A download step should not exist
       api.post_check(lambda check, steps: check(dl_step not in steps)),
   )
+
+  yield api.test(
+      'no symbols bundle found',
+      api.properties(req),
+      _mock_gs_dmp_files(tr, ['./a/b/c.dmp', './a/b/d.dmp']),
+      api.breakpad.gsutil_download_test_data(retcode=1),
+      # A download step should not exist
+      api.post_check(lambda check, steps: check('extract symbols' not in steps)
+                    ),
+  )

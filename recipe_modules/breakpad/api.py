@@ -12,6 +12,10 @@ from recipe_engine.recipe_api import RecipeApi, StepFailure
 SYMBOLS_FILE_NAME = 'debug_breakpad.tar.xz'
 
 
+class SymbolsFileNotFoundException(StepFailure):
+  """Raised when the symbol file is not found, letting us skip gracefully."""
+
+
 class BreakpadApi(RecipeApi):
 
   def initialize(self):
@@ -55,9 +59,12 @@ class BreakpadApi(RecipeApi):
     """
     debug_breakpad_local_path = self.m.path.mkdtemp(
         prefix='image_archive').join(SYMBOLS_FILE_NAME)
-    self._download_and_log_gs_url(
-        os.path.join(image_archive_path, SYMBOLS_FILE_NAME),
-        debug_breakpad_local_path)
+    try:
+      self._download_and_log_gs_url(
+          os.path.join(image_archive_path, SYMBOLS_FILE_NAME),
+          debug_breakpad_local_path)
+    except StepFailure:
+      raise SymbolsFileNotFoundException('Symbols file not found in GS.')
 
     # Extract debug_breakpad.tar.xz. Has a directory structure debug/breakpad.
     # Note that the `recipe_engine/archive` module cannot handle tar.xz files.
@@ -122,50 +129,55 @@ class BreakpadApi(RecipeApi):
       A list[Path] of symbolicated files written.
     """
     stackwalk_output_paths = []
-    with self.m.step.nest('symbolicate dump'):
+    with self.m.step.nest('symbolicate dump') as symbolicate_dump_pres:
       self._ensure_breakpad()
 
-      symbols_path = self._download_and_extract_symbols(image_archive_path)
+      try:
+        symbols_path = self._download_and_extract_symbols(image_archive_path)
+      except SymbolsFileNotFoundException:
+        symbolicate_dump_pres.step_summary_text = (
+            'Skipped because symbols file was not found in GS')
+      else:
+        for test_result in test_results:
+          with self.m.step.nest('symbolicate dumps from {}'.format(
+              test_result.gs_path)) as pres:
+            with self.m.context(cwd=test_result.local_path):
+              # Get all '.dmp' files in the test results dir. Note that the
+              # `recipe_engine/file` module does not provide recursive search
+              # functionality. The `glob` function does not recurse directory
+              # structure.
+              dmp_files = self._find_dmp_files()
+              pres.logs['.dmp files'] = dmp_files
 
-      for test_result in test_results:
-        with self.m.step.nest('symbolicate dumps from {}'.format(
-            test_result.gs_path)) as pres:
-          with self.m.context(cwd=test_result.local_path):
-            # Get all '.dmp' files in the test results dir. Note that the
-            # `recipe_engine/file` module does not provide recursive search
-            # functionality. The `glob` function does not recurse directory
-            # structure.
-            dmp_files = self._find_dmp_files()
-            pres.logs['.dmp files'] = dmp_files
+              for dmp_file in dmp_files:
+                with self.m.step.nest(
+                    'symbolicate {}'.format(dmp_file)) as pres2:
+                  # Failures on a single minidump_stackwalk call should not crash
+                  # the entire recipe. Catch and log StepFailures.
+                  try:
+                    stackwalk_output = self.m.easy.stdout_step(
+                        'minidump_stackwalk',
+                        [self._minidump_stackwalk_path, dmp_file, symbols_path])
 
-            for dmp_file in dmp_files:
-              with self.m.step.nest('symbolicate {}'.format(dmp_file)) as pres2:
-                # Failures on a single minidump_stackwalk call should not crash
-                # the entire recipe. Catch and log StepFailures.
-                try:
-                  stackwalk_output = self.m.easy.stdout_step(
-                      'minidump_stackwalk',
-                      [self._minidump_stackwalk_path, dmp_file, symbols_path])
+                    pres2.logs['minidump_stackwalk output'] = [stackwalk_output]
 
-                  pres2.logs['minidump_stackwalk output'] = [stackwalk_output]
+                    stackwalk_output_path = self._write_stackwalk_output(
+                        dmp_file, stackwalk_output)
+                    stackwalk_output_paths.append(stackwalk_output_path)
+                  except StepFailure as step_failure:
+                    pres2.logs['caught StepFailure'] = [repr(step_failure)]
 
-                  stackwalk_output_path = self._write_stackwalk_output(
-                      dmp_file, stackwalk_output)
-                  stackwalk_output_paths.append(stackwalk_output_path)
-                except StepFailure as step_failure:
-                  pres2.logs['caught StepFailure'] = [repr(step_failure)]
-
-            # `test_result_local_path` will not contain the final path component
-            # of the remote test result path , e.g. "swarming-1234". This final
-            # path component needs to be appeneded to the local path for the
-            # rsync command so the directory structure lines up, e.g.
-            # "rsync [local tmp dir]/test_result/swarming-1234
-            #  gs://chromeos-autotest-results/swarming-1234"
-            test_result_basename = os.path.basename(test_result.gs_path)
-            self.m.gsutil([
-                'rsync', '-r',
-                test_result.local_path.join(test_result_basename),
-                test_result.gs_path
-            ], name='upload symbolicated files', multithreaded=True)
+              # `test_result_local_path` will not contain the final path component
+              # of the remote test result path , e.g. "swarming-1234". This final
+              # path component needs to be appeneded to the local path for the
+              # rsync command so the directory structure lines up, e.g.
+              # "rsync [local tmp dir]/test_result/swarming-1234
+              #  gs://chromeos-autotest-results/swarming-1234"
+              test_result_basename = os.path.basename(test_result.gs_path)
+              self.m.gsutil([
+                  'rsync', '-r',
+                  test_result.local_path.join(test_result_basename),
+                  test_result.gs_path
+              ], name='upload symbolicated files', multithreaded=True)
 
     return stackwalk_output_paths
