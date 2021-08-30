@@ -13,6 +13,7 @@ DEPS = [
     'cros_infra_config',
     'cros_tags',
     'cros_test_plan',
+    'cros_test_plan_v2',
     'easy',
     'gerrit',
     'failures',

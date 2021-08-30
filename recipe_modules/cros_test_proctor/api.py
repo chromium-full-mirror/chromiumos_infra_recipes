@@ -30,6 +30,24 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       self.timeout = duration_pb2.Duration(seconds=7 * 60 * 60)
     self._vm_bucket = properties.vm_bucket or "staging"
 
+  def run_proctor_v2(self, gerrit_changes):
+    """Runs the test platform v2 for a set of GerritChanges.
+
+    Args:
+      gerrit_changes (list[common_pb2.GerritChange]): changes to test.
+    """
+    with self.m.step.nest('run tests') as pres:
+      with self.m.step.nest('schedule tests'):
+        relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
+        coverage_rules = self.m.cros_test_plan_v2.generate_coverage_rules(
+            relevant_plans)
+
+        pres.logs['coverage_rules'] = '\n'.join(
+            json_format.MessageToJson(cr) for cr in coverage_rules)
+
+        # TODO(b/182898188): Call CTP2 when it is available.
+        raise ValueError('CTP2 not implemented')
+
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
                   enable_history):
     """Runs the test platform for a given bunch of builds.

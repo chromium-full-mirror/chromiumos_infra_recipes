@@ -1,0 +1,487 @@
+[
+  {
+    "cmd": [],
+    "name": "run tests",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@coverage_rules@@@@",
+      "@@@STEP_LOG_END@coverage_rules@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.find relevant plans",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.find relevant plans.ensure test_plan",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd",
+      "-ensure-file",
+      "chromiumos/infra/test_plan/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.find relevant plans.ensure test_plan.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_plan/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_plan",
+      "relevant-plans",
+      "-loglevel",
+      "debug",
+      "-cl",
+      "https://chromium-review.googlesource.com/c/src/projectA/+/123/3",
+      "-cl",
+      "https://chromium-review.googlesource.com/c/src/projectB/+/456/7",
+      "-out",
+      "[CLEANUP]/test_plan_tmp_1/output.jsonproto"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.find relevant plans.call test_plan",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/test_plan_tmp_1/output.jsonproto"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.find relevant plans.list output files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate coverage rules",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate coverage rules.ensure docker image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@docker version@1.2.3@@@",
+      "@@@STEP_LOG_END@docker version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "which",
+      "docker"
+    ],
+    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.ensure docker installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "docker",
+      "version"
+    ],
+    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.docker version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_TEXT@1.2.3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/cloud-platform",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.get access token for default account",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[infra::docker]/resources/docker_login.py",
+      "--server",
+      "gcr.io",
+      "--service-account-token-file",
+      "extra.secret.token.should.not.be.logged",
+      "--config-file",
+      "[CLEANUP]/.docker"
+    ],
+    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.docker login",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "docker",
+      "--config",
+      "[CLEANUP]/.docker",
+      "pull",
+      "gcr.io/chromeos-bot/testplan:prod"
+    ],
+    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.docker pull testplan:prod",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate coverage rules.write input files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@data@    {@@@",
+      "@@@STEP_LOG_LINE@data@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@data@        \"portageBuildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@data@          \"overlayName\": \"overlayA\"@@@",
+      "@@@STEP_LOG_LINE@data@        }@@@",
+      "@@@STEP_LOG_LINE@data@      }@@@",
+      "@@@STEP_LOG_LINE@data@    }@@@",
+      "@@@STEP_LOG_LINE@data@  ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT"
+    ],
+    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"values\": [\n    {\n      \"buildTarget\": {\n        \"portageBuildTarget\": {\n          \"overlayName\": \"overlayA\"\n        }\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate coverage rules.write input files.write build_metadata.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@{@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@    {@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@        \"portageBuildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@          \"overlayName\": \"overlayA\"@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@        }@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@      }@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@    }@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@  ]@@@",
+      "@@@STEP_LOG_LINE@build_metadata.jsonproto@}@@@",
+      "@@@STEP_LOG_END@build_metadata.jsonproto@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@data@    {@@@",
+      "@@@STEP_LOG_LINE@data@      \"hwDesign\": {@@@",
+      "@@@STEP_LOG_LINE@data@        \"name\": \"design1\"@@@",
+      "@@@STEP_LOG_LINE@data@      }@@@",
+      "@@@STEP_LOG_LINE@data@    }@@@",
+      "@@@STEP_LOG_LINE@data@  ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.binaryproto?format=TEXT"
+    ],
+    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.binaryproto?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"values\": [\n    {\n      \"hwDesign\": {\n        \"name\": \"design1\"\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_1/flattened.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate coverage rules.write input files.write flattened.binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@{@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@    {@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@      \"hwDesign\": {@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@        \"name\": \"design1\"@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@      }@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@    }@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@  ]@@@",
+      "@@@STEP_LOG_LINE@flattened.binaryproto@}@@@",
+      "@@@STEP_LOG_END@flattened.binaryproto@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@  \"dutAttributes\": [@@@",
+      "@@@STEP_LOG_LINE@data@    {@@@",
+      "@@@STEP_LOG_LINE@data@      \"id\": {@@@",
+      "@@@STEP_LOG_LINE@data@        \"value\": \"attribute1\"@@@",
+      "@@@STEP_LOG_LINE@data@      }@@@",
+      "@@@STEP_LOG_LINE@data@    }@@@",
+      "@@@STEP_LOG_LINE@data@  ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT"
+    ],
+    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file (3).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"dutAttributes\": [\n    {\n      \"id\": {\n        \"value\": \"attribute1\"\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_1/dut_attributes.jsonproto"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate coverage rules.write input files.write dut_attributes.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@{@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@  \"dutAttributes\": [@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@    {@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@      \"id\": {@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@        \"value\": \"attribute1\"@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@      }@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@    }@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@  ]@@@",
+      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@}@@@",
+      "@@@STEP_LOG_END@dut_attributes.jsonproto@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/tmp_tmp_1/source_test_plans_0.textpb"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate coverage rules.write [CLEANUP]/tmp_tmp_1/source_test_plans_0.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@source_test_plans_0.textpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/tmp_tmp_1/source_test_plans_1.textpb"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate coverage rules.write [CLEANUP]/tmp_tmp_1/source_test_plans_1.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@source_test_plans_1.textpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[infra::docker]/resources/docker_run.py",
+      "--config-file",
+      "[CLEANUP]/.docker",
+      "--image",
+      "gcr.io/chromeos-bot/testplan:prod",
+      "--dir-map",
+      "[CLEANUP]/tmp_tmp_1",
+      "/input",
+      "--",
+      "generate",
+      "-alsologtostderr",
+      "-v",
+      "2",
+      "-dutattributes",
+      "/input/dut_attributes.jsonproto",
+      "-buildmetadata",
+      "/input/build_metadata.jsonproto",
+      "-flatconfiglist",
+      "/input/flattened.binaryproto",
+      "-out",
+      "/input/coverage_rules.jsonproto",
+      "-plan",
+      "/input/source_test_plans_0.textpb",
+      "-plan",
+      "/input/source_test_plans_1.textpb"
+    ],
+    "name": "run tests.schedule tests.generate coverage rules.docker run",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_1/coverage_rules.jsonproto",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate coverage rules.read output [CLEANUP]/tmp_tmp_1/coverage_rules.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
