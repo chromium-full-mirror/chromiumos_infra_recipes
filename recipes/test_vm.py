@@ -28,7 +28,6 @@ from PB.recipes.chromeos.test_vm import TestVmProperties
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/archive',
-    'recipe_engine/buildbucket',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',

@@ -5,10 +5,8 @@
 
 DEPS = [
     'recipe_engine/assertions',
-    'recipe_engine/file',
     'recipe_engine/properties',
     'cros_infra_config',
-    'cros_sdk',
     'sysroot_util',
 ]
 

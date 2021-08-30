@@ -7,7 +7,6 @@
 
 DEPS = [
     'build_menu',
-    'cros_artifacts',
     'cros_sdk',
     'sysroot_util',
     'test_util',

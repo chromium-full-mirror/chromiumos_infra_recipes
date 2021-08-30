@@ -44,7 +44,6 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_cq_depends',
-    'cros_sdk',
     'cros_source',
     'easy',
     'gerrit',
