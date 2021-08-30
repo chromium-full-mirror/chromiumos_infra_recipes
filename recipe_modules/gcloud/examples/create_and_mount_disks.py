@@ -78,7 +78,7 @@ def GenTests(api):
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.step_data((
-          'create and attach disk.create disk from snapshot version.create disk from snapshot'
+          'create and attach disk.create disk from snapshot image.create disk from image'
       ), retcode=3),
   )
   yield api.test(
@@ -106,7 +106,7 @@ def GenTests(api):
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data((
-          'create and attach disk.retrieve snapshot version from storage.gsutil cat'
+          'create and attach disk.retrieve image version from storage.gsutil cat'
       ), retcode=3),
   )
   yield api.test(
@@ -121,7 +121,7 @@ def GenTests(api):
       mock_path('chromiumos-main-cache-snapshot-version.txt'),
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.step_data('create and attach disk.read local snapshot version',
+      api.step_data('create and attach disk.read local image version',
                     stdout=api.raw_io.output_text('chromiumos-main-16287984')),
   )
   yield api.test(
@@ -130,7 +130,7 @@ def GenTests(api):
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-disk'),
       api.step_data((
-          'create and attach disk (2).create disk from snapshot version.create disk from snapshot'
+          'create and attach disk (2).create disk from snapshot image.create disk from image'
       ), retcode=3),
   )
 
@@ -140,6 +140,6 @@ def GenTests(api):
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-disk'),
       api.step_data((
-          'create and attach disk (2).create disk from snapshot version.detach disk'
+          'create and attach disk (2).create disk from snapshot image.detach disk'
       ), retcode=3),
   )

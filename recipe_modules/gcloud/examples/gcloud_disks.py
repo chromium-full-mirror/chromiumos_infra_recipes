@@ -16,11 +16,13 @@ def RunSteps(api):
   # Multiple disks
   with api.gcloud.cleanup_gce_disks(), \
        api.gcloud.cleanup_mounted_disks():
-    api.gcloud.create_disk(disk='test_disk1', zone='us-central1-b',
-                           snapshot='test-chromeos-snapshot',
-                           disk_type='pd-ssd')
-    api.gcloud.create_disk(disk='test_disk2', zone='us-central1-b',
-                           snapshot='test-chrome-snapshot')
+    api.gcloud.create_disk_from_snapshot(disk='test_disk1',
+                                         zone='us-central1-b',
+                                         snapshot='test-chromeos-snapshot',
+                                         disk_type='pd-ssd')
+    api.gcloud.create_disk_from_snapshot(disk='test_disk2',
+                                         zone='us-central1-b',
+                                         snapshot='test-chrome-snapshot')
     api.gcloud.create_disk_from_image(disk='test_disk1', zone='us-central1-b',
                                       image='test-chromeos-snapshot',
                                       disk_type='pd-ssd')

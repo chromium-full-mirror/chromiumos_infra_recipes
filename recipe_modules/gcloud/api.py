@@ -304,8 +304,8 @@ class GcloudApi(recipe_api.RecipeApi):
       ], infra_step=True)
     self._remove_cleanup_attached_disk(disk, instance, zone)
 
-  def create_disk(self, disk, zone, snapshot, disk_type=None):
-    """Create a GCE disk.
+  def create_disk_from_snapshot(self, disk, zone, snapshot, disk_type=None):
+    """Create a GCE disk from supplied snapshot.
 
     Create a GCE disk from a provided snapshot name.
 
@@ -325,7 +325,7 @@ class GcloudApi(recipe_api.RecipeApi):
       self.m.step('create disk from snapshot', cmd, infra_step=True)
 
   def create_disk_from_image(self, disk, zone, image, disk_type=None):
-    """Create a GCE disk.
+    """Create a GCE disk from supplied image.
 
     Create a GCE disk from a provided snapshot name.
 
@@ -337,7 +337,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     cmd = [
         'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
-        '--image_project={}'.format(GCE_BUILD_PROJECT),
+        '--image-project={}'.format(GCE_BUILD_PROJECT),
         '--image={}'.format(image), '--quiet'
     ]
     if disk_type:
@@ -422,6 +422,27 @@ class GcloudApi(recipe_api.RecipeApi):
         test_stdout=self.test_api.snapshot_exists_data, infra_step=True)
     for snap in output:
       if snapshot == snap['name']:
+        return True
+    return False
+
+  def image_exists(self, image):
+    """Check whether a image exists.
+
+    Args:
+      image(str): Name of the snapshot to check.
+
+    Returns:
+      Bool of whether the snapshot exists or not.
+    """
+    list_cmd = [
+        'gcloud', 'compute', 'images', 'list', '--format', 'json(name)',
+        '--filter', 'name={}'.format(image)
+    ]
+    output = self.m.easy.stdout_json_step(
+        'check whether image exists: {}'.format(image), list_cmd,
+        test_stdout=self.test_api.image_exists_data, infra_step=True)
+    for img in output:
+      if image == img['name']:
         return True
     return False
 
@@ -656,9 +677,9 @@ class GcloudApi(recipe_api.RecipeApi):
       local_version_path = self.snapshot_version_path.join(self._version_file)
       if self.m.path.exists(local_version_path):
         local_version = self.m.file.read_text(
-            'read local snapshot version', local_version_path,
+            'read local image version', local_version_path,
             test_data='test-cache-snapshot-123')
-      with self.m.step.nest('retrieve snapshot version from storage'):
+      with self.m.step.nest('retrieve image version from storage'):
         try:
           remote_version = self.m.gsutil.cat(
               'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
@@ -670,9 +691,9 @@ class GcloudApi(recipe_api.RecipeApi):
             # Rather than fail, default to an initial snapshot.
             pres.logs['version file not found'] = self._version_file
             remote_version = recovery_snapshot
-      with self.m.step.nest('create disk from snapshot version'):
+      with self.m.step.nest('create disk from snapshot image'):
         snapshot = remote_version
-        if local_version and self.snapshot_exists(snapshot=local_version):
+        if local_version and self.image_exists(image=local_version):
           snapshot = local_version
         self.m.easy.set_properties_step(snapshot_version=snapshot)
         if not dry_run:
@@ -688,11 +709,11 @@ class GcloudApi(recipe_api.RecipeApi):
               pass
             self.delete_disk(disk=self._disk, zone=self._zone)
           try:
-            self.create_disk(disk=self._disk, zone=self._zone,
-                             snapshot=snapshot, disk_type=disk_type)
+            self.create_disk_from_image(disk=self._disk, zone=self._zone,
+                                        image=snapshot, disk_type=disk_type)
           except self.m.step.StepFailure:
-            self.create_disk(disk=self._disk, zone=self._zone,
-                             snapshot=snapshot, disk_type='pd-standard')
+            self.create_disk_from_image(disk=self._disk, zone=self._zone,
+                                        image=snapshot, disk_type='pd-standard')
           if not local_version and self.m.path.exists(
               self.m.path['cache'].join(cache_name).join('upperdir')):
             self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)

@@ -89,8 +89,6 @@ def RunSteps(api, properties):
         with api.step.nest('detach disk for snapshot'):
           api.gcloud.detach_disk(instance=infra_host, disk=disk,
                                  zone=api.gcloud.host_zone)
-        with api.step.nest('snapshot synced disk'):
-          api.gcloud.snapshot_disk(disk, snapshot_name, api.gcloud.host_zone)
         with api.step.nest('create image from disk'):
           api.gcloud.create_image_from_disk(disk=disk, image_name=snapshot_name,
                                             zone=api.gcloud.host_zone)

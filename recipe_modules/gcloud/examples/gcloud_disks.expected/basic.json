@@ -42,7 +42,7 @@
       "create",
       "test_disk1",
       "--zone=us-central1-b",
-      "--image_project=chromeos-bot",
+      "--image-project=chromeos-bot",
       "--image=test-chromeos-snapshot",
       "--quiet",
       "--type=pd-ssd"
@@ -61,7 +61,7 @@
       "create",
       "test_disk2",
       "--zone=us-central1-b",
-      "--image_project=chromeos-bot",
+      "--image-project=chromeos-bot",
       "--image=test-chrome-snapshot",
       "--quiet"
     ],

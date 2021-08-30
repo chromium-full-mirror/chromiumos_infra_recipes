@@ -111,6 +111,19 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
     }]
     return snapshot_list
 
+  def image_exists_data(self):
+    """Returns list of images in json format."""
+    image_list = [{
+        "name": "chromiumos-main-16287984"
+    }, {
+        "name": "staging-chromiumos-release-r93-14092-b-16287710"
+    }, {
+        "name": "chrome-release-r93-14092-b-16287710"
+    }, {
+        "name": "test-cache-snapshot-123",
+    }]
+    return image_list
+
   def disk_exists_data(self):
     """Returns list of disks in json format."""
     disk_list = [{

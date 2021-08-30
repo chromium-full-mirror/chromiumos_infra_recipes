@@ -47,7 +47,7 @@
   },
   {
     "cmd": [],
-    "name": "create and attach disk.retrieve snapshot version from storage",
+    "name": "create and attach disk.retrieve image version from storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -64,21 +64,21 @@
       "gs://chromeos-bot-cache/staging-chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "create and attach disk.retrieve snapshot version from storage.gsutil cat",
+    "name": "create and attach disk.retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create and attach disk.create disk from snapshot version",
+    "name": "create and attach disk.create disk from snapshot image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create and attach disk.create disk from snapshot version.set snapshot_version",
+    "name": "create and attach disk.create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
@@ -96,7 +96,7 @@
       "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros"
     ],
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "name": "create and attach disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -128,7 +128,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.detach disk",
+    "name": "create and attach disk.create disk from snapshot image.detach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros]@@@"
@@ -148,7 +148,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.delete disk",
+    "name": "create and attach disk.create disk from snapshot image.delete disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -161,7 +161,8 @@
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
-      "--source-snapshot=",
+      "--image-project=chromeos-bot",
+      "--image=",
       "--quiet",
       "--type=pd-standard"
     ],
@@ -169,7 +170,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.create disk from snapshot",
+    "name": "create and attach disk.create disk from snapshot image.create disk from image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -185,7 +186,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.pull the blk ids attached",
+    "name": "create and attach disk.create disk from snapshot image.pull the blk ids attached",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -279,7 +280,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.attach disk",
+    "name": "create and attach disk.create disk from snapshot image.attach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -299,7 +300,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.set disk to autodelete",
+    "name": "create and attach disk.create disk from snapshot image.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -314,7 +315,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.ensure mount directory exists",
+    "name": "create and attach disk.create disk from snapshot image.ensure mount directory exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -332,7 +333,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.mount disk chromiumos",
+    "name": "create and attach disk.create disk from snapshot image.mount disk chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -349,7 +350,7 @@
       "[CACHE]/infra_versions/staging-chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot version.write version file",
+    "name": "create and attach disk.create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@staging-chromiumos-main-cache-snapshot-version.txt@@@"
@@ -381,7 +382,7 @@
   },
   {
     "cmd": [],
-    "name": "create and attach disk (2).retrieve snapshot version from storage",
+    "name": "create and attach disk (2).retrieve image version from storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -398,21 +399,21 @@
       "gs://chromeos-bot-cache/staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "create and attach disk (2).retrieve snapshot version from storage.gsutil cat",
+    "name": "create and attach disk (2).retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create and attach disk (2).create disk from snapshot version",
+    "name": "create and attach disk (2).create disk from snapshot image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create and attach disk (2).create disk from snapshot version.set snapshot_version",
+    "name": "create and attach disk (2).create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
@@ -430,7 +431,7 @@
       "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90"
     ],
     "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot version.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+    "name": "create and attach disk (2).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -455,7 +456,8 @@
       "create",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
       "--zone=us-central1-b",
-      "--source-snapshot=",
+      "--image-project=chromeos-bot",
+      "--image=",
       "--quiet",
       "--type=pd-standard"
     ],
@@ -463,7 +465,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot version.create disk from snapshot",
+    "name": "create and attach disk (2).create disk from snapshot image.create disk from image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -479,7 +481,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot version.pull the blk ids attached",
+    "name": "create and attach disk (2).create disk from snapshot image.pull the blk ids attached",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -573,7 +575,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot version.attach disk",
+    "name": "create and attach disk (2).create disk from snapshot image.attach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -593,7 +595,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot version.set disk to autodelete",
+    "name": "create and attach disk (2).create disk from snapshot image.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -614,7 +616,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot version.create mount path",
+    "name": "create and attach disk (2).create disk from snapshot image.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -632,7 +634,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot version.mount disk chromiumos",
+    "name": "create and attach disk (2).create disk from snapshot image.mount disk chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -649,7 +651,7 @@
       "[CACHE]/infra_versions/staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot version.write version file",
+    "name": "create and attach disk (2).create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
@@ -681,7 +683,7 @@
   },
   {
     "cmd": [],
-    "name": "create and attach disk (3).retrieve snapshot version from storage",
+    "name": "create and attach disk (3).retrieve image version from storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -698,21 +700,21 @@
       "gs://chromeos-bot-cache/staging-chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "create and attach disk (3).retrieve snapshot version from storage.gsutil cat",
+    "name": "create and attach disk (3).retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create and attach disk (3).create disk from snapshot version",
+    "name": "create and attach disk (3).create disk from snapshot image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create and attach disk (3).create disk from snapshot version.set snapshot_version",
+    "name": "create and attach disk (3).create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
