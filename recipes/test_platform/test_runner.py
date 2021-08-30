@@ -357,6 +357,8 @@ def execution_steps(api, properties):
           archive_all_logs(api, interface=interface,
                            test_metadata=test_metadata, result=result)
 
+    interface.remove_autotest_results_dir()
+
   return global_result
 
 

@@ -289,6 +289,10 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     with self._api.step.nest('Phosphorus: load skylab local state'):
       return self._api.phosphorus.load_skylab_local_state(test_id=test_id)
 
+  def remove_autotest_results_dir(self):
+    with self._api.step.nest('Phosphorus: remove autotest results dir'):
+      return self._api.phosphorus.remove_autotest_results_dir()
+
   def read_dut_hostname(self):
     if not self._dut_hostname:
       self._dut_hostname = self._read_dut_hostname(self._api)

@@ -8,6 +8,7 @@ from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 from PB.test_platform.skylab_local_state.load import LoadRequest, LoadResponse
+from PB.test_platform.skylab_local_state.remove import RemoveRequest
 from PB.test_platform.skylab_local_state.save import SaveRequest
 from PB.uprev.build_parallels_image.common import Config as ParallelsConfig
 from PB.uprev.build_parallels_image.provision import ProvisionRequest as \
@@ -218,6 +219,16 @@ class PhosphorusCommand(recipe_api.RecipeApi):
                             seal_results_dir=seal_results_dir,
                             peer_duts=peer_duts)
       self._run('save', request, SaveRequest)
+
+  def remove_autotest_results_dir(self):
+    """Remove the autotest results directory.
+
+    Raises:
+      * InfraFailure
+    """
+    with self.m.context(infra_steps=True):
+      request = RemoveRequest(config=self._config, run_id=self._run_id)
+      self._run('remove', request, RemoveRequest)
 
   def build_parallels_image_provision(self, image_gs_path,
                                       max_duration_sec=2 * 60 * 60):

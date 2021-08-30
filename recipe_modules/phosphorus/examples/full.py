@@ -62,6 +62,7 @@ def RunSteps(api):
                                          ['dummy-dut2'])
   api.phosphorus.save_and_seal_skylab_local_state('qux-state', 'dummy-dut1',
                                                   ['dummy-dut2'])
+  api.phosphorus.remove_autotest_results_dir()
   _ = api.phosphorus.parse('/path/to/results')
 
 

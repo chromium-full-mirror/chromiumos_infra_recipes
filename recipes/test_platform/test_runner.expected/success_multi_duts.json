@@ -792,6 +792,44 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.Phosphorus: remove autotest results dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Phosphorus: remove autotest results dir.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"runId\": \"dummy-task-id\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "remove",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "infra_step": true,
+    "name": "execution steps.Phosphorus: remove autotest results dir.call `phosphorus`.remove",
+    "stdin": "{\n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"runId\": \"dummy-task-id\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "test results",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@JSON output@{@@@",
