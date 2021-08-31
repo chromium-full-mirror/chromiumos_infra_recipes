@@ -1152,7 +1152,7 @@
       "/path/to/tmp/json",
       "copytree",
       "[CLEANUP]/chromiumos_workspace/src/overlays/baseboard-fizz/chromeos-base/chromeos-config-bsp-baseboard/files",
-      "[CLEANUP]/chromiumos_workspace/src/overlays/overlay-fizz/chromeos-base/chromeos-config-bsp-fizz/files/include-public"
+      "[CLEANUP]/chromiumos_workspace/src/overlays/overlay-fizz/chromeos-base/chromeos-config-bsp/files/include-public"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -1176,8 +1176,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copytree",
-      "[CLEANUP]/chromiumos_workspace/src/private-overlays/baseboard-fizz-private/chromeos-base/chromeos-config-bsp-baseboard/files/include",
-      "[CLEANUP]/chromiumos_workspace/src/private-overlays/overlay-fizz-private/chromeos-base/chromeos-config-bsp-fizz-private/files/include"
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/baseboard-fizz-private/chromeos-base/chromeos-config-bsp-baseboard-private/files/include",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/overlay-fizz-private/chromeos-base/chromeos-config-bsp-private/files/include"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

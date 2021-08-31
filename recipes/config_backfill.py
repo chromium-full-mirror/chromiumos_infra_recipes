@@ -138,11 +138,11 @@ def create_portage_workaround(api):
           'public_baseboard':
               'chromeos-base/chromeos-config-bsp-baseboard/files',
           'public_overlay':
-              'chromeos-base/chromeos-config-bsp-fizz/files/include-public',
+              'chromeos-base/chromeos-config-bsp/files/include-public',
           'private_baseboard':
-              'chromeos-base/chromeos-config-bsp-baseboard/files/include',
+              'chromeos-base/chromeos-config-bsp-baseboard-private/files/include',
           'private_overlay':
-              'chromeos-base/chromeos-config-bsp-fizz-private/files/include',
+              'chromeos-base/chromeos-config-bsp-private/files/include',
       }
   }
 
