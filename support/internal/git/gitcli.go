@@ -6,12 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go.chromium.org/luci/common/api/gerrit"
 	"io/ioutil"
 	"log"
 	"os/exec"
 	"strings"
 	"time"
+
+	"go.chromium.org/luci/common/api/gerrit"
 )
 
 var (
@@ -107,6 +108,10 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 		if strings.Contains(errStr, "information is lacking or useless") {
 			log.Printf("This looks like a case of https://crbug.com/1031306, in which something in the diff represents a non-existent file. Aborting...")
 			return false, nil
+		}
+		if strings.Contains(errStr, "error: cannot read the current contents") {
+			log.Printf("This looks like a case of b/198465593, ignoring and continuing...")
+			return true, nil
 		}
 		stdoutLineScanner := bufio.NewScanner(strings.NewReader(stdoutBuf.String()))
 		for stdoutLineScanner.Scan() {
