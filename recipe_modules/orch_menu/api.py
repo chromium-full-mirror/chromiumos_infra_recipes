@@ -181,7 +181,7 @@ class OrchMenuApi(RecipeApi):
       BuilderConfig or None, with an active context.
     """
     with self.m.bot_cost.cq_run_cost_context(), \
-        self.m.cros_source.checkout_overlays_context():
+        self.m.cros_source.checkout_overlays_context(snapshot_mount=self.m.cros_infra_config.is_staging):
       with self.m.step.nest('set up orchestrator') as presentation:
         self._validate_properties()
         config = self.m.cros_source.configure_builder(

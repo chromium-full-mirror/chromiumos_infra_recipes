@@ -735,7 +735,12 @@ class CrosSourceApi(RecipeApi):
       if not self._enable_custom_overlays and mount_cache:
         lower_dir = self.preload_path
         if snapshot_mount:
+          branch = self.manifest_branch or 'main'
+          self.m.gcloud.create_and_mount_disk(cache_name='chromiumos',
+                                              branch=branch, disk_type='pd-ssd',
+                                              dry_run=False)
           lower_dir = '{}/chromiumos'.format(self.m.gcloud.snapshot_mount_path)
+          self.m.easy.set_properties_step(snapshot_mount=snapshot_mount)
         self.m.overlayfs.mount('chromiumos', lower_dir, self.cache_path,
                                persist=True)
         self.m.path.mock_add_paths(self.cache_path.join('.repo'))
