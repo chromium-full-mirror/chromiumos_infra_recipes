@@ -72,191 +72,186 @@ def RunSteps(api, properties):
     raise StepFailure('must set manifest ref')
 
   with api.gcloud.cleanup_gce_disks(), \
-         api.gcloud.cleanup_mounted_disks():
-    api.gcloud.create_and_mount_disk(cache_name='chromiumos',
-                                     disk_type='pd-ssd', dry_run=False)
-    with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+         api.gcloud.cleanup_mounted_disks(), \
+         api.cros_source.checkout_overlays_context(snapshot_mount=True, disk_type='pd-ssd'):
 
-      internal_manifest = api.src_state.internal_manifest
-      external_manifest = api.src_state.external_manifest
+    internal_manifest = api.src_state.internal_manifest
+    external_manifest = api.src_state.external_manifest
 
-      # Do this before anything else.  Most notably, if it is called while in
-      # internal_manifest.path, HEAD stops tracking the lowerdir in the overlayfs,
-      # which means we fail when the cache updates manifest-internal.  See
-      # crbug/1148052.
-      api.cros_source.ensure_synced_cache(is_staging=is_staging)
+    # Do this before anything else.  Most notably, if it is called while in
+    # internal_manifest.path, HEAD stops tracking the lowerdir in the overlayfs,
+    # which means we fail when the cache updates manifest-internal.  See
+    # crbug/1148052.
+    api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
-      with api.context(cwd=internal_manifest.path):
-        if not api.cq.active:
-          api.cros_source.checkout_tip_of_tree()
+    with api.context(cwd=internal_manifest.path):
+      if not api.cq.active:
+        api.cros_source.checkout_tip_of_tree()
 
-        if api.cq.active and not commit.id:
-          # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
-          # This may be different from a provided GitilesCommit, but that is OK.
-          ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)
-          commit.host = commit.host or api.src_state.internal_manifest.host
-          commit.project = commit.project or internal_manifest.project
-          commit.ref = ref
-          commit.id = api.git.fetch_ref(internal_manifest.url, ref)
+      if api.cq.active and not commit.id:
+        # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
+        # This may be different from a provided GitilesCommit, but that is OK.
+        ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)
+        commit.host = commit.host or api.src_state.internal_manifest.host
+        commit.project = commit.project or internal_manifest.project
+        commit.ref = ref
+        commit.id = api.git.fetch_ref(internal_manifest.url, ref)
 
-        if commit.id:
-          with api.step.nest('recreating older run'):
-            properties.dry_run = True
-            # Check out the gitiles_commit we received, and declare the prior
-            # commit in each manifest to be the prior commit. Start by forcing a
-            # checkout on the right branch.
-            branch = (
-                commit.ref[len('refs/heads/'):]
-                if commit.ref.startswith('refs/heads/') else commit.ref)
-            api.cros_source.ensure_synced_cache(
-                cache_path_override=workspace_path, is_staging=is_staging,
-                init_opts=dict(manifest_branch=branch))
-            api.cros_source.sync_to_gitiles_commit(commit)
-            prior_internal = api.git.fetch_refs(internal_manifest.url,
-                                                commit.id, count=2)[-1]
-            test_data = api.git_footers.test_api.step_test_data_factory('e' *
-                                                                        40)
-            footers = api.git_footers.from_ref(commit.id,
-                                               key='Cr-External-Snapshot',
-                                               step_test_data=test_data)
-            if not footers:
-              raise StepFailure('missing Cr-External-Snapshot footer')
-            prior_external = footers[0] if footers else None
-            with api.context(cwd=workspace_path):
-              api.repo.init(internal_manifest.url,
-                            manifest_branch=internal_manifest.branch)
+      if commit.id:
+        with api.step.nest('recreating older run'):
+          properties.dry_run = True
+          # Check out the gitiles_commit we received, and declare the prior
+          # commit in each manifest to be the prior commit. Start by forcing a
+          # checkout on the right branch.
+          branch = (
+              commit.ref[len('refs/heads/'):]
+              if commit.ref.startswith('refs/heads/') else commit.ref)
+          api.cros_source.ensure_synced_cache(
+              cache_path_override=workspace_path, is_staging=is_staging,
+              init_opts=dict(manifest_branch=branch))
+          api.cros_source.sync_to_gitiles_commit(commit)
+          prior_internal = api.git.fetch_refs(internal_manifest.url, commit.id,
+                                              count=2)[-1]
+          test_data = api.git_footers.test_api.step_test_data_factory('e' * 40)
+          footers = api.git_footers.from_ref(commit.id,
+                                             key='Cr-External-Snapshot',
+                                             step_test_data=test_data)
+          if not footers:
+            raise StepFailure('missing Cr-External-Snapshot footer')
+          prior_external = footers[0] if footers else None
+          with api.context(cwd=workspace_path):
+            api.repo.init(internal_manifest.url,
+                          manifest_branch=internal_manifest.branch)
 
-        prior_internal = prior_internal or api.git.fetch_ref(
-            internal_manifest.url, manifest_ref)
+      prior_internal = prior_internal or api.git.fetch_ref(
+          internal_manifest.url, manifest_ref)
 
-        with api.context(cwd=external_manifest.path):
-          prior_external = prior_external or api.git.fetch_ref(
-              external_manifest.url, manifest_ref)
+      with api.context(cwd=external_manifest.path):
+        prior_external = prior_external or api.git.fetch_ref(
+            external_manifest.url, manifest_ref)
 
-          # Sync mirrored manifest files from manifest-internal to manifest.
-          diffs = _sync_manifest(api, properties, manifest_ref, prior_internal,
-                                 prior_external, internal_manifest,
-                                 external_manifest)
+        # Sync mirrored manifest files from manifest-internal to manifest.
+        diffs = _sync_manifest(api, properties, manifest_ref, prior_internal,
+                               prior_external, internal_manifest,
+                               external_manifest)
 
-          # One or more uprevs did not complete, end recipe and
-          # do not generate snapshot
-          if not _uprev_packages(api, properties, workspace_path, diffs,
-                                 dry_run):
-            raise StepFailure('Failed to uprev all changes')
+        # One or more uprevs did not complete, end recipe and
+        # do not generate snapshot
+        if not _uprev_packages(api, properties, workspace_path, diffs, dry_run):
+          raise StepFailure('Failed to uprev all changes')
 
-          api.easy.set_properties_step(dry_run=properties.dry_run)
+        api.easy.set_properties_step(dry_run=properties.dry_run)
 
-          prior_external = (
-              manifest_ref if properties.use_ref_not_id else prior_external)
-          prior_internal = (
-              manifest_ref if properties.use_ref_not_id else prior_internal)
-          # Generate a public snapshot of the manifest in the manifest/ repo.  We
-          # need to do this _first_ so that we can fill in the
-          # Cr-External-Snapshot footer in in the internal snapshot commit.
-          external_snapshot_ref = None
-          # Generate the manifest from public repo
-          snapshot_xml_extern = api.repo.manifest(
-              external_manifest.path.join('default.xml'), pinned=True,
-              step_name='generate external manifest')
+        prior_external = (
+            manifest_ref if properties.use_ref_not_id else prior_external)
+        prior_internal = (
+            manifest_ref if properties.use_ref_not_id else prior_internal)
+        # Generate a public snapshot of the manifest in the manifest/ repo.  We
+        # need to do this _first_ so that we can fill in the
+        # Cr-External-Snapshot footer in in the internal snapshot commit.
+        external_snapshot_ref = None
+        # Generate the manifest from public repo
+        snapshot_xml_extern = api.repo.manifest(
+            external_manifest.path.join('default.xml'), pinned=True,
+            step_name='generate external manifest')
 
-        # snapshot internal manifest
-        snapshot_xml_intern = api.repo.manifest(
-            pinned=True, step_name='generate internal manifest')
-        manifest_diffs = api.repo.diff_remote_and_local_manifests(
-            internal_manifest.url, manifest_ref, snapshot_xml_intern,
-            use_merge_base=True)
+      # snapshot internal manifest
+      snapshot_xml_intern = api.repo.manifest(
+          pinned=True, step_name='generate internal manifest')
+      manifest_diffs = api.repo.diff_remote_and_local_manifests(
+          internal_manifest.url, manifest_ref, snapshot_xml_intern,
+          use_merge_base=True)
 
-        # TODO(athilenius): It would be nice to set the 'Info' column here.
-        gerrit_commits = []
-        if manifest_diffs is not None:
-          # If there are zero diffs (empty array) then there is nothing
-          # interesting to be done.
-          if len(manifest_diffs) == 0:
-            return
+      # TODO(athilenius): It would be nice to set the 'Info' column here.
+      gerrit_commits = []
+      if manifest_diffs is not None:
+        # If there are zero diffs (empty array) then there is nothing
+        # interesting to be done.
+        if len(manifest_diffs) == 0:
+          return
 
-          # Pushing to staging-infra-{$BRANCH} may fail since the commit histories
-          # have different acestors. If we can verify that they are reachable
-          # through a prior commit we will ignore the CQ depends.
-          # Make sure that we have not lost commits.  If the new revision at a
-          # path is older than the prior one, provide a clearer failure message
-          # than the one we get in cros_cq_depends.
-          # See b/176121817 and ci.chromium.org/b/8860265036779649984.
-          # TODO(crbug/1169277): If the change is in a pinned entry in the
-          # manifest, ignore the downrev.  Once that is happening, drop
-          # properties.ignore_downrev_paths.
-          with api.step.nest('check reachability') as reach_pres:
-            downrevs = []
-            for diff in manifest_diffs:
-              with api.context(cwd=workspace_path.join(diff.path)):
-                if (not api.git.is_reachable(diff.from_rev) and
-                    diff.path not in properties.ignore_downrev_paths):
-                  downrevs.append('{}: {} is not an ancestor of {}'.format(
-                      diff.path, diff.from_rev, diff.to_rev))
+        # Pushing to staging-infra-{$BRANCH} may fail since the commit histories
+        # have different acestors. If we can verify that they are reachable
+        # through a prior commit we will ignore the CQ depends.
+        # Make sure that we have not lost commits.  If the new revision at a
+        # path is older than the prior one, provide a clearer failure message
+        # than the one we get in cros_cq_depends.
+        # See b/176121817 and ci.chromium.org/b/8860265036779649984.
+        # TODO(crbug/1169277): If the change is in a pinned entry in the
+        # manifest, ignore the downrev.  Once that is happening, drop
+        # properties.ignore_downrev_paths.
+        with api.step.nest('check reachability') as reach_pres:
+          downrevs = []
+          for diff in manifest_diffs:
+            with api.context(cwd=workspace_path.join(diff.path)):
+              if (not api.git.is_reachable(diff.from_rev) and
+                  diff.path not in properties.ignore_downrev_paths):
+                downrevs.append('{}: {} is not an ancestor of {}'.format(
+                    diff.path, diff.from_rev, diff.to_rev))
 
-            if downrevs:
-              # TODO(crbug/1169277): Add code to distinguish these cases, and make
-              # the error only apply to case #1.
-              # There are 3 cases that can lead to an unreachable prior version:
-              # 1. Commits were lost from the git repo.  (bug).
-              # 2. A pinned-entry in the manifest has a change that reverts an
-              #    uprev in that repo.  (not a bug)
-              # 3. A manifest entry changes branches. (not a bug)
-              # Of the set, #1 is generally the least likely to occur, so this is
-              # a warning (which is ignored by LUCI/Milo) for now.
-              reach_pres.logs['downrevs'] = downrevs
-              reach_pres.step_text = 'some downrevs occurred'
+          if downrevs:
+            # TODO(crbug/1169277): Add code to distinguish these cases, and make
+            # the error only apply to case #1.
+            # There are 3 cases that can lead to an unreachable prior version:
+            # 1. Commits were lost from the git repo.  (bug).
+            # 2. A pinned-entry in the manifest has a change that reverts an
+            #    uprev in that repo.  (not a bug)
+            # 3. A manifest entry changes branches. (not a bug)
+            # Of the set, #1 is generally the least likely to occur, so this is
+            # a warning (which is ignored by LUCI/Milo) for now.
+            reach_pres.logs['downrevs'] = downrevs
+            reach_pres.step_text = 'some downrevs occurred'
 
-          # Otherwise we need to ensure all of those diffs have fulfilled deps.
-          try:
-            api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(
-                manifest_diffs)
-          except StepFailure:
-            if not properties.ignore_cq_depends_failure:
-              raise
+        # Otherwise we need to ensure all of those diffs have fulfilled deps.
+        try:
+          api.cros_cq_depends.ensure_manifest_cq_depends_fulfilled(
+              manifest_diffs)
+        except StepFailure:
+          if not properties.ignore_cq_depends_failure:
+            raise
 
-          # Then, get the diffs. We are specifically interested in what
-          # gerrit changes have landed.
-          gerrit_commits, jobs = _get_gerrit_changes(api, manifest_diffs,
-                                                     properties.path_triggers)
+        # Then, get the diffs. We are specifically interested in what
+        # gerrit changes have landed.
+        gerrit_commits, jobs = _get_gerrit_changes(api, manifest_diffs,
+                                                   properties.path_triggers)
 
-        # Generate Cr-Snapshot-Identifer (b/171751551).
-        with api.step.nest('fetch previous snapshot identifier'):
-          api.git.fetch_ref(internal_manifest.url, prior_internal)
-          test_data = api.git_footers.test_api.step_test_data_factory('1000000')
-          snapshot_identifier_footers = api.git_footers.from_ref(
-              'FETCH_HEAD', key='Cr-Snapshot-Identifier',
-              step_test_data=test_data)
-          if not snapshot_identifier_footers:
-            raise StepFailure('missing Cr-Snapshot-Identifier footer')
-          snapshot_identifier = int(snapshot_identifier_footers[0])
-          snapshot_identifier += 1
+      # Generate Cr-Snapshot-Identifer (b/171751551).
+      with api.step.nest('fetch previous snapshot identifier'):
+        api.git.fetch_ref(internal_manifest.url, prior_internal)
+        test_data = api.git_footers.test_api.step_test_data_factory('1000000')
+        snapshot_identifier_footers = api.git_footers.from_ref(
+            'FETCH_HEAD', key='Cr-Snapshot-Identifier',
+            step_test_data=test_data)
+        if not snapshot_identifier_footers:
+          raise StepFailure('missing Cr-Snapshot-Identifier footer')
+        snapshot_identifier = int(snapshot_identifier_footers[0])
+        snapshot_identifier += 1
 
-        # And publish.
-        with api.step.nest('publish external snapshot'), \
-            api.context(cwd=external_manifest.path):
-          external_snapshot_commit = _publish_snapshot(
-              api, external_manifest.url, manifest_ref, prior_external,
-              external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
-              disable_gerrit=True, dry_run=dry_run,
-              footers=[('Cr-Snapshot-Identifier', str(snapshot_identifier))])
-          external_snapshot_ref = external_snapshot_commit.id
+      # And publish.
+      with api.step.nest('publish external snapshot'), \
+          api.context(cwd=external_manifest.path):
+        external_snapshot_commit = _publish_snapshot(
+            api, external_manifest.url, manifest_ref, prior_external,
+            external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
+            disable_gerrit=True, dry_run=dry_run,
+            footers=[('Cr-Snapshot-Identifier', str(snapshot_identifier))])
+        external_snapshot_ref = external_snapshot_commit.id
 
-        with api.step.nest('publish internal snapshot'):
-          internal_snapshot_commit = _publish_snapshot(
-              api, internal_manifest.url, manifest_ref, prior_internal,
-              internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
-              gerrit_commits,
-              properties.disable_gerrit_commits_in_commit_message, footers=[
-                  ('Cr-External-Snapshot', external_snapshot_ref),
-                  ('Cr-Snapshot-Identifier', str(snapshot_identifier))
-              ], dry_run=dry_run)
+      with api.step.nest('publish internal snapshot'):
+        internal_snapshot_commit = _publish_snapshot(
+            api, internal_manifest.url, manifest_ref, prior_internal,
+            internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
+            gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
+            footers=[('Cr-External-Snapshot', external_snapshot_ref),
+                     ('Cr-Snapshot-Identifier', str(snapshot_identifier))],
+            dry_run=dry_run)
 
-          # Set output.properties.commit, this will also set the commit as the
-          # build output.
-          api.src_state.gitiles_commit = internal_snapshot_commit
+        # Set output.properties.commit, this will also set the commit as the
+        # build output.
+        api.src_state.gitiles_commit = internal_snapshot_commit
 
-        if jobs and not properties.dry_run:
-          _schedule_triggered_builds(api, internal_snapshot_commit, jobs)
+      if jobs and not properties.dry_run:
+        _schedule_triggered_builds(api, internal_snapshot_commit, jobs)
 
 
 def _sync_manifest(api, _properties, manifest_ref, prior_internal,

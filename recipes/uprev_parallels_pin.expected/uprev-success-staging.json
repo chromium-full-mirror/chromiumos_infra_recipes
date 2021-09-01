@@ -474,7 +474,7 @@
       "--image-project=chromeos-bot",
       "--image=",
       "--quiet",
-      "--type=pd-ssd"
+      "--type=pd-standard"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -6132,7 +6132,7 @@
       "--image-project=chromeos-bot",
       "--image=test-cache-snapshot-123",
       "--quiet",
-      "--type=pd-ssd"
+      "--type=pd-standard"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

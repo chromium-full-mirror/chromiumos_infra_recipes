@@ -720,13 +720,15 @@ class CrosSourceApi(RecipeApi):
         self.m.git.remote_update(step_name=step_name)
 
   @contextlib.contextmanager
-  def checkout_overlays_context(self, mount_cache=True, snapshot_mount=False):
+  def checkout_overlays_context(self, mount_cache=True, snapshot_mount=False,
+                                disk_type='pd-standard'):
     """Returns a context where overlays can be mounted.
 
     Args:
       mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
       snapshot_mount (bool): Whether to utilize the snapshot mount location,
         rather than the image preload directory.  Default: False
+      disk_type (str): GCE disk type to use.  Default: pd-standard
     """
     with self.m.gcloud.cleanup_gce_disks(), \
         self.m.gcloud.cleanup_mounted_disks(), \
@@ -737,7 +739,8 @@ class CrosSourceApi(RecipeApi):
         if snapshot_mount:
           branch = self.manifest_branch or 'main'
           self.m.gcloud.create_and_mount_disk(cache_name='chromiumos',
-                                              branch=branch, disk_type='pd-ssd',
+                                              branch=branch,
+                                              disk_type=disk_type,
                                               dry_run=False)
           lower_dir = '{}/chromiumos'.format(self.m.gcloud.snapshot_mount_path)
           self.m.easy.set_properties_step(snapshot_mount=snapshot_mount)
