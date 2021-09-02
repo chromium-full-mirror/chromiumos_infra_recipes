@@ -30,6 +30,11 @@ message BuildMenuProperties {
   // artifacts.  The version string for tagging container images is generated
   // from the format string.
   //
+  // This must form a value tag for Docker, as such it has a few rules:
+  //   * May contain [A-Za-z0-9_.-]
+  //   * May not start with . or -
+  //   * Must be at most 128 characters
+  //
   // The format string is taken as-is and any fields delimited by {} are
   // replaced with their respective value.  Supported fields:
   //   * {build-target}  The build target for the board (eg: amd64-generic)
@@ -39,6 +44,6 @@ message BuildMenuProperties {
   //                     otherwise the empty string
   //
   // Example, for CQ we use:
-  //   {staging?}{build-target}-cq/{cros-version}-{bbid}
+  //   {staging?}{build-target}-cq.{cros-version}-{bbid}
   string container_version_format = 6;
 }

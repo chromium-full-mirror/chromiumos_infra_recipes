@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'build_menu',
     'cros_bisect',
     'cros_build_api',
@@ -63,8 +64,9 @@ def GenTests(api):
       'cq-build',
       api.properties(
           **api.test_util.build_menu_properties(
+            build_target_name='atlas',
             container_version_format=\
-              '{staging?}{build-target}-cq/{cros-version}-{bbid}'
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
           )
       ),
       cq=True,
@@ -177,11 +179,11 @@ def GenTests(api):
 
   # Cq build with bad container version string, should throw exception
   yield api.build_menu.test(
-    'bad-container-version',
+    'bad-container-version-format',
     api.properties(
       **api.test_util.build_menu_properties(
         container_version_format=\
-        '{staging?}{build-target}-cq/{unknown-field}'
+        '{staging?}{build-target}-cq.{unknown-field}'
       )
     ),
     api.expect_exception('RuntimeError'),
@@ -195,15 +197,73 @@ def GenTests(api):
 
   # Cq build with bad container version string, should throw exception
   yield api.build_menu.test(
-    'no-container-endpoint',
+    'bad-container-version-characters',
+    api.properties(
+      **api.test_util.build_menu_properties(
+        build_target_name='atlas',
+        container_version_format=\
+        '{staging?}{build-target}-cq/{cros-version}'
+      )
+    ),
+    api.expect_exception('RuntimeError'),
+    api.post_check(post_process.StatusException),
+    api.post_check(
+      post_process.ResultReasonRE,
+      'Invalid tag format',
+    ),
+    cq=True,
+  )
+
+  # Cq build with bad container version string, should throw exception
+  yield api.build_menu.test(
+    'bad-container-version-len',
     api.properties(
       **api.test_util.build_menu_properties(
         container_version_format=\
-        '{staging?}{build-target}-cq/{cros-version}-{bbid}'
+        256*'a'
+      )
+    ),
+    api.expect_exception('RuntimeError'),
+    api.post_check(post_process.StatusException),
+    api.post_check(
+      post_process.ResultReasonRE,
+      'Tag is too long',
+    ),
+    cq=True,
+  )
+
+  # Cq build with bad container version string, should throw exception
+  yield api.build_menu.test(
+    'no-container-endpoint',
+    api.properties(
+      **api.test_util.build_menu_properties(
+        build_target_name='atlas',
+        container_version_format=\
+        '{staging?}{build-target}-cq.{cros-version}-{bbid}'
       )
     ),
     api.cros_build_api.remove_endpoints(
       ['TestService/BuildTestServiceContainers']
+    ),
+    cq=True,
+  )
+
+  # Cq build with bad container version string, should throw exception
+  yield api.build_menu.test(
+    'container-build-error',
+    api.properties(
+      **api.test_util.build_menu_properties(
+        build_target_name='atlas',
+        container_version_format=\
+        '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+      )
+    ),
+
+    # Simulate a failure building a single container
+    api.cros_build_api.set_api_return(
+      'build and upload test service containers',
+      endpoint='TestService/BuildTestServiceContainers',
+      data='{ "results": [ { "failure" : {} } ]}',
     ),
     cq=True,
   )

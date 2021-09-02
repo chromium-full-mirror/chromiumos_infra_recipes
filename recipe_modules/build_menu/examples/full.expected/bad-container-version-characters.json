@@ -5002,308 +5002,6 @@
   },
   {
     "cmd": [],
-    "name": "build and upload test service containers",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@version: 'atlas-cq.R99-1234.56.0-8945511751514863184'@@@",
-      "@@@STEP_LINK@@@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build and upload test service containers.call chromite.api.TestService/BuildTestServiceContainers",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"atlas\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
-      "@@@STEP_LOG_LINE@request@        {@@@",
-      "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      ]@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"version\": \"atlas-cq.R99-1234.56.0-8945511751514863184\"@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"results\": [{\"success\": {}}]}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }, \n  \"version\": \"atlas-cq.R99-1234.56.0-8945511751514863184\"\n}",
-      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "build and upload test service containers.call chromite.api.TestService/BuildTestServiceContainers.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"name\": \"atlas\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"env\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"useFlags\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@          \"flag\": \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@        }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      ]@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"version\": \"atlas-cq.R99-1234.56.0-8945511751514863184\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.TestService/BuildTestServiceContainers"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "name": "build and upload test service containers.call chromite.api.TestService/BuildTestServiceContainers.call build API script",
-    "timeout": 3600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "build and upload test service containers.call chromite.api.TestService/BuildTestServiceContainers.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build and upload test service containers.call chromite.api.TestService/BuildTestServiceContainers.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "finalize metadata"
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
-    "name": "finalize metadata.buildbucket.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
-    "name": "finalize metadata.buildbucket.get (2)",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "finalize metadata.upload metadata",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com//amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"atlas\"\n    ], \n    \"bot-config\": \"amd64-generic-cq\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:14\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
-      "[CLEANUP]/metadata_tmp_2/metadata.json"
-    ],
-    "infra_step": true,
-    "name": "finalize metadata.upload metadata.writing metadata.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@metadata.json@{@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"board-metadata\": {}, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"boards\": [@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"atlas\"@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"amd64-generic-cq\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"branch\": \"main\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"build-number\": 0, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"build_id\": 0, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 8945511751514863184, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"amd64-generic-cq\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"cq\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"child-configs\": [], @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"master_build_id\": 0, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"metadata-version\": \"2\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"results\": [@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"board\": \"\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"description\": \"\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"duration\": \"00:00:00\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"log\": \"\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"name\": \"DebugSymbols\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"status\": \"pass\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"summary\": \"stage was successful\"@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        }, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"board\": \"\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"description\": \"\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"duration\": \"-1 day, 22:03:20\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"log\": \"\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"name\": \"UnitTest\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"status\": \"pass\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@            \"summary\": \"stage was successful\"@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        }@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"status\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"current-time\": null, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"status\": \"pass\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:14\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"unibuild\": false, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"version\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"chrome\": \"chrome_version\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"full\": \"full_version\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"milestone\": \"milestone_version\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"platform\": \"platform_version\"@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    }@@@",
-      "@@@STEP_LOG_LINE@metadata.json@}@@@",
-      "@@@STEP_LOG_END@metadata.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs:///amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata.json"
-    ],
-    "infra_step": true,
-    "name": "finalize metadata.upload metadata.gsutil cp",
-    "timeout": 600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "clean up SDK chroot"
   },
   {
@@ -5345,7 +5043,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
@@ -5371,9 +5069,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -5396,7 +5094,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -5458,7 +5156,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
@@ -5484,9 +5182,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_19/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Unmount"
@@ -5509,7 +5207,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_19/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -5606,10 +5304,32 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0056@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0052@@@"
     ]
   },
   {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/examples/full.py\", line 34, in RunSteps",
+      "    return DoRunSteps(api, properties)",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/examples/full.py\", line 53, in DoRunSteps",
+      "    api.build_menu.upload_artifacts()",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 584, in upload_artifacts",
+      "    if self.container_version:",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 114, in container_version",
+      "    raise RuntimeError('Invalid tag format: \\'{}\\''.format(version))",
+      "RuntimeError: Invalid tag format: 'atlas-cq/R99-1234.56.0'"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: RuntimeError(\"Invalid tag format: 'atlas-cq/R99-1234.56.0'\",)"
+    },
     "name": "$result"
   }
 ]

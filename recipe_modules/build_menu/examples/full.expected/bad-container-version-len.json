@@ -5213,20 +5213,20 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/examples/full.py\", line 33, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/examples/full.py\", line 34, in RunSteps",
       "    return DoRunSteps(api, properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/examples/full.py\", line 52, in DoRunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/examples/full.py\", line 53, in DoRunSteps",
       "    api.build_menu.upload_artifacts()",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 569, in upload_artifacts",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 584, in upload_artifacts",
       "    if self.container_version:",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 100, in container_version",
-      "    ','.join([\"'{}'\".format(field) for field in fields]),",
-      "RuntimeError: Unknown fields found in version format string: '{unknown-field}'"
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 117, in container_version",
+      "    raise RuntimeError('Tag is too long: \\'{}\\' (max 128)'.format(version))",
+      "RuntimeError: Tag is too long: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' (max 128)"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: RuntimeError(\"Unknown fields found in version format string: '{unknown-field}'\",)"
+      "humanReason": "Uncaught Exception: RuntimeError(\"Tag is too long: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' (max 128)\",)"
     },
     "name": "$result"
   }

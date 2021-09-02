@@ -5005,7 +5005,7 @@
     "name": "build and upload test service containers",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@version: 'atlas-cq.R99-1234.56.0-8945511751514863184'@@@",
-      "@@@STEP_LINK@@@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -5031,7 +5031,7 @@
       "@@@STEP_LOG_LINE@request@  \"version\": \"atlas-cq.R99-1234.56.0-8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"results\": [{\"success\": {}}]}@@@",
+      "@@@STEP_LOG_LINE@response@{ \"results\": [ { \"failure\" : {} } ]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

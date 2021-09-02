@@ -83,12 +83,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     # Replace any explicitly allowed fields
     ALLOWED_FIELDS = {
-        '{build-target}': self._build_target,
+        '{build-target}': self._build_target.name,
         '{cros-version}': self.m.cros_version.version.legacy_version,
         '{bbid}': self.m.buildbucket.build.id or 'led-launch',
         '{staging?}': staging_prefix,
     }
+
+    # Get the format string, empty version is fine so just return it
     version = self._container_version_fmt
+    if not version:
+      return ""
+
     for field, value in ALLOWED_FIELDS.items():
       version = version.replace(field, str(value))
 
@@ -100,6 +105,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
               ','.join(["'{}'".format(field) for field in fields]),
           ),
       )
+    # Per the reference material on docker tags:
+    #   A tag name must be valid ASCII and may contain lowercase and uppercase
+    #   letters, digits, underscores, periods and dashes. A tag name may not
+    #   start with a period or a dash and may contain a maximum of 128
+    #   characters.
+    if not re.match('[A-Za-z0-9_][A-Za-z0-9_.-]*$', version):
+      raise RuntimeError('Invalid tag format: \'{}\''.format(version))
+
+    if len(version) > 128:
+      raise RuntimeError('Tag is too long: \'{}\' (max 128)'.format(version))
 
     return version
 
@@ -568,7 +583,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     if self.container_version:
       with self.m.step.nest(
-          'build & upload test service containers') as presentation:
+          'build and upload test service containers') as presentation:
         if not self.m.cros_build_api.has_endpoint(
             self.m.cros_build_api.TestService, 'BuildTestServiceContainers'):
           presentation.step_summary_text = "No endpoint, skipping"
@@ -577,15 +592,24 @@ class BuildMenuApi(recipe_api.RecipeApi):
             self.m.cros_build_api.TestService.BuildTestServiceContainers
 
           version = self.container_version
+          presentation.step_summary_text = 'version: \'{}\''.format(version)
+
           response = BuildTestServiceContainers(
               BuildTestServiceContainersRequest(
                   build_target=self.build_target,
                   chroot=self.m.cros_sdk.chroot,
                   version=version,
               ), timeout=1 * 60 * 60)
-          presentation.step_text = (
-              'Test containers (gcr.io/chromeos-bot) build/push result for'
-              ' {}: {} '.format(version, str(response.results)))
+
+          # Set up links to built containers.
+          for result in response.results:
+            if result.HasField('success'):
+              presentation.links[result.name] = result.success.registry_path
+
+          # Set error status if any builds failed.
+          for result in response.results:
+            if result.HasField('failure'):
+              presentation.status = self.m.step.FAILURE
 
     return artifacts
 
