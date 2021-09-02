@@ -52,44 +52,15 @@
       "-exonerate-unexpected-pass",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
-      "gtest",
+      "tast",
       "-result-file",
-      "dummy-results-dir/autoserv_test/chromium/results/output.json",
+      "dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl",
       "-artifact-directory",
-      "dummy-results-dir/autoserv_test/chromium/debug",
+      "dummy-results-dir/autoserv_test",
       "--",
       "echo"
     ],
     "name": "upload chromium test result to rdb.run rdb",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload chromium test result to rdb (2)"
-  },
-  {
-    "cmd": [
-      "rdb",
-      "stream",
-      "-var",
-      "test_suite:lacros_all_tast_tests",
-      "-tag",
-      "test_suite:cast_shell_browsertests",
-      "-coerce-negative-duration",
-      "-exonerate-unexpected-pass",
-      "--",
-      "[START_DIR]/cipd/result_adapter/result_adapter",
-      "gtest",
-      "-result-file",
-      "dummy-results-dir/autoserv_test/chromium/results/output.json",
-      "-artifact-directory",
-      "dummy-results-dir/autoserv_test/chromium/debug",
-      "--",
-      "echo"
-    ],
-    "name": "upload chromium test result to rdb (2).run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

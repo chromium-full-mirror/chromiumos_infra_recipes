@@ -252,8 +252,7 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
 
     if (test_metadata.test.autotest.test_args and
         'resultdb_settings' in test_metadata.test.autotest.test_args):
-      api.cros_resultdb.upload(api.buildbucket.builder_name,
-                               test_metadata.test.autotest.test_args,
+      api.cros_resultdb.upload(test_metadata.test.autotest.test_args,
                                interface.get_results_directory(test_metadata))
 
     api.cts_results_archive.archive(
@@ -950,12 +949,10 @@ def GenTests(api):
   )
 
   rdb_settings = api.json.dumps({
-      'result_format': 'gtest',
-      'artifact_directory': '/tmp/artifact',
-      'result_file': 'output.json',
-      'base_tags': ['test_suite:cast_shell_browsertests'],
+      'result_format': 'tast',
+      'base_tags': ['test_suite:lacros_all_tast_tests'],
       'base_variant': {
-          'test_suite': 'cast_shell_browsertests',
+          'test_suite': 'lacros_all_tast_tests',
       },
   })
   yield api.test(
@@ -984,9 +981,11 @@ def GenTests(api):
           'to rdb.run rdb',
           [
               '[START_DIR]/cipd/result_adapter/result_adapter',
-              'gtest',
+              'tast',
               '-result-file',
-              'dummy-results-dir/autoserv_test/chromium/results/output.json',
+              'dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl',
+              '-artifact-directory',
+              'dummy-results-dir/autoserv_test',
           ],
       ),
       api.post_process(

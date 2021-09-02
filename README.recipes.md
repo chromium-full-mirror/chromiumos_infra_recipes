@@ -2757,7 +2757,7 @@ Args:
 Returns:
     json string
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#37)(self, builder_name, test_args, base_dir):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#37)(self, test_args, base_dir):**
 
 Call the resultDB module to upload test result
 
@@ -2769,10 +2769,17 @@ Args:
       resultDB arguments, because it is easy to access in test runner
       recipe.
       test_args must contain resultdb_settings, which is base64 compressed
-      json string, wrapping all resultdb parameters.
-      For supported parameters, refer recipe_engine/resultdb module.
+      json string, wrapping all resultdb parameters. The below two are
+      handled differently on CrOS:
+      * result_file: hardcoded for tast and gtest in this module. It
+        should be user invisible.
+      * artifact_directory: rel path relative to autotest result folder.
+        ONLY for gtest, E.g. chromium/debug. For tast test, we rely on
+        it to pass the runtime result path to adapter. So we do
+        not accept user defined artifact fed to this module.
+      For other supported parameters, refer recipe_engine/resultdb module.
   * base_dir - The path of the base test results on the drone server.
-      Chromium test result can be found at
+      For example, Chromium gtest result can be found at
       base_dir/autoserv_test/chromium/results.
 ### *recipe_modules* / [cros\_schedule](/recipe_modules/cros_schedule)
 
@@ -9786,7 +9793,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#365)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#364)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#109)(api, interface, test_metadata, result):**
 
@@ -9802,7 +9809,7 @@ apposite a test.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#300)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#299)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -9818,7 +9825,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#271)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#270)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 

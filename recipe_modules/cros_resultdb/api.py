@@ -34,7 +34,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
         args_dict[match.group(1).lower()] = match.group(2)
     return base64.b64decode(args_dict.get('resultdb_settings', ''))
 
-  def upload(self, builder_name, test_args, base_dir):
+  def upload(self, test_args, base_dir):
     """Call the resultDB module to upload test result
 
     Args:
@@ -45,10 +45,17 @@ class ResultDBCommand(recipe_api.RecipeApi):
           resultDB arguments, because it is easy to access in test runner
           recipe.
           test_args must contain resultdb_settings, which is base64 compressed
-          json string, wrapping all resultdb parameters.
-          For supported parameters, refer recipe_engine/resultdb module.
+          json string, wrapping all resultdb parameters. The below two are
+          handled differently on CrOS:
+          * result_file: hardcoded for tast and gtest in this module. It
+            should be user invisible.
+          * artifact_directory: rel path relative to autotest result folder.
+            ONLY for gtest, E.g. chromium/debug. For tast test, we rely on
+            it to pass the runtime result path to adapter. So we do
+            not accept user defined artifact fed to this module.
+          For other supported parameters, refer recipe_engine/resultdb module.
       * base_dir - The path of the base test results on the drone server.
-          Chromium test result can be found at
+          For example, Chromium gtest result can be found at
           base_dir/autoserv_test/chromium/results.
     """
     rdb_settings = self.extract_resultdb_settings(test_args)
@@ -57,17 +64,19 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
     configs = self.m.json.loads(rdb_settings)
     assert configs.get('result_format') in [
-        'gtest', 'json', 'single'
-    ], 'result_format must be gtest, json or single, got %s' % configs.get(
-        'result_format')
-    assert configs.get('result_file') is not None, ('result_file '
-                                                    'should not be empty.')
+        'gtest', 'json', 'single', 'tast'
+    ], ('result_format must be gtest, json, single or tast, '
+        'got %s' % configs.get('result_format'))
     # Test results on Drone server are not stored in swarming [start_dir],
     # e.g. "/usr/local/autotest/results/swarming-12345678/1".
     # So use general os.path to join.
-    base = os.path.join(base_dir, 'autoserv_test', 'chromium', 'results')
+    base = os.path.join(base_dir, 'autoserv_test')
+    result_file_by_type = {
+        'gtest': os.path.join(base, 'chromium/results/output.json'),
+        'tast': os.path.join(base, 'tast/results/streamed_results.jsonl'),
+    }
+
     with self.m.step.nest('upload chromium test result to rdb'):
-      result_file = os.path.join(base, configs.get('result_file'))
       # ResultDB in CrOS recipes only supports uploading result file,
       # so the cmd must accompany the result_adapter.
       self._ensure_result_adapter_executables()
@@ -75,21 +84,22 @@ class ResultDBCommand(recipe_api.RecipeApi):
           self._result_adapter,
           configs.get('result_format'),
           '-result-file',
-          result_file,
+          result_file_by_type.get(configs.get('result_format')),
       ]
-      if configs.get('artifact_directory'):
-        result_adapter += [
-            '-artifact-directory',
-            os.path.join(base, configs.get('artifact_directory')),
+
+      artifact_path = ['-artifact-directory']
+      if configs.get('result_format') == 'tast':
+        artifact_path += [base]
+      elif configs.get('artifact_directory'):
+        artifact_path += [
+            os.path.join(base, configs.get('artifact_directory', '')),
         ]
+      if len(artifact_path) > 1:
+        result_adapter.extend(artifact_path)
 
       # Skylab tests can not wrap directly by rdb now. We only care the
       # result file from the test runs.
       rdb_cmd = result_adapter + ['--'] + ['echo']
-
-      # add var 'builder' by default
-      var = {'builder': builder_name}
-      var.update(configs.get('base_variant', {}))
 
       base_tags = [tuple(x.split(':', 1)) for x in configs.get('base_tags', [])]
 
@@ -97,7 +107,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       cmd = self.m.resultdb.wrap(
           rdb_cmd,
           base_tags=base_tags,
-          base_variant=var,
+          base_variant=configs.get('base_variant', {}),
           coerce_negative_duration=configs.get('coerce_negative_duration',
                                                True),
           test_id_prefix=configs.get('test_id_prefix', ''),

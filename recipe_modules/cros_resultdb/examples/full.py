@@ -17,28 +17,44 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.cros_resultdb.upload('skylab_test_runner',
-                           api.properties.get('test_args'), 'dummy-results-dir')
+  api.cros_resultdb.upload(api.properties.get('test_args'), 'dummy-results-dir')
   if 'result_adapter_cached' in api.properties:
-    api.cros_resultdb.upload('skylab_test_runner',
-                             api.properties.get('test_args'),
-                             'dummy-results-dir')
+    api.cros_resultdb.upload(
+        api.properties.get('test_args'), 'dummy-results-dir')
 
 
 def GenTests(api):
 
   rdb_settings = api.json.dumps({
-      'result_format': 'gtest',
-      'artifact_directory': '/tmp/artifact',
-      'result_file': 'chromium/output.json',
+      'result_format': 'tast',
       'base_tags': ['test_suite:cast_shell_browsertests'],
       'base_variant': {
-          'test_suite': 'cast_shell_browsertests',
+          'test_suite': 'lacros_all_tast_tests',
       },
   })
 
   yield api.test(
-      'basic',
+      'basic_tast',
+      api.buildbucket.ci_build(),
+      api.properties(test_args='resultdb_settings=%s' %
+                     base64.b64encode(rdb_settings)),
+      api.post_process(post_process.StepSuccess,
+                       'upload chromium test result to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload chromium test result to rdb.run rdb'),
+  )
+
+  rdb_settings = api.json.dumps({
+      'result_format': 'gtest',
+      'base_tags': ['test_suite:cast_shell_browsertests'],
+      'base_variant': {
+          'test_suite': 'lacros_all_tast_tests',
+      },
+      'artifact_directory': 'chromium/debug',
+  })
+
+  yield api.test(
+      'basic_gtest',
       api.buildbucket.ci_build(),
       api.properties(test_args='resultdb_settings=%s' %
                      base64.b64encode(rdb_settings)),
