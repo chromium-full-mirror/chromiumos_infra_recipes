@@ -993,3 +993,34 @@ def GenTests(api):
           'execution steps.original_test.upload chromium test result to rdb.'
           'run rdb'),
   )
+
+  yield api.test(
+      'chormium_test_upload_result_to_rdb_failure',
+      api.buildbucket.ci_build(),
+      api.buildbucket.build(
+          build_pb2.Build(
+              id=42, builder=builder_pb2.BuilderID(
+                  project='chromeos',
+                  bucket='test_runner',
+                  builder='test_runner',
+              ), infra=build_pb2.BuildInfra(
+                  resultdb=build_pb2.BuildInfra.ResultDB(
+                      invocation='invocations/build:%d' % 42)))),
+      _misc_properties(),
+      _request_properties_rdb('resultdb_settings=%s' %
+                              base64.b64encode(rdb_settings)),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      api.step_data(
+          'execution steps.original_test.upload chromium test result '
+          'to rdb.run rdb', retcode=1),
+      api.post_process(
+          post_process.StepFailure, 'execution steps.'
+          'original_test.upload chromium test result to rdb'),
+      api.post_process(
+          post_process.MustRun,
+          'execution steps.Phosphorus: remove autotest results dir'),
+  )

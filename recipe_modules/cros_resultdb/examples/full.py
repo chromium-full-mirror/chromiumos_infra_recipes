@@ -65,6 +65,14 @@ def GenTests(api):
   )
 
   yield api.test(
+      'rdb_failure',
+      api.buildbucket.ci_build(),
+      api.properties(test_args='resultdb_settings=%s' %
+                     base64.b64encode(rdb_settings)),
+      api.step_data('upload chromium test result to rdb.run rdb', retcode=1),
+  )
+
+  yield api.test(
       'cache result_adapter',
       api.buildbucket.ci_build(),
       api.properties(

@@ -1,0 +1,75 @@
+[
+  {
+    "cmd": [],
+    "name": "upload chromium test result to rdb",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload chromium test result to rdb.ensure result_adapter",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_adapter",
+      "-ensure-file",
+      "infra/tools/result_adapter/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "upload chromium test result to rdb.ensure result_adapter.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-var",
+      "test_suite:lacros_all_tast_tests",
+      "-tag",
+      "test_suite:cast_shell_browsertests",
+      "-coerce-negative-duration",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "gtest",
+      "-result-file",
+      "dummy-results-dir/autoserv_test/chromium/results/output.json",
+      "-artifact-directory",
+      "dummy-results-dir/autoserv_test/chromium/debug",
+      "--",
+      "echo"
+    ],
+    "name": "upload chromium test result to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

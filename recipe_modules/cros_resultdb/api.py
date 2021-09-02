@@ -117,7 +117,13 @@ class ResultDBCommand(recipe_api.RecipeApi):
           exonerate_unexpected_pass=configs.get('exonerate_unexpected_pass',
                                                 True),
       )
-      return self.m.step('run rdb', cmd)
+      # Even rdb failed we should complete the test runner build, so that
+      # the we could return the stainless log link to upstream builders.
+      try:
+        return self.m.step('run rdb', cmd)
+      except self.m.step.StepFailure:
+        pass
+    return
 
   def _ensure_result_adapter_executables(self):
     """Ensure the result_adapter CLI is installed."""
