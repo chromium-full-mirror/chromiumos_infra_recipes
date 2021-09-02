@@ -83,8 +83,9 @@ cipd_ref_to_instance() {
 
 # Print recipe commits pending release to production.
 recipe-pending() {
+  log_fmt="%C(bold blue)%h %C(bold green)[%al]%C(auto)%d %C(reset)%s"
   changes=$(git -C "${infra_recipes_root}" log --color --graph --decorate \
-            --oneline "${git_prod}".."${git_target}")
+      --pretty=format:"${log_fmt}" "${git_prod}".."${git_target}")
 
   if [ -z "${changes}" ]; then
       echo "${no_changes}"
@@ -143,6 +144,7 @@ echo "=== Checking staging status ==="
 check_staging "${skip_staging_check}"
 
 if [[ $pending == "$no_changes" ]]; then
+    echo "No changes pending. Exiting early."
     exit 0
 fi
 
