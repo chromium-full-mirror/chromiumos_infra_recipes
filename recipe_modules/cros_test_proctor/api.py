@@ -156,6 +156,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     else:
       return build_target.name + '-tast-vm-informational'
 
+  def _get_non_informational(self, tast_unit):
+    test_cfg = tast_unit.tast_vm_test_cfg
+    tast_unit.tast_vm_test_cfg.ClearField('tast_vm_test')
+    filtered_tests = [
+        test for test in test_cfg.tast_vm_test
+        if 'informational' not in test.suite_name
+    ]
+    tast_unit.tast_vm_test_cfg.tast_vm_test.extend(filtered_tests)
+    return tast_unit
+
   def _filter_snapshot_test_plan(self, test_plan):
     """Filter tests out of test_plan selectively. See b/197748687.
 
@@ -169,6 +179,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     # only on boards that have idle DUTs. For now, cut out all HW tests.
     if self.m.buildbucket.build.builder.builder == "snapshot-orchestrator":
       test_plan.ClearField("hw_test_units")
+      non_informational_units = [
+          self._get_non_informational(unit)
+          for unit in test_plan.direct_tast_vm_test_units
+      ]
+      test_plan.ClearField("direct_tast_vm_test_units")
+      test_plan.direct_tast_vm_test_units.extend(non_informational_units)
 
     return test_plan
 

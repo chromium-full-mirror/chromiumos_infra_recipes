@@ -3615,7 +3615,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#232)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#248)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -3650,7 +3650,7 @@ Runs the test platform v2 for a set of GerritChanges.
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#175)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#191)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False):**
 
 Schedule all tests from the test_plan.
 

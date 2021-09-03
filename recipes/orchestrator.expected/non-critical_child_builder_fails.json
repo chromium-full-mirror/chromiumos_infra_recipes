@@ -4880,7 +4880,7 @@
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@  tast_vm_test_cfg {@@@",
       "@@@STEP_LOG_LINE@planner_output@    tast_vm_test {@@@",
-      "@@@STEP_LOG_LINE@planner_output@      suite_name: \"tast-suite\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@      suite_name: \"tast-suite-informational\"@@@",
       "@@@STEP_LOG_LINE@planner_output@      tast_test_expr {@@@",
       "@@@STEP_LOG_LINE@planner_output@        test_expr: \"informational\"@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",

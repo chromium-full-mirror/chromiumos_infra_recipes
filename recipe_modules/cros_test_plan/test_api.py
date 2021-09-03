@@ -117,7 +117,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                 TastVmTestCfg.TastVmTest(
                     common=TestSuiteCommon(display_name='ttarget.tast.sweet',
                                            critical={'value': False}),
-                    suite_name='tast-suite',
+                    suite_name='tast-suite-informational',
                     tast_test_expr=[
                         TastVmTestCfg.TastTestExpr(test_expr='informational'),
                     ],

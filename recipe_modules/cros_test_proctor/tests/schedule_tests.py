@@ -53,9 +53,10 @@ def GenTests(api):
       api.properties(is_retry=True, passed_tests=passed_tests,
                      expected_tests_run_count=len(expected_tests_run)))
 
+  # Snapshot-orchestrator should only run non-informational VM tests.
   yield api.test(
-      'retry-filter',
+      'retry-snapshot-filter',
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='snapshot-orchestrator'),
-      api.properties(is_retry=True, passed_tests=passed_tests,
-                     expected_tests_run_count=0))
+      api.properties(is_retry=True, passed_tests=[],
+                     expected_tests_run_count=1))
