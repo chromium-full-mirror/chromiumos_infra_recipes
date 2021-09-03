@@ -103,15 +103,14 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	}
 	patchFile := strings.Trim(stdoutBuf.String(), "\n")
 	log.Printf("patching branch")
-	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "apply", "--3way", "--ignore-whitespace", patchFile); err != nil {
+	// We exclude binary files from the apply because of b/198542075.
+	// This tool should probably be rewritten anyways.
+	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "apply", "--3way", "--ignore-whitespace", patchFile,
+		"--exclude", "*.bin", "--exclude", "*.hex"); err != nil {
 		errStr := stderrBuf.String()
 		if strings.Contains(errStr, "information is lacking or useless") {
 			log.Printf("This looks like a case of https://crbug.com/1031306, in which something in the diff represents a non-existent file. Aborting...")
 			return false, nil
-		}
-		if strings.Contains(errStr, "error: cannot read the current contents") {
-			log.Printf("This looks like a case of b/198465593, ignoring and continuing...")
-			return true, nil
 		}
 		stdoutLineScanner := bufio.NewScanner(strings.NewReader(stdoutBuf.String()))
 		for stdoutLineScanner.Scan() {
