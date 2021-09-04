@@ -2739,7 +2739,7 @@ Returns:
 Whether there are toolchain CLs applied to the source tree.
 ### *recipe_modules* / [cros\_resultdb](/recipe_modules/cros_resultdb)
 
-[DEPS](/recipe_modules/cros_resultdb/__init__.py#1): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_resultdb/__init__.py#1): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -2747,7 +2747,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [extract\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#20)(self, test_args):**
+&mdash; **def [extract\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#19)(self, test_args):**
 
 Extract resultdb settings from test_args.
 
@@ -2757,7 +2757,7 @@ Args:
 Returns:
     json string
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#37)(self, test_args, base_dir):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#36)(self, test_args, base_dir):**
 
 Call the resultDB module to upload test result
 

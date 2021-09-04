@@ -15,7 +15,6 @@ class ResultDBCommand(recipe_api.RecipeApi):
   def __init__(self, **kwargs):
     super(ResultDBCommand, self).__init__(**kwargs)
     self._result_adapter = None
-    self._version = 'latest'
 
   def extract_resultdb_settings(self, test_args):
     """Extract resultdb settings from test_args.
@@ -129,12 +128,11 @@ class ResultDBCommand(recipe_api.RecipeApi):
     """Ensure the result_adapter CLI is installed."""
     if self._result_adapter:
       return
-
+    version = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure result_adapter'):
         cipd_dir = self.m.path['start_dir'].join('cipd', 'result_adapter')
         pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package('infra/tools/result_adapter/${platform}',
-                         self._version)
+        pkgs.add_package('infra/tools/result_adapter/${platform}', version)
         self.m.cipd.ensure(cipd_dir, pkgs)
         self._result_adapter = cipd_dir.join('result_adapter')
