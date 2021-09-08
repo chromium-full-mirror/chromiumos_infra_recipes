@@ -4148,21 +4148,21 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [branch](/recipe_modules/gcloud/api.py#76)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#702)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#720)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#746)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#764)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
 Upon exiting the context manager, each mounted disk is then iterated
 through and unmounted.
 
-&mdash; **def [create\_and\_mount\_disk](/recipe_modules/gcloud/api.py#611)(self, cache_name, branch='main', disk_type='pd-standard', recipe_mount=False, dry_run=False):**
+&mdash; **def [create\_and\_mount\_disk](/recipe_modules/gcloud/api.py#634)(self, cache_name, branch='main', disk_type='pd-standard', recipe_mount=False, dry_run=False):**
 
 Determine the disk to create and mount from snapshot.
 
@@ -4214,7 +4214,7 @@ Args:
 
 Returns: A string name of the image.
 
-&mdash; **def [create\_image\_from\_disk](/recipe_modules/gcloud/api.py#469)(self, disk, image_name, zone):**
+&mdash; **def [create\_image\_from\_disk](/recipe_modules/gcloud/api.py#492)(self, disk, image_name, zone):**
 
 Create an image from specified disk.
 
@@ -4249,7 +4249,7 @@ Args:
 
 &mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#186)(self, image_name):**
 
-&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#577)(self, images):**
+&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#600)(self, images):**
 
 Delete the list of provided images from GCE.
 
@@ -4265,7 +4265,7 @@ Args:
   project(str): Google Cloud project name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [delete\_snapshots](/recipe_modules/gcloud/api.py#497)(self, snapshots):**
+&mdash; **def [delete\_snapshots](/recipe_modules/gcloud/api.py#520)(self, snapshots):**
 
 Delete the list of provided snapshots from GCE.
 
@@ -4284,6 +4284,18 @@ Args:
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
+&mdash; **def [disk\_attached](/recipe_modules/gcloud/api.py#469)(self, instance, disk, zone):**
+
+Check whether a disk is attached to an instance.
+
+Args:
+  instance(str): Name of the instance to check.
+  disk(str): Name of the disk to check.
+  zone(str): Name of the zone that the instance is in.
+
+Returns:
+  Bool of whether the disk is attached or not.
+
 &mdash; **def [disk\_exists](/recipe_modules/gcloud/api.py#448)(self, disk):**
 
 Check whether a disk exists.
@@ -4298,7 +4310,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gce\_name\_limit](/recipe_modules/gcloud/api.py#84)(self):**
 
-&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#544)(self, retention_days, prefixes, protected_images=None):**
+&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#567)(self, retention_days, prefixes, protected_images=None):**
 
 Calculate the list of snapshots that have expired.
 
@@ -4307,7 +4319,7 @@ Args:
   prefixes(list|str): List of prefixes to filter.
   protected_images(list|str): List of images to preserve.
 
-&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#510)(self, retention_days, prefixes, protected_snapshots=None):**
+&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#533)(self, retention_days, prefixes, protected_snapshots=None):**
 
 Calculate the list of snapshots that have expired.
 
@@ -4363,7 +4375,7 @@ Args:
 
 Returns a Path to the base mount directory for cache builder.
 
-&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#483)(self, disk, snapshot_name, zone):**
+&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#506)(self, disk, snapshot_name, zone):**
 
 Snapshot an attached disk on a GCE instance.
 
