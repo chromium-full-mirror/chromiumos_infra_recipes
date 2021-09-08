@@ -143,6 +143,10 @@ message BranchPolicy {
   // Regexp pattern for matching and converting a trigger.ref.
   string pattern = 1;
 
+  // Should we completely ignore this ref and return success for this trigger?
+  // Overrides all Policies and subsequent configuration.
+  bool ignore = 9;
+
   // Regexp replacement for converting a trigger.ref to a reference.
   string repl = 2;
 

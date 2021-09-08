@@ -150,8 +150,8 @@ def RunSteps(api, properties):
 
         # If we we recieved a target version from Gitiles, override the tag
         # argument.
-        policy_info = _get_policy(api, policies, gitiles_response or
-                                  trigger.gitiles.ref)
+        tag = gitiles_response or trigger.gitiles.ref
+        policy_info = _get_policy(api, policies, tag)
         if policy_info not in trigger_policies:
           trigger_policies.append(policy_info)
       # If we match more than one policy with the triggers, that is an error.
@@ -161,6 +161,11 @@ def RunSteps(api, properties):
         raise StepFailure('too many triggers')
       policy_info = trigger_policies.pop()
       policy = policy_info.policy
+
+      if policy.ignore:
+        pres.step_text = 'policy set to ignore.'
+        return
+
       if policy_info.branch:
         pres.step_text = 'using {} {}'.format(policy_info.branch,
                                               policy_info.reference.hash)
@@ -600,6 +605,7 @@ def GenTests(api):
   def _policy(**kwargs):
     """Create a BranchPolicy, with defaults."""
     kwargs.setdefault('pattern', '.*')
+    kwargs.setdefault('ignore', False)
     kwargs.setdefault('reviewers', [
         Reviewer(email='evanhernandez@chromium.org'),
         Reviewer(email='chromeos-continuous-integration-team@google.com')
@@ -639,6 +645,14 @@ def GenTests(api):
             'commit uprev', data=[
                 dict(project='private-overlay', remote='cros-internal'),
             ], iteration=2), *args, **kwargs)
+
+  yield api.test(
+      'ignore-policy',
+      _props(branch_policies=[_policy(ignore=True)]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.post_check(post_process.DoesNotRun, 'commit uprev.repo forall'),
+  )
 
   yield _with_infos(
       'with-uprev-do-nothing-policy',
